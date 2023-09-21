@@ -1,0 +1,35 @@
+{
+	"name": "app",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"format": "prettier --plugin-search-dir . --write .",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+		"test": "run-p -l test:unit test:integration",
+		"test:integration": "playwright test",
+		"test:unit": "vitest run",
+		"build": "vite build",
+		"preview": "vite preview",
+		"precommit": "run-p -l lint check build test"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1",
+		"@sveltejs/adapter-auto": "^2",
+		"@sveltejs/kit": "^1",
+		"eslint": "^8",
+		"eslint-config-prettier": "^8",
+		"eslint-plugin-svelte": "^2",
+		"npm-run-all": "^4",
+		"prettier": "^2",
+		"prettier-plugin-svelte": "^2",
+		"svelte": "^4",
+		"svelte-check": "^3",
+		"typescript": "^5",
+		"vite": "^4",
+		"vitest": "^0"
+	}
+}

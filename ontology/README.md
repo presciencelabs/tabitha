@@ -12,3 +12,12 @@
 
 ### App
 
+1. ✅ update linting rules (eslint)
+1. ✅ update code formatting rules (prettier)
+1. ✅ add a unit test (vitest)
+1. ✅ add a playwright test (playwright)
+1. ✅ update README
+1. integrate picocss
+1. build layout
+1. integrate database
+1. look into deployment (https://kit.svelte.dev/docs/adapter-cloudflare)
