@@ -1,5 +1,4 @@
 {
-	"ref": "https://prettier.io/docs/en/options",
 	"printWidth": 100,
 	"useTabs": true,
 	"semi": false,
