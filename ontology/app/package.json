@@ -17,6 +17,7 @@
 		"precommit": "run-p -l lint check build test"
 	},
 	"devDependencies": {
+		"@picocss/pico": "^1",
 		"@playwright/test": "^1",
 		"@sveltejs/adapter-auto": "^2",
 		"@sveltejs/kit": "^1",
