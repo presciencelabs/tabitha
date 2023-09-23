@@ -1,1 +1,1 @@
-main
+<h1>Welcome to TaBiThA's Ontology application</h1>
