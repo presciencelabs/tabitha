@@ -1,14 +1,12 @@
 <script>
 	import '@picocss/pico'
+	import Brand from '$lib/Brand.svelte'
 	import Search from '$lib/Search.svelte'
 
 </script>
 
 <header class="container">
-	<hgroup>
-		<h1>Ontology</h1>
-		<h2>TaBiThA</h2>
-	</hgroup>
+	<Brand />
 
 	<Search autofocus />
 </header>
