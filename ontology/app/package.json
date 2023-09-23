@@ -14,7 +14,8 @@
 		"test:unit": "vitest run",
 		"build": "vite build",
 		"preview": "vite preview",
-		"precommit": "run-p -l lint check build test"
+		"precommit": "run-p -l lint check build test",
+		"clean": "rimraf vite.config.js.timestamp* .svelte-kit test-results"
 	},
 	"devDependencies": {
 		"@picocss/pico": "^1",
@@ -27,6 +28,7 @@
 		"npm-run-all": "^4",
 		"prettier": "^2",
 		"prettier-plugin-svelte": "^2",
+		"rimraf": "^5",
 		"svelte": "^4",
 		"svelte-check": "^3",
 		"typescript": "^5",
