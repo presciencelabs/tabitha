@@ -19,5 +19,14 @@
 1. ✅ update README
 1. ✅ integrate picocss
 1. ✅ build layout
-1. integrate database
+1. integrate database (as a server call for now)
 1. look into deployment (https://kit.svelte.dev/docs/adapter-cloudflare)
+
+#### persistence
+
+refs worth considering:
+
+https://sqlite.org/wasm/doc/trunk/persistence.md#opfs
+https://github.com/WiseLibs/better-sqlite3
+https://hartenfeller.dev/blog/sveltekit-with-sqlite
+https://blog.cloudflare.com/introducing-d1
