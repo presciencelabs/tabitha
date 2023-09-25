@@ -2,11 +2,11 @@
 	/** @type {import('./$types').PageData} */
 	export let data;
 
-$: matches = data.matches
+	$: matches = data.matches
 </script>
 
-{#if matches.length}
-	<pre>{JSON.stringify(data, null, 3)}</pre>
+{#each matches as { id, stem }}
+	<div>{id} {stem}</div>
 {:else}
 	<h1>Welcome to TaBiThA's Ontology application</h1>
-{/if}
+{/each}
