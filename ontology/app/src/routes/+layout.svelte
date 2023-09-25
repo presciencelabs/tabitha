@@ -16,7 +16,7 @@
 </main>
 
 <footer class="container">
-	<a href="https://btn.social">Administer</a>
+	<a href="https://btn.social" target="_blank" data-tooltip="Not implemented yet">Administer</a>
 </footer>
 
 <style>
