@@ -16,12 +16,13 @@
 </main>
 
 <footer class="container">
-	<a href="https://btn.social">Administer (TODO)</a>
+	<a href="https://btn.social">Administer</a>
 </footer>
 
 <style>
 	header {
 		display: flex;
+		gap: calc(var(--spacing) * 2);
 	}
 
 	footer {
