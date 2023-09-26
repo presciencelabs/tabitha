@@ -18,7 +18,7 @@
 		"clean": "rimraf vite.config.js.timestamp* .svelte-kit test-results"
 	},
 	"devDependencies": {
-		"@picocss/pico": "^1",
+		"@picocss/pico": "next",
 		"@playwright/test": "^1",
 		"@sveltejs/adapter-auto": "^2",
 		"@sveltejs/kit": "^1",

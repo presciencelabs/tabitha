@@ -6,8 +6,8 @@ settings:
 
 devDependencies:
   '@picocss/pico':
-    specifier: ^1
-    version: 1.5.10
+    specifier: next
+    version: 2.0.0-alpha1
   '@playwright/test':
     specifier: ^1
     version: 1.38.0
@@ -36,7 +36,7 @@ devDependencies:
     specifier: ^2
     version: 2.10.1(prettier@2.8.8)(svelte@4.2.1)
   rimraf:
-    specifier: ^5.0.1
+    specifier: ^5
     version: 5.0.1
   svelte:
     specifier: ^4
@@ -394,8 +394,8 @@ packages:
       fastq: 1.15.0
     dev: true
 
-  /@picocss/pico@1.5.10:
-    resolution: {integrity: sha512-+LafMsrwPxXQMk6sI///TmSInCwwZmq+K7SikyL3N/4GhhwzyPC+TQLUEqmrLyjluR+uIpFFcqjty30Rtr6GxQ==}
+  /@picocss/pico@2.0.0-alpha1:
+    resolution: {integrity: sha512-DIMBG+ssQHVKEkQuwUs3mfBqNotxIH59xCmrMA8jCtm0CyRmc8p+VfMW1YeBZpeEY/WiKNw8GTefpoLBFvdpug==}
     dev: true
 
   /@pkgjs/parseargs@0.11.0:
