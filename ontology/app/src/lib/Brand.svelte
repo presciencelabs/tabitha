@@ -4,16 +4,14 @@
 </hgroup>
 
 <style>
-	h2 {
-		position: relative;
-		bottom: calc(var(--typography-spacing-vertical) * 1.2);
-		left: calc(var(--typography-spacing-vertical) * 2.2);
-		/* rtl */
-		/* inset-block-end: calc(var(--typography-spacing-vertical) * 1.2);
-		inset-inline-start: calc(var(--typography-spacing-vertical) * 2.2); */
-		/* bottom: calc(var(--typography-spacing-vertical) * 1.2);
-		left: calc(var(--typography-spacing-vertical) * 0.06); */
+	hgroup :last-child {
+		font-size: smaller;
 
-		font-size: calc(var(--font-size) * 0.5);
+		position: relative;
+		inset-block-end: calc(var(--pico-typography-spacing-vertical) * 2.7); /* moves it up */
+	}
+
+	html:not([dir="rtl"]) hgroup :last-child {
+		inset-inline-start: calc(var(--pico-typography-spacing-vertical) * 5.7); /* moves it to the end (only for ltr) */
 	}
 </style>

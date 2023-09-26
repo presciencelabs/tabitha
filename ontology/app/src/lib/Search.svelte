@@ -28,15 +28,7 @@
 
 	form {
 		display: flex;
-		gap: var(--spacing);
-		align-items: center;
-	}
-
-	form > * {
-		margin-bottom: 0; /* allows for vertical centering above */
-	}
-
-	button {
-		width: auto; /* needed to override pico's 100% so the button was only as big as it's content */
+		align-items: flex-start; /* keeps the button from stretching vertically */
+		gap: var(--pico-spacing);
 	}
 </style>

@@ -1,5 +1,5 @@
 <script>
-	import '@picocss/pico'
+	import '$lib/app.css'
 	import Brand from '$lib/Brand.svelte'
 	import Search from '$lib/Search.svelte'
 
@@ -22,7 +22,9 @@
 <style>
 	header {
 		display: flex;
-		gap: calc(var(--spacing) * 2);
+		gap: calc(var(--pico-spacing) * 2);
+
+		padding-block-end: 0; /* there was a little too much bottom padding when combined with main's top padding */
 	}
 
 	footer {
