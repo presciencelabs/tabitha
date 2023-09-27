@@ -21,10 +21,11 @@
 
 <style>
 	header {
-		display: flex;
-		gap: calc(var(--pico-spacing) * 2);
+		display: grid;
 
-		padding-block-end: 0; /* there was a little too much bottom padding when combined with main's top padding */
+		/* there was a little too much vertical padding */
+		padding-block-start: calc(var(--pico-block-spacing-vertical) * 0.5);
+		padding-block-end: 0;
 	}
 
 	footer {
