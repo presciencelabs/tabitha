@@ -15,16 +15,8 @@
 
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search -->
 <search>
-	<form>
-		<fieldset class="grid">
-			<input type="search" name="query" placeholder="Search" bind:this={input} />
-			<input type="button" value="Search" />
-		</fieldset>
+	<form role="search">
+		<input type="search" name="query" placeholder="Search" bind:this={input} />
+		<input type="button" value="Search" />
 	</form>
 </search>
-
-<style>
-	fieldset {
-		grid-template-columns: auto min-content;
-	}
-</style>
