@@ -16,19 +16,15 @@
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search -->
 <search>
 	<form>
-		<input type="search" name="query" placeholder="Search" bind:this={input} />
-		<button>Search</button>
+		<fieldset class="grid">
+			<input type="search" name="query" placeholder="Search" bind:this={input} />
+			<input type="button" value="Search" />
+		</fieldset>
 	</form>
 </search>
 
 <style>
-	search {
-		width: 100%;
-	}
-
-	form {
-		display: flex;
-		align-items: flex-start; /* keeps the button from stretching vertically */
-		gap: var(--pico-spacing);
+	fieldset {
+		grid-template-columns: auto min-content;
 	}
 </style>

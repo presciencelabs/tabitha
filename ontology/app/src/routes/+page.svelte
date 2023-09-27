@@ -14,12 +14,17 @@
 			id: {id}
 		</article>
 	{:else}
-		<h1>Welcome to TaBiThA's Ontology application</h1>
+		<a href="/?query">Show me everything</a>
 	{/each}
 </section>
 
 <style>
-	h1 {
+	a {
 		justify-self: center;
+	}
+
+	section {
+		/* overrode pico's grid system here to ensures there are never more than about 4 columns per row */
+		grid-template-columns: repeat(auto-fit, minmax(20ch,1fr));
 	}
 </style>
