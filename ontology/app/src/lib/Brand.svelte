@@ -1,6 +1,6 @@
 <hgroup>
 	<h1>Ontology</h1>
-	<h2>TaBiThA</h2>
+	<p>TaBiThA</p>
 </hgroup>
 
 <style>
