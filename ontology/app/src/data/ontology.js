@@ -6,7 +6,7 @@
 /** 
  * @type Concept[]
  */
-export const ontology = [
+const ontology = [
 	{
 		id: 1,
 		stem: 'stub1',
@@ -48,3 +48,11 @@ export const ontology = [
 		stem: 'dummy10'
 	},
 ]
+
+export function get_concepts(filter = '') {
+	if (!filter) {
+		return ontology
+	}
+
+	return ontology.filter(({stem}) => stem.includes(filter))
+}
