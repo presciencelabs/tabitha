@@ -17,6 +17,6 @@
 <search>
 	<form role="search">
 		<input type="search" name="query" placeholder="Search" bind:this={input} />
-		<input type="button" value="Search" />
+		<input type="submit" value="Search" />
 	</form>
 </search>
