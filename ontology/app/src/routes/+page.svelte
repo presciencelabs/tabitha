@@ -1,5 +1,4 @@
 <script>
-	
 	/** @type {import('./$types').PageData} */
 	export let data
 
@@ -7,14 +6,14 @@
 </script>
 
 <section class="grid">
-	{#each matches as { id, stem }}
+	{#each matches as { id, roots }}
 		<article>
-			<header>{stem}</header>
+			<header>{roots}</header>
 	
 			id: {id}
 		</article>
 	{:else}
-		<a href="/?query">Show me everything</a>
+		<a href="/?query=*">Show me everything</a>
 	{/each}
 </section>
 
@@ -24,7 +23,7 @@
 	}
 
 	section {
-		/* overrode pico's grid system here to ensures there are never more than about 4 columns per row */
+		/* overrode pico's grid system here to ensure there are never more than about 4 columns per row */
 		grid-template-columns: repeat(auto-fit, minmax(20ch,1fr));
 	}
 </style>
