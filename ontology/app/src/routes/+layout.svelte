@@ -7,12 +7,16 @@
 
 <header class="container">
 	<Brand />
-
-	<Search autofocus />
 </header>
 
 <main class="container">
-	<slot></slot>
+	<section>
+		<Search autofocus />
+	</section>
+	
+	<section>
+		<slot></slot>
+	</section>
 </main>
 
 <footer class="container">
@@ -20,11 +24,9 @@
 </footer>
 
 <style>
-	header {
-		display: grid;
-
+	header, main {
 		/* there was a little too much vertical padding */
-		padding-block-start: calc(var(--pico-block-spacing-vertical) * 0.5);
+		padding-block-start: calc(var(--pico-block-spacing-vertical) * 0.25);
 		padding-block-end: 0;
 	}
 
