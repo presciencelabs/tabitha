@@ -1,6 +1,20 @@
 <script>
+  import Stat from './Stat.svelte';
+
 	/** @type {Concept} */
 	export let concept
+
+	/** @type {import('./Stat.svelte').StatInput[]} */ //TODO: not sure how to do this typing...
+	const stats = [
+		{
+			description: 'occurrences',
+			value: concept.occurrences,
+		},
+		{
+			description: 'categories',
+			value: concept.categories || '–',
+		},
+	]
 
 	$: examples = concept.examples
 	$: exhaustive_examples = concept.exhaustive_examples
@@ -21,21 +35,11 @@
 			<!-- https://daisyui.com/components/tooltip -->
 		</section>
 
-		<p class="prose mt-8">
+		<p class="prose my-8">
 			{concept.gloss}
 		</p>
 
-		<!-- https://daisyui.com/components/stat -->
-		<dl class="stats mt-8 bg-base-200">
-			<div class="stat place-items-center">
-				<dd class="stat-value">{concept.occurrences}</dd>
-				<dt class="stat-desc">occurrences</dt>
-			</div>
-			<div class="stat place-items-center">
-				<dd class="stat-value">{concept.categories || '–'}</dd>
-				<dt class="stat-desc">categories</dt>
-			</div>
-		</dl>
+		<Stat {stats} />
 
 		<details class="collapse bg-base-200 collapse-arrow mt-4 prose max-w-none">
 			<summary class="collapse-title">
