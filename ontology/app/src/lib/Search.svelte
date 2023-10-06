@@ -22,6 +22,8 @@
 		<!-- TODO: (UX) do we need a button as well? -->
 	</form>
 
+	<!-- TODO: consider this block to be a place for possible actions like radio buttons, filters, etc. -->
+
 	<!-- chose visibility here to keep results from jumping up and down -->
 	<progress class:!visible={$navigating} class="progress progress-warning invisible" />
 </search>

@@ -1,5 +1,12 @@
 # Ontology
 
+## Development philosophies
+
+1. classes at end of elements
+1. minimal `if`'s
+1. code indentation via <kbd>tab</kbd> instead of <kbd>space</kbd>
+1. normalize data as close to source as possible, e.g., see how occurrences are handled
+
 ## Database
 > ref:  https://www.sqlite.org
 >
@@ -19,7 +26,7 @@
 1. ✅ update README
 1. ✅ integrate picocss
 1. ✅ build layout
-1. integrate database (as a server call for now)
+1. ✅ integrate database (as a server call for now)
 1. look into deployment (https://kit.svelte.dev/docs/adapter-cloudflare)
 
 #### persistence
