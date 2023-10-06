@@ -1,18 +1,21 @@
 <script>
 	/** @type {Concept} */
 	export let concept
+
+	$: examples = concept.examples
+	$: exhaustive_examples = concept.exhaustive_examples
 </script>
 
 <article class="card card-bordered shadow-xl dark:shadow-neutral-700">
 	<main class="card-body">
-		<section class="card-title prose">
+		<section class="card-title prose max-w-none">
 			<h2 class="whitespace-nowrap">{concept.roots}</h2>
 			<sub class="italic text-neutral-500">{concept.part_of_speech}</sub>
 			<!-- moving last child to the end in a flex container:  https://medium.com/@iamryanyu/how-to-align-last-flex-item-to-right-73512e4e5912 -->
 			<!-- https://tailwindcss.com/docs/margin#using-logical-properties -->
 
-			<span class="tooltip ms-auto self-start" data-tip="occurences">
-				<mark class="badge badge-accent">{concept.occurrences || 0}</mark>
+			<span class="ms-auto self-start">
+				<mark class="badge badge-accent">L{concept.level}</mark>
 			</span>
 
 			<!-- https://daisyui.com/components/tooltip -->
@@ -23,42 +26,49 @@
 		</p>
 
 		<!-- https://daisyui.com/components/stat -->
-		<dl class="stats not-prose mt-8 bg-base-200">
-			<div class="stat">
-				<dd class="stat-value">L{concept.level}</dd>
-				<dt class="stat-desc">level</dt>
+		<dl class="stats mt-8 bg-base-200">
+			<div class="stat place-items-center">
+				<dd class="stat-value">{concept.occurrences}</dd>
+				<dt class="stat-desc">occurrences</dt>
 			</div>
-			<div class="stat">
+			<div class="stat place-items-center">
 				<dd class="stat-value">{concept.categories || '–'}</dd>
 				<dt class="stat-desc">categories</dt>
 			</div>
 		</dl>
 
-		<details class="collapse bg-base-200 collapse-arrow mt-4">
+		<details class="collapse bg-base-200 collapse-arrow mt-4 prose max-w-none">
 			<summary class="collapse-title">
-				Examples ({concept.examples.length})
+				Examples ({examples.length})
 			</summary>
 
 			<p class="collapse-content">
-				{#each concept.examples as {sentence}}
-					<div>{sentence}</div>
+				{#each examples as {sentence, references, semantic_representation}}
+					<blockquote>
+						{sentence}
+					</blockquote>
+					<pre class="text-xs">{references} {semantic_representation}</pre>
 				{:else}
 					–
 				{/each}
 			</p>
 		</details>
 
-		<details class="collapse bg-base-200 collapse-arrow mt-4">
+		<details class="collapse bg-base-200 collapse-arrow mt-4 prose max-w-none">
 			<summary class="collapse-title">
-				Exhaustive examples (//TODO:)
+				Exhaustive examples ({exhaustive_examples.length})
 			</summary>
 
 			<p class="collapse-content">
-				{concept.exhaustive_examples}
+				{#each exhaustive_examples as example}
+					<pre>{example}</pre>
+				{:else}
+					–
+				{/each}
 			</p>
 		</details>
 
-		<footer class="card-actions justify-end mt-4">
+		<footer class="card-actions justify-end mt-4 prose max-w-none">
 			<small>{concept.id}</small>
 		</footer>
 	</main>
