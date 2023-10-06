@@ -2,6 +2,7 @@
 	import '$lib/app.css'
 	import Brand from '$lib/Brand.svelte'
 	import Search from '$lib/Search.svelte'
+	import { Selector } from '$lib/theme'
 
 </script>
 
@@ -18,12 +19,17 @@
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<footer class="footer place-items-end bg-neutral text-neutral-content mt-20 p-10">
+<footer class="footer bg-neutral text-neutral-content mt-20 p-10">
 	<nav>
+		<header class="footer-title">Theme</header>
+
+		<Selector />
+	</nav>
+
+	<nav class="justify-self-end">
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->
 		<a href="https://btn.social" target="_blank" class="link link-hover">Administer</a>
 	</nav>
 </footer>
-
