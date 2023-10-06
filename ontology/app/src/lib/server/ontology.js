@@ -2,37 +2,96 @@ import Database from 'better-sqlite3'
 
 // TODO: review best practices:  https://github.com/WiseLibs/better-sqlite3/blob/master/docs/tips.md#helpful-tips-for-sqlite3
 
-// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#new-databasepath-options
-const db = new Database('src/lib/server/Ontology.tabitha.sqlite', {
-	readonly: true,
-	fileMustExist: true,
-})
-// WAL mode doesn't seem necessary in the case of readonly:  https://www.sqlite.org/wal.html#overview
+/** @type {import('better-sqlite3').Database} */
+let db
 
-console.log('database loaded and connected', db)
+export function open_connection() {
+	// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#new-databasepath-options
+	db = new Database('src/lib/server/Ontology.tabitha.sqlite', {
+		readonly: true,
+		fileMustExist: true,
+	})
+
+	console.info('database loaded and connected:', db)
+}
 
 /**
- * @typedef Concept
- * @property {number} id
- * @property {string} roots
- * @property {string} part_of_speech
+ * @returns {Concept[]}
  */
-
-/** @returns {Concept[]} */
 export function get_all_concepts() {
-	return db.prepare('SELECT * FROM Concepts').all()
+	const results = db.prepare('SELECT * FROM Concepts').all()
+
+	return normalize(/** @type {DbRow[]} */ (results))
 }
 
 /**
  * case-insensitive, wilcard on both sides of search term, i.e., the filter
- * 
- * @param {string} filter 
+ *
+ * @param {string} filter
+ *
  * @returns {Concept[]}
- */
+ * */
 export function get_some_concepts(filter) {
 	// following references helped in implementing a wildcard search, i.e., '%...%', the user's input will match if it appears anywhere in the target
 	// https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 	// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#binding-parameters
 	// https://github.com/WiseLibs/better-sqlite3/issues/405#issuecomment-636453933
-	return /** @type {Concept[]} */ db.prepare('SELECT * FROM Concepts WHERE roots LIKE @param').all({param: `%${filter}%`})
+	const results = db
+						.prepare('SELECT * FROM Concepts WHERE roots LIKE @param')
+						.all({ param: `%${filter}%` })
+
+	return normalize(/** @type {DbRow[]} */ (results))
+}
+
+/**
+ * @param {DbRow[]} matches_from_db
+ *
+ * @returns {Concept[]}
+ * */
+function normalize(matches_from_db) {
+	return matches_from_db.map(transform)
+
+	/**
+	 * @param {DbRow} match_from_db
+	 *
+	 * @returns {Concept}
+	 */
+	function transform(match_from_db) {
+		return {
+			...match_from_db,
+
+			examples: transform_examples(match_from_db.examples),
+		}
+	}
+}
+
+//TODO: need one for exhaustive_examples too, use "courageous"
+
+/**
+ * @param {string} examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
+ *
+ * @returns {Example[]}
+ * */
+function transform_examples(examples_from_db) {
+	const encoded_examples = examples_from_db.split('\n').filter(field => !! field)
+	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
+	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
+	// 4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.
+
+	return encoded_examples.map(decode)
+
+	/**
+	 * @param {string} encoded_example 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
+	 *
+	 * @returns {Example}
+	 * */
+	function decode(encoded_example) {
+		const encoded_references = encoded_example.match(/^(\d+,?)*/)?.[0] || '' // 4,2,2,2
+
+		return {
+			references: encoded_references.split(','),
+			semantic_representation: encoded_example.match(/(\|.*\|)~/)?.[1] || '', // |(NPp|baby|)|(VP|be|)|(APP|beautiful|)|
+			sentence: encoded_example.match(/~(.*\.)/)?.[1] || '', // The baby was beautiful.
+		}
+	}
 }

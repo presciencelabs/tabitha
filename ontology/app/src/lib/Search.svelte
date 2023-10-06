@@ -16,20 +16,12 @@
 
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search -->
 <search>
+	<!-- used role for this: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility -->
 	<form role="search">
-		<input type="search" name="query" placeholder="Search" bind:this={input} />
-		<input type="submit" value="Search" />	
+		<input type="search" name="q" placeholder="Search" bind:this={input} class="input input-lg input-bordered input-primary w-full" />
+		<!-- TODO: (UX) do we need a button as well? -->
 	</form>
 
-	<progress class:busy={$navigating} />
+	<!-- chose visibility here to keep results from jumping up and down -->
+	<progress class:!visible={$navigating} class="progress progress-warning invisible" />
 </search>
-
-<style>
-	/* chose visibility here to keep results from jumping up and down */
-	progress {
-		visibility: hidden;
-	}
-	progress.busy {
-		visibility: visible;
-	}
-</style>
