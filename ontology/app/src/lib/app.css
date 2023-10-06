@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* https://tailwindcss.com/docs/container */
+body {
+	@apply
+		p-8;
+}
