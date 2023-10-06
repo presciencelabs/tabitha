@@ -61,11 +61,11 @@ function normalize(matches_from_db) {
 			...match_from_db,
 
 			examples: transform_examples(match_from_db.examples),
+			exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
+			occurrences: Number(match_from_db.occurrences),
 		}
 	}
 }
-
-//TODO: need one for exhaustive_examples too, use "courageous"
 
 /**
  * @param {string} examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
@@ -93,5 +93,28 @@ function transform_examples(examples_from_db) {
 			semantic_representation: encoded_example.match(/(\|.*\|)~/)?.[1] || '', // |(NPp|baby|)|(VP|be|)|(APP|beautiful|)|
 			sentence: encoded_example.match(/~(.*\.)/)?.[1] || '', // The baby was beautiful.
 		}
+	}
+}
+
+/**
+ * @param {string} exhaustive_examples_from_db '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
+ *
+ * @returns
+ * */
+function transform_exhaustive_examples(exhaustive_examples_from_db) {
+	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !! field)
+	// 4|41|15|36|N|||wineA||
+	// 4|41|15|36|N|||wineA||
+
+	return encoded_exhaustive_examples.map(decode)
+
+	/**
+	 * @param {string} encoded_exhaustive_example 4|41|15|36|N|||wineA||
+	 *
+	 * @returns
+	 * */
+	function decode(encoded_exhaustive_example) {
+		//TODO: need to learn what each of those fields mean.
+		return encoded_exhaustive_example
 	}
 }

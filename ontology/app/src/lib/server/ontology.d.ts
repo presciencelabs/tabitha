@@ -1,5 +1,5 @@
 type DbRow = {
-	id: number,
+	id: string,
 	roots: string,
 	part_of_speech: string,
 	occurrences: string,
@@ -13,6 +13,8 @@ type DbRow = {
 
 interface Concept extends DbRow {
 	examples: Example[],
+	exhaustive_examples: string[],
+	occurrences: number,
 }
 
 type Example = {
