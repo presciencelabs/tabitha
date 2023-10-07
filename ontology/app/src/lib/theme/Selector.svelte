@@ -8,7 +8,7 @@
 	function set(theme) {
 		set_theme(theme)
 
-		open=false
+		open = false
 	}
 </script>
 
@@ -17,7 +17,7 @@
 
 	<ul class="collapse-content">
 		{#each themes as theme}
-			<li class="mb-1">
+			<li class="mb-2">
 				<!-- taken from daisyUI's theme selector design   -->
 				<button on:click={() => set(theme)} class="w-full text-left rounded-lg overflow-hidden">
 					<div data-theme={theme} class="bg-base-100 text-base-content">
@@ -38,3 +38,10 @@
 		{/each}
 	</ul>
 </details>
+
+<style>
+	/* daisyUI's caret was not center-aligned at it's 50% setting */
+	summary.collapse-title::after {
+		top: 45%;
+	}
+</style>
