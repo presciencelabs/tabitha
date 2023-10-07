@@ -11,11 +11,11 @@ DROP TABLE PronounHierarchy;
 DROP TABLE VerbHierarchy;
 
 ALTER TABLE Adjectives 		DROP COLUMN ParentID;
-ALTER TABLE Adjectives 		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Adjectives		DROP COLUMN Linguists_Assistant;
 ALTER TABLE Adpositions		DROP COLUMN ParentID;
 ALTER TABLE Adpositions		DROP COLUMN Linguists_Assistant;
-ALTER TABLE Adverbs 		DROP COLUMN ParentID;
-ALTER TABLE Adverbs 		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Adverbs			DROP COLUMN ParentID;
+ALTER TABLE Adverbs			DROP COLUMN Linguists_Assistant;
 ALTER TABLE Conjunctions	DROP COLUMN ParentID;
 ALTER TABLE Conjunctions	DROP COLUMN Linguists_Assistant;
 ALTER TABLE Nouns 			DROP COLUMN ParentID;
