@@ -12,14 +12,14 @@
 	}
 </script>
 
-<details class="collapse collapse-arrow" bind:open>
+<details class="collapse collapse-arrow bg-base-100 prose" bind:open>
 	<summary class="collapse-title">Change theme</summary>
 
-	<ul class="collapse-content">
+	<ul class="collapse-content mt-0">
 		{#each themes as theme}
-			<li class="mb-2">
-				<!-- taken from daisyUI's theme selector design   -->
-				<button on:click={() => set(theme)} class="w-full text-left rounded-lg overflow-hidden">
+			<li class="my-0 pl-0 list-none">
+				<!-- taken from daisyUI's theme selector design: https://daisyui.com -->
+				<button on:click={() => set(theme)} class="w-full text-left rounded-lg overflow-hidden my-2">
 					<div data-theme={theme} class="bg-base-100 text-base-content">
 						<div class="grid grid-cols-5 grid-rows-3">
 							<div class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-4 py-3">
@@ -39,9 +39,3 @@
 	</ul>
 </details>
 
-<style>
-	/* daisyUI's caret was not center-aligned at it's 50% setting */
-	summary.collapse-title::after {
-		top: 45%;
-	}
-</style>
