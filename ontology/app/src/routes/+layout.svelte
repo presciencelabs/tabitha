@@ -23,13 +23,13 @@
 	<nav>
 		<header class="footer-title">Theme</header>
 
-		<Selector />
+		<Selector colors="bg-accent hover:bg-accent-focus text-accent-content" />
 	</nav>
 
 	<nav class="justify-self-end">
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->
-		<a href="https://btn.social" target="_blank" class="link link-hover">Administer</a>
+		<a href="https://btn.social" target="_blank" class="link link-accent link-hover prose">Administer</a>
 	</nav>
 </footer>

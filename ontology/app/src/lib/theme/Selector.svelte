@@ -2,6 +2,9 @@
 	import { set_theme } from '.'
 	import themes from './themes'
 
+	/** @type {string} class(es) separated by space */
+	export let colors = ''
+
 	let open = false
 
 	/** @param {string} theme */
@@ -12,7 +15,7 @@
 	}
 </script>
 
-<details class="collapse collapse-arrow bg-base-100 prose" bind:open>
+<details bind:open class={`collapse collapse-arrow prose ${colors}`}>
 	<summary class="collapse-title">Change theme</summary>
 
 	<ul class="collapse-content mt-0">

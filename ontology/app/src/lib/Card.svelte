@@ -43,11 +43,11 @@
 		</section>
 
 		<section class="mt-8">
-			<Stat {stats} bg-color-class="bg-base-200" />
+			<Stat {stats} colors="bg-base-200" />
 		</section>
 
 		<section class="mt-4 prose">
-			<Details bg-color-class="bg-base-200">
+			<Details colors="bg-base-200">
 				<span slot="summary">
 					Examples ({examples.length})
 				</span>
@@ -64,7 +64,7 @@
 		</section>
 
 		<section class="mt-4 prose">
-			<Details bg-color-class="bg-base-200">
+			<Details colors="bg-base-200">
 				<span slot="summary">
 					Exhaustive examples ({exhaustive_examples.length})
 				</span>
