@@ -1,5 +1,6 @@
 <script>
-  import Stat from './Stat.svelte';
+	import Details from './Details.svelte'
+	import Stat from './Stat.svelte'
 
 	/** @type {Concept} */
 	export let concept
@@ -35,45 +36,48 @@
 			<!-- https://daisyui.com/components/tooltip -->
 		</section>
 
-		<p class="prose my-8">
-			{concept.gloss}
-		</p>
+		<section class="prose">
+			<p>
+				{concept.gloss}
+			</p>
+		</section>
 
-		<Stat {stats} />
+		<section class="mt-8">
+			<Stat {stats} bg-color-class="bg-base-200" />
+		</section>
 
-		<details class="collapse bg-base-200 collapse-arrow mt-4 prose max-w-none">
-			<summary class="collapse-title">
-				Examples ({examples.length})
-			</summary>
+		<section class="mt-4 prose">
+			<Details bg-color-class="bg-base-200">
+				<span slot="summary">
+					Examples ({examples.length})
+				</span>
 
-			<p class="collapse-content">
-				{#each examples as {sentence, references, semantic_representation}}
+				{#each examples as { sentence, references, semantic_representation }}
 					<blockquote>
 						{sentence}
 					</blockquote>
-
 					<pre class="text-xs">{references} {semantic_representation}</pre>
 				{:else}
 					–
 				{/each}
-			</p>
-		</details>
+			</Details>
+		</section>
 
-		<details class="collapse bg-base-200 collapse-arrow mt-4 prose max-w-none">
-			<summary class="collapse-title">
-				Exhaustive examples ({exhaustive_examples.length})
-			</summary>
+		<section class="mt-4 prose">
+			<Details bg-color-class="bg-base-200">
+				<span slot="summary">
+					Exhaustive examples ({exhaustive_examples.length})
+				</span>
 
-			<p class="collapse-content">
 				{#each exhaustive_examples as example}
 					<pre>{example}</pre>
 				{:else}
 					–
 				{/each}
-			</p>
-		</details>
+			</Details>
+		</section>
 
-		<footer class="card-actions justify-end mt-4 prose max-w-none">
+		<footer class="card-actions prose mt-4 max-w-none justify-end">
 			<small>{concept.id}</small>
 		</footer>
 	</main>
