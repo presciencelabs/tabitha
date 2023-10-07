@@ -51,6 +51,7 @@
 					<blockquote>
 						{sentence}
 					</blockquote>
+
 					<pre class="text-xs">{references} {semantic_representation}</pre>
 				{:else}
 					–
