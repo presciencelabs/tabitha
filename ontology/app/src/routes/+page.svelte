@@ -27,7 +27,5 @@
 <section class="grid grid-cols-[repeat(auto-fit,minmax(30ch,1fr))] gap-10 mt-8">
 	{#each matches as concept}
 		<Card {concept} />
-	{:else}
-		<a href="/?q=*" class="link link-secondary link-hover">Show me everything</a>
 	{/each}
 </section>

@@ -32,8 +32,6 @@
 			<span class="ms-auto self-start">
 				<mark class="badge badge-accent">L{concept.level}</mark>
 			</span>
-
-			<!-- https://daisyui.com/components/tooltip -->
 		</section>
 
 		<section class="prose">
