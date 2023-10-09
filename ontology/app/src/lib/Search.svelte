@@ -27,7 +27,7 @@
 		<div class="form-control join-item w-full">
 			<input type="search" name="q" id="q" bind:value bind:this={input} class="input input-lg input-bordered input-primary" />
 			<label for="q" class="label">
-				<span class="label-text-alt">use an asterisk, <kbd>*</kbd>, to return all concepts</span>
+				<span class="label-text-alt"><kbd class="kbd ">*</kbd> will return <em>all</em> concepts</span>
 			</label>
 		</div>
 
