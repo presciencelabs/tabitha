@@ -1,10 +1,12 @@
 {
-	"printWidth": 100,
+	"//": "https://prettier.io/docs/en/options.html",
+	"printWidth": 500,
 	"useTabs": true,
 	"semi": false,
 	"singleQuote": true,
 	"trailingComma": "es5",
 	"arrowParens": "avoid",
+	"singleAttributePerLine": false,
 	"plugins": [
 		"prettier-plugin-svelte",
 		"prettier-plugin-tailwindcss"
