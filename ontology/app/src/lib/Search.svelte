@@ -22,16 +22,21 @@
 
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search -->
 <search>
-	<!-- used role for this: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility -->
-	<form role="search" class="join w-full">
-		<div class="form-control join-item w-full">
-			<input type="search" name="q" id="q" bind:value bind:this={input} class="input input-lg input-bordered input-primary" />
+	<!--
+		used role for this: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility
+
+		decided against daisy's "join" approach in favor of positioning so I could get a focus ring around the input AND button.  See https://github.com/saadeghi/daisyui/discussions/2400
+	-->
+	<form role="search" class="relative m-10">
+		<div class="form-control">
+			<input type="search" name="q" id="q" bind:value bind:this={input} class="input input-bordered input-lg input-primary" />
+
 			<label for="q" class="label">
 				<span class="label-text-alt"><kbd class="kbd ">*</kbd> will return <em>all</em> concepts</span>
 			</label>
 		</div>
 
-		<button class="btn btn-primary btn-lg join-item relative right-1">Search</button>
+		<button class="btn btn-primary btn-lg rounded-s-none absolute right-0 top-0">Search</button>
 	</form>
 
 	<!-- TODO: consider this block to be a place for possible actions like radio buttons, filters, etc. -->
