@@ -34,7 +34,7 @@
 			</span>
 		</section>
 
-		<section class="prose">
+		<section class="prose flex-grow">
 			<p>
 				{concept.gloss}
 			</p>
@@ -74,9 +74,9 @@
 				{/each}
 			</Details>
 		</section>
-
-		<footer class="card-actions prose mt-4 max-w-none justify-end">
-			<small>{concept.id}</small>
-		</footer>
 	</main>
+
+	<footer class="prose grid place-items-end me-4 mb-2">
+		<small>{concept.id}</small>
+	</footer>
 </article>
