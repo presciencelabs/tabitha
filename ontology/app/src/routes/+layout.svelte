@@ -30,6 +30,6 @@
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->
-		<a href="https://btn.social" target="_blank" class="link link-accent link-hover prose">Administer</a>
+		<a href="https://btn.social" target="_blank" class="link link-accent link-hover prose">Update data</a>
 	</nav>
 </footer>
