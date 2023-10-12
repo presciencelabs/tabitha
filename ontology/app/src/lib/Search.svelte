@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation'
 	import { navigating } from '$app/stores'
+	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
 
 	export let autofocus = false
@@ -36,7 +37,9 @@
 			</label>
 		</div>
 
-		<button class="btn btn-primary btn-lg rounded-s-none absolute right-0 top-0">Search</button>
+		<button class="btn btn-primary btn-lg rounded-s-none absolute right-0 top-0">
+			Search <Icon icon="material-symbols:search" class="h-6 w-6" />
+		</button>
 	</form>
 
 	<!-- TODO: consider this block to be a place for possible actions like radio buttons, filters, etc. -->
