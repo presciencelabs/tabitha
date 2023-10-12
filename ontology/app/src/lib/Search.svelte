@@ -1,23 +1,15 @@
 <script>
-	import { goto } from '$app/navigation'
-	import { navigating } from '$app/stores'
+	import { navigating, page } from '$app/stores'
 	import Icon from '@iconify/svelte'
-	import { onMount } from 'svelte'
 
 	export let autofocus = false
 
-	/** @type HTMLInputElement */
-	let input
+	/** @type {string|null} */
+	let value = new URLSearchParams($page.url.search).get('q')
 
-	/** @type string */
-	let value
-
-	onMount(autofocusIfRequested)
-
-	$: value === '' && goto('/') // clears search results when the input is cleared
-
-	function autofocusIfRequested() {
-		autofocus && input?.focus()
+	/** @param {HTMLInputElement} input */
+	function check_focus(input) {
+		autofocus && input.focus()
 	}
 </script>
 
@@ -30,7 +22,7 @@
 	-->
 	<form role="search" class="relative">
 		<div class="form-control">
-			<input type="search" name="q" id="q" bind:value bind:this={input} class="input input-bordered input-primary input-lg" />
+			<input type="search" name="q" id="q" bind:value use:check_focus class="input input-bordered input-primary input-lg" />
 
 			<label for="q" class="label">
 				<span class="label-text-alt"><kbd class="kbd">*</kbd> will return <em>all</em> concepts</span>
