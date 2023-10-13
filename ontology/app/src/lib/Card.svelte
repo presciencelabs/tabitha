@@ -21,7 +21,7 @@
 	$: exhaustive_examples = concept.exhaustive_examples
 </script>
 
-<article class="card card-bordered shadow-xl dark:shadow-neutral-700">
+<article class="card card-bordered shadow-lg dark:shadow-neutral-700">
 	<main class="card-body">
 		<section class="card-title prose max-w-none">
 			<h2 class="whitespace-nowrap">{concept.roots}</h2>
