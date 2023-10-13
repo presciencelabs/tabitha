@@ -2,12 +2,11 @@
 	import '$lib/app.postcss'
 	import Brand from '$lib/Brand.svelte'
 	import Search from '$lib/Search.svelte'
-	import { Selector } from '$lib/theme'
+	import {Selector} from '$lib/theme'
 
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
-
 <header class="grid grid-cols-[auto_1fr]">
 	<Brand />
 
