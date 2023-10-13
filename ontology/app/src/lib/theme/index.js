@@ -21,8 +21,9 @@ function set_theme(theme) {
 	console.info('theme set:', html.getAttribute('data-theme'))
 }
 
+// prettier-ignore
 export {
-	initialize_theme,
 	Selector,
+	initialize_theme,
 	set_theme,
 }

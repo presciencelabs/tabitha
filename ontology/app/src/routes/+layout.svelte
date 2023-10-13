@@ -1,5 +1,5 @@
 <script>
-	import '$lib/app.css'
+	import '$lib/app.postcss'
 	import Brand from '$lib/Brand.svelte'
 	import Search from '$lib/Search.svelte'
 	import { Selector } from '$lib/theme'

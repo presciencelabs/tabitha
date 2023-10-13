@@ -6,12 +6,12 @@ export default {
 
 	plugins: [
 		require('@tailwindcss/typography'),
-		require('daisyui')
+		require('daisyui'),
 	],
 
 	/** @type {import('daisyui').Config} */
 	daisyui: {
 		themes,
 		//TODO: look into this more when the time is right:  https://daisyui.com/docs/config/#rtl
-	}
+	},
 }
