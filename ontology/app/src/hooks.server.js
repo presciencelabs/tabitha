@@ -1,3 +1,3 @@
-import { open_connection } from '$lib/server/ontology'
+import {open_connection} from '$lib/server/ontology'
 
 open_connection()

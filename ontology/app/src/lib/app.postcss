@@ -4,9 +4,8 @@
 
 /* https://tailwindcss.com/docs/container */
 body {
-	@apply
-		pt-8 px-8
+	@apply px-8 pt-8;
 
-		/* stacked layout with sticky footer */
-		h-screen grid grid-rows-[auto_1fr_auto];
+	/* stacked layout with sticky footer */
+	@apply grid h-screen grid-rows-[auto_1fr_auto];
 }

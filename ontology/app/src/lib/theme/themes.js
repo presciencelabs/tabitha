@@ -1,3 +1,6 @@
+// prettier-ignore
+// don't want arrays flattened by prettier
+
 // https://daisyui.com/docs/themes
 export default [
 	'light',

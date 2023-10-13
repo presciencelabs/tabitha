@@ -36,9 +36,11 @@ export function get_some_concepts(filter) {
 	// https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 	// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#binding-parameters
 	// https://github.com/WiseLibs/better-sqlite3/issues/405#issuecomment-636453933
-	const results = db
-						.prepare('SELECT * FROM Concepts WHERE roots LIKE @param')
-						.all({ param: `%${filter}%` })
+	//
+	// don't want prettier to flatten this line
+	// prettier-ignore
+	const results = db.prepare('SELECT * FROM Concepts WHERE roots LIKE @param')
+							.all({param: `%${filter}%`})
 
 	return normalize(/** @type {DbRow[]} */ (results))
 }
@@ -73,7 +75,7 @@ function normalize(matches_from_db) {
  * @returns {Example[]}
  * */
 function transform_examples(examples_from_db) {
-	const encoded_examples = examples_from_db.split('\n').filter(field => !! field)
+	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
 	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
 	// 4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.
@@ -102,7 +104,7 @@ function transform_examples(examples_from_db) {
  * @returns
  * */
 function transform_exhaustive_examples(exhaustive_examples_from_db) {
-	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !! field)
+	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !!field)
 	// 4|41|15|36|N|||wineA||
 	// 4|41|15|36|N|||wineA||
 
