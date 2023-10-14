@@ -8,5 +8,5 @@
 		Ontology <sup class="text-sm relative -top-6 end-16 text-neutral-500">TaBiThA</sup>
 	</h1>
 
-	<Status />
+	<Status --width="80%" />
 </div>
