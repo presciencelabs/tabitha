@@ -1,3 +1,5 @@
+// https://vitejs.dev/guide/env-and-mode.html
+import {DB_PATH} from '$env/static/private'
 import Database from 'better-sqlite3'
 
 // TODO: review best practices:  https://github.com/WiseLibs/better-sqlite3/blob/master/docs/tips.md#helpful-tips-for-sqlite3
@@ -6,8 +8,10 @@ import Database from 'better-sqlite3'
 let db
 
 export function open_connection() {
+	console.info('attempting to load database from: ', DB_PATH)
+
 	// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#new-databasepath-options
-	db = new Database('src/lib/server/Ontology.tabitha.sqlite', {
+	db = new Database(DB_PATH, {
 		readonly: true,
 		fileMustExist: true,
 	})
@@ -19,7 +23,11 @@ export function open_connection() {
  * @returns {Concept[]}
  */
 export function get_all_concepts() {
-	const results = db.prepare('SELECT * FROM Concepts').all()
+	const sql = `
+		SELECT *
+		FROM Concepts
+	`
+	const results = db.prepare(sql).all()
 
 	return normalize(/** @type {DbRow[]} */ (results))
 }
@@ -32,6 +40,12 @@ export function get_all_concepts() {
  * @returns {Concept[]}
  * */
 export function get_some_concepts(filter) {
+	const sql = `
+		SELECT *
+		FROM Concepts
+		WHERE roots LIKE @param
+	`
+
 	// following references helped in implementing a wildcard search, i.e., '%...%', the user's input will match if it appears anywhere in the target
 	// https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 	// https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#binding-parameters
@@ -39,7 +53,7 @@ export function get_some_concepts(filter) {
 	//
 	// don't want prettier to flatten this line
 	// prettier-ignore
-	const results = db.prepare('SELECT * FROM Concepts WHERE roots LIKE @param')
+	const results = db.prepare(sql)
 							.all({param: `%${filter}%`})
 
 	return normalize(/** @type {DbRow[]} */ (results))
