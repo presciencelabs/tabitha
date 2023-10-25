@@ -1,6 +1,6 @@
 # Ontology web app
 
-`pnpm install`
+`pnpm i`
 
 ## Running locally
 
@@ -55,3 +55,7 @@ Run the following command as a last check before opening a PR
 ```bash
 TBD
 ```
+
+## Error handling
+
+TODO: will integrate Sentry once https://github.com/getsentry/sentry-javascript/issues/8291 is fixed.
