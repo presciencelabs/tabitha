@@ -3,7 +3,7 @@
 ## initial thoughts
 ✅ migrate data in access.mbd into a new storage mechanism, sqlite, kv...? not sure, need to see the access.mdb first
 
-sveltekit app
+✅ sveltekit app
 
 determine authn
 
