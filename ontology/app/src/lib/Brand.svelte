@@ -4,7 +4,7 @@
 </script>
 
 <div class="prose">
-	<h1 class="mb-4">
+	<h1 class="mb-4 hidden md:block">
 		Ontology <sup class="text-sm relative -top-6 end-16 text-neutral-500">TaBiThA</sup>
 	</h1>
 
