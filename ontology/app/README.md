@@ -13,19 +13,19 @@ TBD
 ### Formatting (prettier)
 
 ```bash
-pnpm run format
+TBD
 ```
 
 ### Svelte's checker
 
 ```bash
-pnpm run check
+TBD
 ```
 
 ### Linting (eslint)
 
 ```bash
-pnpm run lint
+pnpm lint
 ```
 
 ## Testing locally
@@ -41,7 +41,7 @@ TBD
 Creates a production version of the app:
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
 > You can preview the production build with `TBD`.
