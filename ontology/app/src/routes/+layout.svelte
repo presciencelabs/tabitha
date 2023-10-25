@@ -25,7 +25,7 @@
 		<Selector colors="bg-accent hover:bg-accent-focus text-accent-content" />
 	</nav>
 
-	<nav class="justify-self-end">
+	<nav class="place-self-start md:justify-self-end">
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->

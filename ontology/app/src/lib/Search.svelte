@@ -30,7 +30,7 @@
 		</div>
 
 		<button class="btn btn-primary btn-lg rounded-s-none absolute right-0 top-0">
-			Search <Icon icon="material-symbols:search" class="h-6 w-6" />
+			<span class="hidden sm:inline">Search</span> <Icon icon="material-symbols:search" class="h-6 w-6" />
 		</button>
 	</form>
 
