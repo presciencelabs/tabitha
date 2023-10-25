@@ -5,7 +5,7 @@
 ## Running locally
 
 ```bash
-npm run dev
+TBD
 ```
 
 ## Static analysis
@@ -13,25 +13,25 @@ npm run dev
 ### Formatting (prettier)
 
 ```bash
-npm run format
+pnpm run format
 ```
 
 ### Svelte's checker
 
 ```bash
-npm run check
+pnpm run check
 ```
 
 ### Linting (eslint)
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 ## Testing locally
 
 ```bash
-npm test
+TBD
 ```
 
 > there may be a need to run `pnpm exec playwright install` when starting out to get the headless browsers for testing
@@ -41,10 +41,10 @@ npm test
 Creates a production version of the app:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
-> You can preview the production build with `npm run preview`.
+> You can preview the production build with `TBD`.
 
 ## Contributing
 
@@ -53,5 +53,5 @@ Always start your work in a new branch.
 Run the following command as a last check before opening a PR
 
 ```bash
-npm run precommit
+TBD
 ```
