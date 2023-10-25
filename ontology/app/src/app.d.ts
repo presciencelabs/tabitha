@@ -11,12 +11,8 @@ declare global {
 		interface Platform {
 			// Cloudflare-specific
 			env: {
-				DB: D1Database; // see wrangler.toml to match this name
+				DB: D1Database // see wrangler.toml to match this name
 			}
-			// context: {
-			// 	waitUntil(promise: Promise<any>): void;
-			// };
-			// caches: CacheStorage & { default: Cache };
 		}
 	}
 }
