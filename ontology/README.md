@@ -7,33 +7,4 @@
 1. code indentation via <kbd>tab</kbd> instead of <kbd>space</kbd>
 1. normalize data as close to source as possible, e.g., see how occurrences are handled
 
-## Database
-> ref:  https://www.sqlite.org
->
-> https://sqlitebrowser.org has been a good tool and it's free
 
-### Convert Ontology.mdb to a sqlite database
-
-1. currently using a manual process, i.e., TBTA's `Ontology.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`database/Ontology.VERSION.mdb.sqlite`)
-1. `database/migrate.sql` can then be run against it to create the new database (`database/Ontology.tabitha.sqlite`)
-
-### App
-
-1. ✅ update linting rules (eslint)
-1. ✅ update code formatting rules (prettier)
-1. ✅ add a unit test (vitest)
-1. ✅ add a playwright test (playwright)
-1. ✅ update README
-1. ✅ integrate picocss
-1. ✅ build layout
-1. ✅ integrate database (as a server call for now)
-1. look into deployment (https://kit.svelte.dev/docs/adapter-cloudflare)
-
-#### persistence
-
-refs worth considering:
-
-https://sqlite.org/wasm/doc/trunk/persistence.md#opfs
-https://github.com/WiseLibs/better-sqlite3
-https://hartenfeller.dev/blog/sveltekit-with-sqlite
-https://blog.cloudflare.com/introducing-d1
