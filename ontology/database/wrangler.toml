@@ -1,0 +1,6 @@
+# https://developers.cloudflare.com/workers/wrangler/configuration
+
+[[d1_databases]]
+binding = "DB" # i.e. available in a Worker on env.DB
+database_name = "ontology"
+database_id = "47334e95-598a-42bb-9c7a-1afba8a10517"

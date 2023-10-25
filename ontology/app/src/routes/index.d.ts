@@ -22,3 +22,5 @@ type Example = {
 	semantic_representation: string
 	sentence: string
 }
+
+type ConceptFilterFunction = (filter: string) => Promise<Concept[]>

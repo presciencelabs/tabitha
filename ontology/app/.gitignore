@@ -2,12 +2,6 @@
 node_modules
 /build
 /.svelte-kit
-/package
-
-# https://vitejs.dev/guide/env-and-mode.html#env-files
-.env.local
-.env.*.local
-
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 test-results
