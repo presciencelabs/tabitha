@@ -15,7 +15,7 @@ export async function get_all_concepts(db) {
 }
 
 /**
- * exact match
+ * case-insenstive match, no wildcard
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
  *
@@ -28,7 +28,7 @@ export const get_concepts_by_root = db => async (root) => {
 	const sql = `
 		SELECT *
 		FROM Concepts
-		WHERE roots = ?
+		WHERE roots like ?
 	`
 
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRow>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
