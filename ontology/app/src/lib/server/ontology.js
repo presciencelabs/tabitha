@@ -1,27 +1,11 @@
 /**
- * @param {import('@cloudflare/workers-types').D1Database} db
- *
- * @returns {Promise<Concept[]>}
- */
-export async function get_all_concepts(db) {
-	const sql = `
-		SELECT *
-		FROM Concepts
-	`
-	/** @type {import('@cloudflare/workers-types').D1Result<DbRow>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-	const { results } = await db.prepare(sql).all()
-
-	return normalize(results)
-}
-
-/**
- * case-insenstive match, no wildcard
+ * case-insensitive match, will accept % as a wildcard
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
  *
- * @returns {ConceptFilterFunction}
+ * @returns {(filter: string) => Promise<Concept[]>}
  * */
-export const get_concepts_by_root = db => async (root) => {
+export const get_concepts = db => async filter => {
 	// https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 	// https://developers.cloudflare.com/d1/platform/client-api/#searching-with-like
 	// https://developers.cloudflare.com/d1/platform/client-api/#parameter-binding
@@ -32,7 +16,7 @@ export const get_concepts_by_root = db => async (root) => {
 	`
 
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRow>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-	const { results } = await db.prepare(sql).bind(root).all()
+	const {results} = await db.prepare(sql).bind(filter).all()
 
 	return normalize(results)
 }
@@ -56,10 +40,11 @@ function normalize(matches_from_db) {
 
 			examples: transform_examples(match_from_db.examples),
 			exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
-			occurrences: Number(match_from_db.occurrences),
+			occurrences: transform_occurrences(match_from_db.occurrences),
 		}
 	}
 }
+
 /**
  * @param {string} examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
  *
@@ -91,6 +76,7 @@ function transform_examples(examples_from_db) {
 		}
 	}
 }
+
 /**
  * @param {string} exhaustive_examples_from_db '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
  *
@@ -111,4 +97,13 @@ function transform_exhaustive_examples(exhaustive_examples_from_db) {
 	function decode(encoded_exhaustive_example) {
 		return encoded_exhaustive_example
 	}
+}
+
+/**
+ * @param {string} occurrences_from_db
+ *
+ * @returns {number}
+ */
+function transform_occurrences(occurrences_from_db) {
+	return Number(occurrences_from_db)
 }

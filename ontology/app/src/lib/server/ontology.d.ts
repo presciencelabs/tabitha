@@ -23,4 +23,3 @@ type Example = {
 	sentence: string
 }
 
-type ConceptFilterFunction = (filter: string) => Promise<Concept[]>
