@@ -44,7 +44,7 @@
 			<Stat {stats} colors="bg-base-200" />
 		</section>
 
-		<section class="mt-4 prose">
+		<section class="mt-4 prose max-w-none">
 			<Details colors="bg-base-200">
 				<span slot="summary">
 					Examples ({examples.length})
@@ -61,7 +61,7 @@
 			</Details>
 		</section>
 
-		<section class="mt-4 prose">
+		<section class="mt-4 prose max-w-none">
 			<Details colors="bg-base-200">
 				<span slot="summary">
 					Exhaustive examples ({exhaustive_examples.length})
