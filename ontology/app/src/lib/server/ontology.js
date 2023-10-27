@@ -69,7 +69,7 @@ function transform_examples(examples_from_db) {
 	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
 	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	//		4 = src_text 4=eng Bible (there are 0-7 for other sources but the majority of the ontology db should be 4...AI: verify this:  glove, e.g., not in Bible:  but it used in a story...)
-	//		2 = book number, Gen = 1, 2 = Exodu, etc.
+	//		2 = book number, Gen = 1
 	//		2 = chapter
 	//		2 = verse
 	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
@@ -94,7 +94,7 @@ function transform_examples(examples_from_db) {
 /**
  * @param {string} exhaustive_examples_from_db '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
  *
- * @returns //TODO: what is the return type?
+ * @returns {string[]}
  * */
 function transform_exhaustive_examples(exhaustive_examples_from_db) {
 	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !!field)
@@ -106,10 +106,9 @@ function transform_exhaustive_examples(exhaustive_examples_from_db) {
 	/**
 	 * @param {string} encoded_exhaustive_example 4|41|15|36|N|||wineA||
 	 *
-	 * @returns //TODO: what is the return type?
+	 * @returns {string}
 	 * */
 	function decode(encoded_exhaustive_example) {
-		//TODO: need to learn what each of those fields mean.
 		return encoded_exhaustive_example
 	}
 }
