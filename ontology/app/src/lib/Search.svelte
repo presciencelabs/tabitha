@@ -8,7 +8,7 @@
 	let value = new URLSearchParams($page.url.search).get('q')
 
 	/** @param {HTMLInputElement} input */
-	function check_focus(input) {
+	function auto_focus(input) {
 		autofocus && input.focus()
 	}
 </script>
@@ -22,19 +22,13 @@
 	-->
 	<form role="search" class="relative">
 		<div class="form-control">
-			<input type="search" name="q" id="q" bind:value use:check_focus class="input input-bordered input-primary input-lg" />
-
-			<label for="q" class="label">
-				<span class="label-text-alt"><kbd class="kbd">*</kbd> will return <em>all</em> concepts</span>
-			</label>
+			<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg" />
 		</div>
 
-		<button class="btn btn-primary btn-lg rounded-s-none absolute right-0 top-0">
+		<button class="btn btn-primary btn-lg absolute top-0 right-0 rounded-s-none">
 			<span class="hidden sm:inline">Search</span> <Icon icon="material-symbols:search" class="h-6 w-6" />
 		</button>
 	</form>
-
-	<!-- TODO: consider this block to be a place for possible actions like radio buttons, filters, etc. -->
 
 	<!-- chose visibility here to keep results from jumping up and down -->
 	<progress class="progress progress-warning invisible" class:visible={$navigating} />
