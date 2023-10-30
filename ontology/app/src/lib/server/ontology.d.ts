@@ -12,6 +12,7 @@ type DbRow = {
 }
 
 interface Concept extends DbRow {
+	categories: string[]
 	examples: Example[]
 	exhaustive_examples: string[]
 	occurrences: number
