@@ -21,7 +21,7 @@
 </header>
 
 <!-- https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Grids#as_many_columns_as_will_fit -->
-<section class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(30ch,1fr))] gap-10">
+<section class="mt-8 grid grid-cols-[repeat(auto-fit,minmax(50ch,1fr))] gap-10">
 	{#each matches as concept}
 		<Card {concept} />
 	{/each}

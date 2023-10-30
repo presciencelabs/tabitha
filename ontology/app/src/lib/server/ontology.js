@@ -1,4 +1,5 @@
 import {
+	transform_categories,
 	transform_examples,
 	transform_exhaustive_examples,
 	transform_occurrences,
@@ -44,6 +45,7 @@ function normalize(matches_from_db) {
 		return {
 			...match_from_db,
 
+			categories: transform_categories(match_from_db.categories),
 			examples: transform_examples(match_from_db.examples),
 			exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
 			occurrences: transform_occurrences(match_from_db.occurrences),

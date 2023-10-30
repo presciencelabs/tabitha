@@ -1,22 +1,11 @@
 <script>
 	import Details from './Details.svelte'
-	import Stat from './Stat.svelte'
+	import ThetaGrid from './ThetaGrid.svelte'
 
 	/** @type {Concept} */
 	export let concept
 
-	/** @type {import('./Stat.svelte').StatInput[]} */ //TODO: not sure how to do this typing...
-	const stats = [
-		{
-			description: 'occurrences',
-			value: concept.occurrences,
-		},
-		{
-			description: 'categories',
-			value: concept.categories || '–',
-		},
-	]
-
+	$: categories = concept.categories
 	$: examples = concept.examples
 	$: exhaustive_examples = concept.exhaustive_examples
 </script>
@@ -26,12 +15,6 @@
 		<section class="card-title prose max-w-none">
 			<h2 class="whitespace-nowrap">{concept.roots}</h2>
 			<sub class="italic text-neutral-500">{concept.part_of_speech}</sub>
-			<!-- moving last child to the end in a flex container:  https://medium.com/@iamryanyu/how-to-align-last-flex-item-to-right-73512e4e5912 -->
-			<!-- https://tailwindcss.com/docs/margin#using-logical-properties -->
-
-			<span class="ms-auto self-start">
-				<mark class="badge badge-accent">L{concept.level}</mark>
-			</span>
 		</section>
 
 		<section class="prose flex-grow">
@@ -41,8 +24,30 @@
 		</section>
 
 		<section class="mt-8">
-			<Stat {stats} colors="bg-base-200" />
+			<!-- https://daisyui.com/components/stat -->
+			<dl class="stats w-full bg-base-200">
+				<div class="stat place-items-center">
+					<dd class="stat-value">L{concept.level}</dd>
+					<dt class="stat-desc">level</dt>
+				</div>
+				<div class="stat place-items-center">
+					<dd class="stat-value">{concept.occurrences}</dd>
+					<dt class="stat-desc">occurrences</dt>
+				</div>
+			</dl>
 		</section>
+
+		{#if concept.part_of_speech === 'Verb'}
+			<section class="mt-4 prose max-w-none">
+				<Details colors="bg-base-200">
+					<span slot="summary">
+						Theta grid
+					</span>
+
+					<ThetaGrid {categories} />
+				</Details>
+			</section>
+		{/if}
 
 		<section class="mt-4 prose max-w-none">
 			<Details colors="bg-base-200">

@@ -60,3 +60,75 @@ export function transform_exhaustive_examples(exhaustive_examples_from_db) {
 export function transform_occurrences(occurrences_from_db) {
 	return Number(occurrences_from_db);
 }
+
+/**
+ * @param {string} categories_from_db
+ */
+export function transform_categories(categories_from_db) {
+	const encoded_categories = [...categories_from_db]
+
+	const grid = initialize_theta_grid()
+
+	return decode(encoded_categories)(grid)
+
+	function initialize_theta_grid() {
+		const required = {
+			A: 'Agent-like',
+			B: 'Patient-like',
+			C: 'State',
+			D: 'Source',
+			E: 'Destination',
+			F: 'Instrument',
+			G: 'Beneficiary',
+			H: 'Patient proposition',
+		}
+
+		const optional = Object.entries(required).reduce(add_lowercase_and_parens, {})
+
+		return {
+			...required,
+			...optional,
+			_: '',
+		}
+
+		/**
+		 * @param {Record<string,string>} optional
+		 *
+		 * @param {[string,string]}
+		 *
+		 * @returns {Record<string,string>}
+		 */
+		function add_lowercase_and_parens(optional, [key, value]) {
+			optional[key.toLowerCase()] = `(${value})`
+
+			return optional
+		}
+	}
+
+	/**
+	 * @param {string[]} encoded_categories
+	 *
+	 * @returns {(grid: Record<string,string>) => string[]}
+	 */
+	function decode(encoded_categories) {
+		return grid => encoded_categories.filter(populated).map(decode_category(grid))
+
+		/**
+		 * @param {string} encoded_category
+		 */
+		function populated(encoded_category) {
+			const EMPTY = '_'
+
+			return encoded_category !== EMPTY
+		}
+
+		/**
+		 * @param {Record<string,string>} grid
+		 *
+		 * @returns {(encoded_category: string) => string}
+		 */
+		function decode_category(grid) {
+			return encoded_category => grid[encoded_category]
+		}
+	}
+}
