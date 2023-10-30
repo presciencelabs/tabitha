@@ -81,6 +81,7 @@ export function transform_categories(categories_from_db) {
 			F: 'Instrument',
 			G: 'Beneficiary',
 			H: 'Patient proposition',
+			I: 'Participant proposition',
 		}
 
 		const optional = Object.entries(required).reduce(add_lowercase_and_parens, {})
