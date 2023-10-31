@@ -23,6 +23,12 @@
 			</p>
 		</section>
 
+		{#if concept.part_of_speech === 'Verb'}
+			<section class="mt-4 prose max-w-none">
+				<ThetaGrid {categories} />
+			</section>
+		{/if}
+
 		<section class="mt-8">
 			<!-- https://daisyui.com/components/stat -->
 			<dl class="stats w-full bg-base-200">
@@ -36,18 +42,6 @@
 				</div>
 			</dl>
 		</section>
-
-		{#if concept.part_of_speech === 'Verb'}
-			<section class="mt-4 prose max-w-none">
-				<Details colors="bg-base-200">
-					<span slot="summary">
-						Theta grid
-					</span>
-
-					<ThetaGrid {categories} />
-				</Details>
-			</section>
-		{/if}
 
 		<section class="mt-4 prose max-w-none">
 			<Details colors="bg-base-200">
