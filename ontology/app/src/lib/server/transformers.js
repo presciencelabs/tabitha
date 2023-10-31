@@ -62,7 +62,21 @@ export function transform_occurrences(occurrences_from_db) {
 }
 
 /**
- * @param {string} categories_from_db
+ * @param {string} categories_from_db '[Aa_],[Bb_], [Cc_], [Dd_], [Ee_], [Ff_], [Gg_], [Hh_], [Ii_]' The letters are irrelevant, the position and case are what matters:
+ *
+ * | position | meaning 						|
+ * | -------- | -------------------------	|
+ * | 0        | Agent-like 					|
+ * | 1        | Patient-like 					|
+ * | 2        | State 							|
+ * | 3        | Source 							|
+ * | 4        | Destination 					|
+ * | 5        | Instrument 					|
+ * | 6        | Beneficiary 					|
+ * | 7        | Patient proposition 		|
+ * | 8        | Participant proposition	|
+ *
+ * Uppercase means required, lowercase means optional and an underscore('_') in any position means not applicable.
  */
 export function transform_categories(categories_from_db) {
 	const encoded_categories = [...categories_from_db]
@@ -84,7 +98,7 @@ export function transform_categories(categories_from_db) {
 			I: 'Participant proposition',
 		}
 
-		const optional = Object.entries(required).reduce(add_lowercase_and_parens, {})
+		const optional = Object.entries(required).reduce(lowercase_and_parens, {})
 
 		return {
 			...required,
@@ -93,13 +107,12 @@ export function transform_categories(categories_from_db) {
 		}
 
 		/**
-		 * @param {Record<string,string>} optional
-		 *
-		 * @param {[string,string]}
+		 * @param {Record<string,string>} optional The new object being created that holds lowercase keys and parenthesized values.
+		 * @param {[string,string]} current_record
 		 *
 		 * @returns {Record<string,string>}
 		 */
-		function add_lowercase_and_parens(optional, [key, value]) {
+		function lowercase_and_parens(optional, [key, value]) {
 			optional[key.toLowerCase()] = `(${value})`
 
 			return optional
@@ -107,9 +120,9 @@ export function transform_categories(categories_from_db) {
 	}
 
 	/**
-	 * @param {string[]} encoded_categories
+	 * @param {string[]} encoded_categories various combinations of A-I, a-i and _, e.g., ['A', 'b', '_', '_', '_', '_', '_', '_', '_']
 	 *
-	 * @returns {(grid: Record<string,string>) => string[]}
+	 * @returns {(grid: Record<string,string>) => string[]} The decoded categories, e.g., ['Agent-like', '(Patient-like)', '', '', '', '', '', '', '']
 	 */
 	function decode(encoded_categories) {
 		return grid => encoded_categories.filter(populated).map(decode_category(grid))
