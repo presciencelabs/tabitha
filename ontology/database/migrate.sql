@@ -11,21 +11,21 @@ DROP TABLE PronounHierarchy;
 DROP TABLE VerbHierarchy;
 
 ALTER TABLE Adjectives 		DROP COLUMN ParentID;
-ALTER TABLE Adjectives		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Adjectives		DROP COLUMN "Linguists Assistant";
 ALTER TABLE Adpositions		DROP COLUMN ParentID;
-ALTER TABLE Adpositions		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Adpositions		DROP COLUMN "Linguists Assistant";
 ALTER TABLE Adverbs			DROP COLUMN ParentID;
-ALTER TABLE Adverbs			DROP COLUMN Linguists_Assistant;
+ALTER TABLE Adverbs			DROP COLUMN "Linguists Assistant";
 ALTER TABLE Conjunctions	DROP COLUMN ParentID;
-ALTER TABLE Conjunctions	DROP COLUMN Linguists_Assistant;
+ALTER TABLE Conjunctions	DROP COLUMN "Linguists Assistant";
 ALTER TABLE Nouns 			DROP COLUMN ParentID;
-ALTER TABLE Nouns 			DROP COLUMN Linguists_Assistant;
+ALTER TABLE Nouns 			DROP COLUMN "Linguists Assistant";
 ALTER TABLE Particles 		DROP COLUMN ParentID;
-ALTER TABLE Particles 		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Particles 		DROP COLUMN "Linguists Assistant";
 ALTER TABLE Pronouns 		DROP COLUMN ParentID;
-ALTER TABLE Pronouns 		DROP COLUMN Linguists_Assistant;
+ALTER TABLE Pronouns 		DROP COLUMN "Linguists Assistant";
 ALTER TABLE Verbs 			DROP COLUMN ParentID;
-ALTER TABLE Verbs 			DROP COLUMN Linguists_Assistant;
+ALTER TABLE Verbs 			DROP COLUMN "Linguists Assistant";
 
 -- The following tables are used by the analyzer, which, for this app, are not necessary.  They can be removed altogether and brought back if/when it's determined the analyzer is needed.
 DROP TABLE DifferencesEnglishBible;
@@ -47,63 +47,63 @@ DROP TABLE Sorting_Sequence;
 ALTER TABLE Adjectives DROP COLUMN Distribution;
 
 -- migrate parts of speech data into a single "concepts" table with a parts_of_speech column
-CREATE TABLE Concepts (id, roots, part_of_speech, occurrences, gloss, brief_gloss, categories, examples, exhaustive_examples, level); -- excluding columns that don't have meaningful data, e.g., null or 0.  They can always be added back as the need arises.
+CREATE TABLE Concepts ('id' INTEGER PRIMARY KEY, 'roots', 'part_of_speech', 'occurrences', 'gloss', 'brief_gloss', 'categories', 'examples', 'exhaustive_examples', 'level' INTEGER); -- excluding columns that don't have meaningful data, e.g., null or 0.  They can always be added back as the need arises.
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adjective', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Adjective', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adjectives;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adposition', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Adposition', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adpositions;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adverb', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Adverb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adverbs;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Conjunction', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Conjunction', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Conjunctions;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Noun', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Noun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Nouns;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Particle', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Particles;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Pronoun', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Pronouns;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Verb', Occurrences, LN_Gloss, Brief_Gloss, Categories, Examples, Exhaustive_Examples, Level
+	SELECT ID, Roots, 'Verb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Verbs;
 
-SELECT count(ID) FROM Adjectives;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Adjective';
+SELECT 'rows from Adjectives', count(ID) FROM Adjectives;
+SELECT 'Adjective from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Adjective';
 
-SELECT count(ID) FROM Adpositions;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Adposition';
+SELECT 'rows from Adpositions', count(ID) FROM Adpositions;
+SELECT 'Adpositions from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Adposition';
 
-SELECT count(ID) FROM Adverbs;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Adverb';
+SELECT 'rows from Adverbs', count(ID) FROM Adverbs;
+SELECT 'Adverbs from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Adverb';
 
-SELECT count(ID) FROM Conjunctions;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Conjunction';
+SELECT 'rows from Conjunctions', count(ID) FROM Conjunctions;
+SELECT 'Conjunctions from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Conjunction';
 
-SELECT count(ID) FROM Nouns;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Noun';
+SELECT 'rows from Nouns', count(ID) FROM Nouns;
+SELECT 'Nouns from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Noun';
 
-SELECT count(ID) FROM Particles;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Particle';
+SELECT 'rows from Particles', count(ID) FROM Particles;
+SELECT 'Particles from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Particle';
 
-SELECT count(ID) FROM Pronouns;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Pronoun';
+SELECT 'rows from Pronouns', count(ID) FROM Pronouns;
+SELECT 'Pronouns from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Pronoun';
 
-SELECT count(ID) FROM Verbs;
-SELECT count(id) FROM Concepts WHERE part_of_speech = 'Verb';
+SELECT 'rows from Verbs', count(ID) FROM Verbs;
+SELECT 'Verbs from Concepts', count(id) FROM Concepts WHERE part_of_speech = 'Verb';
 
 -- now individual parts of speech tables are no longer needed
 DROP TABLE Adjectives;
