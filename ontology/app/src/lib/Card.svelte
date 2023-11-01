@@ -12,12 +12,22 @@
 
 <article class="card card-bordered shadow-lg dark:shadow-neutral-700">
 	<main class="card-body">
-		<section class="card-title prose max-w-none">
+		<section class="card-title prose max-w-none justify-between">
 			<h2 class="whitespace-nowrap relative pb-6">
 				{concept.roots}
 				<sup class="text-sm font-mono text-neutral-500 -top-4">{concept.sense}</sup>
 				<sub class="italic text-neutral-500 font-light -left-4 -bottom-4">{concept.part_of_speech}</sub>
 			</h2>
+
+			<aside class="self-start flex flex-col items-center gap-1">
+				<span class="badge badge-primary badge-lg">
+					L{concept.level}
+				</span>
+
+				<span class="badge badge-success badge-md font-mono tooltip tooltip-right" data-tip="Occurrences">
+					{concept.occurrences}
+				</span>
+			</aside>
 		</section>
 
 		<section class="prose flex-grow">
@@ -31,20 +41,6 @@
 				<ThetaGrid {categories} />
 			</section>
 		{/if}
-
-		<section class="mt-8">
-			<!-- https://daisyui.com/components/stat -->
-			<dl class="stats w-full bg-base-200">
-				<div class="stat place-items-center">
-					<dd class="stat-value">L{concept.level}</dd>
-					<dt class="stat-desc">level</dt>
-				</div>
-				<div class="stat place-items-center">
-					<dd class="stat-value">{concept.occurrences}</dd>
-					<dt class="stat-desc">occurrences</dt>
-				</div>
-			</dl>
-		</section>
 
 		<section class="mt-4 prose max-w-none">
 			<Details colors="bg-base-200">
