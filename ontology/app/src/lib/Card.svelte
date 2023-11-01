@@ -13,8 +13,11 @@
 <article class="card card-bordered shadow-lg dark:shadow-neutral-700">
 	<main class="card-body">
 		<section class="card-title prose max-w-none">
-			<h2 class="whitespace-nowrap">{concept.roots}</h2>
-			<sub class="italic text-neutral-500">{concept.part_of_speech}</sub>
+			<h2 class="whitespace-nowrap relative pb-6">
+				{concept.roots}
+				<sup class="text-sm font-mono text-neutral-500 -top-4">{concept.sense}</sup>
+				<sub class="italic text-neutral-500 font-light -left-4 -bottom-4">{concept.part_of_speech}</sub>
+			</h2>
 		</section>
 
 		<section class="prose flex-grow">

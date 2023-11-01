@@ -11,11 +11,15 @@ type DbRow = {
 	level: string
 }
 
-interface Concept extends DbRow {
+interface TransformedConcept extends DbRow {
 	categories: string[]
 	examples: Example[]
 	exhaustive_examples: string[]
 	occurrences: number
+}
+
+interface Concept extends TransformedConcept {
+	sense: string
 }
 
 type Example = {
