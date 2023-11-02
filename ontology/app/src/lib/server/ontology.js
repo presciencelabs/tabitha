@@ -1,9 +1,4 @@
-import {
-	transform_categories,
-	transform_examples,
-	transform_exhaustive_examples,
-	transform_occurrences,
-} from './transformers'
+import {transform_categories, transform_examples, transform_exhaustive_examples, transform_occurrences} from './transformers'
 
 /**
  * case-insensitive match, will accept % as a wildcard
@@ -11,7 +6,7 @@ import {
  * @param {import('@cloudflare/workers-types').D1Database} db
  *
  * @returns {(filter: string) => Promise<Concept[]>}
- * */
+ */
 export const get_concepts = db => async filter => {
 	// https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 	// https://developers.cloudflare.com/d1/platform/client-api/#searching-with-like
@@ -22,17 +17,17 @@ export const get_concepts = db => async filter => {
 		WHERE roots like ?
 	`
 
-	/** @type {import('@cloudflare/workers-types').D1Result<DbRow>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
+	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
 	const {results} = await db.prepare(sql).bind(filter).all()
 
 	return normalize(results)
 }
 
 /**
- * @param {DbRow[]} matches_from_db
+ * @param {DbRowConcept[]} matches_from_db
  *
  * @returns {Concept[]}
- * */
+ */
 function normalize(matches_from_db) {
 	const transformed_matches = matches_from_db.map(transform)
 
@@ -41,7 +36,7 @@ function normalize(matches_from_db) {
 	return augmented_matches
 
 	/**
-	 * @param {DbRow} match_from_db
+	 * @param {DbRowConcept} match_from_db
 	 *
 	 * @returns {TransformedConcept}
 	 */
@@ -103,4 +98,21 @@ function normalize(matches_from_db) {
 			return String.fromCharCode(sense.charCodeAt(0) + 1)
 		}
 	}
+}
+
+/**
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ *
+ * @returns {Promise<string>}
+ */
+export async function get_version(db) {
+	const sql = `
+		SELECT Version
+		FROM OntologyVersion
+	`
+
+	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
+	const version = await db.prepare(sql).first('Version') || ''
+
+	return version
 }
