@@ -47,38 +47,50 @@ DROP TABLE Sorting_Sequence;
 ALTER TABLE Adjectives DROP COLUMN Distribution;
 
 -- migrate parts of speech data into a single "concepts" table with a parts_of_speech column
-CREATE TABLE Concepts ('id' INTEGER PRIMARY KEY, 'roots', 'part_of_speech', 'occurrences', 'gloss', 'brief_gloss', 'categories', 'examples', 'exhaustive_examples', 'level' INTEGER); -- excluding columns that don't have meaningful data, e.g., null or 0.  They can always be added back as the need arises.
+CREATE TABLE Concepts (
+	'id' INTEGER PRIMARY KEY,
+	'roots', -- TODO: remove this after API changes have been made to the app
+	'stem',
+	'part_of_speech',
+	'occurrences',
+	'gloss',
+	'brief_gloss',
+	'categories',
+	'examples',
+	'exhaustive_examples',
+	'level' INTEGER
+); -- excluding columns that don't have meaningful data, e.g., null or 0.  They can always be added back as the need arises.
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adjective', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Adjective', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adjectives;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adposition', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Adposition', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adpositions;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adverb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Adverb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Adverbs;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Conjunction', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Conjunction', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Conjunctions;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Noun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Noun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Nouns;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Particles;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Pronouns;
 
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Verb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
+	SELECT ID, Roots, Roots, 'Verb', Occurrences, "LN Gloss", "Brief Gloss", Categories, Examples, "Exhaustive Examples", Level
 	FROM Verbs;
 
 SELECT 'rows from Adjectives', count(ID) FROM Adjectives;
@@ -114,6 +126,12 @@ DROP TABLE Nouns;
 DROP TABLE Particles;
 DROP TABLE Pronouns;
 DROP TABLE Verbs;
+
+-- simplify version info
+CREATE TABLE Version AS
+	SELECT Version as version FROM OntologyVersion;
+
+--TODO: don't do this until the API changes in the app have been made. DROP TABLE OntologyVersion;
 
 -- now get rid of all sqlite's scratchpad space (https://www.sqlite.org/lang_vacuum.html)
 VACUUM;
