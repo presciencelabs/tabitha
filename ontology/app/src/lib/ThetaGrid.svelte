@@ -15,6 +15,6 @@
 	/* had to override daisy's `.card figure` definition so I could get the items to left-align */
 	figure {
 		display: flex;
-		justify-content: start;
+		justify-content: flex-start;
 	}
 </style>
