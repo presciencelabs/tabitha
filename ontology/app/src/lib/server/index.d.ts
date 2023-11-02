@@ -18,9 +18,11 @@ interface TransformedConcept extends DbRowConcept {
 	occurrences: number
 }
 
-interface Concept extends TransformedConcept {
+interface AugmentedConcept extends TransformedConcept {
 	sense: string
 }
+
+interface Concept extends AugmentedConcept {}
 
 type Example = {
 	references: string[]
