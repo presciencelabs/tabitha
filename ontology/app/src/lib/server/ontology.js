@@ -54,7 +54,7 @@ function normalize(matches_from_db) {
 	/**
 	 * @param {TransformedConcept[]} concepts
 	 *
-	 * @returns {Concept[]}
+	 * @returns {AugmentedConcept[]}
 	 */
 	function add_senses(concepts) {
 		const sensed_concepts = []
