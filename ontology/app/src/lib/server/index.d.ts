@@ -1,4 +1,4 @@
-type DbRow = {
+type DbRowConcept = {
 	id: string
 	roots: string
 	part_of_speech: string
@@ -11,7 +11,7 @@ type DbRow = {
 	level: string
 }
 
-interface TransformedConcept extends DbRow {
+interface TransformedConcept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]
 	exhaustive_examples: string[]
@@ -27,4 +27,3 @@ type Example = {
 	semantic_representation: string
 	sentence: string
 }
-

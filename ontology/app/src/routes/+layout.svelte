@@ -4,6 +4,8 @@
 	import Search from '$lib/Search.svelte'
 	import {Selector} from '$lib/theme'
 
+	/** @type {import('./$types').PageData} */
+	export let data
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
@@ -18,7 +20,7 @@
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<footer class="footer bg-secondary text-secondary-content mt-20 p-10">
+<footer class="footer bg-secondary text-secondary-content mt-20 p-10 prose max-w-none">
 	<nav>
 		<header class="footer-title">Theme</header>
 
@@ -29,6 +31,16 @@
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->
-		<a href="https://btn.social" target="_blank" class="link link-accent-content link-hover prose">Update data</a>
+		<a href="//btn.social" target="_blank">Update data</a>
+
+		<a href="//alltheword.org/downloads-software-bible" target="_blank">
+			<pre>{data.version}</pre>
+		</a>
 	</nav>
 </footer>
+
+<style lang="postcss">
+	a {
+		@apply link link-hover;
+	}
+</style>
