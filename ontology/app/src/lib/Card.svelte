@@ -12,19 +12,19 @@
 
 <article class="card card-bordered shadow-lg dark:shadow-neutral-700">
 	<main class="card-body">
-		<section class="card-title prose max-w-none justify-between">
-			<h2 class="whitespace-nowrap relative pb-6">
+		<section class="prose card-title max-w-none justify-between">
+			<h2 class="relative whitespace-nowrap pb-6">
 				{concept.roots}
-				<sup class="text-sm font-mono text-neutral-500 -top-4">{concept.sense}</sup>
-				<sub class="italic text-neutral-500 font-light -left-4 -bottom-4">{concept.part_of_speech}</sub>
+				<sup class="-top-4 font-mono text-sm text-neutral-500">{concept.sense}</sup>
+				<sub class="-bottom-4 -left-4 font-light italic text-neutral-500">{concept.part_of_speech}</sub>
 			</h2>
 
-			<aside class="self-start flex flex-col items-center gap-1">
+			<aside class="flex flex-col items-center gap-1 self-start">
 				<span class="badge badge-primary badge-lg">
 					L{concept.level}
 				</span>
 
-				<span class="badge badge-success badge-md font-mono tooltip tooltip-right" data-tip="Occurrences">
+				<span class="badge badge-success badge-md tooltip tooltip-right font-mono" data-tip="Occurrences">
 					{concept.occurrences}
 				</span>
 			</aside>
@@ -37,29 +37,47 @@
 		</section>
 
 		{#if concept.part_of_speech === 'Verb'}
-			<section class="mt-4 prose max-w-none">
+			<section class="prose mt-4 max-w-none">
 				<ThetaGrid {categories} />
 			</section>
 		{/if}
 
-		<section class="mt-4 prose max-w-none">
+		<section class="prose mt-4 max-w-none">
 			<Details colors="bg-base-200">
 				<span slot="summary">
 					Examples ({examples.length})
 				</span>
 
-				{#each examples as { sentence, references, semantic_representation }}
-					<blockquote>
-						{sentence}
+				{#each examples as {sentence, reference, semantic_representation}}
+					<blockquote class="mb-0">
+						<span>
+							{sentence}
+
+							<cite data-tip="Source: {reference.source}" class="tooltip text-sm">
+								({reference.book} {reference.chapter}:{reference.verse})
+							</cite>
+						</span>
+
+						<footer class="flex justify-around bg-neutral mt-4">
+							{#each semantic_representation as {part_of_speech, role, word}}
+								<span class="flex flex-col items-center py-2">
+									<span class="not-italic tracking-widest text-neutral-400">
+										{word}
+									</span>
+									<small class="text-xs text-neutral-500 font-mono">
+										{part_of_speech} {role ? `[${role}]` : ''}
+									</small>
+								</span>
+							{/each}
+						</footer>
 					</blockquote>
-					<pre class="text-xs">{references} {semantic_representation}</pre>
 				{:else}
 					–
 				{/each}
 			</Details>
 		</section>
 
-		<section class="mt-4 prose max-w-none">
+		<section class="prose mt-4 max-w-none">
 			<Details colors="bg-base-200">
 				<span slot="summary">
 					Exhaustive examples ({exhaustive_examples.length})
@@ -74,7 +92,7 @@
 		</section>
 	</main>
 
-	<footer class="prose grid place-items-end me-4 mb-2">
+	<footer class="prose mb-2 me-4 grid place-items-end">
 		<small>{concept.id}</small>
 	</footer>
 </article>
