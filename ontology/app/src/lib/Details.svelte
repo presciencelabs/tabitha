@@ -2,7 +2,6 @@
 	/** @type {string} class(es) separated by space */
 	export let colors = ''
 </script>
-<!-- TODO: export these color-classes ☝️ -->
 
 <details class={`collapse collapse-arrow ${colors}`}>
 	<summary class="collapse-title">
