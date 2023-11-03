@@ -58,23 +58,23 @@ function normalize(matches_from_db) {
 	 */
 	function add_senses(concepts) {
 		const sensed_concepts = []
-		const root_sense_tracker = new Map()
+		const sense_tracker = new Map()
 
 		for (const concept of concepts.sort(by_id)) {
 			const {roots} = concept
 
-			if (!root_sense_tracker.has(roots)) {
-				root_sense_tracker.set(roots, 'A')
+			if (!sense_tracker.has(roots)) {
+				sense_tracker.set(roots, 'A')
 			}
 
-			const sense = root_sense_tracker.get(roots)
+			const sense = sense_tracker.get(roots)
 
 			sensed_concepts.push({
 				...concept,
 				sense,
 			})
 
-			root_sense_tracker.set(roots, next_sense(sense))
+			sense_tracker.set(roots, next_sense(sense))
 		}
 
 		return sensed_concepts
@@ -90,9 +90,9 @@ function normalize(matches_from_db) {
 		}
 
 		/**
-		 * @param {string} sense
+		 * @param {string} sense - a single character that started with 'A'
 		 *
-		 * @returns {string}
+		 * @returns {string} - the next character in the alphabet
 		 */
 		function next_sense(sense) {
 			return String.fromCharCode(sense.charCodeAt(0) + 1)
@@ -112,7 +112,5 @@ export async function get_version(db) {
 	`
 
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
-	const version = await db.prepare(sql).first('Version') || ''
-
-	return version
+	return await db.prepare(sql).first('Version') || ''
 }
