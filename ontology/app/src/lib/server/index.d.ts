@@ -14,7 +14,7 @@ type DbRowConcept = {
 interface TransformedConcept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]
-	exhaustive_examples: string[]
+	exhaustive_examples: ExhaustiveExample[]
 	occurrences: number
 }
 
@@ -24,11 +24,15 @@ interface AugmentedConcept extends TransformedConcept {
 
 interface Concept extends AugmentedConcept {}
 
-// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 type Example = {
 	reference: Reference
 	semantic_representation: SemanticRepresentation
 	sentence: string
+}
+
+type ExhaustiveExample = {
+	reference: Reference
+	unknown_encoding: string
 }
 
 type Reference = {
@@ -38,12 +42,8 @@ type Reference = {
 	verse: number
 }
 
-// '(NPp|baby|)|(VP|be|)|(APP|beautiful|)'
 type SemanticRepresentation = Phrase[]
 
-// (NPp|baby|) => { part_of_speech: 'NP', role: 'p', word: 'baby' }
-// (VP|be|) => { part_of_speech: 'VP', role: '', word: 'be' }
-// (APP|beautiful|) => { part_of_speech: 'AP', role: 'P', word: 'beautiful' }
 type Phrase = {
 	part_of_speech: string
 	role: string
