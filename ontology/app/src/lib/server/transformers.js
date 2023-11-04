@@ -19,29 +19,13 @@ export function transform_examples(examples_from_db) {
 	 * @returns {Example}
 	 */
 	function decode(encoded_example) {
-		const encoded_reference = encoded_example.match(/^(\d+,?)*/)?.[0] || '' // '4,2,2,2'
+		const encoded_reference = encoded_example.split('|')[0] // '4,2,2,2'
 		const encoded_semantic_representation = encoded_example.match(/\|(.*)\|~/)?.[1] || '' // (NPp|baby|)|(VP|be|)|(APP|beautiful|)
 
 		return {
 			reference: decode_reference(encoded_reference),
 			semantic_representation: decode_semantic_representation(encoded_semantic_representation),
-			sentence: encoded_example.match(/~(.*\.)/)?.[1] || '', // The baby was beautiful.
-		}
-
-		/**
-		 * @param {string} encoded_reference '4,2,2,2'
-		 *
-		 * @returns {Reference}
-		 */
-		function decode_reference(encoded_reference) {
-			const [source_key, book_key, chapter, verse] = encoded_reference.split(',').map(Number)
-
-			return {
-				source: sources[source_key],
-				book: books[book_key],
-				chapter,
-				verse,
-			}
+			sentence: encoded_example.split('~')[1], // The baby was beautiful.
 		}
 
 		/**
@@ -80,24 +64,27 @@ export function transform_examples(examples_from_db) {
 }
 
 /**
- * @param {string} exhaustive_examples_from_db '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
+ * @param {string} exhaustive_examples_from_db various encoding formats, here's one example '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
  *
- * @returns {string[]}
+ * @returns {ExhaustiveExample[]}
  */
 export function transform_exhaustive_examples(exhaustive_examples_from_db) {
 	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !!field)
-	// 4|41|15|36|N|||wineA||
-	// 	encoding is the same as example above.
-	// 4|41|15|36|N|||wineA||
+
 	return encoded_exhaustive_examples.map(decode)
 
 	/**
-	 * @param {string} encoded_exhaustive_example 4|41|15|36|N|||wineA||
+	 * @param {string} encoded_exhaustive_example 4|41|15|36|N|||wineA|| or 4|19|23|6|followA|A or 4|1|20|13|p|A|SarahA|AbrahamA|||||||
 	 *
-	 * @returns {string}
+	 * @returns {ExhaustiveExample}
 	 * */
 	function decode(encoded_exhaustive_example) {
-		return encoded_exhaustive_example
+		const [source, book, chapter, verse, ...rest] = encoded_exhaustive_example.split('|')
+
+		return {
+			reference: decode_reference([source, book, chapter, verse].join(',')),
+			unknown_encoding: rest.join('|'),
+		}
 	}
 }
 
@@ -134,5 +121,26 @@ export function transform_categories(categories_from_db) {
 
 			return encoded_category !== EMPTY
 		}
+	}
+}
+
+/**
+ * @param {string} encoded_reference four numbers separated by a comma
+ *
+ * @returns {Reference}
+ */
+function decode_reference(encoded_reference) {
+	const [
+		source_key,
+		book_key,
+		chapter,
+		verse,
+	] = encoded_reference.split(',').map(Number)
+
+	return {
+		source: sources[source_key],
+		book: books[book_key],
+		chapter,
+		verse,
 	}
 }

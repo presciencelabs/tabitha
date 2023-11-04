@@ -83,8 +83,14 @@
 					Exhaustive examples ({exhaustive_examples.length})
 				</span>
 
-				{#each exhaustive_examples as example}
-					<pre>{example}</pre>
+				{#each exhaustive_examples as {reference, unknown_encoding}}
+					<div class="py-2">
+						<span data-tip="Source: {reference.source}" class="tooltip tooltip-top">
+							{reference.book} {reference.chapter}:{reference.verse}
+						</span>
+
+						<code>{unknown_encoding}</code>
+					</div>
 				{:else}
 					–
 				{/each}
