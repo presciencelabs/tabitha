@@ -34,7 +34,7 @@ or
 
 `sqlite3 Ontology.tabitha.sqlite .help`
 
-## Dump
+### Dump
 
 `sqlite3 Ontology.tabitha.sqlite .dump > Ontology.tabitha.sqlite.sql`
 
@@ -71,8 +71,8 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 
 ### Migrate
 
-1. make a backup of the new database, e.g., `cp Ontology.2023-10-20.mdb.sqlite Ontology.2023-10-20.mdb.bak.sqlite`
-1. run migration, e.g., `sqlite3 -init migrate.sql Ontology.2023-10-20.mdb.sqlite .exit`
+1. make a backup of the new database, e.g., `cp Ontology.2023-10-20.mdb.sqlite Ontology.2023-10-20.mdb.sqlite.bak`
+1. run migration, e.g., `sqlite3 -separator '' -init migrate.sql Ontology.2023-10-20.mdb.sqlite .exit`
 1. rename migrated database, e.g., `cp Ontology.2023-10-20.mdb.sqlite Ontology.2023-10-20.tabitha.sqlite`
 1. dump migrated database, e.g., `sqlite3 Ontology.2023-10-20.tabitha.sqlite .dump > Ontology.2023-10-20.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
