@@ -31,7 +31,10 @@
 		<header class="footer-title">Administer</header>
 
 		<!-- https://daisyui.com/components/link -->
-		<a href="//btn.social" target="_blank">Update data</a>
+		<a href="//btn.social" target="_blank" class="indicator">
+			Update data
+			<span data-tip="TBD: still need to integrate auth" class="indicator-item badge badge-xs badge-warning tooltip tooltip-left" />
+		</a>
 
 		<a href="//alltheword.org/downloads-software-bible" target="_blank">
 			<pre>{data.version}</pre>

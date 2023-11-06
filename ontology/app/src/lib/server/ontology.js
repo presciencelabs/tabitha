@@ -1,4 +1,4 @@
-import {transform_categories, transform_examples, transform_exhaustive_examples, transform_occurrences} from './transformers'
+import {transform_categorization, transform_examples, transform_exhaustive_examples, transform_occurrences} from './transformers'
 
 /**
  * case-insensitive match, will accept % as a wildcard
@@ -44,7 +44,7 @@ function normalize(matches_from_db) {
 		return {
 			...match_from_db,
 
-			categories: transform_categories(match_from_db.categories),
+			categories: transform_categorization(match_from_db),
 			examples: transform_examples(match_from_db.examples),
 			exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
 			occurrences: transform_occurrences(match_from_db.occurrences),
