@@ -47,7 +47,7 @@ export function transform_examples(examples_from_db) {
 			 */
 			function decode_phrase(encoded_phrase) {
 				const [type, word] = encoded_phrase.replace(/[()]/g, '').split('|') // ['NPp', 'baby']
-				const part_of_speech = `${type[0]}${type[1]}`//'NP' or 'VP' or 'AP'
+				const part_of_speech = `${type[0]}${type[1]}` //'NP' or 'VP' or 'AP'
 				const role = type[2] || '' // 'p' or '' or 'P'
 
 				// (NPp|baby|) => { part_of_speech: 'NP', role: 'p', word: 'baby' }
@@ -98,11 +98,24 @@ export function transform_occurrences(occurrences_from_db) {
 }
 
 /**
+ * @param {DbRowConcept} concept_from_db
+ *
+ * @returns {string[]}
+ */
+export function transform_categorization({part_of_speech, categories}) {
+	if (part_of_speech === 'Verb') {
+		return transform_verb_categorization(categories)
+	}
+
+	return [...categories]
+}
+
+/**
  * @param {string} categories_from_db '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
  *
  * @returns {string[]} The decoded categories, e.g., ['Agent-like', '(Patient-like)', '', '', '', '', '', '', '']
  */
-export function transform_categories(categories_from_db) {
+function transform_verb_categorization(categories_from_db) {
 	const encoded_categories = [...categories_from_db]
 
 	return decode(encoded_categories)
@@ -130,12 +143,7 @@ export function transform_categories(categories_from_db) {
  * @returns {Reference}
  */
 function decode_reference(encoded_reference) {
-	const [
-		source_key,
-		book_key,
-		chapter,
-		verse,
-	] = encoded_reference.split(',').map(Number)
+	const [source_key, book_key, chapter, verse] = encoded_reference.split(',').map(Number)
 
 	return {
 		source: sources[source_key],

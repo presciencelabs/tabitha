@@ -1,7 +1,7 @@
 type DbRowConcept = {
 	id: string
 	brief_gloss: string
-	categories: string // TODO: theta_grids are only relevant for verbs and adjectives, check the Ontology db for verification, look at SourceAndTargetView.cppL3033-3068
+	categories: string
 	examples: string
 	exhaustive_examples: string
 	gloss: string

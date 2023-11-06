@@ -3,7 +3,7 @@
 	export let categories
 </script>
 
-<figure class="font-mono text-sm overflow-x-auto">
+<figure class="font-mono text-sm overflow-x-auto mt-0">
 	{#each categories as category}
 		<span class="p-2 border-4 border-double whitespace-nowrap">
 			{category}
