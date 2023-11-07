@@ -1,4 +1,4 @@
-// Categories in the database '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
+// Verb categorizations in the database '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
 //
 // The letters are irrelevant, the position and case are what matters:
 //		| position 	| meaning 						|
@@ -49,16 +49,19 @@ export const theta_grid = {
 	_: '',
 }
 
-// as of Nov 2023, the Ontology data looked like this:
-// | source | count 	|
-// |--------|--------|
-// |	3		|	6		|
-// |	4		|	1087	|
-// |	6		|	57		|
-// |	7		|	75		|
-//
-// ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
 /**
+ * position-based lookup for the source of a reference
+ *
+ * as of Nov 2023, the Ontology data looked like this:
+ * | source | count 	|
+ * |--------|--------|
+ * |	3		|	6		| "Missions Documents"
+ * |	4		|	1087	| "Bible"
+ * |	6		|	57		| "Grammar Introduction"
+ * |	7		|	75		| "Community Development Texts"
+ *
+ * ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
+ *
  * @type {string[]}
  */
 export const sources = [
@@ -73,7 +76,9 @@ export const sources = [
 ]
 
 /**
- * @type {Record<number, string>}
+ * Books of the Bible
+ *
+ * @type {Record<number, string>} - { 1: 'Genesis', 2: 'Exodus', ... }
  */
 export const books = {
 	1: 'Genesis',
