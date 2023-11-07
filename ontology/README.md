@@ -6,3 +6,4 @@
 1. minimal `if`'s
 1. code indentation via <kbd>tab</kbd> instead of <kbd>space</kbd>
 1. normalize data as close to source as possible, e.g., see how occurrences are handled
+1. pure functions, i.e., no changes outside of scope and no more that one arg at a time

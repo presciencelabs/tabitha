@@ -1,4 +1,20 @@
-import { books, theta_grid, sources } from './lookups';
+import { books, theta_grid, sources } from './lookups'
+
+/**
+ * @param {DbRowConcept} match_from_db
+ *
+ * @returns {TransformedConcept}
+ */
+export function transform(match_from_db) {
+	return {
+		...match_from_db,
+
+		categories: transform_categorization(match_from_db),
+		examples: transform_examples(match_from_db.examples),
+		exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
+		occurrences: transform_occurrences(match_from_db.occurrences),
+	}
+}
 
 
 /**
@@ -6,7 +22,7 @@ import { books, theta_grid, sources } from './lookups';
  *
  * @returns {Example[]}
  */
-export function transform_examples(examples_from_db) {
+function transform_examples(examples_from_db) {
 	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
 	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
@@ -68,7 +84,7 @@ export function transform_examples(examples_from_db) {
  *
  * @returns {ExhaustiveExample[]}
  */
-export function transform_exhaustive_examples(exhaustive_examples_from_db) {
+function transform_exhaustive_examples(exhaustive_examples_from_db) {
 	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !!field)
 
 	return encoded_exhaustive_examples.map(decode)
@@ -93,8 +109,15 @@ export function transform_exhaustive_examples(exhaustive_examples_from_db) {
  *
  * @returns {number}
  */
-export function transform_occurrences(occurrences_from_db) {
+function transform_occurrences(occurrences_from_db) {
 	return Number(occurrences_from_db)
+}
+
+/**
+ * @type {Record<string, (categories_from_db: string) => string[]>}
+ */
+const categorization_decoders = {
+	'Verb': transform_verb_categorization,
 }
 
 /**
@@ -102,12 +125,10 @@ export function transform_occurrences(occurrences_from_db) {
  *
  * @returns {string[]}
  */
-export function transform_categorization({part_of_speech, categories}) {
-	if (part_of_speech === 'Verb') {
-		return transform_verb_categorization(categories)
-	}
+function transform_categorization({part_of_speech, categories}) {
+	const decoder = categorization_decoders[part_of_speech]
 
-	return [...categories]
+	return decoder ? decoder(categories) : [...categories]
 }
 
 /**
