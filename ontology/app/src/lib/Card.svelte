@@ -49,12 +49,10 @@
 					<blockquote class="mb-0">
 						<span>
 							{sentence}
-
-							<!-- TODO: under certain circumstances the tooltip gets cutoff by the collapse section, need to work through that. -->
-							<cite data-tip="Source: {reference.source}" class="tooltip text-sm">
-								({reference.book} {reference.chapter}:{reference.verse})
-							</cite>
 						</span>
+						<cite data-tip="Source: {reference.source}" class="tooltip tooltip-info tooltip-right text-xs block text-start w-fit">
+							({reference.book} {reference.chapter}:{reference.verse})
+						</cite>
 
 						<footer class="mt-4 flex justify-around bg-base-100">
 							{#each semantic_representation as {part_of_speech, role, word}}
@@ -84,7 +82,7 @@
 
 				{#each exhaustive_examples as { reference, unknown_encoding }}
 					<div class="py-2">
-						<span data-tip="Source: {reference.source}" class="tooltip tooltip-top">
+						<span data-tip="Source: {reference.source}" class="tooltip tooltip-info tooltip-right text-sm">
 							{reference.book}
 							{reference.chapter}:{reference.verse}
 						</span>
