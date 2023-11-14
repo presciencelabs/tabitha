@@ -50,18 +50,19 @@
 						<span>
 							{sentence}
 
+							<!-- TODO: under certain circumstances the tooltip gets cutoff by the collapse section, need to work through that. -->
 							<cite data-tip="Source: {reference.source}" class="tooltip text-sm">
 								({reference.book} {reference.chapter}:{reference.verse})
 							</cite>
 						</span>
 
-						<footer class="mt-4 flex justify-around bg-neutral">
+						<footer class="mt-4 flex justify-around bg-base-100">
 							{#each semantic_representation as {part_of_speech, role, word}}
 								<span class="flex flex-col items-center py-2">
-									<span class="not-italic tracking-widest text-neutral-400">
+									<span class="not-italic tracking-widest text-base-content mb-1">
 										{word}
 									</span>
-									<small class="font-mono text-xs text-neutral-500">
+									<small class="font-mono text-xs text-base-content">
 										{part_of_speech}
 										{role ? `[${role}]` : ''}
 									</small>
