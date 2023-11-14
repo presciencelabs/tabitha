@@ -1,4 +1,5 @@
-import { theta_grid, sources } from './lookups'
+import {sources,theta_grid} from './lookups'
+
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -15,7 +16,6 @@ export function transform(match_from_db) {
 		occurrences: transform_occurrences(match_from_db.occurrences),
 	}
 }
-
 
 /**
  * @param {string} examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
@@ -117,7 +117,7 @@ function transform_occurrences(occurrences_from_db) {
  * @type {Record<string, (categories_from_db: string) => string[]>}
  */
 const categorization_decoders = {
-	'Verb': transform_verb_categorization,
+	Verb: transform_verb_categorization,
 }
 
 /**
