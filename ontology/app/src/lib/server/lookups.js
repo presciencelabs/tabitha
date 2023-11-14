@@ -184,4 +184,3 @@ export const sources = new Map([
 	['Grammar Introduction', grammar_introduction_books],
 	['Community Development Texts', community_development_text_books],
 ])
-
