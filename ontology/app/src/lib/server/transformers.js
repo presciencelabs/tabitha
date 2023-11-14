@@ -1,4 +1,4 @@
-import { books, theta_grid, sources } from './lookups'
+import { theta_grid, sources } from './lookups'
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -165,9 +165,10 @@ function transform_verb_categorization(categories_from_db) {
  */
 function decode_reference(encoded_reference) {
 	const [source_key, book_key, chapter, verse] = encoded_reference.split(',').map(Number)
+	const [source, books] = Array.from(sources.entries())[source_key]
 
 	return {
-		source: sources[source_key],
+		source,
 		book: books[book_key],
 		chapter,
 		verse,
