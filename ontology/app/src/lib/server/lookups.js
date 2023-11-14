@@ -50,37 +50,18 @@ export const theta_grid = {
 }
 
 /**
- * position-based lookup for the source of a reference
- *
- * as of Nov 2023, the Ontology data looked like this:
- * | source | count 	|
- * |--------|--------|
- * |	3		|	6		| "Missions Documents"
- * |	4		|	1087	| "Bible"
- * |	6		|	57		| "Grammar Introduction"
- * |	7		|	75		| "Community Development Texts"
- *
- * ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
- *
- * @type {string[]}
+ * Represents a collection of books.
+ * @typedef {Record<number, string>} Book
+ * @property {number} number - The unique number representing a book.
+ * @property {string} name - The name of the book.
  */
-export const sources = [
-	'Hebrew Old Testament',
-	'Greek New Testament',
-	'Greek Grammar Introduction',
-	'Missions Documents',
-	'Bible',
-	'Video Subtitles',
-	'Grammar Introduction',
-	'Community Development Texts',
-]
 
 /**
- * Books of the Bible
+ * @type {Book} – book number, book name
  *
- * @type {Record<number, string>} - { 1: 'Genesis', 2: 'Exodus', ... }
+ * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
  */
-export const books = {
+const bible_books = {
 	1: 'Genesis',
 	2: 'Exodus',
 	3: 'Leviticus',
@@ -148,3 +129,59 @@ export const books = {
 	65: 'Jude',
 	66: 'Revelation',
 }
+
+/**
+ * @type {Book}
+ *
+ * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
+ */
+const grammar_introduction_books = {
+	1: 'Nouns',
+	2: 'Verbs',
+	3: 'Adjectives',
+	4: 'Adverbs',
+	5: 'Adpositions',
+	6: 'Pronouns',
+	7: 'Noun_Phrases',
+	8: 'Clauses',
+	9: 'Discourse',
+	10: 'Theta_Grids',
+}
+
+/**
+ * @type {Book}
+ *
+ * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
+ */
+const community_development_text_books = {
+	1: 'Infected Eye',
+	2: "Kande's Story",
+	3: 'Avian Influenza',
+}
+
+/**
+ * map lookup for the source and book of a reference
+ *
+ * as of Nov 2023, the Ontology data looked like this:
+ * | source | count 	|
+ * |--------|--------|
+ * |	3		|	6		| "Missions Documents"
+ * |	4		|	1087	| "Bible"
+ * |	6		|	57		| "Grammar Introduction"
+ * |	7		|	75		| "Community Development Texts"
+ *
+ * ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
+ *
+ * @type {Map<string, Book>}
+ */
+export const sources = new Map([
+	['Hebrew Old Testament', {}],
+	['Greek New Testament', {}],
+	['Greek Grammar Introduction', {}],
+	['Missions Documents', {}],
+	['Bible', bible_books],
+	['Video Subtitles', {}],
+	['Grammar Introduction', grammar_introduction_books],
+	['Community Development Texts', community_development_text_books],
+])
+
