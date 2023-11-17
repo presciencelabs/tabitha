@@ -24,7 +24,7 @@
 	<nav>
 		<header class="footer-title">Theme</header>
 
-		<Selector colors="bg-accent hover:bg-accent-focus text-accent-content" />
+		<Selector colors="bg-accent text-accent-content" />
 	</nav>
 
 	<nav class="place-self-start md:justify-self-end">
