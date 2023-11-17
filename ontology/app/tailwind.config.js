@@ -13,9 +13,8 @@ export default {
 		themes: [
 			...themes,
 			{
-				reformation: daisy_themes['[data-theme=halloween]'],
+				reformation: daisy_themes['halloween'],
 			},
 		],
-		//TODO: look into this more when the time is right:  https://daisyui.com/docs/config/#rtl
 	},
 }
