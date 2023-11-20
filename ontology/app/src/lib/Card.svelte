@@ -99,7 +99,7 @@
 		</section>
 	</main>
 
-	<footer class="prose mb-2 me-4 grid place-items-end">
+	<footer class="prose mb-2 me-4 grid place-items-end max-w-none">
 		<small>{concept.id}</small>
 	</footer>
 </article>
