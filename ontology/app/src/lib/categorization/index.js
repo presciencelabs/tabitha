@@ -2,7 +2,8 @@ import Category from './Category.svelte'
 import SemanticCategorization from './SemanticCategorization.svelte'
 import TBD from './TBD.svelte'
 import ThetaGrid from './ThetaGrid.svelte'
-import UsageInfo from './UsageInfo.svelte'
+import UsageInfoForAdjective from './UsageInfoForAdjective.svelte'
+import UsageInfoForAdverb from './UsageInfoForAdverb.svelte'
 
 // prettier-ignore - don't want these to be on one line
 export {
@@ -10,5 +11,6 @@ export {
 	SemanticCategorization,
 	TBD,
 	ThetaGrid,
-	UsageInfo
+	UsageInfoForAdjective,
+	UsageInfoForAdverb,
 }

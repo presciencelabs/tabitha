@@ -118,6 +118,7 @@ function transform_occurrences(occurrences_from_db) {
  */
 const categorization_decoders = {
 	Adjective: transform_adjective_categorization,
+	Adverb: transform_adverb_categorization,
 	Noun: transform_noun_categorization,
 	Verb: transform_verb_categorization,
 }
@@ -184,7 +185,7 @@ function transform_adjective_categorization(categories_from_db) {
 	 * @returns {string[]} - various permutations, e.g., ['never used attributively', ...]
 	 */
 	function decode_usage(encoded_usage) {
-		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info[i]}`)
+		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info.Adjective[i]}`)
 	}
 
 	/**
@@ -222,4 +223,36 @@ function transform_noun_categorization(categories_from_db) {
 	return [
 		semantic_category.Noun[categories_from_db[0]] || 'No information available yet.',
 	]
+}
+
+/**
+ * @param {string} categories_from_db '[Aa_][Bb_][Cc_]' OR ''
+ *
+ * @returns {string[]}
+ */
+function transform_adverb_categorization(categories_from_db) {
+	if (!categories_from_db) {
+		return []
+	}
+
+	return [...decode_usage([...categories_from_db])]
+
+	/**
+	 * Encoding is a combination of position and case, letters are actually irrelevant.
+	 *
+	 * @param {string[]} encoded_usage // ['Aa_', 'Bb_', 'Cc_']
+	 *
+	 * @returns {string[]} - various permutations, e.g., ['never used in Clauses to Modify Verbs', ...]
+	 */
+	function decode_usage(encoded_usage) {
+		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info.Adverb[i]}`)
+	}
+
+	/**
+	 * @param {string} character - uppercase or lowercase or underscore
+	 * @returns {string} - "always" or "sometimes" or "never", respectively
+	 */
+	function decode_frequency(character) {
+		return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
+	}
 }

@@ -1,5 +1,5 @@
 <script>
-	import {SemanticCategorization, TBD, ThetaGrid, UsageInfo} from '.'
+	import {SemanticCategorization, TBD, ThetaGrid, UsageInfoForAdjective, UsageInfoForAdverb} from '.'
 
 	/** @type {Concept} */
 	export let concept
@@ -8,7 +8,8 @@
 	 * @type {Record<Concept['part_of_speech'], ConstructorOfATypedSvelteComponent>}
 	 */
 	const lookup = {
-		Adjective: UsageInfo,
+		Adjective: UsageInfoForAdjective,
+		Adverb: UsageInfoForAdverb,
 		Noun: SemanticCategorization,
 		Verb: ThetaGrid,
 	}
