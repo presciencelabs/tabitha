@@ -117,6 +117,7 @@ function transform_occurrences(occurrences_from_db) {
  * @type {Record<string, (categories_from_db: string) => string[]>}
  */
 const categorization_decoders = {
+	Adjective: transform_adjective_categorization,
 	Verb: transform_verb_categorization,
 }
 
@@ -155,6 +156,42 @@ function transform_verb_categorization(categories_from_db) {
 
 			return encoded_category !== EMPTY
 		}
+	}
+}
+
+/**
+ * @param {string} categories_from_db '[GCOFQIL][Aa_][Bb_][Cc_][Dd_][Ee_][Ff_]' OR ''
+ *
+ * position 1 is the semantic category, the remaining positions are the usage, see DisplayOntologyDlg.cppL1064
+ *
+ * @returns {string[]}
+ */
+function transform_adjective_categorization(categories_from_db) {
+	if (!categories_from_db) {
+		return []
+	}
+
+	const [encoded_semantic_category, ...encoded_usage] = [...categories_from_db]
+
+	return [semantic_category['Adjective'][encoded_semantic_category], ...decode_usage(encoded_usage)]
+
+	/**
+	 * Encoding is a combination of position and case, letters are actually irrelevant.
+	 *
+	 * @param {string[]} encoded_usage // ['Aa_', 'Bb_', 'Cc_', 'Dd_', 'Ee_', 'Ff_']
+	 *
+	 * @returns {string[]} - various permutations, e.g., ['never used attributively', ...]
+	 */
+	function decode_usage(encoded_usage) {
+		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info[i]}`)
+	}
+
+	/**
+	 * @param {string} character - uppercase or lowercase or underscore
+	 * @returns {string} - "always" or "sometimes" or "never", respectively
+	 */
+	function decode_frequency(character) {
+		return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
 	}
 }
 
