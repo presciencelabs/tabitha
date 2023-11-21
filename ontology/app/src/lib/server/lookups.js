@@ -50,29 +50,29 @@ export const theta_grid = {
 	_: '',
 }
 
-// Adjective categorizations
-// DisplayOntologyDlg.cppL1064
-//
-// [Aa_][Bb_][Cc_][Dd_][Ee_][Ff_]
-//
-// 	| position 	| usage info 																		|
-//		| ---------	| ---------------------------------------------------------------	|
-//		| 2			| used attributively 															|
-//		| 3			| used predicately without an argument 									|
-//		| 4			| used predicately with a nominal argument 								|
-//		| 5			| used predicately with a same participant clausal argument 		|
-//		| 6			| used predicately with a different participant clausal argument 	|
-//		| 7			| used comparatively 															|
-//
-//		| case		| when		|
-//		| ---------	| ---------	|
-//		| upper		| always		|
-//		| lower		| sometimes	|
-//		| _			| never		|
 /**
  * @type {Record<string, Record<string, string>>}
  */
 export const semantic_category = {
+	// Adjective categorizations
+	// DisplayOntologyDlg.cppL1064
+	//
+	// [Aa_][Bb_][Cc_][Dd_][Ee_][Ff_]
+	//
+	// 	| position 	| usage info 																		|
+	//		| ---------	| ---------------------------------------------------------------	|
+	//		| 2			| used attributively 															|
+	//		| 3			| used predicately without an argument 									|
+	//		| 4			| used predicately with a nominal argument 								|
+	//		| 5			| used predicately with a same participant clausal argument 		|
+	//		| 6			| used predicately with a different participant clausal argument 	|
+	//		| 7			| used comparatively 															|
+	//
+	//		| case		| when		|
+	//		| ---------	| ---------	|
+	//		| upper		| always		|
+	//		| lower		| sometimes	|
+	//		| _			| never		|
 	Adjective: {
 		G: 'Generic',
 		C: 'Cardinal number',
@@ -81,6 +81,31 @@ export const semantic_category = {
 		Q: 'Quantity',
 		I: 'Identity',
 		L: 'Color',
+	},
+	// Noun categorizations
+	// TBTA -> (ontology) -> (nouns) -> Concept Subsets button
+	// SemanticDomainNamesDlg.cpp::LoadConceptCategories (comment on line ~504)
+	// Ontology.mdb:Features_Source.FeatureValues
+	//
+	// | letter | meaning 				|
+	// | ------ | ------------------ |
+	// | A 		| Abstracts 			|
+	// | F 		| Feminine names 		|
+	// | G 		| Geographical names |
+	// | M 		| Masculine names 	|
+	// | O 		| Ordinal numbers 	|
+	// | T 		| Temporal names 		|
+	// | g 		| Other proper names |
+	// | o 		| All other objects 	|
+	Noun: {
+		A: 'Abstracts',
+		F: 'Feminine names',
+		G: 'Geographical names',
+		M: 'Masculine names',
+		O: 'Ordinal numbers',
+		T: 'Temporal names',
+		g: 'Other proper names',
+		o: 'All other objects',
 	},
 }
 
