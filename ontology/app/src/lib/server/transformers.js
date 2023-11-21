@@ -118,8 +118,9 @@ function transform_occurrences(occurrences_from_db) {
  */
 const categorization_decoders = {
 	Adjective: transform_adjective_categorization,
-	Adposition: transform_adposition_categorization,
-	Adverb: transform_adverb_categorization,
+	Adposition: transform_particle_categorization('Adposition'),
+	Adverb: transform_particle_categorization('Adverb'),
+	Conjunction: transform_particle_categorization('Conjunction'),
 	Noun: transform_noun_categorization,
 	Verb: transform_verb_categorization,
 }
@@ -174,28 +175,14 @@ function transform_adjective_categorization(categories_from_db) {
 		return []
 	}
 
-	const [encoded_semantic_category, ...encoded_usage] = [...categories_from_db]
+	const [encoded_semantic_category, ...encoded_usage] = categories_from_db
 
-	return [semantic_category.Adjective[encoded_semantic_category], ...decode_usage(encoded_usage)]
-
-	/**
-	 * Encoding is a combination of position and case, letters are actually irrelevant.
-	 *
-	 * @param {string[]} encoded_usage // ['Aa_', 'Bb_', 'Cc_', 'Dd_', 'Ee_', 'Ff_']
-	 *
-	 * @returns {string[]} - various permutations, e.g., ['never used attributively', ...]
-	 */
-	function decode_usage(encoded_usage) {
-		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info.Adjective[i]}`)
-	}
-
-	/**
-	 * @param {string} character - uppercase or lowercase or underscore
-	 * @returns {string} - "always" or "sometimes" or "never", respectively
-	 */
-	function decode_frequency(character) {
-		return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
-	}
+	return [
+		semantic_category.Adjective[encoded_semantic_category],
+		// TODO: look into a fix for this type mismatch warning
+		// @ts-ignore
+		...transform_particle_categorization('Adjective')(encoded_usage),
+	]
 }
 
 /**
@@ -227,65 +214,42 @@ function transform_noun_categorization(categories_from_db) {
 }
 
 /**
- * @param {string} categories_from_db '[Aa_][Bb_][Cc_]' OR ''
+ * @param {Concept['part_of_speech']} part_of_speech
  *
- * @returns {string[]}
+ * @returns {(categories_from_db: string) => string[]}
  */
-function transform_adverb_categorization(categories_from_db) {
-	if (!categories_from_db) {
-		return []
-	}
-
-	return [...decode_usage([...categories_from_db])]
+function transform_particle_categorization(part_of_speech) {
+	return decode_categories
 
 	/**
-	 * Encoding is a combination of position and case, letters are actually irrelevant.
+	 * @param {string} categories_from_db
 	 *
-	 * @param {string[]} encoded_usage // ['Aa_', 'Bb_', 'Cc_']
-	 *
-	 * @returns {string[]} - various permutations, e.g., ['never used in Clauses to Modify Verbs', ...]
+	 * @returns {string[]}
 	 */
-	function decode_usage(encoded_usage) {
-		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info.Adverb[i]}`)
-	}
+	function decode_categories(categories_from_db) {
+		if (!categories_from_db) {
+			return []
+		}
 
-	/**
-	 * @param {string} character - uppercase or lowercase or underscore
-	 * @returns {string} - "always" or "sometimes" or "never", respectively
-	 */
-	function decode_frequency(character) {
-		return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
-	}
-}
+		return [...decode_usage([...categories_from_db])]
 
-/**
- * @param {string} categories_from_db '[Aa_][Bb_][Cc_]' OR ''
- *
- * @returns {string[]}
- */
-function transform_adposition_categorization(categories_from_db) {
-	if (!categories_from_db) {
-		return []
-	}
+		/**
+		 * Encoding is a combination of position and case, letters are actually irrelevant.
+		 *
+		 * @param {string[]} encoded_usage ['Aa_', 'Bb_', 'Cc_']
+		 *
+		 * @returns {string[]} - various sentences from the usage_info lookup
+		 */
+		function decode_usage(encoded_usage) {
+			return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info[part_of_speech][i]}`)
+		}
 
-	return [...decode_usage([...categories_from_db])]
-
-	/**
-	 * Encoding is a combination of position and case, letters are actually irrelevant.
-	 *
-	 * @param {string[]} encoded_usage // ['Aa_', 'Bb_', 'Cc_']
-	 *
-	 * @returns {string[]} - various permutations, e.g., ['never used in adverbial clauses', ...]
-	 */
-	function decode_usage(encoded_usage) {
-		return encoded_usage.map((character, i) => `${decode_frequency(character)} ${usage_info.Adposition[i]}`)
-	}
-
-	/**
-	 * @param {string} character - uppercase or lowercase or underscore
-	 * @returns {string} - "always" or "sometimes" or "never", respectively
-	 */
-	function decode_frequency(character) {
-		return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
+		/**
+		 * @param {string} character - uppercase or lowercase or underscore
+		 * @returns {string} - "always" or "sometimes" or "never", respectively
+		 */
+		function decode_frequency(character) {
+			return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
+		}
 	}
 }

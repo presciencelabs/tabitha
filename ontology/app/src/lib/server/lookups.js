@@ -51,7 +51,7 @@ export const theta_grid = {
 }
 
 /**
- * @type {Record<string, Record<string, string>>}
+ * @type {Record<Concept['part_of_speech'], Record<string, string>>}
  */
 export const semantic_category = {
 	// Adjective categorizations
@@ -109,6 +109,9 @@ export const semantic_category = {
 	},
 }
 
+/**
+ * @type {Record<Concept['part_of_speech'], string[]>}
+ */
 export const usage_info = {
 	Adjective: [
 		'used attributively',
@@ -127,6 +130,12 @@ export const usage_info = {
 		'used in Clauses to modify Verbs',
 		'used in Noun Phrases',
 		'used in Adjective Phrases',
+	],
+	Conjunction: [
+		'used to conjoin Clauses',
+		'used to conjoin Noun Phrases',
+		'used to conjoin Adjective Phrases',
+		'used to conjoin Adverb Phrases',
 	],
 }
 
