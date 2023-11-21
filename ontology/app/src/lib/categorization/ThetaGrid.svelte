@@ -8,6 +8,8 @@
 		<span class="p-2 border-4 border-double whitespace-nowrap">
 			{category}
 		</span>
+	{:else}
+		No theta grid information available.
 	{/each}
 </figure>
 

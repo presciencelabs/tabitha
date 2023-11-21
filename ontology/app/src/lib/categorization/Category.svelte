@@ -1,31 +1,19 @@
 <script>
-	import ThetaGrid from './ThetaGrid.svelte'
+	import {TBD, ThetaGrid, UsageInfo} from '.'
 
 	/** @type {Concept} */
 	export let concept
 
 	/**
-	 * @type {Record<Concept['part_of_speech'], string>}
+	 * @type {Record<Concept['part_of_speech'], ConstructorOfATypedSvelteComponent>}
 	 */
-	const names = {
-		'Noun': 'Usage',
-		'Verb': 'Theta Grid',
+	const lookup = {
+		Adjective: UsageInfo,
+		Verb: ThetaGrid,
 	}
 
-	$: part_of_speech = concept.part_of_speech
 	$: categories = concept.categories
+	$: component = lookup[concept.part_of_speech] || TBD
 </script>
 
-<header class="pb-2 italic">
-	{names[concept.part_of_speech] ?? 'Semantic categorization'}
-</header>
-
-{#if part_of_speech === 'Verb' }
-	<ThetaGrid {categories} />
-{:else}
-	<pre data-tip="TBD: still needs to be decoded" class="indicator whitespace-normal inline tooltip tooltip-right">
-		{categories.length ? categories : '–'}
-		<span class="indicator-item badge badge-xs badge-warning" />
-	</pre>
-{/if}
-
+<svelte:component this={component} {categories} />

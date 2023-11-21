@@ -1,4 +1,5 @@
 // Verb categorizations in the database '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
+// DisplayOntologyDlg.cppL1010
 //
 // The letters are irrelevant, the position and case are what matters:
 //		| position 	| meaning 						|
@@ -48,6 +49,49 @@ export const theta_grid = {
 	...optional,
 	_: '',
 }
+
+// Adjective categorizations
+// DisplayOntologyDlg.cppL1064
+//
+// [Aa_][Bb_][Cc_][Dd_][Ee_][Ff_]
+//
+// 	| position 	| usage info 																		|
+//		| ---------	| ---------------------------------------------------------------	|
+//		| 2			| used attributively 															|
+//		| 3			| used predicately without an argument 									|
+//		| 4			| used predicately with a nominal argument 								|
+//		| 5			| used predicately with a same participant clausal argument 		|
+//		| 6			| used predicately with a different participant clausal argument 	|
+//		| 7			| used comparatively 															|
+//
+//		| case		| when		|
+//		| ---------	| ---------	|
+//		| upper		| always		|
+//		| lower		| sometimes	|
+//		| _			| never		|
+/**
+ * @type {Record<string, Record<string, string>>}
+ */
+export const semantic_category = {
+	Adjective: {
+		G: 'Generic',
+		C: 'Cardinal number',
+		O: 'Ordinal number',
+		F: 'Fractional number',
+		Q: 'Quantity',
+		I: 'Identity',
+		L: 'Color',
+	},
+}
+
+export const usage_info = [
+	'used attributively',
+	'used predicatively without an argument',
+	'used predicatively with a nominal argument',
+	'used predicatively with a same participant clausal argument',
+	'used predicatively with a different participant clausal argument',
+	'used comparatively',
+]
 
 /**
  * Represents a collection of books.
