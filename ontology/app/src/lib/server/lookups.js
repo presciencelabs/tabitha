@@ -109,14 +109,21 @@ export const semantic_category = {
 	},
 }
 
-export const usage_info = [
-	'used attributively',
-	'used predicatively without an argument',
-	'used predicatively with a nominal argument',
-	'used predicatively with a same participant clausal argument',
-	'used predicatively with a different participant clausal argument',
-	'used comparatively',
-]
+export const usage_info = {
+	Adjective: [
+		'used attributively',
+		'used predicatively without an argument',
+		'used predicatively with a nominal argument',
+		'used predicatively with a same participant clausal argument',
+		'used predicatively with a different participant clausal argument',
+		'used comparatively',
+	],
+	Adverb: [
+		'used in Clauses to modify Verbs',
+		'used in Noun Phrases',
+		'used in Adjective Phrases',
+	],
+}
 
 /**
  * Represents a collection of books.
