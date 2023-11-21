@@ -3,7 +3,7 @@ import SemanticCategorization from './SemanticCategorization.svelte'
 import TBD from './TBD.svelte'
 import ThetaGrid from './ThetaGrid.svelte'
 import UsageInfoForAdjective from './UsageInfoForAdjective.svelte'
-import UsageInfoForAdverb from './UsageInfoForAdverb.svelte'
+import UsageInfoForParticles from './UsageInfoForParticles.svelte'
 
 // prettier-ignore - don't want these to be on one line
 export {
@@ -12,5 +12,5 @@ export {
 	TBD,
 	ThetaGrid,
 	UsageInfoForAdjective,
-	UsageInfoForAdverb,
+	UsageInfoForParticles,
 }

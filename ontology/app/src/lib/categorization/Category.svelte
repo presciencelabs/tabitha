@@ -1,5 +1,5 @@
 <script>
-	import {SemanticCategorization, TBD, ThetaGrid, UsageInfoForAdjective, UsageInfoForAdverb} from '.'
+	import {SemanticCategorization, TBD, ThetaGrid, UsageInfoForAdjective, UsageInfoForParticles} from '.'
 
 	/** @type {Concept} */
 	export let concept
@@ -9,8 +9,9 @@
 	 */
 	const lookup = {
 		Adjective: UsageInfoForAdjective,
-		Adposition: UsageInfoForAdverb,
-		Adverb: UsageInfoForAdverb,
+		Adposition: UsageInfoForParticles,
+		Adverb: UsageInfoForParticles,
+		Conjunction: UsageInfoForParticles,
 		Noun: SemanticCategorization,
 		Verb: ThetaGrid,
 	}
