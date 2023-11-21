@@ -1,5 +1,5 @@
 <script>
-	import {TBD, ThetaGrid, UsageInfo} from '.'
+	import {SemanticCategorization, TBD, ThetaGrid, UsageInfo} from '.'
 
 	/** @type {Concept} */
 	export let concept
@@ -9,6 +9,7 @@
 	 */
 	const lookup = {
 		Adjective: UsageInfo,
+		Noun: SemanticCategorization,
 		Verb: ThetaGrid,
 	}
 

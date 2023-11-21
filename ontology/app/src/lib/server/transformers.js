@@ -1,4 +1,5 @@
-import {semantic_category, sources, theta_grid, usage_info} from './lookups'
+import { semantic_category, sources, theta_grid, usage_info } from './lookups'
+
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -117,6 +118,7 @@ function transform_occurrences(occurrences_from_db) {
  */
 const categorization_decoders = {
 	Adjective: transform_adjective_categorization,
+	Noun: transform_noun_categorization,
 	Verb: transform_verb_categorization,
 }
 
@@ -172,7 +174,7 @@ function transform_adjective_categorization(categories_from_db) {
 
 	const [encoded_semantic_category, ...encoded_usage] = [...categories_from_db]
 
-	return [semantic_category['Adjective'][encoded_semantic_category], ...decode_usage(encoded_usage)]
+	return [semantic_category.Adjective[encoded_semantic_category], ...decode_usage(encoded_usage)]
 
 	/**
 	 * Encoding is a combination of position and case, letters are actually irrelevant.
@@ -209,4 +211,15 @@ function decode_reference(encoded_reference) {
 		chapter,
 		verse,
 	}
+}
+
+/**
+ * @param {string} categories_from_db '[AFGMOTgo]' OR ''
+ *
+ * @returns {string[]} – e.g., ['Abstracts'] or ['Feminine names'] or ['Not yet categorized']
+ */
+function transform_noun_categorization(categories_from_db) {
+	return [
+		semantic_category.Noun[categories_from_db[0]] || 'No information available yet.',
+	]
 }
