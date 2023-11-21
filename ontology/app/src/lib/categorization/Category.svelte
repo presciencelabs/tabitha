@@ -9,6 +9,7 @@
 	 */
 	const lookup = {
 		Adjective: UsageInfoForAdjective,
+		Adposition: UsageInfoForAdverb,
 		Adverb: UsageInfoForAdverb,
 		Noun: SemanticCategorization,
 		Verb: ThetaGrid,

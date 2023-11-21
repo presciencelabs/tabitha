@@ -118,6 +118,11 @@ export const usage_info = {
 		'used predicatively with a different participant clausal argument',
 		'used comparatively',
 	],
+	Adposition: [
+		'used in Adjunct Phrases',
+		'used in Noun-Noun Phrases',
+		'used in Abverbial Clauses',
+	],
 	Adverb: [
 		'used in Clauses to modify Verbs',
 		'used in Noun Phrases',
