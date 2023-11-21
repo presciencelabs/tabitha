@@ -32,7 +32,7 @@
 			{/if}
 		</dl>
 	{:else}
-		<p class="italic">
+		<p class="italic mt-0">
 			No usage information available.
 		</p>
 	{/if}
