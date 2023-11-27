@@ -43,6 +43,10 @@
 </footer>
 
 <style lang="postcss">
+	header, main {
+		@apply mt-8 mx-8;
+	}
+
 	a {
 		@apply link link-hover;
 	}
