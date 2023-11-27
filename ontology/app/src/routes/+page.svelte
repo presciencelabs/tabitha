@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores'
-	import Card from '$lib/Card.svelte'
+	import Summary from '$lib/Summary.svelte'
 	import Icon from '@iconify/svelte' // https://iconify.design/
 
 	/** @type {import('./$types').PageData} */
@@ -23,7 +23,7 @@
 <!-- https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Grids#as_many_columns_as_will_fit -->
 <section class="mt-8 flex flex-row flex-wrap gap-10">
 	{#each matches as concept (concept.id)}
-		<Card {concept} />
+		<Summary {concept} />
 	{/each}
 </section>
 
