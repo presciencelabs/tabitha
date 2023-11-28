@@ -1,5 +1,5 @@
 <script>
-	import { navigating, page } from '$app/stores'
+	import {navigating, page} from '$app/stores'
 	import Icon from '@iconify/svelte'
 
 	export let autofocus = false
@@ -25,8 +25,9 @@
 			<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg" />
 		</div>
 
-		<button class="btn btn-primary btn-lg absolute top-0 right-0 rounded-s-none">
-			<span class="hidden sm:inline">Search</span> <Icon icon="material-symbols:search" class="h-6 w-6" />
+		<button class="btn btn-primary btn-lg absolute right-0 top-0 rounded-s-none">
+			<span class="hidden sm:inline">Search</span>
+			<Icon icon="material-symbols:search" class="h-6 w-6" />
 		</button>
 	</form>
 

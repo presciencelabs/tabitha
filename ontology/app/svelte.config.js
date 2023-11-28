@@ -1,4 +1,5 @@
-import adapter from '@sveltejs/adapter-cloudflare' //https://kit.svelte.dev/docs/adapter-cloudflare
+//https://kit.svelte.dev/docs/adapter-cloudflare
+import adapter from '@sveltejs/adapter-cloudflare'
 import {vitePreprocess} from '@sveltejs/kit/vite'
 
 /** @type {import('@sveltejs/kit').Config} */
