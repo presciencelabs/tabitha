@@ -5,12 +5,10 @@
 	$: name = categories[0]
 </script>
 
-<fieldset class="border rounded-lg p-4">
-	<legend class="px-2 bg-base-200 rounded-lg">
-		Semantic categorization
-	</legend>
+<fieldset class="rounded-lg border p-4">
+	<legend class="rounded-lg bg-base-200 px-2"> Semantic categorization </legend>
 
-	<p class="text-xl font-bold tracking-widest mt-0 ms-4">
+	<p class="ms-4 mt-0 text-xl font-bold tracking-widest">
 		{name}
 	</p>
 </fieldset>

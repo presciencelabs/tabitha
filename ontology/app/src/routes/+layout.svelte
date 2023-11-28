@@ -16,11 +16,11 @@
 </header>
 
 <main>
-	<slot></slot>
+	<slot />
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<footer class="footer bg-secondary text-secondary-content mt-20 p-10 prose max-w-none">
+<footer class="prose footer mt-20 max-w-none bg-secondary p-10 text-secondary-content">
 	<nav>
 		<header class="footer-title">Theme</header>
 
@@ -33,7 +33,7 @@
 		<!-- https://daisyui.com/components/link -->
 		<a href="//btn.social" target="_blank" class="indicator">
 			Update data
-			<span data-tip="TBD: still need to integrate auth" class="indicator-item badge badge-xs badge-warning tooltip tooltip-left" />
+			<span data-tip="TBD: still need to integrate auth" class="badge indicator-item badge-warning badge-xs tooltip tooltip-left" />
 		</a>
 
 		<a href="//alltheword.org/downloads-software-bible" target="_blank">
@@ -43,11 +43,12 @@
 </footer>
 
 <style lang="postcss">
-	header, main {
-		@apply mt-8 mx-8;
+	header,
+	main {
+		@apply mx-8 mt-8;
 	}
 
 	a {
-		@apply link link-hover;
+		@apply link-hover link;
 	}
 </style>

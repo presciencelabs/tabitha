@@ -8,8 +8,8 @@
 	$: grouped_usages = [...always_usages, ...sometimes_usages]
 </script>
 
-<fieldset class="prose border rounded-lg p-4">
-	<legend class="px-2 text-lg font-bold tracking-widest bg-base-200 rounded-lg">
+<fieldset class="prose rounded-lg border p-4">
+	<legend class="rounded-lg bg-base-200 px-2 text-lg font-bold tracking-widest">
 		{semantic_category || 'None'}
 	</legend>
 
@@ -32,9 +32,7 @@
 			{/if}
 		</dl>
 	{:else}
-		<p class="italic mt-0">
-			No usage information available.
-		</p>
+		<p class="mt-0 italic">No usage information available.</p>
 	{/if}
 </fieldset>
 

@@ -15,7 +15,7 @@
 	$: exhaustive_examples = concept.exhaustive_examples
 </script>
 
-<article class="card card-bordered shadow-lg dark:shadow-neutral-700 grow">
+<article class="card card-bordered grow shadow-lg dark:shadow-neutral-700">
 	<main class="card-body">
 		<section class="prose card-title max-w-none justify-between">
 			<Header {concept} />
@@ -73,14 +73,15 @@
 								<span>
 									{sentence}
 								</span>
-								<cite data-tip="Source: {reference.source}" class="tooltip tooltip-info tooltip-right text-xs block text-start w-fit">
-									({reference.book} {reference.chapter}:{reference.verse})
+								<cite data-tip="Source: {reference.source}" class="tooltip tooltip-right tooltip-info block w-fit text-start text-xs">
+									({reference.book}
+									{reference.chapter}:{reference.verse})
 								</cite>
 
 								<footer class="mt-4 flex justify-around bg-base-100">
-									{#each semantic_representation as {part_of_speech, role, word}}
+									{#each semantic_representation as { part_of_speech, role, word }}
 										<span class="flex flex-col items-center py-2">
-											<span class="not-italic tracking-widest text-base-content mb-1">
+											<span class="mb-1 not-italic tracking-widest text-base-content">
 												{word}
 											</span>
 											<small class="font-mono text-xs text-base-content">
@@ -105,14 +106,14 @@
 
 						{#each exhaustive_examples as { reference, unknown_encoding }}
 							<div class="py-2">
-								<span data-tip="Source: {reference.source}" class="tooltip tooltip-info tooltip-right text-sm">
+								<span data-tip="Source: {reference.source}" class="tooltip tooltip-right tooltip-info text-sm">
 									{reference.book}
 									{reference.chapter}:{reference.verse}
 								</span>
 
 								<code class="indicator">
 									{unknown_encoding}
-									<span data-tip="TBD: still needs to be decoded" class="indicator-item badge badge-xs badge-warning tooltip tooltip-top" />
+									<span data-tip="TBD: still needs to be decoded" class="badge indicator-item badge-warning badge-xs tooltip tooltip-top" />
 								</code>
 							</div>
 						{:else}
