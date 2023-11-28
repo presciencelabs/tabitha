@@ -2,15 +2,14 @@
 	/** @type {Concept['categories']} */
 	export let categories
 
-	$: [semantic_category, ...usages] = categories
-	$: always_usages = usages.filter(usage => usage.startsWith('always'))
-	$: sometimes_usages = usages.filter(usage => usage.startsWith('sometimes'))
+	$: always_usages = categories.filter(usage => usage.startsWith('always'))
+	$: sometimes_usages = categories.filter(usage => usage.startsWith('sometimes'))
 	$: grouped_usages = [...always_usages, ...sometimes_usages]
 </script>
 
-<fieldset class="prose border rounded-lg p-4">
-	<legend class="px-2 text-lg font-bold tracking-widest bg-base-200 rounded-lg">
-		{semantic_category || 'None'}
+<fieldset class="prose rounded-lg border p-4">
+	<legend class="rounded-lg bg-base-200 px-2">
+		Semantic categorization
 	</legend>
 
 	{#if grouped_usages.length}
@@ -32,7 +31,7 @@
 			{/if}
 		</dl>
 	{:else}
-		<p class="italic mt-0">
+		<p class="mt-0 italic">
 			No usage information available.
 		</p>
 	{/if}
