@@ -1,6 +1,6 @@
 <script>
-	import { page } from '$app/stores'
-	import Summary from '$lib/Summary.svelte'
+	import {page} from '$app/stores'
+	import {Card} from '$lib/card'
 	import Icon from '@iconify/svelte' // https://iconify.design/
 
 	/** @type {import('./$types').PageData} */
@@ -9,7 +9,7 @@
 	$: searched = !!$page.url.search
 	$: matches = data.matches
 	$: found = !!matches.length
-	$: icon = found ? 'material-symbols:check-circle-outline-rounded' : 'material-symbols:warning-outline-rounded'
+	$: icon = `material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`
 </script>
 
 <header>
@@ -23,7 +23,7 @@
 <!-- https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Grids#as_many_columns_as_will_fit -->
 <section class="mt-8 flex flex-row flex-wrap gap-10">
 	{#each matches as concept (concept.id)}
-		<Summary {concept} />
+		<Card {concept} />
 	{/each}
 </section>
 
