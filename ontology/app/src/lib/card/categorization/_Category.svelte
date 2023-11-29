@@ -1,9 +1,9 @@
 <script>
-	import SemanticCategorization from './categorization/_SemanticCategorization.svelte'
-	import TBD from './categorization/_TBD.svelte'
-	import ThetaGrid from './categorization/_ThetaGrid.svelte'
-	import UsageInfoForAdjective from './categorization/_UsageInfoForAdjective.svelte'
-	import UsageInfoForParticles from './categorization/_UsageInfoForParticles.svelte'
+	import SemanticCategorization from './_SemanticCategorization.svelte'
+	import TBD from './_TBD.svelte'
+	import ThetaGrid from './_ThetaGrid.svelte'
+	import UsageInfoForAdjective from './_UsageInfoForAdjective.svelte'
+	import UsageInfoForParticles from './_UsageInfoForParticles.svelte'
 
 	/** @type {Concept} */
 	export let concept

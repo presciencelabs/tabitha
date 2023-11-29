@@ -207,6 +207,7 @@ function decode_reference(encoded_reference) {
  * @returns {string[]} – e.g., ['Abstracts'] or ['Feminine names'] or ['Not yet categorized']
  */
 function transform_noun_categorization(categories_from_db) {
+	// prettier-ignore
 	return [
 		semantic_category.Noun[categories_from_db[0]] || 'No information available yet.',
 	]

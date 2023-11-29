@@ -1,7 +1,6 @@
 <script>
 	import '$lib/app.postcss'
-	import Brand from '$lib/Brand.svelte'
-	import Search from '$lib/Search.svelte'
+	import {Brand, Search} from '$lib'
 	import {Selector} from '$lib/theme'
 
 	/** @type {import('./$types').PageData} */

@@ -48,6 +48,7 @@ export async function get_version(db) {
 		FROM OntologyVersion
 	`
 
+	// prettier-ignore
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
 	return await db.prepare(sql).first('Version') || ''
 }

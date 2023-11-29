@@ -112,6 +112,7 @@ export const semantic_category = {
 /**
  * @type {Record<Concept['part_of_speech'], string[]>}
  */
+// prettier-ignore
 export const usage_info = {
 	Adjective: [
 		'used attributively',

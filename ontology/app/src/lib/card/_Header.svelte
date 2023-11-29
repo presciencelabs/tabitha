@@ -1,6 +1,11 @@
 <script>
+	import {Level, Occurrences} from '$lib'
+
 	/** @type {Concept} */
 	export let concept
+
+	$: level = concept.level
+	$: occurrences = concept.occurrences
 </script>
 
 <h2 class="relative whitespace-nowrap pb-6">
@@ -10,11 +15,7 @@
 </h2>
 
 <aside class="flex flex-col items-center gap-1 self-start">
-	<span class="badge badge-primary badge-lg">
-		L{concept.level}
-	</span>
+	<Level {level} />
 
-	<span class="badge badge-success badge-md tooltip tooltip-right font-mono" data-tip="Occurrences">
-		{concept.occurrences}
-	</span>
+	<Occurrences {occurrences} />
 </aside>

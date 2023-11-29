@@ -1,46 +1,25 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {Header, Meaning} from '.'
-	import Category from './Category.svelte'
-	import Details from '$lib/Details.svelte'
+	import {Details} from '$lib'
+	import Header from './_Header.svelte'
+	import Meaning from './_Meaning.svelte'
+	import Category from './categorization/_Category.svelte'
+	import {onMount} from 'svelte'
 
 	/** @type {Concept} */
 	export let concept
 
 	/** @type {HTMLDialogElement} */
 	let dialog
-	const expand = () => dialog.showModal()
+
+	onMount(() => dialog.showModal())
 
 	$: examples = concept.examples
 	$: exhaustive_examples = concept.exhaustive_examples
 </script>
 
-<article class="card card-bordered grow shadow-lg dark:shadow-neutral-700">
-	<main class="card-body">
-		<section class="prose card-title max-w-none justify-between">
-			<Header {concept} />
-		</section>
-
-		<section class="prose flex-grow">
-			<Meaning {concept} />
-		</section>
-
-		{#if concept.part_of_speech === 'Verb'}
-			<section class="prose mt-4 max-w-none">
-				<Category {concept} />
-			</section>
-		{/if}
-
-		<section class="card-actions mt-4 justify-end">
-			<button on:click={expand} class="btn btn-primary btn-sm">
-				EXPAND <Icon icon="gg:maximize-alt" class="h-4 w-4" />
-			</button>
-		</section>
-	</main>
-</article>
-
 <!-- https://daisyui.com/components/modal -->
-<dialog bind:this={dialog} class="modal">
+<dialog bind:this={dialog} on:close class="modal">
 	<section class="modal-box max-w-none">
 		<form method="dialog">
 			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">

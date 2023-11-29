@@ -8,6 +8,7 @@
 </script>
 
 <fieldset class="prose rounded-lg border p-4">
+	<!-- prettier-ignore -->
 	<legend class="rounded-lg bg-base-200 px-2">
 		Semantic categorization
 	</legend>
@@ -31,6 +32,7 @@
 			{/if}
 		</dl>
 	{:else}
+		<!-- prettier-ignore -->
 		<p class="mt-0 italic">
 			No usage information available.
 		</p>
