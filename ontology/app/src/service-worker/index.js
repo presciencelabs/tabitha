@@ -1,6 +1,6 @@
 // taken from https://kit.svelte.dev/docs/service-workers
 //
-/// <reference types="@sveltejs/kit" />
+/// <reference types="@sveltejs/kit/types" />
 /// <reference no-default-lib="true"/>
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
@@ -22,6 +22,7 @@ sw.addEventListener('fetch', event => {
 	// ignore POST requests etc
 	if (event.request.method !== 'GET') return
 
+	// @ts-ignore
 	event.respondWith(respond(event.request))
 })
 
