@@ -2,14 +2,8 @@
 	/** @type {Concept['exhaustive_examples']} */
 	export let examples
 
-	let selected_source = ''
-	let selected_book = ''
-	let selected_verse_json_encoded = ''
 
 	$: transformed_examples = examples.reduce(transform, {})
-	$: sources = Object.keys(transformed_examples)
-	$: books = Object.keys(transformed_examples[selected_source] || [])
-	$: verses = transformed_examples[selected_source]?.[selected_book] || {}
 
 	// TODO: maybe this belongs in the data layer...need to consider
 	/**
@@ -38,6 +32,24 @@
 		return transformed_examples
 	}
 
+	$: sources = Object.keys(transformed_examples)
+	/** @param {string} source */
+	function book_count(source) {
+		return Object.keys(transformed_examples[source]).length
+	}
+	let selected_source = ''
+
+
+	$: books = Object.keys(transformed_examples[selected_source] || [])
+	/** @param {string} book */
+	function verse_count(book) {
+		return Object.keys(transformed_examples[selected_source][book]).length
+	}
+	let selected_book = ''
+
+	$: verses = transformed_examples[selected_source]?.[selected_book] || {}
+	let selected_verse_json_encoded = ''
+
 	$: selected_source && source_changed()
 	$: selected_book && book_changed()
 
@@ -56,14 +68,14 @@
 		<select bind:value={selected_source} class="select">
 			<option value="" disabled>Select a source</option>
 			{#each sources.toSorted() as source}
-				<option value={source}>{source}</option>
+				<option value={source}>{source} ({book_count(source)})</option>
 			{/each}
 		</select>
 
 		<select bind:value={selected_book} disabled={! selected_source} class="select">
 			<option value="" disabled>Select a book</option>
 			{#each books as book}
-				<option value={book}>{book}</option>
+				<option value={book}>{book} ({verse_count(book)})</option>
 			{/each}
 		</select>
 
