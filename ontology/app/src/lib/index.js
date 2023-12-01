@@ -1,6 +1,7 @@
 import Brand from './Brand.svelte'
 import Details from './Details.svelte'
 import DisplayPreference from './DisplayPreference.svelte'
+import Examples from './Examples.svelte'
 import Level from './Level.svelte'
 import Occurrences from './Occurrences.svelte'
 import Search from './Search.svelte'
@@ -14,6 +15,7 @@ export {
 	DetailedCard,
 	Details,
 	DisplayPreference,
+	Examples,
 	Level,
 	Occurrences,
 	Search,

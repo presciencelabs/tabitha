@@ -1,6 +1,6 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {Details} from '$lib'
+	import {Details, Examples} from '$lib'
 	import Header from './_Header.svelte'
 	import Meaning from './_Meaning.svelte'
 	import Category from './categorization/_Category.svelte'
@@ -44,7 +44,7 @@
 				<section class="prose mt-4 max-w-none">
 					<Details colors="bg-base-200">
 						<span slot="summary">
-							Examples ({examples.length})
+							Curated examples ({examples.length})
 						</span>
 
 						{#each examples as { sentence, reference, semantic_representation }}
@@ -78,27 +78,8 @@
 				</section>
 
 				<section class="prose mt-4 max-w-none">
-					<Details colors="bg-base-200">
-						<span slot="summary">
-							Exhaustive examples ({exhaustive_examples.length})
-						</span>
-
-						{#each exhaustive_examples as { reference, unknown_encoding }}
-							<div class="py-2">
-								<span data-tip="Source: {reference.source}" class="tooltip tooltip-right tooltip-info text-sm">
-									{reference.book}
-									{reference.chapter}:{reference.verse}
-								</span>
-
-								<code class="indicator">
-									{unknown_encoding}
-									<span data-tip="TBD: still needs to be decoded" class="badge indicator-item badge-warning badge-xs tooltip tooltip-top" />
-								</code>
-							</div>
-						{:else}
-							–
-						{/each}
-					</Details>
+					<h3>Examples</h3>
+					<Examples examples={exhaustive_examples} />
 				</section>
 			</main>
 		</article>
