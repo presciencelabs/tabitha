@@ -1,4 +1,0 @@
-[[d1_databases]]
-binding = "DB_Sources" # i.e. available in your Worker on env.DB
-database_name = "Sources.2023-11-14"
-database_id = "03046f44-9e82-46d2-8b41-92160306362f"
