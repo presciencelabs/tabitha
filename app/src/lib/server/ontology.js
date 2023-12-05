@@ -54,8 +54,8 @@ export async function get_version(db) {
 }
 
 /**
- *
  * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
+ *
  * @returns {string} SQL-ready string, i.e., `%` for wildcards
  */
 function normalize_wildcards(possible_wildard) {
