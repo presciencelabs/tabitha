@@ -7,7 +7,7 @@ https://www.sqlite.org
 
 1. currently using a manual process, i.e., TBTA's `*.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`*.VERSION.mdb.sqlite`)
 1. `grep ATTACH *.sql` to ensure filenames are accurate
-1. `sqlite3 Sources.YYYY-MM-DD.tabitha.sqlite < *.sql` to create and load the database
+1. `cat create.sql migrate_bible.sql migrate_community_development_texts.sql migrate_grammar_introduction.sql | sqlite3 Sources.YYYY-MM-DD.tabitha.sqlite` to create and load the database
 
 > if an mdb is larger than 40M, the MDB Viewer app will not work unfortunately.  There is an option to buy MDB ACCB Viewer (for macs).
 
@@ -48,6 +48,10 @@ https://developers.cloudflare.com/workers/wrangler/commands/#d1
 https://developers.cloudflare.com/workers/wrangler
 
 `pnpx wrangler ...` will also work if you do not want to install wrangler
+
+### List current databases
+
+`wrangler d1 list`
 
 ### Create database
 

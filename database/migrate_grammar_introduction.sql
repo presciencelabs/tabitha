@@ -5,7 +5,7 @@ SELECT '======= loading individual tables into Sources table =======';
 INSERT INTO Sources
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Adjectives',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -17,7 +17,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Adpositions',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -29,7 +29,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Adverbs',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -41,7 +41,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Clauses',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -53,7 +53,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Discourse',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -65,7 +65,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Noun Phrases',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -77,7 +77,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Nouns',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -89,7 +89,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Pronouns',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
@@ -113,7 +113,7 @@ WHERE Reference IS NOT NULL AND Verse IS NOT NULL
 UNION ALL
 SELECT
 	'Grammar Introduction',
-	substr(Reference, 1, instr(Reference, ' ') - 1),
+	'Verbs',
 	substr(Reference, instr(Reference, ' ') + 1, instr(Reference, ':') - instr(Reference, ' ') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,

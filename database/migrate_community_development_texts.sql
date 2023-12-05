@@ -5,36 +5,36 @@ SELECT '======= loading individual tables into Sources table =======';
 INSERT INTO Sources
 SELECT
 	'Community Development Texts',
-	substr(Reference, 1, instr(Reference, ':') - 3),
+	'Avian_Influenza',
 	substr(substr(Reference, instr(Reference, 'a ') + 2), 1, instr(substr(Reference, instr(Reference, 'a ') + 2), ':') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
 	AnalyzedVerse,
 	NULL,
 	Notes
-FROM 'Avian_Influenza'
+FROM Avian_Influenza
 UNION ALL
 SELECT
 	'Community Development Texts',
-	substr(Reference, 1, instr(Reference, ':') - 3),
+	'Infected_Eye',
 	substr(substr(Reference, instr(Reference, 'e ') + 2), 1, instr(substr(Reference, instr(Reference, 'e ') + 2), ':') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
 	AnalyzedVerse,
 	NULL,
 	Notes
-FROM 'Infected_Eye'
+FROM Infected_Eye
 UNION ALL
 SELECT
 	'Community Development Texts',
-	substr(Reference, 1, instr(Reference, ':') - 3),
+	'Kandes_Story',
 	substr(substr(Reference, instr(Reference, 'y ') + 2), 1, instr(substr(Reference, instr(Reference, 'y ') + 2), ':') - 1),
 	substr(Reference, instr(Reference, ':') + 1),
 	Verse,
 	AnalyzedVerse,
 	NULL,
 	Notes
-FROM 'Kandes_Story';
+FROM Kandes_Story;
 
 -- now individual book tables are no longer needed
 -- SELECT '======= removing individual book tables =======';
