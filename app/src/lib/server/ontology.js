@@ -19,7 +19,7 @@ export const get_concepts = db => async filter => {
 	`
 
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-	const {results} = await db.prepare(sql).bind(filter).all()
+	const {results} = await db.prepare(sql).bind(normalize_wildcards(filter)).all()
 
 	return normalize(results)
 }
@@ -51,4 +51,13 @@ export async function get_version(db) {
 	// prettier-ignore
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
 	return await db.prepare(sql).first('Version') || ''
+}
+
+/**
+ *
+ * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
+ * @returns {string} SQL-ready string, i.e., `%` for wildcards
+ */
+function normalize_wildcards(possible_wildard) {
+	return possible_wildard.replace(/[*#]/g, '%')
 }
