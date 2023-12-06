@@ -33,7 +33,8 @@ export async function handle({event, resolve}) {
 	function handle_cors() {
 		const origin = event.request.headers.get('Origin')
 
-		if (origin?.match(/tbta.bible/)) {
+		const FROM_TBTA_BIBLE_OPTIONAL_PORT = /\.tbta\.bible(:\d+)?$/
+		if (origin?.match(FROM_TBTA_BIBLE_OPTIONAL_PORT)) {
 			response.headers.set('Access-Control-Allow-Origin', origin)
 		}
 	}
