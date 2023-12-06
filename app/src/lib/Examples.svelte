@@ -1,7 +1,9 @@
 <script>
+	import Icon from "@iconify/svelte"
+	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
+
 	/** @type {Concept['exhaustive_examples']} */
 	export let examples
-
 
 	$: transformed_examples = examples.reduce(transform, {})
 
@@ -39,7 +41,6 @@
 	}
 	let selected_source = ''
 
-
 	$: books = Object.keys(transformed_examples[selected_source] || [])
 	/** @param {string} book */
 	function verse_count(book) {
@@ -60,9 +61,40 @@
 	function book_changed() {
 			selected_verse_json_encoded = ''
 	}
+
+	/**
+	 * @typedef {Object} SourceData
+	 * @property {string} type
+	 * @property {string} id_primary
+	 * @property {string} id_secondary
+	 * @property {string} id_tertiary
+	 * @property {string} phase_1_encoding
+	 * @property {string} phase_2_encoding
+	 * @property {string} comments
+	 * @property {string} notes
+	 */
+	/**
+	 * @param {Reference} reference
+	 *
+	 * @returns {Promise<SourceData>}
+	 */
+	async function get_source_data(reference) {
+		const response = await fetch(get_sources_url(reference))
+
+		return await response.json()
+	}
+
+	/**
+	 * @param {Reference} reference
+	 *
+	 * @returns {string} fully-qualified URL to the sources API
+	 */
+	function get_sources_url({source, book, chapter, verse}) {
+		return `${PUBLIC_SOURCES_API_HOST}/${source}/${book}/${chapter}/${verse}`
+	}
 </script>
 
-<article class="bg-base-200 p-4 flex flex-col gap-4">
+<article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
 	<form class="flex gap-4">
 		<!-- https://daisyui.com/components/select -->
 		<select bind:value={selected_source} class="select">
@@ -89,18 +121,31 @@
 
 	{#if selected_verse_json_encoded}
 		{@const [key, unknown_encoding] = JSON.parse(selected_verse_json_encoded)}
+		{@const [selected_chapter, selected_verse] = key.split(':')}
+		{@const selected_reference = {source: selected_source, book: selected_book, chapter: selected_chapter, verse: selected_verse}}
 
-		<blockquote>
-			TBD: full verse once integrated with the Bible database
+		{#await get_source_data(selected_reference)}
+			loading... <!-- TODO: add a spinner? -->
+		{:then source}
+			<h4 class="flex justify-between">
+				Phase 1 encoding
 
-			<cite class="block w-fit text-start text-xs">
-				({selected_book} {key})
-			</cite>
-		</blockquote>
+				<a href={get_sources_url(selected_reference)} target="_blank" class="link link-accent link-hover text-sm flex items-end">
+					all source details
+					<Icon icon="fe:link-external" class="h-6 w-6" />
+				</a>
+			</h4>
+			<p>
+				{source.phase_1_encoding}
+			</p>
 
+			<!-- TODO: need errorhandling here, i.e., :catch? -->
+		{/await}
+
+		<!-- <h4>unknown encoding</h4>
 		<span class="indicator font-mono">
 			{unknown_encoding}
 			<span data-tip="TBD: still needs to be decoded" class="badge indicator-item badge-warning badge-xs tooltip tooltip-top" />
-		</span>
+		</span> -->
 	{/if}
 </article>

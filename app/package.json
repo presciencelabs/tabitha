@@ -14,7 +14,7 @@
 		"build": "vite build",
 		"_build:watch": "vite build -w",
 		"_wrangler:dev": "wrangler pages dev .svelte-kit/cloudflare",
-		"pages:dev": "run-p -l _build:watch _wrangler:dev",
+		"pages:dev": "PUBLIC_SOURCES_API_HOST=http://localhost:8789 run-p -l _build:watch _wrangler:dev",
 		"pages:list:deployments": "wrangler pages deployment list",
 		"clean": "rimraf vite.config.js.timestamp* .svelte-kit test-results",
 		"clean:powerwash": "pnpm clean && rimraf node_modules && pnpm install"
