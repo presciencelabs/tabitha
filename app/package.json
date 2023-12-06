@@ -13,7 +13,7 @@
 		"prepare": "svelte-kit sync",
 		"build": "vite build",
 		"_build:watch": "vite build -w",
-		"_wrangler:dev": "wrangler pages dev .svelte-kit/cloudflare",
+		"_wrangler:dev": "wrangler pages dev .svelte-kit/cloudflare --port 8789",
 		"wrangler:list:db": "wrangler d1 list",
 		"wrangler:query:db": "wrangler d1 execute Sources.2023-12-04 --local --command=\"select distinct id_primary from Sources where type = 'Bible'\"",
 		"pages:dev": "run-p -l _build:watch _wrangler:dev",
