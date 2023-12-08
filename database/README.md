@@ -51,13 +51,15 @@ https://developers.cloudflare.com/workers/wrangler
 
 `wrangler d1 create <DB_NAME>`
 
+> This always creates the database remotely and locally, it is empty though.
+
 ### Interacting with the database
 
-> `--local` only operates on the local copy, removing that option will interact with the deployed database
+> `--local` only operates on the local copy, i.e., the one in the closest .wrangler folder, removing that option will interact with the deployed database
 
 `wrangler d1 execute <DB_NAME> --local --file=./<DB_NAME>.tabitha.sqlite.sql`
 
-`wrangler d1 execute <DB_NAME> --local --command="select part_of_speech, count(*) as count from Concepts group by part_of_speech order by count"`
+`wrangler d1 execute <DB_NAME> --local --command="select part_of_speech, count(*) as count from Concepts group by part_of_speech order by count; select * from Version;"`
 
 ### Deployment
 
@@ -77,7 +79,7 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 1. dump migrated database, e.g., `sqlite3 Ontology.2023-10-20.tabitha.sqlite .dump > Ontology.2023-10-20.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
 1.	create new database, e.g., `wrangler d1 create Ontology.2023-10-20`  (need to update local `wrangler.toml`'s with new info)
-1. load data locally only, e.g., `wrangler d1 execute Ontology.2023-10-20 --local --file=./Ontology.2023-10-20.tabitha.sqlite.sql`
+1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.2023-10-20 --local --file=./Ontology.2023-10-20.tabitha.sqlite.sql`
 1. test app with new database locally
 1. deploy to remote, e.g., `wrangler d1 execute Ontology.2023-10-20 --file=./Ontology.2023-10-20.tabitha.sqlite.sql`
 1. need to run another deployment either via `push` or "retry deployment" in Cloudflare dashboard

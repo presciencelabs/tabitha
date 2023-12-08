@@ -15,7 +15,7 @@ export const get_concepts = db => async filter => {
 	const sql = `
 		SELECT *
 		FROM Concepts
-		WHERE roots like ?
+		WHERE stem like ?
 	`
 
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
@@ -44,13 +44,13 @@ function normalize(matches_from_db) {
  */
 export async function get_version(db) {
 	const sql = `
-		SELECT Version
-		FROM OntologyVersion
+		SELECT version
+		FROM Version
 	`
 
 	// prettier-ignore
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
-	return await db.prepare(sql).first('Version') || ''
+	return await db.prepare(sql).first('version') || ''
 }
 
 /**

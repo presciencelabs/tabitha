@@ -1,20 +1,20 @@
 type DbRowConcept = {
 	id: string
-	brief_gloss: string
-	categories: string
-	examples: string
-	exhaustive_examples: string
-	gloss: string
-	level: string
-	occurrences: string
+	stem: string
 	part_of_speech: string
-	roots: string
+	level: string
+	categorization: string
+	examples: string
+	curated_examples: string
+	gloss: string
+	brief_gloss: string
+	occurrences: string
 }
 
 interface TransformedConcept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]
-	exhaustive_examples: ExhaustiveExample[]
+	curated_examples: CuratedExample[]
 	occurrences: number
 }
 
@@ -24,13 +24,13 @@ interface AugmentedConcept extends TransformedConcept {
 
 interface Concept extends AugmentedConcept {}
 
-type Example = {
+type CuratedExample = {
 	reference: Reference
 	semantic_representation: SemanticRepresentation
 	sentence: string
 }
 
-type ExhaustiveExample = {
+type Example = {
 	reference: Reference
 	unknown_encoding: string
 }

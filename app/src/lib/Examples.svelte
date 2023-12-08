@@ -2,7 +2,7 @@
 	import Icon from "@iconify/svelte"
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 
-	/** @type {Concept['exhaustive_examples']} */
+	/** @type {Concept['examples']} */
 	export let examples
 
 	$: transformed_examples = examples.reduce(transform, {})
@@ -22,7 +22,7 @@
 	 *		}
 	 *
 	 * @param {Record<string, Record<string, Record<string, string>>>} transformed_examples
-	 * @param {Concept['exhaustive_examples'][0]} example
+	 * @param {Concept['examples'][0]} example
 	 */
 	function transform(transformed_examples, {reference, unknown_encoding}) {
 		const {source, book, chapter, verse} = reference

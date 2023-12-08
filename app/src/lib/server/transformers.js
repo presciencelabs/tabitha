@@ -11,18 +11,18 @@ export function transform(match_from_db) {
 
 		categories: transform_categorization(match_from_db),
 		examples: transform_examples(match_from_db.examples),
-		exhaustive_examples: transform_exhaustive_examples(match_from_db.exhaustive_examples),
+		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		occurrences: transform_occurrences(match_from_db.occurrences),
 	}
 }
 
 /**
- * @param {string} examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
+ * @param {string} curated_examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
  *
- * @returns {Example[]}
+ * @returns {CuratedExample[]}
  */
-function transform_examples(examples_from_db) {
-	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
+function transform_curated_examples(curated_examples_from_db) {
+	const encoded_examples = curated_examples_from_db.split('\n').filter(field => !!field)
 	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
 	// 4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothes are more beautiful than Solomon's clothes.
@@ -31,7 +31,7 @@ function transform_examples(examples_from_db) {
 	/**
 	 * @param {string} encoded_example 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	 *
-	 * @returns {Example}
+	 * @returns {CuratedExample}
 	 */
 	function decode(encoded_example) {
 		const encoded_reference = encoded_example.split('|')[0] // '4,2,2,2'
@@ -79,22 +79,22 @@ function transform_examples(examples_from_db) {
 }
 
 /**
- * @param {string} exhaustive_examples_from_db various encoding formats, here's one example '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
+ * @param {string} examples_from_db various encoding formats, here's one example '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
  *
- * @returns {ExhaustiveExample[]}
+ * @returns {Example[]}
  */
-function transform_exhaustive_examples(exhaustive_examples_from_db) {
-	const encoded_exhaustive_examples = exhaustive_examples_from_db.split('\n').filter(field => !!field)
+function transform_examples(examples_from_db) {
+	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
 
-	return encoded_exhaustive_examples.map(decode)
+	return encoded_examples.map(decode)
 
 	/**
-	 * @param {string} encoded_exhaustive_example 4|41|15|36|N|||wineA|| or 4|19|23|6|followA|A or 4|1|20|13|p|A|SarahA|AbrahamA|||||||
+	 * @param {string} encoded_example 4|41|15|36|N|||wineA|| or 4|19|23|6|followA|A or 4|1|20|13|p|A|SarahA|AbrahamA|||||||
 	 *
-	 * @returns {ExhaustiveExample}
+	 * @returns {Example}
 	 * */
-	function decode(encoded_exhaustive_example) {
-		const [source, book, chapter, verse, ...rest] = encoded_exhaustive_example.split('|')
+	function decode(encoded_example) {
+		const [source, book, chapter, verse, ...rest] = encoded_example.split('|')
 
 		return {
 			reference: decode_reference([source, book, chapter, verse].join(',')),
@@ -129,10 +129,10 @@ const categorization_decoders = {
  *
  * @returns {string[]}
  */
-function transform_categorization({part_of_speech, categories}) {
+function transform_categorization({part_of_speech, categorization}) {
 	const decoder = categorization_decoders[part_of_speech]
 
-	return decoder ? decoder(categories) : [...categories]
+	return decoder ? decoder(categorization) : [...categorization]
 }
 
 /**

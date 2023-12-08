@@ -19,9 +19,9 @@ function add_senses(concepts) {
 	const sense_tracker = new Map()
 
 	for (const concept of concepts.sort(by_id)) {
-		const {part_of_speech, roots} = concept
+		const {part_of_speech, stem} = concept
 
-		const key = `${part_of_speech}:${roots}`
+		const key = `${part_of_speech}:${stem}`
 
 		if (!sense_tracker.has(key)) {
 			sense_tracker.set(key, 'A')

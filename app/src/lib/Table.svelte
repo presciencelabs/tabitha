@@ -32,7 +32,7 @@
 		{#each concepts as concept (concept.id)}
 			<tr class="hover hover:cursor-pointer" on:click={() => open(concept)}>
 				<td>
-					{concept.roots}
+					{concept.stem}
 				</td>
 				<td>
 					{concept.sense}
