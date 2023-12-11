@@ -95,29 +95,33 @@
 </script>
 
 <article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
-	<form class="flex gap-4">
-		<!-- https://daisyui.com/components/select -->
-		<select bind:value={selected_source} class="select">
-			<option value="" disabled>Select a source</option>
-			{#each sources.toSorted() as source}
-				<option value={source}>{source} ({book_count(source)})</option>
-			{/each}
-		</select>
+	{#if sources.length}
+		<form class="flex gap-4">
+			<!-- https://daisyui.com/components/select -->
+			<select bind:value={selected_source} class="select">
+				<option value="" disabled>Select a source</option>
+				{#each sources.toSorted() as source}
+					<option value={source}>{source} ({book_count(source)})</option>
+				{/each}
+			</select>
 
-		<select bind:value={selected_book} disabled={! selected_source} class="select">
-			<option value="" disabled>Select a book</option>
-			{#each books as book}
-				<option value={book}>{book} ({verse_count(book)})</option>
-			{/each}
-		</select>
+			<select bind:value={selected_book} disabled={! selected_source} class="select">
+				<option value="" disabled>Select a book</option>
+				{#each books as book}
+					<option value={book}>{book} ({verse_count(book)})</option>
+				{/each}
+			</select>
 
-		<select bind:value={selected_verse_json_encoded} disabled={! selected_book} class="select">
-			<option value="" disabled>Select a reference</option>
-			{#each Object.entries(verses) as verse}
-				<option value={JSON.stringify(verse)}>{verse[0]} {verse[1]}</option>
-			{/each}
-		</select>
-	</form>
+			<select bind:value={selected_verse_json_encoded} disabled={! selected_book} class="select">
+				<option value="" disabled>Select a reference</option>
+				{#each Object.entries(verses) as verse}
+					<option value={JSON.stringify(verse)}>{verse[0]} {verse[1]}</option>
+				{/each}
+			</select>
+		</form>
+	{:else}
+		None recorded at this time.
+	{/if}
 
 	{#if selected_verse_json_encoded}
 		{@const [key, unknown_encoding] = JSON.parse(selected_verse_json_encoded)}
