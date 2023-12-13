@@ -1,16 +1,12 @@
 <script>
 	import Icon from '@iconify/svelte'
+	import {tokenize} from '$lib/checks'
 
 	let entered_text = ''
-	let errors = false
 
-	$: success = entered_text && !errors
-	$: tokens = entered_text && entered_text.split(' ').filter(not_empty)
-
-
-	function not_empty(text = '') {
-		return text.trim().length > 0
-	}
+	$: checked_tokens = tokenize(entered_text)
+	$: has_error = checked_tokens.some(token => !!token.message)
+	$: success = checked_tokens.length && !has_error
 </script>
 
 <form class="grid justify-items-center">
@@ -18,21 +14,28 @@
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
 </form>
 
-<div class="divider my-12" class:divider-success={success} class:divider-error={errors} >
+<div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
 	{#if entered_text}
-		{#if success}
-			<Icon icon="mdi:check-outline" class="w-24 h-24 text-success" />
-		{:else}
-			<Icon icon="mdi:close-outline" class="w-24 h-24 text-error" />
-		{/if}
+		{@const icon = success ? 'check' : 'close'}
+		{@const color = success ? 'text-success' : 'text-error'}
+
+		<Icon icon={`mdi:${icon}-circle`} class="h-24 w-24 {color}" />
 	{/if}
 </div>
 
-<section class="flex gap-4 flex-wrap p-8">
-	{#each tokens as token}
-		<span class="badge badge-outline badge-lg p-6">
-			{token}
-		</span>
+<section class="prose flex max-w-none flex-wrap gap-4 p-8">
+	{#each checked_tokens as checked_token}
+		{@const {message, token} = checked_token}
+
+		<div class:tooltip={message} class:tooltip-error={message} data-tip={message}>
+			<span class:badge-error={message} class="badge badge-outline badge-lg gap-2 py-6">
+				{#if message}
+					<Icon icon="mdi:close-circle" class="h-8 w-8" />
+				{/if}
+
+				{token}
+			</span>
+		</div>
 	{/each}
 </section>
 
