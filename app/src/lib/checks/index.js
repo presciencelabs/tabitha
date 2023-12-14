@@ -3,7 +3,7 @@
  *
  * @returns {CheckedToken[]}
  */
-export function tokenize(sentence) {
+export function check(sentence) {
 	const tokens = sentence.split(' ').filter(not_empty)
 
 	return tokens.map(convert_to_checked_token)
@@ -15,8 +15,9 @@ export function tokenize(sentence) {
 	function convert_to_checked_token(token) {
 		// prettier-ignore
 		const checks = [
+			check_bracket_syntax,
 			check_for_unbalanced_parentheses,
-			check_for_pronouns
+			check_for_pronouns,
 		]
 
 		const messages = checks.map(check => check(token)).filter(not_empty)
@@ -77,9 +78,8 @@ function check_for_pronouns(token) {
  *
  * @returns {string} error message or ''
  *
- * scenarios:
- * 	valid: good (good) (good)(good) (good(good))
- * 	invalid: (bad )bad( bad) (bad(bad) bad)
+ *	valid: good (good) (good)(good) (good(good))
+ *	invalid: (bad )bad( bad) (bad(bad) bad)
  */
 function check_for_unbalanced_parentheses(token) {
 	const open_count = token.match(/\(/g)?.length || 0
@@ -91,6 +91,26 @@ function check_for_unbalanced_parentheses(token) {
 		return 'Missing an opening parenthesis.'
 	} else if (token.indexOf(')') < token.indexOf('(')) {
 		return 'Closing parenthesis appears before the opening parenthesis.'
+	}
+
+	return ''
+}
+
+/**
+ * opening brackets must have a space before them
+ *
+ * @param {string} token
+ *
+ * @returns {string} error message or ''
+ *
+ * valid: [ [good
+ * invalid: [[bad]] bad[ [bad[good]]
+ */
+function check_bracket_syntax(token) {
+	if (token.includes('[')) {
+		const NON_WHITESPACE_BEFORE_BRACKET = /\S\[/g
+
+		return  NON_WHITESPACE_BEFORE_BRACKET.test(token) ? 'Opening brackets must have a space before them.' : ''
 	}
 
 	return ''

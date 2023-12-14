@@ -1,10 +1,10 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {tokenize} from '$lib/checks'
+	import {check} from '$lib/checks'
 
 	let entered_text = ''
 
-	$: checked_tokens = tokenize(entered_text)
+	$: checked_tokens = check(entered_text)
 	$: has_error = checked_tokens.some(token => !!token.messages.length)
 	$: success = checked_tokens.length && !has_error
 </script>
