@@ -1,4 +1,4 @@
 type CheckedToken = {
 	token: string
-	message: string
+	messages: string[]
 }

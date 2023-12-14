@@ -13,11 +13,17 @@ export function tokenize(sentence) {
 	 * @returns {CheckedToken}
 	 */
 	function convert_to_checked_token(token) {
-		const message = check_for_pronouns(token)
+		// prettier-ignore
+		const checks = [
+			check_for_unbalanced_parentheses,
+			check_for_pronouns
+		]
+
+		const messages = checks.map(check => check(token)).filter(not_empty)
 
 		return {
 			token,
-			message,
+			messages,
 		}
 	}
 }
@@ -43,10 +49,48 @@ pronoun_rules.set(THIRD_PERSON, 'Third person pronouns should be replaced with t
  * @returns {string} error message or ''
  */
 function check_for_pronouns(token) {
+	const normalized_token = normalize(token)
+
 	for (const [pronouns, message] of pronoun_rules) {
-		if (pronouns.includes(token.toLowerCase())) {
+		if (pronouns.includes(normalized_token)) {
 			return message
 		}
+	}
+
+	return ''
+
+	/** @param {string} raw_token */
+	function normalize(raw_token) {
+		// prettier-ignore
+		const normalized = raw_token
+									.toLowerCase() // catches YOU
+									.trim() 			// catches you\n
+
+		const match = normalized.match(/\((\w+)\)/) // catches (you)
+
+		return match ? match[1] : normalized
+	}
+}
+
+/**
+ * @param {string} token
+ *
+ * @returns {string} error message or ''
+ *
+ * scenarios:
+ * 	valid: good (good) (good)(good) (good(good))
+ * 	invalid: (bad )bad( bad) (bad(bad) bad)
+ */
+function check_for_unbalanced_parentheses(token) {
+	const open_count = token.match(/\(/g)?.length || 0
+	const close_count = token.match(/\)/g)?.length || 0
+
+	if (open_count > close_count) {
+		return 'Missing a closing parenthesis.'
+	} else if (open_count < close_count) {
+		return 'Missing an opening parenthesis.'
+	} else if (token.indexOf(')') < token.indexOf('(')) {
+		return 'Closing parenthesis appears before the opening parenthesis.'
 	}
 
 	return ''

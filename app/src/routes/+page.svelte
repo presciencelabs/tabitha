@@ -5,7 +5,7 @@
 	let entered_text = ''
 
 	$: checked_tokens = tokenize(entered_text)
-	$: has_error = checked_tokens.some(token => !!token.message)
+	$: has_error = checked_tokens.some(token => !!token.messages.length)
 	$: success = checked_tokens.length && !has_error
 </script>
 
@@ -25,11 +25,12 @@
 
 <section class="prose flex max-w-none flex-wrap gap-4 p-8">
 	{#each checked_tokens as checked_token}
-		{@const {message, token} = checked_token}
+		{@const {messages, token} = checked_token}
+		{@const has_messages = !!messages.length}
 
-		<div class:tooltip={message} class:tooltip-error={message} data-tip={message}>
-			<span class:badge-error={message} class="badge badge-outline badge-lg gap-2 py-6">
-				{#if message}
+		<div class:tooltip={has_messages} class:tooltip-error={has_messages} data-tip={messages.join('<br>')}>
+			<span class:badge-error={has_messages} class="badge badge-outline badge-lg gap-2 py-6">
+				{#if has_messages}
 					<Icon icon="mdi:close-circle" class="h-8 w-8" />
 				{/if}
 
