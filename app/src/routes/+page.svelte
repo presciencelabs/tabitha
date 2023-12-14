@@ -28,7 +28,7 @@
 		{@const {messages, token} = checked_token}
 		{@const has_messages = !!messages.length}
 
-		<div class:tooltip={has_messages} class:tooltip-error={has_messages} data-tip={messages.join('<br>')}>
+		<div class:tooltip={has_messages} class:tooltip-error={has_messages} data-tip={messages.join(' ⎯ ')}>
 			<span class:badge-error={has_messages} class="badge badge-outline badge-lg gap-2 py-6">
 				{#if has_messages}
 					<Icon icon="mdi:close-circle" class="h-8 w-8" />
