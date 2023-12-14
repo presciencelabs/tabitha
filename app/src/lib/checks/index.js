@@ -6,7 +6,9 @@
 export function check(sentence) {
 	const tokens = sentence.split(' ').filter(not_empty)
 
-	return tokens.map(convert_to_checked_token)
+	const checked_tokens = tokens.map(convert_to_checked_token)
+
+	return check_for_unbalanced_brackets(checked_tokens)
 
 	/**
 	 * @param {string} token
@@ -104,14 +106,64 @@ function check_for_unbalanced_parentheses(token) {
  * @returns {string} error message or ''
  *
  * valid: [ [good
- * invalid: [[bad]] bad[ [bad[good]]
+ * invalid: [[bad]] bad[ [bad[bad]]
  */
 function check_bracket_syntax(token) {
-	if (token.includes('[')) {
-		const NON_WHITESPACE_BEFORE_BRACKET = /\S\[/g
+	const NON_WHITESPACE_BEFORE_BRACKET = /\S\[/g
 
-		return  NON_WHITESPACE_BEFORE_BRACKET.test(token) ? 'Opening brackets must have a space before them.' : ''
+	// prettier-ignore
+	return token.includes('[') && NON_WHITESPACE_BEFORE_BRACKET.test(token)
+			? 'Opening brackets must have a space before them.'
+			: ''
+}
+
+/**
+ * @param {CheckedToken[]} checked_tokens
+ *
+ * @returns {CheckedToken[]}
+ */
+function check_for_unbalanced_brackets(checked_tokens) {
+	/**
+	 * @typedef CountTracker
+	 * @property {number} open
+	 * @property {number} close
+	 */
+	/** @type {CountTracker} */
+	const count_tracker = checked_tokens.reduce(sum, {open: 0, close: 0})
+
+	if (count_tracker.open === count_tracker.close) {
+		return checked_tokens
 	}
 
-	return ''
+	return add_missing_token(checked_tokens)(count_tracker)
+
+	/**
+	 * @param {CountTracker} tracker
+	 * @param {CheckedToken} param1
+	 *
+	 * @returns {CountTracker}
+	 */
+	function sum(tracker, {token}) {
+		const open_count = token.match(/\[/g)?.length ?? 0
+		const close_count = token.match(/\]/g)?.length ?? 0
+
+		tracker.open += open_count
+		tracker.close += close_count
+
+		return tracker
+	}
+
+	/**
+	 * @param {CheckedToken[]} checked_tokens
+	 *
+	 * @returns {(tracker: CountTracker) => CheckedToken[]}
+	 */
+	function add_missing_token(checked_tokens) {
+		const open_token = {token: '[', messages: ['Missing a closing bracket.']}
+		const close_token = {token: ']', messages: ['Missing an opening bracket.']}
+
+		// prettier-ignore
+		return ({open, close}) => open < close ? [open_token, ...checked_tokens]
+															: [...checked_tokens, close_token]
+	}
 }
