@@ -4,7 +4,8 @@
  * @returns {CheckedToken[]}
  */
 export function check(sentence) {
-	const tokens = sentence.split(' ').filter(not_empty)
+	const ANY_WHITESPACE = /\s+/
+	const tokens = sentence.split(ANY_WHITESPACE).filter(not_empty)
 
 	const checked_tokens = tokens.map(convert_to_checked_token)
 
@@ -20,6 +21,7 @@ export function check(sentence) {
 			check_bracket_syntax,
 			check_for_unbalanced_parentheses,
 			check_for_pronouns,
+			check_underscore_syntax,
 		]
 
 		const messages = checks.map(check => check(token)).filter(not_empty)
@@ -89,9 +91,13 @@ function check_for_unbalanced_parentheses(token) {
 
 	if (open_count > close_count) {
 		return 'Missing a closing parenthesis.'
-	} else if (open_count < close_count) {
+	}
+
+	if (open_count < close_count) {
 		return 'Missing an opening parenthesis.'
-	} else if (token.indexOf(')') < token.indexOf('(')) {
+	}
+
+	if (token.indexOf(')') < token.indexOf('(')) {
 		return 'Closing parenthesis appears before the opening parenthesis.'
 	}
 
@@ -166,4 +172,29 @@ function check_for_unbalanced_brackets(checked_tokens) {
 		return ({open, close}) => open < close ? [open_token, ...checked_tokens]
 															: [...checked_tokens, close_token]
 	}
+}
+
+/**
+ * underscores must have a space before and after the word connected to them, e.g., ⎕_implicit⎕
+ *
+ * @param {string} token
+ *
+ * @returns {string} error message or ''
+ *
+ * valid: _implicit _paragraph _explainName
+ * invalid: x_implicit _implicit. _implicit_ __implicit _implicit, _implicit; _implicit– _implicit-
+ * questionable: _implicitX (if this is invalid, that means a list of finite "specialized notations" will be required)
+ */
+function check_underscore_syntax(token) {
+	const NON_WHITESPACE_BEFORE_UNDERSCORE = /\S_/
+	if (NON_WHITESPACE_BEFORE_UNDERSCORE.test(token)) {
+		return 'Specialized notation can only have a space before the underscore, e.g., ⎕_implicit'
+	}
+
+	const NON_ALPHANUMERIC_AT_END = /_\w+[\W_]$/
+	if (NON_ALPHANUMERIC_AT_END.test(token)) {
+		return 'Specialized notation must have a space after the underscore, e.g., _implicit⎕'
+	}
+
+	return ''
 }
