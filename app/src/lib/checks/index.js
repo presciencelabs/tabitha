@@ -7,9 +7,11 @@ export function check(sentence) {
 	const ANY_WHITESPACE = /\s+/
 	const tokens = sentence.split(ANY_WHITESPACE).filter(not_empty)
 
-	const checked_tokens = tokens.map(convert_to_checked_token)
+	let checked_tokens = tokens.map(convert_to_checked_token)
 
-	return check_for_unbalanced_brackets(checked_tokens)
+	checked_tokens = check_for_unbalanced_brackets(checked_tokens)
+
+	return isolate_punctuation(checked_tokens)
 
 	/**
 	 * @param {string} token
@@ -197,4 +199,96 @@ function check_underscore_syntax(token) {
 	}
 
 	return ''
+}
+
+/**
+ * @param {CheckedToken[]} checked_tokens
+ *
+ * @returns {CheckedToken[]}
+ */
+function isolate_punctuation(checked_tokens) {
+	/** @type {CheckedToken[]} */
+	const isolated_from_front_of_token = checked_tokens.reduce(parse_front_of_token, [])
+
+	/** @type {CheckedToken[]} */
+	const isolated = isolated_from_front_of_token.reduce(parse_back_of_token, [])
+
+	return isolated
+
+	/**
+	 * @param {CheckedToken[]} augmented_tokens
+	 * @param {CheckedToken} next_token
+	 *
+	 * @returns {CheckedToken[]}
+	 */
+	function parse_front_of_token(augmented_tokens, {token, messages}) {
+		// at this time, '[' is the only "opening" punctuation to be parsed
+
+		// early exit if the token isn't relevant, e.g., 'some_token'
+		if (token[0] !== '[') {
+			augmented_tokens.push({token, messages})
+
+			return augmented_tokens
+		}
+
+		//
+		// split '[some_token' into two tokens => '[' 'some_token'
+		//
+
+		// '['
+		augmented_tokens.push({token: '[', messages: []})
+
+		// 'some_token' (or possibly empty, e.g., if the incoming token was just '[')
+		const bare_token = token.slice(1)
+		!!bare_token && augmented_tokens.push({token: bare_token, messages})
+
+		return augmented_tokens
+	}
+
+	/**
+	 * @param {CheckedToken[]} augmented_tokens
+	 * @param {CheckedToken} next_token
+	 *
+	 * @returns {CheckedToken[]}
+	 */
+	function parse_back_of_token(augmented_tokens, {token, messages}) {
+		// at this time, ']', ',', '.' are the only "closing" punctuations to be parsed, will need to tweak RE if others need to be separated
+		//
+		// [\],.]+: Matches one or more of these ',', ']', or '.'
+		// [^\],.]+: Matches one or more characters that are NOT ',', ']', or '.'
+		const PUNCT_OF_INTEREST = /^([^\],.]+)+([\],.]+)$/
+
+		// match these patterns:
+		// 	token]
+		// 	token]]
+		// 	token,
+		// 	token.
+		// 	token]]].
+		// 	teaching/preaching]].
+		//
+		// not these:
+		//		token
+		//		(token)
+		const matches = token.match(PUNCT_OF_INTEREST)
+
+		// early exit if the token isn't relevant, e.g., 'some_token'
+		if (matches === null) {
+			augmented_tokens.push({token, messages})
+
+			return augmented_tokens
+		}
+
+		//
+		// split 'some_token]', 'some_token].', 'some_token]],', ...(many permutations) into multiple tokens
+		//
+
+		// 'some_token'
+		const bare_token = matches[1]
+		augmented_tokens.push({token: bare_token, messages})
+
+		// split ']', '].', ']],', ...(many permutations) into multiple tokens
+		matches[2].split('').forEach(punct => augmented_tokens.push({token: punct, messages: []}))
+
+		return augmented_tokens
+	}
 }

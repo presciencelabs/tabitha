@@ -7,6 +7,11 @@
 	$: checked_tokens = check(entered_text)
 	$: has_error = checked_tokens.some(token => !!token.messages.length)
 	$: success = checked_tokens.length && !has_error
+
+	/** @param {string} token */
+	function is_bracket(token) {
+		return ['[', ']'].includes(token)
+	}
 </script>
 
 <form class="grid justify-items-center">
@@ -23,18 +28,20 @@
 	{/if}
 </div>
 
-<section class="prose flex max-w-none flex-wrap gap-4 p-8">
+<section class="prose max-w-none flex items-center flex-wrap gap-4 p-8">
 	{#each checked_tokens as checked_token}
 		{@const {messages, token} = checked_token}
 		{@const has_messages = !!messages.length}
 
 		<div class:tooltip={has_messages} class:tooltip-error={has_messages} data-tip={messages.join(' ⎯ ')}>
-			<span class:badge-error={has_messages} class="badge badge-outline badge-lg gap-2 py-6">
+			<span class:badge-error={has_messages} class:bracket-container={is_bracket(token)} class="badge badge-outline badge-lg gap-2 py-6">
 				{#if has_messages}
-					<Icon icon="mdi:close-circle" class="h-8 w-8" />
+					<Icon icon="mdi:close-circle" class="h-7 w-7" />
 				{/if}
 
-				{token}
+				<span class:bracket={is_bracket(token)} class="text-lg font-bold">
+					{token}
+				</span>
 			</span>
 		</div>
 	{/each}
@@ -45,5 +52,13 @@
 	.divider::before,
 	.divider::after {
 		@apply h-2;
+	}
+
+	.bracket-container {
+		@apply py-9 mx-4;
+	}
+	.bracket {
+		@apply text-3xl font-thin;
+		font-family: math;
 	}
 </style>
