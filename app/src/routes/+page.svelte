@@ -7,11 +7,6 @@
 	$: checked_tokens = check(entered_text)
 	$: has_error = checked_tokens.some(token => !!token.messages.length)
 	$: success = checked_tokens.length && !has_error
-
-	/** @param {string} token */
-	function is_bracket(token) {
-		return ['[', ']'].includes(token)
-	}
 </script>
 
 <form class="grid justify-items-center">
@@ -28,18 +23,21 @@
 	{/if}
 </div>
 
-<section class="prose max-w-none flex items-center flex-wrap gap-4 p-8">
+<section class="prose max-w-none flex flex-wrap gap-x-4 gap-y-8">
 	{#each checked_tokens as checked_token}
 		{@const {messages, token} = checked_token}
-		{@const has_messages = !!messages.length}
+		{@const has_errors = !!messages.length}
+		{@const is_punctuation = ['[', ']', '.', ','].includes(token)}
+		{@const is_sp_notaion = token.startsWith('_')}
+		{@const is_word = !is_punctuation && !is_sp_notaion}
 
-		<div class:tooltip={has_messages} class:tooltip-error={has_messages} data-tip={messages.join(' ⎯ ')}>
-			<span class:badge-error={has_messages} class:bracket-container={is_bracket(token)} class="badge badge-outline badge-lg gap-2 py-6">
-				{#if has_messages}
+		<div class:tooltip={has_errors} class:tooltip-error={has_errors} data-tip={messages.join(' ⎯ ')}>
+			<span class:badge-error={has_errors} class:badge-outline={is_word} class="badge badge-lg p-4">
+				{#if has_errors}
 					<Icon icon="mdi:close-circle" class="h-7 w-7" />
 				{/if}
 
-				<span class:bracket={is_bracket(token)} class="text-lg font-bold">
+				<span class:text-5xl={is_punctuation} class:font-thin={is_punctuation} class:font-mono={is_sp_notaion} class:text-lg={is_word} class:tracking-widest={is_word}>
 					{token}
 				</span>
 			</span>
@@ -52,13 +50,5 @@
 	.divider::before,
 	.divider::after {
 		@apply h-2;
-	}
-
-	.bracket-container {
-		@apply py-9 mx-4;
-	}
-	.bracket {
-		@apply text-3xl font-thin;
-		font-family: math;
 	}
 </style>
