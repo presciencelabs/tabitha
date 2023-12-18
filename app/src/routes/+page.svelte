@@ -35,19 +35,16 @@
 		{@const is_word = !is_punctuation && !is_sp_notation}
 
 		<div class:tooltip={has_errors} class:tooltip-error={has_errors} data-tip={messages.join(' ⎯ ')}>
-			<span class:badge-error={has_errors} class:badge-outline={is_word} class="badge badge-lg p-4 text-lg tracking-widest">
+			<span class:badge-error={has_errors} class:badge-outline={is_word}  class:font-mono={is_sp_notation} class="badge badge-lg p-4 text-lg tracking-widest">
 				{#if has_errors}
 					<Icon icon="mdi:close-circle" class="h-6 w-6 me-2" />
 
-					<span class:font-mono={is_sp_notation}>
-						{token}
-					</span>
+					{token}
 				{:else}
-					<span class:text-5xl={is_punctuation} class:font-thin={is_punctuation} class:font-mono={is_sp_notation}>
+					<span class:text-5xl={is_punctuation} class:font-thin={is_punctuation}>
 						{token}
 					</span>
 				{/if}
-
 			</span>
 		</div>
 	{/each}
