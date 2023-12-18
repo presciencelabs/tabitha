@@ -15,11 +15,14 @@
 </form>
 
 <div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
-	{#if entered_text}
-		{@const icon = success ? 'check' : 'close'}
-		{@const color = success ? 'text-success' : 'text-error'}
+	<span class:text-success={success} class:text-error={has_error} class="prose text-2xl">
+		Phase 1 encoding
+	</span>
 
-		<Icon icon={`mdi:${icon}-circle`} class="h-24 w-24 {color}" />
+	{#if success}
+		<Icon icon={`mdi:check-circle`} class="h-16 w-16 text-success" />
+	{:else if has_error}
+		<Icon icon={`mdi:close-circle`} class="h-16 w-16 text-error" />
 	{/if}
 </div>
 
@@ -28,18 +31,23 @@
 		{@const {messages, token} = checked_token}
 		{@const has_errors = !!messages.length}
 		{@const is_punctuation = ['[', ']', '.', ','].includes(token)}
-		{@const is_sp_notaion = token.startsWith('_')}
-		{@const is_word = !is_punctuation && !is_sp_notaion}
+		{@const is_sp_notation = token.startsWith('_')}
+		{@const is_word = !is_punctuation && !is_sp_notation}
 
 		<div class:tooltip={has_errors} class:tooltip-error={has_errors} data-tip={messages.join(' ⎯ ')}>
-			<span class:badge-error={has_errors} class:badge-outline={is_word} class="badge badge-lg p-4">
+			<span class:badge-error={has_errors} class:badge-outline={is_word} class="badge badge-lg p-4 text-lg tracking-widest">
 				{#if has_errors}
-					<Icon icon="mdi:close-circle" class="h-7 w-7" />
+					<Icon icon="mdi:close-circle" class="h-6 w-6 me-2" />
+
+					<span class:font-mono={is_sp_notation}>
+						{token}
+					</span>
+				{:else}
+					<span class:text-5xl={is_punctuation} class:font-thin={is_punctuation} class:font-mono={is_sp_notation}>
+						{token}
+					</span>
 				{/if}
 
-				<span class:text-5xl={is_punctuation} class:font-thin={is_punctuation} class:font-mono={is_sp_notaion} class:text-lg={is_word} class:tracking-widest={is_word}>
-					{token}
-				</span>
 			</span>
 		</div>
 	{/each}
