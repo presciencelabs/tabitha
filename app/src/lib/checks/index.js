@@ -9,9 +9,9 @@ export function check(sentence) {
 
 	let checked_tokens = tokens.map(convert_to_checked_token)
 
-	checked_tokens = check_for_unbalanced_brackets(checked_tokens)
+	checked_tokens = isolate_punctuation(checked_tokens)
 
-	return isolate_punctuation(checked_tokens)
+	return check_for_unbalanced_brackets(checked_tokens)
 
 	/**
 	 * @param {string} token
@@ -152,12 +152,11 @@ function check_for_unbalanced_brackets(checked_tokens) {
 	 * @returns {CountTracker}
 	 */
 	function sum(tracker, {token}) {
-		const open_count = token.match(/\[/g)?.length ?? 0
-		const close_count = token.match(/\]/g)?.length ?? 0
-
-		tracker.open += open_count
-		tracker.close += close_count
-
+		if (token === '[') {
+			tracker.open += 1
+		} else if (token === ']') {
+			tracker.close += 1
+		}
 		return tracker
 	}
 
@@ -167,8 +166,8 @@ function check_for_unbalanced_brackets(checked_tokens) {
 	 * @returns {(tracker: CountTracker) => CheckedToken[]}
 	 */
 	function add_missing_token(checked_tokens) {
-		const open_token = {token: '[', messages: ['Missing a closing bracket.']}
-		const close_token = {token: ']', messages: ['Missing an opening bracket.']}
+		const open_token = {token: '[', messages: ['Missing an opening bracket.']}
+		const close_token = {token: ']', messages: ['Missing a closing bracket.']}
 
 		// prettier-ignore
 		return ({open, close}) => open < close ? [open_token, ...checked_tokens]
