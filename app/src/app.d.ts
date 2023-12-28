@@ -8,12 +8,12 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 
-		// interface Platform {
+		interface Platform {
 			// Cloudflare-specific
-			// env: {
-				// DB_Ontology: D1Database // see wrangler.toml to match this name
-			// }
-		// }
+			env: {
+				DB_Ontology: D1Database // see wrangler.toml to match this name
+			}
+		}
 	}
 }
 

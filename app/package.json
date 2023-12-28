@@ -12,6 +12,12 @@
 		"kit:check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"prepare": "svelte-kit sync",
 		"build": "vite build",
+		"_build:watch": "vite build -w",
+		"_wrangler:dev": "wrangler pages dev .svelte-kit/cloudflare",
+		"pages:dev": "run-p -l _build:watch _wrangler:dev",
+		"test:unit": "vitest run",
+		"test:unit:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"clean": "rimraf vite.config.js.timestamp* .svelte-kit test-results",
 		"clean:powerwash": "pnpm clean && rimraf node_modules && pnpm install"
 	},
@@ -24,9 +30,11 @@
 		"tailwindcss": "^3.3.6"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20231218.0",
 		"@playwright/test": "^1.40.1",
 		"@sveltejs/adapter-cloudflare": "^2.3.3",
 		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
+		"@vitest/coverage-v8": "^1.1.0",
 		"autoprefixer": "^10.4.16",
 		"eslint": "^8.55.0",
 		"eslint-config-prettier": "^9.1.0",
