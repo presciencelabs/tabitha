@@ -1,4 +1,5 @@
 import Selector from './Selector.svelte'
+import {writable} from 'svelte/store'
 
 function initialize_theme() {
 	const saved_theme = localStorage.getItem('theme')
@@ -18,12 +19,17 @@ function set_theme(theme) {
 
 	html.setAttribute('data-theme', theme)
 
+	current_theme.set(theme)
+
 	console.info('theme set:', html.getAttribute('data-theme'))
 }
 
+const current_theme = writable('')
+
 // prettier-ignore
 export {
-	Selector,
+	current_theme,
 	initialize_theme,
+	Selector,
 	set_theme,
 }
