@@ -7,5 +7,5 @@
 		Editor <sup class="relative -top-6 end-12 text-xs text-neutral-500">TaBiThA</sup>
 	</h1>
 
-	<Status --width="80%" />
+	<Status />
 </div>
