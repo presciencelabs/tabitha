@@ -1,11 +1,13 @@
 <script>
-	import {set_theme} from '.'
+	import {current_theme, set_theme} from '.'
 	import themes from './themes'
 
 	/** @type {string} class(es) separated by space */
 	export let colors = ''
 
 	let open = false
+
+	$: other_themes = themes.filter(theme => theme !== $current_theme)
 
 	/** @param {string} theme */
 	function set(theme) {
@@ -16,10 +18,10 @@
 </script>
 
 <details bind:open class={`prose collapse collapse-arrow ${colors}`}>
-	<summary class="collapse-title">Change theme</summary>
+	<summary class="collapse-title">{$current_theme}</summary>
 
 	<ul class="collapse-content mt-0">
-		{#each themes as theme}
+		{#each other_themes as theme}
 			<li class="my-0 list-none pl-0">
 				<!-- taken from daisyUI's theme selector design: https://daisyui.com -->
 				<button on:click={() => set(theme)} class="my-2 w-full overflow-hidden rounded-lg text-left">
