@@ -23,7 +23,7 @@ export function check_syntax(tokens) {
 }
 
 /**
- * Special notation can only have a space before and after, e.g., `⎕_specialNotation⎕`.
+ * Special notation can only have a space before, e.g., `⎕_specialNotation`.
  *
  * @param {Token} token
  * @returns {string} error messages or ''
@@ -31,10 +31,6 @@ export function check_syntax(tokens) {
 function check_special_notation(token) {
 	if (REGEXES.NON_WHITESPACE_BEFORE_UNDERSCORE.test(token)) {
 		return 'Specialized notation should have a space before the underscore, e.g., ⎕_implicit'
-	}
-
-	if (REGEXES.NON_ALPHANUMERIC_AT_END.test(token)) {
-		return 'Specialized notation should have a space at the end, e.g., _implicit⎕'
 	}
 
 	return ''

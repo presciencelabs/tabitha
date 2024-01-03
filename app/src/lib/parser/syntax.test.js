@@ -25,13 +25,7 @@ describe('syntax: special notation', () => {
 		// prettier-ignore
 		test.each([
 			[['x_implicit']],
-			[['_implicit.']],
-			[['_implicit_']],
 			[['__implicit']],
-			[['_implicit,']],
-			[['_implicit;']],
-			[['_implicit–']],
-			[['_implicit-']],
 		])('%s', test_tokens => {
 			/** @type {CheckedToken[]} */
 			const checked_tokens = check_syntax(test_tokens)
