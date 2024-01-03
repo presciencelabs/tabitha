@@ -12,7 +12,7 @@
 //		| 5 (Ff)		| Instrument 					|
 //		| 6 (Gg)		| Beneficiary 					|
 //		| 7 (Hh)		| Patient proposition 		|
-//		| 8 (Ii)		| Participant proposition	|
+//		| 8 (Ii)		| Agent proposition	|
 //
 // Uppercase means required, lowercase means optional and an underscore('_') in any position means not applicable.
 const required = {
@@ -24,7 +24,7 @@ const required = {
 	F: 'Instrument',
 	G: 'Beneficiary',
 	H: 'Patient proposition',
-	I: 'Participant proposition',
+	I: 'Agent proposition',
 }
 
 const optional = Object.entries(required).reduce(lowercase_and_parens, {})
