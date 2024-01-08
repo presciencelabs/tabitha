@@ -17,11 +17,6 @@
 </form>
 
 <div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
-	<!-- prettier-ignore -->
-	<span class:text-success={success} class:text-error={has_error} class="prose text-2xl">
-		Phase 1 encoding
-	</span>
-
 	{#if success}
 		<Icon icon={`mdi:check-circle`} class="h-16 w-16 text-success" />
 	{:else if has_error}
