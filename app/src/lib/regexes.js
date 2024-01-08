@@ -23,10 +23,10 @@ const ANY_WORD_EXCLUDE_OPEN_PAREN = /\b(\w+)\b(?!\()/
 const OPENING_OR_CLOSING_BRACKET = /[[\]]/
 const OPENING_OR_CLOSING_BRACKET_G = /[[\]]/g
 
-const RELEVANT_PUNCTUATION = /[[\],.]+/
+const RELEVANT_PUNCTUATION = /[[\],."]+/
 // [\],.]+: Matches one or more of these ',', ']', or '.'
 // [^\],.]+: Matches one or more characters that are NOT ',', ']', or '.'
-const RELEVANT_CLOSING_PUNCTUATION = /^([^\],.]+)+([\],.]+)$/
+const RELEVANT_CLOSING_PUNCTUATION = /^([^\],."]+)+([\],."]+)$/
 
 export const REGEXES = {
 	ANY_WHITESPACE,

@@ -1,5 +1,6 @@
-import {tokenize_input, tokenize_punctuation} from './tokenize'
-import {describe, expect, test} from 'vitest'
+import { tokenize_input, tokenize_punctuation } from './tokenize';
+import { describe, expect, test } from 'vitest';
+
 
 describe('tokenize_input', () => {
 	test("'' should return an empty array", () => {
@@ -293,5 +294,23 @@ describe('tokenize_punctuation', () => {
 		expect(checked_tokens[1]).toEqual({token: ']', message: ''})
 		expect(checked_tokens[2]).toEqual({token: ']', message: ''})
 		expect(checked_tokens[3]).toEqual({token: '.', message: ''})
+	})
+
+	test('seen]." should be split into four tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: 'seen]."',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(4)
+		expect(checked_tokens[0]).toEqual({token: 'seen', message: ''})
+		expect(checked_tokens[1]).toEqual({token: ']', message: ''})
+		expect(checked_tokens[2]).toEqual({token: '.', message: ''})
+		expect(checked_tokens[3]).toEqual({token: '"', message: ''})
 	})
 })
