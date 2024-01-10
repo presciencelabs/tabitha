@@ -38,8 +38,8 @@ function get_matches(db) {
 		const sql = `
 			SELECT id, part_of_speech, stem, level
 			FROM Concepts
-			WHERE stem = ?
-		`
+			WHERE stem like ?
+		` // using like here to ensure case-insensitivity, e.g., abram should still match Abram
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
 		const {results} = await db.prepare(sql).bind(lookup_word).all()
