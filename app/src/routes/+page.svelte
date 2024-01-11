@@ -3,12 +3,27 @@
 	import {REGEXES} from '$lib'
 	import {check_ontology} from '$lib/lookups'
 	import {parse} from '$lib/parser'
+	import {backtranslate} from '$lib/backtranslator'
 
 	let entered_text = ''
 
 	$: checked_tokens = parse(entered_text)
 	$: has_error = checked_tokens.some(({message}) => !!message)
 	$: success = checked_tokens.length && !has_error
+	$: english_back_translation = backtranslate(entered_text)
+	$: english_back_translation && reset_copied()
+
+	let copied = false
+	async function copy() {
+		// https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
+		await navigator.clipboard.writeText(english_back_translation)
+
+		copied = true
+	}
+
+	function reset_copied() {
+		copied = false
+	}
 </script>
 
 <form class="grid justify-items-center">
@@ -67,6 +82,28 @@
 		{/if}
 	{/each}
 </section>
+
+{#if english_back_translation}
+	<div class="prose divider mb-12 mt-20 max-w-none">
+		<h2>English back translation</h2>
+	</div>
+
+	<section class="prose mx-auto flex flex-col text-lg">
+		<p>
+			{english_back_translation}
+		</p>
+
+		<button on:click={copy} class="btn btn-secondary mt-8 gap-4 self-center">
+			Copy to clipboard
+
+			{#if copied}
+				<Icon icon="mdi:check" class="h-6 w-6" />
+			{:else}
+				<Icon icon="mdi:content-copy" class="h-6 w-6" />
+			{/if}
+		</button>
+	</section>
+{/if}
 
 <style lang="postcss">
 	/* had to override daisyui's sizing so I could make the line bigger */

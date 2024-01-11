@@ -1,6 +1,5 @@
-import { tokenize_input, tokenize_punctuation } from './tokenize';
-import { describe, expect, test } from 'vitest';
-
+import {tokenize_input, tokenize_punctuation} from './tokenize'
+import {describe, expect, test} from 'vitest'
 
 describe('tokenize_input', () => {
 	test("'' should return an empty array", () => {
