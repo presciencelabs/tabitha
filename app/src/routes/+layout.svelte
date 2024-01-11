@@ -14,7 +14,7 @@
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<footer class="prose footer mt-20 max-w-none bg-secondary p-10 text-secondary-content">
+<footer class="prose footer mt-20 max-w-none bg-neutral p-10 text-neutral-content">
 	<nav>
 		<header class="footer-title">Theme</header>
 
