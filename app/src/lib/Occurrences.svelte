@@ -3,6 +3,6 @@
 	export let occurrences
 </script>
 
-<span class="badge badge-success badge-md tooltip tooltip-right font-mono" data-tip="Occurrences">
+<span class="badge badge-success badge-md tooltip tooltip-left font-mono" data-tip="Occurrences">
 	{occurrences}
 </span>
