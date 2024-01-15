@@ -1,0 +1,3600 @@
+1.  abandon
+	Past: abandoned   (suppletive)
+	Perfect: abandoned
+	Participle: abandoning   (suppletive)
+	Third Singular Present: abandons
+
+2.  accept
+	Past: accepted
+	Perfect: accepted
+	Participle: accepting
+	Third Singular Present: accepts
+
+3.  accuse
+	Past: accused
+	Perfect: accused
+	Participle: accusing
+	Third Singular Present: accuses
+
+4.  act
+	Past: acted
+	Perfect: acted
+	Participle: acting
+	Third Singular Present: acts
+
+5.  admire
+	Past: admired
+	Perfect: admired
+	Participle: admiring
+	Third Singular Present: admires
+
+6.  admit
+	Past: admitted
+	Perfect: admitted
+	Participle: admitting
+	Third Singular Present: admits
+
+7.  advise
+	Past: advised
+	Perfect: advised
+	Participle: advising
+	Third Singular Present: advises
+
+8.  affect
+	Past: affected
+	Perfect: affected
+	Participle: affecting
+	Third Singular Present: affects
+
+9.  agree
+	Past: agreed
+	Perfect: agreed
+	Participle: agreeing   (suppletive)
+	Third Singular Present: agrees
+
+10.  allow
+	Past: allowed
+	Perfect: allowed
+	Participle: allowing
+	Third Singular Present: allows
+
+11.  amaze
+	Past: amazed
+	Perfect: amazed
+	Participle: amazing
+	Third Singular Present: amazes
+
+12.  announce
+	Past: announced
+	Perfect: announced
+	Participle: announcing
+	Third Singular Present: announces
+
+13.  annoy
+	Past: annoyed
+	Perfect: annoyed
+	Participle: annoying
+	Third Singular Present: annoys   (suppletive)
+
+14.  anoint
+	Past: anointed
+	Perfect: anointed
+	Participle: anointing
+	Third Singular Present: anoints
+
+15.  answer
+	Past: answered
+	Perfect: answered
+	Participle: answering
+	Third Singular Present: answers
+
+16.  appear
+	Past: appeared
+	Perfect: appeared
+	Participle: appearing
+	Third Singular Present: appears
+
+17.  appoint
+	Past: appointed
+	Perfect: appointed
+	Participle: appointing
+	Third Singular Present: appoints
+
+18.  approve
+	Past: approved
+	Perfect: approved
+	Participle: approving
+	Third Singular Present: approves
+
+19.  argue
+	Past: argued
+	Perfect: argued
+	Participle: arguing
+	Third Singular Present: argues
+
+20.  arrest
+	Past: arrested
+	Perfect: arrested
+	Participle: arresting
+	Third Singular Present: arrests
+
+21.  arrive
+	Past: arrived
+	Perfect: arrived
+	Participle: arriving
+	Third Singular Present: arrives
+
+22.  ask
+	Past: asked
+	Perfect: asked
+	Participle: asking
+	Third Singular Present: asks
+
+23.  assist
+	Past: assisted
+	Perfect: assisted
+	Participle: assisting
+	Third Singular Present: assists
+
+24.  attach
+	Past: attached
+	Perfect: attached
+	Participle: attaching
+	Third Singular Present: attaches
+
+25.  attack
+	Past: attacked
+	Perfect: attacked
+	Participle: attacking
+	Third Singular Present: attacks
+
+26.  attend
+	Past: attended
+	Perfect: attended
+	Participle: attending
+	Third Singular Present: attends
+
+27.  avoid
+	Past: avoided
+	Perfect: avoided
+	Participle: avoiding
+	Third Singular Present: avoids
+
+28.  bake
+	Past: baked
+	Perfect: baked
+	Participle: baking
+	Third Singular Present: bakes
+
+29.  baptize
+	Past: baptized
+	Perfect: baptized
+	Participle: baptizing
+	Third Singular Present: baptizes
+
+30.  bark
+	Past: barked
+	Perfect: barked
+	Participle: barking
+	Third Singular Present: barks
+
+31.  be
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+32.  be born
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+33.  be concerned
+	Past: bed
+	Perfect: bed
+	Participle: bing
+	Third Singular Present: bes
+
+34.  be determined
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+35.  be fulfilled
+	Past: bed
+	Perfect: bed
+	Participle: bing
+	Third Singular Present: bes
+
+36.  be locked
+	Past: bed
+	Perfect: bed
+	Participle: bing
+	Third Singular Present: bes
+
+37.  be married
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+38.  be tied
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+39.  be worried
+	Past: was   (suppletive)
+	Perfect: been   (suppletive)
+	Participle: being   (suppletive)
+	Third Singular Present: is   (suppletive)
+
+40.  be hurt
+	Past: bed
+	Perfect: bed
+	Participle: bing
+	Third Singular Present: bes
+
+41.  beat
+	Past: beat   (suppletive)
+	Perfect: beaten   (suppletive)
+	Participle: beating
+	Third Singular Present: beats
+
+42.  become
+	Past: became   (suppletive)
+	Perfect: become   (suppletive)
+	Participle: becoming
+	Third Singular Present: becomes
+
+43.  beg
+	Past: begged
+	Perfect: begged
+	Participle: begging
+	Third Singular Present: begs
+
+44.  begin
+	Past: began   (suppletive)
+	Perfect: began
+	Participle: beginning
+	Third Singular Present: begins
+
+45.  behave
+	Past: behaved
+	Perfect: behaved
+	Participle: behaving
+	Third Singular Present: behaves
+
+46.  behold
+	Past: beheld   (suppletive)
+	Perfect: beheld
+	Participle: beholding
+	Third Singular Present: beholds
+
+47.  believe
+	Past: believed
+	Perfect: believed
+	Participle: believing
+	Third Singular Present: believes
+
+48.  belong
+	Past: belonged
+	Perfect: belonged
+	Participle: belonging
+	Third Singular Present: belongs
+
+49.  bend
+	Past: bent   (suppletive)
+	Perfect: bent
+	Participle: bending
+	Third Singular Present: bends
+
+50.  bend over
+	Past: bent   (suppletive)
+	Perfect: bent
+	Participle: bending
+	Third Singular Present: bends
+
+51.  betray
+	Past: betrayed
+	Perfect: betrayed
+	Participle: betraying
+	Third Singular Present: betrays   (suppletive)
+
+52.  birth
+	Past: birthed
+	Perfect: birthed
+	Participle: birthing
+	Third Singular Present: births
+
+53.  bite
+	Past: bit   (suppletive)
+	Perfect: bitten   (suppletive)
+	Participle: biting
+	Third Singular Present: bites
+
+54.  blame
+	Past: blamed
+	Perfect: blamed
+	Participle: blaming
+	Third Singular Present: blames
+
+55.  blaspheme
+	Past: blasphemed
+	Perfect: blasphemed
+	Participle: blaspheming
+	Third Singular Present: blasphemes
+
+56.  bleed
+	Past: bled   (suppletive)
+	Perfect: bled
+	Participle: bleeding
+	Third Singular Present: bleeds
+
+57.  bleet
+	Past: bleeted
+	Perfect: bleeted
+	Participle: bleeting
+	Third Singular Present: bleets
+
+58.  bless
+	Past: blessed
+	Perfect: blessed
+	Participle: blessing
+	Third Singular Present: blesses
+
+59.  blow
+	Past: blew   (suppletive)
+	Perfect: blown   (suppletive)
+	Participle: blowing
+	Third Singular Present: blows
+
+60.  board
+	Past: boarded
+	Perfect: boarded
+	Participle: boarding
+	Third Singular Present: boards
+
+61.  boast
+	Past: boasted
+	Perfect: boasted
+	Participle: boasting
+	Third Singular Present: boasts
+
+62.  boil
+	Past: boiled
+	Perfect: boiled
+	Participle: boiling
+	Third Singular Present: boils
+
+63.  borrow
+	Past: borrowed
+	Perfect: borrowed
+	Participle: borrowing
+	Third Singular Present: borrows
+
+64.  bother
+	Past: bothered   (suppletive)
+	Perfect: bothered
+	Participle: bothering   (suppletive)
+	Third Singular Present: bothers
+
+65.  bow
+	Past: bowed
+	Perfect: bowed
+	Participle: bowing
+	Third Singular Present: bows
+
+66.  break
+	Past: broke   (suppletive)
+	Perfect: broken   (suppletive)
+	Participle: breaking
+	Third Singular Present: breaks
+
+67.  breathe
+	Past: breathed
+	Perfect: breathed
+	Participle: breathing
+	Third Singular Present: breathes
+
+68.  bring
+	Past: brought   (suppletive)
+	Perfect: brought
+	Participle: bringing
+	Third Singular Present: brings
+
+69.  build
+	Past: built   (suppletive)
+	Perfect: built
+	Participle: building
+	Third Singular Present: builds
+
+70.  burn
+	Past: burned
+	Perfect: burned
+	Participle: burning
+	Third Singular Present: burns
+
+71.  burst
+	Past: burst   (suppletive)
+	Perfect: burst
+	Participle: bursting
+	Third Singular Present: bursts
+
+72.  bury
+	Past: buried
+	Perfect: buried
+	Participle: burying
+	Third Singular Present: buries
+
+73.  buy
+	Past: bought   (suppletive)
+	Perfect: bought
+	Participle: buying
+	Third Singular Present: buys   (suppletive)
+
+74.  calculate
+	Past: calculated
+	Perfect: calculated
+	Participle: calculating
+	Third Singular Present: calculates
+
+75.  call
+	Past: called
+	Perfect: called
+	Participle: calling
+	Third Singular Present: calls
+
+76.  camp
+	Past: camped
+	Perfect: camped
+	Participle: camping
+	Third Singular Present: camps
+
+77.  cancel
+	Past: cancelled
+	Perfect: cancelled
+	Participle: cancelling
+	Third Singular Present: cancels
+
+78.  capture
+	Past: captured
+	Perfect: captured
+	Participle: capturing
+	Third Singular Present: captures
+
+79.  care
+	Past: cared
+	Perfect: cared
+	Participle: caring
+	Third Singular Present: cares
+
+80.  carry
+	Past: carried
+	Perfect: carried
+	Participle: carrying
+	Third Singular Present: carries
+
+81.  carve
+	Past: carved
+	Perfect: carved
+	Participle: carving
+	Third Singular Present: carves
+
+82.  cast
+	Past: cast   (suppletive)
+	Perfect: cast
+	Participle: casting
+	Third Singular Present: casts
+
+83.  catch
+	Past: caught   (suppletive)
+	Perfect: caught
+	Participle: catching
+	Third Singular Present: catches
+
+84.  catch up
+	Past: caught   (suppletive)
+	Perfect: caught
+	Participle: catching
+	Third Singular Present: catches
+
+85.  cause
+	Past: caused
+	Perfect: caused
+	Participle: causing
+	Third Singular Present: causes
+
+86.  celebrate
+	Past: celebrated
+	Perfect: celebrated
+	Participle: celebrating
+	Third Singular Present: celebrates
+
+87.  change
+	Past: changed
+	Perfect: changed
+	Participle: changing
+	Third Singular Present: changes
+
+88.  chase
+	Past: chased
+	Perfect: chased
+	Participle: chasing
+	Third Singular Present: chases
+
+89.  chase away
+	Past: chased
+	Perfect: chased
+	Participle: chasing
+	Third Singular Present: chases
+
+90.  cheat
+	Past: cheated
+	Perfect: cheated
+	Participle: cheating
+	Third Singular Present: cheats
+
+91.  check
+	Past: checked
+	Perfect: checked
+	Participle: checking
+	Third Singular Present: checks
+
+92.  chew
+	Past: chewed
+	Perfect: chewed
+	Participle: chewing
+	Third Singular Present: chews
+
+93.  choose
+	Past: chose   (suppletive)
+	Perfect: chosen   (suppletive)
+	Participle: choosing
+	Third Singular Present: chooses
+
+94.  circumcise
+	Past: circumcised
+	Perfect: circumcised
+	Participle: circumcising
+	Third Singular Present: circumcises
+
+95.  clean
+	Past: cleaned
+	Perfect: cleaned
+	Participle: cleaning
+	Third Singular Present: cleans
+
+96.  climb
+	Past: climbed
+	Perfect: climbed
+	Participle: climbing
+	Third Singular Present: climbs
+
+97.  close
+	Past: closed
+	Perfect: closed
+	Participle: closing
+	Third Singular Present: closes
+
+98.  collect
+	Past: collected
+	Perfect: collected
+	Participle: collecting
+	Third Singular Present: collects
+
+99.  comb
+	Past: combed
+	Perfect: combed
+	Participle: combing
+	Third Singular Present: combs
+
+100.  combine
+	Past: combined
+	Perfect: combined
+	Participle: combining
+	Third Singular Present: combines
+
+101.  come up
+	Past: came   (suppletive)
+	Perfect: come   (suppletive)
+	Participle: coming
+	Third Singular Present: comes
+
+102.  come
+	Past: came   (suppletive)
+	Perfect: come   (suppletive)
+	Participle: coming
+	Third Singular Present: comes
+
+103.  come down
+	Past: came   (suppletive)
+	Perfect: come   (suppletive)
+	Participle: coming
+	Third Singular Present: comes
+
+104.  come out
+	Past: came   (suppletive)
+	Perfect: come   (suppletive)
+	Participle: coming
+	Third Singular Present: comes
+
+105.  comfort
+	Past: comforted
+	Perfect: comforted
+	Participle: comforting
+	Third Singular Present: comforts
+
+106.  command
+	Past: commanded
+	Perfect: commanded
+	Participle: commanding
+	Third Singular Present: commands
+
+107.  commit
+	Past: committed
+	Perfect: committed
+	Participle: committing
+	Third Singular Present: commits
+
+108.  compare
+	Past: compared
+	Perfect: compared
+	Participle: comparing
+	Third Singular Present: compares
+
+109.  complain
+	Past: complained
+	Perfect: complained
+	Participle: complaining
+	Third Singular Present: complains
+
+110.  condemn
+	Past: condemned
+	Perfect: condemned
+	Participle: condemning
+	Third Singular Present: condemns
+
+111.  confess
+	Past: confessed
+	Perfect: confessed
+	Participle: confessing
+	Third Singular Present: confesses
+
+112.  confuse
+	Past: confused
+	Perfect: confused
+	Participle: confusing
+	Third Singular Present: confuses
+
+113.  conquer
+	Past: conquered
+	Perfect: conquered
+	Participle: conquering
+	Third Singular Present: conquers
+
+114.  consecrate
+	Past: consecrated
+	Perfect: consecrated
+	Participle: consecrating
+	Third Singular Present: consecrates
+
+115.  consist
+	Past: consisted
+	Perfect: consisted
+	Participle: consisting
+	Third Singular Present: consists
+
+116.  contain
+	Past: contained
+	Perfect: contained
+	Participle: containing
+	Third Singular Present: contains
+
+117.  continue
+	Past: continued
+	Perfect: continued
+	Participle: continuing
+	Third Singular Present: continues
+
+118.  control
+	Past: controlled
+	Perfect: controlled
+	Participle: controlling
+	Third Singular Present: controls
+
+119.  cook
+	Past: cooked
+	Perfect: cooked
+	Participle: cooking
+	Third Singular Present: cooks
+
+120.  cough
+	Past: coughed
+	Perfect: coughed
+	Participle: coughing
+	Third Singular Present: coughs
+
+121.  count
+	Past: counted
+	Perfect: counted
+	Participle: counting
+	Third Singular Present: counts
+
+122.  cover
+	Past: covered   (suppletive)
+	Perfect: covered
+	Participle: covering   (suppletive)
+	Third Singular Present: covers
+
+123.  covet
+	Past: coveted   (suppletive)
+	Perfect: coveted
+	Participle: coveting   (suppletive)
+	Third Singular Present: covets
+
+124.  crawl
+	Past: crawled
+	Perfect: crawled
+	Participle: crawling
+	Third Singular Present: crawls
+
+125.  create
+	Past: created
+	Perfect: created
+	Participle: creating
+	Third Singular Present: creates
+
+126.  criticize
+	Past: criticized
+	Perfect: criticized
+	Participle: criticizing
+	Third Singular Present: criticizes
+
+127.  crow
+	Past: crowed
+	Perfect: crowed
+	Participle: crowing
+	Third Singular Present: crows
+
+128.  crowd
+	Past: crowded
+	Perfect: crowded
+	Participle: crowding
+	Third Singular Present: crowds
+
+129.  crucify
+	Past: crucified
+	Perfect: crucified
+	Participle: crucifying
+	Third Singular Present: crucifies
+
+130.  crush
+	Past: crushed
+	Perfect: crushed
+	Participle: crushing
+	Third Singular Present: crushes
+
+131.  cry
+	Past: cried
+	Perfect: cried
+	Participle: crying
+	Third Singular Present: cries
+
+132.  cry out
+	Past: cried
+	Perfect: cried
+	Participle: crying
+	Third Singular Present: cries
+
+133.  curse
+	Past: cursed
+	Perfect: cursed
+	Participle: cursing
+	Third Singular Present: curses
+
+134.  cut
+	Past: cut   (suppletive)
+	Perfect: cut
+	Participle: cutting
+	Third Singular Present: cuts
+
+135.  cut down
+	Past: cut   (suppletive)
+	Perfect: cut
+	Participle: cutting
+	Third Singular Present: cuts
+
+136.  cut off
+	Past: cut   (suppletive)
+	Perfect: cut
+	Participle: cutting
+	Third Singular Present: cuts
+
+137.  damage
+	Past: damaged
+	Perfect: damaged
+	Participle: damaging
+	Third Singular Present: damages
+
+138.  dance
+	Past: danced
+	Perfect: danced
+	Participle: dancing
+	Third Singular Present: dances
+
+139.  deceive
+	Past: deceived
+	Perfect: deceived
+	Participle: deceiving
+	Third Singular Present: deceives
+
+140.  decide
+	Past: decided
+	Perfect: decided
+	Participle: deciding
+	Third Singular Present: decides
+
+141.  declare
+	Past: declared
+	Perfect: declared
+	Participle: declaring
+	Third Singular Present: declares
+
+142.  dedicate
+	Past: dedicated
+	Perfect: dedicated
+	Participle: dedicating
+	Third Singular Present: dedicates
+
+143.  defeat
+	Past: defeated
+	Perfect: defeated
+	Participle: defeating
+	Third Singular Present: defeats
+
+144.  defend
+	Past: defended
+	Perfect: defended
+	Participle: defending
+	Third Singular Present: defends
+
+145.  defile
+	Past: defiled
+	Perfect: defiled
+	Participle: defiling
+	Third Singular Present: defiles
+
+146.  deliver
+	Past: delivered   (suppletive)
+	Perfect: delivered
+	Participle: delivering   (suppletive)
+	Third Singular Present: delivers
+
+147.  demand
+	Past: demanded
+	Perfect: demanded
+	Participle: demanding
+	Third Singular Present: demands
+
+148.  describe
+	Past: described
+	Perfect: described
+	Participle: describing
+	Third Singular Present: describes
+
+149.  deserve
+	Past: deserved
+	Perfect: deserved
+	Participle: deserving
+	Third Singular Present: deserves
+
+150.  desire
+	Past: desired
+	Perfect: desired
+	Participle: desiring
+	Third Singular Present: desires
+
+151.  destroy
+	Past: destroyed
+	Perfect: destroyed
+	Participle: destroying
+	Third Singular Present: destroys   (suppletive)
+
+152.  determine
+	Past: determined
+	Perfect: determined
+	Participle: determining
+	Third Singular Present: determines
+
+153.  devour
+	Past: devoured
+	Perfect: devoured
+	Participle: devouring
+	Third Singular Present: devours
+
+154.  die
+	Past: died
+	Perfect: died
+	Participle: dying   (suppletive)
+	Third Singular Present: dies
+
+155.  dig
+	Past: dug   (suppletive)
+	Perfect: dug
+	Participle: digging
+	Third Singular Present: digs
+
+156.  dip
+	Past: dipped
+	Perfect: dipped
+	Participle: dipping
+	Third Singular Present: dips
+
+157.  disagree
+	Past: disagreed
+	Perfect: disagreed
+	Participle: disagreeing   (suppletive)
+	Third Singular Present: disagrees
+
+158.  discover
+	Past: discovered   (suppletive)
+	Perfect: discovered
+	Participle: discovering   (suppletive)
+	Third Singular Present: discovers
+
+159.  divide
+	Past: divided
+	Perfect: divided
+	Participle: dividing
+	Third Singular Present: divides
+
+160.  divorce
+	Past: divorced
+	Perfect: divorced
+	Participle: divorcing
+	Third Singular Present: divorces
+
+161.  do
+	Past: did   (suppletive)
+	Perfect: done   (suppletive)
+	Participle: doing
+	Third Singular Present: does   (suppletive)
+
+162.  doubt
+	Past: doubted
+	Perfect: doubted
+	Participle: doubting
+	Third Singular Present: doubts
+
+163.  draw
+	Past: drew   (suppletive)
+	Perfect: drawn   (suppletive)
+	Participle: drawing
+	Third Singular Present: draws
+
+164.  dream
+	Past: dreamed
+	Perfect: dreamed
+	Participle: dreaming
+	Third Singular Present: dreams
+
+165.  dress
+	Past: dressed
+	Perfect: dressed
+	Participle: dressing
+	Third Singular Present: dresses
+
+166.  drink
+	Past: drank   (suppletive)
+	Perfect: drunk   (suppletive)
+	Participle: drinking
+	Third Singular Present: drinks
+
+167.  drop
+	Past: dropped
+	Perfect: dropped
+	Participle: dropping
+	Third Singular Present: drops
+
+168.  drown
+	Past: drowned
+	Perfect: drowned
+	Participle: drowning
+	Third Singular Present: drowns
+
+169.  dry
+	Past: dried
+	Perfect: dried
+	Participle: drying
+	Third Singular Present: dries
+
+170.  dwell
+	Past: dwelled
+	Perfect: dwelled
+	Participle: dwelling
+	Third Singular Present: dwells
+
+171.  dye
+	Past: dyed   (suppletive)
+	Perfect: dyed
+	Participle: dying
+	Third Singular Present: dyes
+
+172.  earn
+	Past: earned
+	Perfect: earned
+	Participle: earning
+	Third Singular Present: earns
+
+173.  eat
+	Past: ate   (suppletive)
+	Perfect: eaten   (suppletive)
+	Participle: eating
+	Third Singular Present: eats
+
+174.  embalm
+	Past: embalmed
+	Perfect: embalmed
+	Participle: embalming
+	Third Singular Present: embalms
+
+175.  embarrass
+	Past: embarrassed
+	Perfect: embarrassed
+	Participle: embarrassing
+	Third Singular Present: embarrasses
+
+176.  employ
+	Past: employed
+	Perfect: employed
+	Participle: employing
+	Third Singular Present: employs   (suppletive)
+
+177.  encourage
+	Past: encouraged
+	Perfect: encouraged
+	Participle: encouraging
+	Third Singular Present: encourages
+
+178.  end
+	Past: ended
+	Perfect: ended
+	Participle: ending
+	Third Singular Present: ends
+
+179.  enjoy
+	Past: enjoyed
+	Perfect: enjoyed
+	Participle: enjoying
+	Third Singular Present: enjoys   (suppletive)
+
+180.  enter
+	Past: entered   (suppletive)
+	Perfect: entered
+	Participle: entering   (suppletive)
+	Third Singular Present: enters
+
+181.  erase
+	Past: erased
+	Perfect: erased
+	Participle: erasing
+	Third Singular Present: erases
+
+182.  escape
+	Past: escaped
+	Perfect: escaped
+	Participle: escaping
+	Third Singular Present: escapes
+
+183.  exalt
+	Past: exalted
+	Perfect: exalted
+	Participle: exalting
+	Third Singular Present: exalts
+
+184.  examine
+	Past: examined
+	Perfect: examined
+	Participle: examining
+	Third Singular Present: examines
+
+185.  exile
+	Past: exiled
+	Perfect: exiled
+	Participle: exiling
+	Third Singular Present: exiles
+
+186.  exist
+	Past: existed
+	Perfect: existed
+	Participle: existing
+	Third Singular Present: exists
+
+187.  expect
+	Past: expected
+	Perfect: expected
+	Participle: expecting
+	Third Singular Present: expects
+
+188.  explain
+	Past: explained
+	Perfect: explained
+	Participle: explaining
+	Third Singular Present: explains
+
+189.  explore
+	Past: explored
+	Perfect: explored
+	Participle: exploring
+	Third Singular Present: explores
+
+190.  fail
+	Past: failed
+	Perfect: failed
+	Participle: failing
+	Third Singular Present: fails
+
+191.  faint
+	Past: fainted
+	Perfect: fainted
+	Participle: fainting
+	Third Singular Present: faints
+
+192.  fall
+	Past: fell   (suppletive)
+	Perfect: fallen   (suppletive)
+	Participle: falling
+	Third Singular Present: falls
+
+193.  fast
+	Past: fasted
+	Perfect: fasted
+	Participle: fasting
+	Third Singular Present: fasts
+
+194.  fear
+	Past: feared
+	Perfect: feared
+	Participle: fearing
+	Third Singular Present: fears
+
+195.  feed
+	Past: fed   (suppletive)
+	Perfect: fed
+	Participle: feeding
+	Third Singular Present: feeds
+
+196.  feel
+	Past: felt   (suppletive)
+	Perfect: felt
+	Participle: feeling
+	Third Singular Present: feels
+
+197.  fight
+	Past: fought   (suppletive)
+	Perfect: fought
+	Participle: fighting
+	Third Singular Present: fights
+
+198.  fill
+	Past: filled
+	Perfect: filled
+	Participle: filling
+	Third Singular Present: fills
+
+199.  find out
+	Past: found   (suppletive)
+	Perfect: found
+	Participle: finding
+	Third Singular Present: finds
+
+200.  find
+	Past: found   (suppletive)
+	Perfect: found
+	Participle: finding
+	Third Singular Present: finds
+
+201.  finish
+	Past: finished
+	Perfect: finished
+	Participle: finishing
+	Third Singular Present: finishes
+
+202.  float
+	Past: floated
+	Perfect: floated
+	Participle: floating
+	Third Singular Present: floats
+
+203.  flow
+	Past: flowed
+	Perfect: flowed
+	Participle: flowing
+	Third Singular Present: flows
+
+204.  fly
+	Past: flew   (suppletive)
+	Perfect: flown   (suppletive)
+	Participle: flying
+	Third Singular Present: flies
+
+205.  follow
+	Past: followed
+	Perfect: followed
+	Participle: following
+	Third Singular Present: follows
+
+206.  forbid
+	Past: forbade   (suppletive)
+	Perfect: forbidden   (suppletive)
+	Participle: forbidding
+	Third Singular Present: forbids
+
+207.  force
+	Past: forced
+	Perfect: forced
+	Participle: forcing
+	Third Singular Present: forces
+
+208.  forget
+	Past: forgot   (suppletive)
+	Perfect: forgotten   (suppletive)
+	Participle: forgetting
+	Third Singular Present: forgets
+
+209.  forgive
+	Past: forgave   (suppletive)
+	Perfect: forgiven   (suppletive)
+	Participle: forgiving
+	Third Singular Present: forgives
+
+210.  forsake
+	Past: forsook   (suppletive)
+	Perfect: forsaken   (suppletive)
+	Participle: forsaking
+	Third Singular Present: forsakes
+
+211.  free
+	Past: freed
+	Perfect: freed
+	Participle: freeing   (suppletive)
+	Third Singular Present: frees
+
+212.  frighten
+	Past: frightened   (suppletive)
+	Perfect: frightened
+	Participle: frightening   (suppletive)
+	Third Singular Present: frightens
+
+213.  frown
+	Past: frowned
+	Perfect: frowned
+	Participle: frowning
+	Third Singular Present: frowns
+
+214.  fulfill
+	Past: fulfilled
+	Perfect: fulfilled
+	Participle: fulfilling
+	Third Singular Present: fulfills
+
+215.  gain
+	Past: gained
+	Perfect: gained
+	Participle: gaining
+	Third Singular Present: gains
+
+216.  gather
+	Past: gathered   (suppletive)
+	Perfect: gathered
+	Participle: gathering   (suppletive)
+	Third Singular Present: gathers
+
+217.  get
+	Past: got   (suppletive)
+	Perfect: gotten   (suppletive)
+	Participle: getting
+	Third Singular Present: gets
+
+218.  get off
+	Past: got   (suppletive)
+	Perfect: gotten   (suppletive)
+	Participle: getting
+	Third Singular Present: gets
+
+219.  get up
+	Past: got   (suppletive)
+	Perfect: gotten   (suppletive)
+	Participle: getting
+	Third Singular Present: gets
+
+220.  get on
+	Past: got   (suppletive)
+	Perfect: gotten   (suppletive)
+	Participle: getting
+	Third Singular Present: gets
+
+221.  give
+	Past: gave   (suppletive)
+	Perfect: given   (suppletive)
+	Participle: giving
+	Third Singular Present: gives
+
+222.  glean
+	Past: gleaned
+	Perfect: gleaned
+	Participle: gleaning
+	Third Singular Present: gleans
+
+223.  glorify
+	Past: glorified
+	Perfect: glorified
+	Participle: glorifying
+	Third Singular Present: glorifies
+
+224.  gnash
+	Past: gnashed
+	Perfect: gnashed
+	Participle: gnashing
+	Third Singular Present: gnashes
+
+225.  go
+	Past: went   (suppletive)
+	Perfect: gone   (suppletive)
+	Participle: going
+	Third Singular Present: goes   (suppletive)
+
+226.  go down
+	Past: went   (suppletive)
+	Perfect: gone   (suppletive)
+	Participle: going
+	Third Singular Present: goes   (suppletive)
+
+227.  go out
+	Past: went   (suppletive)
+	Perfect: gone   (suppletive)
+	Participle: going
+	Third Singular Present: goes   (suppletive)
+
+228.  go up
+	Past: went   (suppletive)
+	Perfect: gone   (suppletive)
+	Participle: going
+	Third Singular Present: goes   (suppletive)
+
+229.  gore
+	Past: gored
+	Perfect: gored
+	Participle: goring
+	Third Singular Present: gores
+
+230.  govern
+	Past: governed
+	Perfect: governed
+	Participle: governing
+	Third Singular Present: governs
+
+231.  grab
+	Past: grabbed
+	Perfect: grabbed
+	Participle: grabbing
+	Third Singular Present: grabs
+
+232.  greet
+	Past: greeted
+	Perfect: greeted
+	Participle: greeting
+	Third Singular Present: greets
+
+233.  grow
+	Past: grew   (suppletive)
+	Perfect: grown   (suppletive)
+	Participle: growing
+	Third Singular Present: grows
+
+234.  grow up
+	Past: grew   (suppletive)
+	Perfect: grown   (suppletive)
+	Participle: growing
+	Third Singular Present: grows
+
+235.  guard
+	Past: guarded
+	Perfect: guarded
+	Participle: guarding
+	Third Singular Present: guards
+
+236.  hamstring
+	Past: hamstrung   (suppletive)
+	Perfect: hamstrung
+	Participle: hamstringing
+	Third Singular Present: hamstrings
+
+237.  hang
+	Past: hung   (suppletive)
+	Perfect: hung
+	Participle: hanging
+	Third Singular Present: hangs
+
+238.  happen
+	Past: happened   (suppletive)
+	Perfect: happened
+	Participle: happening   (suppletive)
+	Third Singular Present: happens
+
+239.  harvest
+	Past: harvested
+	Perfect: harvested
+	Participle: harvesting
+	Third Singular Present: harvests
+
+240.  hate
+	Past: hated
+	Perfect: hated
+	Participle: hating
+	Third Singular Present: hates
+
+241.  have
+	Past: had   (suppletive)
+	Perfect: had
+	Participle: having
+	Third Singular Present: has   (suppletive)
+
+242.  heal
+	Past: healed
+	Perfect: healed
+	Participle: healing
+	Third Singular Present: heals
+
+243.  hear
+	Past: heard   (suppletive)
+	Perfect: heard
+	Participle: hearing
+	Third Singular Present: hears
+
+244.  help
+	Past: helped
+	Perfect: helped
+	Participle: helping
+	Third Singular Present: helps
+
+245.  hide
+	Past: hid   (suppletive)
+	Perfect: hidden   (suppletive)
+	Participle: hiding
+	Third Singular Present: hides
+
+246.  hire
+	Past: hired
+	Perfect: hired
+	Participle: hiring
+	Third Singular Present: hires
+
+247.  hit
+	Past: hit   (suppletive)
+	Perfect: hit
+	Participle: hitting
+	Third Singular Present: hits
+
+248.  hold
+	Past: held   (suppletive)
+	Perfect: held
+	Participle: holding
+	Third Singular Present: holds
+
+249.  honor
+	Past: honored   (suppletive)
+	Perfect: honored
+	Participle: honoring   (suppletive)
+	Third Singular Present: honors
+
+250.  hope
+	Past: hoped
+	Perfect: hoped
+	Participle: hoping
+	Third Singular Present: hopes
+
+251.  hover
+	Past: hovered   (suppletive)
+	Perfect: hovered
+	Participle: hovering   (suppletive)
+	Third Singular Present: hovers
+
+252.  hug
+	Past: hugged
+	Perfect: hugged
+	Participle: hugging
+	Third Singular Present: hugs
+
+253.  hunt
+	Past: hunted
+	Perfect: hunted
+	Participle: hunting
+	Third Singular Present: hunts
+
+254.  hurt
+	Past: hurt   (suppletive)
+	Perfect: hurt
+	Participle: hurting
+	Third Singular Present: hurts
+
+255.  ignore
+	Past: ignored
+	Perfect: ignored
+	Participle: ignoring
+	Third Singular Present: ignores
+
+256.  improve
+	Past: improved
+	Perfect: improved
+	Participle: improving
+	Third Singular Present: improves
+
+257.  include
+	Past: included
+	Perfect: included
+	Participle: including
+	Third Singular Present: includes
+
+258.  increase
+	Past: increased
+	Perfect: increased
+	Participle: increasing
+	Third Singular Present: increases
+
+259.  influence
+	Past: influenced
+	Perfect: influenced
+	Participle: influencing
+	Third Singular Present: influences
+
+260.  inherit
+	Past: inherited   (suppletive)
+	Perfect: inherited
+	Participle: inheriting   (suppletive)
+	Third Singular Present: inherits
+
+261.  insist
+	Past: insisted
+	Perfect: insisted
+	Participle: insisting
+	Third Singular Present: insists
+
+262.  inspect
+	Past: inspected
+	Perfect: inspected
+	Participle: inspecting
+	Third Singular Present: inspects
+
+263.  insult
+	Past: insulted
+	Perfect: insulted
+	Participle: insulting
+	Third Singular Present: insults
+
+264.  introduce
+	Past: introduced
+	Perfect: introduced
+	Participle: introducing
+	Third Singular Present: introduces
+
+265.  invade
+	Past: invaded
+	Perfect: invaded
+	Participle: invading
+	Third Singular Present: invades
+
+266.  invite
+	Past: invited
+	Perfect: invited
+	Participle: inviting
+	Third Singular Present: invites
+
+267.  join
+	Past: joined
+	Perfect: joined
+	Participle: joining
+	Third Singular Present: joins
+
+268.  judge
+	Past: judged
+	Perfect: judged
+	Participle: judging
+	Third Singular Present: judges
+
+269.  jump
+	Past: jumped
+	Perfect: jumped
+	Participle: jumping
+	Third Singular Present: jumps
+
+270.  jump down
+	Past: jumped
+	Perfect: jumped
+	Participle: jumping
+	Third Singular Present: jumps
+
+271.  keep
+	Past: kept   (suppletive)
+	Perfect: kept
+	Participle: keeping
+	Third Singular Present: keeps
+
+272.  kidnap
+	Past: kidnapped
+	Perfect: kidnapped
+	Participle: kidnapping
+	Third Singular Present: kidnaps
+
+273.  kill
+	Past: killed
+	Perfect: killed
+	Participle: killing
+	Third Singular Present: kills
+
+274.  kiss
+	Past: kissed
+	Perfect: kissed
+	Participle: kissing
+	Third Singular Present: kisses
+
+275.  kneel
+	Past: knelt   (suppletive)
+	Perfect: knelt
+	Participle: kneeling
+	Third Singular Present: kneels
+
+276.  knock
+	Past: knocked
+	Perfect: knocked
+	Participle: knocking
+	Third Singular Present: knocks
+
+277.  knock down
+	Past: knocked
+	Perfect: knocked
+	Participle: knocking
+	Third Singular Present: knocks
+
+278.  knock over
+	Past: knocked
+	Perfect: knocked
+	Participle: knocking
+	Third Singular Present: knocks
+
+279.  know
+	Past: knew   (suppletive)
+	Perfect: known   (suppletive)
+	Participle: knowing
+	Third Singular Present: knows
+
+280.  lack
+	Past: lacked
+	Perfect: lacked
+	Participle: lacking
+	Third Singular Present: lacks
+
+281.  laugh
+	Past: laughed
+	Perfect: laughed
+	Participle: laughing
+	Third Singular Present: laughs
+
+282.  lead
+	Past: led   (suppletive)
+	Perfect: led
+	Participle: leading
+	Third Singular Present: leads
+
+283.  lean
+	Past: leaned
+	Perfect: leaned
+	Participle: leaning
+	Third Singular Present: leans
+
+284.  learn
+	Past: learned
+	Perfect: learned
+	Participle: learning
+	Third Singular Present: learns
+
+285.  learn
+	Past: learned
+	Perfect: learned
+	Participle: learning
+	Third Singular Present: learns
+
+286.  leave
+	Past: left   (suppletive)
+	Perfect: left
+	Participle: leaving
+	Third Singular Present: leaves
+
+287.  lend
+	Past: lent   (suppletive)
+	Perfect: lent
+	Participle: lending
+	Third Singular Present: lends
+
+288.  let
+	Past: let   (suppletive)
+	Perfect: let
+	Participle: letting
+	Third Singular Present: lets
+
+289.  lick
+	Past: licked
+	Perfect: licked
+	Participle: licking
+	Third Singular Present: licks
+
+290.  lie
+	Past: lied   (suppletive)
+	Perfect: lied   (suppletive)
+	Participle: lying   (suppletive)
+	Third Singular Present: lies
+
+291.  lie
+	Past: lay   (suppletive)
+	Perfect: lain   (suppletive)
+	Participle: lying   (suppletive)
+	Third Singular Present: lies
+
+292.  lie down
+	Past: lay   (suppletive)
+	Perfect: lain   (suppletive)
+	Participle: lying   (suppletive)
+	Third Singular Present: lies
+
+293.  lift
+	Past: lifted
+	Perfect: lifted
+	Participle: lifting
+	Third Singular Present: lifts
+
+294.  light
+	Past: lit   (suppletive)
+	Perfect: lit
+	Participle: lighting
+	Third Singular Present: lights
+
+295.  like
+	Past: liked
+	Perfect: liked
+	Participle: liking
+	Third Singular Present: likes
+
+296.  limp
+	Past: limped
+	Perfect: limped
+	Participle: limping
+	Third Singular Present: limps
+
+297.  listen
+	Past: listened   (suppletive)
+	Perfect: listened
+	Participle: listening   (suppletive)
+	Third Singular Present: listens
+
+298.  live
+	Past: lived
+	Perfect: lived
+	Participle: living
+	Third Singular Present: lives
+
+299.  loan
+	Past: loaned
+	Perfect: loaned
+	Participle: loaning
+	Third Singular Present: loans
+
+300.  lock
+	Past: locked
+	Perfect: locked
+	Participle: locking
+	Third Singular Present: locks
+
+301.  long
+	Past: longed
+	Perfect: longed
+	Participle: longing
+	Third Singular Present: longs
+
+302.  look
+	Past: looked
+	Perfect: looked
+	Participle: looking
+	Third Singular Present: looks
+
+303.  look like
+	Past: looked
+	Perfect: looked
+	Participle: looking
+	Third Singular Present: looks
+
+304.  lose
+	Past: lost   (suppletive)
+	Perfect: lost
+	Participle: losing
+	Third Singular Present: loses
+
+305.  love
+	Past: loved
+	Perfect: loved
+	Participle: loving
+	Third Singular Present: loves
+
+306.  low
+	Past: lowed
+	Perfect: lowed
+	Participle: lowing
+	Third Singular Present: lows
+
+307.  lower
+	Past: lowered
+	Perfect: lowered
+	Participle: lowering
+	Third Singular Present: lowers
+
+308.  make
+	Past: made   (suppletive)
+	Perfect: made
+	Participle: making
+	Third Singular Present: makes
+
+309.  make up
+	Past: made   (suppletive)
+	Perfect: made
+	Participle: making
+	Third Singular Present: makes
+
+310.  manage
+	Past: managed
+	Perfect: managed
+	Participle: managing
+	Third Singular Present: manages
+
+311.  march
+	Past: marched
+	Perfect: marched
+	Participle: marching
+	Third Singular Present: marches
+
+312.  mark
+	Past: marked
+	Perfect: marked
+	Participle: marking
+	Third Singular Present: marks
+
+313.  marry
+	Past: married
+	Perfect: married
+	Participle: marrying
+	Third Singular Present: marries
+
+314.  mate
+	Past: mated
+	Perfect: mated
+	Participle: mating
+	Third Singular Present: mates
+
+315.  mean
+	Past: meant   (suppletive)
+	Perfect: meant
+	Participle: meaning
+	Third Singular Present: means
+
+316.  measure
+	Past: measured
+	Perfect: measured
+	Participle: measuring
+	Third Singular Present: measures
+
+317.  meditate
+	Past: meditated
+	Perfect: meditated
+	Participle: meditating
+	Third Singular Present: meditates
+
+318.  meet
+	Past: met   (suppletive)
+	Perfect: met
+	Participle: meeting
+	Third Singular Present: meets
+
+319.  melt
+	Past: melted
+	Perfect: melted
+	Participle: melting
+	Third Singular Present: melts
+
+320.  menstruate
+	Past: menstruated
+	Perfect: menstruated
+	Participle: menstruating
+	Third Singular Present: menstruates
+
+321.  miss
+	Past: missed
+	Perfect: missed
+	Participle: missing
+	Third Singular Present: misses
+
+322.  mix
+	Past: mixed   (suppletive)
+	Perfect: mixed
+	Participle: mixing   (suppletive)
+	Third Singular Present: mixes
+
+323.  mock
+	Past: mocked
+	Perfect: mocked
+	Participle: mocking
+	Third Singular Present: mocks
+
+324.  molest
+	Past: molested
+	Perfect: molested
+	Participle: molesting
+	Third Singular Present: molests
+
+325.  mourn
+	Past: mourned
+	Perfect: mourned
+	Participle: mourning
+	Third Singular Present: mourns
+
+326.  move
+	Past: moved
+	Perfect: moved
+	Participle: moving
+	Third Singular Present: moves
+
+327.  move aside
+	Past: moved
+	Perfect: moved
+	Participle: moving
+	Third Singular Present: moves
+
+328.  multiply
+	Past: multiplied
+	Perfect: multiplied
+	Participle: multiplying
+	Third Singular Present: multiplies
+
+329.  murder
+	Past: murdered   (suppletive)
+	Perfect: murdered
+	Participle: murdering   (suppletive)
+	Third Singular Present: murders
+
+330.  name
+	Past: named
+	Perfect: named
+	Participle: naming
+	Third Singular Present: names
+
+331.  need
+	Past: needed
+	Perfect: needed
+	Participle: needing
+	Third Singular Present: needs
+
+332.  notice
+	Past: noticed
+	Perfect: noticed
+	Participle: noticing
+	Third Singular Present: notices
+
+333.  nurse
+	Past: nursed
+	Perfect: nursed
+	Participle: nursing
+	Third Singular Present: nurses
+
+334.  obey
+	Past: obeyed
+	Perfect: obeyed
+	Participle: obeying
+	Third Singular Present: obeys   (suppletive)
+
+335.  obtain
+	Past: obtained
+	Perfect: obtained
+	Participle: obtaining
+	Third Singular Present: obtains
+
+336.  offend
+	Past: offended
+	Perfect: offended
+	Participle: offending
+	Third Singular Present: offends
+
+337.  offer
+	Past: offered   (suppletive)
+	Perfect: offered
+	Participle: offering   (suppletive)
+	Third Singular Present: offers
+
+338.  open
+	Past: opened   (suppletive)
+	Perfect: opened
+	Participle: opening   (suppletive)
+	Third Singular Present: opens
+
+339.  oppose
+	Past: opposed
+	Perfect: opposed
+	Participle: opposing
+	Third Singular Present: opposes
+
+340.  order
+	Past: ordered   (suppletive)
+	Perfect: ordered
+	Participle: ordering   (suppletive)
+	Third Singular Present: orders
+
+341.  overflow
+	Past: overflowed
+	Perfect: overflowed
+	Participle: overflowing
+	Third Singular Present: overflows
+
+342.  overlay
+	Past: overlayed
+	Perfect: overlayed
+	Participle: overlaying
+	Third Singular Present: overlays   (suppletive)
+
+343.  oversee
+	Past: oversaw   (suppletive)
+	Perfect: overseen   (suppletive)
+	Participle: overseeing   (suppletive)
+	Third Singular Present: oversees
+
+344.  owe
+	Past: owed
+	Perfect: owed
+	Participle: owing
+	Third Singular Present: owes
+
+345.  own
+	Past: owned
+	Perfect: owned
+	Participle: owning
+	Third Singular Present: owns
+
+346.  pass
+	Past: passed
+	Perfect: passed
+	Participle: passing
+	Third Singular Present: passes
+
+347.  pay
+	Past: paid   (suppletive)
+	Perfect: paid
+	Participle: paying
+	Third Singular Present: pays   (suppletive)
+
+348.  perform
+	Past: performed
+	Perfect: performed
+	Participle: performing
+	Third Singular Present: performs
+
+349.  persecute
+	Past: persecuted
+	Perfect: persecuted
+	Participle: persecuting
+	Third Singular Present: persecutes
+
+350.  persuade
+	Past: persuaded
+	Perfect: persuaded
+	Participle: persuading
+	Third Singular Present: persuades
+
+351.  pick up
+	Past: picked
+	Perfect: picked
+	Participle: picking
+	Third Singular Present: picks
+
+352.  pick
+	Past: picked
+	Perfect: picked
+	Participle: picking
+	Third Singular Present: picks
+
+353.  plan
+	Past: planned
+	Perfect: planned
+	Participle: planning
+	Third Singular Present: plans
+
+354.  plant
+	Past: planted
+	Perfect: planted
+	Participle: planting
+	Third Singular Present: plants
+
+355.  play
+	Past: played
+	Perfect: played
+	Participle: playing
+	Third Singular Present: plays   (suppletive)
+
+356.  plead
+	Past: pleaded
+	Perfect: pleaded
+	Participle: pleading
+	Third Singular Present: pleads
+
+357.  please
+	Past: pleased
+	Perfect: pleased
+	Participle: pleasing
+	Third Singular Present: pleases
+
+358.  plot
+	Past: plotted
+	Perfect: plotted
+	Participle: plotting
+	Third Singular Present: plots
+
+359.  plow
+	Past: plowed
+	Perfect: plowed
+	Participle: plowing
+	Third Singular Present: plows
+
+360.  point
+	Past: pointed
+	Perfect: pointed
+	Participle: pointing
+	Third Singular Present: points
+
+361.  possess
+	Past: possessed
+	Perfect: possessed
+	Participle: possessing
+	Third Singular Present: possesses
+
+362.  pour
+	Past: poured
+	Perfect: poured
+	Participle: pouring
+	Third Singular Present: pours
+
+363.  pour out
+	Past: poured
+	Perfect: poured
+	Participle: pouring
+	Third Singular Present: pours
+
+364.  practice
+	Past: practiced
+	Perfect: practiced
+	Participle: practicing
+	Third Singular Present: practices
+
+365.  praise
+	Past: praised
+	Perfect: praised
+	Participle: praising
+	Third Singular Present: praises
+
+366.  pray
+	Past: prayed
+	Perfect: prayed
+	Participle: praying
+	Third Singular Present: prays   (suppletive)
+
+367.  preach
+	Past: preached
+	Perfect: preached
+	Participle: preaching
+	Third Singular Present: preaches
+
+368.  predict
+	Past: predicted
+	Perfect: predicted
+	Participle: predicting
+	Third Singular Present: predicts
+
+369.  prepare
+	Past: prepared
+	Perfect: prepared
+	Participle: preparing
+	Third Singular Present: prepares
+
+370.  preserve
+	Past: preserved
+	Perfect: preserved
+	Participle: preserving
+	Third Singular Present: preserves
+
+371.  pretend
+	Past: pretended
+	Perfect: pretended
+	Participle: pretending
+	Third Singular Present: pretends
+
+372.  prevent
+	Past: prevented
+	Perfect: prevented
+	Participle: preventing
+	Third Singular Present: prevents
+
+373.  proclaim
+	Past: proclaimed
+	Perfect: proclaimed
+	Participle: proclaiming
+	Third Singular Present: proclaims
+
+374.  produce
+	Past: produced
+	Perfect: produced
+	Participle: producing
+	Third Singular Present: produces
+
+375.  prohesy
+	Past: prohesied
+	Perfect: prohesied
+	Participle: prohesying
+	Third Singular Present: prohesies
+
+376.  promise
+	Past: promised
+	Perfect: promised
+	Participle: promising
+	Third Singular Present: promises
+
+377.  protect
+	Past: protected
+	Perfect: protected
+	Participle: protecting
+	Third Singular Present: protects
+
+378.  prove
+	Past: proved
+	Perfect: proven   (suppletive)
+	Participle: proving
+	Third Singular Present: proves
+
+379.  provide
+	Past: provided
+	Perfect: provided
+	Participle: providing
+	Third Singular Present: provides
+
+380.  pull
+	Past: pulled
+	Perfect: pulled
+	Participle: pulling
+	Third Singular Present: pulls
+
+381.  pull off
+	Past: pulled
+	Perfect: pulled
+	Participle: pulling
+	Third Singular Present: pulls
+
+382.  pull out
+	Past: pulled
+	Perfect: pulled
+	Participle: pulling
+	Third Singular Present: pulls
+
+383.  pull out of
+	Past: pulled
+	Perfect: pulled
+	Participle: pulling
+	Third Singular Present: pulls
+
+384.  punish
+	Past: punished
+	Perfect: punished
+	Participle: punishing
+	Third Singular Present: punishes
+
+385.  pursue
+	Past: pursued
+	Perfect: pursued
+	Participle: pursuing
+	Third Singular Present: pursues
+
+386.  push
+	Past: pushed
+	Perfect: pushed
+	Participle: pushing
+	Third Singular Present: pushes
+
+387.  push away
+	Past: pushed
+	Perfect: pushed
+	Participle: pushing
+	Third Singular Present: pushes
+
+388.  put
+	Past: put   (suppletive)
+	Perfect: put
+	Participle: putting
+	Third Singular Present: puts
+
+389.  put down
+	Past: put   (suppletive)
+	Perfect: put
+	Participle: putting
+	Third Singular Present: puts
+
+390.  put on
+	Past: put   (suppletive)
+	Perfect: put
+	Participle: putting
+	Third Singular Present: puts
+
+391.  race
+	Past: raced
+	Perfect: raced
+	Participle: racing
+	Third Singular Present: races
+
+392.  raid
+	Past: raided
+	Perfect: raided
+	Participle: raiding
+	Third Singular Present: raids
+
+393.  rain
+	Past: rained
+	Perfect: rained
+	Participle: raining
+	Third Singular Present: rains
+
+394.  raise
+	Past: raised
+	Perfect: raised
+	Participle: raising
+	Third Singular Present: raises
+
+395.  rape
+	Past: raped
+	Perfect: raped
+	Participle: raping
+	Third Singular Present: rapes
+
+396.  reach
+	Past: reached
+	Perfect: reached
+	Participle: reaching
+	Third Singular Present: reaches
+
+397.  read
+	Past: read   (suppletive)
+	Perfect: read
+	Participle: reading
+	Third Singular Present: reads
+
+398.  realize
+	Past: realized
+	Perfect: realized
+	Participle: realizing
+	Third Singular Present: realizes
+
+399.  rebel
+	Past: rebelled
+	Perfect: rebelled
+	Participle: rebelling
+	Third Singular Present: rebels
+
+400.  rebuke
+	Past: rebuked
+	Perfect: rebuked
+	Participle: rebuking
+	Third Singular Present: rebukes
+
+401.  recede
+	Past: receded
+	Perfect: receded
+	Participle: receding
+	Third Singular Present: recedes
+
+402.  receive
+	Past: received
+	Perfect: received
+	Participle: receiving
+	Third Singular Present: receives
+
+403.  recline
+	Past: reclined
+	Perfect: reclined
+	Participle: reclining
+	Third Singular Present: reclines
+
+404.  recognize
+	Past: recognized
+	Perfect: recognized
+	Participle: recognizing
+	Third Singular Present: recognizes
+
+405.  redeem
+	Past: redeemed
+	Perfect: redeemed
+	Participle: redeeming
+	Third Singular Present: redeems
+
+406.  refuse
+	Past: refused
+	Perfect: refused
+	Participle: refusing
+	Third Singular Present: refuses
+
+407.  regret
+	Past: regretted
+	Perfect: regretted
+	Participle: regretting
+	Third Singular Present: regrets
+
+408.  reign
+	Past: reigned
+	Perfect: reigned
+	Participle: reigning
+	Third Singular Present: reigns
+
+409.  reject
+	Past: rejected
+	Perfect: rejected
+	Participle: rejecting
+	Third Singular Present: rejects
+
+410.  rejoice
+	Past: rejoiced
+	Perfect: rejoiced
+	Participle: rejoicing
+	Third Singular Present: rejoices
+
+411.  release
+	Past: released
+	Perfect: released
+	Participle: releasing
+	Third Singular Present: releases
+
+412.  remember
+	Past: remembered   (suppletive)
+	Perfect: remembered
+	Participle: remembering   (suppletive)
+	Third Singular Present: remembers
+
+413.  remind
+	Past: reminded
+	Perfect: reminded
+	Participle: reminding
+	Third Singular Present: reminds
+
+414.  rent
+	Past: rented
+	Perfect: rented
+	Participle: renting
+	Third Singular Present: rents
+
+415.  repair
+	Past: repaired
+	Perfect: repaired
+	Participle: repairing
+	Third Singular Present: repairs
+
+416.  repeat
+	Past: repeated
+	Perfect: repeated
+	Participle: repeating
+	Third Singular Present: repeats
+
+417.  repent
+	Past: repented
+	Perfect: repented
+	Participle: repenting
+	Third Singular Present: repents
+
+418.  replace
+	Past: replaced
+	Perfect: replaced
+	Participle: replacing
+	Third Singular Present: replaces
+
+419.  represent
+	Past: represented
+	Perfect: represented
+	Participle: representing
+	Third Singular Present: represents
+
+420.  rescue
+	Past: rescued
+	Perfect: rescued
+	Participle: rescuing
+	Third Singular Present: rescues
+
+421.  respect
+	Past: respected
+	Perfect: respected
+	Participle: respecting
+	Third Singular Present: respects
+
+422.  rest
+	Past: rested
+	Perfect: rested
+	Participle: resting
+	Third Singular Present: rests
+
+423.  restore
+	Past: restored
+	Perfect: restored
+	Participle: restoring
+	Third Singular Present: restores
+
+424.  retreat
+	Past: retreated
+	Perfect: retreated
+	Participle: retreating
+	Third Singular Present: retreats
+
+425.  return
+	Past: returned
+	Perfect: returned
+	Participle: returning
+	Third Singular Present: returns
+
+426.  reveal
+	Past: revealed
+	Perfect: revealed
+	Participle: revealing
+	Third Singular Present: reveals
+
+427.  reward
+	Past: rewarded
+	Perfect: rewarded
+	Participle: rewarding
+	Third Singular Present: rewards
+
+428.  ride
+	Past: rode   (suppletive)
+	Perfect: ridden   (suppletive)
+	Participle: riding
+	Third Singular Present: rides
+
+429.  rise
+	Past: rose   (suppletive)
+	Perfect: risen   (suppletive)
+	Participle: rising
+	Third Singular Present: rises
+
+430.  roar
+	Past: roared
+	Perfect: roared
+	Participle: roaring
+	Third Singular Present: roars
+
+431.  roast
+	Past: roasted
+	Perfect: roasted
+	Participle: roasting
+	Third Singular Present: roasts
+
+432.  roll
+	Past: rolled
+	Perfect: rolled
+	Participle: rolling
+	Third Singular Present: rolls
+
+433.  roll up
+	Past: rolled
+	Perfect: rolled
+	Participle: rolling
+	Third Singular Present: rolls
+
+434.  row
+	Past: rowed
+	Perfect: rowed
+	Participle: rowing
+	Third Singular Present: rows
+
+435.  rub
+	Past: rubbed
+	Perfect: rubbed
+	Participle: rubbing
+	Third Singular Present: rubs
+
+436.  ruin
+	Past: ruined
+	Perfect: ruined
+	Participle: ruining
+	Third Singular Present: ruins
+
+437.  rule
+	Past: ruled
+	Perfect: ruled
+	Participle: ruling
+	Third Singular Present: rules
+
+438.  run out
+	Past: ran   (suppletive)
+	Perfect: run   (suppletive)
+	Participle: running
+	Third Singular Present: runs
+
+439.  run
+	Past: ran   (suppletive)
+	Perfect: run   (suppletive)
+	Participle: running
+	Third Singular Present: runs
+
+440.  run away
+	Past: ran   (suppletive)
+	Perfect: run   (suppletive)
+	Participle: running
+	Third Singular Present: runs
+
+441.  run down
+	Past: ran   (suppletive)
+	Perfect: run   (suppletive)
+	Participle: running
+	Third Singular Present: runs
+
+442.  sacrifice
+	Past: sacrificed
+	Perfect: sacrificed
+	Participle: sacrificing
+	Third Singular Present: sacrifices
+
+443.  satisfy
+	Past: satisfied
+	Perfect: satisfied
+	Participle: satisfying
+	Third Singular Present: satisfies
+
+444.  save
+	Past: saved
+	Perfect: saved
+	Participle: saving
+	Third Singular Present: saves
+
+445.  say
+	Past: said   (suppletive)
+	Perfect: said
+	Participle: saying
+	Third Singular Present: says   (suppletive)
+
+446.  scare
+	Past: scared
+	Perfect: scared
+	Participle: scaring
+	Third Singular Present: scares
+
+447.  scatter
+	Past: scattered   (suppletive)
+	Perfect: scattered
+	Participle: scattering   (suppletive)
+	Third Singular Present: scatters
+
+448.  scold
+	Past: scolded
+	Perfect: scolded
+	Participle: scolding
+	Third Singular Present: scolds
+
+449.  scout
+	Past: scouted
+	Perfect: scouted
+	Participle: scouting
+	Third Singular Present: scouts
+
+450.  scream
+	Past: screamed
+	Perfect: screamed
+	Participle: screaming
+	Third Singular Present: screams
+
+451.  seal
+	Past: sealed
+	Perfect: sealed
+	Participle: sealing
+	Third Singular Present: seals
+
+452.  search
+	Past: searched
+	Perfect: searched
+	Participle: searching
+	Third Singular Present: searches
+
+453.  see
+	Past: saw   (suppletive)
+	Perfect: seen   (suppletive)
+	Participle: seeing   (suppletive)
+	Third Singular Present: sees
+
+454.  seem
+	Past: seemed
+	Perfect: seemed
+	Participle: seeming
+	Third Singular Present: seems
+
+455.  sell
+	Past: sold   (suppletive)
+	Perfect: sold
+	Participle: selling
+	Third Singular Present: sells
+
+456.  send
+	Past: sent   (suppletive)
+	Perfect: sent
+	Participle: sending
+	Third Singular Present: sends
+
+457.  separate
+	Past: separated
+	Perfect: separated
+	Participle: separating
+	Third Singular Present: separates
+
+458.  serve
+	Past: served
+	Perfect: served
+	Participle: serving
+	Third Singular Present: serves
+
+459.  set
+	Past: set   (suppletive)
+	Perfect: set
+	Participle: setting
+	Third Singular Present: sets
+
+460.  set up
+	Past: set   (suppletive)
+	Perfect: set
+	Participle: setting
+	Third Singular Present: sets
+
+461.  sew
+	Past: sewed
+	Perfect: sewn   (suppletive)
+	Participle: sewing
+	Third Singular Present: sews
+
+462.  shake
+	Past: shook   (suppletive)
+	Perfect: shaken   (suppletive)
+	Participle: shaking
+	Third Singular Present: shakes
+
+463.  share
+	Past: shared
+	Perfect: shared
+	Participle: sharing
+	Third Singular Present: shares
+
+464.  shave
+	Past: shaved
+	Perfect: shaved
+	Participle: shaving
+	Third Singular Present: shaves
+
+465.  shear
+	Past: sheared
+	Perfect: sheared
+	Participle: shearing
+	Third Singular Present: shears
+
+466.  shine
+	Past: shined
+	Perfect: shined
+	Participle: shining
+	Third Singular Present: shines
+
+467.  shoot
+	Past: shot   (suppletive)
+	Perfect: shot
+	Participle: shooting
+	Third Singular Present: shoots
+
+468.  shout
+	Past: shouted
+	Perfect: shouted
+	Participle: shouting
+	Third Singular Present: shouts
+
+469.  show
+	Past: showed
+	Perfect: shown   (suppletive)
+	Participle: showing
+	Third Singular Present: shows
+
+470.  sigh
+	Past: sighed
+	Perfect: sighed
+	Participle: sighing
+	Third Singular Present: sighs
+
+471.  sign
+	Past: signed
+	Perfect: signed
+	Participle: signing
+	Third Singular Present: signs
+
+472.  sin
+	Past: sinned
+	Perfect: sinned
+	Participle: sinning
+	Third Singular Present: sins
+
+473.  sing
+	Past: sang   (suppletive)
+	Perfect: sung   (suppletive)
+	Participle: singing
+	Third Singular Present: sings
+
+474.  sink
+	Past: sank   (suppletive)
+	Perfect: sunk   (suppletive)
+	Participle: sinking
+	Third Singular Present: sinks
+
+475.  sit
+	Past: sat   (suppletive)
+	Perfect: sat
+	Participle: sitting
+	Third Singular Present: sits
+
+476.  sit down
+	Past: sat   (suppletive)
+	Perfect: sat
+	Participle: sitting
+	Third Singular Present: sits
+
+477.  sit up
+	Past: sat   (suppletive)
+	Perfect: sat
+	Participle: sitting
+	Third Singular Present: sits
+
+478.  slaughter
+	Past: slaughtered   (suppletive)
+	Perfect: slaughtered
+	Participle: slaughtering   (suppletive)
+	Third Singular Present: slaughters
+
+479.  sleep
+	Past: slept   (suppletive)
+	Perfect: slept
+	Participle: sleeping
+	Third Singular Present: sleeps
+
+480.  sling
+	Past: slung   (suppletive)
+	Perfect: slung
+	Participle: slinging
+	Third Singular Present: slings
+
+481.  smell
+	Past: smelled
+	Perfect: smelled
+	Participle: smelling
+	Third Singular Present: smells
+
+482.  sneeze
+	Past: sneezed
+	Perfect: sneezed
+	Participle: sneezing
+	Third Singular Present: sneezes
+
+483.  snow
+	Past: snowed
+	Perfect: snowed
+	Participle: snowing
+	Third Singular Present: snows
+
+484.  sound like
+	Past: sounded
+	Perfect: sounded
+	Participle: sounding
+	Third Singular Present: sounds
+
+485.  speak
+	Past: spoke   (suppletive)
+	Perfect: spoken   (suppletive)
+	Participle: speaking
+	Third Singular Present: speaks
+
+486.  spend
+	Past: spent   (suppletive)
+	Perfect: spent
+	Participle: spending
+	Third Singular Present: spends
+
+487.  spill
+	Past: spilled
+	Perfect: spilled
+	Participle: spilling
+	Third Singular Present: spills
+
+488.  spit
+	Past: spit   (suppletive)
+	Perfect: spit
+	Participle: spitting
+	Third Singular Present: spits
+
+489.  spread
+	Past: spread   (suppletive)
+	Perfect: spread
+	Participle: spreading
+	Third Singular Present: spreads
+
+490.  sprout
+	Past: sprouted
+	Perfect: sprouted
+	Participle: sprouting
+	Third Singular Present: sprouts
+
+491.  squeeze
+	Past: squeezed
+	Perfect: squeezed
+	Participle: squeezing
+	Third Singular Present: squeezes
+
+492.  stab
+	Past: stabbed
+	Perfect: stabbed
+	Participle: stabbing
+	Third Singular Present: stabs
+
+493.  stand
+	Past: stood   (suppletive)
+	Perfect: stood
+	Participle: standing
+	Third Singular Present: stands
+
+494.  stand up
+	Past: stood   (suppletive)
+	Perfect: stood
+	Participle: standing
+	Third Singular Present: stands
+
+495.  stare
+	Past: stared
+	Perfect: stared
+	Participle: staring
+	Third Singular Present: stares
+
+496.  start
+	Past: started
+	Perfect: started
+	Participle: starting
+	Third Singular Present: starts
+
+497.  starve
+	Past: starved
+	Perfect: starved
+	Participle: starving
+	Third Singular Present: starves
+
+498.  stay
+	Past: stayed
+	Perfect: stayed
+	Participle: staying
+	Third Singular Present: stays   (suppletive)
+
+499.  stay away
+	Past: stayed
+	Perfect: stayed
+	Participle: staying
+	Third Singular Present: stays   (suppletive)
+
+500.  steal
+	Past: stole   (suppletive)
+	Perfect: stolen   (suppletive)
+	Participle: stealing
+	Third Singular Present: steals
+
+501.  step
+	Past: stepped
+	Perfect: stepped
+	Participle: stepping
+	Third Singular Present: steps
+
+502.  step aside
+	Past: stepped
+	Perfect: stepped
+	Participle: stepping
+	Third Singular Present: steps
+
+503.  sting
+	Past: stung   (suppletive)
+	Perfect: stung
+	Participle: stinging
+	Third Singular Present: stings
+
+504.  stone
+	Past: stoned
+	Perfect: stoned
+	Participle: stoning
+	Third Singular Present: stones
+
+505.  stop
+	Past: stopped
+	Perfect: stopped
+	Participle: stopping
+	Third Singular Present: stops
+
+506.  store
+	Past: stored
+	Perfect: stored
+	Participle: storing
+	Third Singular Present: stores
+
+507.  stretch
+	Past: stretched
+	Perfect: stretched
+	Participle: stretching
+	Third Singular Present: stretches
+
+508.  struggle
+	Past: struggled
+	Perfect: struggled
+	Participle: struggling
+	Third Singular Present: struggles
+
+509.  study
+	Past: studied
+	Perfect: studied
+	Participle: studying
+	Third Singular Present: studies
+
+510.  succeed
+	Past: succeeded
+	Perfect: succeeded
+	Participle: succeeding
+	Third Singular Present: succeeds
+
+511.  suffer
+	Past: suffered   (suppletive)
+	Perfect: suffered
+	Participle: suffering   (suppletive)
+	Third Singular Present: suffers
+
+512.  suggest
+	Past: suggested
+	Perfect: suggested
+	Participle: suggesting
+	Third Singular Present: suggests
+
+513.  support
+	Past: supported
+	Perfect: supported
+	Participle: supporting
+	Third Singular Present: supports
+
+514.  surprise
+	Past: surprised
+	Perfect: surprised
+	Participle: surprising
+	Third Singular Present: surprises
+
+515.  surrender
+	Past: surrendered   (suppletive)
+	Perfect: surrendered
+	Participle: surrendering   (suppletive)
+	Third Singular Present: surrenders
+
+516.  surround
+	Past: surrounded
+	Perfect: surrounded
+	Participle: surrounding
+	Third Singular Present: surrounds
+
+517.  swallow
+	Past: swallowed
+	Perfect: swallowed
+	Participle: swallowing
+	Third Singular Present: swallows
+
+518.  swear
+	Past: swore   (suppletive)
+	Perfect: sworn   (suppletive)
+	Participle: swearing
+	Third Singular Present: swears
+
+519.  sweat
+	Past: sweated
+	Perfect: sweated
+	Participle: sweating
+	Third Singular Present: sweats
+
+520.  sweep
+	Past: swept   (suppletive)
+	Perfect: swept
+	Participle: sweeping
+	Third Singular Present: sweeps
+
+521.  swim
+	Past: swam   (suppletive)
+	Perfect: swum   (suppletive)
+	Participle: swimming   (suppletive)
+	Third Singular Present: swims
+
+522.  take
+	Past: took   (suppletive)
+	Perfect: taken   (suppletive)
+	Participle: taking
+	Third Singular Present: takes
+
+523.  take away
+	Past: took   (suppletive)
+	Perfect: taken   (suppletive)
+	Participle: taking
+	Third Singular Present: takes
+
+524.  take care
+	Past: took   (suppletive)
+	Perfect: taken   (suppletive)
+	Participle: taking
+	Third Singular Present: takes
+
+525.  take off
+	Past: took   (suppletive)
+	Perfect: taken   (suppletive)
+	Participle: taking
+	Third Singular Present: takes
+
+526.  take out
+	Past: took   (suppletive)
+	Perfect: taken   (suppletive)
+	Participle: taking
+	Third Singular Present: takes
+
+527.  talk
+	Past: talked
+	Perfect: talked
+	Participle: talking
+	Third Singular Present: talks
+
+528.  taste
+	Past: tasted
+	Perfect: tasted
+	Participle: tasting
+	Third Singular Present: tastes
+
+529.  teach
+	Past: taught   (suppletive)
+	Perfect: taught
+	Participle: teaching
+	Third Singular Present: teaches
+
+530.  tear
+	Past: tore   (suppletive)
+	Perfect: torn   (suppletive)
+	Participle: tearing
+	Third Singular Present: tears
+
+531.  tell
+	Past: told   (suppletive)
+	Perfect: told
+	Participle: telling
+	Third Singular Present: tells
+
+532.  tempt
+	Past: tempted
+	Perfect: tempted
+	Participle: tempting
+	Third Singular Present: tempts
+
+533.  terrify
+	Past: terrified
+	Perfect: terrified
+	Participle: terrifying
+	Third Singular Present: terrifies
+
+534.  test
+	Past: tested
+	Perfect: tested
+	Participle: testing
+	Third Singular Present: tests
+
+535.  testify
+	Past: testified
+	Perfect: testified
+	Participle: testifying
+	Third Singular Present: testifies
+
+536.  thank
+	Past: thanked
+	Perfect: thanked
+	Participle: thanking
+	Third Singular Present: thanks
+
+537.  think
+	Past: thought   (suppletive)
+	Perfect: thought
+	Participle: thinking
+	Third Singular Present: thinks
+
+538.  thresh
+	Past: threshed
+	Perfect: threshed
+	Participle: threshing
+	Third Singular Present: threshes
+
+539.  throw
+	Past: threw   (suppletive)
+	Perfect: thrown   (suppletive)
+	Participle: throwing
+	Third Singular Present: throws
+
+540.  throw away
+	Past: threw   (suppletive)
+	Perfect: thrown   (suppletive)
+	Participle: throwing
+	Third Singular Present: throws
+
+541.  tie
+	Past: tied
+	Perfect: tied
+	Participle: tying   (suppletive)
+	Third Singular Present: ties
+
+542.  torture
+	Past: tortured
+	Perfect: tortured
+	Participle: torturing
+	Third Singular Present: tortures
+
+543.  touch
+	Past: touched
+	Perfect: touched
+	Participle: touching
+	Third Singular Present: touches
+
+544.  trade
+	Past: traded
+	Perfect: traded
+	Participle: trading
+	Third Singular Present: trades
+
+545.  trample
+	Past: trampled
+	Perfect: trampled
+	Participle: trampling
+	Third Singular Present: tramples
+
+546.  transform
+	Past: transformed
+	Perfect: transformed
+	Participle: transforming
+	Third Singular Present: transforms
+
+547.  travel
+	Past: traveled   (suppletive)
+	Perfect: traveled
+	Participle: traveling   (suppletive)
+	Third Singular Present: travels
+
+548.  treat
+	Past: treated
+	Perfect: treated
+	Participle: treating
+	Third Singular Present: treats
+
+549.  trick
+	Past: tricked
+	Perfect: tricked
+	Participle: tricking
+	Third Singular Present: tricks
+
+550.  trip
+	Past: tripped
+	Perfect: tripped
+	Participle: tripping
+	Third Singular Present: trips
+
+551.  trust
+	Past: trusted
+	Perfect: trusted
+	Participle: trusting
+	Third Singular Present: trusts
+
+552.  try
+	Past: tried
+	Perfect: tried
+	Participle: trying
+	Third Singular Present: tries
+
+553.  turn
+	Past: turned
+	Perfect: turned
+	Participle: turning
+	Third Singular Present: turns
+
+554.  turn around
+	Past: turned
+	Perfect: turned
+	Participle: turning
+	Third Singular Present: turns
+
+555.  turn away
+	Past: turned
+	Perfect: turned
+	Participle: turning
+	Third Singular Present: turns
+
+556.  understand
+	Past: understood   (suppletive)
+	Perfect: understood
+	Participle: understanding
+	Third Singular Present: understands
+
+557.  unite
+	Past: united
+	Perfect: united
+	Participle: uniting
+	Third Singular Present: unites
+
+558.  unlock
+	Past: unlocked
+	Perfect: unlocked
+	Participle: unlocking
+	Third Singular Present: unlocks
+
+559.  untie
+	Past: untied
+	Perfect: untied
+	Participle: untying   (suppletive)
+	Third Singular Present: unties
+
+560.  urge
+	Past: urged
+	Perfect: urged
+	Participle: urging
+	Third Singular Present: urges
+
+561.  urinate
+	Past: urinated
+	Perfect: urinated
+	Participle: urinating
+	Third Singular Present: urinates
+
+562.  use
+	Past: used
+	Perfect: used
+	Participle: using
+	Third Singular Present: uses
+
+563.  visit
+	Past: visited   (suppletive)
+	Perfect: visited
+	Participle: visiting   (suppletive)
+	Third Singular Present: visits
+
+564.  vomit
+	Past: vomited   (suppletive)
+	Perfect: vomited
+	Participle: vomiting   (suppletive)
+	Third Singular Present: vomits
+
+565.  wage
+	Past: waged
+	Perfect: waged
+	Participle: waging
+	Third Singular Present: wages
+
+566.  wait
+	Past: waited
+	Perfect: waited
+	Participle: waiting
+	Third Singular Present: waits
+
+567.  wake up
+	Past: woke   (suppletive)
+	Perfect: woken   (suppletive)
+	Participle: waking
+	Third Singular Present: wakes
+
+568.  walk
+	Past: walked
+	Perfect: walked
+	Participle: walking
+	Third Singular Present: walks
+
+569.  walk away
+	Past: walked
+	Perfect: walked
+	Participle: walking
+	Third Singular Present: walks
+
+570.  walk down
+	Past: walked
+	Perfect: walked
+	Participle: walking
+	Third Singular Present: walks
+
+571.  walk up
+	Past: walked
+	Perfect: walked
+	Participle: walking
+	Third Singular Present: walks
+
+572.  wander
+	Past: wandered   (suppletive)
+	Perfect: wandered
+	Participle: wandering   (suppletive)
+	Third Singular Present: wanders
+
+573.  want
+	Past: wanted
+	Perfect: wanted
+	Participle: wanting
+	Third Singular Present: wants
+
+574.  warn
+	Past: warned
+	Perfect: warned
+	Participle: warning
+	Third Singular Present: warns
+
+575.  wash
+	Past: washed
+	Perfect: washed
+	Participle: washing
+	Third Singular Present: washes
+
+576.  waste
+	Past: wasted
+	Perfect: wasted
+	Participle: wasting
+	Third Singular Present: wastes
+
+577.  watch
+	Past: watched
+	Perfect: watched
+	Participle: watching
+	Third Singular Present: watches
+
+578.  watch out
+	Past: watched
+	Perfect: watched
+	Participle: watching
+	Third Singular Present: watches
+
+579.  wave
+	Past: waved
+	Perfect: waved
+	Participle: waving
+	Third Singular Present: waves
+
+580.  wear
+	Past: wore   (suppletive)
+	Perfect: worn   (suppletive)
+	Participle: wearing
+	Third Singular Present: wears
+
+581.  weep
+	Past: wept   (suppletive)
+	Perfect: wept
+	Participle: weeping
+	Third Singular Present: weeps
+
+582.  weigh
+	Past: weighed
+	Perfect: weighed
+	Participle: weighing
+	Third Singular Present: weighs
+
+583.  welcome
+	Past: welcomed
+	Perfect: welcomed
+	Participle: welcoming
+	Third Singular Present: welcomes
+
+584.  whip
+	Past: whipped
+	Perfect: whipped
+	Participle: whipping
+	Third Singular Present: whips
+
+585.  whisper
+	Past: whispered   (suppletive)
+	Perfect: whispered
+	Participle: whispering   (suppletive)
+	Third Singular Present: whispers
+
+586.  win
+	Past: won   (suppletive)
+	Perfect: won
+	Participle: winning   (suppletive)
+	Third Singular Present: wins
+
+587.  winnow
+	Past: winnowed
+	Perfect: winnowed
+	Participle: winnowing
+	Third Singular Present: winnows
+
+588.  wish
+	Past: wished
+	Perfect: wished
+	Participle: wishing
+	Third Singular Present: wishes
+
+589.  wither
+	Past: withered   (suppletive)
+	Perfect: withered
+	Participle: withering   (suppletive)
+	Third Singular Present: withers
+
+590.  witness
+	Past: witnessed
+	Perfect: witnessed
+	Participle: witnessing
+	Third Singular Present: witnesses
+
+591.  wonder
+	Past: wondered   (suppletive)
+	Perfect: wondered
+	Participle: wondering   (suppletive)
+	Third Singular Present: wonders
+
+592.  work
+	Past: worked
+	Perfect: worked
+	Participle: working
+	Third Singular Present: works
+
+593.  work out
+	Past: worked
+	Perfect: worked
+	Participle: working
+	Third Singular Present: works
+
+594.  worry
+	Past: worried
+	Perfect: worried
+	Participle: worrying
+	Third Singular Present: worries
+
+595.  worship
+	Past: worshiped   (suppletive)
+	Perfect: worshiped
+	Participle: worshiping   (suppletive)
+	Third Singular Present: worships
+
+596.  wound
+	Past: wounded
+	Perfect: wounded
+	Participle: wounding
+	Third Singular Present: wounds
+
+597.  wrap
+	Past: wrapped
+	Perfect: wrapped
+	Participle: wrapping
+	Third Singular Present: wraps
+
+598.  wrestle
+	Past: wrestled
+	Perfect: wrestled
+	Participle: wrestling
+	Third Singular Present: wrestles
+
+599.  write
+	Past: wrote   (suppletive)
+	Perfect: written   (suppletive)
+	Participle: writing
+	Third Singular Present: writes
+
+600.  write down
+	Past: wrote   (suppletive)
+	Perfect: written   (suppletive)
+	Participle: writing
+	Third Singular Present: writes
+
