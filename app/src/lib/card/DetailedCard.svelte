@@ -15,7 +15,6 @@
 	onMount(() => dialog.showModal())
 
 	$: curated_examples = concept.curated_examples
-	$: examples = concept.examples
 </script>
 
 <!-- https://daisyui.com/components/modal -->
@@ -47,7 +46,7 @@
 							Curated examples ({curated_examples.length})
 						</span>
 
-						{#each curated_examples as { sentence, reference, semantic_representation }}
+						{#each curated_examples as { sentence, reference, encoding }}
 							<blockquote class="mb-0">
 								<span>
 									{sentence}
@@ -58,7 +57,7 @@
 								</cite>
 
 								<footer class="mt-4 flex justify-around bg-base-100">
-									{#each semantic_representation as { part_of_speech, role, word }}
+									{#each encoding as { part_of_speech, role, word }}
 										<span class="flex flex-col items-center py-2">
 											<span class="mb-1 not-italic tracking-widest text-base-content">
 												{word}
@@ -79,7 +78,7 @@
 
 				<section class="prose mt-4 max-w-none">
 					<h3>Examples</h3>
-					<Examples examples={examples} />
+					<Examples {concept} />
 				</section>
 			</main>
 		</article>

@@ -1,38 +1,13 @@
 <script>
 	import Icon from "@iconify/svelte"
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
+	import SemanticEncoding from "./SemanticEncoding.svelte"
+	import { transform_example, display_context_arguments } from "./examples"
 
-	/** @type {Concept['examples']} */
-	export let examples
+	/** @type {Concept} */
+	export let concept
 
-	$: transformed_examples = examples.reduce(transform, {})
-
-	// TODO: maybe this belongs in the data layer...need to consider
-	/**
-	 * Transforms a list of examples with "flat" References into a nested structure
-	 *
-	 * 	{
-	 * 		{											{
-	 * 			source: string							source: {
-	 *				book: string				=>					book: {
-	 *				chapter: number								'chapter:verse': unknown_encoding,
-	 *				verse: number								},
-	 * 		},												},
-	 *			unknown_encoding: string,			}
-	 *		}
-	 *
-	 * @param {Record<string, Record<string, Record<string, string>>>} transformed_examples
-	 * @param {Concept['examples'][0]} example
-	 */
-	function transform(transformed_examples, {reference, unknown_encoding}) {
-		const {source, book, chapter, verse} = reference
-
-		transformed_examples[source] ??= {}
-		transformed_examples[source][book] ??= {}
-		transformed_examples[source][book][`${chapter}:${verse}`] = unknown_encoding
-
-		return transformed_examples
-	}
+	$: transformed_examples = concept.examples.reduce(transform_example, {})
 
 	$: sources = Object.keys(transformed_examples)
 	/** @param {string} source */
@@ -62,17 +37,6 @@
 			selected_verse_json_encoded = ''
 	}
 
-	/**
-	 * @typedef {Object} SourceData
-	 * @property {string} type
-	 * @property {string} id_primary
-	 * @property {string} id_secondary
-	 * @property {string} id_tertiary
-	 * @property {string} phase_1_encoding
-	 * @property {string} phase_2_encoding
-	 * @property {string} comments
-	 * @property {string} notes
-	 */
 	/**
 	 * @param {Reference} reference
 	 *
@@ -115,7 +79,9 @@
 			<select bind:value={selected_verse_json_encoded} disabled={! selected_book} class="select">
 				<option value="" disabled>Select a reference</option>
 				{#each Object.entries(verses) as verse}
-					<option value={JSON.stringify(verse)}>{verse[0]} {verse[1]}</option>
+					{#each verse[1] as occurrence}
+						<option value={JSON.stringify(verse[0])}>{verse[0]} {display_context_arguments(concept, occurrence)}</option>
+					{/each}
 				{/each}
 			</select>
 		</form>
@@ -124,7 +90,7 @@
 	{/if}
 
 	{#if selected_verse_json_encoded}
-		{@const [key, unknown_encoding] = JSON.parse(selected_verse_json_encoded)}
+		{@const key = JSON.parse(selected_verse_json_encoded)}
 		{@const [selected_chapter, selected_verse] = key.split(':')}
 		{@const selected_reference = {source: selected_source, book: selected_book, chapter: selected_chapter, verse: selected_verse}}
 
@@ -143,13 +109,8 @@
 				{source.phase_1_encoding}
 			</p>
 
+			<SemanticEncoding phase_2_encoding={source.phase_2_encoding} />
 			<!-- TODO: need errorhandling here, i.e., :catch? -->
 		{/await}
-
-		<!-- <h4>unknown encoding</h4>
-		<span class="indicator font-mono">
-			{unknown_encoding}
-			<span data-tip="TBD: still needs to be decoded" class="badge indicator-item badge-warning badge-xs tooltip tooltip-top" />
-		</span> -->
 	{/if}
 </article>

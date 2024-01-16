@@ -1,4 +1,4 @@
-import {semantic_category, sources, theta_grid, usage_info} from './lookups'
+import {semantic_category, sources, theta_grid, usage_info, example_argument_slots} from './lookups'
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -10,7 +10,7 @@ export function transform(match_from_db) {
 		...match_from_db,
 
 		categories: transform_categorization(match_from_db),
-		examples: transform_examples(match_from_db.examples),
+		examples: transform_examples(match_from_db),
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		occurrences: transform_occurrences(match_from_db.occurrences),
 	}
@@ -35,30 +35,30 @@ function transform_curated_examples(curated_examples_from_db) {
 	 */
 	function decode(encoded_example) {
 		const encoded_reference = encoded_example.split('|')[0] // '4,2,2,2'
-		const encoded_semantic_representation = encoded_example.match(/\|(.*)\|~/)?.[1] || '' // (NPp|baby|)|(VP|be|)|(APP|beautiful|)
+		const simplified_semantic_encoding = encoded_example.match(/\|(.*)\|~/)?.[1] || '' // (NPp|baby|)|(VP|be|)|(APP|beautiful|)
 
 		return {
 			reference: decode_reference(encoded_reference),
-			semantic_representation: decode_semantic_representation(encoded_semantic_representation),
+			encoding: decode_simplified_encoding(simplified_semantic_encoding),
 			sentence: encoded_example.split('~')[1], // The baby was beautiful.
 		}
 
 		/**
-		 * @param {string} encoded_semantic_representation '(NPp|baby|)|(VP|be|)|(APP|beautiful|)'
+		 * @param {string} simplified_semantic_encoding '(NPp|baby|)|(VP|be|)|(APP|beautiful|)'
 		 *
-		 * @returns {SemanticRepresentation}
+		 * @returns {SimplifiedSemanticEncoding}
 		 */
-		function decode_semantic_representation(encoded_semantic_representation) {
-			const encoded_phrases = encoded_semantic_representation.match(/\([^)]+\|[^)]+\)/g) || [] // ['(NPp|baby|)', '(VP|be|)', '(APP|beautiful|)']
+		function decode_simplified_encoding(simplified_semantic_encoding) {
+			const encoded_phrases = simplified_semantic_encoding.match(/\([^)]+\|[^)]+\)/g) || [] // ['(NPp|baby|)', '(VP|be|)', '(APP|beautiful|)']
 
-			const semantic_representation = encoded_phrases.map(decode_phrase)
+			const argument_phrases = encoded_phrases.map(decode_phrase)
 
-			return semantic_representation
+			return argument_phrases
 
 			/**
 			 * @param {string} encoded_phrase '(NPp|baby|)'
 			 *
-			 * @returns {Phrase}
+			 * @returns {SimplifiedEncodingPhrase}
 			 */
 			function decode_phrase(encoded_phrase) {
 				const [type, word] = encoded_phrase.replace(/[()]/g, '').split('|') // ['NPp', 'baby']
@@ -79,12 +79,28 @@ function transform_curated_examples(curated_examples_from_db) {
 }
 
 /**
- * @param {string} examples_from_db various encoding formats, here's one example '4|41|15|36|N|||wineA||\n4|41|15|36|N|||wineA||\n'
+ * Various encoding formats depending on the part-of-speech.
+ * Here's one example for an adjective:
+ * '4|41|15|36|N|||wineA||' =>
+ * 	{
+ * 		reference: {
+ *			source: 'Bible'
+ *			book: 'Mark'
+ *			chapter: 15
+ *			verse: 36
+ *		},
+ *		context_arguments: {
+ *			'Degree': 'N'
+ *			'Modified Noun': 'wineA'
+ *		}
+ * 	}
+ * 
+ * @param {DbRowConcept} concept_from_db
  *
  * @returns {Example[]}
  */
-function transform_examples(examples_from_db) {
-	const encoded_examples = examples_from_db.split('\n').filter(field => !!field)
+function transform_examples({examples, part_of_speech}) {
+	const encoded_examples = examples.split('\n').filter(field => !!field)
 
 	return encoded_examples.map(decode)
 
@@ -94,11 +110,28 @@ function transform_examples(examples_from_db) {
 	 * @returns {Example}
 	 * */
 	function decode(encoded_example) {
-		const [source, book, chapter, verse, ...rest] = encoded_example.split('|')
+		const [source, book, chapter, verse, ...argument_slots] = encoded_example.split('|')
+
+		const slot_names = example_argument_slots[part_of_speech] || []
+		const context_arguments = argument_slots.reduce(example_reducer, new Map())
 
 		return {
 			reference: decode_reference([source, book, chapter, verse].join(',')),
-			unknown_encoding: rest.join('|'),
+			context_arguments: context_arguments,
+		}
+
+		/**
+		 * Only keep the arguments that are present 
+		 * 
+		 * @param {Map<string, string>} reduced_slots 
+		 * @param {string} slot_value 
+		 * @param {number} index 
+		 */
+		function example_reducer(reduced_slots, slot_value, index) {
+			if (slot_value !== '') {
+				reduced_slots.set(slot_names[index], slot_value)
+			}
+			return reduced_slots
 		}
 	}
 }
