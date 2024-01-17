@@ -1,5 +1,20 @@
-import { stdin as input } from 'node:process'
+import { stdin as input, argv } from 'node:process'
 import { createInterface } from 'node:readline'
+
+const parts_of_speech = [
+	'Adjective',
+	'Adverb',
+	'Noun',
+	'Verb',
+]
+
+const part_of_speech = argv[2]
+if (!parts_of_speech.includes(part_of_speech)) {
+	console.error('part of speech is required and must be one of these: ', parts_of_speech)
+	console.error('usage: node to_csv.mjs <part of speech> < <input file>')
+
+	process.exit(1)
+}
 
 const extracted_data = new Map()
 
@@ -54,21 +69,19 @@ function extract(line) {
 		const normalized_inflection = inflection.replace(ADDITIONAL_INFO, '')
 
 		extracted_data.get(last_stem).push(normalized_inflection)
-	} else {
-		console.error('line did not look like a stem or and inflection:', line)
 	}
 }
 
 function output() {
-	[...extracted_data]
+	Array.from(extracted_data)
 		.filter(has_inflections)
 		.map(log_csv)
 
-		function has_inflections([, inflections]) {
-			return !!inflections.length
-		}
+	function has_inflections([, inflections]) {
+		return inflections.length > 0
+	}
 
-		function log_csv([stem, inflections]) {
-			console.log(`${stem},${inflections.join('|')}`)
-		}
+	function log_csv([stem, inflections]) {
+		console.log(`${stem},${part_of_speech},${inflections.join('|')}`)
+	}
 }

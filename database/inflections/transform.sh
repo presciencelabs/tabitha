@@ -17,6 +17,9 @@ for win_file in win/*; do
 	part_of_speech_file=$(echo $unix_file | sed -E 's/lexical_forms_(.*)\.txt$/\1\.csv/')
 	# part_of_speech_file = nouns.csv
 
+	part_of_speech=$(echo $part_of_speech_file | cut -d. -f1 | awk '{print toupper(substr($0,1,1)) substr($0,2,length($0)-2)}')
+	# part_of_speech = Noun
+
 	echo "transforming unix/$unix_file => $part_of_speech_file"
-	cat unix/$unix_file | node to_csv.mjs > csv/$part_of_speech_file
+	cat unix/$unix_file | node to_csv.mjs $part_of_speech > csv/$part_of_speech_file
 done
