@@ -64,15 +64,15 @@ function check_for_pronouns(token) {
 }
 
 /**
- * Subordinate clauses must begin with a space before the opening bracket, e.g., `⎕[subordinate clause`.
+ * Subordinate clauses must begin with a space or another opening bracket before the opening bracket, e.g., `⎕[subordinate clause` or `[[subordinate clause`.
  * Not sure whether there are any rules about the closing bracket.  //TODO: follow-up on this question
  *
  * @param {Token} token
  * @returns {string} error messages or ''
  */
 function check_subordinate_clause(token) {
-	if (REGEXES.NON_WHITESPACE_BEFORE_OPENING_BRACKET.test(token)) {
-		return 'Subordinate clauses should have a space before the opening bracket, e.g., ⎕[subordinate clause...'
+	if (REGEXES.UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET.test(token)) {
+		return 'Subordinate clauses should have a space or an opening bracket before the opening bracket, e.g., ⎕[subordinate clause or [[subordinate clause'
 	}
 
 	return ''

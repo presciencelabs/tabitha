@@ -229,6 +229,7 @@ describe('syntax: subordinate clauses', () => {
 		test.each([
 			[['[']],
 			[['[good']],
+			[['[[good]]']],
 		])('%s', test_tokens => {
 			/** @type {CheckedToken[]} */
 			const EXPECTED_OUTPUT = [
@@ -246,7 +247,6 @@ describe('syntax: subordinate clauses', () => {
 		// prettier-ignore
 		test.each([
 			[['bad[']],
-			[['[[bad]]']],
 			[['[bad[bad]]']],
 		])('%s', test_tokens => {
 			/** @type {CheckedToken[]} */

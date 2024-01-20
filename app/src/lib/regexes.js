@@ -10,7 +10,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class_escape#s
 const ANY_WHITESPACE = /\s+/
 const NON_WHITESPACE_BEFORE_UNDERSCORE = /\S_/
-const NON_WHITESPACE_BEFORE_OPENING_BRACKET = /\S\[/
+const UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET = /[^\s[]\[/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class_escape#w
 // e.g., "Paul was very upset/distressed [because Paul saw throughout Athens many objects [that the people of that city thought [were gods]]]."
@@ -32,7 +32,7 @@ export const REGEXES = {
 	ANY_WHITESPACE,
 	ANY_WORD_EXCLUDE_OPEN_PAREN,
 	IS_A_WORD,
-	NON_WHITESPACE_BEFORE_OPENING_BRACKET,
+	UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET,
 	NON_WHITESPACE_BEFORE_UNDERSCORE,
 	OPENING_OR_CLOSING_BRACKET,
 	OPENING_OR_CLOSING_BRACKET_G,
