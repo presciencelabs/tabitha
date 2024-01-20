@@ -2,7 +2,7 @@
 
 ## Create the table
 
-`sqlite3 Editor.sqlite < <table>/<table>.sqlite.sql`
+`sqlite3 Editor.sqlite < <table>/create_table.sql`
 
 ## Load the csv's
 

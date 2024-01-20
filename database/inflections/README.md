@@ -24,10 +24,4 @@ in "take" and that stem has a chance to be found.
 1. Place all `*.win.txt` files into the `win` directory
 1. run `./transform.sh`
 
-This script will populate `csv` with the newly transformed files.
-
-# Database load
-
-## Load the csv's
-
-`sqlite3 <DB_NAME> < load_csv_data.sql`
+This script will populate `csv` with the newly transformed files that can then be loaded

@@ -12,6 +12,7 @@ declare global {
 			// Cloudflare-specific
 			env: {
 				DB_Ontology: D1Database // see wrangler.toml to match this name
+				DB_Editor: D1Database // see wrangler.toml to match this name
 			}
 		}
 	}

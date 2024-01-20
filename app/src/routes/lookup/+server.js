@@ -5,27 +5,43 @@ export async function GET({url: {searchParams}, platform}) {
 	/** @type {LookupTerm} */
 	const word = searchParams.get('word') ?? ''
 
-	/** @type {LookupResult<OntologyResult>} */
-	const result = {
-		term: word,
-		matches: [],
-	}
-
 	if (!platform?.env.DB_Ontology) {
-		console.error(`database missing from platform arg: ${JSON.stringify(platform)}`)
+		console.error(`Ontology database missing from platform arg: ${JSON.stringify(platform)}`)
 
-		return json(result)
+		return response({term: word, matches: []})
 	}
 
-	result.matches = await get_matches(platform.env.DB_Ontology)(word)
+	let matches = await get_matches_from_ontology(platform.env.DB_Ontology)(word)
 
-	const THREE_HOUR_CACHE = {
-		'cache-control': `max-age=${3 * 60 * 60}`,
+	if (matches.length > 0) return response({term: word, matches})
+
+	if (!platform?.env.DB_Editor) {
+		console.error(`Editor database missing from platform arg: ${JSON.stringify(platform)}`)
+
+		return response({term: word, matches})
 	}
 
-	return json(result, {
-		headers: THREE_HOUR_CACHE,
-	})
+	/** @type {string} */
+	const stem = await check_inflections(platform.env.DB_Editor)(word)
+
+	if (stem) {
+		matches = await get_matches_from_ontology(platform.env.DB_Ontology)(stem)
+	}
+
+	return response({term: word, matches})
+
+	/** @param {LookupResult<OntologyResult>} result  */
+	function response(result) {
+		if (result.matches.length > 0) return json(result)
+
+		const THREE_HOUR_CACHE = {
+			'cache-control': `max-age=${3 * 60 * 60}`,
+		}
+
+		return json(result, {
+			headers: THREE_HOUR_CACHE,
+		})
+	}
 }
 
 /**
@@ -33,13 +49,19 @@ export async function GET({url: {searchParams}, platform}) {
  *
  * @returns {(lookup_word: string) => Promise<OntologyResult[]>}
  */
-function get_matches(db) {
-	return async lookup_word => {
+function get_matches_from_ontology(db) {
+	return lookup
+
+	/**
+	 * @param {string} lookup_word
+	 * @returns {Promise<OntologyResult[]>}
+	 */
+	async function lookup(lookup_word) {
 		const sql = `
 			SELECT id, part_of_speech, stem, level
 			FROM Concepts
-			WHERE stem like ?
-		` // using like here to ensure case-insensitivity, e.g., abram should still match Abram
+			WHERE stem LIKE ?
+		` // using LIKE here to ensure case-insensitivity, e.g., abram should still match Abram //TODO: should wildcards be guarded against?
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
 		const {results} = await db.prepare(sql).bind(lookup_word).all()
@@ -58,6 +80,7 @@ function get_matches(db) {
 		for (const match of matches_from_db.sort(by_id)) {
 			const {part_of_speech, stem} = match
 
+			// key must be case-senstive to ensure proper nouns get a new sense, e.g., son and Son
 			const key = `${part_of_speech}:${stem}`
 
 			if (!sense_tracker.has(key)) {
@@ -93,5 +116,30 @@ function get_matches(db) {
 	 */
 	function next_sense(sense) {
 		return String.fromCharCode(sense.charCodeAt(0) + 1)
+	}
+}
+
+/**
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ *
+ * @returns {(possible_inflection: string) => Promise<Stem>}
+ */
+function check_inflections(db) {
+	return lookup
+
+	/**
+	 * @param {string} possible_inflection
+	 * @returns {Promise<Stem>}
+	 */
+	async function lookup(possible_inflection) {
+		// not aware of a need to grab multiple rows if the stems are all the same, e.g., love (has both noun and verb), but the stem is the same.
+		const sql = `
+			SELECT DISTINCT stem
+			FROM Inflections
+			WHERE inflections LIKE ?
+		`
+
+		// prettier-ignore
+		return await db.prepare(sql).bind(`%|${possible_inflection}|%`).first('stem') ?? ''
 	}
 }

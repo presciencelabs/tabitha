@@ -22,3 +22,10 @@ type LookupResult<T> = {
 interface OntologyResult extends DbRowConcept {
 	sense: string
 }
+
+type Stem = string
+
+type DbRowInflection = {
+	stem: Stem
+	part_of_speech: string
+}

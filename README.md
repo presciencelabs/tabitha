@@ -1,6 +1,8 @@
 # tabitha-editor
 
-## Loading database
+## Loading databases
+> within the `app` dir so these loads remain local to `app` only
 
-example:
 `wrangler d1 execute Ontology.2023-12-07.3_0_9485 --local --file=../../tabitha-ontology/database/Ontology.2023-12-07.3_0_9485.tabitha.sqlite.sql`
+
+`wrangler d1 execute Editor.2024-01-17 --local --file=../database/Editor.sqlite.sql`

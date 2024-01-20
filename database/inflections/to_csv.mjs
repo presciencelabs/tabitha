@@ -82,6 +82,6 @@ function output() {
 	}
 
 	function log_csv([stem, inflections]) {
-		console.log(`${stem},${part_of_speech},${inflections.join('|')}`)
+		console.log(`${stem},${part_of_speech},|${inflections.join('|')}|`)
 	}
 }

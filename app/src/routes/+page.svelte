@@ -72,7 +72,7 @@
 					<span class="loading loading-ring loading-lg absolute" />
 				</span>
 			{:then { matches }}
-				<!-- TODO: more work needed to handle multiple matches with possibly different levels, e.g.,  -->
+				<!-- TODO: more work needed to handle multiple matches with possibly different levels, e.g., son -->
 				{@const level_color = matches.length ? `L${matches[0].level}` : ''}
 
 				<span class="badge badge-outline {level_color}">
