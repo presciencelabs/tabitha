@@ -295,11 +295,11 @@ describe('tokenize_punctuation', () => {
 		expect(checked_tokens[3]).toEqual({token: '.', message: ''})
 	})
 
-	test('seen]." should be split into four tokens', () => {
+	test('token]." should be split into four tokens', () => {
 		/** @type {CheckedToken[]} */
 		const test_tokens = [
 			{
-				token: 'seen]."',
+				token: 'token]."',
 				message: '',
 			},
 		]
@@ -307,7 +307,7 @@ describe('tokenize_punctuation', () => {
 		const checked_tokens = tokenize_punctuation(test_tokens)
 
 		expect(checked_tokens).length(4)
-		expect(checked_tokens[0]).toEqual({token: 'seen', message: ''})
+		expect(checked_tokens[0]).toEqual({token: 'token', message: ''})
 		expect(checked_tokens[1]).toEqual({token: ']', message: ''})
 		expect(checked_tokens[2]).toEqual({token: '.', message: ''})
 		expect(checked_tokens[3]).toEqual({token: '"', message: ''})
