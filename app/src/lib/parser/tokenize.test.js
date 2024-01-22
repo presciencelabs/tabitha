@@ -175,6 +175,56 @@ describe('tokenize_punctuation', () => {
 		expect(checked_tokens[1]).toEqual({token: 'token', message: ''})
 	})
 
+	test('[[ should be split into two tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: '[[',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(2)
+		expect(checked_tokens[0]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[1]).toEqual({token: '[', message: ''})
+	})
+
+	test('[[Token should be split into three tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: '[[Token',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(3)
+		expect(checked_tokens[0]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[1]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[2]).toEqual({token: 'Token', message: ''})
+	})
+
+	test('["Token should be split into three tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: '["Token',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(3)
+		expect(checked_tokens[0]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[1]).toEqual({token: '"', message: ''})
+		expect(checked_tokens[2]).toEqual({token: 'Token', message: ''})
+	})
+
 	test('token] should be split into two tokens', () => {
 		/** @type {CheckedToken[]} */
 		const test_tokens = [
@@ -188,6 +238,22 @@ describe('tokenize_punctuation', () => {
 
 		expect(checked_tokens).length(2)
 		expect(checked_tokens[0]).toEqual({token: 'token', message: ''})
+		expect(checked_tokens[1]).toEqual({token: ']', message: ''})
+	})
+
+	test('you(Token)] should be split into two tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: 'you(Token)]',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(2)
+		expect(checked_tokens[0]).toEqual({token: 'you(Token)', message: ''})
 		expect(checked_tokens[1]).toEqual({token: ']', message: ''})
 	})
 

@@ -30,47 +30,44 @@ export function tokenize_punctuation(checked_tokens) {
 	 * @returns {CheckedToken[]}
 	 */
 	function tokenizer(results, {token, message}) {
-		if (message) {
+		if (message || REGEXES.IS_SIGNAL_WORD.test(token)) {
 			results.push({token, message})
 
 			return results
 		}
 
-		const token_remains = parse_front_of_token()
-		token_remains && parse_back_of_token(token_remains)
+		results.push(...extract_punctuation(token))
 
 		return results
 
 		/**
-		 * at this time, '[' is the only "opening" punctuation of relevance
-		 */
-		function parse_front_of_token() {
-			if (token[0] === '[') {
-				results.push({token: '[', message: ''})
+		 * @param {string} token
+		 * @returns {CheckedToken[]}
+		 **/
+		function extract_punctuation(token) {
+			const tokens = []
 
-				return token.slice(1) || ''
-			}
-
-			return token
-		}
-
-		/**
-		 * at this time, ']', ',', '.' are the only "closing" punctuations of relevance
-		 * @param {string} remains
-		 */
-		function parse_back_of_token(remains) {
-			const matches = remains.match(REGEXES.RELEVANT_CLOSING_PUNCTUATION)
+			const matches = token.match(REGEXES.PUNCTUATION_GROUPING)
 
 			if (matches === null) {
-				results.push({token: remains, message: ''})
-			} else {
-				// split 'some_token]', 'some_token].', 'some_token]],', ...(many permutations) into multiple tokens
-				const everything_except_punctuation = matches[1] // 'some_token'
-				results.push({token: everything_except_punctuation, message: ''})
+				tokens.push({token, message: ''})
 
-				const punctuation_that_matched = matches[2] // ']' or '].' or ']],' respectively
-				punctuation_that_matched.split('').forEach(punct => results.push({token: punct, message: ''}))
+				return tokens
 			}
+
+			/** @type {string} */
+			const front_punctuations = matches[1] ?? ''
+			front_punctuations.split('').map(punctuation => tokens.push({token: punctuation, message: ''}))
+
+			/** @type {string} */
+			const word = matches[2] ?? ''
+			word && tokens.push({token: word, message: ''})
+
+			/** @type {string} */
+			const back_punctuations = matches[3] ?? ''
+			back_punctuations.split('').map(punctuation => tokens.push({token: punctuation, message: ''}))
+
+			return tokens
 		}
 	}
 }

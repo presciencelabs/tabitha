@@ -43,7 +43,7 @@
 	{#each checked_tokens as checked_token}
 		{@const {message, token} = checked_token}
 		{@const has_error = !!message}
-		{@const is_punctuation = REGEXES.RELEVANT_PUNCTUATION.test(token)}
+		{@const is_punctuation = REGEXES.IS_PUNCTUATION.test(token)}
 		{@const is_sp_notation = token.startsWith('_')}
 
 		{#if has_error}
