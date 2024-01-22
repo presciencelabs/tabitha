@@ -19,6 +19,8 @@ const UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET = /[^\s[]\[/
 const IS_A_WORD = /^\w+$/
 const ANY_WORD_EXCLUDE_OPEN_PAREN = /\b(\w+)\b(?!\()/
 const IS_PUNCTUATION = /^\W$/
+const IS_PRONOUN = /^\w+\(\w+\)$/
+const EXTRACT_PRONOUN_REFERENT = /^\w+\((\w+)\)$/
 
 // catches (imp) but not you(Paul)
 const IS_SIGNAL_WORD = /^\(.*\)$/
@@ -35,7 +37,9 @@ const PUNCTUATION_GROUPING = /^(\W*)([\w/()]*)(\W*)$/
 export const REGEXES = {
 	ANY_WHITESPACE,
 	ANY_WORD_EXCLUDE_OPEN_PAREN,
+	EXTRACT_PRONOUN_REFERENT,
 	IS_A_WORD,
+	IS_PRONOUN,
 	IS_PUNCTUATION,
 	IS_SIGNAL_WORD,
 	UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET,

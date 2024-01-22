@@ -12,9 +12,19 @@ export async function check_ontology(checked_token) {
 		}
 	}
 
-	const response = await fetch(`/lookup?word=${checked_token.token}`)
+	if (REGEXES.IS_PRONOUN.test(checked_token.token)) {
+		const word = checked_token.token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[1]
 
-	return await response.json()
+		return await lookup(word)
+	}
+	// if it's
+	// 	not a pronoun...
+	// 	not an alternate form of a complex word...
+	// 	not a word perhaps???
+	// then look up
+	// const response = await fetch(`/lookup?word=${checked_token.token}`)
+
+	return await lookup(checked_token.token) //response.json()
 
 	/**
 	 * @param {CheckedToken} candidate_token
@@ -22,16 +32,24 @@ export async function check_ontology(checked_token) {
 	 */
 	function bypass(candidate_token) {
 		const HAS_ERROR = !!candidate_token.message
-		const NOT_A_WORD = !REGEXES.IS_A_WORD.test(candidate_token.token)
 		const SP_NOTATION = candidate_token.token.startsWith('_')
 
 		// prettier-ignore
 		const conditions = [
 			HAS_ERROR,
-			NOT_A_WORD,
 			SP_NOTATION,
 		]
 
 		return conditions.some(condition => condition)
+	}
+
+	/**
+	 * @param {string} word
+	 * @returns {Promise<LookupResult<OntologyResult>>}
+	 */
+	async function lookup(word = '') {
+		const response = await fetch(`/lookup?word=${word}`)
+
+		return await response.json()
 	}
 }
