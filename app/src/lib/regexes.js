@@ -30,9 +30,15 @@ const OPENING_OR_CLOSING_BRACKET = /[[\]]/
 const OPENING_OR_CLOSING_BRACKET_G = /[[\]]/g
 
 // ^(\W*?): group 1 => any non-word characters at the beginning of the string (if they appear) (and non-greedy match in case of '[(')
-// ([\w/()-]*): group 2 => any word characters (including '/', '(', ')' or '-') (if they appear)
+// ([\w/()-]*): group 2 => any word characters (including characters below) (if they appear)
+//			'/': alternate forms
+//			'(' or ')': signal words or pronoun referents
+//			"'": possessives, .e.g, Israelites'
+//			'-': hyphentated signal words
 // (\W*)$: group 3 => same as group 1 but at the end of the string (if they appear)
-const PUNCTUATION_GROUPING = /^(\W*?)([\w/()-]*)(\W*)$/
+const PUNCTUATION_GROUPING = /^(\W*?)([\w/()'-]*)(\W*)$/
+
+const POSSESSIVE = /'s?/
 
 export const REGEXES = {
 	ANY_WHITESPACE,
@@ -46,5 +52,6 @@ export const REGEXES = {
 	NON_WHITESPACE_BEFORE_UNDERSCORE,
 	OPENING_OR_CLOSING_BRACKET,
 	OPENING_OR_CLOSING_BRACKET_G,
+	POSSESSIVE,
 	PUNCTUATION_GROUPING,
 }

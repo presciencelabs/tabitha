@@ -12,19 +12,15 @@ export async function check_ontology(checked_token) {
 		}
 	}
 
-	if (REGEXES.IS_PRONOUN.test(checked_token.token)) {
-		const word = checked_token.token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[1]
+	const normalized_word = remove_possessives(checked_token.token)
 
-		return await lookup(word)
+	if (REGEXES.IS_PRONOUN.test(normalized_word)) {
+		const referent = normalized_word.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[1]
+
+		return await lookup(referent)
 	}
-	// if it's
-	// 	not a pronoun...
-	// 	not an alternate form of a complex word...
-	// 	not a word perhaps???
-	// then look up
-	// const response = await fetch(`/lookup?word=${checked_token.token}`)
 
-	return await lookup(checked_token.token) //response.json()
+	return await lookup(normalized_word)
 
 	/**
 	 * @param {CheckedToken} candidate_token
@@ -53,5 +49,13 @@ export async function check_ontology(checked_token) {
 		const response = await fetch(`/lookup?word=${word}`)
 
 		return await response.json()
+	}
+
+	/**
+	 * @param {string} word
+	 * @returns {string}
+	 */
+	function remove_possessives(word) {
+		return word.replace(REGEXES.POSSESSIVE, '')
 	}
 }

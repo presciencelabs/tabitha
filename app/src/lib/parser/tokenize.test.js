@@ -1,5 +1,6 @@
-import {tokenize_input, tokenize_punctuation} from './tokenize'
-import {describe, expect, test} from 'vitest'
+import { tokenize_input, tokenize_punctuation } from './tokenize';
+import { describe, expect, test } from 'vitest';
+
 
 describe('tokenize_input', () => {
 	test("'' should return an empty array", () => {
@@ -152,6 +153,54 @@ describe('tokenize_punctuation', () => {
 		const test_tokens = [
 			{
 				token: '(token)',
+				message: '',
+			},
+		]
+
+		expect(tokenize_punctuation(test_tokens)).toEqual(test_tokens)
+	})
+
+	test("token's should not be split", () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: "token's",
+				message: '',
+			},
+		]
+
+		expect(tokenize_punctuation(test_tokens)).toEqual(test_tokens)
+	})
+
+	test("tokens' should not be split", () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: "tokens'",
+				message: '',
+			},
+		]
+
+		expect(tokenize_punctuation(test_tokens)).toEqual(test_tokens)
+	})
+
+	test("(token's) should not be split", () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: "(token's)",
+				message: '',
+			},
+		]
+
+		expect(tokenize_punctuation(test_tokens)).toEqual(test_tokens)
+	})
+
+	test("(tokens') should not be split", () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: "(tokens')",
 				message: '',
 			},
 		]
