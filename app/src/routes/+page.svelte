@@ -69,7 +69,8 @@
 						{token}
 					</span>
 
-					<span class="loading loading-ring loading-lg absolute" /> <!-- used absolute here to avoid any layout shift (centers the pulse as well) -->
+					<!-- used absolute here to avoid any layout shift (centers the pulse as well) -->
+					<span class="loading loading-ring loading-lg absolute" />
 				</span>
 			{:then { matches }}
 				<!-- TODO: more work needed to handle multiple matches with possibly different levels, e.g., son -->
