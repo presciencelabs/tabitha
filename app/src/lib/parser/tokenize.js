@@ -30,7 +30,7 @@ export function tokenize_punctuation(checked_tokens) {
 	 * @returns {CheckedToken[]}
 	 */
 	function tokenizer(results, {token, message}) {
-		if (message || REGEXES.IS_SIGNAL_WORD.test(token)) {
+		if (message || REGEXES.IS_CLAUSE_NOTATION.test(token)) {
 			results.push({token, message})
 
 			return results

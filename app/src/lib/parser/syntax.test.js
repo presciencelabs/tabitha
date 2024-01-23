@@ -1,7 +1,7 @@
 import {check_syntax} from './syntax'
 import {describe, expect, test} from 'vitest'
 
-describe('syntax: special notation', () => {
+describe('syntax: notes notation', () => {
 	describe('valid', () => {
 		// prettier-ignore
 		test.each([

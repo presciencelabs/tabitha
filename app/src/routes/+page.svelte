@@ -44,8 +44,7 @@
 		{@const {message, token} = checked_token}
 		{@const has_error = !!message}
 		{@const is_punctuation = REGEXES.IS_PUNCTUATION.test(token)}
-		{@const is_sp_notation = token.startsWith('_')}
-		{@const is_signal_word = REGEXES.IS_SIGNAL_WORD.test(token)}
+		{@const is_special_notation = REGEXES.IS_NOTES_NOTATION.test(token) || REGEXES.IS_CLAUSE_NOTATION.test(token)}
 
 		{#if has_error}
 			<div data-tip={message} class="tooltip tooltip-error">
@@ -59,7 +58,7 @@
 			<span class="pb-3 text-6xl font-thin">
 				{token}
 			</span>
-		{:else if is_sp_notation || is_signal_word}
+		{:else if is_special_notation}
 			<span class="font-mono text-lg tracking-widest">
 				{token}
 			</span>
@@ -69,8 +68,8 @@
 					<span class="opacity-30">
 						{token}
 					</span>
-					<!-- used absolute here to avoid any layout shift (centers the pulse as well) -->
-					<span class="loading loading-ring loading-lg absolute" />
+
+					<span class="loading loading-ring loading-lg absolute" /> <!-- used absolute here to avoid any layout shift (centers the pulse as well) -->
 				</span>
 			{:then { matches }}
 				<!-- TODO: more work needed to handle multiple matches with possibly different levels, e.g., son -->

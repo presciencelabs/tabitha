@@ -22,8 +22,11 @@ const IS_PUNCTUATION = /^\W$/
 const IS_PRONOUN = /^\w+\(\w+\)$/
 const EXTRACT_PRONOUN_REFERENT = /^\w+\((\w+)\)$/
 
-// catches (imp) but not you(Paul)
-const IS_SIGNAL_WORD = /^\(.*\)$/
+// (implicit) or (implicit-info) but not you(Paul)
+const IS_CLAUSE_NOTATION = /^\(.*\)$/
+
+// starts with an underscore
+const IS_NOTES_NOTATION = /^_/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class
 const OPENING_OR_CLOSING_BRACKET = /[[\]]/
@@ -32,9 +35,9 @@ const OPENING_OR_CLOSING_BRACKET_G = /[[\]]/g
 // ^(\W*?): group 1 => any non-word characters at the beginning of the string (if they appear) (and non-greedy match in case of '[(')
 // ([\w/()-]*): group 2 => any word characters (including characters below) (if they appear)
 //			'/': alternate forms
-//			'(' or ')': signal words or pronoun referents
+//			'(' or ')': clause notations or pronoun referents
 //			"'": possessives, .e.g, Israelites'
-//			'-': hyphentated signal words
+//			'-': hyphentated clause notations
 // (\W*)$: group 3 => same as group 1 but at the end of the string (if they appear)
 const PUNCTUATION_GROUPING = /^(\W*?)([\w/()'-]*)(\W*)$/
 
@@ -45,9 +48,10 @@ export const REGEXES = {
 	ANY_WORD_EXCLUDE_OPEN_PAREN,
 	EXTRACT_PRONOUN_REFERENT,
 	IS_A_WORD,
+	IS_CLAUSE_NOTATION,
+	IS_NOTES_NOTATION,
 	IS_PRONOUN,
 	IS_PUNCTUATION,
-	IS_SIGNAL_WORD,
 	UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET,
 	NON_WHITESPACE_BEFORE_UNDERSCORE,
 	OPENING_OR_CLOSING_BRACKET,

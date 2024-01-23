@@ -13,7 +13,7 @@ export function check_syntax(tokens) {
 	 * @returns {CheckedToken}
 	 */
 	function check(token) {
-		const message = check_special_notation(token) || check_for_pronouns(token) || check_subordinate_clause(token)
+		const message = check_notes_notation(token) || check_for_pronouns(token) || check_subordinate_clause(token)
 
 		return {
 			token,
@@ -23,14 +23,14 @@ export function check_syntax(tokens) {
 }
 
 /**
- * Special notation can only have a space before, e.g., `⎕_specialNotation`.
+ * Notes notation can only have a space before, e.g., `⎕_notesNotation`.
  *
  * @param {Token} token
  * @returns {string} error messages or ''
  */
-function check_special_notation(token) {
+function check_notes_notation(token) {
 	if (REGEXES.NON_WHITESPACE_BEFORE_UNDERSCORE.test(token)) {
-		return 'Specialized notation should have a space before the underscore, e.g., ⎕_implicit'
+		return 'Notes notation should have a space before the underscore, e.g., ⎕_implicit'
 	}
 
 	return ''

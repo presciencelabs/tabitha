@@ -33,13 +33,13 @@ describe('parse', () => {
 			])
 		})
 
-		test('ok _spnotation [fixedbracket you(Paul)]', () => {
-			const results = parse('ok _spnotation [fixedbracket you(Paul)]')
+		test('ok _notesNotation [fixedbracket you(Paul)]', () => {
+			const results = parse('ok _notesNotation [fixedbracket you(Paul)]')
 
 			expect(results).length(6)
 			expect(results[0].token).toBe('ok')
 			expect(results[0].message).toBe('')
-			expect(results[1].token).toBe('_spnotation')
+			expect(results[1].token).toBe('_notesNotation')
 			expect(results[1].message).toBe('')
 			expect(results[2].token).toBe('[')
 			expect(results[2].message).toBe('')
@@ -87,25 +87,25 @@ describe('parse', () => {
 	})
 
 	describe('problems detected', () => {
-		test('bad_spnotation[badbracket you', () => {
-			const results = parse('bad_spnotation[badbracket you')
+		test('bad_notesNotation[badbracket you', () => {
+			const results = parse('bad_notesNotation[badbracket you')
 
 			expect(results).length(3)
-			expect(results[0].token).toBe('bad_spnotation[badbracket')
-			expect(results[0].message).toMatch(/^Specialized notation/)
+			expect(results[0].token).toBe('bad_notesNotation[badbracket')
+			expect(results[0].message).toMatch(/^Notes notation/)
 			expect(results[1].token).toBe('you')
 			expect(results[1].message).toMatch(/^Second person pronouns/)
 			expect(results[2].token).toBe(']')
 			expect(results[2].message).toMatch(/^Missing a closing bracket/)
 		})
 
-		test('ok _spnotation[badbracket you', () => {
-			const results = parse('ok _spnotation[badbracket you')
+		test('ok _notesNotation[badbracket you', () => {
+			const results = parse('ok _notesNotation[badbracket you')
 
 			expect(results).length(4)
 			expect(results[0].token).toBe('ok')
 			expect(results[0].message).toBe('')
-			expect(results[1].token).toBe('_spnotation[badbracket')
+			expect(results[1].token).toBe('_notesNotation[badbracket')
 			expect(results[1].message).toMatch(/^Subordinate clauses/)
 			expect(results[2].token).toBe('you')
 			expect(results[2].message).toMatch(/^Second person pronouns/)
@@ -113,13 +113,13 @@ describe('parse', () => {
 			expect(results[3].message).toMatch(/^Missing a closing bracket/)
 		})
 
-		test('ok _spnotation [fixedbracket you', () => {
-			const results = parse('ok _spnotation [fixedbracket you')
+		test('ok _notesNotation [fixedbracket you', () => {
+			const results = parse('ok _notesNotation [fixedbracket you')
 
 			expect(results).length(6)
 			expect(results[0].token).toBe('ok')
 			expect(results[0].message).toBe('')
-			expect(results[1].token).toBe('_spnotation')
+			expect(results[1].token).toBe('_notesNotation')
 			expect(results[1].message).toBe('')
 			expect(results[2].token).toBe('[')
 			expect(results[2].message).toBe('')
@@ -131,13 +131,13 @@ describe('parse', () => {
 			expect(results[5].message).toMatch(/^Missing a closing bracket/)
 		})
 
-		test('ok _spnotation [fixedbracket you(Paul', () => {
-			const results = parse('ok _spnotation [fixedbracket you(Paul')
+		test('ok _notesNotation [fixedbracket you(Paul', () => {
+			const results = parse('ok _notesNotation [fixedbracket you(Paul')
 
 			expect(results).length(6)
 			expect(results[0].token).toBe('ok')
 			expect(results[0].message).toBe('')
-			expect(results[1].token).toBe('_spnotation')
+			expect(results[1].token).toBe('_notesNotation')
 			expect(results[1].message).toBe('')
 			expect(results[2].token).toBe('[')
 			expect(results[2].message).toBe('')
@@ -149,13 +149,13 @@ describe('parse', () => {
 			expect(results[5].message).toMatch(/^Missing a closing bracket/)
 		})
 
-		test('ok _spnotation [fixedbracket you(Paul)', () => {
-			const results = parse('ok _spnotation [fixedbracket you(Paul)')
+		test('ok _notesNotation [fixedbracket you(Paul)', () => {
+			const results = parse('ok _notesNotation [fixedbracket you(Paul)')
 
 			expect(results).length(6)
 			expect(results[0].token).toBe('ok')
 			expect(results[0].message).toBe('')
-			expect(results[1].token).toBe('_spnotation')
+			expect(results[1].token).toBe('_notesNotation')
 			expect(results[1].message).toBe('')
 			expect(results[2].token).toBe('[')
 			expect(results[2].message).toBe('')
