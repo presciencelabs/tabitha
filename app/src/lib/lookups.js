@@ -33,11 +33,13 @@ export async function check_ontology(checked_token) {
 	function bypass(candidate_token) {
 		const HAS_ERROR = !!candidate_token.message
 		const SP_NOTATION = candidate_token.token.startsWith('_')
+		const SIGNAL_WORD = REGEXES.IS_SIGNAL_WORD.test(candidate_token.token)
 
 		// prettier-ignore
 		const conditions = [
 			HAS_ERROR,
 			SP_NOTATION,
+			SIGNAL_WORD,
 		]
 
 		return conditions.some(condition => condition)

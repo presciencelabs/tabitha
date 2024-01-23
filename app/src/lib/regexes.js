@@ -29,10 +29,10 @@ const IS_SIGNAL_WORD = /^\(.*\)$/
 const OPENING_OR_CLOSING_BRACKET = /[[\]]/
 const OPENING_OR_CLOSING_BRACKET_G = /[[\]]/g
 
-// ^(\W*): group 1 => any non-word characters at the beginning of the string (if they appear)
-// ([\w/()]*): group 2 => any word characters (including '/', '(' or ')') (if they appear)
+// ^(\W*?): group 1 => any non-word characters at the beginning of the string (if they appear) (and non-greedy match in case of '[(')
+// ([\w/()-]*): group 2 => any word characters (including '/', '(', ')' or '-') (if they appear)
 // (\W*)$: group 3 => same as group 1 but at the end of the string (if they appear)
-const PUNCTUATION_GROUPING = /^(\W*)([\w/()]*)(\W*)$/
+const PUNCTUATION_GROUPING = /^(\W*?)([\w/()-]*)(\W*)$/
 
 export const REGEXES = {
 	ANY_WHITESPACE,

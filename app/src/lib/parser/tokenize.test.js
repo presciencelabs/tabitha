@@ -175,6 +175,38 @@ describe('tokenize_punctuation', () => {
 		expect(checked_tokens[1]).toEqual({token: 'token', message: ''})
 	})
 
+	test('[(token) should be split into two tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: '[(token)',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(2)
+		expect(checked_tokens[0]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[1]).toEqual({token: '(token)', message: ''})
+	})
+
+	test('[(implicit-situational) should be split into two tokens', () => {
+		/** @type {CheckedToken[]} */
+		const test_tokens = [
+			{
+				token: '[(implicit-situational)',
+				message: '',
+			},
+		]
+
+		const checked_tokens = tokenize_punctuation(test_tokens)
+
+		expect(checked_tokens).length(2)
+		expect(checked_tokens[0]).toEqual({token: '[', message: ''})
+		expect(checked_tokens[1]).toEqual({token: '(implicit-situational)', message: ''})
+	})
+
 	test('[[ should be split into two tokens', () => {
 		/** @type {CheckedToken[]} */
 		const test_tokens = [
