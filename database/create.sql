@@ -5,7 +5,7 @@ CREATE TABLE Sources (
 	'id_secondary', -- for Bible, this would hold the chapter, e.g., 1
 	'id_tertiary', -- for Bible, this would hold the verse, e.g., 1
 	'phase_1_encoding',
-	'phase_2_encoding',
+	'phase_2_encoding', -- TODO: rename this to semantic_encoding
 	'comments',
 	'notes'
 ); -- excluding columns not being used anymore as well as columns that don't have meaningful data, e.g., null or 0.  They can always be added back as the need arises.
