@@ -1,4 +1,5 @@
 import {REGEXES} from '$lib/regexes'
+import {CLAUSE_NOTATIONS} from './clause_notations'
 import {PRONOUN_RULES} from './pronoun_rules'
 
 /**
@@ -13,7 +14,11 @@ export function check_syntax(tokens) {
 	 * @returns {CheckedToken}
 	 */
 	function check(token) {
-		const message = check_notes_notation(token) || check_for_pronouns(token) || check_subordinate_clause(token)
+		// prettier-ignore
+		const message = check_notes_notation(token)
+			|| check_for_pronouns(token)
+			|| check_subordinate_clause(token)
+			|| check_clause_notation(token)
 
 		return {
 			token,
@@ -26,7 +31,7 @@ export function check_syntax(tokens) {
  * Notes notation can only have a space before, e.g., `⎕_notesNotation`.
  *
  * @param {Token} token
- * @returns {string} error messages or ''
+ * @returns {string} error message or ''
  */
 function check_notes_notation(token) {
 	if (REGEXES.NON_WHITESPACE_BEFORE_UNDERSCORE.test(token)) {
@@ -40,7 +45,7 @@ function check_notes_notation(token) {
  * Pronouns can only be used under the right circumstances, e.g., `you(Paul)`.
  *
  * @param {Token} token
- * @returns {string} error messages or ''
+ * @returns {string} error message or ''
  */
 function check_for_pronouns(token) {
 	const normalized_token = normalize(token)
@@ -68,11 +73,25 @@ function check_for_pronouns(token) {
  * Not sure whether there are any rules about the closing bracket.  //TODO: follow-up on this question
  *
  * @param {Token} token
- * @returns {string} error messages or ''
+ * @returns {string} error message or ''
  */
 function check_subordinate_clause(token) {
 	if (REGEXES.UNACCEPTABLE_CHAR_BEFORE_OPENING_BRACKET.test(token)) {
 		return 'Subordinate clauses should have a space or an opening bracket before the opening bracket, e.g., ⎕[subordinate clause or [[subordinate clause'
+	}
+
+	return ''
+}
+
+/**
+ * Clause notations follow the pattern (keyword) or (keyword-subkeyword)
+ *
+ * @param {Token} token
+ * @returns {string} error message or ''
+ */
+function check_clause_notation(token) {
+	if (REGEXES.IS_CLAUSE_NOTATION.test(token) && !CLAUSE_NOTATIONS.includes(token)) {
+		return 'This clause notation is not recognized.'
 	}
 
 	return ''

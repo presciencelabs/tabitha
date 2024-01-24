@@ -1,3 +1,4 @@
+import {CLAUSE_NOTATIONS} from './clause_notations'
 import {check_syntax} from './syntax'
 import {describe, expect, test} from 'vitest'
 
@@ -248,6 +249,39 @@ describe('syntax: subordinate clauses', () => {
 		test.each([
 			[['bad[']],
 			[['[bad[bad]]']],
+		])('%s', test_tokens => {
+			/** @type {CheckedToken[]} */
+			const checked_tokens = check_syntax(test_tokens)
+
+			expect(checked_tokens[0].token).toEqual(test_tokens[0])
+			expect(checked_tokens[0].message).toBeTruthy()
+		})
+	})
+})
+
+describe('syntax: clause notations', () => {
+	describe('valid', () => {
+		// prettier-ignore
+		test.each(CLAUSE_NOTATIONS.map(notation => ([[notation]])))
+			('%s', test_tokens => {
+			/** @type {CheckedToken[]} */
+			const EXPECTED_OUTPUT = [
+				{
+					token: test_tokens[0],
+					message: '',
+				},
+			]
+
+			expect(check_syntax(test_tokens)).toEqual(EXPECTED_OUTPUT)
+		})
+	})
+
+	describe('invalid', () => {
+		// prettier-ignore
+		test.each([
+			[['()']],
+			[['(bad)']],
+			[['(bad-keyword)']],
 		])('%s', test_tokens => {
 			/** @type {CheckedToken[]} */
 			const checked_tokens = check_syntax(test_tokens)
