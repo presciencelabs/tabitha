@@ -1,10 +1,11 @@
 <script>
 	import Error from './Error.svelte'
 	import Loading from './Loading.svelte'
-	import Result from './Result.svelte'
 	import NotFound from './NotFound.svelte'
+	import Result from './Result.svelte'
+	import Token from './Token.svelte'
 	import {check_ontology} from '$lib/lookups'
-	import { REGEXES } from '$lib/regexes'
+	import {REGEXES} from '$lib/regexes'
 
 	/** @type {CheckedToken} */
 	export let checked_token
@@ -24,9 +25,10 @@
 	 * @param {CheckedToken} word2
 	 */
 	async function lookup(word1, word2) {
+		// prettier-ignore
 		return Promise.all([
 			check_ontology(word1),
-			check_ontology(word2),
+			check_ontology(word2)
 		])
 	}
 </script>
@@ -46,33 +48,31 @@
 
 	<div class="join">
 		{#if left_match}
-			{#if REGEXES.IS_LEVEL_SIMPLE.test(left_match.level) }
-				<Result result={left_result} classes='join-item' />
+			{#if REGEXES.IS_LEVEL_SIMPLE.test(left_match.level)}
+				<Result result={left_result} classes="join-item" />
 			{:else}
 				{@const error = {token: left.token, message: 'Word must be a level 0 or 1'}}
 
-				<Error checked_token={error} classes='join-item' />
+				<Error checked_token={error} classes="join-item" />
 			{/if}
 		{:else}
 			{@const not_found = {token: left.token, message: ''}}
-			<NotFound checked_token={not_found} classes='join-item' />
+			<NotFound checked_token={not_found} classes="join-item" />
 		{/if}
 
-		<span class="badge badge-lg badge-outline px-1.5 py-5 text-2xl join-item">
-			/
-		</span>
+		<Token classes="!px-1.5 [font-family:cursive] join-item">/</Token>
 
 		{#if right_match}
-			{#if REGEXES.IS_LEVEL_COMPLEX.test(right_match.level) }
-				<Result result={right_result} classes='join-item' />
+			{#if REGEXES.IS_LEVEL_COMPLEX.test(right_match.level)}
+				<Result result={right_result} classes="join-item" />
 			{:else}
 				{@const error = {token: right.token, message: 'Word must be a level 2 or 3'}}
 
-				<Error checked_token={error} classes='join-item' />
+				<Error checked_token={error} classes="join-item" />
 			{/if}
 		{:else}
 			{@const not_found = {token: right.token, message: ''}}
-			<NotFound checked_token={not_found} classes='join-item' />
+			<NotFound checked_token={not_found} classes="join-item" />
 		{/if}
 	</div>
 {:catch}

@@ -7,3 +7,50 @@ body {
 	/* stacked layout with sticky footer */
 	@apply grid h-screen grid-rows-[auto_1fr_auto];
 }
+
+/*
+	added an xl to Daisy's badge size since lg isn't always big enough (https://daisyui.com/components/badge)
+*/
+.badge-xl {
+	height: 1.75rem;
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+	padding-left: 0.813rem;
+	padding-right: 0.813rem;
+}
+
+/* TODO: second copy of these, time to DRY them out.  Also used in Ontology app.
+
+	complexity level colors in TBTA are as follows:
+	0 => blue
+	1 => creme
+	2 => magenta
+	3 => green
+	4 => brown
+*/
+.L0 {
+	color: whitesmoke;
+	background-color: #0b66ff;
+	border-color: whitesmoke;
+}
+.L1 {
+	color: darkblue;
+	background-color: #fcffc5;
+	filter: saturate(200%);
+	border-color: darkblue;
+}
+.L2 {
+	color: yellow;
+	background-color: #fb00ff;
+	border-color: yellow;
+}
+.L3 {
+	color: whitesmoke;
+	background-color: #0f7000;
+	border-color: whitesmoke;
+}
+.L4 {
+	color: whitesmoke;
+	background-color: #6b2f30;
+	border-color: whitesmoke;
+}
