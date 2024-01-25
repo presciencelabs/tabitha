@@ -11,9 +11,6 @@
 
 	$: [left, right] = split_pair(checked_token.token)
 
-	// scenarios:
-	//		good: follower follower/disciple
-	//		bad: /disciple follower/ disciple/disciple disciple/follower /
 	/**
 	 * @param {string} token
 	 * @returns {CheckedToken[]}
@@ -37,6 +34,12 @@
 {#await lookup(left, right)}
 	<Loading {checked_token} />
 {:then [left_result, right_result]}
+	<!--
+		scenarios:
+			good: follower follower/disciple
+			bad: /disciple follower/ disciple/disciple disciple/follower /
+	-->
+
 	<!-- TODO: consider multiple matches where the levels are different, e.g., son -->
 	{@const left_match = left_result.matches?.[0]}
 	{@const right_match = right_result.matches?.[0]}
@@ -51,7 +54,8 @@
 				<Error checked_token={error} classes='join-item' />
 			{/if}
 		{:else}
-			<NotFound {checked_token} classes='join-item' />
+			{@const not_found = {token: left.token, message: ''}}
+			<NotFound checked_token={not_found} classes='join-item' />
 		{/if}
 
 		<span class="badge badge-lg badge-outline px-1.5 py-5 text-2xl join-item">
@@ -67,6 +71,9 @@
 				<Error checked_token={error} classes='join-item' />
 			{/if}
 		{:else}
+			{@const not_found = {token: right.token, message: ''}}
+			<NotFound checked_token={not_found} classes='join-item' />
+
 			<NotFound {checked_token} classes='join-item' />
 		{/if}
 	</div>

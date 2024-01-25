@@ -7,7 +7,7 @@
 	let entered_text = ''
 
 	$: checked_tokens = parse(entered_text)
-	$: has_error = checked_tokens.some(({message}) => !!message)
+	$: has_error = checked_tokens.some(({message}) => message.length > 0)
 	$: success = checked_tokens.length && !has_error
 	$: english_back_translation = backtranslate(entered_text)
 	$: english_back_translation && reset_copied()
