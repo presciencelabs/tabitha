@@ -1,4 +1,5 @@
-import {REGEXES} from './regexes'
+import {function_words, REGEXES} from '.'
+
 
 /**
  * @param {CheckedToken} checked_token
@@ -30,12 +31,14 @@ export async function check_ontology(checked_token) {
 		const HAS_ERROR = !!candidate_token.message
 		const NOTES_NOTATION = REGEXES.IS_NOTES_NOTATION.test(candidate_token.token)
 		const CLAUSE_NOTATION = REGEXES.IS_CLAUSE_NOTATION.test(candidate_token.token)
+		const IS_FUNCTION_WORD = function_words.includes(candidate_token.token)
 
 		// prettier-ignore
 		const conditions = [
 			HAS_ERROR,
 			NOTES_NOTATION,
 			CLAUSE_NOTATION,
+			IS_FUNCTION_WORD,
 		]
 
 		return conditions.some(condition => condition)

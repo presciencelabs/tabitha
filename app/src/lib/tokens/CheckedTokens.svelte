@@ -1,5 +1,6 @@
 <script>
 	import Error from './Error.svelte'
+	import FunctionWord from './FunctionWord.svelte'
 	import Loading from './Loading.svelte'
 	import Result from './Result.svelte'
 	import Note from './Note.svelte'
@@ -7,7 +8,7 @@
 	import Pairing from './Pairing.svelte'
 	import Punctuation from './Punctuation.svelte'
 	import {check_ontology} from '$lib/lookups'
-	import {REGEXES} from '$lib/regexes'
+	import {function_words, REGEXES} from '$lib'
 
 	/** @type {CheckedToken[]} */
 	export let checked_tokens
@@ -19,6 +20,7 @@
 	{@const is_punctuation = REGEXES.IS_PUNCTUATION.test(token)}
 	{@const is_special_notation = REGEXES.IS_NOTES_NOTATION.test(token) || REGEXES.IS_CLAUSE_NOTATION.test(token)}
 	{@const is_pairing = REGEXES.IS_PAIRING.test(token)}
+	{@const is_function_word = function_words.includes(token)}
 
 	{#if has_error}
 		<Error {checked_token} />
@@ -26,6 +28,8 @@
 		<Punctuation {checked_token} />
 	{:else if is_special_notation}
 		<Note {checked_token} />
+	{:else if is_function_word}
+		<FunctionWord {checked_token} />
 	{:else if is_pairing}
 		<Pairing {checked_token} />
 	{:else}
