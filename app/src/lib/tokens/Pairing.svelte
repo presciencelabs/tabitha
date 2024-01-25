@@ -73,8 +73,6 @@
 		{:else}
 			{@const not_found = {token: right.token, message: ''}}
 			<NotFound checked_token={not_found} classes='join-item' />
-
-			<NotFound {checked_token} classes='join-item' />
 		{/if}
 	</div>
 {:catch}
