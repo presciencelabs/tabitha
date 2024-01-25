@@ -291,3 +291,37 @@ describe('syntax: clause notations', () => {
 		})
 	})
 })
+
+describe('syntax: pairings', () => {
+	describe('valid', () => {
+		// prettier-ignore
+		test.each([
+			[['follower/disciple']],
+		])('%s', test_tokens => {
+			/** @type {CheckedToken[]} */
+			const EXPECTED_OUTPUT = [
+				{
+					token: test_tokens[0],
+					message: '',
+				},
+			]
+
+			expect(check_syntax(test_tokens)).toEqual(EXPECTED_OUTPUT)
+		})
+	})
+
+	describe('invalid', () => {
+		// prettier-ignore
+		test.each([
+			[['follower/']],
+			[['/disciple']],
+			[['/']],
+		])('%s', test_tokens => {
+			/** @type {CheckedToken[]} */
+			const checked_tokens = check_syntax(test_tokens)
+
+			expect(checked_tokens[0].token).toEqual(test_tokens[0])
+			expect(checked_tokens[0].message).toBeTruthy()
+		})
+	})
+})

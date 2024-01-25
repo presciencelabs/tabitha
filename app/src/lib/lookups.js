@@ -5,7 +5,7 @@ import {REGEXES} from './regexes'
  * @returns {Promise<LookupResult<OntologyResult>>}
  */
 export async function check_ontology(checked_token) {
-	if (bypass(checked_token)) {
+	if (bypass_lookup(checked_token)) {
 		return {
 			term: checked_token.token,
 			matches: [],
@@ -26,7 +26,7 @@ export async function check_ontology(checked_token) {
 	 * @param {CheckedToken} candidate_token
 	 * @returns {boolean}
 	 */
-	function bypass(candidate_token) {
+	function bypass_lookup(candidate_token) {
 		const HAS_ERROR = !!candidate_token.message
 		const NOTES_NOTATION = REGEXES.IS_NOTES_NOTATION.test(candidate_token.token)
 		const CLAUSE_NOTATION = REGEXES.IS_CLAUSE_NOTATION.test(candidate_token.token)

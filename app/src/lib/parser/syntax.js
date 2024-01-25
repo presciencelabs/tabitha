@@ -19,6 +19,7 @@ export function check_syntax(tokens) {
 			|| check_for_pronouns(token)
 			|| check_subordinate_clause(token)
 			|| check_clause_notation(token)
+			|| check_pairings(token)
 
 		return {
 			token,
@@ -92,6 +93,20 @@ function check_subordinate_clause(token) {
 function check_clause_notation(token) {
 	if (REGEXES.IS_CLAUSE_NOTATION.test(token) && !CLAUSE_NOTATIONS.includes(token)) {
 		return 'This clause notation is not recognized.'
+	}
+
+	return ''
+}
+
+/**
+ * pairings follow the pattern simple/complex
+ *
+ * @param {Token} token
+ * @returns {string} error message or ''
+ */
+function check_pairings(token) {
+	if (token.includes('/') && !REGEXES.IS_PAIRING.test(token)) {
+		return 'Pairings should have the form simple/complex, e.g., follower/disciple.'
 	}
 
 	return ''
