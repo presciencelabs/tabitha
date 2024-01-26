@@ -75,10 +75,21 @@ function extract(line) {
 function output() {
 	Array.from(extracted_data)
 		.filter(has_inflections)
+		.map(augment_missing_data)
 		.map(log_csv)
 
 	function has_inflections([, inflections]) {
 		return inflections.length > 0
+	}
+
+	function augment_missing_data([stem, inflections]) {
+		if (stem === 'be') {
+			// these forms are not present in TBTA's lexical data because be is so irregular...
+			// they are only produced during the rules phase so they need to be added manually here.
+			inflections.push('am', 'are', 'were')
+		}
+
+		return [stem, inflections]
 	}
 
 	function log_csv([stem, inflections]) {

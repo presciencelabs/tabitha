@@ -3136,7 +3136,7 @@ INSERT INTO Inflections VALUES('avoid','Verb','|avoided|avoided|avoiding|avoids|
 INSERT INTO Inflections VALUES('bake','Verb','|baked|baked|baking|bakes|');
 INSERT INTO Inflections VALUES('baptize','Verb','|baptized|baptized|baptizing|baptizes|');
 INSERT INTO Inflections VALUES('bark','Verb','|barked|barked|barking|barks|');
-INSERT INTO Inflections VALUES('be','Verb','|was|been|being|is|');
+INSERT INTO Inflections VALUES('be','Verb','|was|been|being|is|am|are|were|');
 INSERT INTO Inflections VALUES('be born','Verb','|was|been|being|is|');
 INSERT INTO Inflections VALUES('be concerned','Verb','|bed|bed|bing|bes|');
 INSERT INTO Inflections VALUES('be determined','Verb','|was|been|being|is|');
