@@ -1,11 +1,12 @@
 <script>
-	import Token from './Token.svelte'
-	/** @type {CheckedToken} */
-	export let checked_token
+	import TokenDisplay from './TokenDisplay.svelte'
+
+	/** @type {Token} */
+	export let token
 
 	export let classes = ''
 </script>
 
-<Token {classes}>
-	{checked_token.token}
-</Token>
+<TokenDisplay {classes}>
+	{token.token}
+</TokenDisplay>

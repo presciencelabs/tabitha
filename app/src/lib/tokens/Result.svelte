@@ -1,6 +1,8 @@
 <script>
-	import Token from './Token.svelte'
+	import TokenDisplay from './TokenDisplay.svelte'
 
+	/** @type {Token} */
+	export let token
 	/** @type {LookupResult<OntologyResult>} */
 	export let result
 
@@ -10,6 +12,6 @@
 	const match = result.matches[0]
 </script>
 
-<Token classes="{classes} L{match?.level}">
-	{result.term}
-</Token>
+<TokenDisplay classes="{classes} L{match?.level}">
+	{token.token}
+</TokenDisplay>

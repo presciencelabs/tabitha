@@ -1,3 +1,3 @@
-import CheckedTokens from './CheckedTokens.svelte'
+import Tokens from './Tokens.svelte'
 
-export {CheckedTokens}
+export {Tokens}

@@ -1,8 +1,10 @@
 // prettier-ignore
-export const function_words = [
+export const FUNCTION_WORDS = new Set([
 	'a',
 	'an',
 	'certainly',
+	'continue',
+	'continued',
 	'could',
 	'definitely',
 	'extremely',
@@ -13,10 +15,12 @@ export const function_words = [
 	'of',
 	'probably',
 	'should',
+	'start',
+	'started',
+	'starts',
 	'stop',
 	'stopped',
 	'stops',
-	'to',
 	'that',
 	'the',
 	'these',
@@ -27,5 +31,9 @@ export const function_words = [
 	'very',
 	'will',
 	'would',
-]
+	'who',
+	'whom',
+	'what',
+	'which',
+])
 

@@ -3,38 +3,38 @@
 	import Loading from './Loading.svelte'
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'
-	import Token from './Token.svelte'
+	import TokenDisplay from './TokenDisplay.svelte'
 	import {check_ontology} from '$lib/lookups'
 	import {REGEXES} from '$lib/regexes'
 
-	/** @type {CheckedToken} */
-	export let checked_token
+	/** @type {Token} */
+	export let token
 
-	$: [left, right] = split_pair(checked_token.token)
+	// At this point the pairing tokens will never be null
+	/** @type {Token} */
+	// @ts-ignore
+	$: left_token = token.pairing_left
+
+	/** @type {Token} */
+	// @ts-ignore
+	$: right_token = token.pairing_right
 
 	/**
-	 * @param {string} token
-	 * @returns {CheckedToken[]}
+	 * 
+	 * @param {Token} left
+	 * @param {Token} right
 	 */
-	function split_pair(token) {
-		return token.split('/').map(token => ({token, message: checked_token.message}))
-	}
-
-	/**
-	 * @param {CheckedToken} word1
-	 * @param {CheckedToken} word2
-	 */
-	async function lookup(word1, word2) {
+	async function lookup(left, right) {
 		// prettier-ignore
 		return Promise.all([
-			check_ontology(word1),
-			check_ontology(word2)
+			check_ontology(left),
+			check_ontology(right)
 		])
 	}
 </script>
 
-{#await lookup(left, right)}
-	<Loading {checked_token} />
+{#await lookup(left_token, right_token)}
+	<Loading {token} />
 {:then [left_result, right_result]}
 	<!--
 		scenarios:
@@ -49,32 +49,30 @@
 	<div class="join">
 		{#if left_match}
 			{#if REGEXES.IS_LEVEL_SIMPLE.test(left_match.level)}
-				<Result result={left_result} classes="join-item" />
+				<Result token={left_token} result={left_result} classes="join-item" />
 			{:else}
-				{@const error = {token: left.token, message: 'Word must be a level 0 or 1'}}
+				{@const error = {...left_token, message: 'Word must be a level 0 or 1'}}
 
-				<Error checked_token={error} classes="join-item" />
+				<Error token={error} classes="join-item" />
 			{/if}
 		{:else}
-			{@const not_found = {token: left.token, message: ''}}
-			<NotFound checked_token={not_found} classes="join-item" />
+			<NotFound token={left_token} classes="join-item" />
 		{/if}
 
-		<Token classes="!px-1.5 [font-family:cursive] join-item">/</Token>
+		<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">/</TokenDisplay>
 
 		{#if right_match}
 			{#if REGEXES.IS_LEVEL_COMPLEX.test(right_match.level)}
-				<Result result={right_result} classes="join-item" />
+				<Result token={right_token} result={right_result} classes="join-item" />
 			{:else}
-				{@const error = {token: right.token, message: 'Word must be a level 2 or 3'}}
+				{@const error = {...right_token, message: 'Word must be a level 2 or 3'}}
 
-				<Error checked_token={error} classes="join-item" />
+				<Error token={error} classes="join-item" />
 			{/if}
 		{:else}
-			{@const not_found = {token: right.token, message: ''}}
-			<NotFound checked_token={not_found} classes="join-item" />
+			<NotFound token={right_token} classes="join-item" />
 		{/if}
 	</div>
 {:catch}
-	<NotFound {checked_token} />
+	<NotFound {token} />
 {/await}

@@ -1,8 +1,8 @@
 <script>
-	/** @type {CheckedToken} */
-	export let checked_token
+	/** @type {Token} */
+	export let token
 </script>
 
 <span class="pb-3 text-6xl font-thin">
-	{checked_token.token}
+	{token.token}
 </span>

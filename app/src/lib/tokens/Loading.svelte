@@ -1,13 +1,13 @@
 <script>
-	import Token from './Token.svelte'
+	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {CheckedToken} */
-	export let checked_token
+	/** @type {Token} */
+	export let token
 </script>
 
-<Token classes="opacity-30">
-	{checked_token.token}
+<TokenDisplay classes="opacity-30">
+	{token.token}
 
 	<!-- used absolute here to avoid any layout shift (centers the pulse as well) -->
 	<span class="loading loading-ring loading-lg absolute" />
-</Token>
+</TokenDisplay>

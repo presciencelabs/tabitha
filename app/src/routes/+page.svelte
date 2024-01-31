@@ -2,13 +2,14 @@
 	import Icon from '@iconify/svelte'
 	import {parse} from '$lib/parser'
 	import {backtranslate} from '$lib/backtranslator'
-	import {CheckedTokens} from '$lib/tokens'
+	import {Tokens} from '$lib/tokens'
+	import {TOKEN_TYPE} from '$lib/parser/token'
 
 	let entered_text = ''
 
-	$: checked_tokens = parse(entered_text)
-	$: has_error = checked_tokens.some(({message}) => message.length > 0)
-	$: success = checked_tokens.length && !has_error
+	$: tokens = parse(entered_text)
+	$: has_error = tokens.some(({type}) => type == TOKEN_TYPE.ERROR)
+	$: success = tokens.length && !has_error
 	$: english_back_translation = backtranslate(entered_text)
 	$: english_back_translation && reset_copied()
 
@@ -39,7 +40,7 @@
 </div>
 
 <section class="prose flex max-w-none flex-wrap items-center justify-center gap-x-4 gap-y-8">
-	<CheckedTokens {checked_tokens} />
+	<Tokens {tokens} />
 </section>
 
 {#if english_back_translation}
