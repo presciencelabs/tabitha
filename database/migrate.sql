@@ -65,6 +65,7 @@ SELECT '======= creating new Concepts table =======';
 CREATE TABLE Concepts (
 	'id' 						INTEGER PRIMARY KEY,
 	'stem' 					TEXT,
+	'sense' 					TEXT,
 	'part_of_speech' 		TEXT,
 	'occurrences' 			TEXT,
 	'gloss' 					TEXT,
@@ -77,42 +78,42 @@ CREATE TABLE Concepts (
 
 SELECT '======= loading Adjectives into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adjective', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Adjective', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Adjectives;
 
 SELECT '======= loading Adpositions into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adposition', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Adposition', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Adpositions;
 
 SELECT '======= loading Adverbs into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Adverb', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Adverb', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Adverbs;
 
 SELECT '======= loading Conjunctions into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Conjunction', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Conjunction', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Conjunctions;
 
 SELECT '======= loading Nouns into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Noun', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Noun', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Nouns;
 
 SELECT '======= loading Particles into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Particles;
 
 SELECT '======= loading Pronouns into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Pronouns;
 
 SELECT '======= loading Verbs into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, 'Verb', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Verb', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Verbs;
 
 SELECT '======= verifying numbers of rows transferred into Concepts table =======';

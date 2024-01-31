@@ -1,4 +1,3 @@
-import {augment} from './augmentors'
 import {transform} from './transformers'
 
 /**
@@ -30,11 +29,7 @@ export const get_concepts = db => async filter => {
  * @returns {Concept[]}
  */
 function normalize(matches_from_db) {
-	const transformed_matches = matches_from_db.map(transform)
-
-	const augmented_matches = augment(transformed_matches)
-
-	return augmented_matches
+	return matches_from_db.map(transform)
 }
 
 /**

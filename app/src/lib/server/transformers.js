@@ -3,7 +3,7 @@ import {semantic_category, sources, theta_grid, usage_info, example_argument_slo
 /**
  * @param {DbRowConcept} match_from_db
  *
- * @returns {TransformedConcept}
+ * @returns {Concept}
  */
 export function transform(match_from_db) {
 	return {

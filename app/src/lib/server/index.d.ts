@@ -1,6 +1,7 @@
 type DbRowConcept = {
 	id: string
 	stem: string
+	sense: string
 	part_of_speech: string
 	level: string
 	categorization: string
@@ -11,18 +12,12 @@ type DbRowConcept = {
 	occurrences: string
 }
 
-interface TransformedConcept extends DbRowConcept {
+interface Concept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]
 	curated_examples: CuratedExample[]
 	occurrences: number
 }
-
-interface AugmentedConcept extends TransformedConcept {
-	sense: string
-}
-
-interface Concept extends AugmentedConcept {}
 
 type CuratedExample = {
 	reference: Reference
