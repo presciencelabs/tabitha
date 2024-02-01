@@ -32,8 +32,6 @@ export async function GET({url: {searchParams}, platform}) {
 
 	/** @param {LookupResult<OntologyResult>} result  */
 	function response(result) {
-		if (result.matches.length > 0) return json(result)
-
 		const THREE_HOUR_CACHE = {
 			'cache-control': `max-age=${3 * 60 * 60}`,
 		}
