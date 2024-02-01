@@ -259,7 +259,7 @@ export function tokenize_input(text = '') {
 	 * @param {RegExp} regex
 	 */
 	function match_two(regex) {
-		if ((i < text.length-2) && (text[i]+text[i+1]).match(regex)) {
+		if ((i < text.length-1) && (text[i]+text[i+1]).match(regex)) {
 			i += 2
 			return true
 		}

@@ -77,7 +77,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid words with decimal', () => {
-		const INPUT = "2.5 .5 .1. 3.88]"
+		const INPUT = "2.5 .5 .1. 3.88] 2.5"
 		
 		const EXPECTED_OUTPUT = [
 			create_word_token('2.5', '2.5'),
@@ -86,6 +86,7 @@ describe('tokenize_input', () => {
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 			create_word_token('3.88', '3.88'),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_word_token('2.5', '2.5'),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)

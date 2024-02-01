@@ -1,6 +1,8 @@
 import {pipe} from '$lib/pipeline'
-import {check_syntax} from './syntax'
 import {tokenize_input} from './tokenize'
+import {check_syntax} from './syntax'
+import {use_alternate_lookups} from './alternate_lookups'
+import {transform_tokens} from './token_transforms'
 
 /**
  * @param {string} text
@@ -11,5 +13,7 @@ export function parse(text) {
 	return pipe(
 		tokenize_input,
 		check_syntax,
+		use_alternate_lookups,
+		transform_tokens,
 	)(text)
 }
