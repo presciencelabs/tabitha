@@ -305,6 +305,21 @@ describe('tokenize_input', () => {
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
+	test('single quote variants', () => {
+		const INPUT = "Paul's Paul’s Jesus’ Jesus' sons’-C you(Paul’s)"
+		
+		const EXPECTED_OUTPUT = [
+			create_word_token("Paul's", 'Paul'),
+			create_word_token("Paul’s", 'Paul'),
+			create_word_token("Jesus’", 'Jesus'),
+			create_word_token("Jesus'", 'Jesus'),
+			create_word_token("sons’-C", 'sons-C'),
+			create_word_token("you(Paul’s)", 'Paul'),
+		]
+		
+		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
 	test('invalid single characters', () => {
 		const INPUT = "( ) / * + ;"
 		
