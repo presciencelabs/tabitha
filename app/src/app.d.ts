@@ -5,7 +5,9 @@ import type {D1Database} from '@cloudflare/workers-types'
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			db: D1Database
+		}
 		// interface PageData {}
 
 		interface Platform {

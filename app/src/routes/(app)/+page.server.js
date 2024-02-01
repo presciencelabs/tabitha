@@ -1,14 +1,10 @@
 import {get_concepts} from '$lib/server/ontology'
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({url: {searchParams}, platform}) {
-	if (!platform?.env.DB_Ontology) {
-		throw new Error(`database missing from platform arg: ${JSON.stringify(platform)}`)
-	}
-
+export async function load({url: {searchParams}, locals: {db}}) {
 	const query = (searchParams.get('q') || '').trim()
 
-	const matches = await get_concepts(platform.env.DB_Ontology)(query)
+	const matches = await get_concepts(db)(query)
 
 	return {
 		matches,
