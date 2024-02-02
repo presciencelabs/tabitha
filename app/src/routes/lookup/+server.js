@@ -1,31 +1,21 @@
+import {PUBLIC_ONTOLOGY_API_HOST} from '$env/static/public'
 import {json} from '@sveltejs/kit'
 
+
 /** @type {import('./$types').RequestHandler} */
-export async function GET({url: {searchParams}, platform}) {
+export async function GET({url: {searchParams}, locals: {db}}) {
 	/** @type {LookupTerm} */
 	const word = searchParams.get('word') ?? ''
 
-	if (!platform?.env.DB_Ontology) {
-		console.error(`Ontology database missing from platform arg: ${JSON.stringify(platform)}`)
-
-		return response({term: word, matches: []})
-	}
-
-	let matches = await get_matches_from_ontology(platform.env.DB_Ontology)(word)
+	let matches = await get_matches_from_ontology(word)
 
 	if (matches.length > 0) return response({term: word, matches})
 
-	if (!platform?.env.DB_Editor) {
-		console.error(`Editor database missing from platform arg: ${JSON.stringify(platform)}`)
-
-		return response({term: word, matches})
-	}
-
 	/** @type {string} */
-	const stem = await check_inflections(platform.env.DB_Editor)(word)
+	const stem = await check_inflections(db)(word)
 
 	if (stem) {
-		matches = await get_matches_from_ontology(platform.env.DB_Ontology)(stem)
+		matches = await get_matches_from_ontology(stem)
 	}
 
 	return response({term: word, matches})
@@ -43,78 +33,19 @@ export async function GET({url: {searchParams}, platform}) {
 }
 
 /**
- * @param {import('@cloudflare/workers-types').D1Database} db
+ * @param {string} lookup_term
  *
- * @returns {(lookup_word: string) => Promise<OntologyResult[]>}
+ * @returns {Promise<OntologyResult[]>}
  */
-function get_matches_from_ontology(db) {
-	return lookup
+async function get_matches_from_ontology(lookup_term) {
+	const response = await fetch(
+		`${PUBLIC_ONTOLOGY_API_HOST}/?q=${lookup_term}`
+	)
 
-	/**
-	 * @param {string} lookup_word
-	 * @returns {Promise<OntologyResult[]>}
-	 */
-	async function lookup(lookup_word) {
-		const sql = `
-			SELECT id, part_of_speech, stem, level
-			FROM Concepts
-			WHERE stem LIKE ?
-		` // using LIKE here to ensure case-insensitivity, e.g., abram should still match Abram //TODO: should wildcards be guarded against?
+	if (!response.ok) return []
 
-		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-		const {results} = await db.prepare(sql).bind(lookup_word).all()
+	return response.json()
 
-		return add_senses(results)
-	}
-	//TODO: need to DRY this out, it's taken from tabitha-ontology/app/src/lib/server/augmentors.js's augment() OR just start storing senses in the db.
-	/**
-	 * @param {DbRowConcept[]} matches_from_db
-	 * @returns {OntologyResult[]}
-	 */
-	function add_senses(matches_from_db) {
-		const sensed_matches = []
-		const sense_tracker = new Map()
-
-		for (const match of matches_from_db.sort(by_id)) {
-			const {part_of_speech, stem} = match
-
-			// key must be case-senstive to ensure proper nouns get a new sense, e.g., son and Son
-			const key = `${part_of_speech}:${stem}`
-
-			if (!sense_tracker.has(key)) {
-				sense_tracker.set(key, 'A')
-			}
-
-			const sense = sense_tracker.get(key)
-
-			sensed_matches.push({
-				...match,
-				sense,
-			})
-
-			sense_tracker.set(key, next_sense(sense))
-		}
-
-		return sensed_matches
-	}
-
-	/**
-	 * @param {DbRowConcept} a
-	 * @param {DbRowConcept} b
-	 *
-	 * @returns {number}
-	 */
-	function by_id(a, b) {
-		return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
-	}
-
-	/**
-	 * @param {string} sense - a single character in a sequence
-	 * @returns {string} - the next character according to ASCII order
-	 */
-	function next_sense(sense) {
-		return String.fromCharCode(sense.charCodeAt(0) + 1)
-	}
 }
 
 /**

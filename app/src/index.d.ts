@@ -9,13 +9,6 @@ type Token = {
 	pairing_right: Token?;
 }
 
-type DbRowConcept = {
-	id: string
-	part_of_speech: string
-	stem: string
-	level: string
-}
-
 type LookupTerm = string
 
 type LookupResult<T> = {
@@ -23,8 +16,13 @@ type LookupResult<T> = {
 	matches: T[]
 }
 
-interface OntologyResult extends DbRowConcept {
+type OntologyResult = {
+	id: string
+	stem: string
 	sense: string
+	part_of_speech: string
+	level: number
+	gloss: string
 }
 
 type Stem = string

@@ -5,13 +5,14 @@ import type {D1Database} from '@cloudflare/workers-types'
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			db: D1Database
+		}
 		// interface PageData {}
 
 		interface Platform {
 			// Cloudflare-specific
 			env: {
-				DB_Ontology: D1Database // see wrangler.toml to match this name
 				DB_Editor: D1Database // see wrangler.toml to match this name
 			}
 		}
