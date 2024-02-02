@@ -22,8 +22,9 @@ const EXTRACT_PRONOUN_REFERENT = /^\w+\(([\w'’-]+)\)$/
 const EXTRACT_WORD_REFERENT = /^(.+?)(?:['’]s|['’])?(-[A-Z])?$/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class
-const OPENING_OR_CLOSING_BRACKET = /[[\]]/
-const OPENING_OR_CLOSING_BRACKET_G = /[[\]]/g
+const OPENING_OR_CLOSING_BRACKET = /([[\]])/
+const SENTENCE_ENDING_PUNCTUATION = /^[.?!]/
+const CLAUSE_ENDING_PUNCTUATION = /[\]"]/
 
 const TOKEN_END_BOUNDARY = /[\s.,!?:"\]]/
 const WORD_START_CHAR = /[a-zA-Z0-9-]/
@@ -47,7 +48,8 @@ export const REGEXES = {
 	IS_LEVEL_COMPLEX,
 	IS_LEVEL_SIMPLE,
 	OPENING_OR_CLOSING_BRACKET,
-	OPENING_OR_CLOSING_BRACKET_G,
+	SENTENCE_ENDING_PUNCTUATION,
+	CLAUSE_ENDING_PUNCTUATION,
 	OPENING_BRACKET,
 	OPENING_PAREN,
 	CLOSING_PAREN,
