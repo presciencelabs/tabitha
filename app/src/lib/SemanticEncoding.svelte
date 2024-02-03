@@ -27,14 +27,14 @@
 	 *
 	 * The phase_2_encoding looks something like:
 	 * ~\wd ~\tg c-IDp00NNNNNNNNNNNNN.............~\lu {~\wd ~\tg C-1A.....~\lu then~\wd ~\tg n-SAN.N........~\lu (...
-	 * 
+	 *
 	 * If present, the first character of the features indicates the 'entity' type.
 	 * This could be a clause/phrase boundary, part of speech, or even certain punctuation.
-	 * 
+	 *
 	 * '{' and '}' indicate a main clause boundary
 	 * '[' and ']' indicate a subordinate clause boundary
 	 * '(' and ')' indicate a phrase boundary
-	 * 
+	 *
 	 * Examples:
 	 * ~\wd ~\tg c-IDp00NNNNNNNNNNNNN.............~\lu {    => { label: 'C', features: C-IDp00NNNNNNNNNNNNN.............', entity: '{' }
 	 * ~\wd ~\tg N-1A1SDAnK3NN........~\lu God  => { label: 'N', features: 'N-1A1SDAnK3NN........', entity: 'God' }
@@ -42,9 +42,9 @@
 	 * ~\wd ~\tg C-1A.....~\lu then => { label: 'Con', features: 'Con-1A.....', entity: 'then' }
 	 * ~\wd ~\tg ~\lu )             => { label: '', features: '', entity: ')' }
 	 * ~\wd ~\tg .-~\lu .           => { label: 'period', features: 'period-', entity: '.' }
-	 * 
-	 * @param {string} semantic_encoding 
-	 * 
+	 *
+	 * @param {string} semantic_encoding
+	 *
 	 * @returns {SemanticEncoding}
 	 */
 	function transform_semantic_encoding(semantic_encoding) {
@@ -87,9 +87,9 @@
 
 	/**
 	 * This is just a temporary display solution.
-	 * 
+	 *
 	 * @param {SourceEntity} entity
-	 * 
+	 *
 	 * @returns {string} a simplified rendering of the entity
 	 */
 	function simple_display(entity) {
@@ -115,9 +115,9 @@
 </script>
 
 <h4 class="flex justify-between">
-	Semantic Encoding (Phase 2)
+	Semantic encoding (Phase 2)
 </h4>
 <p>
-	<!--TODO display clause/phrase boundaries differently, and show (some?) features on hover-->
+	<!--TODO display clause/phrase boundaries differently, and show (some?) features on hover -->
 	{simple_encoding}
 </p>
