@@ -14,7 +14,6 @@ export const CLAUSE_NOTATIONS = [
 	'(implicit-background)',
 	'(implicit-cultural)',
 	'(implicit-historical)',
-	'(implicit-info)',
 	'(implicit-situational)',
 	'(implicit-subaction)',
 	'(literal)',
