@@ -12,7 +12,7 @@ export async function GET({locals: {db}, params: {type, id_primary, id_secondary
 			AND id_tertiary = ?
 	`
 
-	/** @type {import('@cloudflare/workers-types').D1Result<Source>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
+	/** @type {import('@cloudflare/workers-types').D1Result<Source>|null} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
 	const result = await db.prepare(sql).bind(type, id_primary, id_secondary, id_tertiary).first()
 
 	return json(result)

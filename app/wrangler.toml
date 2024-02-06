@@ -1,5 +1,9 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
+# https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds
+[build]
+command = "pnpm build"
+
 [[d1_databases]]
 binding = "DB_Sources" # i.e. available in your Worker on env.DB
 database_name = "Sources.2023-12-04"

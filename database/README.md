@@ -1,4 +1,3 @@
-TODO: still need to work through the MissionsDocuments database conversion since it's trying to fit a square peg into a round hole... will come back to it when there's more data in it.
 # Database
 
 https://www.sqlite.org
