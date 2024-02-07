@@ -9,7 +9,6 @@ import Table from './Table.svelte'
 import DetailedCard from './card/DetailedCard.svelte'
 import SummaryCard from './card/SummaryCard.svelte'
 
-// prettier-ignore
 export {
 	Brand,
 	DetailedCard,

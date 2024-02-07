@@ -84,7 +84,6 @@ export async function get_version(db) {
 		FROM Version
 	`
 
-	// prettier-ignore
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
 	return await db.prepare(sql).first('version') || ''
 }

@@ -26,7 +26,6 @@ function set_theme(theme) {
 
 const current_theme = writable('')
 
-// prettier-ignore
 export {
 	current_theme,
 	initialize_theme,

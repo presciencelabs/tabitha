@@ -94,7 +94,7 @@ function transform_curated_examples(curated_examples_from_db) {
  *			'Modified Noun': 'wineA'
  *		}
  * 	}
- * 
+ *
  * @param {DbRowConcept} concept_from_db
  *
  * @returns {Example[]}
@@ -121,11 +121,11 @@ function transform_examples({examples, part_of_speech}) {
 		}
 
 		/**
-		 * Only keep the arguments that are present 
-		 * 
-		 * @param {Map<string, string>} reduced_slots 
-		 * @param {string} slot_value 
-		 * @param {number} index 
+		 * Only keep the arguments that are present
+		 *
+		 * @param {Map<string, string>} reduced_slots
+		 * @param {string} slot_value
+		 * @param {number} index
 		 */
 		function example_reducer(reduced_slots, slot_value, index) {
 			if (slot_value !== '') {
@@ -240,7 +240,6 @@ function decode_reference(encoded_reference) {
  * @returns {string[]} – e.g., ['Abstracts'] or ['Feminine names'] or ['Not yet categorized']
  */
 function transform_noun_categorization(categories_from_db) {
-	// prettier-ignore
 	return [
 		semantic_category.Noun[categories_from_db[0]] || 'No information available yet.',
 	]
