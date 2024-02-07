@@ -19,7 +19,15 @@ export default [
 		rules: {
 			...js.configs.recommended.rules,
 
-			'no-console': 'warn', // https://eslint.org/docs/rules/no-console
+			'no-console': [ // https://eslint.org/docs/rules/no-console
+				'warn',
+				{
+					allow: [
+						'warn',
+						'error'
+					],
+				},
+			],
 			'sort-imports': 'error', // https://eslint.org/docs/rules/sort-imports
 			'no-duplicate-imports': 'error', // https://eslint.org/docs/rules/no-duplicate-imports
 
