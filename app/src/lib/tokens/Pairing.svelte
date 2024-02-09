@@ -20,12 +20,11 @@
 	$: right_token = token.pairing_right
 
 	/**
-	 * 
+	 *
 	 * @param {Token} left
 	 * @param {Token} right
 	 */
 	async function lookup(left, right) {
-		// prettier-ignore
 		return Promise.all([
 			check_ontology(left),
 			check_ontology(right)
@@ -48,7 +47,7 @@
 
 	<div class="join">
 		{#if left_match}
-			{#if REGEXES.IS_LEVEL_SIMPLE.test(left_match.level)}
+			{#if REGEXES.IS_LEVEL_SIMPLE.test(`${left_match.level}`)}
 				<Result token={left_token} result={left_result} classes="join-item" />
 			{:else}
 				{@const error = {...left_token, message: 'Word must be a level 0 or 1'}}
@@ -62,7 +61,7 @@
 		<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">/</TokenDisplay>
 
 		{#if right_match}
-			{#if REGEXES.IS_LEVEL_COMPLEX.test(right_match.level)}
+			{#if REGEXES.IS_LEVEL_COMPLEX.test(`${right_match.level}`)}
 				<Result token={right_token} result={right_result} classes="join-item" />
 			{:else}
 				{@const error = {...right_token, message: 'Word must be a level 2 or 3'}}

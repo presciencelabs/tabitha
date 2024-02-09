@@ -9,7 +9,6 @@ import {ERRORS} from './error_messages'
  * @returns {Token[]}
  */
 export function check_syntax(tokens) {
-	// prettier-ignore
 	return pipe(
 		check_invalid_tokens,
 		check_sentence_syntax,
@@ -28,7 +27,6 @@ export function check_invalid_tokens(tokens) {
 	 * @returns {Token}
 	 */
 	function check(token) {
-		// prettier-ignore
 		const message = token.message
 			|| check_for_pronouns(token)
 
@@ -79,7 +77,7 @@ export function check_sentence_syntax(tokens) {
 
 	/**
 	 * @param {Token[]} tokens
-	 * @param {Sentence} sentence 
+	 * @param {Sentence} sentence
 	 */
 	function check_capitalization(tokens, sentence) {
 		const sentence_tokens = tokens.slice(sentence['start'], sentence['end'])
@@ -94,13 +92,13 @@ export function check_sentence_syntax(tokens) {
 		}
 
 		/**
-		 * @param {Token[]} slice 
+		 * @param {Token[]} slice
 		 */
 		function find_and_check_first_word(slice) {
 			/** @type {TokenType[]} */
 			const word_types = [TOKEN_TYPE.LOOKUP_WORD, TOKEN_TYPE.PAIRING, TOKEN_TYPE.FUNCTION_WORD]
 			const first_word = slice.find(({type}) => word_types.includes(type))
-			
+
 			if (first_word !== undefined && /^[a-z]/.test(first_word.token)) {
 				first_word.type = TOKEN_TYPE.ERROR
 				first_word.message = ERRORS.FIRST_WORD_NOT_CAPITALIZED
@@ -110,11 +108,11 @@ export function check_sentence_syntax(tokens) {
 
 	/**
 	 * @param {Token[]} tokens
-	 * @param {Sentence} sentence 
+	 * @param {Sentence} sentence
 	 */
 	function check_sentence_for_balanced_brackets(tokens, sentence) {
 		const all_brackets = stringify_brackets(tokens, sentence)
-	
+
 		const tracker = []
 		for (const bracket of all_brackets) {
 			if (bracket === '[') {
@@ -127,13 +125,13 @@ export function check_sentence_syntax(tokens) {
 				}
 			}
 		}
-	
+
 		while (tracker.length > 0) {
 			tokens.splice(sentence['end'], 0, create_error_token(']', ERRORS.MISSING_CLOSING_BRACKET))
-	
+
 			tracker.pop()
 		}
-	
+
 		return tokens
 	}
 
@@ -178,9 +176,9 @@ function find_and_check_sentences(tokens) {
 	}
 
 	return sentences
-	
+
 	/**
-	 * @param {Token} token 
+	 * @param {Token} token
 	 */
 	function is_sentence_end_token(token) {
 		return (token.type === TOKEN_TYPE.PUNCTUATION || token.type === TOKEN_TYPE.ERROR)
@@ -188,7 +186,7 @@ function find_and_check_sentences(tokens) {
 	}
 
 	/**
-	 * @param {Token} token 
+	 * @param {Token} token
 	 */
 	function is_clause_end_token(token) {
 		return token.type === TOKEN_TYPE.PUNCTUATION && REGEXES.CLAUSE_ENDING_PUNCTUATION.test(token.token)

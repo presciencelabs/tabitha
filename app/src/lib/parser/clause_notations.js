@@ -1,4 +1,3 @@
-// prettier-ignore
 export const CLAUSE_NOTATIONS = [
 	'(alternate-1)',
 	'(alternate-2)',

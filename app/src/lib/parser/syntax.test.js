@@ -4,7 +4,7 @@ import {ERRORS} from './error_messages'
 import {describe, expect, test} from 'vitest'
 
 /**
- * 
+ *
  * @param {string[]} tokens
  * @returns {Token[]}
  */
@@ -15,19 +15,19 @@ function create_tokens(tokens) {
 }
 
 /**
- * 
- * @param {string} token 
- * @param {string?} lookup_term 
+ *
+ * @param {string} token
+ * @param {string?} lookup_term
  */
 function create_word_token(token, lookup_term=null) {
 	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: lookup_term || token})
 }
 
 /**
- * 
- * @param {number} index 
- * @param {string} message 
- * @param {Token[]} tokens 
+ *
+ * @param {number} index
+ * @param {string} message
+ * @param {Token[]} tokens
  */
 function expect_error_at(index, message, tokens) {
 	for (let [i, token] of tokens.entries()) {
@@ -41,7 +41,6 @@ function expect_error_at(index, message, tokens) {
 
 describe('invalid tokens: pronouns', () => {
 	describe('valid', () => {
-		// prettier-ignore
 		test.each([
 			[create_tokens(['I(Paul)'])],
 			[create_tokens(['You(Paul)'])],
@@ -56,7 +55,6 @@ describe('invalid tokens: pronouns', () => {
 	})
 
 	describe('invalid: catches first person (case-insensitive)', () => {
-		// prettier-ignore
 		test.each([
 			[create_tokens(['I', 'i'])],
 			[create_tokens(['ME','Me','me'])],
@@ -79,7 +77,6 @@ describe('invalid tokens: pronouns', () => {
 	})
 
 	describe('invalid: catches second person (case-insensitive)', () => {
-		// prettier-ignore
 		test.each([
 			[create_tokens(['YOU'])],
 			[create_tokens(['You'])],
@@ -102,7 +99,6 @@ describe('invalid tokens: pronouns', () => {
 	})
 
 	describe('invalid: catches third person (case-insensitive)', () => {
-		// prettier-ignore
 		test.each([
 			[create_tokens(['HE'])],
 			[create_tokens(['He'])],
@@ -387,7 +383,7 @@ describe('sentence syntax: period', () => {
 			expect(check_sentence_syntax(test_tokens)).toEqual(test_tokens)
 		})
 	})
-	
+
 	describe('missing ending', () => {
 		test('Token', () => {
 			const test_tokens = [

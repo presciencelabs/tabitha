@@ -9,7 +9,6 @@ import {transform_tokens} from './token_transforms'
  * @returns {Token[]}
  */
 export function parse(text) {
-	// prettier-ignore
 	return pipe(
 		tokenize_input,
 		check_syntax,

@@ -1,4 +1,3 @@
-// prettier-ignore
 // don't want arrays flattened by prettier
 
 // made this for a few reasons:

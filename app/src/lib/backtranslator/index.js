@@ -3,7 +3,6 @@ import prepostional_phrases from './prepostional_phrases'
 
 /** @param {string} input */
 export function backtranslate(input) {
-	// prettier-ignore
 	return input
 		.replace(/[^ ][0-9]*:([0-9]*)\nP1S\nP1P-eng\nP2-pre\nC\nP2 signoff\nP3 signoff[\n ]*\n/g, '\\v$1 ')
 		.replace(/[^ ][0-9]*:([0-9]*)\nReview\nBack Translate[ ]*\nCheck\n[\n ]*\n/g, '\n\n\\v$1 ')

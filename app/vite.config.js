@@ -1,5 +1,5 @@
 import {sveltekit} from '@sveltejs/kit/vite'
-import {defineConfig} from 'vitest/config'
+import {defineConfig} from 'vite'
 
 export default defineConfig({
 	plugins: [
@@ -7,7 +7,7 @@ export default defineConfig({
 	],
 	test: {
 		include: [
-			'src/**/*.{test,spec}.{js,ts}',
+			'src/**/*.test.js',
 		],
 	},
 })

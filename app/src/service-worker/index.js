@@ -1,6 +1,6 @@
 // taken from https://kit.svelte.dev/docs/service-workers
 //
-/// <reference types="@sveltejs/kit/types" />
+/// <reference types="@sveltejs/kit" />
 /// <reference no-default-lib="true"/>
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />

@@ -16,7 +16,6 @@ function initialize_detection() {
 	offline.subscribe(value => console.info('network status: ', value ? 'offline' : 'online'))
 }
 
-// prettier-ignore
 export {
 	Status,
 	initialize_detection,

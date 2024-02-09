@@ -73,7 +73,6 @@ function check_inflections(db) {
 			WHERE inflections LIKE ?
 		`
 
-		// prettier-ignore
 		const stem = await db.prepare(sql).bind(`%|${word}|%`).first('stem') ?? ''
 		return stem ? `${stem}${sense}` : ''
 	}
