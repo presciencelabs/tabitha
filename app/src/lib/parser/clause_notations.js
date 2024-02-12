@@ -25,6 +25,7 @@ export const CLAUSE_NOTATIONS = [
 	'(rhetorical)',
 	'(simple)',
 	'(statement)',
+	'(suggestivelets)',
 	'(title)',
 	'(yesrhetorical)',
 ]
