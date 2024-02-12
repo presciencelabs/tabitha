@@ -15,6 +15,7 @@ export const CLAUSE_NOTATIONS = [
 	'(implicit-historical)',
 	'(implicit-situational)',
 	'(implicit-subaction)',
+	'(jussive)',
 	'(literal)',
 	'(literalunits)',
 	'(modernunits)',
