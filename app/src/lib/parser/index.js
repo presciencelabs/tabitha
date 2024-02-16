@@ -2,7 +2,7 @@ import {pipe} from '$lib/pipeline'
 import {tokenize_input} from './tokenize'
 import {check_syntax} from './syntax'
 import {use_alternate_lookups} from './alternate_lookups'
-import {transform_tokens} from './token_transforms'
+import {apply_transform_rules, apply_checker_rules} from '../rules/rules_processor'
 
 /**
  * @param {string} text
@@ -13,6 +13,7 @@ export function parse(text) {
 		tokenize_input,
 		check_syntax,
 		use_alternate_lookups,
-		transform_tokens,
+		apply_transform_rules,
+		apply_checker_rules,
 	)(text)
 }
