@@ -15,8 +15,9 @@ export function tokenize_input(text = '') {
 		[() => match(REGEXES.OPENING_PAREN), clause_notation],
 		[() => match(/_/), underscore_notation],
 		[() => match_two(/\.\d/), decimal_number],
+		[() => match(/:/), colon],
 		[() => match(/[["]/), opening_punctuation],
-		[() => match(/[.,?!:\]]/), closing_punctuation],
+		[() => match(/[.,?!\]]/), closing_punctuation],
 	]
 
 	const tokens = []
@@ -77,6 +78,13 @@ export function tokenize_input(text = '') {
 		return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
 	}
 
+	function colon() {
+		if (peek_match(/\d/)) {
+			return simple_token(TOKEN_TYPE.PUNCTUATION)
+		}
+		return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
+	}
+
 	function clause_notation() {
 		// any non-boundary character can go between the parentheses
 		eat_until(REGEXES.OR(REGEXES.TOKEN_END_BOUNDARY, REGEXES.CLOSING_PAREN))
@@ -84,19 +92,12 @@ export function tokenize_input(text = '') {
 			// (imp
 			return error_token(ERRORS.MISSING_CLOSING_PAREN)
 
-		} else if (!is_at_end() && !peek_match(REGEXES.ANY_WHITESPACE)) {
-			// (imp)[ (imp)token
-			eat_until(REGEXES.TOKEN_END_BOUNDARY)
-			return error_token(ERRORS.NO_SPACE_AFTER_CLAUSE_NOTATION)
-
 		} else if (!CLAUSE_NOTATIONS.includes(collect_text())) {
 			// (invalid-notation)
 			return error_token(ERRORS.UNRECOGNIZED_CLAUSE_NOTATION)
-
-		} else {
-			// (imp) (implicit-situational) etc
-			return simple_token(TOKEN_TYPE.NOTE)
 		}
+		
+		return check_boundary_for_token(TOKEN_TYPE.NOTE)
 	}
 
 	function underscore_notation() {

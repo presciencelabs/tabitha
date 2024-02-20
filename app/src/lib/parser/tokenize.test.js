@@ -169,13 +169,17 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid clause notation', () => {
-		const INPUT = "(imp) (implicit-situational) [(imp)"
+		const INPUT = "(imp) (implicit-situational) [(imp) (imp)] (imp)."
 
 		const EXPECTED_OUTPUT = [
 			create_token('(imp)', TOKEN_TYPE.NOTE),
 			create_token('(implicit-situational)', TOKEN_TYPE.NOTE),
 			create_token('[', TOKEN_TYPE.PUNCTUATION),
 			create_token('(imp)', TOKEN_TYPE.NOTE),
+			create_token('(imp)', TOKEN_TYPE.NOTE),
+			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token('(imp)', TOKEN_TYPE.NOTE),
+			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -199,7 +203,7 @@ describe('tokenize_input', () => {
 			create_error_token('(imp', ERRORS.MISSING_CLOSING_PAREN),
 			create_error_token('imp)', ERRORS.MISSING_OPENING_PAREN),
 			create_word_token('token(imp)', 'imp'),		// tokenizing at this time does not differentiate from a pronoun referent
-			create_error_token('(imp)token', ERRORS.NO_SPACE_AFTER_CLAUSE_NOTATION),
+			create_error_token('(imp)token', ERRORS.INVALID_TOKEN_END('(imp)')),
 			create_error_token('(implicit_situational)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
 			create_error_token('(imperative)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
 			create_error_token("(Paul's)", ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
@@ -261,7 +265,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid opening brackets', () => {
-		const INPUT = ".[ ,[ ?[ ][ token["
+		const INPUT = ".[ ,[ ?[ ][ token[ :["
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('.[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
@@ -269,13 +273,14 @@ describe('tokenize_input', () => {
 			create_error_token('?[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
 			create_error_token('][', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
 			create_error_token('token[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
+			create_error_token(':[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
 	test('valid punctuation', () => {
-		const INPUT = '." ". ?"] token]". "], token]] token,'
+		const INPUT = '." ". ?"] token]". "], token]] token, 5:5'
 
 		const EXPECTED_OUTPUT = [
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
@@ -297,6 +302,9 @@ describe('tokenize_input', () => {
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
 			create_word_token('token'),
 			create_token(',', TOKEN_TYPE.PUNCTUATION),
+			create_word_token('5'),
+			create_token(':', TOKEN_TYPE.PUNCTUATION),
+			create_word_token('5'),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
