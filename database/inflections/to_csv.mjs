@@ -75,11 +75,16 @@ function extract(line) {
 function output() {
 	Array.from(extracted_data)
 		.filter(has_inflections)
+		.filter(has_no_space)
 		.map(augment_missing_data)
 		.map(log_csv)
 
 	function has_inflections([, inflections]) {
 		return inflections.length > 0
+	}
+
+	function has_no_space([stem, inflections]) {
+		return !stem.includes(' ') && !inflections.some(i => i.includes(' '))
 	}
 
 	function augment_missing_data([stem, inflections]) {

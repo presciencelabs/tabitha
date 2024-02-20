@@ -29,15 +29,6 @@ bake,Verb,|baked|baked|baking|bakes|
 baptize,Verb,|baptized|baptized|baptizing|baptizes|
 bark,Verb,|barked|barked|barking|barks|
 be,Verb,|was|been|being|is|am|are|were|
-be born,Verb,|was|been|being|is|
-be concerned,Verb,|bed|bed|bing|bes|
-be determined,Verb,|was|been|being|is|
-be fulfilled,Verb,|bed|bed|bing|bes|
-be locked,Verb,|bed|bed|bing|bes|
-be married,Verb,|was|been|being|is|
-be tied,Verb,|was|been|being|is|
-be worried,Verb,|was|been|being|is|
-be hurt,Verb,|bed|bed|bing|bes|
 beat,Verb,|beat|beaten|beating|beats|
 become,Verb,|became|become|becoming|becomes|
 beg,Verb,|begged|begged|begging|begs|
@@ -47,7 +38,6 @@ behold,Verb,|beheld|beheld|beholding|beholds|
 believe,Verb,|believed|believed|believing|believes|
 belong,Verb,|belonged|belonged|belonging|belongs|
 bend,Verb,|bent|bent|bending|bends|
-bend over,Verb,|bent|bent|bending|bends|
 betray,Verb,|betrayed|betrayed|betraying|betrays|
 birth,Verb,|birthed|birthed|birthing|births|
 bite,Verb,|bit|bitten|biting|bites|
@@ -81,12 +71,10 @@ carry,Verb,|carried|carried|carrying|carries|
 carve,Verb,|carved|carved|carving|carves|
 cast,Verb,|cast|cast|casting|casts|
 catch,Verb,|caught|caught|catching|catches|
-catch up,Verb,|caught|caught|catching|catches|
 cause,Verb,|caused|caused|causing|causes|
 celebrate,Verb,|celebrated|celebrated|celebrating|celebrates|
 change,Verb,|changed|changed|changing|changes|
 chase,Verb,|chased|chased|chasing|chases|
-chase away,Verb,|chased|chased|chasing|chases|
 cheat,Verb,|cheated|cheated|cheating|cheats|
 check,Verb,|checked|checked|checking|checks|
 chew,Verb,|chewed|chewed|chewing|chews|
@@ -98,10 +86,7 @@ close,Verb,|closed|closed|closing|closes|
 collect,Verb,|collected|collected|collecting|collects|
 comb,Verb,|combed|combed|combing|combs|
 combine,Verb,|combined|combined|combining|combines|
-come up,Verb,|came|come|coming|comes|
 come,Verb,|came|come|coming|comes|
-come down,Verb,|came|come|coming|comes|
-come out,Verb,|came|come|coming|comes|
 comfort,Verb,|comforted|comforted|comforting|comforts|
 command,Verb,|commanded|commanded|commanding|commands|
 commit,Verb,|committed|committed|committing|commits|
@@ -129,11 +114,8 @@ crowd,Verb,|crowded|crowded|crowding|crowds|
 crucify,Verb,|crucified|crucified|crucifying|crucifies|
 crush,Verb,|crushed|crushed|crushing|crushes|
 cry,Verb,|cried|cried|crying|cries|
-cry out,Verb,|cried|cried|crying|cries|
 curse,Verb,|cursed|cursed|cursing|curses|
 cut,Verb,|cut|cut|cutting|cuts|
-cut down,Verb,|cut|cut|cutting|cuts|
-cut off,Verb,|cut|cut|cutting|cuts|
 damage,Verb,|damaged|damaged|damaging|damages|
 dance,Verb,|danced|danced|dancing|dances|
 deceive,Verb,|deceived|deceived|deceiving|deceives|
@@ -196,7 +178,6 @@ feed,Verb,|fed|fed|feeding|feeds|
 feel,Verb,|felt|felt|feeling|feels|
 fight,Verb,|fought|fought|fighting|fights|
 fill,Verb,|filled|filled|filling|fills|
-find out,Verb,|found|found|finding|finds|
 find,Verb,|found|found|finding|finds|
 finish,Verb,|finished|finished|finishing|finishes|
 float,Verb,|floated|floated|floating|floats|
@@ -215,23 +196,16 @@ fulfill,Verb,|fulfilled|fulfilled|fulfilling|fulfills|
 gain,Verb,|gained|gained|gaining|gains|
 gather,Verb,|gathered|gathered|gathering|gathers|
 get,Verb,|got|gotten|getting|gets|
-get off,Verb,|got|gotten|getting|gets|
-get up,Verb,|got|gotten|getting|gets|
-get on,Verb,|got|gotten|getting|gets|
 give,Verb,|gave|given|giving|gives|
 glean,Verb,|gleaned|gleaned|gleaning|gleans|
 glorify,Verb,|glorified|glorified|glorifying|glorifies|
 gnash,Verb,|gnashed|gnashed|gnashing|gnashes|
 go,Verb,|went|gone|going|goes|
-go down,Verb,|went|gone|going|goes|
-go out,Verb,|went|gone|going|goes|
-go up,Verb,|went|gone|going|goes|
 gore,Verb,|gored|gored|goring|gores|
 govern,Verb,|governed|governed|governing|governs|
 grab,Verb,|grabbed|grabbed|grabbing|grabs|
 greet,Verb,|greeted|greeted|greeting|greets|
 grow,Verb,|grew|grown|growing|grows|
-grow up,Verb,|grew|grown|growing|grows|
 guard,Verb,|guarded|guarded|guarding|guards|
 hamstring,Verb,|hamstrung|hamstrung|hamstringing|hamstrings|
 hang,Verb,|hung|hung|hanging|hangs|
@@ -267,15 +241,12 @@ invite,Verb,|invited|invited|inviting|invites|
 join,Verb,|joined|joined|joining|joins|
 judge,Verb,|judged|judged|judging|judges|
 jump,Verb,|jumped|jumped|jumping|jumps|
-jump down,Verb,|jumped|jumped|jumping|jumps|
 keep,Verb,|kept|kept|keeping|keeps|
 kidnap,Verb,|kidnapped|kidnapped|kidnapping|kidnaps|
 kill,Verb,|killed|killed|killing|kills|
 kiss,Verb,|kissed|kissed|kissing|kisses|
 kneel,Verb,|knelt|knelt|kneeling|kneels|
 knock,Verb,|knocked|knocked|knocking|knocks|
-knock down,Verb,|knocked|knocked|knocking|knocks|
-knock over,Verb,|knocked|knocked|knocking|knocks|
 know,Verb,|knew|known|knowing|knows|
 lack,Verb,|lacked|lacked|lacking|lacks|
 laugh,Verb,|laughed|laughed|laughing|laughs|
@@ -287,7 +258,6 @@ lend,Verb,|lent|lent|lending|lends|
 let,Verb,|let|let|letting|lets|
 lick,Verb,|licked|licked|licking|licks|
 lie,Verb,|lay|lain|lying|lies|
-lie down,Verb,|lay|lain|lying|lies|
 lift,Verb,|lifted|lifted|lifting|lifts|
 light,Verb,|lit|lit|lighting|lights|
 like,Verb,|liked|liked|liking|likes|
@@ -298,13 +268,11 @@ loan,Verb,|loaned|loaned|loaning|loans|
 lock,Verb,|locked|locked|locking|locks|
 long,Verb,|longed|longed|longing|longs|
 look,Verb,|looked|looked|looking|looks|
-look like,Verb,|looked|looked|looking|looks|
 lose,Verb,|lost|lost|losing|loses|
 love,Verb,|loved|loved|loving|loves|
 low,Verb,|lowed|lowed|lowing|lows|
 lower,Verb,|lowered|lowered|lowering|lowers|
 make,Verb,|made|made|making|makes|
-make up,Verb,|made|made|making|makes|
 manage,Verb,|managed|managed|managing|manages|
 march,Verb,|marched|marched|marching|marches|
 mark,Verb,|marked|marked|marking|marks|
@@ -322,7 +290,6 @@ mock,Verb,|mocked|mocked|mocking|mocks|
 molest,Verb,|molested|molested|molesting|molests|
 mourn,Verb,|mourned|mourned|mourning|mourns|
 move,Verb,|moved|moved|moving|moves|
-move aside,Verb,|moved|moved|moving|moves|
 multiply,Verb,|multiplied|multiplied|multiplying|multiplies|
 murder,Verb,|murdered|murdered|murdering|murders|
 name,Verb,|named|named|naming|names|
@@ -346,7 +313,6 @@ pay,Verb,|paid|paid|paying|pays|
 perform,Verb,|performed|performed|performing|performs|
 persecute,Verb,|persecuted|persecuted|persecuting|persecutes|
 persuade,Verb,|persuaded|persuaded|persuading|persuades|
-pick up,Verb,|picked|picked|picking|picks|
 pick,Verb,|picked|picked|picking|picks|
 plan,Verb,|planned|planned|planning|plans|
 plant,Verb,|planted|planted|planting|plants|
@@ -358,7 +324,6 @@ plow,Verb,|plowed|plowed|plowing|plows|
 point,Verb,|pointed|pointed|pointing|points|
 possess,Verb,|possessed|possessed|possessing|possesses|
 pour,Verb,|poured|poured|pouring|pours|
-pour out,Verb,|poured|poured|pouring|pours|
 practice,Verb,|practiced|practiced|practicing|practices|
 praise,Verb,|praised|praised|praising|praises|
 pray,Verb,|prayed|prayed|praying|prays|
@@ -376,16 +341,10 @@ protect,Verb,|protected|protected|protecting|protects|
 prove,Verb,|proved|proven|proving|proves|
 provide,Verb,|provided|provided|providing|provides|
 pull,Verb,|pulled|pulled|pulling|pulls|
-pull off,Verb,|pulled|pulled|pulling|pulls|
-pull out,Verb,|pulled|pulled|pulling|pulls|
-pull out of,Verb,|pulled|pulled|pulling|pulls|
 punish,Verb,|punished|punished|punishing|punishes|
 pursue,Verb,|pursued|pursued|pursuing|pursues|
 push,Verb,|pushed|pushed|pushing|pushes|
-push away,Verb,|pushed|pushed|pushing|pushes|
 put,Verb,|put|put|putting|puts|
-put down,Verb,|put|put|putting|puts|
-put on,Verb,|put|put|putting|puts|
 race,Verb,|raced|raced|racing|races|
 raid,Verb,|raided|raided|raiding|raids|
 rain,Verb,|rained|rained|raining|rains|
@@ -428,15 +387,11 @@ rise,Verb,|rose|risen|rising|rises|
 roar,Verb,|roared|roared|roaring|roars|
 roast,Verb,|roasted|roasted|roasting|roasts|
 roll,Verb,|rolled|rolled|rolling|rolls|
-roll up,Verb,|rolled|rolled|rolling|rolls|
 row,Verb,|rowed|rowed|rowing|rows|
 rub,Verb,|rubbed|rubbed|rubbing|rubs|
 ruin,Verb,|ruined|ruined|ruining|ruins|
 rule,Verb,|ruled|ruled|ruling|rules|
-run out,Verb,|ran|run|running|runs|
 run,Verb,|ran|run|running|runs|
-run away,Verb,|ran|run|running|runs|
-run down,Verb,|ran|run|running|runs|
 sacrifice,Verb,|sacrificed|sacrificed|sacrificing|sacrifices|
 satisfy,Verb,|satisfied|satisfied|satisfying|satisfies|
 save,Verb,|saved|saved|saving|saves|
@@ -455,7 +410,6 @@ send,Verb,|sent|sent|sending|sends|
 separate,Verb,|separated|separated|separating|separates|
 serve,Verb,|served|served|serving|serves|
 set,Verb,|set|set|setting|sets|
-set up,Verb,|set|set|setting|sets|
 sew,Verb,|sewed|sewn|sewing|sews|
 shake,Verb,|shook|shaken|shaking|shakes|
 share,Verb,|shared|shared|sharing|shares|
@@ -471,15 +425,12 @@ sin,Verb,|sinned|sinned|sinning|sins|
 sing,Verb,|sang|sung|singing|sings|
 sink,Verb,|sank|sunk|sinking|sinks|
 sit,Verb,|sat|sat|sitting|sits|
-sit down,Verb,|sat|sat|sitting|sits|
-sit up,Verb,|sat|sat|sitting|sits|
 slaughter,Verb,|slaughtered|slaughtered|slaughtering|slaughters|
 sleep,Verb,|slept|slept|sleeping|sleeps|
 sling,Verb,|slung|slung|slinging|slings|
 smell,Verb,|smelled|smelled|smelling|smells|
 sneeze,Verb,|sneezed|sneezed|sneezing|sneezes|
 snow,Verb,|snowed|snowed|snowing|snows|
-sound like,Verb,|sounded|sounded|sounding|sounds|
 speak,Verb,|spoke|spoken|speaking|speaks|
 spend,Verb,|spent|spent|spending|spends|
 spill,Verb,|spilled|spilled|spilling|spills|
@@ -489,15 +440,12 @@ sprout,Verb,|sprouted|sprouted|sprouting|sprouts|
 squeeze,Verb,|squeezed|squeezed|squeezing|squeezes|
 stab,Verb,|stabbed|stabbed|stabbing|stabs|
 stand,Verb,|stood|stood|standing|stands|
-stand up,Verb,|stood|stood|standing|stands|
 stare,Verb,|stared|stared|staring|stares|
 start,Verb,|started|started|starting|starts|
 starve,Verb,|starved|starved|starving|starves|
 stay,Verb,|stayed|stayed|staying|stays|
-stay away,Verb,|stayed|stayed|staying|stays|
 steal,Verb,|stole|stolen|stealing|steals|
 step,Verb,|stepped|stepped|stepping|steps|
-step aside,Verb,|stepped|stepped|stepping|steps|
 sting,Verb,|stung|stung|stinging|stings|
 stone,Verb,|stoned|stoned|stoning|stones|
 stop,Verb,|stopped|stopped|stopping|stops|
@@ -518,10 +466,6 @@ sweat,Verb,|sweated|sweated|sweating|sweats|
 sweep,Verb,|swept|swept|sweeping|sweeps|
 swim,Verb,|swam|swum|swimming|swims|
 take,Verb,|took|taken|taking|takes|
-take away,Verb,|took|taken|taking|takes|
-take care,Verb,|took|taken|taking|takes|
-take off,Verb,|took|taken|taking|takes|
-take out,Verb,|took|taken|taking|takes|
 talk,Verb,|talked|talked|talking|talks|
 taste,Verb,|tasted|tasted|tasting|tastes|
 teach,Verb,|taught|taught|teaching|teaches|
@@ -535,7 +479,6 @@ thank,Verb,|thanked|thanked|thanking|thanks|
 think,Verb,|thought|thought|thinking|thinks|
 thresh,Verb,|threshed|threshed|threshing|threshes|
 throw,Verb,|threw|thrown|throwing|throws|
-throw away,Verb,|threw|thrown|throwing|throws|
 tie,Verb,|tied|tied|tying|ties|
 torture,Verb,|tortured|tortured|torturing|tortures|
 touch,Verb,|touched|touched|touching|touches|
@@ -549,8 +492,6 @@ trip,Verb,|tripped|tripped|tripping|trips|
 trust,Verb,|trusted|trusted|trusting|trusts|
 try,Verb,|tried|tried|trying|tries|
 turn,Verb,|turned|turned|turning|turns|
-turn around,Verb,|turned|turned|turning|turns|
-turn away,Verb,|turned|turned|turning|turns|
 understand,Verb,|understood|understood|understanding|understands|
 unite,Verb,|united|united|uniting|unites|
 unlock,Verb,|unlocked|unlocked|unlocking|unlocks|
@@ -562,18 +503,13 @@ visit,Verb,|visited|visited|visiting|visits|
 vomit,Verb,|vomited|vomited|vomiting|vomits|
 wage,Verb,|waged|waged|waging|wages|
 wait,Verb,|waited|waited|waiting|waits|
-wake up,Verb,|woke|woken|waking|wakes|
 walk,Verb,|walked|walked|walking|walks|
-walk away,Verb,|walked|walked|walking|walks|
-walk down,Verb,|walked|walked|walking|walks|
-walk up,Verb,|walked|walked|walking|walks|
 wander,Verb,|wandered|wandered|wandering|wanders|
 want,Verb,|wanted|wanted|wanting|wants|
 warn,Verb,|warned|warned|warning|warns|
 wash,Verb,|washed|washed|washing|washes|
 waste,Verb,|wasted|wasted|wasting|wastes|
 watch,Verb,|watched|watched|watching|watches|
-watch out,Verb,|watched|watched|watching|watches|
 wave,Verb,|waved|waved|waving|waves|
 wear,Verb,|wore|worn|wearing|wears|
 weep,Verb,|wept|wept|weeping|weeps|
@@ -588,11 +524,9 @@ wither,Verb,|withered|withered|withering|withers|
 witness,Verb,|witnessed|witnessed|witnessing|witnesses|
 wonder,Verb,|wondered|wondered|wondering|wonders|
 work,Verb,|worked|worked|working|works|
-work out,Verb,|worked|worked|working|works|
 worry,Verb,|worried|worried|worrying|worries|
 worship,Verb,|worshiped|worshiped|worshiping|worships|
 wound,Verb,|wounded|wounded|wounding|wounds|
 wrap,Verb,|wrapped|wrapped|wrapping|wraps|
 wrestle,Verb,|wrestled|wrestled|wrestling|wrestles|
 write,Verb,|wrote|written|writing|writes|
-write down,Verb,|wrote|written|writing|writes|
