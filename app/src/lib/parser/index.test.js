@@ -1,4 +1,4 @@
-import {parse} from '.'
+import {parse_for_test} from '.'
 import {describe, expect, test} from 'vitest'
 import {TOKEN_TYPE, create_token} from './token'
 import {ERRORS} from './error_messages'
@@ -16,22 +16,22 @@ function create_word_token(token, lookup_term=null) {
 describe('parse', () => {
 	describe('no problems', () => {
 		test('empty string', () => {
-			expect(parse('')).toEqual([])
+			expect(parse_for_test('')).toEqual([])
 		})
 
 		test('whitespace', () => {
-			expect(parse(' ')).toEqual([])
+			expect(parse_for_test(' ')).toEqual([])
 		})
 
 		test('Token.', () => {
-			expect(parse('Token.')).toEqual([
+			expect(parse_for_test('Token.')).toEqual([
 				create_word_token('Token'),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
 			])
 		})
 
 		test('Token1 token2.', () => {
-			expect(parse('Token1 token2.')).toEqual([
+			expect(parse_for_test('Token1 token2.')).toEqual([
 				create_word_token('Token1'),
 				create_word_token('token2'),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
@@ -39,7 +39,7 @@ describe('parse', () => {
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul)].', () => {
-			const results = parse('Ok _notesNotation [fixedbracket you(Paul)].')
+			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul)].')
 
 			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
@@ -66,7 +66,7 @@ describe('parse', () => {
 		})
 
 		test('[Paul explained [the Christ needed to become alive again]].', () => {
-			const results = parse('[Paul explained [the Christ needed to become alive again]].')
+			const results = parse_for_test('[Paul explained [the Christ needed to become alive again]].')
 
 			expect(results).length(14)
 			expect(results[0].token).toBe('[')
@@ -100,7 +100,7 @@ describe('parse', () => {
 		})
 
 		test('You(people) are being stupid/foolish."', () => {
-			const results = parse('You(people) are being stupid/foolish."')
+			const results = parse_for_test('You(people) are being stupid/foolish."')
 
 			expect(results).length(6)
 			expect(results[0].token).toBe('You(people)')
@@ -124,7 +124,7 @@ describe('parse', () => {
 		})
 
 		test('John said, ["What do you(person) want?"] Then that person took the book [that John had].', () => {
-			const results = parse('John said, ["What do you(person) want?"] Then that person took the book [that John had].')
+			const results = parse_for_test('John said, ["What do you(person) want?"] Then that person took the book [that John had].')
 
 			expect(results).length(24)
 			for (let token of results) {
@@ -135,7 +135,7 @@ describe('parse', () => {
 
 	describe('problems detected', () => {
 		test('bad_notesNotation[badbracket you', () => {
-			const results = parse('bad_notesNotation[badbracket you')
+			const results = parse_for_test('bad_notesNotation[badbracket you')
 
 			expect(results).length(4)
 			expect(results[0].token).toBe('bad_notesNotation[badbracket')
@@ -149,7 +149,7 @@ describe('parse', () => {
 		})
 
 		test('Ok _notesNotation text[badbracket you', () => {
-			const results = parse('Ok _notesNotation text[badbracket you')
+			const results = parse_for_test('Ok _notesNotation text[badbracket you')
 
 			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
@@ -169,7 +169,7 @@ describe('parse', () => {
 		})
 
 		test('Ok _notesNotation [fixedbracket you', () => {
-			const results = parse('Ok _notesNotation [fixedbracket you')
+			const results = parse_for_test('Ok _notesNotation [fixedbracket you')
 
 			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
@@ -189,7 +189,7 @@ describe('parse', () => {
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul', () => {
-			const results = parse('Ok _notesNotation [fixedbracket you(Paul')
+			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul')
 
 			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
@@ -209,7 +209,7 @@ describe('parse', () => {
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul).', () => {
-			const results = parse('Ok _notesNotation [fixedbracket you(Paul)')
+			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul)')
 
 			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
@@ -229,7 +229,7 @@ describe('parse', () => {
 		})
 
 		test('Paul explained [the Christ needed to become alive again]].', () => {
-			const results = parse('Paul explained [the Christ needed to become alive again]].')
+			const results = parse_for_test('Paul explained [the Christ needed to become alive again]].')
 
 			expect(results).length(14)
 			expect(results[0].token).toBe('[')
@@ -263,7 +263,7 @@ describe('parse', () => {
 		})
 
 		test('John said, ["what do you(person) want?" then that person took the book that John had]', () => {
-			const results = parse('John said, ["what do you(person) want?" then that person took the book that John had]')
+			const results = parse_for_test('John said, ["what do you(person) want?" then that person took the book that John had]')
 	
 			expect(results).length(24)
 			expect(results[0].token).toBe('John')
@@ -319,7 +319,7 @@ describe('parse', () => {
 
 	describe('alternate lookups', () => {
 		test('alternate lookups', () => {
-			const results = parse('John ran [in order to escape many bears].')
+			const results = parse_for_test('John ran [in order to escape many bears].')
 
 			expect(results).length(9)
 			expect(results[0].token).toBe('John')

@@ -3,13 +3,9 @@
 	import {parse} from '$lib/parser'
 	import {backtranslate} from '$lib/backtranslator'
 	import {Tokens} from '$lib/tokens'
-	import {TOKEN_TYPE} from '$lib/parser/token'
+	import {token_has_error} from '$lib/parser/token'
 
 	let entered_text = ''
-
-	$: tokens = parse(entered_text)
-	$: has_error = tokens.some(({type}) => type == TOKEN_TYPE.ERROR)
-	$: success = tokens.length && !has_error
 	$: english_back_translation = backtranslate(entered_text)
 	$: english_back_translation && reset_copied()
 
@@ -31,17 +27,26 @@
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
 </form>
 
-<div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
-	{#if success}
-		<Icon icon={`mdi:check-circle`} class="h-16 w-16 text-success" />
-	{:else if has_error}
-		<Icon icon={`mdi:close-circle`} class="h-16 w-16 text-error" />
-	{/if}
-</div>
+{#await parse(entered_text)}
+	<div class="divider my-12 divider-warning">
+		<Icon icon="line-md:loading-twotone-loop" class="h-16 w-16 text-warning" />
+	</div>
+{:then tokens} 
+	{@const has_error = tokens.some(token_has_error)}
+	{@const success = tokens.length > 0 && !has_error}
 
-<section class="prose flex max-w-none flex-wrap items-center justify-center gap-x-4 gap-y-8">
-	<Tokens {tokens} />
-</section>
+	<div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
+		{#if success}
+			<Icon icon="mdi:check-circle" class="h-16 w-16 text-success" />
+		{:else if has_error}
+			<Icon icon="mdi:close-circle" class="h-16 w-16 text-error" />
+		{/if}
+	</div>
+
+	<section class="prose flex max-w-none flex-wrap items-center justify-center gap-x-4 gap-y-8">
+		<Tokens {tokens} />
+	</section>
+{/await}
 
 {#if english_back_translation}
 	<div class="prose divider mb-12 mt-20 max-w-none">

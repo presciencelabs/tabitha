@@ -7,6 +7,8 @@ type Token = {
 	lookup_term: string;
 	pairing_left: Token?;
 	pairing_right: Token?;
+	concept: OntologyResult?;
+	lookup_results: OntologyResult[]
 }
 
 type LookupTerm = string
@@ -33,6 +35,7 @@ type DbRowInflection = {
 }
 
 type TokenFilter = (token: Token) => boolean
+type LookupFilter = (concept: OntologyResult) => boolean
 
 type TokenContextFilter = (tokens: Token[], trigger_index: number) => boolean
 

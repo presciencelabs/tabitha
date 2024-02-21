@@ -3,15 +3,12 @@
 
 	/** @type {Token} */
 	export let token
-	/** @type {LookupResult<OntologyResult>} */
-	export let result
-
 	export let classes = ''
 
 	// TODO: more work needed to handle multiple matches with possibly different levels, e.g., son
-	const match = result.matches[0]
+	const concept = token.concept || token.lookup_results[0]
 </script>
 
-<TokenDisplay classes="{classes} L{match?.level}">
+<TokenDisplay classes="{classes} L{concept.level}">
 	{token.token}
 </TokenDisplay>

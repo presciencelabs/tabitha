@@ -6,7 +6,7 @@ const checker_rules_json = [
 	// 	'name': 'Expect a [ before a relative clause',
 	// 	'trigger': { 'token': 'that|who|whom|which' },
 	// 	'context': {
-	// 		'precededby': { 'category': 'noun' },
+	// 		'precededby': { 'category': 'Noun' },
 	// 	},
 	// 	'require': {
 	// 		'precededby': '[',
