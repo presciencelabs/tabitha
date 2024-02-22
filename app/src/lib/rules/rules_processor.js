@@ -1,6 +1,6 @@
-import {create_error_token} from "$lib/parser/token"
-import {CHECKER_RULES} from "./checker_rules"
-import {TRANSFORM_RULES} from "./transform_rules"
+import {create_error_token} from '$lib/parser/token'
+import {CHECKER_RULES} from './checker_rules'
+import {TRANSFORM_RULES} from './transform_rules'
 
 /**
  * @template {TokenRule} R
@@ -63,11 +63,11 @@ export function apply_checker_rules(tokens, rules=CHECKER_RULES) {
 			continue
 		}
 
-		new_tokens.push(...create_context_tokens(triggered_rules, (action) => action.preceded_by))
+		new_tokens.push(...create_context_tokens(triggered_rules, action => action.preceded_by))
 
 		new_tokens.push(create_trigger_token(triggered_rules, tokens[i]))
 
-		new_tokens.push(...create_context_tokens(triggered_rules, (action) => action.followed_by))
+		new_tokens.push(...create_context_tokens(triggered_rules, action => action.followed_by))
 	}
 
 	return new_tokens

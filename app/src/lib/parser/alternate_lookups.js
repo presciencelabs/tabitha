@@ -1,14 +1,14 @@
-import {TOKEN_TYPE, create_token} from './token'
+import { TOKEN_TYPE, create_token } from './token'
 
 /**
  * @typedef {[token_list: string[], new_lookup: string]} AlternateLookup
  */
 
 /**
- * These words/phrases (and some others) are accepted by the Analyzer as alternates for 
+ * These words/phrases (and some others) are accepted by the Analyzer as alternates for
  * certain words in the Ontology.
  * This could easily be put into a config file to prevent the need to rebuild if adding a new one.
- * 
+ *
  * @type {AlternateLookup[]}
  */
 const ALTERNATE_LOOKUPS = [
@@ -27,8 +27,7 @@ const ALTERNATE_LOOKUPS = [
 const ALTERNATE_LOOKUPS_OPENING_TOKENS = new Set(ALTERNATE_LOOKUPS.map(alt => alt[0][0]))
 
 /**
- * 
- * @param {Token[]} tokens 
+ * @param {Token[]} tokens
  * @returns {Token[]}
  */
 export function use_alternate_lookups(tokens) {
@@ -42,7 +41,6 @@ export function use_alternate_lookups(tokens) {
 	return new_tokens
 
 	/**
-	 * 
 	 * @returns {Token}
 	 */
 	function create_next_token() {
@@ -58,7 +56,7 @@ export function use_alternate_lookups(tokens) {
 				return create_token(combined_tokens.join(' '), TOKEN_TYPE.LOOKUP_WORD, {lookup_term: new_lookup})
 			}
 		}
-		
+
 		return tokens[current++]
 	}
 
@@ -66,7 +64,7 @@ export function use_alternate_lookups(tokens) {
 	 * @param {AlternateLookup} alt
 	 */
 	function matches_alternate([token_list]) {
-		return (current + token_list.length) <= tokens.length
-			&& token_list.every((value, i) => value == tokens[current+i].token.toLowerCase())
+		return current + token_list.length <= tokens.length
+			&& token_list.every((value, i) => value === tokens[current+i].token.toLowerCase())
 	}
 }

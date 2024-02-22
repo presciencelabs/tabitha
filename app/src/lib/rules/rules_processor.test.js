@@ -9,7 +9,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': 'all' },
-				'transform': { 'lookup': 'lookup' }
+				'transform': { 'lookup': 'lookup' },
 			},
 		].map(parse_transform_rule)
 
@@ -28,7 +28,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'other' } },
-				'transform': { 'lookup': 'lookup' }
+				'transform': { 'lookup': 'lookup' },
 			},
 		].map(parse_transform_rule)
 
@@ -47,7 +47,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'peanut' },
 				'context': { 'precededby': { 'token': 'a' } },
-				'transform': { 'lookup': 'lookup' }
+				'transform': { 'lookup': 'lookup' },
 			},
 		].map(parse_transform_rule)
 
@@ -66,18 +66,18 @@ describe('transform rules', () => {
 		expect(results[1].lookup_term).toBe('peanut')
 		expect(results[4].lookup_term).toBe('lookup')
 	})
-	
+
 	test('multiple transforms for one token', () => {
 		const transform_rules = [
 			{
 				'trigger': { 'token': 'the' },
 				'context': { 'followedby': 'all' },
-				'transform': { 'lookup': 'the1' }
+				'transform': { 'lookup': 'the1' },
 			},
 			{
 				'trigger': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 				'context': { 'followedby': 'all' },
-				'transform': { 'lookup': 'the2' }
+				'transform': { 'lookup': 'the2' },
 			},
 		].map(parse_transform_rule)
 
@@ -104,7 +104,7 @@ describe('checker rules', () => {
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
-				}
+				},
 			},
 		].map(parse_checker_rule)
 
@@ -124,7 +124,7 @@ describe('checker rules', () => {
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
-				}
+				},
 			},
 		].map(parse_checker_rule)
 
@@ -144,7 +144,7 @@ describe('checker rules', () => {
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
-				}
+				},
 			},
 		].map(parse_checker_rule)
 
@@ -169,7 +169,7 @@ describe('checker rules', () => {
 				'require': {
 					'precededby': 'add',
 					'message': 'message',
-				}
+				},
 			},
 		].map(parse_checker_rule)
 

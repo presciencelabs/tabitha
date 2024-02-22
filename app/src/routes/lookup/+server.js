@@ -38,9 +38,7 @@ export async function GET({url: {searchParams}, locals: {db}}) {
  * @returns {Promise<OntologyResult[]>}
  */
 async function get_matches_from_ontology(lookup_term) {
-	const response = await fetch(
-		`${PUBLIC_ONTOLOGY_API_HOST}/?q=${lookup_term}`
-	)
+	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/?q=${lookup_term}`)
 
 	if (!response.ok) return []
 

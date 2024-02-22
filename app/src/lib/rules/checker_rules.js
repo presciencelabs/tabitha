@@ -1,4 +1,4 @@
-import {parse_checker_rule} from "./rules_parser"
+import {parse_checker_rule} from './rules_parser'
 
 // TODO store these in the database
 const checker_rules_json = [
@@ -17,12 +17,12 @@ const checker_rules_json = [
 		'name': 'Expect a [ before a quote',
 		'trigger': { 'token': ',' },
 		'context': {
-			'followedby': { 'token': '"' }
+			'followedby': { 'token': '"' },
 		},
 		'require': {
 			'followedby': '[',
 			'message': 'Missing bracket before an opening quote',
-		}
+		},
 	},
 ]
 

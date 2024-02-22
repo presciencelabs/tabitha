@@ -1,7 +1,7 @@
-import {TOKEN_TYPE, create_error_token, create_token} from './token'
-import {check_invalid_tokens, check_sentence_syntax, check_syntax} from './syntax'
-import {ERRORS} from './error_messages'
-import {describe, expect, test} from 'vitest'
+import { describe, expect, test } from 'vitest'
+import { ERRORS } from './error_messages'
+import { check_invalid_tokens, check_sentence_syntax } from './syntax'
+import { TOKEN_TYPE, create_error_token, create_token } from './token'
 
 /**
  *
@@ -31,7 +31,7 @@ function create_word_token(token, lookup_term=null) {
  */
 function expect_error_at(index, message, tokens) {
 	for (let [i, token] of tokens.entries()) {
-		if (i == index) {
+		if (i === index) {
 			expect(token.message).toEqual(message)
 		} else {
 			expect(token.message).toBe('')
@@ -392,7 +392,7 @@ describe('sentence syntax: period', () => {
 
 			const expected_tokens = [
 				...test_tokens,
-				create_error_token('.', ERRORS.MISSING_PERIOD)
+				create_error_token('.', ERRORS.MISSING_PERIOD),
 			]
 
 			expect(check_sentence_syntax(test_tokens)).toEqual(expected_tokens)
@@ -406,7 +406,7 @@ describe('sentence syntax: period', () => {
 
 			const expected_tokens = [
 				...test_tokens,
-				create_error_token('.', ERRORS.MISSING_PERIOD)
+				create_error_token('.', ERRORS.MISSING_PERIOD),
 			]
 
 			expect(check_sentence_syntax(test_tokens)).toEqual(expected_tokens)
@@ -420,7 +420,7 @@ describe('sentence syntax: period', () => {
 
 			const expected_tokens = [
 				...test_tokens,
-				create_error_token('.', ERRORS.MISSING_PERIOD)
+				create_error_token('.', ERRORS.MISSING_PERIOD),
 			]
 
 			expect(check_sentence_syntax(test_tokens)).toEqual(expected_tokens)
@@ -433,7 +433,7 @@ describe('sentence syntax: period', () => {
 
 			const expected_tokens = [
 				...test_tokens,
-				create_error_token('.', ERRORS.MISSING_PERIOD)
+				create_error_token('.', ERRORS.MISSING_PERIOD),
 			]
 
 			expect(check_sentence_syntax(test_tokens)).toEqual(expected_tokens)

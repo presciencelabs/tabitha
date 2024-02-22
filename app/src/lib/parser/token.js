@@ -45,7 +45,7 @@ export function create_token(token, type, {message='', lookup_term='', pairing_l
 		pairing_left,
 		pairing_right,
 		concept: null,
-		lookup_results: []
+		lookup_results: [],
 	}
 }
 

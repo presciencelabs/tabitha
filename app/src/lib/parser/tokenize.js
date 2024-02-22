@@ -96,7 +96,7 @@ export function tokenize_input(text = '') {
 			// (invalid-notation)
 			return error_token(ERRORS.UNRECOGNIZED_CLAUSE_NOTATION)
 		}
-		
+
 		return check_boundary_for_token(TOKEN_TYPE.NOTE)
 	}
 
@@ -126,10 +126,10 @@ export function tokenize_input(text = '') {
 			return invalid_closing_char()
 		}
 
-		if (token_type == TOKEN_TYPE.LOOKUP_WORD) {
+		if (token_type === TOKEN_TYPE.LOOKUP_WORD) {
 			// token token. token,
 			return word_token()
-		} else if (token_type == TOKEN_TYPE.PAIRING) {
+		} else if (token_type === TOKEN_TYPE.PAIRING) {
 			// simple/complex simple/complex. simple/complex,
 			return pairing_token()
 		} else {
@@ -260,10 +260,11 @@ export function tokenize_input(text = '') {
 	 * @param {RegExp} regex
 	 */
 	function match_two(regex) {
-		if ((i < text.length-1) && (text[i]+text[i+1]).match(regex)) {
+		if (i < text.length - 1 && (text[i] + text[i + 1]).match(regex)) {
 			i += 2
 			return true
 		}
+
 		return false
 	}
 

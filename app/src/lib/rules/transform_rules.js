@@ -12,17 +12,17 @@ const transform_rules_json = [
 		'name': 'do with not becomes a function word',
 		'trigger': { 'token': 'do|does|did|Do' },
 		'context': {
-			'followedby': { 'token': 'not' }
+			'followedby': { 'token': 'not' },
 		},
-		'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD }
+		'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'because of becomes because-B',
 		'trigger': { 'token': 'because' },
 		'context': {
-			'followedby': { 'token': 'of' }
+			'followedby': { 'token': 'of' },
 		},
-		'transform': { 'lookup': 'because-B' }
+		'transform': { 'lookup': 'because-B' },
 	},
 ]
 

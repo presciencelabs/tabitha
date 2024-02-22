@@ -169,12 +169,12 @@ describe('context filters', () => {
 		const context_json = {
 			'precededby': {
 				'token': 'token',
-				'skip': { 'token': 'skip|middle' }
+				'skip': { 'token': 'skip|middle' },
 			},
 			'followedby': {
 				'token': 'token',
-				'skip': { 'token': 'skip|middle' }
-			}
+				'skip': { 'token': 'skip|middle' },
+			},
 		}
 		const filter = create_token_context(context_json)
 

@@ -6,6 +6,7 @@
 /// <reference lib="webworker" />
 import {build, files, version} from '$service-worker'
 
+// eslint-disable-next-line no-extra-parens
 const sw = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self))
 
 // Create a unique cache name for this deployment

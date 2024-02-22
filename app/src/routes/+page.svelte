@@ -1,9 +1,9 @@
 <script>
-	import Icon from '@iconify/svelte'
-	import {parse} from '$lib/parser'
 	import {backtranslate} from '$lib/backtranslator'
-	import {Tokens} from '$lib/tokens'
+	import {parse} from '$lib/parser'
 	import {token_has_error} from '$lib/parser/token'
+	import {Tokens} from '$lib/tokens'
+	import Icon from '@iconify/svelte'
 
 	let entered_text = ''
 	$: english_back_translation = backtranslate(entered_text)
@@ -31,7 +31,7 @@
 	<div class="divider my-12 divider-warning">
 		<Icon icon="line-md:loading-twotone-loop" class="h-16 w-16 text-warning" />
 	</div>
-{:then tokens} 
+{:then tokens}
 	{@const has_error = tokens.some(token_has_error)}
 	{@const success = tokens.length > 0 && !has_error}
 

@@ -1,9 +1,9 @@
 import {REGEXES} from '$lib/regexes'
-import {create_error_token, check_token_lookup, TOKEN_TYPE} from './token'
+import {TOKEN_TYPE, check_token_lookup, create_error_token} from './token'
 
 /**
- * 
- * @param {Token[]} tokens 
+ *
+ * @param {Token[]} tokens
  * @returns {Token[]}
  */
 export function check_pairings(tokens) {
@@ -12,8 +12,8 @@ export function check_pairings(tokens) {
 	return tokens
 
 	/**
-	 * 
-	 * @param {Token} token 
+	 *
+	 * @param {Token} token
 	 */
 	function check_pairing(token) {
 		if (token.pairing_left &&

@@ -1,8 +1,8 @@
-import {TOKEN_TYPE} from "./parser/token"
+import {TOKEN_TYPE} from './parser/token'
 
 /**
- * 
- * @param {Token[]} tokens 
+ *
+ * @param {Token[]} tokens
  */
 export async function perform_ontology_lookups(tokens) {
 	const lookup_tokens = tokens.flatMap(get_lookup_tokens)
@@ -12,8 +12,7 @@ export async function perform_ontology_lookups(tokens) {
 	return tokens
 
 	/**
-	 * 
-	 * @param {Token} token 
+	 * @param {Token} token
 	 * @returns {Token[]}
 	 */
 	function get_lookup_tokens(token) {

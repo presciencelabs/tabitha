@@ -1,6 +1,6 @@
 <script>
 	import TokenDisplay from './TokenDisplay.svelte'
-    import Word from './Word.svelte';
+	import Word from './Word.svelte'
 
 	/** @type {Token} */
 	export let token

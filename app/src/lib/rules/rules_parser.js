@@ -1,6 +1,6 @@
 /**
- * 
- * @param {any} rule_json 
+ *
+ * @param {any} rule_json
  * @returns {TransformRule}
  */
 export function parse_transform_rule(rule_json) {
@@ -18,8 +18,8 @@ export function parse_transform_rule(rule_json) {
 }
 
 /**
- * 
- * @param {any} rule_json 
+ *
+ * @param {any} rule_json
  * @returns {CheckerRule}
  */
 export function parse_checker_rule(rule_json) {
@@ -37,8 +37,8 @@ export function parse_checker_rule(rule_json) {
 }
 
 /**
- * 
- * @param {any} filter_json 
+ *
+ * @param {any} filter_json
  * @returns {TokenFilter}
  */
 export function create_token_filter(filter_json) {
@@ -56,32 +56,32 @@ export function create_token_filter(filter_json) {
 
 	const type_filter = filter_json['type']
 	if (type_filter !== undefined) {
-		filters.push((token) => token.type === type_filter)
+		filters.push(token => token.type === type_filter)
 	}
 	// TODO support filtering by lookup values such as category/stem/etc
 
 	if (filters.length === 0) {
 		return () => false
 	}
-	return (token) => filters.every(filter => filter(token))
+	return token => filters.every(filter => filter(token))
 }
 
 /**
- * 
- * @param {string} token_value 
+ *
+ * @param {string} token_value
  * @return {TokenFilter}
  */
 function create_token_token_filter(token_value) {
 	const token_values = token_value.split('|')
 	if (token_values.length > 1) {
-		return (token) => token_values.includes(token.token)
+		return token => token_values.includes(token.token)
 	}
-	return (token) => token.token === token_value
+	return token => token.token === token_value
 }
 
 /**
- * 
- * @param {any} context_json 
+ *
+ * @param {any} context_json
  * @returns {TokenContextFilter}
  */
 export function create_token_context(context_json) {
@@ -92,7 +92,7 @@ export function create_token_context(context_json) {
 	if (preceded_by !== undefined) {
 		filters.push(create_context_filter(preceded_by, -1))
 	}
-	
+
 	const followed_by = context_json['followedby']
 	if (followed_by !== undefined) {
 		filters.push(create_context_filter(followed_by, +1))
@@ -100,7 +100,7 @@ export function create_token_context(context_json) {
 
 	if (filters.length === 0) {
 		return () => true
-	} else if (filters.length == 1) {
+	} else if (filters.length === 1) {
 		return (tokens, trigger_index) => filters[0](tokens, trigger_index)
 	} else {
 		return (tokens, trigger_index) => filters.every(filter => filter(tokens, trigger_index))
@@ -108,8 +108,8 @@ export function create_token_context(context_json) {
 }
 
 /**
- * 
- * @param {any} context_json 
+ *
+ * @param {any} context_json
  * @param {number} offset
  * @returns {TokenContextFilter}
  */
@@ -128,13 +128,13 @@ function create_context_filter(context_json, offset) {
 
 	/**
 	 * TODO only go until a clause boundary?
-	 * 
-	 * @param {Token[]} tokens 
-	 * @param {number} trigger_index 
+	 *
+	 * @param {Token[]} tokens
+	 * @param {number} trigger_index
 	 * @returns {boolean}
 	 */
 	function check_context_with_skip(tokens, trigger_index) {
-		for (let i = (trigger_index + offset); end_check(tokens, i); i += offset) {
+		for (let i = trigger_index + offset; end_check(tokens, i); i += offset) {
 			if (filter(tokens[i])) {
 				return true
 			}
@@ -148,8 +148,8 @@ function create_context_filter(context_json, offset) {
 }
 
 /**
- * 
- * @param {any} action_json 
+ *
+ * @param {any} action_json
  * @returns {CheckerAction}
  */
 export function create_checker_action(action_json) {
@@ -161,8 +161,8 @@ export function create_checker_action(action_json) {
 }
 
 /**
- * 
- * @param {any} transform_json 
+ *
+ * @param {any} transform_json
  * @returns {TokenTransform}
  */
 export function create_token_transform(transform_json) {
@@ -171,19 +171,19 @@ export function create_token_transform(transform_json) {
 
 	const type = transform_json['type']
 	if (type !== undefined) {
-		transforms.push((token) => ({...token, type}))
+		transforms.push(token => ({...token, type}))
 	}
 
 	const lookup_term = transform_json['lookup']
 	if (lookup_term !== undefined) {
-		transforms.push((token) => ({...token, lookup_term}))
+		transforms.push(token => ({...token, lookup_term}))
 	}
 
 	if (transforms.length === 0) {
-		return (token) => token
+		return token => token
 	} else if (transforms.length === 1) {
 		return transforms[0]
 	} else {
-		return (token) => transforms.reduce((new_token, transform) => transform(new_token), token)
+		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
 	}
 }

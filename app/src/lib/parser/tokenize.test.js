@@ -1,26 +1,24 @@
-import {TOKEN_TYPE, create_error_token, create_token} from './token'
-import {ERRORS} from './error_messages'
-import {CLAUSE_NOTATIONS} from './clause_notations'
-import {FUNCTION_WORDS} from './function_words'
-import {tokenize_input} from './tokenize'
-import {describe, expect, test} from 'vitest'
+import { describe, expect, test } from 'vitest'
+import { CLAUSE_NOTATIONS } from './clause_notations'
+import { ERRORS } from './error_messages'
+import { FUNCTION_WORDS } from './function_words'
+import { TOKEN_TYPE, create_error_token, create_token } from './token'
+import { tokenize_input } from './tokenize'
 
 /**
- *
  * @param {string} token
  * @param {string?} lookup_term
- * @returns
+ * @returns {Token}
  */
 function create_word_token(token, lookup_term=null) {
 	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: lookup_term || token})
 }
 
 /**
- *
  * @param {string} token
  * @param {string?} lookup_left
  * @param {string?} lookup_right
- * @returns
+ * @returns {Token}
  */
 function create_pairing_token(token, lookup_left=null, lookup_right=null) {
 	const [left, right] = token.split('/')
@@ -39,7 +37,7 @@ describe('tokenize_input', () => {
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
-	test("any whitespace should split tokens", () => {
+	test('any whitespace should split tokens', () => {
 		const INPUT = `a b    c
 		d	e		  f
 
@@ -62,22 +60,22 @@ describe('tokenize_input', () => {
 		const INPUT = "token tokens token's token-A token's-A in-order-to Holy-Spirit's token123 123"
 
 		const EXPECTED_OUTPUT = [
-			create_word_token("token", "token"),
-			create_word_token("tokens", "tokens"),
-			create_word_token("token's", "token"),
-			create_word_token("token-A", "token-A"),
-			create_word_token("token's-A", "token-A"),
-			create_word_token("in-order-to", "in-order-to"),
-			create_word_token("Holy-Spirit's", "Holy-Spirit"),
-			create_word_token("token123", "token123"),
-			create_word_token("123", "123"),
+			create_word_token('token', 'token'),
+			create_word_token('tokens', 'tokens'),
+			create_word_token("token's", 'token'),
+			create_word_token('token-A', 'token-A'),
+			create_word_token("token's-A", 'token-A'),
+			create_word_token('in-order-to', 'in-order-to'),
+			create_word_token("Holy-Spirit's", 'Holy-Spirit'),
+			create_word_token('token123', 'token123'),
+			create_word_token('123', '123'),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
 	test('valid words with decimal', () => {
-		const INPUT = "2.5 .5 .1. 3.88] 2.5"
+		const INPUT = '2.5 .5 .1. 3.88] 2.5'
 
 		const EXPECTED_OUTPUT = [
 			create_word_token('2.5', '2.5'),
@@ -93,7 +91,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid words', () => {
-		const INPUT = ".token ,token token["
+		const INPUT = '.token ,token token['
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('.token', ERRORS.INVALID_TOKEN_END('.')),
@@ -108,14 +106,14 @@ describe('tokenize_input', () => {
 		const INPUT = "you(Paul) abc(test) your(Paul's) your(son-C) your(son's-C) your(sons'-C)] you(Paul)."
 
 		const EXPECTED_OUTPUT = [
-			create_word_token("you(Paul)", "Paul"),
-			create_word_token("abc(test)", "test"),
-			create_word_token("your(Paul's)", "Paul"),
-			create_word_token("your(son-C)", "son-C"),
-			create_word_token("your(son's-C)", "son-C"),
-			create_word_token("your(sons'-C)", "sons-C"),
+			create_word_token('you(Paul)', 'Paul'),
+			create_word_token('abc(test)', 'test'),
+			create_word_token("your(Paul's)", 'Paul'),
+			create_word_token('your(son-C)', 'son-C'),
+			create_word_token("your(son's-C)", 'son-C'),
+			create_word_token("your(sons'-C)", 'sons-C'),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_word_token("you(Paul)", "Paul"),
+			create_word_token('you(Paul)', 'Paul'),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		]
 
@@ -123,13 +121,13 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid pronoun referents', () => {
-		const INPUT = "you(Paul youPaul) you(Paul)[ you(Paul)_."
+		const INPUT = 'you(Paul youPaul) you(Paul)[ you(Paul)_.'
 
 		const EXPECTED_OUTPUT = [
-			create_error_token("you(Paul", ERRORS.MISSING_CLOSING_PAREN),
-			create_error_token("youPaul)", ERRORS.MISSING_OPENING_PAREN),
-			create_error_token("you(Paul)[", ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
-			create_error_token("you(Paul)_", ERRORS.INVALID_TOKEN_END('you(Paul)')),
+			create_error_token('you(Paul', ERRORS.MISSING_CLOSING_PAREN),
+			create_error_token('youPaul)', ERRORS.MISSING_OPENING_PAREN),
+			create_error_token('you(Paul)[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
+			create_error_token('you(Paul)_', ERRORS.INVALID_TOKEN_END('you(Paul)')),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		]
 
@@ -137,7 +135,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid underscore notation', () => {
-		const INPUT = "_note _note. _note] [_note _note[ __implicit"
+		const INPUT = '_note _note. _note] [_note _note[ __implicit'
 
 		const EXPECTED_OUTPUT = [
 			create_token('_note', TOKEN_TYPE.NOTE),
@@ -156,7 +154,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid underscore notation', () => {
-		const INPUT = "token_note token_ ._note ]_note"
+		const INPUT = 'token_note token_ ._note ]_note'
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('token_note', ERRORS.NO_SPACE_BEFORE_UNDERSCORE),
@@ -169,7 +167,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid clause notation', () => {
-		const INPUT = "(imp) (implicit-situational) [(imp) (imp)] (imp)."
+		const INPUT = '(imp) (implicit-situational) [(imp) (imp)] (imp).'
 
 		const EXPECTED_OUTPUT = [
 			create_token('(imp)', TOKEN_TYPE.NOTE),
@@ -186,10 +184,9 @@ describe('tokenize_input', () => {
 	})
 
 	describe('all valid clause notations', () => {
-		test.each(CLAUSE_NOTATIONS.map(notation => ([[notation]])))
-			('%s', test_text => {
+		test.each(CLAUSE_NOTATIONS.map(notation => [[notation]]))('%s', test_text => {
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.NOTE)
+				create_token(test_text[0], TOKEN_TYPE.NOTE),
 			]
 
 			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
@@ -215,10 +212,9 @@ describe('tokenize_input', () => {
 	})
 
 	describe('all valid function words lowercase', () => {
-		test.each(Array.from(FUNCTION_WORDS).map(word => ([[word]])))
-			('%s', test_text => {
+		test.each(Array.from(FUNCTION_WORDS).map(word => [[word]]))('%s', test_text => {
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD)
+				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD),
 			]
 
 			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
@@ -226,10 +222,9 @@ describe('tokenize_input', () => {
 	})
 
 	describe('all valid function words uppercase', () => {
-		test.each(Array.from(FUNCTION_WORDS).map(word => ([[word.toUpperCase()]])))
-			('%s', test_text => {
+		test.each(Array.from(FUNCTION_WORDS).map(word => [[word.toUpperCase()]]))('%s', test_text => {
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD)
+				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD),
 			]
 
 			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
@@ -265,7 +260,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid opening brackets', () => {
-		const INPUT = ".[ ,[ ?[ ][ token[ :["
+		const INPUT = '.[ ,[ ?[ ][ token[ :['
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('.[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
@@ -315,18 +310,18 @@ describe('tokenize_input', () => {
 
 		const EXPECTED_OUTPUT = [
 			create_word_token("Paul's", 'Paul'),
-			create_word_token("Paul’s", 'Paul'),
-			create_word_token("Jesus’", 'Jesus'),
+			create_word_token('Paul’s', 'Paul'),
+			create_word_token('Jesus’', 'Jesus'),
 			create_word_token("Jesus'", 'Jesus'),
-			create_word_token("sons’-C", 'sons-C'),
-			create_word_token("you(Paul’s)", 'Paul'),
+			create_word_token('sons’-C', 'sons-C'),
+			create_word_token('you(Paul’s)', 'Paul'),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
 	test('invalid single characters', () => {
-		const INPUT = "( ) / * + ;"
+		const INPUT = '( ) / * + ;'
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('(', ERRORS.MISSING_CLOSING_PAREN),
@@ -344,14 +339,14 @@ describe('tokenize_input', () => {
 		const INPUT = "simple/complex simple's/complex's simples'/complexs' simples'-A/complexs' simple-A/complex-B. [simple/complex]"
 
 		const EXPECTED_OUTPUT = [
-			create_pairing_token("simple/complex"),
-			create_pairing_token("simple's/complex's", "simple", "complex"),
-			create_pairing_token("simples'/complexs'", "simples", "complexs"),
-			create_pairing_token("simples'-A/complexs'", "simples-A", "complexs"),
-			create_pairing_token("simple-A/complex-B", "simple-A", "complex-B"),
+			create_pairing_token('simple/complex'),
+			create_pairing_token("simple's/complex's", 'simple', 'complex'),
+			create_pairing_token("simples'/complexs'", 'simples', 'complexs'),
+			create_pairing_token("simples'-A/complexs'", 'simples-A', 'complexs'),
+			create_pairing_token('simple-A/complex-B', 'simple-A', 'complex-B'),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_pairing_token("simple/complex", "simple", "complex"),
+			create_pairing_token('simple/complex', 'simple', 'complex'),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
 		]
 
@@ -359,7 +354,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid pairing', () => {
-		const INPUT = "/complex simple/ / simple//complex simple/.complex simple./complex"
+		const INPUT = '/complex simple/ / simple//complex simple/.complex simple./complex'
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('/complex', ERRORS.INVALID_PAIRING_SYNTAX),
