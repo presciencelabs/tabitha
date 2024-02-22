@@ -1,5 +1,4 @@
 <script>
-
 	/** @type {SourceData['phase_2_encoding']}*/
 	export let phase_2_encoding
 
@@ -99,7 +98,7 @@
 		} else if (['}', ')', ']'].includes(entity.entity)) {
 			return ']'
 
-		} else if (entity.label == 'period') {
+		} else if (entity.label === 'period') {
 			return entity.entity
 
 		} else if (entity.sense !== 'A') {

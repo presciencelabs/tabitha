@@ -318,7 +318,7 @@ export const example_argument_slots = {
 		'Degree',
 		'Verb',
 		'Noun',
-		'Adjective'
+		'Adjective',
 	],
 	Adposition: [
 		'Verb',

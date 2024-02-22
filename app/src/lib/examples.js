@@ -49,7 +49,7 @@ const context_argument_displayer = {
 }
 
 /**
- * 
+ *
  * @param {Concept} concept
  * @param {Map<string, string>} context_arguments
  *
@@ -64,20 +64,20 @@ export function display_context_arguments(concept, context_arguments) {
 /**
  * for Agent -> 'Noun Verb'
  * for other roles -> 'Verb Noun(R)' where R is the role character
- * 
- * @param {string} stem 
+ *
+ * @param {string} stem
  * @param {Map<string, string>} context_arguments
- * 
+ *
  * @returns {string}
  */
 function display_noun_arguments(stem, context_arguments) {
 	let role = context_arguments.get('Role')
 	let verb = context_arguments.get('Verb')
-	if (role == 'A') {
+	if (role === 'A') {
 		return `${stem} ${verb}`
-	} else if (role == 'P') {
+	} else if (role === 'P') {
 		return `${verb} ${stem}`
-	} else if (role == 'X') {
+	} else if (role === 'X') {
 		return stem
 	} else {
 		return `${verb} ${stem}(${role})`
@@ -89,15 +89,15 @@ function display_noun_arguments(stem, context_arguments) {
  * Proposition Arguments are already surrounded by brackets so leave as they are.
  * For the Topic NP, p means 'Most Agent-Like' (active), P means 'Most Patient-Like' (passive)
  * If passive, include (passive)
- * 
- * @param {string} stem 
+ *
+ * @param {string} stem
  * @param {Map<string, string>} context_arguments
- * 
+ *
  * @returns {string}
  */
 function display_verb_arguments(stem, context_arguments) {
 	const parts = [
-		context_arguments.get('Topic NP') == 'P' ? '(passive)' : '',
+		context_arguments.get('Topic NP') === 'P' ? '(passive)' : '',
 		context_arguments.get('Agent') || '',
 		context_arguments.get('Agent Proposition') || '',
 		stem,
@@ -118,10 +118,10 @@ function display_verb_arguments(stem, context_arguments) {
  * Agent Verb (stem PatientClause)
  * All arguments except the stem are optional
  * It it currently understood (but not confirmed) that a Modified Noun never occurs with a Patient Noun/Clause
- * 
- * @param {string} stem 
+ *
+ * @param {string} stem
  * @param {Map<string, string>} context_arguments
- * 
+ *
  * @returns {string}
  */
 function display_adjective_arguments(stem, context_arguments) {
@@ -153,10 +153,10 @@ function display_adjective_arguments(stem, context_arguments) {
 /**
  * Verb Noun Adjective stem
  * All arguments except the stem are optional
- * 
- * @param {string} stem 
+ *
+ * @param {string} stem
  * @param {Map<string, string>} context_arguments
- * 
+ *
  * @returns {string}
  */
 function display_adverb_arguments(stem, context_arguments) {
@@ -174,9 +174,9 @@ function display_adverb_arguments(stem, context_arguments) {
  * In Noun-Noun relationship -> (HeadNoun (stem Noun))
  * In adverbial clause -> [stem... ]
 
- * @param {string} stem 
+ * @param {string} stem
  * @param {Map<string, string>} context_arguments
- * 
+ *
  * @returns {string}
  */
 function display_adposition_arguments(stem, context_arguments) {

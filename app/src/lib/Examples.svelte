@@ -1,8 +1,8 @@
 <script>
-	import Icon from "@iconify/svelte"
-	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import SemanticEncoding from "./SemanticEncoding.svelte"
-	import { transform_example, display_context_arguments } from "./examples"
+	import Icon from '@iconify/svelte'
+	import {PUBLIC_SOURCES_API_HOST} from '$env/static/public'
+	import SemanticEncoding from './SemanticEncoding.svelte'
+	import {transform_example, display_context_arguments} from './examples'
 
 	/** @type {Concept} */
 	export let concept
@@ -30,11 +30,11 @@
 	$: selected_book && book_changed()
 
 	function source_changed() {
-			selected_book = ''
-			selected_verse_json_encoded = ''
+		selected_book = ''
+		selected_verse_json_encoded = ''
 	}
 	function book_changed() {
-			selected_verse_json_encoded = ''
+		selected_verse_json_encoded = ''
 	}
 
 	/**
