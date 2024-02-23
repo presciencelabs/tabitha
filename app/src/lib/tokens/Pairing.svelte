@@ -11,14 +11,7 @@
 	 * bad: /disciple follower/ disciple/disciple disciple/follower /
 	 */
 
-	// At this point the pairing tokens will never be null
-	/** @type {Token} */
-	// @ts-ignore
-	$: left_token = token.pairing_left
-
-	/** @type {Token} */
-	// @ts-ignore
-	$: right_token = token.pairing_right
+	$: [left_token, right_token] = token.sub_tokens
 </script>
 
 <div class="join">

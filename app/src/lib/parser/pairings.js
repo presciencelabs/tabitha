@@ -1,5 +1,6 @@
 import {REGEXES} from '$lib/regexes'
-import {TOKEN_TYPE, check_token_lookup, create_error_token} from './token'
+import {ERRORS} from './error_messages'
+import {TOKEN_TYPE, check_token_lookup} from './token'
 
 /**
  *
@@ -16,13 +17,20 @@ export function check_pairings(tokens) {
 	 * @param {Token} token
 	 */
 	function check_pairing(token) {
-		if (token.pairing_left &&
-			check_token_lookup(concept => REGEXES.IS_LEVEL_COMPLEX.test(`${concept.level}`))(token.pairing_left)) {
-			token.pairing_left = create_error_token(token.pairing_left.token, 'Word must be a level 0 or 1')
+		const [left, right] = token.sub_tokens
+		if (check_token_lookup(concept => REGEXES.IS_LEVEL_COMPLEX.test(`${concept.level}`))(left)) {
+			token.sub_tokens[0] = {
+				...left,
+				type: TOKEN_TYPE.ERROR,
+				message: ERRORS.WORD_LEVEL_TOO_HIGH,
+			}
 		}
-		if (token.pairing_right &&
-			check_token_lookup(concept => REGEXES.IS_LEVEL_SIMPLE.test(`${concept.level}`))(token.pairing_right)) {
-			token.pairing_right = create_error_token(token.pairing_right.token, 'Word must be a level 2 or 3')
+		if (check_token_lookup(concept => REGEXES.IS_LEVEL_SIMPLE.test(`${concept.level}`))(right)) {
+			token.sub_tokens[1] = {
+				...right,
+				type: TOKEN_TYPE.ERROR,
+				message: ERRORS.WORD_LEVEL_TOO_LOW,
+			}
 		}
 	}
 }

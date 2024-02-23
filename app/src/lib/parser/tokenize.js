@@ -209,10 +209,8 @@ export function tokenize_input(text = '') {
 	 */
 	function pairing_token() {
 		const token = collect_text()
-		const [left, right] = token.split('/')
-		const left_token = lookup_token(left)
-		const right_token = lookup_token(right)
-		return create_token(token, TOKEN_TYPE.PAIRING, { pairing_left: left_token, pairing_right: right_token })
+		const sub_tokens = token.split('/').map(lookup_token)
+		return create_token(token, TOKEN_TYPE.PAIRING, { sub_tokens })
 	}
 
 	/**

@@ -92,12 +92,12 @@ describe('context filters', () => {
 		expect(results[2]).toBe(false)
 	})
 	test('followed by with skip', () => {
-		const context_json = { 'followedby': { 'token': 'other', 'skip': { 'token': 'token' } } }
+		const context_json = { 'followedby': { 'token': 'other', 'skip': { 'token': 'skip' } } }
 		const filter = create_token_context(context_json)
 
 		const tokens = [
 			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
 			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
 			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
 		]
@@ -211,26 +211,49 @@ describe('token transforms', () => {
 		expect(result.lookup_term).toBe(token.lookup_term)
 		expect(result.message).toBe(token.message)
 	})
-	test('lookup', () => {
-		const transform_json = { 'lookup': 'lookup' }
+	test('concept no lookup results', () => {
+		const transform_json = { 'concept': 'concept-A' }
 		const transform = create_token_transform(transform_json)
 
 		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
-		expect(result.lookup_term).toBe('lookup')
+		expect(result.lookup_term).toBe('concept-A')
+		expect(result.concept?.stem).toBe('concept')
+		expect(result.concept?.sense).toBe('A')
 		expect(result.message).toBe(token.message)
 	})
-	test('type and lookup', () => {
-		const transform_json = { 'type': TOKEN_TYPE.LOOKUP_WORD, 'lookup': 'lookup' }
+	test('concept with lookup results', () => {
+		const transform_json = { 'concept': 'concept-A' }
+		const transform = create_token_transform(transform_json)
+
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
+		token.lookup_results.push({
+			id: '0',
+			stem: 'concept',
+			sense: 'A',
+			part_of_speech: 'Noun',
+			level: 1,
+			gloss: '',
+		})
+
+		const result = transform(token)
+		expect(result.token).toBe(token.token)
+		expect(result.type).toBe(token.type)
+		expect(result.lookup_term).toBe('concept-A')
+		expect(result.concept).toEqual(token.lookup_results[0])
+		expect(result.message).toBe(token.message)
+	})
+	test('type and concept', () => {
+		const transform_json = { 'type': TOKEN_TYPE.LOOKUP_WORD, 'concept': 'concept-A' }
 		const transform = create_token_transform(transform_json)
 
 		const token = create_token('token', TOKEN_TYPE.FUNCTION_WORD)
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.LOOKUP_WORD)
-		expect(result.lookup_term).toBe('lookup')
+		expect(result.lookup_term).toBe('concept-A')
 		expect(result.message).toBe(token.message)
 	})
 	test('unrecognized', () => {

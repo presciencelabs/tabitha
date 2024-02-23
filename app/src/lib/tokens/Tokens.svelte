@@ -10,6 +10,7 @@
 	/** @type {Token[]} */
 	export let tokens
 
+	/** @type {Map<TokenType, typeof Word>}*/
 	const component_map = new Map([
 		[TOKEN_TYPE.ERROR, Error],
 		[TOKEN_TYPE.FUNCTION_WORD, FunctionWord],

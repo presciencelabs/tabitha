@@ -13,9 +13,12 @@ const UNRECOGNIZED_CHAR = 'Unrecognized character.'
 const MISSING_PERIOD = 'Each verse must end in a period (or ? and !).'
 const FIRST_WORD_NOT_CAPITALIZED = 'The first word of each sentence should be capitalized.'
 
+const WORD_LEVEL_TOO_HIGH = 'Word must be a level 0 or 1'
+const WORD_LEVEL_TOO_LOW = 'Word must be a level 2 or 3'
+
 /**
- * 
- * @param {string} text 
+ *
+ * @param {string} text
  */
 const INVALID_TOKEN_END = function(text) {
 	return `${text} must be followed by a space or punctuation.`
@@ -34,4 +37,6 @@ export const ERRORS = {
 	INVALID_PAIRING_SYNTAX,
 	UNRECOGNIZED_CHAR,
 	INVALID_TOKEN_END,
+	WORD_LEVEL_TOO_HIGH,
+	WORD_LEVEL_TOO_LOW,
 }

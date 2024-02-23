@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_token } from './token'
+import {TOKEN_TYPE, create_token} from './token'
 
 /**
  * @typedef {[token_list: string[], new_lookup: string]} AlternateLookup

@@ -1,29 +1,24 @@
-import {TOKEN_TYPE} from './parser/token'
+import {TOKEN_TYPE, flatten_sentence} from './parser/token'
 
 /**
- *
- * @param {Token[]} tokens
+ * 
+ * @param {Sentence[]} sentences 
+ * @returns {Promise<Sentence[]>}
  */
-export async function perform_ontology_lookups(tokens) {
-	const lookup_tokens = tokens.flatMap(get_lookup_tokens)
+export async function perform_ontology_lookups(sentences) {
+	const lookup_tokens = sentences.flatMap(flatten_sentence).filter(is_lookup_token)
 
 	await Promise.all(lookup_tokens.map(check_ontology))
 
-	return tokens
+	return sentences
 
 	/**
-	 * @param {Token} token
-	 * @returns {Token[]}
+	 * 
+	 * @param {Token} token 
+	 * @returns {boolean}
 	 */
-	function get_lookup_tokens(token) {
-		if (token.type === TOKEN_TYPE.LOOKUP_WORD) {
-			return [token]
-		} else if (token.type === TOKEN_TYPE.PAIRING) {
-			// @ts-ignore
-			return [token.pairing_left, token.pairing_right]
-		} else {
-			return []
-		}
+	function is_lookup_token(token) {
+		return token.type === TOKEN_TYPE.LOOKUP_WORD
 	}
 }
 

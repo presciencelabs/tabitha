@@ -1,14 +1,19 @@
-type TokenType = 'Error' | 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Pairing'
+type TokenType = 'Error' | 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Pairing' | 'Clause'
 
 type Token = {
 	token: string;
 	type: TokenType;
 	message: string;
 	lookup_term: string;
-	pairing_left: Token?;
-	pairing_right: Token?;
 	concept: OntologyResult?;
-	lookup_results: OntologyResult[]
+	lookup_results: OntologyResult[];
+	sub_tokens: Token[];
+}
+
+type Clause = Token
+
+type Sentence = {
+	clause: Clause,
 }
 
 type LookupTerm = string

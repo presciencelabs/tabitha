@@ -41,7 +41,6 @@ describe('parse', () => {
 		test('Ok _notesNotation [fixedbracket you(Paul)].', () => {
 			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul)].')
 
-			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
 			expect(results[0].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[0].message).toBe('')
@@ -63,12 +62,12 @@ describe('parse', () => {
 			expect(results[6].token).toBe('.')
 			expect(results[6].type).toBe(TOKEN_TYPE.PUNCTUATION)
 			expect(results[6].message).toBe('')
+			expect(results).length(7)
 		})
 
 		test('[Paul explained [the Christ needed to become alive again]].', () => {
 			const results = parse_for_test('[Paul explained [the Christ needed to become alive again]].')
 
-			expect(results).length(14)
 			expect(results[0].token).toBe('[')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('Paul')
@@ -97,12 +96,12 @@ describe('parse', () => {
 			expect(results[12].message).toBe('')
 			expect(results[13].token).toBe('.')
 			expect(results[13].message).toBe('')
+			expect(results).length(14)
 		})
 
 		test('You(people) are being stupid/foolish."', () => {
 			const results = parse_for_test('You(people) are being stupid/foolish."')
 
-			expect(results).length(6)
 			expect(results[0].token).toBe('You(people)')
 			expect(results[0].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[0].message).toBe('')
@@ -121,6 +120,7 @@ describe('parse', () => {
 			expect(results[5].token).toBe('"')
 			expect(results[5].type).toBe(TOKEN_TYPE.PUNCTUATION)
 			expect(results[5].message).toBe('')
+			expect(results).length(6)
 		})
 
 		test('John said, ["What do you(person) want?"] Then that person took the book [that John had].', () => {
@@ -137,21 +137,20 @@ describe('parse', () => {
 		test('bad_notesNotation[badbracket you', () => {
 			const results = parse_for_test('bad_notesNotation[badbracket you')
 
-			expect(results).length(4)
 			expect(results[0].token).toBe('bad_notesNotation[badbracket')
 			expect(results[0].message).toEqual(ERRORS.NO_SPACE_BEFORE_UNDERSCORE)
 			expect(results[1].token).toBe('you')
 			expect(results[1].message).toMatch(/^Second person pronouns/)
-			expect(results[2].token).toBe(']')
-			expect(results[2].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
-			expect(results[3].token).toBe('.')
-			expect(results[3].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[2].token).toBe('.')
+			expect(results[2].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[3].token).toBe(']')
+			expect(results[3].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
+			expect(results).length(4)
 		})
 
 		test('Ok _notesNotation text[badbracket you', () => {
 			const results = parse_for_test('Ok _notesNotation text[badbracket you')
 
-			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('_notesNotation')
@@ -162,16 +161,16 @@ describe('parse', () => {
 			expect(results[3].message).toBe('')
 			expect(results[4].token).toBe('you')
 			expect(results[4].message).toMatch(/^Second person pronouns/)
-			expect(results[5].token).toBe(']')
-			expect(results[5].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
-			expect(results[6].token).toBe('.')
-			expect(results[6].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[5].token).toBe('.')
+			expect(results[5].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[6].token).toBe(']')
+			expect(results[6].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
+			expect(results).length(7)
 		})
 
 		test('Ok _notesNotation [fixedbracket you', () => {
 			const results = parse_for_test('Ok _notesNotation [fixedbracket you')
 
-			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('_notesNotation')
@@ -182,16 +181,16 @@ describe('parse', () => {
 			expect(results[3].message).toBe('')
 			expect(results[4].token).toBe('you')
 			expect(results[4].message).toMatch(/^Second person pronouns/)
-			expect(results[5].token).toBe(']')
-			expect(results[5].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
-			expect(results[6].token).toBe('.')
-			expect(results[6].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[5].token).toBe('.')
+			expect(results[5].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[6].token).toBe(']')
+			expect(results[6].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
+			expect(results).length(7)
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul', () => {
 			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul')
 
-			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('_notesNotation')
@@ -202,16 +201,16 @@ describe('parse', () => {
 			expect(results[3].message).toBe('')
 			expect(results[4].token).toBe('you(Paul')
 			expect(results[4].message).toEqual(ERRORS.MISSING_CLOSING_PAREN)
-			expect(results[5].token).toBe(']')
-			expect(results[5].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
-			expect(results[6].token).toBe('.')
-			expect(results[6].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[5].token).toBe('.')
+			expect(results[5].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[6].token).toBe(']')
+			expect(results[6].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
+			expect(results).length(7)
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul).', () => {
 			const results = parse_for_test('Ok _notesNotation [fixedbracket you(Paul)')
 
-			expect(results).length(7)
 			expect(results[0].token).toBe('Ok')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('_notesNotation')
@@ -222,16 +221,16 @@ describe('parse', () => {
 			expect(results[3].message).toBe('')
 			expect(results[4].token).toBe('you(Paul)')
 			expect(results[4].message).toBe('')
-			expect(results[5].token).toBe(']')
-			expect(results[5].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
-			expect(results[6].token).toBe('.')
-			expect(results[6].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[5].token).toBe('.')
+			expect(results[5].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results[6].token).toBe(']')
+			expect(results[6].message).toEqual(ERRORS.MISSING_CLOSING_BRACKET)
+			expect(results).length(7)
 		})
 
 		test('Paul explained [the Christ needed to become alive again]].', () => {
 			const results = parse_for_test('Paul explained [the Christ needed to become alive again]].')
 
-			expect(results).length(14)
 			expect(results[0].token).toBe('[')
 			expect(results[0].message).toEqual(ERRORS.MISSING_OPENING_BRACKET)
 			expect(results[1].token).toBe('Paul')
@@ -260,12 +259,12 @@ describe('parse', () => {
 			expect(results[12].message).toBe('')
 			expect(results[13].token).toBe('.')
 			expect(results[13].message).toBe('')
+			expect(results).length(14)
 		})
 
 		test('John said, ["what do you(person) want?" then that person took the book that John had]', () => {
 			const results = parse_for_test('John said, ["what do you(person) want?" then that person took the book that John had]')
 	
-			expect(results).length(24)
 			expect(results[0].token).toBe('John')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('said')
@@ -314,6 +313,7 @@ describe('parse', () => {
 			expect(results[22].message).toBe('')
 			expect(results[23].token).toBe('.')
 			expect(results[23].message).toEqual(ERRORS.MISSING_PERIOD)
+			expect(results).length(24)
 		})
 	})
 
@@ -321,7 +321,6 @@ describe('parse', () => {
 		test('alternate lookups', () => {
 			const results = parse_for_test('John ran [in order to escape many bears].')
 
-			expect(results).length(9)
 			expect(results[0].token).toBe('John')
 			expect(results[0].message).toBe('')
 			expect(results[1].token).toBe('ran')
@@ -342,6 +341,7 @@ describe('parse', () => {
 			expect(results[7].message).toBe('')
 			expect(results[8].token).toBe('.')
 			expect(results[8].message).toBe('')
+			expect(results).length(9)
 		})
 	})
 })

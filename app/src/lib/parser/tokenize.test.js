@@ -24,7 +24,7 @@ function create_pairing_token(token, lookup_left=null, lookup_right=null) {
 	const [left, right] = token.split('/')
 	const left_token = create_word_token(left, lookup_left)
 	const right_token = create_word_token(right, lookup_right)
-	return create_token(token, TOKEN_TYPE.PAIRING, {pairing_left: left_token, pairing_right: right_token})
+	return create_token(token, TOKEN_TYPE.PAIRING, { sub_tokens: [left_token, right_token] })
 }
 
 describe('tokenize_input', () => {
