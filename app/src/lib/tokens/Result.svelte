@@ -1,4 +1,5 @@
 <script>
+	import {PUBLIC_ONTOLOGY_API_HOST} from '$env/static/public'
 	import TokenDisplay from './TokenDisplay.svelte'
 
 	/** @type {Token} */
@@ -8,6 +9,8 @@
 	// TODO: more work needed to handle multiple matches with possibly different levels, e.g., son
 	const concept = token.concept || token.lookup_results[0]
 	const tooltip = token.concept ? display_concept(token.concept) : token.lookup_results.map(display_concept).join('; ')
+
+	const lookup_term = token.concept ? display_concept(token.concept) : token.lookup_results[0].stem
 
 	/**
 	 * @param {OntologyResult} concept
@@ -19,6 +22,8 @@
 
 <div class='tooltip' data-tip={tooltip}>
 	<TokenDisplay classes="{classes} L{concept.level}">
-		{token.token}
+		<a class="link link-hover not-prose L{concept.level}-text" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${lookup_term}`} target="_blank">
+			{token.token}
+		</a>
 	</TokenDisplay>
 </div>
