@@ -12,6 +12,14 @@ type DbRowConcept = {
 	occurrences: string
 }
 
+type SimplificationHint = {
+	term: string
+	part_of_speech: string
+	pairing: string
+	explication: string
+}
+
+
 interface Concept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]

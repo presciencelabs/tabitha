@@ -2,5 +2,5 @@
 
 [[d1_databases]]
 binding = "DB_Ontology" # i.e. available in a Worker on env.DB
-database_name = "Ontology.2024-01-30.3_0_9485"
-database_id = "84506589-8c5f-4933-a3d6-329b64c89f7d"
+database_name = "Ontology.2024-02-27.3_0_9485"
+database_id = "10500b77-bd59-4780-a575-8074b1d2e5e4"

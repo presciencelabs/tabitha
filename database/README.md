@@ -77,6 +77,7 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 1. run migration, e.g., `sqlite3 -separator '' -init migrate.sql Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite .exit`
 1. rename migrated database, e.g., `cp Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
 1. add derived senses, e.g., `bun senses.js Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
+1. add complex terms, e.g., `bun complex_terms.js Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
 1. dump migrated database, e.g., `sqlite3 Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite .dump > Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
 1.	create new database, e.g., `wrangler d1 create Ontology.YYYY-MM-DD.#_#_####`  (need to update local `wrangler.toml`'s with new info)

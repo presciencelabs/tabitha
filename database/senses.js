@@ -24,8 +24,8 @@ sensed_concepts.map(async ({id, sense}) => {
 
 	await Bun.write(Bun.stdout, '.')
 })
-
 console.log('Done!')
+
 
 function derive_senses(concepts) {
 	const sensed_concepts = []

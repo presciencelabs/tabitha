@@ -87,3 +87,25 @@ export async function get_version(db) {
 	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
 	return await db.prepare(sql).first('version') || ''
 }
+
+/**
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ * @returns {(term: string) => Promise<SimplificationHint[]>}
+ */
+export const get_simplification_hints = db => async term => {
+	const sql = `
+		SELECT *
+		FROM Complex_Terms
+		WHERE term = ?
+	`
+
+	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
+	const {results} = await db.prepare(sql).bind(term).all()
+
+	return results.map(normalize)
+
+	/** @param {SimplificationHint} arg */
+	function normalize({term, part_of_speech, pairing, explication}) {
+		return {term, part_of_speech, pairing, explication}
+	}
+}

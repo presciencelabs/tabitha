@@ -3,6 +3,7 @@
 	import {Details, Examples} from '$lib'
 	import Header from './_Header.svelte'
 	import Meaning from './_Meaning.svelte'
+	import SimplificationHints from './_SimplificationHints.svelte'
 	import Category from './categorization/_Category.svelte'
 	import {onMount} from 'svelte'
 
@@ -75,6 +76,13 @@
 						{/each}
 					</Details>
 				</section>
+
+				{#if Number(concept.level) > 1}
+					<section class="prose mt-4 max-w-none">
+						<h3>Simplification hints</h3>
+						<SimplificationHints {concept} />
+					</section>
+				{/if}
 
 				<section class="prose mt-4 max-w-none">
 					<h3>Examples</h3>
