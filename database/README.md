@@ -85,3 +85,21 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 1. test app with new database locally
 1. deploy to remote, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. need to run another deployment either via `push` or "retry deployment" in Cloudflare dashboard
+
+## Automated updates
+
+### Complex terms
+
+Complex terms will be updated from the "How to" spreadsheet to the database on a regular schedule.
+
+#### Testing locally
+
+`wrangler dev --test-scheduled`
+
+ Hit `curl 'http://localhost:8787/__scheduled'` in a separate terminal to run it.
+
+#### Deployment
+
+> ⚠️ You will need Cloudflare credentials to deploy.
+
+From within `./complex_terms/` run `wrangler deploy`
