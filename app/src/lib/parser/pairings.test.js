@@ -18,13 +18,11 @@ function create_pairing_token(left, right) {
  * 
  * @param {string} token 
  * @param {Object} [data={}] 
- * @param {OntologyResult?} [data.concept=null] 
  * @param {OntologyResult[]} [data.lookup_results=[]] 
  * @returns {Token}
  */
-function create_lookup_token(token, {concept=null, lookup_results=[]}={}) {
+function create_lookup_token(token, {lookup_results=[]}={}) {
 	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
-	lookup_token.concept = concept
 	lookup_token.lookup_results = lookup_results
 	return lookup_token
 }
@@ -53,8 +51,8 @@ describe('pairing level check', () => {
 	test('both words right level', () => {
 		const test_tokens = [
 			create_pairing_token(
-				create_lookup_token('first', {concept: create_lookup_result('first', {level: 0})}),
-				create_lookup_token('second', {concept: create_lookup_result('second', {level: 2})}),
+				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 0})]}),
+				create_lookup_token('second', {lookup_results: [create_lookup_result('second', {level: 2})]}),
 			),
 			create_pairing_token(
 				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 1})]}),
@@ -69,8 +67,8 @@ describe('pairing level check', () => {
 	test('first word wrong level', () => {
 		const test_tokens = [
 			create_pairing_token(
-				create_lookup_token('first', {concept: create_lookup_result('first', {level: 2})}),
-				create_lookup_token('second', {concept: create_lookup_result('second', {level: 2})}),
+				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 2})]}),
+				create_lookup_token('second', {lookup_results: [create_lookup_result('second', {level: 2})]}),
 			),
 			create_pairing_token(
 				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 3})]}),
@@ -88,8 +86,8 @@ describe('pairing level check', () => {
 	test('second word wrong level', () => {
 		const test_tokens = [
 			create_pairing_token(
-				create_lookup_token('first', {concept: create_lookup_result('first', {level: 0})}),
-				create_lookup_token('second', {concept: create_lookup_result('second', {level: 0})}),
+				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 0})]}),
+				create_lookup_token('second', {lookup_results: [create_lookup_result('second', {level: 0})]}),
 			),
 			create_pairing_token(
 				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 1})]}),
@@ -107,8 +105,8 @@ describe('pairing level check', () => {
 	test('both words wrong level', () => {
 		const test_tokens = [
 			create_pairing_token(
-				create_lookup_token('first', {concept: create_lookup_result('first', {level: 2})}),
-				create_lookup_token('second', {concept: create_lookup_result('second', {level: 0})}),
+				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 2})]}),
+				create_lookup_token('second', {lookup_results: [create_lookup_result('second', {level: 0})]}),
 			),
 			create_pairing_token(
 				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 3})]}),

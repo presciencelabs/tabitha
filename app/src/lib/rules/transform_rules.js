@@ -18,25 +18,6 @@ const transform_rules_json = [
 		'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
-		'name': 'because of becomes because-B',
-		'trigger': { 'token': 'because' },
-		'context': {
-			'followedby': { 'token': 'of' },
-		},
-		'transform': { 'concept': 'because-B' },
-	},
-	{
-		'name': 'take-away',
-		'trigger': { 'stem': 'take' },
-		'context': {
-			'followedby': {
-				'token': 'away',
-				'skip': 'all',
-			},
-		},
-		'transform': { 'concept': 'take-away-A' },
-	},
-	{
 		'name': 'start before a verb becomes a function word',
 		'trigger': { 'stem': 'start' },
 		'context': {
@@ -73,6 +54,29 @@ const transform_rules_json = [
 			},
 		},
 		'transform': { 'concept': 'be-D' },
+	},
+	{
+		'name': 'be before a past participle Verb indicates passive',
+		'trigger': { 'stem': 'be' },
+		'context': {
+			'followedby': {
+				'category': 'Verb',
+				'form': 'past participle',
+				'skip': { 'category': 'Adverb' },
+			},
+		},
+		'transform': { 'function': 'passive' },
+	},
+	{
+		'name': 'by preceded by a passive be indicates the agent',
+		'trigger': { 'stem': 'by' },
+		'context': {
+			'precededby': {
+				'tag': 'passive',
+				'skip': 'all',
+			},
+		},
+		'transform': { 'function': 'agent_of_passive' },
 	},
 ]
 

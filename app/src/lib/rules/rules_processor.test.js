@@ -1,7 +1,8 @@
 import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence} from '$lib/parser/token'
 import {describe, expect, test} from 'vitest'
 import {parse_checker_rule, parse_transform_rule} from './rules_parser'
-import {apply_checker_rules, apply_transform_rules} from './rules_processor'
+import {apply_rules} from './rules_processor'
+import {LOOKUP_RULES} from './lookup_rules'
 
 /**
  * 
@@ -29,7 +30,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules)
+		const results = apply_rules(input_tokens, transform_rules)
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -50,7 +51,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules)
+		const results = apply_rules(input_tokens, transform_rules)
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -75,7 +76,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
+		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(6)
 		expect(results[1].lookup_term).toBe('peanut')
@@ -100,7 +101,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
+		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
 		expect(results[0].lookup_term).toBe('concept-A')
 	})
@@ -129,7 +130,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(tokens, transform_rules).flatMap(flatten_sentence)
+		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
 
 		expect(results[2].lookup_term).toBe('the-B')
 	})
@@ -152,7 +153,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules)
+		const results = apply_rules(input_tokens, transform_rules)
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -175,7 +176,7 @@ describe('transform rules', () => {
 			]),
 		]
 
-		const results = apply_transform_rules(input_tokens, transform_rules)
+		const results = apply_rules(input_tokens, transform_rules)
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -200,7 +201,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules)
+		const output_tokens = apply_rules(input_tokens, rules)
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -222,7 +223,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules)
+		const output_tokens = apply_rules(input_tokens, rules)
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -245,7 +246,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(3)
 		expect(output_tokens[0].message).toBe('')
@@ -272,7 +273,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(3)
 		expect(output_tokens[0].token).toBe('add')
@@ -307,7 +308,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(4)
 		expect(output_tokens[0].token).toBe('add1')
@@ -333,7 +334,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(2)
 		expect(output_tokens[0].token).toBe('token')
@@ -361,7 +362,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules)
+		const output_tokens = apply_rules(input_tokens, rules)
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -386,7 +387,7 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const output_tokens = apply_checker_rules(input_tokens, rules)
+		const output_tokens = apply_rules(input_tokens, rules)
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -412,10 +413,60 @@ describe('checker rules', () => {
 			]),
 		]
 
-		const results = apply_checker_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(3)
 		expect(results[1].token).toBe('add')
 		expect(results[1].message).toBe('message')
+	})
+})
+
+describe('lookup rules', () => {
+	test('built-in lookup rules', () => {
+		const input_tokens = [
+			create_sentence([
+				create_token('John', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'John'}),
+				create_token('ran', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'run'}),
+				create_clause_token([
+					create_token('[', TOKEN_TYPE.PUNCTUATION),
+					create_token('in', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'in'}),
+					create_token('order', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'order'}),
+					create_token('to', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'to'}),
+					create_token('take', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'take'}),
+					create_token('many', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'many'}),
+					create_token('books', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'book'}),
+					create_token('away', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'away'}),
+					create_token(']', TOKEN_TYPE.PUNCTUATION),
+				]),
+				create_token('.', TOKEN_TYPE.PUNCTUATION),
+			]),
+		]
+		const results = apply_rules(input_tokens, LOOKUP_RULES).flatMap(flatten_sentence)
+
+		expect(results[0].token).toBe('John')
+		expect(results[0].message).toBe('')
+		expect(results[1].token).toBe('ran')
+		expect(results[1].message).toBe('')
+		expect(results[2].token).toBe('[')
+		expect(results[2].message).toBe('')
+		expect(results[3].token).toBe('in order to')
+		expect(results[3].lookup_term).toBe('in-order-to')
+		expect(results[3].message).toBe('')
+		expect(results[4].token).toBe('take')
+		expect(results[4].lookup_term).toBe('take-away')
+		expect(results[4].message).toBe('')
+		expect(results[5].token).toBe('many')
+		expect(results[5].lookup_term).toBe('much-many')
+		expect(results[5].message).toBe('')
+		expect(results[6].token).toBe('books')
+		expect(results[6].message).toBe('')
+		expect(results[7].token).toBe('away')
+		expect(results[7].type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+		expect(results[7].message).toBe('')
+		expect(results[8].token).toBe(']')
+		expect(results[8].message).toBe('')
+		expect(results[9].token).toBe('.')
+		expect(results[9].message).toBe('')
+		expect(results).length(10)
 	})
 })

@@ -35,17 +35,19 @@ export const TOKEN_TYPE = {
  * @param {TokenType} type 
  * @param {Object} [other_data={}] 
  * @param {string} [other_data.message=''] 
+ * @param {string} [other_data.tag=''] 
  * @param {string} [other_data.lookup_term=''] 
  * @param {Token[]} [other_data.sub_tokens=[]] 
  * @return {Token}
  */
-export function create_token(token, type, {message='', lookup_term='', sub_tokens=[]}={}) {
+export function create_token(token, type, {message='', tag='', lookup_term='', sub_tokens=[]}={}) {
 	return {
 		token,
 		type,
 		message,
+		tag,
 		lookup_term,
-		concept: null,
+		form_results: [],
 		lookup_results: [],
 		sub_tokens,
 	}
@@ -76,9 +78,7 @@ export function create_clause_token(sub_tokens) {
  */
 export function check_token_lookup(lookup_check) {
 	return token => {
-		if (token.concept) {
-			return lookup_check(token.concept)
-		} else if (token.lookup_results.length > 0) {
+		if (token.lookup_results.length > 0) {
 			return token.lookup_results.every(concept => lookup_check(concept))
 		} else {
 			return false
@@ -94,24 +94,8 @@ export function check_token_lookup(lookup_check) {
  */
 export function set_token_concept(token, concept) {
 	const [stem, sense] = split_concept()
-
 	token.lookup_term = concept
-	const matched_result = token.lookup_results.find(result => result.stem === stem && result.sense === sense)
-
-	if (matched_result) {
-		token.concept = matched_result
-	} else {
-		// TODO lookup in the ontology
-		token.concept = {
-			id: '0',
-			stem,
-			sense,
-			part_of_speech: '',
-			level: 1,
-			gloss: '',
-		}
-	}
-
+	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.sense === sense)
 	return token
 
 	function split_concept() {
@@ -128,7 +112,7 @@ export function set_token_concept(token, concept) {
  * @returns {boolean}
  */
 export function token_has_concept(token) {
-	return token.concept !== null || token.lookup_results.length > 0
+	return token.lookup_results.length > 0
 }
 
 /**

@@ -38,13 +38,13 @@ describe('tokenize_input', () => {
 	})
 
 	test('any whitespace should split tokens', () => {
-		const INPUT = `a b    c
+		const INPUT = `z b    c
 		d	e		  f
 
 		g`
 
 		const EXPECTED_OUTPUT = [
-			create_token('a', TOKEN_TYPE.FUNCTION_WORD),
+			create_word_token('z'),
 			create_word_token('b'),
 			create_word_token('c'),
 			create_word_token('d'),
@@ -213,21 +213,23 @@ describe('tokenize_input', () => {
 
 	describe('all valid function words lowercase', () => {
 		test.each(Array.from(FUNCTION_WORDS).map(word => [[word]]))('%s', test_text => {
+			const [word, tag] = test_text[0]
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD),
+				create_token(word, TOKEN_TYPE.FUNCTION_WORD, {tag}),
 			]
 
-			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
+			expect(tokenize_input(word)).toEqual(EXPECTED_OUTPUT)
 		})
 	})
 
 	describe('all valid function words uppercase', () => {
-		test.each(Array.from(FUNCTION_WORDS).map(word => [[word.toUpperCase()]]))('%s', test_text => {
+		test.each(Array.from(FUNCTION_WORDS).map(([word, tag]) => [[[word.toUpperCase(), tag]]]))('%s', test_text => {
+			const [word, tag] = test_text[0]
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.FUNCTION_WORD),
+				create_token(word, TOKEN_TYPE.FUNCTION_WORD, {tag}),
 			]
 
-			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
+			expect(tokenize_input(word)).toEqual(EXPECTED_OUTPUT)
 		})
 	})
 

@@ -36,6 +36,18 @@ const checker_rules_json = [
 	// 		'message': '\'Speak\' cannot be used with a direct quote',
 	// 	},
 	// },
+	{
+		'name': 'Expect an agent of a passive',
+		'trigger': { 'category': 'Verb' },
+		'context': {
+			'precededby': { 'tag': 'passive', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'agent_of_passive', 'skip': 'all' },
+		},
+		'require': {
+			'followedby': 'by X',
+			'message': 'Missing agent of passive verb. Use _implicitActiveAgent if necessary.',
+		},
+	},
 ]
 
 export const CHECKER_RULES = checker_rules_json.map(parse_checker_rule)

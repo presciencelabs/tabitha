@@ -7,10 +7,10 @@
 	export let classes = ''
 
 	// TODO: more work needed to handle multiple matches with possibly different levels, e.g., son
-	const concept = token.concept || token.lookup_results[0]
-	const tooltip = token.concept ? display_concept(token.concept) : token.lookup_results.map(display_concept).join('; ')
+	const concept = token.lookup_results[0]
+	const tooltip = token.lookup_results.map(display_concept).join('; ')
 
-	const lookup_term = token.concept ? display_concept(token.concept) : token.lookup_results[0].stem
+	const lookup_term = token.lookup_results.length === 1 ? display_concept(token.lookup_results[0]) : token.lookup_results[0].stem
 
 	/**
 	 * @param {OntologyResult} concept

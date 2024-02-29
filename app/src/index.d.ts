@@ -1,13 +1,14 @@
 type TokenType = 'Error' | 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Pairing' | 'Clause'
 
 type Token = {
-	token: string;
-	type: TokenType;
-	message: string;
-	lookup_term: string;
-	concept: OntologyResult?;
-	lookup_results: OntologyResult[];
-	sub_tokens: Token[];
+	token: string
+	type: TokenType
+	message: string
+	tag: string
+	lookup_term: string
+	form_results: FormResult[]
+	lookup_results: OntologyResult[]
+	sub_tokens: Token[]
 }
 
 type Clause = Token
@@ -32,17 +33,26 @@ type OntologyResult = {
 	gloss: string
 }
 
-type Stem = string
+type FormResult = {
+	stem: string
+	part_of_speech: string
+	form: string
+}
 
 type DbRowInflection = {
-	stem: Stem
+	stem: string
 	part_of_speech: string
+	inflections: string
 }
 
 type TokenFilter = (token: Token) => boolean
 type LookupFilter = (concept: OntologyResult) => boolean
+type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
 
-type TokenContextFilter = (tokens: Token[], trigger_index: number) => boolean
+type ContextFilterResult = {
+	success: boolean
+	indexes: number[]
+}
 
 type TokenTransform = (token: Token) => Token
 
@@ -52,16 +62,10 @@ type CheckerAction = {
 	message: string
 }
 
-interface TokenRule {
-	name: string
+type RuleAction = (tokens: Token[], trigger_index: number, context_indexes: number[]) => number
+
+type TokenRule = {
 	trigger: TokenFilter
 	context: TokenContextFilter
-}
-
-interface TransformRule extends TokenRule {
-	transform: TokenTransform
-}
-
-interface CheckerRule extends TokenRule {
-	require: CheckerAction
+	action: RuleAction
 }

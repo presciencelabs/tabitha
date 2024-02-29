@@ -182,10 +182,17 @@ export function tokenize_input(text = '') {
 	 */
 	function word_token() {
 		const token = collect_text()
-		if (FUNCTION_WORDS.has(token.toLowerCase())) {
-			return create_token(token, TOKEN_TYPE.FUNCTION_WORD)
-		}
-		return lookup_token(token)
+		return get_function_word(token) || lookup_token(token)
+	}
+
+	/**
+	 * 
+	 * @param {string} token 
+	 * @returns {Token|null}
+	 */
+	function get_function_word(token) {
+		const word_function = FUNCTION_WORDS.get(token.toLowerCase())
+		return word_function ? create_token(token, TOKEN_TYPE.FUNCTION_WORD, {tag: word_function}) : null
 	}
 
 	/**
