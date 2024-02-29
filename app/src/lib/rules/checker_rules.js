@@ -48,6 +48,17 @@ const checker_rules_json = [
 			'message': 'Missing agent of passive verb. Use _implicitActiveAgent if necessary.',
 		},
 	},
+	{
+		'name': 'each other must be hyphenated',
+		'trigger': { 'stem': 'each' },
+		'context': {
+			'followedby': { 'stem': 'other' },
+			'notfollowedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } },
+		},
+		'require': {
+			'message': 'Reciprocal each-other must be hyphenated.',
+		},
+	},
 ]
 
 export const CHECKER_RULES = checker_rules_json.map(parse_checker_rule)

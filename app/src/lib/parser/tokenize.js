@@ -201,7 +201,7 @@ export function tokenize_input(text = '') {
 	 */
 	function lookup_token(text) {
 		// The lookup term could be in a pronoun referent
-		const lookup_term = text.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[1] ?? text
+		const lookup_term = text.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[2] ?? text
 		const lookup_match = lookup_term.match(REGEXES.EXTRACT_WORD_REFERENT)
 
 		// combine stem and sense

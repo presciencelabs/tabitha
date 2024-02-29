@@ -1,5 +1,5 @@
 import {TOKEN_TYPE, create_error_token, find_token_nested} from './token'
-import {PRONOUN_RULES} from './pronoun_rules'
+import {PRONOUN_MESSAGES, PRONOUN_TAGS} from './pronoun_rules'
 import {ERRORS} from './error_messages'
 import {REGEXES} from '$lib/regexes'
 
@@ -22,13 +22,35 @@ export function check_for_pronouns(tokens) {
 
 		const normalized_token = token.token.toLowerCase()
 
-		for (const [pronouns, message] of PRONOUN_RULES) {
-			if (pronouns.includes(normalized_token)) {
-				return create_error_token(token.token, message)
-			}
+		if (PRONOUN_MESSAGES.has(normalized_token)) {
+			// @ts-ignore
+			return create_error_token(token.token, PRONOUN_MESSAGES.get(normalized_token))
+		}
+
+		const referent_match = normalized_token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)
+		if (referent_match) {
+			return check_referent(token, referent_match[1])
 		}
 
 		return token
+	}
+
+	/**
+	 * 
+	 * @param {Token} token 
+	 * @param {string} pronoun 
+	 * @returns {Token}
+	 */
+	function check_referent(token, pronoun) {
+		if (PRONOUN_TAGS.has(pronoun)) {
+			// @ts-ignore
+			return {...token, tag: PRONOUN_TAGS.get(pronoun)}
+		} else if (PRONOUN_MESSAGES.has(pronoun)) {
+			// @ts-ignore
+			return create_error_token(token.token, PRONOUN_MESSAGES.get(pronoun))
+		} else {
+			return create_error_token(token.token, `Unrecognized pronoun "${pronoun}"`)
+		}
 	}
 }
 

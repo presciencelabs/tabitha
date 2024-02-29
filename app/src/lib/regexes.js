@@ -15,7 +15,7 @@ const CLOSING_PAREN = /\)/
 const FORWARD_SLASH = /\//
 
 // Could be you(son) your(son's) your(sons') you(son-C) your(son's-C) your(sons'-C)
-const EXTRACT_PRONOUN_REFERENT = /^\w+\(([\w'’-]+)\)$/
+const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'’-]+)\)$/
 
 // Could be son son's sons' son-C son's-C sons'-C
 // This pulls out the stem and sense, which will then need to be put back together
