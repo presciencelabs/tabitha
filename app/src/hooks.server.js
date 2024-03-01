@@ -1,7 +1,7 @@
-import {building} from '$app/environment'
+import { building } from '$app/environment'
 
 /** @type {import('@sveltejs/kit').Handle} */
-export async function handle({event, resolve}) {
+export async function handle({ event, resolve }) {
 	set_up_database()
 
 	const response = await resolve(event)

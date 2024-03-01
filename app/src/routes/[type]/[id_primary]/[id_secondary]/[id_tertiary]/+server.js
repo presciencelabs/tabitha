@@ -1,8 +1,8 @@
 // https://kit.svelte.dev/docs/routing#server
-import {json} from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({locals: {db}, params: {type, id_primary, id_secondary, id_tertiary}}) {
+export async function GET({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }) {
 	const sql = `
 		SELECT *
 		FROM Sources
