@@ -1,4 +1,4 @@
-import {transform} from './transformers'
+import { transform } from './transformers'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
@@ -17,7 +17,7 @@ export const get_concepts = db => async filter => {
 	const matches = filter.match(/^(.*)-([A-Z])$/)
 	if (matches) {
 		const [, stem, sense] = matches
-		return await by_sense({stem, sense})
+		return await by_sense({ stem, sense })
 	}
 
 	return await by_filter(filter)
@@ -26,7 +26,7 @@ export const get_concepts = db => async filter => {
 	 * @param {{stem: string, sense: string}} input
 	 * @returns {Promise<Concept[]>}
 	 */
-	async function by_sense({stem, sense}) {
+	async function by_sense({ stem, sense }) {
 		const sql = `
 			SELECT *
 			FROM Concepts
@@ -35,7 +35,7 @@ export const get_concepts = db => async filter => {
 		`
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-		const {results} = await db.prepare(sql).bind(stem, sense).all() // note: love-A will still return 2 results, the noun and the verb
+		const { results } = await db.prepare(sql).bind(stem, sense).all() // note: love-A will still return 2 results, the noun and the verb
 
 		return normalize(results)
 	}
@@ -52,7 +52,7 @@ export const get_concepts = db => async filter => {
 		`
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
-		const {results} = await db.prepare(sql).bind(normalize_wildcards(filter)).all()
+		const { results } = await db.prepare(sql).bind(normalize_wildcards(filter)).all()
 
 		return normalize(results)
 	}
@@ -100,12 +100,12 @@ export const get_simplification_hints = db => async term => {
 	`
 
 	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
-	const {results} = await db.prepare(sql).bind(term).all()
+	const { results } = await db.prepare(sql).bind(term).all()
 
 	return results.map(normalize)
 
 	/** @param {SimplificationHint} arg */
-	function normalize({term, part_of_speech, pairing, explication}) {
-		return {term, part_of_speech, pairing, explication}
+	function normalize({ term, part_of_speech, pairing, explication }) {
+		return { term, part_of_speech, pairing, explication }
 	}
 }

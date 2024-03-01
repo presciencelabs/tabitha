@@ -1,6 +1,6 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {offline} from '.'
+	import { offline } from '.'
 </script>
 
 {#if $offline}

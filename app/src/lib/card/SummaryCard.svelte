@@ -3,7 +3,7 @@
 	import Header from './_Header.svelte'
 	import Meaning from './_Meaning.svelte'
 	import Category from './categorization/_Category.svelte'
-	import {DetailedCard} from '$lib'
+	import { DetailedCard } from '$lib'
 
 	/** @type {Concept} */
 	export let concept

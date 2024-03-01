@@ -1,6 +1,6 @@
 <script>
 	import '$lib/app.postcss'
-	import {Selector} from '$lib/theme'
+	import { Selector } from '$lib/theme'
 
 	export let data
 </script>

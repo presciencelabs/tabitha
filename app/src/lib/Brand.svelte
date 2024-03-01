@@ -1,5 +1,5 @@
 <script>
-	import {Status} from '$lib/network'
+	import { Status } from '$lib/network'
 </script>
 
 <div class="prose">

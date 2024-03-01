@@ -1,5 +1,5 @@
 <script>
-	import {DetailedCard, Level, Occurrences} from '$lib'
+	import { DetailedCard, Level, Occurrences } from '$lib'
 
 	/** @type {Concept[]} */
 	export let concepts

@@ -25,7 +25,7 @@
  * @param {Concept['examples'][0]} example
  */
 export function transform_example(transformed_examples, example) {
-	const {source, book, chapter, verse} = example.reference
+	const { source, book, chapter, verse } = example.reference
 	const chapter_verse = `${chapter}:${verse}`
 
 	// There may be more than one occurrence within the verse, and we want to show all of them

@@ -1,6 +1,6 @@
 <script>
 	import Icon from '@iconify/svelte' // https://iconify.design/
-	import {createEventDispatcher, onMount} from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 
 	const dispatcher = createEventDispatcher()
 

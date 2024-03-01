@@ -1,5 +1,5 @@
 <script>
-	import {navigating, page} from '$app/stores'
+	import { navigating, page } from '$app/stores'
 	import Icon from '@iconify/svelte'
 
 	export let autofocus = false

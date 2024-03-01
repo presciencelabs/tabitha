@@ -29,7 +29,7 @@
 				</td>
 			</tr>
 		{:then hints}
-			{#each hints as {pairing, explication}}
+			{#each hints as { pairing, explication }}
 				<tr>
 					<td>{pairing || '–'}</td>
 					<td>{explication || '–'}</td>

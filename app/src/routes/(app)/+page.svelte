@@ -1,7 +1,7 @@
 <script>
 	import Icon from '@iconify/svelte' // https://iconify.design/
-	import {page} from '$app/stores'
-	import {DisplayPreference, SummaryCard, Table} from '$lib'
+	import { page } from '$app/stores'
+	import { DisplayPreference, SummaryCard, Table } from '$lib'
 
 	/** @type {import('./$types').PageData} */
 	export let data
@@ -15,7 +15,7 @@
 	$: icon = `material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`
 
 	/** @param {CustomEvent<'grid'|'table'>} preference_event */
-	function set_preference({detail}) {
+	function set_preference({ detail }) {
 		display_preference = detail
 	}
 </script>

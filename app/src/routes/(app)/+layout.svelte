@@ -1,5 +1,5 @@
 <script>
-	import {Brand, Search} from '$lib'
+	import { Brand, Search } from '$lib'
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->

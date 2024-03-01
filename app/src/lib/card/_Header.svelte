@@ -1,5 +1,5 @@
 <script>
-	import {Level, Occurrences} from '$lib'
+	import { Level, Occurrences } from '$lib'
 
 	/** @type {Concept} */
 	export let concept

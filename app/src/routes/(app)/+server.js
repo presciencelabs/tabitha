@@ -1,8 +1,8 @@
-import {json} from '@sveltejs/kit'
-import {get_concepts} from '$lib/server/ontology'
+import { json } from '@sveltejs/kit'
+import { get_concepts } from '$lib/server/ontology'
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({url: {searchParams}, locals: {db}}) {
+export async function GET({ url: { searchParams }, locals: { db } }) {
 	const query = (searchParams.get('q') || '').trim()
 
 	const matches = await get_concepts(db)(query)
@@ -15,8 +15,8 @@ export async function GET({url: {searchParams}, locals: {db}}) {
 	 * @param {Concept} concept
 	 */
 	function make_lite(concept) {
-		const {id, stem, sense, part_of_speech, level, gloss} = concept
+		const { id, stem, sense, part_of_speech, level, gloss } = concept
 
-		return {id, stem, sense, part_of_speech, level, gloss}
+		return { id, stem, sense, part_of_speech, level, gloss }
 	}
 }

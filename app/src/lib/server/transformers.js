@@ -1,4 +1,4 @@
-import {semantic_category, sources, theta_grid, usage_info, example_argument_slots} from './lookups'
+import { semantic_category, sources, theta_grid, usage_info, example_argument_slots } from './lookups'
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -99,7 +99,7 @@ function transform_curated_examples(curated_examples_from_db) {
  *
  * @returns {Example[]}
  */
-function transform_examples({examples, part_of_speech}) {
+function transform_examples({ examples, part_of_speech }) {
 	const encoded_examples = examples.split('\n').filter(field => !!field)
 
 	return encoded_examples.map(decode)
@@ -162,7 +162,7 @@ const categorization_decoders = {
  *
  * @returns {string[]}
  */
-function transform_categorization({part_of_speech, categorization}) {
+function transform_categorization({ part_of_speech, categorization }) {
 	const decoder = categorization_decoders[part_of_speech]
 
 	return decoder ? decoder(categorization) : [...categorization]

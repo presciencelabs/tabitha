@@ -1,8 +1,8 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {PUBLIC_SOURCES_API_HOST} from '$env/static/public'
+	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 	import SemanticEncoding from './SemanticEncoding.svelte'
-	import {transform_example, display_context_arguments} from './examples'
+	import { transform_example, display_context_arguments } from './examples'
 
 	/** @type {Concept} */
 	export let concept
@@ -53,7 +53,7 @@
 	 *
 	 * @returns {string} fully-qualified URL to the sources API
 	 */
-	function get_sources_url({source, book, chapter, verse}) {
+	function get_sources_url({ source, book, chapter, verse }) {
 		return `${PUBLIC_SOURCES_API_HOST}/${source}/${book}/${chapter}/${verse}`
 	}
 </script>
@@ -92,7 +92,7 @@
 	{#if selected_verse_json_encoded}
 		{@const key = JSON.parse(selected_verse_json_encoded)}
 		{@const [selected_chapter, selected_verse] = key.split(':')}
-		{@const selected_reference = {source: selected_source, book: selected_book, chapter: selected_chapter, verse: selected_verse}}
+		{@const selected_reference = { source: selected_source, book: selected_book, chapter: selected_chapter, verse: selected_verse }}
 
 		{#await get_source_data(selected_reference)}
 			loading... <!-- TODO: add a spinner? -->
