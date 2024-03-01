@@ -2,5 +2,5 @@
 
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "Editor.2024-02-20"
-database_id = "78a34afa-079b-4d27-874c-da8c561fed55"
+database_name = "Editor.2024-03-01"
+database_id = "259e4056-4a21-407f-a686-63066bb65fdd"

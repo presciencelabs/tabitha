@@ -83,8 +83,8 @@ function output() {
 		return inflections.length > 0
 	}
 
-	function has_no_space([stem, inflections]) {
-		return !stem.includes(' ') && !inflections.some(i => i.includes(' '))
+	function has_no_space([stem]) {
+		return !stem.includes(' ')
 	}
 
 	function augment_missing_data([stem, inflections]) {
