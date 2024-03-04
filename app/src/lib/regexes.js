@@ -29,6 +29,7 @@ const CLAUSE_ENDING_PUNCTUATION = /[\]"]/
 const TOKEN_END_BOUNDARY = /[\s.,!?:"\]]/
 const WORD_START_CHAR = /[a-zA-Z0-9-]/
 const WORD_CHAR = /[a-zA-Z0-9-'’]/
+const STARTS_LOWERCASE = /^[a-z]/
 
 const IS_LEVEL_SIMPLE = /[01]/
 const IS_LEVEL_COMPLEX = /[23]/
@@ -57,5 +58,6 @@ export const REGEXES = {
 	TOKEN_END_BOUNDARY,
 	WORD_START_CHAR,
 	WORD_CHAR,
+	STARTS_LOWERCASE,
 	OR,
 }

@@ -1,6 +1,6 @@
 import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence} from '$lib/parser/token'
 import {describe, expect, test} from 'vitest'
-import {parse_checker_rule, parse_transform_rule} from './rules_parser'
+import {parse_checker_rule, parse_part_of_speech_rule, parse_transform_rule} from './rules_parser'
 import {apply_rules} from './rules_processor'
 import {LOOKUP_RULES} from './lookup_rules'
 
@@ -468,5 +468,139 @@ describe('lookup rules', () => {
 		expect(results[9].token).toBe('.')
 		expect(results[9].message).toBe('')
 		expect(results).length(10)
+	})
+})
+
+/**
+ * 
+ * @param {string} token 
+ * @param {Object} [data={}] 
+ * @param {OntologyResult[]} [data.lookup_results=[]] 
+ * @returns {Token}
+ */
+function create_lookup_token(token, {lookup_results=[]}={}) {
+	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
+	lookup_token.lookup_results = lookup_results
+	return lookup_token
+}
+
+/**
+ * 
+ * @param {string} stem
+ * @param {Object} [data={}] 
+ * @param {string} [data.sense='A'] 
+ * @param {string} [data.part_of_speech='Noun'] 
+ * @param {number} [data.level=1] 
+ * @returns {OntologyResult}
+ */
+function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+	return {
+		id: '0',
+		stem: stem,
+		sense,
+		part_of_speech,
+		level,
+		gloss: '',
+	}
+}
+
+describe('part-of-speech rules', () => {
+	test('word does not match any parts of speech', () => {
+		const rules = [
+			{
+				'category': 'Noun|Verb',
+				'context': {},
+				'remove': 'Noun',
+			},
+		].map(parse_part_of_speech_rule)
+
+		const input_tokens = [
+			create_sentence([
+				create_lookup_token('token', {lookup_results: [
+					create_lookup_result('token', {part_of_speech: 'Adjective'}),
+				]}),
+			]),
+		]
+
+		const results = apply_rules(input_tokens, rules)
+
+		expect(results).toEqual(input_tokens)
+	})
+	test('word matches only one part of speech', () => {
+		const rules = [
+			{
+				'category': 'Noun|Verb',
+				'context': {},
+				'remove': 'Noun',
+			},
+		].map(parse_part_of_speech_rule)
+
+		const input_tokens = [
+			create_sentence([
+				create_lookup_token('token', {lookup_results: [
+					create_lookup_result('token1', {part_of_speech: 'Noun'}),
+					create_lookup_result('token2', {part_of_speech: 'Noun'}),
+				]}),
+			]),
+		]
+
+		const results = apply_rules(input_tokens, rules)
+
+		expect(results).toEqual(input_tokens)
+	})
+	test('word matches both parts of speech', () => {
+		const rules = [
+			{
+				'category': 'Noun|Verb',
+				'context': {},
+				'remove': 'Noun',
+			},
+		].map(parse_part_of_speech_rule)
+
+		const input_tokens = [
+			create_sentence([
+				create_lookup_token('token', {lookup_results: [
+					create_lookup_result('token1', {part_of_speech: 'Noun'}),
+					create_lookup_result('token2', {part_of_speech: 'Noun'}),
+					create_lookup_result('token1', {part_of_speech: 'Verb'}),
+					create_lookup_result('token2', {part_of_speech: 'Verb'}),
+				]}),
+			]),
+		]
+
+		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+
+		expect(results[0].message).toBe('')
+		expect(results[0].lookup_results.length).toBe(2)
+		expect(results[0].lookup_results[0].part_of_speech).toBe('Verb')
+	})
+	test('word matches both parts of speech, but has three', () => {
+		const rules = [
+			{
+				'category': 'Noun|Verb',
+				'context': {},
+				'remove': 'Noun',
+			},
+		].map(parse_part_of_speech_rule)
+
+		const input_tokens = [
+			create_sentence([
+				create_lookup_token('token', {lookup_results: [
+					create_lookup_result('token1', {part_of_speech: 'Noun'}),
+					create_lookup_result('token2', {part_of_speech: 'Noun'}),
+					create_lookup_result('token1', {part_of_speech: 'Verb'}),
+					create_lookup_result('token2', {part_of_speech: 'Verb'}),
+					create_lookup_result('token1', {part_of_speech: 'Adjective'}),
+				]}),
+			]),
+		]
+
+		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+
+		expect(results[0].message).toBe('')
+		expect(results[0].lookup_results.length).toBe(3)
+		expect(results[0].lookup_results[0].part_of_speech).toBe('Verb')
+		expect(results[0].lookup_results[1].part_of_speech).toBe('Verb')
+		expect(results[0].lookup_results[2].part_of_speech).toBe('Adjective')
 	})
 })

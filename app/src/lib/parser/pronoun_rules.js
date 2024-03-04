@@ -1,9 +1,11 @@
+import {REGEXES} from '$lib/regexes'
+import {TOKEN_TYPE, create_error_token} from './token'
+
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
-const THIRD_PERSON = ['he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves']
+const THIRD_PERSON = ['he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves']
 
-/** @type {Map<string, string>} */
-export const PRONOUN_MESSAGES = new Map([
+const PRONOUN_MESSAGES = new Map([
 	['mine', '"mine" should be replaced with "my() X", e.g., That book is my(Paul\'s) book.'],
 	['ours', '"ours" should be replaced with "our() X", e.g., That book is our(Paul\'s) book.'],
 	['yours', '"yours" should be replaced with "your() X", e.g., That book is your(Paul\'s) book.'],
@@ -28,3 +30,55 @@ export const PRONOUN_TAGS = new Map([
 	['yourselves', 'second_person|plural|reflexive'],
 	['each-other', 'reciprocal'],
 ])
+
+/**
+ * 
+ * @param {Token[]} tokens 
+ * @returns {Token[]}
+ */
+export function check_for_pronouns(tokens) {
+	return tokens.map(check)
+
+	/**
+	 * 
+	 * @param {Token} token 
+	 */
+	function check(token) {
+		if (token.type === TOKEN_TYPE.ERROR) {
+			return token
+		}
+
+		const normalized_token = token.token.toLowerCase()
+
+		if (PRONOUN_MESSAGES.has(normalized_token)) {
+			// @ts-ignore
+			return create_error_token(token.token, PRONOUN_MESSAGES.get(normalized_token))
+		}
+
+		return check_pronoun(token)
+	}
+
+	/**
+	 * 
+	 * @param {Token} token 
+	 * @returns {Token}
+	 */
+	function check_pronoun(token) {
+		if (!token.pronoun) {
+			return token
+		}
+
+		const pronoun = token.pronoun.token
+		const normalized_pronoun = pronoun.toLowerCase()
+		if (PRONOUN_TAGS.has(normalized_pronoun)) {
+			// @ts-ignore
+			return {...token, tag: PRONOUN_TAGS.get(normalized_pronoun)}
+		} else if (PRONOUN_MESSAGES.has(normalized_pronoun)) {
+			// @ts-ignore
+			token.pronoun = create_error_token(pronoun, PRONOUN_MESSAGES.get(normalized_pronoun))
+		} else {
+			token.pronoun = create_error_token(pronoun, `Unrecognized pronoun "${pronoun}"`)
+		}
+		return token
+	}
+}

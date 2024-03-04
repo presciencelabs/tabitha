@@ -11,13 +11,15 @@
 	 * bad: /disciple follower/ disciple/disciple disciple/follower /
 	 */
 
-	$: [left_token, right_token] = token.sub_tokens
+	/** @type {Token} */
+	// @ts-ignore the pairing will always be non-null at this point
+	$: pairing_token = token.complex_pairing
 </script>
 
 <div class="join">
-	<Word token={left_token} classes="join-item" />
+	<Word {token} classes="join-item" />
 
 	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">/</TokenDisplay>
 
-	<Word token={right_token} classes="join-item" />
+	<Word token={pairing_token} classes="join-item" />
 </div>

@@ -1,17 +1,7 @@
 import {parse_for_test} from '.'
 import {describe, expect, test} from 'vitest'
-import {TOKEN_TYPE, create_token} from './token'
+import {TOKEN_TYPE} from './token'
 import {ERRORS} from './error_messages'
-
-/**
- * 
- * @param {string} token 
- * @param {string?} lookup_term 
- * @returns 
- */
-function create_word_token(token, lookup_term=null) {
-	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: lookup_term || token})
-}
 
 describe('parse', () => {
 	describe('no problems', () => {
@@ -24,18 +14,30 @@ describe('parse', () => {
 		})
 
 		test('Token.', () => {
-			expect(parse_for_test('Token.')).toEqual([
-				create_word_token('Token'),
-				create_token('.', TOKEN_TYPE.PUNCTUATION),
-			])
+			const results = parse_for_test('Token.')
+
+			expect(results[0].token).toBe('Token')
+			expect(results[0].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
+			expect(results[0].message).toBe('')
+			expect(results[1].token).toBe('.')
+			expect(results[1].type).toBe(TOKEN_TYPE.PUNCTUATION)
+			expect(results[1].message).toBe('')
+			expect(results).length(2)
 		})
 
 		test('Token1 token2.', () => {
-			expect(parse_for_test('Token1 token2.')).toEqual([
-				create_word_token('Token1'),
-				create_word_token('token2'),
-				create_token('.', TOKEN_TYPE.PUNCTUATION),
-			])
+			const results = parse_for_test('Token1 token2.')
+
+			expect(results[0].token).toBe('Token1')
+			expect(results[0].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
+			expect(results[0].message).toBe('')
+			expect(results[1].token).toBe('token2')
+			expect(results[1].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
+			expect(results[1].message).toBe('')
+			expect(results[2].token).toBe('.')
+			expect(results[2].type).toBe(TOKEN_TYPE.PUNCTUATION)
+			expect(results[2].message).toBe('')
+			expect(results).length(3)
 		})
 
 		test('Ok _notesNotation [fixedbracket you(Paul)].', () => {
@@ -53,9 +55,12 @@ describe('parse', () => {
 			expect(results[3].token).toBe('fixedbracket')
 			expect(results[3].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[3].message).toBe('')
-			expect(results[4].token).toBe('you(Paul)')
+			expect(results[4].token).toBe('Paul')
 			expect(results[4].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[4].message).toBe('')
+			expect(results[4].pronoun?.token).toBe('you')
+			expect(results[4].pronoun?.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+			expect(results[4].pronoun?.message).toBe('')
 			expect(results[5].token).toBe(']')
 			expect(results[5].type).toBe(TOKEN_TYPE.PUNCTUATION)
 			expect(results[5].message).toBe('')
@@ -102,17 +107,21 @@ describe('parse', () => {
 		test('You(people) are being stupid/foolish."', () => {
 			const results = parse_for_test('You(people) are being stupid/foolish."')
 
-			expect(results[0].token).toBe('You(people)')
+			expect(results[0].token).toBe('people')
 			expect(results[0].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[0].message).toBe('')
+			expect(results[0].pronoun?.token).toBe('You')
+			expect(results[0].pronoun?.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+			expect(results[0].pronoun?.message).toBe('')
 			expect(results[1].token).toBe('are')
 			expect(results[1].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[1].message).toBe('')
 			expect(results[2].token).toBe('being')
 			expect(results[2].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 			expect(results[2].message).toBe('')
-			expect(results[3].token).toBe('stupid/foolish')
-			expect(results[3].type).toBe(TOKEN_TYPE.PAIRING)
+			expect(results[3].token).toBe('stupid')
+			expect(results[3].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
+			expect(results[3].complex_pairing?.token).toBe('foolish')
 			expect(results[3].message).toBe('')
 			expect(results[4].token).toBe('.')
 			expect(results[4].type).toBe(TOKEN_TYPE.PUNCTUATION)
@@ -219,7 +228,7 @@ describe('parse', () => {
 			expect(results[2].message).toBe('')
 			expect(results[3].token).toBe('fixedbracket')
 			expect(results[3].message).toBe('')
-			expect(results[4].token).toBe('you(Paul)')
+			expect(results[4].token).toBe('Paul')
 			expect(results[4].message).toBe('')
 			expect(results[5].token).toBe('.')
 			expect(results[5].message).toEqual(ERRORS.MISSING_PERIOD)
@@ -279,7 +288,7 @@ describe('parse', () => {
 			expect(results[5].message).toEqual(ERRORS.FIRST_WORD_NOT_CAPITALIZED)
 			expect(results[6].token).toBe('do')
 			expect(results[6].message).toBe('')
-			expect(results[7].token).toBe('you(person)')
+			expect(results[7].token).toBe('person')
 			expect(results[7].message).toBe('')
 			expect(results[8].token).toBe('want')
 			expect(results[8].message).toBe('')

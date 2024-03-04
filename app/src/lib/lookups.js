@@ -42,8 +42,10 @@ function flatten_for_lookup(sentence) {
 	 * @returns {Token[]}
 	 */
 	function flatten_tokens(token) {
-		if (token.type === TOKEN_TYPE.CLAUSE || token.type === TOKEN_TYPE.PAIRING) {
+		if (token.type === TOKEN_TYPE.CLAUSE) {
 			return token.sub_tokens.flatMap(flatten_tokens)
+		} else if (token.complex_pairing) {
+			return [token, token.complex_pairing]
 		}
 		return [token]
 	}
@@ -68,11 +70,6 @@ async function check_forms(lookup_token) {
 	const results = await response.json()
 
 	lookup_token.form_results = results.matches
-	
-	// if the lookup term starts with lowercase, remove results that start with uppercase
-	if (starts_lowercase(lookup_token.lookup_term)) {
-		lookup_token.form_results = lookup_token.form_results.filter(result => starts_lowercase(result.stem))
-	}
 
 	if (results.matches.length) {
 		// maintain the sense marker if present
@@ -107,7 +104,7 @@ async function check_ontology(lookup_token) {
 	if (lookup_token.form_results.length) {
 		const forms = lookup_token.form_results
 		lookup_token.lookup_results = lookup_token.lookup_results
-			.filter(lookup => forms.some(form => form.part_of_speech === lookup.part_of_speech))
+			.filter(lookup => forms.some(({form, part_of_speech}) => form === 'stem' || part_of_speech === lookup.part_of_speech))
 	}
 	
 
@@ -122,23 +119,9 @@ async function check_ontology(lookup_token) {
 		/** @type {LookupResult<OntologyResult>} */
 		const results = await response.json()
 		let matches = results.matches
-		
-		// if the lookup term starts with lowercase, remove results that start with uppercase
-		if (starts_lowercase(lookup)) {
-			matches = matches.filter(result => starts_lowercase(result.stem))
-		}
 
 		return matches
 	}
-}
-
-/**
- * 
- * @param {string} word 
- * @returns {boolean}
- */
-function starts_lowercase(word) {
-	return word[0].toLowerCase() === word[0]
 }
 
 /**

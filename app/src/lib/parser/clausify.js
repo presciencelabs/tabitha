@@ -69,7 +69,9 @@ export function clausify(tokens) {
 			end_clause()
 		}
 
-		sentences.push({ clause: create_clause() })
+		const clause = create_clause()
+		clause.tag = 'main_clause'
+		sentences.push({ clause })
 	}
 
 	function start_clause() {

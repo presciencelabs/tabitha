@@ -55,6 +55,49 @@ export function parse_lookup_rule(rule_json) {
  * @param {any} rule_json
  * @returns {TokenRule}
  */
+export function parse_part_of_speech_rule(rule_json) {
+	const trigger = trigger_filter(rule_json['category'])
+	const context = create_context_filter(rule_json['context'])
+	const action = create_remove_action(rule_json['remove'])
+
+	return {
+		trigger,
+		context,
+		action,
+	}
+
+	/**
+	 * 
+	 * @param {string} categories_json 
+	 * @returns {TokenFilter}
+	 */
+	function trigger_filter(categories_json) {
+		// the token must have at least one result from each given category
+		const categories = categories_json.split('|')
+		return token => categories.every(category => token.lookup_results.some(result => result.part_of_speech === category))
+	}
+
+	/**
+	 * 
+	 * @param {string} remove_json
+	 * @returns {RuleAction}
+	 */
+	function create_remove_action(remove_json) {
+		return (tokens, trigger_index) => {
+			const token = tokens[trigger_index]
+			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
+			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
+			tokens[trigger_index] = {...token, form_results, lookup_results}
+			return trigger_index + 1
+		}
+	}
+}
+
+/**
+ *
+ * @param {any} rule_json
+ * @returns {TokenRule}
+ */
 export function parse_transform_rule(rule_json) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])

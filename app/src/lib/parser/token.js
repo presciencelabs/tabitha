@@ -14,9 +14,6 @@ const FUNCTION_WORD = 'FunctionWord'
 const LOOKUP_WORD = 'Word'
 
 /** @type {TokenType} */
-const PAIRING = 'Pairing'
-
-/** @type {TokenType} */
 const CLAUSE = 'Clause'
 
 export const TOKEN_TYPE = {
@@ -25,7 +22,6 @@ export const TOKEN_TYPE = {
 	NOTE,
 	FUNCTION_WORD,
 	LOOKUP_WORD,
-	PAIRING,
 	CLAUSE,
 }
 
@@ -38,9 +34,11 @@ export const TOKEN_TYPE = {
  * @param {string} [other_data.tag=''] 
  * @param {string} [other_data.lookup_term=''] 
  * @param {Token[]} [other_data.sub_tokens=[]] 
+ * @param {Token?} [other_data.pairing=null] 
+ * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, {message='', tag='', lookup_term='', sub_tokens=[]}={}) {
+export function create_token(token, type, {message='', tag='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null}={}) {
 	return {
 		token,
 		type,
@@ -50,6 +48,8 @@ export function create_token(token, type, {message='', tag='', lookup_term='', s
 		form_results: [],
 		lookup_results: [],
 		sub_tokens,
+		complex_pairing: pairing,
+		pronoun,
 	}
 }
 
@@ -122,7 +122,10 @@ export function token_has_concept(token) {
  */
 export function token_has_error(token) {
 	return token.type === TOKEN_TYPE.ERROR
+		|| token.message.length > 0
 		|| token.sub_tokens.some(token_has_error)
+		|| token.complex_pairing !== null && token_has_error(token.complex_pairing)
+		|| token.pronoun !== null && token_has_error(token.pronoun)
 }
 
 /**
@@ -147,20 +150,9 @@ export function flatten_sentence(sentence) {
 }
 
 /**
- * 
- * @param {Token} token 
- * @param {TokenFilter} predicate
- * @returns {Token|undefined}
+ * @param {OntologyResult} concept
+ * @returns {string}
  */
-export function find_token_nested(token, predicate) {
-	if (predicate(token)) {
-		return token
-	}
-	for (let sub_token of token.sub_tokens) {
-		const result = find_token_nested(sub_token, predicate)
-		if (result) {
-			return result
-		}
-	}
-	return undefined
+export function concept_with_sense(concept) {
+	return `${concept.stem}-${concept.sense}`
 }

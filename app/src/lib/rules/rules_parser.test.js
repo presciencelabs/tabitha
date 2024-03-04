@@ -47,6 +47,27 @@ describe('token filters', () => {
 		expect(results[1]).toBe(true)
 		expect(results[2]).toBe(false)
 	})
+	test('by tag', () => {
+		const filter_json = { 'tag': 'tag1|tag2' }
+		const filter = create_token_filter(filter_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: ''}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag1'}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag2'}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag3'}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag2|tag3'}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag4|tag4'}),
+		]
+		const results = tokens.map(token => filter(token))
+
+		expect(results[0]).toBe(false)
+		expect(results[1]).toBe(true)
+		expect(results[2]).toBe(true)
+		expect(results[3]).toBe(false)
+		expect(results[4]).toBe(true)
+		expect(results[5]).toBe(false)
+	})
 })
 
 describe('context filters', () => {

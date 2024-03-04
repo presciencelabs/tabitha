@@ -49,17 +49,16 @@ export function tokenize_input(text = '') {
 
 		} else {
 			// any other word
-			return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
+			return check_boundary_for_token(word_token)
 		}
 	}
 
 	function pronoun_referent() {
-		// TODO check if first part is a pronoun, otherwise error?
 		eat(REGEXES.WORD_CHAR)
 		if (!match(REGEXES.CLOSING_PAREN)) {
 			return error_token(ERRORS.MISSING_CLOSING_PAREN)
 		}
-		return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
+		return check_boundary_for_token(pronoun_referent_token)
 	}
 
 	function pairing() {
@@ -70,19 +69,19 @@ export function tokenize_input(text = '') {
 		}
 		// simple/complex
 		eat(REGEXES.WORD_CHAR)
-		return check_boundary_for_token(TOKEN_TYPE.PAIRING)
+		return check_boundary_for_token(pairing_token)
 	}
 
 	function decimal_number() {
 		eat(/\d/)
-		return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
+		return check_boundary_for_token(word_token)
 	}
 
 	function colon() {
 		if (peek_match(/\d/)) {
 			return simple_token(TOKEN_TYPE.PUNCTUATION)
 		}
-		return check_boundary_for_token(TOKEN_TYPE.LOOKUP_WORD)
+		return check_boundary_for_token(word_token)
 	}
 
 	function clause_notation() {
@@ -97,7 +96,7 @@ export function tokenize_input(text = '') {
 			return error_token(ERRORS.UNRECOGNIZED_CLAUSE_NOTATION)
 		}
 
-		return check_boundary_for_token(TOKEN_TYPE.NOTE)
+		return check_boundary_for_token(() => simple_token(TOKEN_TYPE.NOTE))
 	}
 
 	function underscore_notation() {
@@ -109,7 +108,7 @@ export function tokenize_input(text = '') {
 
 	function closing_punctuation() {
 		// Cannot be followed directly by text or [
-		return check_boundary_for_token(TOKEN_TYPE.PUNCTUATION)
+		return check_boundary_for_token(() => simple_token(TOKEN_TYPE.PUNCTUATION))
 	}
 
 	function opening_punctuation() {
@@ -118,24 +117,15 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
-	 * @param {TokenType} token_type
+	 * @param {(string: text) => Token} token_if_valid
 	 * @returns {Token}
 	 */
-	function check_boundary_for_token(token_type) {
+	function check_boundary_for_token(token_if_valid) {
 		if (!is_at_end() && !peek_match(REGEXES.TOKEN_END_BOUNDARY)) {
 			return invalid_closing_char()
 		}
 
-		if (token_type === TOKEN_TYPE.LOOKUP_WORD) {
-			// token token. token,
-			return word_token()
-		} else if (token_type === TOKEN_TYPE.PAIRING) {
-			// simple/complex simple/complex. simple/complex,
-			return pairing_token()
-		} else {
-			// punctuation
-			return simple_token(token_type)
-		}
+		return token_if_valid(collect_text())
 	}
 
 	function invalid_opening_char() {
@@ -178,10 +168,10 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
+	 * @param {string} token 
 	 * @returns {Token}
 	 */
-	function word_token() {
-		const token = collect_text()
+	function word_token(token) {
 		return get_function_word(token) || lookup_token(token)
 	}
 
@@ -200,9 +190,7 @@ export function tokenize_input(text = '') {
 	 * @returns {Token}
 	 */
 	function lookup_token(text) {
-		// The lookup term could be in a pronoun referent
-		const lookup_term = text.match(REGEXES.EXTRACT_PRONOUN_REFERENT)?.[2] ?? text
-		const lookup_match = lookup_term.match(REGEXES.EXTRACT_WORD_REFERENT)
+		const lookup_match = text.match(REGEXES.EXTRACT_WORD_REFERENT)
 
 		// combine stem and sense
 		// @ts-ignore the stem will always be there
@@ -212,12 +200,29 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
+	 * @param {string} token 
 	 * @returns {Token}
 	 */
-	function pairing_token() {
-		const token = collect_text()
-		const sub_tokens = token.split('/').map(lookup_token)
-		return create_token(token, TOKEN_TYPE.PAIRING, { sub_tokens })
+	function pairing_token(token) {
+		const [left, right] = token.split('/').map(lookup_token)
+		left.complex_pairing = right
+		return left
+	}
+
+	/**
+	 * @param {string} token 
+	 * @returns {Token}
+	 */
+	function pronoun_referent_token(token) {
+		/** @type {RegExpMatchArray} */
+		// @ts-ignore the match will always succeed here
+		const referent_match = token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)
+
+		const [pronoun_text, referent_text] = [referent_match[1], referent_match[2]]
+		const referent = lookup_token(referent_text)
+		const pronoun = create_token(pronoun_text, TOKEN_TYPE.FUNCTION_WORD)
+		referent.pronoun = pronoun
+		return referent
 	}
 
 	/**

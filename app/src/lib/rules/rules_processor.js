@@ -1,5 +1,3 @@
-import {create_clause_token} from '$lib/parser/token'
-
 /**
  * 
  * @param {TokenRule[]} rules 
@@ -16,7 +14,7 @@ export function rules_applier(rules) {
  * @returns {Sentence[]}
  */
 export function apply_rules(sentences, rules) {
-	return sentences.map(sentence => create_sentence(apply_rules_to_tokens(sentence.clause.sub_tokens, rules)))
+	return apply_rules_to_tokens(sentences.map(sentence => sentence.clause), rules).map(clause => ({ clause }))
 	
 	/**
 	 * 
@@ -63,13 +61,4 @@ export function apply_rules(sentences, rules) {
 
 		return tokens
 	}
-}
-
-/**
- * 
- * @param {Token[]} sub_tokens 
- * @returns {Sentence}
- */
-function create_sentence(sub_tokens) {
-	return { clause: create_clause_token(sub_tokens) }
 }

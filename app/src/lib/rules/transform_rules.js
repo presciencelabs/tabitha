@@ -2,11 +2,9 @@ import {TOKEN_TYPE} from '../parser/token'
 import {parse_transform_rule} from './rules_parser'
 
 /**
- * TODO store these in the database
  * These are words that may change their underlying data based on the context around them.
  * These can look at the lookup results of the surrounding tokens (ie syntactic category)
  * and can be used to decide between senses.
- * TODO add a tag for function words
  */
 const transform_rules_json = [
 	{

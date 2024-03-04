@@ -9,7 +9,7 @@
 	export let classes = ''
 </script>
 
-{#if token.type === TOKEN_TYPE.ERROR}
+{#if token.type === TOKEN_TYPE.ERROR || token.message.length > 0}
 	<Error {token} {classes} />
 {:else if token_has_concept(token)}
 	<Result {token} {classes} />

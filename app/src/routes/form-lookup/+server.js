@@ -74,7 +74,7 @@ function get_form_matches(db) {
 		return {
 			stem: result.stem,
 			part_of_speech: result.part_of_speech,
-			form: matched_forms,
+			form: matched_forms || 'stem',
 		}
 	}
 }
