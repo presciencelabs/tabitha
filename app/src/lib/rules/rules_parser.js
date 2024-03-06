@@ -83,13 +83,11 @@ export function parse_part_of_speech_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function create_remove_action(remove_json) {
-		return (tokens, trigger_index) => {
-			const token = tokens[trigger_index]
+		return create_token_map_action(token => {
 			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
 			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
-			tokens[trigger_index] = {...token, form_results, lookup_results}
-			return trigger_index + 1
-		}
+			return {...token, form_results, lookup_results}
+		})
 	}
 }
 
@@ -175,13 +173,7 @@ export function parse_checker_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function checker_suggest_action(suggest) {
-		return (tokens, trigger_index) => {
-			tokens[trigger_index] = {
-				...tokens[trigger_index],
-				suggest_message: suggest.message,
-			}
-			return trigger_index + 1
-		}
+		return create_token_map_action(token => ({...token, suggest_message: suggest.message}))
 	}
 }
 
@@ -508,5 +500,29 @@ export function create_token_transform(transform_json) {
 		return transforms[0]
 	} else {
 		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
+	}
+}
+
+/**
+ * 
+ * @param {(token: Token) => Token} mapper 
+ * @returns {RuleAction}
+ */
+export function create_token_map_action(mapper) {
+	return (tokens, trigger_index) => {
+		tokens[trigger_index] = mapper(tokens[trigger_index])
+		return trigger_index + 1
+	}
+}
+
+/**
+ * 
+ * @param {(token: Token) => void} action 
+ * @returns {RuleAction}
+ */
+export function create_token_modify_action(action) {
+	return (tokens, trigger_index) => {
+		action(tokens[trigger_index])
+		return trigger_index + 1
 	}
 }

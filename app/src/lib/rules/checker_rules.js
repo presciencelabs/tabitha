@@ -1,4 +1,6 @@
-import {parse_checker_rule} from './rules_parser'
+import {ERRORS} from '$lib/parser/error_messages'
+import {TOKEN_TYPE, check_token_lookup} from '$lib/parser/token'
+import {create_context_filter, create_token_modify_action, parse_checker_rule} from './rules_parser'
 
 const checker_rules_json = [
 	{
@@ -149,4 +151,67 @@ const checker_rules_json = [
 	},
 ]
 
-export const CHECKER_RULES = checker_rules_json.map(parse_checker_rule)
+/** @type {BuiltInRule[]} */
+const builtin_checker_rules = [
+	{
+		name: 'Check word complexity level',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			context: create_context_filter({}),
+			action: create_token_modify_action(token =>{
+				if (check_token_lookup(is_level_complex)(token)) {
+					token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+				}
+
+				if (token.complex_pairing && check_token_lookup(is_level_simple)(token.complex_pairing)) {
+					token.complex_pairing.error_message = ERRORS.WORD_LEVEL_TOO_LOW
+				}
+			}),
+		},
+	},
+	{
+		name: 'Warn user if the word\'s complexity is ambiguous',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && token.lookup_results.length > 0,
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				// Alert if the first result is complex and there are also non-complex results (including proper nouns - see 'ark')
+				// If the first result is already simple, that will be selected by default and thus not ambiguous
+				if (is_level_complex(token.lookup_results[0]) && token.lookup_results.some(result => !is_level_complex(result))) {
+					token.suggest_message = ERRORS.AMBIGUOUS_LEVEL
+				}
+
+				const pairing = token.complex_pairing
+				if (!pairing || pairing.lookup_results.length === 0) {
+					return
+				}
+
+				// Alert if the first result is simple and there are also complex results (see 'son')
+				// If the first result is already complex, that will be selected by default and thus not ambiguous
+				if (is_level_simple(pairing.lookup_results[0]) && pairing.lookup_results.some(result => !is_level_simple(result))) {
+					pairing.suggest_message = ERRORS.AMBIGUOUS_LEVEL
+				}
+			}),
+		},
+	},
+]
+
+export const CHECKER_RULES = builtin_checker_rules.map(({rule}) => rule).concat(checker_rules_json.map(parse_checker_rule))
+
+/**
+ * 
+ * @param {OntologyResult} result 
+ */
+function is_level_simple(result) {
+	return result.level === 0 || result.level === 1
+}
+
+/**
+ * 
+ * @param {OntologyResult} result 
+ */
+function is_level_complex(result) {
+	return result.level === 2 || result.level === 3
+}

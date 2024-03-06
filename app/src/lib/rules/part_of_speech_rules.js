@@ -63,6 +63,24 @@ const part_of_speech_rules_json = [
 		'remove': 'Adposition',
 		'comment': '',
 	},
+	{
+		'name': 'If Adverb-Adjective followed by Noun, remove Adverb',
+		'category': 'Adverb|Adjective',
+		'context': {
+			'followedby': { 'category': 'Noun' },
+		},
+		'remove': 'Adverb',
+		'comment': 'Dan. 1:12 Please give only(Adj/Adv) vegetables ...  Paul like most(Adj/Adv) books.',
+	},
+	{
+		'name': 'If Adverb-Adjective followed by Verb, remove Adjective',
+		'category': 'Adverb|Adjective',
+		'context': {
+			'followedby': { 'category': 'Verb' },
+		},
+		'remove': 'Adjective',
+		'comment': 'Infected Eye 1:5  You must first(Adj/Adv) wash ...',
+	},
 ]
 
 export const PART_OF_SPEECH_RULES = part_of_speech_rules_json.map(parse_part_of_speech_rule)

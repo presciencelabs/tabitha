@@ -1,10 +1,8 @@
 import {pipe} from '$lib/pipeline'
 import {tokenize_input} from './tokenize'
-import {check_for_pronouns} from './pronoun_rules'
 import {perform_form_lookups, perform_ontology_lookups} from '$lib/lookups'
-import {check_pairings} from './pairings'
 import {clausify, flatten_sentences} from './clausify'
-import {CHECKER_RULES, LOOKUP_RULES, PART_OF_SPEECH_RULES, SYNTAX_RULES, TRANSFORM_RULES, rules_applier} from '$lib/rules'
+import {CHECKER_RULES, LOOKUP_RULES, PART_OF_SPEECH_RULES, SYNTAX_RULES, TRANSFORM_RULES, PRONOUN_RULES, rules_applier} from '$lib/rules'
 
 /**
  * @param {string} text
@@ -13,8 +11,8 @@ import {CHECKER_RULES, LOOKUP_RULES, PART_OF_SPEECH_RULES, SYNTAX_RULES, TRANSFO
 export async function parse(text) {
 	const pre_lookups = pipe(
 		tokenize_input,
-		check_for_pronouns,
 		clausify,
+		rules_applier(PRONOUN_RULES),
 	)(text)
 
 	const with_forms = await perform_form_lookups(pre_lookups)
@@ -23,7 +21,6 @@ export async function parse(text) {
 
 	return pipe(
 		rules_applier(SYNTAX_RULES),
-		check_pairings,
 		rules_applier(PART_OF_SPEECH_RULES),
 		rules_applier(TRANSFORM_RULES),
 		rules_applier(CHECKER_RULES),
@@ -40,11 +37,10 @@ export async function parse(text) {
 export function parse_for_test(text) {
 	return pipe(
 		tokenize_input,
-		check_for_pronouns,
 		clausify,
+		rules_applier(PRONOUN_RULES),
 		rules_applier(LOOKUP_RULES),
 		rules_applier(SYNTAX_RULES),
-		check_pairings,
 		rules_applier(PART_OF_SPEECH_RULES),
 		rules_applier(TRANSFORM_RULES),
 		rules_applier(CHECKER_RULES),

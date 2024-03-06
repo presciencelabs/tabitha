@@ -72,3 +72,9 @@ type TokenRule = {
 	context: TokenContextFilter
 	action: RuleAction
 }
+
+type BuiltInRule = {
+	name: string
+	comment: string
+	rule: TokenRule
+}

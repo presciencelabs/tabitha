@@ -4,9 +4,11 @@ import {LOOKUP_RULES} from './lookup_rules'
 import {PART_OF_SPEECH_RULES} from './part_of_speech_rules'
 import {rules_applier} from './rules_processor'
 import {TRANSFORM_RULES} from './transform_rules'
+import {PRONOUN_RULES} from './pronoun_rules'
 
 export {
 	rules_applier,
+	PRONOUN_RULES,
 	LOOKUP_RULES,
 	PART_OF_SPEECH_RULES,
 	TRANSFORM_RULES,

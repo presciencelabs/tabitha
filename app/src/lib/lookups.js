@@ -78,7 +78,7 @@ async function check_forms(lookup_token) {
 
 		// the new lookup stem can be the form stem if they are all the same.
 		// otherwise use the original lookup term
-		const stem = all_elements_the_same(lookup_token.form_results, result => result.stem)
+		const stem = all_stems_the_same(lookup_token.form_results)
 			? results.matches[0].stem : sense_match?.[1] ?? lookup_token.lookup_term
 
 		lookup_token.lookup_term = sense ? `${stem}${sense}` : stem
@@ -90,7 +90,7 @@ async function check_forms(lookup_token) {
  */
 async function check_ontology(lookup_token) {
 	// The form lookup may have resulted in different stems (eg. saw). We want to look up all of them
-	if (!all_elements_the_same(lookup_token.form_results, result => result.stem.toLowerCase())) {
+	if (!all_stems_the_same(lookup_token.form_results)) {
 		const unique_lookups = [...new Set(lookup_token.form_results.map(form => form.stem))]
 
 		const results = await Promise.all(unique_lookups.map(check_word_in_ontology))
@@ -125,11 +125,9 @@ async function check_ontology(lookup_token) {
 }
 
 /**
- * @template R
- * @param {R[]} arr 
- * @param {(elem: R) => any} getter 
+ * @param {FormResult[]} forms 
  * @returns {boolean}
  */
-function all_elements_the_same(arr, getter) {
-	return arr.every(elem => getter(elem) === getter(arr[0]))
+function all_stems_the_same(forms) {
+	return forms.every(result => result.stem.toLowerCase() === forms[0].stem.toLowerCase())
 }
