@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { CLAUSE_NOTATIONS } from './clause_notations'
 import { ERRORS } from './error_messages'
 import { FUNCTION_WORDS } from './function_words'
-import { TOKEN_TYPE, create_error_token, create_token } from './token'
+import { TOKEN_TYPE, create_token } from './token'
 import { tokenize_input } from './tokenize'
 
 /**
@@ -39,6 +39,16 @@ function create_pronoun_token(pronoun, referent, referent_lookup=null) {
 	const pronoun_token = create_token(pronoun, TOKEN_TYPE.FUNCTION_WORD)
 	referent_token.pronoun = pronoun_token
 	return referent_token
+}
+
+/**
+ * 
+ * @param {string} token 
+ * @param {string} message 
+ * @returns {Token}
+ */
+function create_error_token(token, message) {
+	return create_token(token, TOKEN_TYPE.NOTE, {error: message})
 }
 
 describe('tokenize_input', () => {

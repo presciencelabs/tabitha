@@ -3,7 +3,6 @@
 
 	/** @type {Token} */
 	export let token
-
 	export let classes = ''
 </script>
 

@@ -1,9 +1,10 @@
-type TokenType = 'Error' | 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Pairing' | 'Clause'
+type TokenType = 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Clause' |'Added'
 
 type Token = {
 	token: string
 	type: TokenType
-	message: string
+	error_message: string
+	suggest_message: string
 	tag: string
 	lookup_term: string
 	form_results: FormResult[]
@@ -59,8 +60,8 @@ type ContextFilterResult = {
 type TokenTransform = (token: Token) => Token
 
 type CheckerAction = {
-	preceded_by: string?;
-	followed_by: string?;
+	precededby: string?;
+	followedby: string?;
 	message: string
 }
 

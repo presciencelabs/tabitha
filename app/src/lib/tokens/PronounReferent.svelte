@@ -1,7 +1,7 @@
 <script>
+	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
-	import Error from './Error.svelte'
 
 	/** @type {Token} */
 	export let token
@@ -12,16 +12,12 @@
 </script>
 
 <div class="join">
-	{#if pronoun.message}
-		<Error token={pronoun} classes="!px-1.5 join-item" />
-	{:else}
-		<TokenDisplay classes="!px-2 join-item">
-			{pronoun.token}
-		</TokenDisplay>
-	{/if}
+	<Message token={pronoun} />
+	<TokenDisplay classes="!px-2 join-item">{pronoun.token}</TokenDisplay>
 
 	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">(</TokenDisplay>
 
+	<Message {token} />
 	<Word {token} classes="join-item" />
 
 	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">)</TokenDisplay>

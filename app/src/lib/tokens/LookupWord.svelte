@@ -1,11 +1,10 @@
 <script>
 	import Pairing from './Pairing.svelte'
 	import PronounReferent from './PronounReferent.svelte'
-	import Word from './Word.svelte'
+	import SingleToken from './SingleToken.svelte'
 
 	/** @type {Token} */
 	export let token
-	export let classes = ''
 </script>
 
 {#if token.complex_pairing}
@@ -13,5 +12,5 @@
 {:else if token.pronoun}
 	<PronounReferent {token} />
 {:else}
-	<Word {token} {classes} />
+	<SingleToken {token} />
 {/if}

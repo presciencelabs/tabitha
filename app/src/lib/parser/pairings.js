@@ -50,7 +50,7 @@ export function check_pairings(sentences) {
 			right.form_results = right.form_results.filter(result => overlapping_categories.has(result.part_of_speech))
 			right.lookup_results = right.lookup_results.filter(result => overlapping_categories.has(result.part_of_speech))
 		} else {
-			left.message = 'Cannot pair words of different parts of speech'
+			left.error_message = 'Cannot pair words of different parts of speech'
 		}
 	}
 
@@ -63,10 +63,10 @@ export function check_pairings(sentences) {
 		// Check if the levels are correct
 		// TODO remove the left check when we address Issue #30 (https://github.com/presciencelabs/tabitha-editor/issues/30)
 		if (check_token_lookup(concept => REGEXES.IS_LEVEL_COMPLEX.test(`${concept.level}`))(left)) {
-			left.message = ERRORS.WORD_LEVEL_TOO_HIGH
+			left.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
 		}
 		if (check_token_lookup(concept => REGEXES.IS_LEVEL_SIMPLE.test(`${concept.level}`))(right)) {
-			right.message = ERRORS.WORD_LEVEL_TOO_LOW
+			right.error_message = ERRORS.WORD_LEVEL_TOO_LOW
 		}
 	}
 }

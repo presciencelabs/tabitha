@@ -249,10 +249,10 @@ describe('checker rules', () => {
 		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(3)
-		expect(output_tokens[0].message).toBe('')
+		expect(output_tokens[0].error_message).toBe('')
 		expect(output_tokens[1].token).toBe('add')
-		expect(output_tokens[1].message).toBe('message')
-		expect(output_tokens[2].message).toBe('')
+		expect(output_tokens[1].error_message).toBe('message')
+		expect(output_tokens[2].error_message).toBe('')
 	})
 	test('triggered with require precededby', () => {
 		const rules = [
@@ -277,9 +277,9 @@ describe('checker rules', () => {
 
 		expect(output_tokens.length).toBe(3)
 		expect(output_tokens[0].token).toBe('add')
-		expect(output_tokens[0].message).toBe('message')
-		expect(output_tokens[1].message).toBe('')
-		expect(output_tokens[2].message).toBe('')
+		expect(output_tokens[0].error_message).toBe('message')
+		expect(output_tokens[1].error_message).toBe('')
+		expect(output_tokens[2].error_message).toBe('')
 	})
 	test('triggered with multiple precededby', () => {
 		const rules = [
@@ -312,11 +312,11 @@ describe('checker rules', () => {
 
 		expect(output_tokens.length).toBe(4)
 		expect(output_tokens[0].token).toBe('add1')
-		expect(output_tokens[0].message).toBe('message1')
+		expect(output_tokens[0].error_message).toBe('message1')
 		expect(output_tokens[1].token).toBe('add2')
-		expect(output_tokens[1].message).toBe('message2')
-		expect(output_tokens[2].message).toBe('')
-		expect(output_tokens[3].message).toBe('')
+		expect(output_tokens[1].error_message).toBe('message2')
+		expect(output_tokens[2].error_message).toBe('')
+		expect(output_tokens[3].error_message).toBe('')
 	})
 	test('triggered with message on trigger', () => {
 		const rules = [
@@ -338,8 +338,8 @@ describe('checker rules', () => {
 
 		expect(output_tokens.length).toBe(2)
 		expect(output_tokens[0].token).toBe('token')
-		expect(output_tokens[0].message).toBe('message')
-		expect(output_tokens[1].message).toBe('')
+		expect(output_tokens[0].error_message).toBe('message')
+		expect(output_tokens[1].error_message).toBe('')
 	})
 	test('not triggered across sentences', () => {
 		const rules = [
@@ -417,7 +417,7 @@ describe('checker rules', () => {
 
 		expect(results.length).toBe(3)
 		expect(results[1].token).toBe('add')
-		expect(results[1].message).toBe('message')
+		expect(results[1].error_message).toBe('message')
 	})
 })
 
@@ -444,29 +444,29 @@ describe('lookup rules', () => {
 		const results = apply_rules(input_tokens, LOOKUP_RULES).flatMap(flatten_sentence)
 
 		expect(results[0].token).toBe('John')
-		expect(results[0].message).toBe('')
+		expect(results[0].error_message).toBe('')
 		expect(results[1].token).toBe('ran')
-		expect(results[1].message).toBe('')
+		expect(results[1].error_message).toBe('')
 		expect(results[2].token).toBe('[')
-		expect(results[2].message).toBe('')
+		expect(results[2].error_message).toBe('')
 		expect(results[3].token).toBe('in order to')
 		expect(results[3].lookup_term).toBe('in-order-to')
-		expect(results[3].message).toBe('')
+		expect(results[3].error_message).toBe('')
 		expect(results[4].token).toBe('take')
 		expect(results[4].lookup_term).toBe('take-away')
-		expect(results[4].message).toBe('')
+		expect(results[4].error_message).toBe('')
 		expect(results[5].token).toBe('many')
 		expect(results[5].lookup_term).toBe('much-many')
-		expect(results[5].message).toBe('')
+		expect(results[5].error_message).toBe('')
 		expect(results[6].token).toBe('books')
-		expect(results[6].message).toBe('')
+		expect(results[6].error_message).toBe('')
 		expect(results[7].token).toBe('away')
 		expect(results[7].type).toBe(TOKEN_TYPE.FUNCTION_WORD)
-		expect(results[7].message).toBe('')
+		expect(results[7].error_message).toBe('')
 		expect(results[8].token).toBe(']')
-		expect(results[8].message).toBe('')
+		expect(results[8].error_message).toBe('')
 		expect(results[9].token).toBe('.')
-		expect(results[9].message).toBe('')
+		expect(results[9].error_message).toBe('')
 		expect(results).length(10)
 	})
 })
@@ -570,7 +570,7 @@ describe('part-of-speech rules', () => {
 
 		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
-		expect(results[0].message).toBe('')
+		expect(results[0].error_message).toBe('')
 		expect(results[0].lookup_results.length).toBe(2)
 		expect(results[0].lookup_results[0].part_of_speech).toBe('Verb')
 	})
@@ -597,7 +597,7 @@ describe('part-of-speech rules', () => {
 
 		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
 
-		expect(results[0].message).toBe('')
+		expect(results[0].error_message).toBe('')
 		expect(results[0].lookup_results.length).toBe(3)
 		expect(results[0].lookup_results[0].part_of_speech).toBe('Verb')
 		expect(results[0].lookup_results[1].part_of_speech).toBe('Verb')

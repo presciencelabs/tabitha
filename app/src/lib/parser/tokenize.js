@@ -1,7 +1,7 @@
 import {CLAUSE_NOTATIONS} from './clause_notations'
 import {FUNCTION_WORDS} from './function_words'
 import {REGEXES} from '$lib/regexes'
-import {TOKEN_TYPE, create_error_token, create_token} from './token'
+import {TOKEN_TYPE, create_token} from './token'
 import {ERRORS} from './error_messages'
 
 /**
@@ -230,7 +230,7 @@ export function tokenize_input(text = '') {
 	 * @returns {Token}
 	 */
 	function error_token(message) {
-		return create_error_token(collect_text(), message)
+		return create_token(collect_text(), TOKEN_TYPE.NOTE, {error: message})
 	}
 
 	/**

@@ -1,6 +1,6 @@
 import {REGEXES} from '$lib/regexes'
 import {ERRORS} from './error_messages'
-import {TOKEN_TYPE, create_clause_token, create_error_token, flatten_sentence} from './token'
+import {TOKEN_TYPE, create_clause_token, create_added_token, flatten_sentence} from './token'
 
 /**
  * @param {Token[]} tokens
@@ -43,7 +43,7 @@ export function clausify(tokens) {
 
 	if (!sentence_is_ending) {
 		// add a 'missing period' error
-		add_token_to_clause(create_error_token('.', ERRORS.MISSING_PERIOD))
+		add_token_to_clause(create_added_token('.', {error: ERRORS.MISSING_PERIOD}))
 	}
 
 	end_sentence()
@@ -65,7 +65,7 @@ export function clausify(tokens) {
 
 	function end_sentence() {
 		while (clause_tokens.length > 1) {
-			add_token_to_clause(create_error_token(']', ERRORS.MISSING_CLOSING_BRACKET))
+			add_token_to_clause(create_added_token(']', {error: ERRORS.MISSING_CLOSING_BRACKET}))
 			end_clause()
 		}
 
@@ -81,7 +81,7 @@ export function clausify(tokens) {
 
 	function end_clause() {
 		if (clause_tokens.length === 1) {
-			clause_tokens[0].splice(0, 0, create_error_token('[', ERRORS.MISSING_OPENING_BRACKET))
+			clause_tokens[0].splice(0, 0, create_added_token('[', {error: ERRORS.MISSING_OPENING_BRACKET}))
 			return
 		}
 
@@ -97,8 +97,7 @@ export function clausify(tokens) {
 	 * @param {Token} token
 	 */
 	function is_sentence_end_token(token) {
-		return (token.type === TOKEN_TYPE.PUNCTUATION || token.type === TOKEN_TYPE.ERROR)
-			&& REGEXES.SENTENCE_ENDING_PUNCTUATION.test(token.token)
+		return token.type === TOKEN_TYPE.PUNCTUATION && REGEXES.SENTENCE_ENDING_PUNCTUATION.test(token.token)
 	}
 
 	/**

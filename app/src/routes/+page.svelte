@@ -20,6 +20,15 @@
 	function reset_copied() {
 		copied = false
 	}
+
+	/**
+	 * @param {Token[]} tokens
+	 */
+	function check_for_error(tokens) {
+		return tokens.some(token => token_has_error(token)
+			|| token.complex_pairing && token_has_error(token.complex_pairing)
+			|| token.pronoun && token_has_error(token.pronoun))
+	}
 </script>
 
 <form class="grid justify-items-center">
@@ -32,7 +41,7 @@
 		<Icon icon="line-md:loading-twotone-loop" class="h-16 w-16 text-warning" />
 	</div>
 {:then tokens}
-	{@const has_error = tokens.some(token_has_error)}
+	{@const has_error = check_for_error(tokens)}
 	{@const success = tokens.length > 0 && !has_error}
 
 	<div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>

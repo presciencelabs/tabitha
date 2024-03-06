@@ -76,17 +76,17 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
-		'name': 'take away',
-		'trigger': { 'stem': 'take' },
-		'context': { 'followedby': {'token': 'away', 'skip': 'all'} },
-		'lookup': 'take-away',
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
-	},
-	{
 		'name': 'come out',
 		'trigger': { 'stem': 'come' },
 		'context': { 'followedby': {'token': 'out'} },
 		'lookup': 'come-out',
+		'combine': 1,
+	},
+	{
+		'name': 'cry out',
+		'trigger': { 'stem': 'cry' },
+		'context': { 'followedby': {'token': 'out'} },
+		'lookup': 'cry-out',
 		'combine': 1,
 	},
 	{
@@ -103,6 +103,13 @@ const lookup_rules_json = [
 		'lookup': 'put-on',
 		'combine': 1,
 		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
+	},
+	{
+		'name': 'take away',
+		'trigger': { 'stem': 'take' },
+		'context': { 'followedby': {'token': 'away', 'skip': 'all'} },
+		'lookup': 'take-away',
+		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 ]
 

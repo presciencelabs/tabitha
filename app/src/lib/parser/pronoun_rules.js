@@ -1,5 +1,4 @@
-import {REGEXES} from '$lib/regexes'
-import {TOKEN_TYPE, create_error_token} from './token'
+import {convert_to_error_token, token_has_error} from './token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -42,9 +41,10 @@ export function check_for_pronouns(tokens) {
 	/**
 	 * 
 	 * @param {Token} token 
+	 * @returns {Token}
 	 */
 	function check(token) {
-		if (token.type === TOKEN_TYPE.ERROR) {
+		if (token_has_error(token)) {
 			return token
 		}
 
@@ -52,7 +52,7 @@ export function check_for_pronouns(tokens) {
 
 		if (PRONOUN_MESSAGES.has(normalized_token)) {
 			// @ts-ignore
-			return create_error_token(token.token, PRONOUN_MESSAGES.get(normalized_token))
+			return convert_to_error_token(token, PRONOUN_MESSAGES.get(normalized_token))
 		}
 
 		return check_pronoun(token)
@@ -75,9 +75,9 @@ export function check_for_pronouns(tokens) {
 			return {...token, tag: PRONOUN_TAGS.get(normalized_pronoun)}
 		} else if (PRONOUN_MESSAGES.has(normalized_pronoun)) {
 			// @ts-ignore
-			token.pronoun = create_error_token(pronoun, PRONOUN_MESSAGES.get(normalized_pronoun))
+			token.pronoun = convert_to_error_token(token.pronoun, PRONOUN_MESSAGES.get(normalized_pronoun))
 		} else {
-			token.pronoun = create_error_token(pronoun, `Unrecognized pronoun "${pronoun}"`)
+			token.pronoun = convert_to_error_token(token.pronoun, `Unrecognized pronoun "${pronoun}"`)
 		}
 		return token
 	}

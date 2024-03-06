@@ -13,7 +13,7 @@
 </script>
 
 <div class='tooltip' data-tip={tooltip}>
-	<TokenDisplay classes="{classes} L{concept.level}">
+	<TokenDisplay classes={`L${concept.level} ${classes}`}>
 		<LinkedLookup {token} classes={`L${concept.level}-text`} />
 	</TokenDisplay>
 </div>

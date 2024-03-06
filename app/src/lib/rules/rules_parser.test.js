@@ -149,6 +149,28 @@ describe('context filters', () => {
 		expect(results[2].success).toBe(false)
 		expect(results[3].success).toBe(false)
 	})
+	test('followed by with multiple skips', () => {
+		const context_json = { 'followedby': { 'token': 'other', 'skip': [{'token': 'skip' }, {'tag': 'skip'}] } }
+		const filter = create_context_filter(context_json)
+
+		const tokens = [
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
+			create_token('notskip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'notskip', tag: 'skip'}),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
+		]
+		const results = tokens.map((_, i) => filter(tokens, i))
+
+		expect(results[0].success).toBe(true)
+		expect(results[0].indexes[0]).toBe(3)
+		expect(results[1].success).toBe(true)
+		expect(results[1].indexes[0]).toBe(3)
+		expect(results[2].success).toBe(true)
+		expect(results[2].indexes[0]).toBe(3)
+		expect(results[3].success).toBe(false)
+		expect(results[4].success).toBe(false)
+	})
 	test('preceded by', () => {
 		const context_json = { 'precededby': { 'token': 'token' } }
 		const filter = create_context_filter(context_json)
@@ -356,7 +378,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.lookup_term).toBe(token.lookup_term)
-		expect(result.message).toBe(token.message)
+		expect(result.error_message).toBe(token.error_message)
 	})
 	test('concept no lookup results', () => {
 		const transform_json = { 'concept': 'concept-A' }
@@ -368,7 +390,7 @@ describe('token transforms', () => {
 		expect(result.type).toBe(token.type)
 		expect(result.lookup_term).toBe('concept-A')
 		expect(result.lookup_results.length).toBe(0)
-		expect(result.message).toBe(token.message)
+		expect(result.error_message).toBe(token.error_message)
 	})
 	test('concept with lookup results', () => {
 		const transform_json = { 'concept': 'concept-A' }
@@ -400,7 +422,7 @@ describe('token transforms', () => {
 		expect(result.lookup_term).toBe('concept-A')
 		expect(result.lookup_results.length).toBe(1)
 		expect(result.lookup_results[0].sense).toBe('A')
-		expect(result.message).toBe(token.message)
+		expect(result.error_message).toBe(token.error_message)
 	})
 	test('type and concept', () => {
 		const transform_json = { 'type': TOKEN_TYPE.LOOKUP_WORD, 'concept': 'concept-A' }
@@ -411,7 +433,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.LOOKUP_WORD)
 		expect(result.lookup_term).toBe('concept-A')
-		expect(result.message).toBe(token.message)
+		expect(result.error_message).toBe(token.error_message)
 	})
 	test('unrecognized', () => {
 		const transform_json = { 'other': 'other' }

@@ -1,21 +1,19 @@
 <script>
-	import Error from './Error.svelte'
-	import FunctionWord from './FunctionWord.svelte'
-	import Note from './Note.svelte'
-	import Punctuation from './Punctuation.svelte'
 	import LookupWord from './LookupWord.svelte'
+	import Added from './Added.svelte'
+	import SingleToken from './SingleToken.svelte'
 	import {TOKEN_TYPE} from '$lib/parser/token'
 
 	/** @type {Token[]} */
 	export let tokens
 
-	/** @type {Map<TokenType, typeof Error>}*/
+	/** @type {Map<TokenType, typeof LookupWord>}*/
 	const component_map = new Map([
-		[TOKEN_TYPE.ERROR, Error],
-		[TOKEN_TYPE.FUNCTION_WORD, FunctionWord],
-		[TOKEN_TYPE.NOTE, Note],
-		[TOKEN_TYPE.PUNCTUATION, Punctuation],
+		[TOKEN_TYPE.FUNCTION_WORD, SingleToken],
+		[TOKEN_TYPE.NOTE, SingleToken],
+		[TOKEN_TYPE.PUNCTUATION, SingleToken],
 		[TOKEN_TYPE.LOOKUP_WORD, LookupWord],
+		[TOKEN_TYPE.ADDED, Added],
 	])
 </script>
 

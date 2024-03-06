@@ -43,7 +43,7 @@ const part_of_speech_rules_json = [
 			'precededby': { 'stem': 'from|of|with' },
 		},
 		'remove': 'Noun',
-		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Preceded by an Adjective: Daniel 1:7 The official gave new names(N/V) to the men... Preceded by a Conjunction: Because we don\'t allow coordinate VPs in these propositions, if there\'s a Conjunction preceding the Noun/Verb, the word must be a Noun. Daniel 2:37 God has given wealth and honor(N/V) to you.',
+		'comment': '',
 	},
 	{
 		'name': 'If Noun-Verb preceded by a Noun, delete the Noun',
@@ -53,6 +53,15 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Noun',
 		'comment': 'Daniel 3:9  I(astrologer) hope(N/V) that...',
+	},
+	{
+		'name': 'If Adposition-Conjunction at the beginning of a non-relative clause, remove Adposition',
+		'category': 'Adposition|Conjunction',
+		'context': {
+			'notprecededby': { 'token': '[' },
+		},
+		'remove': 'Adposition',
+		'comment': '',
 	},
 ]
 

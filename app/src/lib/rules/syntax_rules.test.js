@@ -1,4 +1,4 @@
-import {TOKEN_TYPE, create_clause_token, create_error_token, create_token, flatten_sentence, token_has_error} from '../parser/token'
+import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence, token_has_error} from '../parser/token'
 import {ERRORS} from '../parser/error_messages'
 import {apply_rules} from './rules_processor'
 import {SYNTAX_RULES} from './syntax_rules'
@@ -71,9 +71,9 @@ function expect_error_at(index, message, tokens) {
 	for (let [i, token] of tokens.entries()) {
 		if (i === index) {
 			expect(token_has_error(token)).toBe(true)
-			expect(token.message).toEqual(message)
+			expect(token.error_message).toEqual(message)
 		} else {
-			expect(token.message).toBe('')
+			expect(token.error_message).toBe('')
 		}
 	}
 }
@@ -310,7 +310,7 @@ describe('sentence syntax: capitalization', () => {
 		test('you go. an existing error doesn\'t get overwritten', () => {
 			const test_tokens = [
 				create_sentence([
-					create_error_token('you', 'Some error'),
+					create_token('you', TOKEN_TYPE.LOOKUP_WORD, {error: 'Some error'}),
 					create_token('go', TOKEN_TYPE.LOOKUP_WORD),
 					create_token('.', TOKEN_TYPE.PUNCTUATION),
 				]),
@@ -320,7 +320,7 @@ describe('sentence syntax: capitalization', () => {
 
 			expect(checked_tokens).length(3)
 			expect_error_at(0, 'Some error', checked_tokens)
-			expect(checked_tokens[1].message).toBe('')
+			expect(checked_tokens[1].error_message).toBe('')
 		})
 		test('Token, ["hello"]. beginning of quote is checked', () => {
 			const test_tokens = [

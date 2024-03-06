@@ -87,10 +87,10 @@ describe('pairing level check', () => {
 
 		const checked_tokens = check_pairings(test_tokens).flatMap(flatten_sentence)
 
-		expect(checked_tokens[0].message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
-		expect(checked_tokens[0].complex_pairing?.message).toBe('')
-		expect(checked_tokens[1].message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
-		expect(checked_tokens[1].complex_pairing?.message).toBe('')
+		expect(checked_tokens[0].error_message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
+		expect(checked_tokens[0].complex_pairing?.error_message).toBe('')
+		expect(checked_tokens[1].error_message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
+		expect(checked_tokens[1].complex_pairing?.error_message).toBe('')
 	})
 	test('second word wrong level', () => {
 		const test_tokens = [create_sentence([
@@ -106,10 +106,10 @@ describe('pairing level check', () => {
 
 		const checked_tokens = check_pairings(test_tokens).flatMap(flatten_sentence)
 
-		expect(checked_tokens[0].message).toBe('')
-		expect(checked_tokens[0].complex_pairing?.message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
-		expect(checked_tokens[1].message).toBe('')
-		expect(checked_tokens[1].complex_pairing?.message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
+		expect(checked_tokens[0].error_message).toBe('')
+		expect(checked_tokens[0].complex_pairing?.error_message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
+		expect(checked_tokens[1].error_message).toBe('')
+		expect(checked_tokens[1].complex_pairing?.error_message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
 	})
 	test('both words wrong level', () => {
 		const test_tokens = [create_sentence([
@@ -125,10 +125,10 @@ describe('pairing level check', () => {
 
 		const checked_tokens = check_pairings(test_tokens).flatMap(flatten_sentence)
 
-		expect(checked_tokens[0].message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
-		expect(checked_tokens[0].complex_pairing?.message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
-		expect(checked_tokens[1].message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
-		expect(checked_tokens[1].complex_pairing?.message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
+		expect(checked_tokens[0].error_message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
+		expect(checked_tokens[0].complex_pairing?.error_message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
+		expect(checked_tokens[1].error_message).toBe(ERRORS.WORD_LEVEL_TOO_HIGH)
+		expect(checked_tokens[1].complex_pairing?.error_message).toBe(ERRORS.WORD_LEVEL_TOO_LOW)
 	})
 	test('lookups with multiple levels does not cause error', () => {
 		const test_tokens = [create_sentence([
@@ -176,11 +176,11 @@ describe('part_of_speech disambiguation', () => {
 
 		const checked_tokens = check_pairings(test_tokens).flatMap(flatten_sentence)
 
-		expect(checked_tokens[0].message).toBe('')
+		expect(checked_tokens[0].error_message).toBe('')
 		expect(checked_tokens[0].lookup_results.length).toBe(1)
 		expect(checked_tokens[0].lookup_results[0].part_of_speech).toBe('Verb')
 
-		expect(checked_tokens[0].complex_pairing?.message).toBe('')
+		expect(checked_tokens[0].complex_pairing?.error_message).toBe('')
 		expect(checked_tokens[0].complex_pairing?.lookup_results.length).toBe(1)
 		expect(checked_tokens[0].complex_pairing?.lookup_results[0].part_of_speech).toBe('Verb')
 	})
@@ -218,10 +218,10 @@ describe('part_of_speech disambiguation', () => {
 
 		const checked_tokens = check_pairings(test_tokens).flatMap(flatten_sentence)
 
-		expect(checked_tokens[0].message).toMatch(/^Cannot pair words/)
+		expect(checked_tokens[0].error_message).toMatch(/^Cannot pair words/)
 		expect(checked_tokens[0].lookup_results.length).toBe(2)
 
-		expect(checked_tokens[0].complex_pairing?.message).toBe('')
+		expect(checked_tokens[0].complex_pairing?.error_message).toBe('')
 		expect(checked_tokens[0].complex_pairing?.lookup_results.length).toBe(2)
 	})
 })

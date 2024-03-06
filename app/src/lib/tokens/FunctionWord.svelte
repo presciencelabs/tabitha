@@ -1,8 +1,15 @@
 <script>
+	import TokenDisplay from './TokenDisplay.svelte'
+
 	/** @type {Token} */
 	export let token
+	export let classes = ''
 </script>
 
-<span>
-	{token.token}
-</span>
+{#if classes.includes('join-item')}
+	<TokenDisplay classes="!px-2 {classes}">{token.token}</TokenDisplay>
+{:else}
+	<span class="{classes}">
+		{token.token}
+	</span>
+{/if}
