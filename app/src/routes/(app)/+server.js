@@ -15,8 +15,8 @@ export async function GET({ url: { searchParams }, locals: { db } }) {
 	 * @param {Concept} concept
 	 */
 	function make_lite(concept) {
-		const { id, stem, sense, part_of_speech, level, gloss } = concept
+		const { id, stem, sense, part_of_speech, level, gloss, categorization } = concept
 
-		return { id, stem, sense, part_of_speech, level, gloss }
+		return { id, stem, sense, part_of_speech, level, gloss, categorization }
 	}
 }
