@@ -30,7 +30,7 @@ export const get_concepts = db => async filter => {
 		const sql = `
 			SELECT *
 			FROM Concepts
-			WHERE stem = ?
+			WHERE stem like ?
 			AND sense = ?
 		`
 
