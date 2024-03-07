@@ -225,23 +225,9 @@ export function create_token_filter(filter_json) {
 		})
 	}
 
-	const stem_json = filter_json['stem']
-	if (stem_json !== undefined) {
-		const value_checker = get_value_checker(stem_json)
-		filters.push(token => {
-			if (token.lookup_results.length) {
-				return token.lookup_results.every(lookup => value_checker(lookup.stem))
-
-			} else if (token.form_results.length) {
-				return token.form_results.every(form => value_checker(form.stem))
-
-			} else {
-				return value_checker(token.token)
-			}
-		})
-	}
-
-	add_lookup_filter('category', concept => concept.part_of_speech)
+	add_lookup_filter('stem', lookup => lookup.stem, form => form.stem, token => token.token)
+	add_lookup_filter('category', lookup => lookup.part_of_speech, form => form.part_of_speech)
+	add_lookup_filter('level', concept => `${concept.level}`)
 
 	if (filters.length === 0) {
 		return () => false
@@ -264,13 +250,29 @@ export function create_token_filter(filter_json) {
 	/**
 	 * 
 	 * @param {string} property_name 
-	 * @param {(concept: OntologyResult) => string} value_getter
+	 * @param {(concept: OntologyResult) => string} lookup_value_getter
+	 * @param {((form: FormResult) => string)?} form_value_getter
+	 * @param {((token: Token) => string)?} default_getter
 	 */
-	function add_lookup_filter(property_name, value_getter) {
+	function add_lookup_filter(property_name, lookup_value_getter, form_value_getter=null, default_getter=null) {
 		const property_json = filter_json[property_name]
 		if (property_json !== undefined) {
 			const value_checker = get_value_checker(property_json)
-			filters.push(check_token_lookup(concept => value_checker(value_getter(concept))))
+			filters.push(token => {
+				if (token.type !== TOKEN_TYPE.LOOKUP_WORD) {
+					return false
+					
+				} else if (token.lookup_results.length) {
+					return token.lookup_results.every(lookup => value_checker(lookup_value_getter(lookup)))
+	
+				} else if (form_value_getter && token.form_results.length) {
+					return token.form_results.every(form => value_checker(form_value_getter(form)))
+	
+				} else if (default_getter) {
+					return value_checker(default_getter(token))
+				}
+				return false
+			})
 		}
 	}
 

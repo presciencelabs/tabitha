@@ -347,7 +347,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('double quote variants', () => {
-		const INPUT = "[“Yes.”] \" “"
+		const INPUT = '[“Yes.”] " “'
 
 		const EXPECTED_OUTPUT = [
 			create_token('[', TOKEN_TYPE.PUNCTUATION),

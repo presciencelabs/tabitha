@@ -48,7 +48,7 @@ function get_form_matches(db) {
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowInflection>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
 		const {results} = await db.prepare(sql).bind(`%|${word}|%`, word).all()
 
-		return results.map(result => transform_db_result(result, term))
+		return results.map(result => transform_db_result(result, word))
 	}
 
 	/**

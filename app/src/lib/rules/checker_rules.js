@@ -1,6 +1,6 @@
 import {ERRORS} from '$lib/parser/error_messages'
 import {TOKEN_TYPE, check_token_lookup} from '$lib/parser/token'
-import {create_context_filter, create_token_modify_action, parse_checker_rule} from './rules_parser'
+import {create_context_filter, create_token_filter, create_token_modify_action, parse_checker_rule} from './rules_parser'
 
 const checker_rules_json = [
 	{
@@ -154,16 +154,40 @@ const checker_rules_json = [
 /** @type {BuiltInRule[]} */
 const builtin_checker_rules = [
 	{
-		name: 'Check word complexity level',
+		name: 'Check that level 3 words are within a (complex) alternate',
 		comment: '',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			trigger: create_token_filter({ 'level': '3' }),
+			context: create_context_filter({ 'notprecededby': { 'token': '(complex)', 'skip': 'all' } }),
+			action: create_token_modify_action(token =>{
+				token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+			}),
+		},
+	},
+	{
+		name: 'Check that level 2 words are not on their own',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'level': '2' }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token =>{
+				token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+			}),
+		},
+	},
+	{
+		name: 'Check word complexity level of pairings',
+		comment: '',
+		rule: {
+			trigger: token => token.complex_pairing !== null,
+			context: create_context_filter({}),
+			action: create_token_modify_action(token =>{
+				// the simple word should never be level 2 or 3
 				if (check_token_lookup(is_level_complex)(token)) {
 					token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
 				}
 
+				// the complex word should never be level 0 or 1 (right?)
 				if (token.complex_pairing && check_token_lookup(is_level_simple)(token.complex_pairing)) {
 					token.complex_pairing.error_message = ERRORS.WORD_LEVEL_TOO_LOW
 				}

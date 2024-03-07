@@ -36,24 +36,26 @@ const lookup_rules_json = [
 	},
 	{
 		'name': 'even-if',
-		'trigger': { 'token': 'even' },
+		'trigger': { 'token': 'Even|even' },
 		'context': { 'followedby': {'token': 'if'} },
 		'lookup': 'even-if',
 		'combine': 1,
 	},
 	{
-		'name': 'much becomes much-many',
-		'trigger': { 'token': 'much' },
+		'name': 'much becomes much-many if followed by a Noun',
+		'trigger': { 'token': 'Much|much' },
+		'context': { 'followedby': {'category': 'Noun'} },
 		'lookup': 'much-many',
+		'comment': 'something like "There is much water"',
 	},
 	{
 		'name': 'many becomes much-many',
-		'trigger': { 'token': 'many' },
+		'trigger': { 'token': 'Many|many' },
 		'lookup': 'much-many',
 	},
 	{
 		'name': 'every becomes each',
-		'trigger': { 'token': 'every' },
+		'trigger': { 'token': 'Every|every' },
 		'lookup': 'each',
 	},
 	{
@@ -63,7 +65,7 @@ const lookup_rules_json = [
 	},
 	{
 		'name': 'one tenth of',
-		'trigger': { 'token': 'one' },
+		'trigger': { 'token': 'One|one' },
 		'context': { 'followedby': [{'token': 'tenth'}, {'token': 'of'}] },
 		'lookup': '.1',
 		'combine': 2,

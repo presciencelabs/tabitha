@@ -40,6 +40,7 @@ const transform_rules_json = [
 			},
 		},
 		'transform': { 'function': 'auxiliary|inceptive_aspect' },
+		'comment': 'support both "started eating" and "started to eat"',
 	},
 	{
 		'name': 'stop before a verb becomes a function word',
@@ -53,9 +54,13 @@ const transform_rules_json = [
 		'name': 'continue before a verb becomes a function word',
 		'trigger': { 'stem': 'continue' },
 		'context': {
-			'followedby': { 'category': 'Verb' },
+			'followedby': {
+				'category': 'Verb',
+				'skip': { 'token': 'to' },
+			},
 		},
 		'transform': { 'function': 'auxiliary|continuative_aspect' },
+		'comment': 'support both "continued eating" and "continued to eat"',
 	},
 	{
 		'name': 'finish before a verb becomes a function word',
@@ -113,9 +118,20 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxiliary' },
 	},
 	{
-		'name': '\'named\' after a place becomes a function word',
+		'name': '\'named\' before a name and after a Verb becomes a function word',
 		'trigger': { 'token': 'named' },
-		'context': { 'precededby': {'stem': 'tribe|region|city|town|country'} },
+		'context': {
+			'precededby': { 'category': 'Verb', 'skip': 'all' },
+			'followedby': { 'level': '4' },
+		},
+		'transform': { 'function': '-Name' },
+	},
+	{
+		'name': '\'named\' before a name and before a Verb becomes a function word',
+		'trigger': { 'token': 'named' },
+		'context': {
+			'followedby': [{ 'level': '4' }, { 'category': 'Verb', 'skip': 'all' }],
+		},
 		'transform': { 'function': '-Name' },
 	},
 	{
@@ -141,7 +157,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'category': 'Adjective',
-				'skip': { 'token': 'not|very|extremely' },
+				'skip': [{ 'token': 'not|very|extremely' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'concept': 'be-D' },
