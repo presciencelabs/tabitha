@@ -1,0 +1,3 @@
+type BookResult = {
+	book: string
+}

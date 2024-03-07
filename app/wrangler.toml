@@ -1,0 +1,10 @@
+# https://developers.cloudflare.com/workers/wrangler/configuration
+
+# https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds
+[build]
+command = "pnpm build"
+
+[[d1_databases]]
+binding = "DB_Targets"
+database_name = "Targets.2023-10-20"
+database_id = "d52ae9a5-54e4-4426-b097-16b1757975ae"

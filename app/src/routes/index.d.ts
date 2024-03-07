@@ -1,0 +1,3 @@
+type LanguageResult = {
+	name: string
+}
