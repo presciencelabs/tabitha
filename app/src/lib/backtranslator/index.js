@@ -16,8 +16,18 @@ export function backtranslate(input) {
 		.replace(/> </g, ' ')
 		.replace(/ _1stAs3rd([ .?!])/g, '$1')
 
+		// replace certain words
+		.replace(/([ .?!]*)God's book([ .?!]*)/g, '$1the Scriptures$2')
+		.replace(/([ .?!]*)2([ .?!]*)/g, '$1two$2')
+		.replace(/([ .?!]*)3([ .?!]*)/g, '$1three$2')
+		.replace(/([ .?!]*)4([ .?!]*)/g, '$1four$2')
+		.replace(/([ .?!]*)5([ .?!]*)/g, '$1five$2')
+
 		// verbs that take a clausal argument that are often translated as 'that....'
 		.replace(/(see|saw|know|knew|say|said) \[/g, '$1 that [')
+
+		// surround descriptive relative clauses with commas
+		.replace(/([ .?!]*) \[([^[.?!]*)_descriptive (.*?)\]/g, '$1, $2 $3,')
 
 		.replace(/\[([^[.?!]*) \(implicit-situational\) (.*?)\]/g, '<<$1 $2>>')
 		.replace(/\[([^[.?!]*) \(implicit-background\) (.*?)\]/g, '<<$1 $2>>')
@@ -33,6 +43,7 @@ export function backtranslate(input) {
 		.replace(/You \(imp\) ([a-z])/g, (match, p1) => p1.toUpperCase())
 		.replace(/You \(imp\) /g, '')
 		.replace(/you \(imp\) /g, '')
+		.replace(/_paragraph /g, '(paragraph) ')
 		.replace(/_excl([ .?!])/g, '$1')
 		.replace(/ _inLDV([ .!?,])/g, '$1')
 		.replace(/_restrictive /g, '')
@@ -53,6 +64,7 @@ export function backtranslate(input) {
 		.replace(/the ([^ ]*?) of (.+?) _metonymy/g, '<<$2 of>> the $1')
 		.replace(/([^ ]*?) of (.+?) _metonymy/g, '<<$2 of>> $1')
 		.replace(/ named /g, ' named& ')
+		.replace(/(tribe|region|city|town|country) named& ([^&]+?)/g, '$1 of $2')
 		.replace(/([^ ]*?) named& ([^&]+?) _explainName/g, '<<$2 of>> $1')
 		.replace(/([^ ]*?) named& ([^&]+?) _implicitExplainName/g, '<<$2 of>> $1')
 		.replace(/&/g, '')

@@ -82,6 +82,18 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxilliary|imperfective_aspect' },
 	},
 	{
+		'name': 'have before a past participle Verb indicates flashback/perfect',
+		'trigger': { 'stem': 'have' },
+		'context': {
+			'followedby': {
+				'category': 'Verb',
+				'form': 'past participle',
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+			},
+		},
+		'transform': { 'function': 'auxilliary|flashback' },
+	},
+	{
 		'name': 'be before an auxilliary becomes an auxilliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
@@ -93,16 +105,16 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxilliary' },
 	},
 	{
-		'name': 'have before a past participle Verb indicates flashback/perfect',
-		'trigger': { 'stem': 'have' },
-		'context': {
-			'followedby': {
-				'category': 'Verb',
-				'form': 'past participle',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
-			},
-		},
-		'transform': { 'function': 'auxilliary|flashback' },
+		'name': '\'named\' after a place becomes a function word',
+		'trigger': { 'token': 'named' },
+		'context': { 'precededby': {'stem': 'tribe|region|city|town|country'} },
+		'transform': { 'function': '-Name' },
+	},
+	{
+		'name': '\'of\' after group/crowd becomes a function word',
+		'trigger': { 'token': 'of' },
+		'context': { 'precededby': {'stem': 'group|crowd'} },
+		'transform': { 'function': '-Group' },
 	},
 	{
 		'name': 'be before an adjective becomes be-D',
