@@ -19,7 +19,8 @@ const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'-]+)\)$/
 
 // Could be son son's sons' son-C son's-C sons'-C
 // This pulls out the stem and sense, which will then need to be put back together
-const EXTRACT_WORD_REFERENT = /^(.+?)(?:'s|')?(-[A-Z])?$/
+const EXTRACT_LOOKUP_TERM = /^(.+?)(?:'s|')?(-[A-Z])?$/
+const HAS_POSSESSIVE = /^(.+?)('s|')(-[A-Z])?$/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class
 const SENTENCE_ENDING_PUNCTUATION = /^[.?!]/
@@ -41,7 +42,8 @@ const OR = function (regex1, regex2) {
 export const REGEXES = {
 	ANY_WHITESPACE,
 	EXTRACT_PRONOUN_REFERENT,
-	EXTRACT_WORD_REFERENT,
+	EXTRACT_LOOKUP_TERM,
+	HAS_POSSESSIVE,
 	SENTENCE_ENDING_PUNCTUATION,
 	CLAUSE_ENDING_PUNCTUATION,
 	OPENING_BRACKET,

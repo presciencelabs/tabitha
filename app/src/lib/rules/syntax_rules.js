@@ -121,6 +121,17 @@ const builtin_syntax_rules = [
 		},
 	},
 	{
+		name: "Tag words with a possessive 's as genitive_saxon",
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				token.tag = token.tag ? `${token.tag}|genitive_saxon` : 'genitive_saxon'
+			}),
+		},
+	},
+	{
 		name: 'Filter lookup results for pairings based on part of speech',
 		comment: '',
 		rule: {

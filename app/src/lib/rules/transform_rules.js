@@ -71,6 +71,15 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxiliary|completive_aspect' },
 	},
 	{
+		'name': 'be before any verb becomes an auxiliary',
+		'trigger': { 'stem': 'be' },
+		'context': {
+			'followedby': { 'category': 'Verb' },
+		},
+		'transform': { 'function': 'auxiliary' },
+		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
+	},
+	{
 		'name': 'be before a past participle Verb indicates passive',
 		'trigger': { 'stem': 'be' },
 		'context': {
@@ -95,16 +104,16 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxiliary|imperfective_aspect' },
 	},
 	{
-		'name': 'have before a past participle Verb indicates flashback/perfect',
+		'name': 'have before a Verb indicates flashback/perfect',
 		'trigger': { 'stem': 'have' },
 		'context': {
 			'followedby': {
 				'category': 'Verb',
-				'form': 'past participle',
 				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
 			},
 		},
 		'transform': { 'function': 'auxiliary|flashback' },
+		'comment': 'don\'t check for the past participle form because of cases like "have cry-out"',
 	},
 	{
 		'name': 'be before an auxiliary becomes an auxiliary',

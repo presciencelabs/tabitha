@@ -201,7 +201,7 @@ export function tokenize_input(text = '') {
 	 * @returns {Token}
 	 */
 	function lookup_token(text) {
-		const lookup_match = text.match(REGEXES.EXTRACT_WORD_REFERENT)
+		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)
 
 		// combine stem and sense
 		// @ts-ignore the stem will always be there

@@ -14,7 +14,7 @@ export const FUNCTION_WORDS = new Map([
 	['might', 'might_mood'],
 	['must', 'must_mood'],
 	['not', 'negative_verb_polarity'],
-	['of', 'genitive'],
+	['of', 'genitive_norman'],
 	['probably', 'probable_mood'],
 	['should', 'should_mood'],
 	['than', 'comparative_degree'],

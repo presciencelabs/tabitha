@@ -211,6 +211,7 @@ INSERT INTO Inflections VALUES('wonderful','Adjective','|wonderful  more|wonderf
 INSERT INTO Inflections VALUES('worthless','Adjective','|worthless  more|worthless  most|');
 INSERT INTO Inflections VALUES('worthy','Adjective','|worthy  more|worthy  most|');
 INSERT INTO Inflections VALUES('young','Adjective','|younger|youngest|');
+INSERT INTO Inflections VALUES('left','Adjective','||');
 INSERT INTO Inflections VALUES('badly','Adverb','|badlier|badliest|');
 INSERT INTO Inflections VALUES('carefully','Adverb','|carefully  more|carefully  most|');
 INSERT INTO Inflections VALUES('completely','Adverb','|completely  more|completely  most|');
@@ -2800,6 +2801,7 @@ INSERT INTO Inflections VALUES('Zorah','Noun','|Zorahs|');
 INSERT INTO Inflections VALUES('Zuph','Noun','|Zuphs|');
 INSERT INTO Inflections VALUES('Zur','Noun','|Zurs|');
 INSERT INTO Inflections VALUES('Zuzite','Noun','|Zuzites|');
+INSERT INTO Inflections VALUES('result','Noun','|results|');
 INSERT INTO Inflections VALUES('abandon','Verb','|abandoned|abandoned|abandoning|abandons|');
 INSERT INTO Inflections VALUES('accept','Verb','|accepted|accepted|accepting|accepts|');
 INSERT INTO Inflections VALUES('accuse','Verb','|accused|accused|accusing|accuses|');
@@ -3332,4 +3334,8 @@ INSERT INTO Inflections VALUES('wound','Verb','|wounded|wounded|wounding|wounds|
 INSERT INTO Inflections VALUES('wrap','Verb','|wrapped|wrapped|wrapping|wraps|');
 INSERT INTO Inflections VALUES('wrestle','Verb','|wrestled|wrestled|wrestling|wrestles|');
 INSERT INTO Inflections VALUES('write','Verb','|wrote|written|writing|writes|');
+INSERT INTO Inflections VALUES('goodbye','Verb','|goodbied|goodbied|goodbying|goodbyes|');
+INSERT INTO Inflections VALUES('pity','Verb','|pitied|pitied|pitying|pities|');
+INSERT INTO Inflections VALUES('prophesy','Verb','|prophesied|prophesied|prophesying|prophesies|');
+INSERT INTO Inflections VALUES('sex','Verb','|sexed|sexed|sexing|sexes|');
 COMMIT;

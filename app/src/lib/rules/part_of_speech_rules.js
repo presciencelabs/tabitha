@@ -46,6 +46,15 @@ const part_of_speech_rules_json = [
 		'comment': '',
 	},
 	{
+		'name': 'If Noun-Verb preceded by an \'s, delete the Verb',
+		'category': 'Noun|Verb',
+		'context': {
+			'precededby': { 'tag': 'genitive_saxon', 'skip': { 'category': 'Adjective' } },
+		},
+		'remove': 'Verb',
+		'comment': 'Gideon returned to the Israelite\'s camp.',
+	},
+	{
 		'name': 'If Noun-Verb preceded by a Noun, delete the Noun',
 		'category': 'Noun|Verb',
 		'context': {
@@ -71,6 +80,25 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Adverb',
 		'comment': 'Dan. 1:12 Please give only(Adj/Adv) vegetables ...  Paul like most(Adj/Adv) books.',
+	},
+	{
+		'name': 'If Verb-Adjective preceded by an article or possessive, remove Verb',
+		'category': 'Verb|Adjective',
+		'context': {
+			'precededby': {
+				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|genitive_saxon',
+				'skip': { 'category': 'Adjective' },
+			},
+		},
+		'remove': 'Verb',
+		'comment': 'The man held the stick in the man\'s left hand',
+	},
+	{
+		'name': 'If Verb-Adjective preceded by a Noun, remove Adjective',
+		'category': 'Verb|Adjective',
+		'context': { 'precededby': { 'category': 'Noun' } },
+		'remove': 'Adjective',
+		'comment': 'The man left the house.',
 	},
 	{
 		'name': 'If Adverb-Adjective followed by Verb, remove Adjective',

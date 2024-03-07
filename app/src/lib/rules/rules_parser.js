@@ -1,4 +1,4 @@
-import {TOKEN_TYPE, check_token_lookup, convert_to_error_token, create_added_token, set_token_concept} from '$lib/parser/token'
+import {TOKEN_TYPE, convert_to_error_token, create_added_token, set_token_concept} from '$lib/parser/token'
 
 /**
  *

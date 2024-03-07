@@ -6,5 +6,5 @@ command = "pnpm build"
 
 [[d1_databases]]
 binding = "DB_Editor" # i.e. available in your Worker on env.DB
-database_name = "Editor.2024-02-20"
-database_id = "78a34afa-079b-4d27-874c-da8c561fed55"
+database_name = "Editor.2024-03-07"
+database_id = "1cafb9bd-be9b-4c3c-a4d0-ac0394126cd6"
