@@ -65,7 +65,3 @@ https://developers.cloudflare.com/workers/wrangler
 
 `wrangler d1 execute Targets.YYYY-MM-DD --local --command="select count(*) from English"`
 
-### Deployment
-
-D1 requires a worker so deployments will occur during the app deployment by virtue of the D1 binding.
-
