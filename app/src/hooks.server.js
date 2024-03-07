@@ -6,7 +6,7 @@ export async function handle({ event, resolve }) {
 
 	const response = await resolve(event)
 
-	// handle_cors()
+	handle_cors()
 
 	return response
 
@@ -30,12 +30,12 @@ export async function handle({ event, resolve }) {
 
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 	// 	ours meets the conditions for a simple request scenario
-	// function handle_cors() {
-	// 	const origin = event.request.headers.get('Origin')
+	function handle_cors() {
+		const origin = event.request.headers.get('Origin')
 
-	// 	const FROM_TBTA_BIBLE_OPTIONAL_PORT = /\.tbta\.bible(:\d+)?$/
-	// 	if (origin?.match(FROM_TBTA_BIBLE_OPTIONAL_PORT)) {
-	// 		response.headers.set('Access-Control-Allow-Origin', origin)
-	// 	}
-	// }
+		const FROM_TBTA_BIBLE_OPTIONAL_PORT = /\.tbta\.bible(:\d+)?$/
+		if (origin?.match(FROM_TBTA_BIBLE_OPTIONAL_PORT)) {
+			response.headers.set('Access-Control-Allow-Origin', origin)
+		}
+	}
 }
