@@ -5,10 +5,21 @@ import {TOKEN_TYPE, create_token} from './token'
 import {ERRORS} from './error_messages'
 
 /**
+ * 
+ * @param {string} text 
+ * @returns {string}
+ */
+function normalize_input(text) {
+	return text.replaceAll(/[“”]/g, '"').replaceAll(/’/g, '\'')
+}
+
+/**
  * @param {string} text
  * @returns {Token[]}
  */
 export function tokenize_input(text = '') {
+	text = normalize_input(text)
+
 	/** @type {Array<[() => boolean, () => Token]>} */
 	const parsers = [
 		[() => match(REGEXES.WORD_START_CHAR), word],

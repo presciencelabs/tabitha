@@ -335,12 +335,29 @@ describe('tokenize_input', () => {
 		const INPUT = "Paul's Paul’s Jesus’ Jesus' sons’-C you(Paul’s)"
 
 		const EXPECTED_OUTPUT = [
-			create_word_token("Paul's", 'Paul'),
-			create_word_token('Paul’s', 'Paul'),
-			create_word_token('Jesus’', 'Jesus'),
+			create_word_token('Paul\'s', 'Paul'),
+			create_word_token('Paul\'s', 'Paul'),
+			create_word_token('Jesus\'', 'Jesus'),
 			create_word_token("Jesus'", 'Jesus'),
-			create_word_token('sons’-C', 'sons-C'),
-			create_pronoun_token('you', 'Paul’s', 'Paul'),
+			create_word_token('sons\'-C', 'sons-C'),
+			create_pronoun_token('you', 'Paul\'s', 'Paul'),
+		]
+
+		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
+	test('double quote variants', () => {
+		const INPUT = "[“Yes.”] \" “"
+
+		const EXPECTED_OUTPUT = [
+			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_token('"', TOKEN_TYPE.PUNCTUATION),
+			create_word_token('Yes'),
+			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token('"', TOKEN_TYPE.PUNCTUATION),
+			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token('"', TOKEN_TYPE.PUNCTUATION),
+			create_token('"', TOKEN_TYPE.PUNCTUATION),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)

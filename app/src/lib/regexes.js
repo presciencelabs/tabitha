@@ -15,11 +15,11 @@ const CLOSING_PAREN = /\)/
 const FORWARD_SLASH = /\//
 
 // Could be you(son) your(son's) your(sons') you(son-C) your(son's-C) your(sons'-C)
-const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'’-]+)\)$/
+const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'-]+)\)$/
 
 // Could be son son's sons' son-C son's-C sons'-C
 // This pulls out the stem and sense, which will then need to be put back together
-const EXTRACT_WORD_REFERENT = /^(.+?)(?:['’]s|['’])?(-[A-Z])?$/
+const EXTRACT_WORD_REFERENT = /^(.+?)(?:'s|')?(-[A-Z])?$/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class
 const SENTENCE_ENDING_PUNCTUATION = /^[.?!]/
@@ -27,7 +27,7 @@ const CLAUSE_ENDING_PUNCTUATION = /[\]"]/
 
 const TOKEN_END_BOUNDARY = /[\s.,!?:"\]]/
 const WORD_START_CHAR = /[a-zA-Z0-9-]/
-const WORD_CHAR = /[a-zA-Z0-9-'’]/
+const WORD_CHAR = /[a-zA-Z0-9-']/
 const STARTS_LOWERCASE = /^[a-z]/
 
 /**

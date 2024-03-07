@@ -12,7 +12,15 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'token': 'not' },
 		},
-		'transform': { 'function': 'auxilliary' },
+		'transform': { 'function': 'auxiliary' },
+	},
+	{
+		'name': 'do in a question becomes an auxiliary',
+		'trigger': { 'stem': 'do' },
+		'context': {
+			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
+		},
+		'transform': { 'function': 'auxiliary' },
 	},
 	{
 		'name': 'most before adjective or adverb becomes a function word',
@@ -31,7 +39,7 @@ const transform_rules_json = [
 				'skip': { 'token': 'to' },
 			},
 		},
-		'transform': { 'function': 'auxilliary|inceptive_aspect' },
+		'transform': { 'function': 'auxiliary|inceptive_aspect' },
 	},
 	{
 		'name': 'stop before a verb becomes a function word',
@@ -39,7 +47,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Verb' },
 		},
-		'transform': { 'function': 'auxilliary|cessative_aspect' },
+		'transform': { 'function': 'auxiliary|cessative_aspect' },
 	},
 	{
 		'name': 'continue before a verb becomes a function word',
@@ -47,7 +55,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Verb' },
 		},
-		'transform': { 'function': 'auxilliary|continuative_aspect' },
+		'transform': { 'function': 'auxiliary|continuative_aspect' },
 	},
 	{
 		'name': 'finish before a verb becomes a function word',
@@ -55,7 +63,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Verb' },
 		},
-		'transform': { 'function': 'auxilliary|completive_aspect' },
+		'transform': { 'function': 'auxiliary|completive_aspect' },
 	},
 	{
 		'name': 'be before a past participle Verb indicates passive',
@@ -67,7 +75,7 @@ const transform_rules_json = [
 				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
 			},
 		},
-		'transform': { 'function': 'auxilliary|passive' },
+		'transform': { 'function': 'auxiliary|passive' },
 	},
 	{
 		'name': 'be before a participle Verb indicates imperfective',
@@ -79,7 +87,7 @@ const transform_rules_json = [
 				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
 			},
 		},
-		'transform': { 'function': 'auxilliary|imperfective_aspect' },
+		'transform': { 'function': 'auxiliary|imperfective_aspect' },
 	},
 	{
 		'name': 'have before a past participle Verb indicates flashback/perfect',
@@ -91,18 +99,18 @@ const transform_rules_json = [
 				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
 			},
 		},
-		'transform': { 'function': 'auxilliary|flashback' },
+		'transform': { 'function': 'auxiliary|flashback' },
 	},
 	{
-		'name': 'be before an auxilliary becomes an auxilliary',
+		'name': 'be before an auxiliary becomes an auxiliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': {
-				'tag': 'auxilliary',
+				'tag': 'auxiliary',
 				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
 			},
 		},
-		'transform': { 'function': 'auxilliary' },
+		'transform': { 'function': 'auxiliary' },
 	},
 	{
 		'name': '\'named\' after a place becomes a function word',
@@ -115,6 +123,17 @@ const transform_rules_json = [
 		'trigger': { 'token': 'of' },
 		'context': { 'precededby': {'stem': 'group|crowd'} },
 		'transform': { 'function': '-Group' },
+	},
+	{
+		'name': 'by preceded by a passive be indicates the agent',
+		'trigger': { 'stem': 'by' },
+		'context': {
+			'precededby': {
+				'tag': 'passive',
+				'skip': 'all',
+			},
+		},
+		'transform': { 'function': 'agent_of_passive' },
 	},
 	{
 		'name': 'be before an adjective becomes be-D',
@@ -146,17 +165,6 @@ const transform_rules_json = [
 		},
 		'transform': { 'concept': 'be-E' },
 		'context_transform': { 'function': 'existential' },
-	},
-	{
-		'name': 'by preceded by a passive be indicates the agent',
-		'trigger': { 'stem': 'by' },
-		'context': {
-			'precededby': {
-				'tag': 'passive',
-				'skip': 'all',
-			},
-		},
-		'transform': { 'function': 'agent_of_passive' },
 	},
 ]
 

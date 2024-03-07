@@ -66,7 +66,7 @@ function get_form_matches(db) {
 
 		const matched_forms = result.inflections.split('|')
 			.filter(inflection => inflection !== '')
-			.map((inflection, index) => inflection === term ? index : -1)
+			.map((inflection, index) => inflection.toLowerCase() === term.toLowerCase() ? index : -1)
 			.filter(index => index >= 0)
 			.map(index => form_names[index])
 			.join('|')
