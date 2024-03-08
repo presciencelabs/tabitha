@@ -1,193 +1,4 @@
-import {TOKEN_TYPE, convert_to_error_token, create_added_token, set_token_concept} from '$lib/parser/token'
-
-/**
- *
- * @param {any} rule_json
- * @returns {TokenRule}
- */
-export function parse_lookup_rule(rule_json) {
-	const trigger = create_token_filter(rule_json['trigger'])
-	const context = create_context_filter(rule_json['context'])
-
-	const lookup_term = rule_json['lookup']
-	const combine = rule_json['combine'] ?? 0
-
-	// TODO support multiple transforms if context requires multiple tokens
-	const context_transforms = [create_token_transform(rule_json['context_transform'])]
-
-	return {
-		trigger,
-		context,
-		action: lookup_rule_action,
-	}
-
-	/**
-	 * 
-	 * @param {Token[]} tokens 
-	 * @param {number} trigger_index 
-	 * @param {number[]} context_indexes 
-	 * @returns {number}
-	 */
-	function lookup_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = {...tokens[trigger_index], lookup_term}
-
-		if (context_indexes.length === 0) {
-			return trigger_index + 1
-		}
-
-		// apply possible context transforms
-		apply_token_transforms(tokens, context_indexes, context_transforms)
-
-		if (combine === 0 || context_indexes[combine-1] !== trigger_index + combine) {
-			return trigger_index + 1
-		}
-		
-		// combine context tokens into one
-		const tokens_to_combine = tokens.splice(trigger_index, combine + 1)
-		const new_token_value = tokens_to_combine.map(token => token.token).join(' ')
-		tokens.splice(trigger_index, 0, {...tokens_to_combine[0], token: new_token_value})
-		return trigger_index + combine + 1
-	}
-}
-
-/**
- *
- * @param {any} rule_json
- * @returns {TokenRule}
- */
-export function parse_part_of_speech_rule(rule_json) {
-	const trigger = trigger_filter(rule_json['category'])
-	const context = create_context_filter(rule_json['context'])
-	const action = create_remove_action(rule_json['remove'])
-
-	return {
-		trigger,
-		context,
-		action,
-	}
-
-	/**
-	 * 
-	 * @param {string} categories_json 
-	 * @returns {TokenFilter}
-	 */
-	function trigger_filter(categories_json) {
-		// the token must have at least one result from each given category
-		const categories = categories_json.split('|')
-		return token => categories.every(category => token.lookup_results.some(result => result.part_of_speech === category))
-	}
-
-	/**
-	 * 
-	 * @param {string} remove_json
-	 * @returns {RuleAction}
-	 */
-	function create_remove_action(remove_json) {
-		return create_token_map_action(token => {
-			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
-			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
-			return {...token, form_results, lookup_results}
-		})
-	}
-}
-
-/**
- *
- * @param {any} rule_json
- * @returns {TokenRule}
- */
-export function parse_transform_rule(rule_json) {
-	const trigger = create_token_filter(rule_json['trigger'])
-	const context = create_context_filter(rule_json['context'])
-	const transform = create_token_transform(rule_json['transform'])
-
-	// TODO support multiple transforms if context requires multiple tokens
-	const context_transforms = [create_token_transform(rule_json['context_transform'])]
-
-	return {
-		trigger,
-		context,
-		action: transform_rule_action,
-	}
-
-	/**
-	 * 
-	 * @param {Token[]} tokens 
-	 * @param {number} trigger_index 
-	 * @param {number[]} context_indexes 
-	 * @returns {number}
-	 */
-	function transform_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = transform(tokens[trigger_index])
-		apply_token_transforms(tokens, context_indexes, context_transforms)
-		
-		return trigger_index + 1
-	}
-}
-
-/**
- *
- * @param {any} rule_json
- * @returns {TokenRule}
- */
-export function parse_checker_rule(rule_json) {
-	const trigger = create_token_filter(rule_json['trigger'])
-	const context = create_context_filter(rule_json['context'])
-
-	// one of these has to be present, but not both
-	const require_json = rule_json['require']
-	const suggest_json = rule_json['suggest']
-	const action = require_json ? checker_require_action(require_json) : checker_suggest_action(suggest_json)
-
-	return {
-		trigger,
-		context,
-		action,
-	}
-
-	/**
-	 * 
-	 * @param {CheckerAction} require
-	 * @returns {RuleAction}
-	 */
-	function checker_require_action(require) {
-		return (tokens, trigger_index) => {
-			// The action will have a precededby, followedby, or neither. Never both.
-			if (require.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(require.precededby, {error: require.message}))
-				return trigger_index + 2
-			}
-			if (require.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, {error: require.message}))
-				return trigger_index + 2
-			}
-
-			tokens[trigger_index] = convert_to_error_token(tokens[trigger_index], require.message)
-			return trigger_index + 1
-		}
-	}
-
-	/**
-	 * suggest only applies on the trigger token (for now)
-	 * @param {CheckerAction} suggest
-	 * @returns {RuleAction}
-	 */
-	function checker_suggest_action(suggest) {
-		return create_token_map_action(token => ({...token, suggest_message: suggest.message}))
-	}
-}
-
-/**
- * 
- * @param {Token[]} tokens 
- * @param {number[]} token_indexes 
- * @param {TokenTransform[]} transforms 
- */
-function apply_token_transforms(tokens, token_indexes, transforms) {
-	for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
-		tokens[token_indexes[i]] = transforms[i](tokens[token_indexes[i]])
-	}
-}
+import {TOKEN_TYPE, check_token_lookup, set_token_concept} from '$lib/parser/token'
 
 /**
  *
@@ -228,6 +39,16 @@ export function create_token_filter(filter_json) {
 	add_lookup_filter('stem', lookup => lookup.stem, form => form.stem, token => token.token)
 	add_lookup_filter('category', lookup => lookup.part_of_speech, form => form.part_of_speech)
 	add_lookup_filter('level', concept => `${concept.level}`)
+
+	/** @type {string | undefined} */
+	const usage_json = filter_json['usage']
+	if (usage_json !== undefined) {
+		const value_checker = get_value_checker(usage_json)
+		filters.push(check_token_lookup(result => {
+			const usages = [...result.categorization].filter(usage => usage !== '_')
+			return usages.length === 0 || usages.some(usage => value_checker(usage))
+		}))
+	}
 
 	if (filters.length === 0) {
 		return () => false
@@ -496,12 +317,59 @@ export function create_token_transform(transform_json) {
 		transforms.push(token => set_token_concept(token, concept))
 	}
 
+	const usage = transform_json['usage']
+	if (usage !== undefined) {
+		transforms.push(token => filter_by_usage(token, usage))
+	}
+
 	if (transforms.length === 0) {
 		return token => token
 	} else if (transforms.length === 1) {
 		return transforms[0]
 	} else {
 		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
+	}
+}
+
+/**
+ * 
+ * @param {Token} token 
+ * @param {string} char 
+ */
+function filter_by_usage(token, char) {
+	if (token.lookup_results.some(has_usage(char))) {
+		token.lookup_results = token.lookup_results.filter(may_have_usage(char))
+	}
+	return token
+
+	/**
+	 * 
+	 * @param {string} char
+	 * @returns {LookupFilter}
+	 */
+	function has_usage(char) {
+		return result => result.categorization.includes(char)
+	}
+	
+	/**
+	 * 
+	 * @param {string} char
+	 * @returns {LookupFilter}
+	 */
+	function may_have_usage(char) {
+		return result => result.categorization.length === 0 || result.categorization.includes(char)
+	}
+}
+
+/**
+ * 
+ * @param {Token[]} tokens 
+ * @param {number[]} token_indexes 
+ * @param {TokenTransform[]} transforms 
+ */
+export function apply_token_transforms(tokens, token_indexes, transforms) {
+	for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
+		tokens[token_indexes[i]] = transforms[i](tokens[token_indexes[i]])
 	}
 }
 

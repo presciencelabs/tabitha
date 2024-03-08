@@ -1,4 +1,4 @@
-import {parse_part_of_speech_rule} from './rules_parser'
+import {create_context_filter, create_token_filter, create_token_map_action} from './rules_parser'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -64,12 +64,27 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 3:9  I(astrologer) hope(N/V) that...',
 	},
 	{
-		'name': 'If Adposition-Conjunction at the beginning of a non-relative clause, remove Adposition',
+		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
-		'context': {
-			'notprecededby': { 'token': '[' },
-		},
+		'trigger': { 'tag': 'first_word' },
 		'remove': 'Adposition',
+		'comment': 'so and for',
+	},
+	{
+		'name': '\'so-that\' will always be the adposition',
+		'category': 'Adposition|Conjunction',
+		'trigger': { 'token': 'so-that' },
+		'remove': 'Conjunction',
+		'comment': '',
+	},
+	{
+		'name': 'If \'so\' is at the start of a subordinate clause, remove the Conjunction',
+		'category': 'Adposition|Conjunction',
+		'trigger': { 'stem': 'so' },
+		'context': {
+			'precededby': { 'token': '[' },
+		},
+		'remove': 'Conjunction',
 		'comment': '',
 	},
 	{
@@ -110,5 +125,47 @@ const part_of_speech_rules_json = [
 		'comment': 'Infected Eye 1:5  You must first(Adj/Adv) wash ...',
 	},
 ]
+
+/**
+ *
+ * @param {any} rule_json
+ * @returns {TokenRule}
+ */
+export function parse_part_of_speech_rule(rule_json) {
+	const category = category_filter(rule_json['category'])
+	const trigger = create_token_filter(rule_json['trigger']) 
+	const context = create_context_filter(rule_json['context'])
+	const action = create_remove_action(rule_json['remove'])
+
+	return {
+		trigger: token => category(token) && trigger(token),
+		context,
+		action,
+	}
+
+	/**
+	 * 
+	 * @param {string} categories_json 
+	 * @returns {TokenFilter}
+	 */
+	function category_filter(categories_json) {
+		// the token must have at least one result from each given category
+		const categories = categories_json.split('|')
+		return token => categories.every(category => token.lookup_results.some(result => result.part_of_speech === category))
+	}
+
+	/**
+	 * 
+	 * @param {string} remove_json
+	 * @returns {RuleAction}
+	 */
+	function create_remove_action(remove_json) {
+		return create_token_map_action(token => {
+			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
+			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
+			return {...token, form_results, lookup_results}
+		})
+	}
+}
 
 export const PART_OF_SPEECH_RULES = part_of_speech_rules_json.map(parse_part_of_speech_rule)

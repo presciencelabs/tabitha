@@ -368,6 +368,27 @@ describe('context filters', () => {
 	})
 })
 
+/**
+ * 
+ * @param {string} stem
+ * @param {Object} [data={}] 
+ * @param {string} [data.sense='A'] 
+ * @param {string} [data.part_of_speech='Noun'] 
+ * @param {number} [data.level=1] 
+ * @returns {OntologyResult}
+ */
+function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+	return {
+		id: '0',
+		stem: stem,
+		sense,
+		part_of_speech,
+		level,
+		gloss: '',
+		categorization: '',
+	}
+}
+
 describe('token transforms', () => {
 	test('type', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD }
@@ -388,7 +409,7 @@ describe('token transforms', () => {
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
-		expect(result.lookup_term).toBe('concept-A')
+		expect(result.lookup_term).toBe('token')
 		expect(result.lookup_results.length).toBe(0)
 		expect(result.error_message).toBe(token.error_message)
 	})
@@ -398,22 +419,8 @@ describe('token transforms', () => {
 
 		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
 		token.lookup_results = [
-			{
-				id: '0',
-				stem: 'concept',
-				sense: 'A',
-				part_of_speech: 'Noun',
-				level: 1,
-				gloss: '',
-			},
-			{
-				id: '0',
-				stem: 'concept',
-				sense: 'B',
-				part_of_speech: 'Noun',
-				level: 1,
-				gloss: '',
-			},
+			create_lookup_result('concept', {'sense': 'A', 'part_of_speech': 'Noun'}),
+			create_lookup_result('concept', {'sense': 'B', 'part_of_speech': 'Noun'}),
 		]
 
 		const result = transform(token)
@@ -424,15 +431,15 @@ describe('token transforms', () => {
 		expect(result.lookup_results[0].sense).toBe('A')
 		expect(result.error_message).toBe(token.error_message)
 	})
-	test('type and concept', () => {
-		const transform_json = { 'type': TOKEN_TYPE.LOOKUP_WORD, 'concept': 'concept-A' }
+	test('type and tag', () => {
+		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': 'tag' }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.FUNCTION_WORD)
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD)
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
-		expect(result.type).toBe(TOKEN_TYPE.LOOKUP_WORD)
-		expect(result.lookup_term).toBe('concept-A')
+		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+		expect(result.tag).toBe('tag')
 		expect(result.error_message).toBe(token.error_message)
 	})
 	test('unrecognized', () => {

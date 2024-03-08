@@ -21,6 +21,8 @@ const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'-]+)\)$/
 // This pulls out the stem and sense, which will then need to be put back together
 const EXTRACT_LOOKUP_TERM = /^(.+?)(?:'s|')?(-[A-Z])?$/
 const HAS_POSSESSIVE = /^(.+?)('s|')(-[A-Z])?$/
+const HAS_SENSE = /^(.+?)(-[A-Z])$/
+const EXTRACT_STEM_AND_SENSE = /^(.+?)(?:-([A-Z]))?$/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class
 const SENTENCE_ENDING_PUNCTUATION = /^[.?!]/
@@ -44,6 +46,8 @@ export const REGEXES = {
 	EXTRACT_PRONOUN_REFERENT,
 	EXTRACT_LOOKUP_TERM,
 	HAS_POSSESSIVE,
+	HAS_SENSE,
+	EXTRACT_STEM_AND_SENSE,
 	SENTENCE_ENDING_PUNCTUATION,
 	CLAUSE_ENDING_PUNCTUATION,
 	OPENING_BRACKET,

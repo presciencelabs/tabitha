@@ -34,6 +34,7 @@ type OntologyResult = {
 	part_of_speech: string
 	level: number
 	gloss: string
+	categorization: string
 }
 
 type FormResult = {

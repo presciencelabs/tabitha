@@ -82,6 +82,7 @@ function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}=
 		part_of_speech,
 		level,
 		gloss: '',
+		categorization: '',
 	}
 }
 

@@ -90,23 +90,17 @@ async function check_forms(lookup_token) {
  */
 async function check_ontology(lookup_token) {
 	// The form lookup may have resulted in different stems (eg. saw). We want to look up all of them
-	if (!all_stems_the_same(lookup_token.form_results)) {
-		const unique_lookups = [...new Set(lookup_token.form_results.map(form => form.stem))]
+	// If different, we also look up the original token in case there is a missing form. (eg. Adjectives left, following)
+	const unique_lookups = new Set(lookup_token.form_results.map(form => form.stem))
+	unique_lookups.add(lookup_token.lookup_term)
+	unique_lookups.add(lookup_token.token)
 
-		const results = await Promise.all(unique_lookups.map(check_word_in_ontology))
+	if (unique_lookups.size > 1) {
+		const results = await Promise.all([...unique_lookups].map(check_word_in_ontology))
 		lookup_token.lookup_results = results.flat()
-
 	} else {
 		lookup_token.lookup_results = await check_word_in_ontology(lookup_token.lookup_term)
 	}
-	
-	// filter out results based on form data
-	if (lookup_token.form_results.length) {
-		const forms = lookup_token.form_results
-		lookup_token.lookup_results = lookup_token.lookup_results
-			.filter(lookup => forms.some(({form, part_of_speech}) => form === 'stem' || part_of_speech === lookup.part_of_speech))
-	}
-	
 
 	/**
 	 * 

@@ -1,3 +1,5 @@
+import {REGEXES} from '$lib/regexes'
+
 /** @type {TokenType} */
 const PUNCTUATION = 'Punctuation'
 
@@ -107,16 +109,26 @@ export function check_token_lookup(lookup_check) {
  * @returns {Token}
  */
 export function set_token_concept(token, concept) {
-	const [stem, sense] = split_concept()
+	// If a specific sense is already selected, don't overwrite it
+	if (token.lookup_results.length <= 1 || REGEXES.HAS_SENSE.test(token.lookup_term)) {
+		return token
+	}
+
+	const {stem, sense} = split_stem_and_sense(concept)
 	token.lookup_term = concept
 	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.sense === sense)
 	return token
 
-	function split_concept() {
-		const dash = concept.lastIndexOf('-')
-		const stem = concept.substring(0, dash)
-		const sense = concept.substring(dash+1)
-		return [stem, sense]
+	/**
+	 * 
+	 * @param {string} term 
+	 * @returns {{stem: string, sense: string}}
+	 */
+	function split_stem_and_sense(term) {
+		/** @type {RegExpMatchArray} */
+		// @ts-ignore the match will always succeed
+		const match = term.match(REGEXES.EXTRACT_STEM_AND_SENSE)
+		return {stem: match[1], sense: match[2] ?? ''}
 	}
 }
 

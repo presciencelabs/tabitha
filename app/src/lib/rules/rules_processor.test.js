@@ -1,8 +1,10 @@
 import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence} from '$lib/parser/token'
 import {describe, expect, test} from 'vitest'
-import {parse_checker_rule, parse_part_of_speech_rule, parse_transform_rule} from './rules_parser'
 import {apply_rules} from './rules_processor'
 import {LOOKUP_RULES} from './lookup_rules'
+import {parse_transform_rule} from './transform_rules'
+import {parse_checker_rule} from './checker_rules'
+import {parse_part_of_speech_rule} from './part_of_speech_rules'
 
 /**
  * 
@@ -11,6 +13,40 @@ import {LOOKUP_RULES} from './lookup_rules'
  */
 function create_sentence(tokens) {
 	return { clause: create_clause_token(tokens) }
+}
+
+/**
+ * 
+ * @param {string} token 
+ * @param {Object} [data={}] 
+ * @param {OntologyResult[]} [data.lookup_results=[]] 
+ * @returns {Token}
+ */
+function create_lookup_token(token, {lookup_results=[]}={}) {
+	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
+	lookup_token.lookup_results = lookup_results
+	return lookup_token
+}
+
+/**
+ * 
+ * @param {string} stem
+ * @param {Object} [data={}] 
+ * @param {string} [data.sense='A'] 
+ * @param {string} [data.part_of_speech='Noun'] 
+ * @param {number} [data.level=1] 
+ * @returns {OntologyResult}
+ */
+function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+	return {
+		id: '0',
+		stem: stem,
+		sense,
+		part_of_speech,
+		level,
+		gloss: '',
+		categorization: '',
+	}
 }
 
 describe('transform rules', () => {
@@ -61,7 +97,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'peanut' },
 				'context': { 'precededby': { 'token': 'a' } },
-				'transform': { 'concept': 'concept-A' },
+				'transform': { 'tag': 'tag' },
 			},
 		].map(parse_transform_rule)
 
@@ -79,8 +115,8 @@ describe('transform rules', () => {
 		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(6)
-		expect(results[1].lookup_term).toBe('peanut')
-		expect(results[4].lookup_term).toBe('concept-A')
+		expect(results[1].tag).toBe('')
+		expect(results[4].tag).toBe('tag')
 	})
 
 	test('triggered within a subordinate clauses', () => {
@@ -88,7 +124,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'transform': { 'concept': 'concept-A' },
+				'transform': { 'tag': 'tag' },
 			},
 		].map(parse_transform_rule)
 
@@ -103,36 +139,41 @@ describe('transform rules', () => {
 
 		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
-		expect(results[0].lookup_term).toBe('concept-A')
+		expect(results[0].tag).toBe('tag')
 	})
 
-	test('multiple transforms for one token', () => {
+	test('concept does not get overwritten', () => {
 		const transform_rules = [
 			{
-				'trigger': { 'token': 'the' },
+				'trigger': { 'token': 'saw' },
 				'context': { 'followedby': 'all' },
-				'transform': { 'concept': 'the-A' },
+				'transform': { 'concept': 'see-A' },
 			},
 			{
-				'trigger': { 'type': TOKEN_TYPE.FUNCTION_WORD },
-				'context': { 'followedby': 'all' },
-				'transform': { 'concept': 'the-B' },
+				'trigger': { 'token': 'saw' },
+				'context': { 'followedby': {'token': 'cat', 'skip': 'all'} },
+				'transform': { 'concept': 'see-B' },
 			},
 		].map(parse_transform_rule)
 
 		const tokens = [
 			create_sentence([
 				create_token('John', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'John'}),
-				create_token('saw', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'saw'}),
+				create_token('saw', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'see'}),
 				create_token('the', TOKEN_TYPE.FUNCTION_WORD),
 				create_token('cat', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'cat'}),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
 			]),
 		]
+		tokens[0].clause.sub_tokens[1].lookup_results = [
+			create_lookup_result('see', {sense: 'A'}),
+			create_lookup_result('see', {sense: 'B'}),
+			create_lookup_result('see', {sense: 'C'}),
+		]
 
 		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
 
-		expect(results[2].lookup_term).toBe('the-B')
+		expect(results[1].lookup_term).toBe('see-A')
 	})
 
 	test('not triggered across sentences', () => {
@@ -470,39 +511,6 @@ describe('lookup rules', () => {
 		expect(results).length(10)
 	})
 })
-
-/**
- * 
- * @param {string} token 
- * @param {Object} [data={}] 
- * @param {OntologyResult[]} [data.lookup_results=[]] 
- * @returns {Token}
- */
-function create_lookup_token(token, {lookup_results=[]}={}) {
-	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
-	lookup_token.lookup_results = lookup_results
-	return lookup_token
-}
-
-/**
- * 
- * @param {string} stem
- * @param {Object} [data={}] 
- * @param {string} [data.sense='A'] 
- * @param {string} [data.part_of_speech='Noun'] 
- * @param {number} [data.level=1] 
- * @returns {OntologyResult}
- */
-function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
-	return {
-		id: '0',
-		stem: stem,
-		sense,
-		part_of_speech,
-		level,
-		gloss: '',
-	}
-}
 
 describe('part-of-speech rules', () => {
 	test('word does not match any parts of speech', () => {
