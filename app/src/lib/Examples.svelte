@@ -1,8 +1,7 @@
 <script>
-	import Icon from '@iconify/svelte'
-	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import SemanticEncoding from './SemanticEncoding.svelte'
 	import { transform_example, display_context_arguments } from './examples'
+	import SourceData from './SourceData.svelte'
+	import TargetData from './TargetData.svelte'
 
 	/** @type {Concept} */
 	export let concept
@@ -10,6 +9,7 @@
 	$: transformed_examples = concept.examples.reduce(transform_example, {})
 
 	$: sources = Object.keys(transformed_examples)
+
 	/** @param {string} source */
 	function book_count(source) {
 		return Object.keys(transformed_examples[source]).length
@@ -37,25 +37,18 @@
 		selected_verse_json_encoded = ''
 	}
 
-	/**
-	 * @param {Reference} reference
-	 *
-	 * @returns {Promise<SourceData>}
-	 */
-	async function get_source_data(reference) {
-		const response = await fetch(get_sources_url(reference))
-
-		return await response.json()
+	$: [selected_chapter, selected_verse] = decode(selected_verse_json_encoded)
+	/** @param {string} encoding */
+	function decode(encoding) {
+		return encoding && JSON.parse(encoding).split(':') || ['', '']
 	}
 
-	/**
-	 * @param {Reference} reference
-	 *
-	 * @returns {string} fully-qualified URL to the sources API
-	 */
-	function get_sources_url({ source, book, chapter, verse }) {
-		return `${PUBLIC_SOURCES_API_HOST}/${source}/${book}/${chapter}/${verse}`
-	}
+	$: selected_reference = {
+			source: selected_source,
+			book: selected_book,
+			chapter: selected_chapter,
+			verse: selected_verse,
+		}
 </script>
 
 <article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
@@ -89,28 +82,14 @@
 		None recorded at this time.
 	{/if}
 
-	{#if selected_verse_json_encoded}
-		{@const key = JSON.parse(selected_verse_json_encoded)}
-		{@const [selected_chapter, selected_verse] = key.split(':')}
-		{@const selected_reference = { source: selected_source, book: selected_book, chapter: selected_chapter, verse: selected_verse }}
+	{#if selected_reference.verse}
+		<SourceData reference={selected_reference} />
 
-		{#await get_source_data(selected_reference)}
-			loading... <!-- TODO: add a spinner? -->
-		{:then source}
-			<h4 class="flex justify-between">
-				Phase 1 encoding
-
-				<a href={get_sources_url(selected_reference)} target="_blank" class="link link-accent link-hover text-sm flex items-end">
-					all source details
-					<Icon icon="fe:link-external" class="h-6 w-6" />
-				</a>
-			</h4>
-			<p>
-				{source.phase_1_encoding}
-			</p>
-
-			<SemanticEncoding phase_2_encoding={source.phase_2_encoding} />
-			<!-- TODO: need errorhandling here, i.e., :catch? -->
-		{/await}
+		<h4>
+			Generated English text
+		</h4>
+		<p>
+			<TargetData reference={selected_reference} />
+		</p>
 	{/if}
 </article>

@@ -25,7 +25,7 @@
 			<tr>
 				<td colspan="2">
 					<span class="loading loading-spinner text-warning"></span>
-					looking for simplification hints...
+					looking for hints...
 				</td>
 			</tr>
 		{:then hints}

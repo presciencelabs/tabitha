@@ -4,7 +4,7 @@
 
 ## Running locally
 
-for the sake of CORS and accessing the sources API, `ontology.local.tbta.bible` needs to be added as an additonal alias for the loopback:
+for the sake of CORS and accessing the sources/targets API, `ontology.local.tbta.bible` needs to be added as an additonal alias for the loopback:
 
 > `/etc/hosts` file on *nix systems
 > ```bash
