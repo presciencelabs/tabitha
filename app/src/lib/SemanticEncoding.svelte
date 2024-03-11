@@ -1,6 +1,6 @@
 <script>
-	/** @type {SourceData['phase_2_encoding']}*/
-	export let phase_2_encoding
+	/** @type {SourceData['semantic_encoding']}*/
+	export let semantic_encoding
 
 	const ENTITY_LABELS = new Map([
 		['c', 'C'],			// Clauses
@@ -109,7 +109,7 @@
 		}
 	}
 
-	$: simple_encoding = transform_semantic_encoding(phase_2_encoding).map(simple_display).join(' ')
+	$: simple_encoding = transform_semantic_encoding(semantic_encoding).map(simple_display).join(' ')
 
 </script>
 

@@ -59,7 +59,7 @@ type SourceData = {
 	id_secondary: string
 	id_tertiary: string
 	phase_1_encoding: string
-	phase_2_encoding: string
+	semantic_encoding: string
 	comments: string
 	notes: string
 }

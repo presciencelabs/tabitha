@@ -43,5 +43,5 @@
 		{source.phase_1_encoding}
 	</p>
 
-	<SemanticEncoding phase_2_encoding={source.phase_2_encoding} />
+	<SemanticEncoding semantic_encoding={source.semantic_encoding} />
 {/await}
