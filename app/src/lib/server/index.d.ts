@@ -60,7 +60,6 @@ type SourceData = {
 	id_tertiary: string
 	phase_1_encoding: string
 	semantic_encoding: string
-	comments: string
 	notes: string
 }
 
