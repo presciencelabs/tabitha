@@ -14,6 +14,10 @@ https://github.com/presciencelabs/tabitha-sources
 
 https://github.com/presciencelabs/tabitha-editor
 
+### Targets
+
+https://github.com/presciencelabs/tabitha-targets
+
 ## Contributing
 
 ### Resources
