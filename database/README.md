@@ -9,7 +9,8 @@ https://www.sqlite.org
 > if an mdb is larger than 40M, the MDB Viewer app will not work unfortunately.  There is an option to buy MDB ACCB Viewer (for macs).
 
 ## Migrate TBTA's database to TaBiThA format
-1. `bun migrate.js English.YYYY-MM-DD.mdb.sqlite Targets.YYYY-MM-DD.tabitha.sqlite` to create and load the database
+
+`bun migrate.js English.YYYY-MM-DD.mdb.sqlite Targets.YYYY-MM-DD.tabitha.sqlite` to create and load the database
 
 ## Interacting with the database locally
 

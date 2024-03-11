@@ -23,7 +23,8 @@ const tbta_db = new Database(tbta_db_name)
 const target_tablenames_tbta = tbta_db.query(`
 	SELECT *
 	FROM sqlite_master
-	WHERE type = 'table' AND name like 'Target_EB_%'
+	WHERE type = 'table'
+		AND name like 'Target_EB_%'
 `).all().map(({name}) => name)
 console.log('done.')
 
