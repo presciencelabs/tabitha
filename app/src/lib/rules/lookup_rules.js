@@ -142,7 +142,7 @@ export function parse_lookup_rule(rule_json) {
 	 * @returns {number}
 	 */
 	function lookup_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = {...tokens[trigger_index], lookup_term}
+		tokens[trigger_index] = {...tokens[trigger_index], lookup_terms: [lookup_term]}
 
 		if (context_indexes.length === 0) {
 			return trigger_index + 1

@@ -23,22 +23,19 @@ export async function GET({url: {searchParams}, locals: {db}}) {
 }
 
 /**
+ * This expects no sense attached to the word
+ * 
  * @param {import('@cloudflare/workers-types').D1Database} db
- *
- * @returns {(term: string) => Promise<FormResult[]>}
+ * @returns {(term: LookupTerm) => Promise<FormResult[]>}
  */
 function get_form_matches(db) {
 	return lookup
 
 	/**
-	 * @param {string} term
+	 * @param {LookupTerm} word
 	 * @returns {Promise<FormResult[]>}
 	 */
-	async function lookup(term) {
-		// strip sense from word
-		const sense_match = term.match(/^(.+)(-[A-Z])$/)
-		const word = sense_match?.[1] ?? term
-
+	async function lookup(word) {
 		const sql = `
 			SELECT *
 			FROM Inflections

@@ -1,4 +1,5 @@
 import {TOKEN_TYPE} from './parser/token'
+import {REGEXES} from './regexes'
 
 // TODO move whole token pipeline to the server
 
@@ -64,43 +65,39 @@ function is_lookup_token(token) {
  * @param {Token} lookup_token
  */
 async function check_forms(lookup_token) {
-	const response = await fetch(`/form-lookup?word=${lookup_token.lookup_term}`)
+	// At this point there is always just one lookup term
+	const stem_match = lookup_token.lookup_terms[0].match(REGEXES.EXTRACT_STEM_AND_SENSE)
+	const stem = stem_match?.[1] ?? ''
+	const sense = stem_match?.[2]
+
+	const response = await fetch(`/form-lookup?word=${stem}`)
 
 	/** @type {LookupResult<FormResult>} */
 	const results = await response.json()
 
 	lookup_token.form_results = results.matches
 
-	if (results.matches.length) {
-		// maintain the sense marker if present
-		const sense_match = lookup_token.lookup_term.match(/^(.+)(-[A-Z])$/)
-		const sense = sense_match?.[2]
-
-		// the new lookup stem can be the form stem if they are all the same.
-		// otherwise use the original lookup term
-		const stem = all_stems_the_same(lookup_token.form_results)
-			? results.matches[0].stem : sense_match?.[1] ?? lookup_token.lookup_term
-
-		lookup_token.lookup_term = sense ? `${stem}${sense}` : stem
+	if (results.matches.length === 0) {
+		return
 	}
+
+	// The form lookup may have resulted in different stems (eg. saw).
+	// So add a lookup term for each unique stem (case-insensitive)
+	const unique_stems = new Set(results.matches.map(({stem}) => stem.toLowerCase()))
+
+	// Add the original lookup stem in case there is a missing form (eg. Adjectives left, following)
+	unique_stems.add(stem.toLowerCase())
+
+	// Reattach the sense if present
+	lookup_token.lookup_terms = sense ? [...unique_stems].map(stem => `${stem}-${sense}`) : [...unique_stems]
 }
 
 /**
  * @param {Token} lookup_token
  */
 async function check_ontology(lookup_token) {
-	// The form lookup may have resulted in different stems (eg. saw). We want to look up all of them
-	// If different, we also look up the original token in case there is a missing form. (eg. Adjectives left, following)
-	const unique_lookups = new Set(lookup_token.form_results.map(form => form.stem))
-	unique_lookups.add(lookup_token.lookup_term)
-	unique_lookups.add(lookup_token.token)
-
-	if (unique_lookups.size > 1) {
-		const results = await Promise.all([...unique_lookups].map(check_word_in_ontology))
-		lookup_token.lookup_results = results.flat()
-	} else {
-		lookup_token.lookup_results = await check_word_in_ontology(lookup_token.lookup_term)
-	}
+	const results = await Promise.all(lookup_token.lookup_terms.map(check_word_in_ontology))
+	lookup_token.lookup_results = results.flat()
 
 	/**
 	 * 
@@ -116,12 +113,4 @@ async function check_ontology(lookup_token) {
 
 		return matches
 	}
-}
-
-/**
- * @param {FormResult[]} forms 
- * @returns {boolean}
- */
-function all_stems_the_same(forms) {
-	return forms.every(result => result.stem.toLowerCase() === forms[0].stem.toLowerCase())
 }

@@ -48,7 +48,7 @@ export function create_token(token, type, {error='', suggest= '', tag='', lookup
 		error_message: error,
 		suggest_message: suggest,
 		tag,
-		lookup_term,
+		lookup_terms: lookup_term ? [lookup_term] : [],
 		form_results: [],
 		lookup_results: [],
 		sub_tokens,
@@ -110,12 +110,12 @@ export function check_token_lookup(lookup_check) {
  */
 export function set_token_concept(token, concept) {
 	// If a specific sense is already selected, don't overwrite it
-	if (token.lookup_results.length <= 1 || REGEXES.HAS_SENSE.test(token.lookup_term)) {
+	if (token.lookup_results.length <= 1) {
 		return token
 	}
 
 	const {stem, sense} = split_stem_and_sense(concept)
-	token.lookup_term = concept
+	token.lookup_terms = [concept]
 	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.sense === sense)
 	return token
 

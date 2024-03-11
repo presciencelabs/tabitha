@@ -6,7 +6,7 @@ type Token = {
 	error_message: string
 	suggest_message: string
 	tag: string
-	lookup_term: string
+	lookup_terms: LookupTerm[]
 	form_results: FormResult[]
 	lookup_results: OntologyResult[]
 	complex_pairing: Token?;

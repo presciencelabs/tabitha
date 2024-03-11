@@ -173,7 +173,7 @@ describe('transform rules', () => {
 
 		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
 
-		expect(results[1].lookup_term).toBe('see-A')
+		expect(results[1].lookup_terms[0]).toBe('see-A')
 	})
 
 	test('not triggered across sentences', () => {
@@ -491,13 +491,13 @@ describe('lookup rules', () => {
 		expect(results[2].token).toBe('[')
 		expect(results[2].error_message).toBe('')
 		expect(results[3].token).toBe('in order to')
-		expect(results[3].lookup_term).toBe('in-order-to')
+		expect(results[3].lookup_terms[0]).toBe('in-order-to')
 		expect(results[3].error_message).toBe('')
 		expect(results[4].token).toBe('take')
-		expect(results[4].lookup_term).toBe('take-away')
+		expect(results[4].lookup_terms[0]).toBe('take-away')
 		expect(results[4].error_message).toBe('')
 		expect(results[5].token).toBe('many')
-		expect(results[5].lookup_term).toBe('much-many')
+		expect(results[5].lookup_terms[0]).toBe('much-many')
 		expect(results[5].error_message).toBe('')
 		expect(results[6].token).toBe('books')
 		expect(results[6].error_message).toBe('')
