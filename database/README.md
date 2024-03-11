@@ -5,10 +5,14 @@ https://www.sqlite.org
 ## Convert the source mdb's to a sqlite database
 
 1. currently using a manual process, i.e., TBTA's `*.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`*.VERSION.mdb.sqlite`)
-1. `grep ATTACH *.sql` to ensure filenames are accurate
-1. `cat create.sql migrate_bible.sql migrate_community_development_texts.sql migrate_grammar_introduction.sql | sqlite3 Sources.YYYY-MM-DD.tabitha.sqlite` to create and load the database
 
 > if an mdb is larger than 40M, the MDB Viewer app will not work unfortunately.  There is an option to buy MDB ACCB Viewer (for macs).
+
+## Migrate TBTA's database to TaBiThA format
+
+> ‼️ naming convention is important here for the sake of the scripts
+
+`bun migrate.js Bible.YYYY-MM-DD.mdb.sqlite Community_Development_Texts.YYYY-MM-DD.mdb.sqlite Grammar_Introduction.YYYY-MM-DD.mdb.sqlite Sources.YYYY-MM-DD.tabitha.sqlite` to create and load the database
 
 ## Interacting with the database locally
 

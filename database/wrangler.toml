@@ -1,4 +1,4 @@
 [[d1_databases]]
 binding = "DB_Sources" # i.e. available in your Worker on env.DB
-database_name = "Sources.2023-12-04"
-database_id = "8632cf2f-fb55-4e31-a23a-1bc0c84c9c78"
+database_name = "Sources.2024-03-11"
+database_id = "a3ddaf2f-d49d-43fb-9d6b-daeb155f6c05"
