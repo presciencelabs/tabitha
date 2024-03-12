@@ -1,4 +1,5 @@
 <script>
+	import CopyButton from '$lib/CopyButton.svelte'
 	import {backtranslate} from '$lib/backtranslator'
 	import {parse} from '$lib/parser'
 	import {token_has_error} from '$lib/parser/token'
@@ -7,19 +8,6 @@
 
 	let entered_text = ''
 	$: english_back_translation = backtranslate(entered_text)
-	$: english_back_translation && reset_copied()
-
-	let copied = false
-	async function copy() {
-		// https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText
-		await navigator.clipboard.writeText(english_back_translation)
-
-		copied = true
-	}
-
-	function reset_copied() {
-		copied = false
-	}
 
 	/**
 	 * @param {Token[]} tokens
@@ -34,6 +22,8 @@
 <form class="grid justify-items-center">
 	<!-- svelte-ignore a11y-autofocus -->
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
+
+	<CopyButton content={entered_text} classes="mt-8 gap-4 self-center" />
 </form>
 
 {#await parse(entered_text)}
@@ -67,15 +57,7 @@
 			{english_back_translation}
 		</p>
 
-		<button on:click={copy} class="btn btn-secondary mt-8 gap-4 self-center">
-			Copy to clipboard
-
-			{#if copied}
-				<Icon icon="mdi:check" class="h-6 w-6" />
-			{:else}
-				<Icon icon="mdi:content-copy" class="h-6 w-6" />
-			{/if}
-		</button>
+		<CopyButton content={english_back_translation} classes="mt-8 gap-4 self-center" />
 	</section>
 {/if}
 
