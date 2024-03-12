@@ -76,20 +76,6 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
-		'name': 'come out',
-		'trigger': { 'stem': 'come' },
-		'context': { 'followedby': {'token': 'out'} },
-		'lookup': 'come-out',
-		'combine': 1,
-	},
-	{
-		'name': 'cry out',
-		'trigger': { 'stem': 'cry' },
-		'context': { 'followedby': {'token': 'out'} },
-		'lookup': 'cry-out',
-		'combine': 1,
-	},
-	{
 		'name': 'give birth',
 		'trigger': { 'stem': 'give' },
 		'context': { 'followedby': {'token': 'birth'} },
@@ -97,18 +83,52 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
-		'name': 'put on (clothes)',
-		'trigger': { 'stem': 'put' },
-		'context': { 'followedby': [{'token': 'on'}, {'stem': 'clothes|glove|sandal|shirt|shoe'}] },
-		'lookup': 'put-on',
+		'name': 'grow up',
+		'trigger': { 'stem': 'grow' },
+		'context': { 'followedby': {'token': 'up'} },
+		'lookup': 'grow-B',
 		'combine': 1,
-		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
 	},
 	{
-		'name': 'take away',
-		'trigger': { 'stem': 'take' },
-		'context': { 'followedby': {'token': 'away', 'skip': 'all'} },
-		'lookup': 'take-away',
+		'name': 'laugh at',
+		'trigger': { 'stem': 'laugh' },
+		'context': { 'followedby': {'token': 'at'} },
+		'lookup': 'laugh-B',		// TODO make this a case frame rule
+		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
+	},
+	{
+		'name': 'lift up',
+		'trigger': { 'stem': 'lift' },
+		'context': { 'followedby': {'token': 'up', 'skip': 'all'} },
+		'lookup': 'lift',
+		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
+	},
+	{
+		'name': 'look at',
+		'trigger': { 'stem': 'look' },
+		'context': { 'followedby': {'token': 'at'} },
+		'lookup': 'look-A',		// TODO make this a case frame rule
+		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
+	},
+	{
+		'name': 'look for -> search',
+		'trigger': { 'stem': 'look' },
+		'context': { 'followedby': {'token': 'for'} },
+		'lookup': 'search',
+		'combine': 1,
+	},
+	{
+		'name': 'look like -> appear-B',
+		'trigger': { 'stem': 'look' },
+		'context': { 'followedby': {'token': 'like'} },
+		'lookup': 'appear-B',
+		'combine': 1,
+	},
+	{
+		'name': 'worry about',
+		'trigger': { 'stem': 'worry' },
+		'context': { 'followedby': {'token': 'about'} },
+		'lookup': 'worry',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 ]

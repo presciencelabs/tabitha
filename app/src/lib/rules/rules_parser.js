@@ -46,7 +46,7 @@ export function create_token_filter(filter_json) {
 		const value_checker = get_value_checker(usage_json)
 		filters.push(check_token_lookup(result => {
 			const usages = [...result.categorization].filter(usage => usage !== '_')
-			return usages.length === 0 || usages.some(usage => value_checker(usage))
+			return usages.some(usage => value_checker(usage))
 		}))
 	}
 

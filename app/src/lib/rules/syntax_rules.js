@@ -156,6 +156,17 @@ const builtin_syntax_rules = [
 			}),
 		},
 	},
+	{
+		name: 'Remove lookup results for certain functional Adpositions (up, down, etc)',
+		comment: 'While these have an entry in the Ontoloy, they are only used in the Analyzer with specific Verbs. They should not be recognized as words on their own.',
+		rule: {
+			trigger: create_token_filter({'token': 'down|off|out|up'}),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				token.lookup_results = []
+			}),
+		},
+	},
 ]
 
 export const SYNTAX_RULES = builtin_syntax_rules.map(({rule}) => rule)

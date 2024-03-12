@@ -183,6 +183,78 @@ const checker_rules_json = [
 			'message': 'Use \'so-that\' so-that it doesn\'t get mistaken for the Conjunction.',
 		},
 	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'around\'',
+		'trigger': { 'token': 'around' },
+		'context': {
+			'precededby': { 'stem': 'turn', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'around\' must be hyphenated with the Verb (e.g. turn-around). DO NOT inflect the Verb (e.g. NOT turned-around).',
+		},
+	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'away\'',
+		'trigger': { 'token': 'away' },
+		'context': {
+			'precededby': { 'stem': 'chase|take|walk', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'away\' must be hyphenated with the Verb (e.g. take-away). DO NOT inflect the Verb (e.g. NOT took-away).',
+		},
+	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'down\'',
+		'trigger': { 'token': 'down' },
+		'context': {
+			'precededby': { 'stem': 'cut|knock|lie|run|sit|walk|write', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'down\' must be hyphenated with the Verb (e.g. run-down). DO NOT inflect the Verb (e.g. NOT ran-down).',
+		},
+	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'off\'',
+		'trigger': { 'token': 'off' },
+		'context': {
+			'precededby': { 'stem': 'cut|pull|take', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'off\' must be hyphenated with the Verb (e.g. take-off). DO NOT inflect the Verb (e.g. NOT took-off).',
+		},
+	},
+	{
+		'name': 'Check for unhyphenated \'put on\' (clothes)',
+		'trigger': { 'stem': 'on' },
+		'context': {
+			'precededby': { 'stem': 'put', 'category': 'Verb' },
+			'followedby': { 'stem': 'clothes|glove|sandal|shirt|shoe' },
+		},
+		'require': {
+			'message': '\'on\' must be hyphenated with the Verb (e.g. put-on).',
+		},
+		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
+	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'out\'',
+		'trigger': { 'token': 'out' },
+		'context': {
+			'precededby': { 'stem': 'come|cry|pour|pull', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'out\' must be hyphenated with the Verb (e.g. cry-out). DO NOT inflect the Verb (e.g. NOT cried-out).',
+		},
+	},
+	{
+		'name': 'Check for unhyphenated Verbs with \'up\'',
+		'trigger': { 'token': 'up' },
+		'context': {
+			'precededby': { 'stem': 'pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': '\'up\' must be hyphenated with the Verb (e.g. pick-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
+		},
+	},
 ]
 
 /** @type {BuiltInRule[]} */
