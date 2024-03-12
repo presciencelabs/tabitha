@@ -15,6 +15,7 @@ type DbRowConcept = {
 type SimplificationHint = {
 	term: string
 	part_of_speech: string
+	structure: string
 	pairing: string
 	explication: string
 }

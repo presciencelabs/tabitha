@@ -5,6 +5,7 @@
  * @typedef {Object} ComplexTerm
  * @property {string} term
  * @property {string} part_of_speech
+ * @property {string} structure
  * @property {string} pairing
  * @property {string} explication
  *
@@ -12,11 +13,12 @@
  */
 export function transform(rows) {
 	return rows.map(row => {
-		const [term, part_of_speech, , pairing, explication,] = row.split('\t')
+		const [term, part_of_speech, structure, pairing, explication,] = row.split('\t')
 
 		return {
 			term,
 			part_of_speech,
+			structure,
 			pairing,
 			explication,
 		}

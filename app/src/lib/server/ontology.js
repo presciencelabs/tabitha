@@ -105,7 +105,7 @@ export const get_simplification_hints = db => async term => {
 	return results.map(normalize)
 
 	/** @param {SimplificationHint} arg */
-	function normalize({ term, part_of_speech, pairing, explication }) {
-		return { term, part_of_speech, pairing, explication }
+	function normalize({ term, part_of_speech, structure, pairing, explication }) {
+		return { term, part_of_speech, structure, pairing, explication }
 	}
 }

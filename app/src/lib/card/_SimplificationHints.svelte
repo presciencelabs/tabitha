@@ -16,6 +16,7 @@
 <table class="table ml-8">
 	<thead>
 		<tr>
+			<th>Structure</th>
 			<th>Pairing</th>
 			<th>Explication</th>
 		</tr>
@@ -29,8 +30,9 @@
 				</td>
 			</tr>
 		{:then hints}
-			{#each hints as { pairing, explication }}
+			{#each hints as { structure, pairing, explication }}
 				<tr>
+					<td>{structure || '–'}</td>
 					<td>{pairing || '–'}</td>
 					<td>{explication || '–'}</td>
 				</tr>

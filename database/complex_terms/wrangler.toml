@@ -12,5 +12,5 @@ crons = ["0 */12 * * *"]
 
 [[d1_databases]]
 binding = "DB_Ontology" # i.e. available in a Worker on env.DB
-database_name = "Ontology.2024-02-27.3_0_9485"
-database_id = "10500b77-bd59-4780-a575-8074b1d2e5e4"
+database_name = "Ontology.2024-03-12.3_0_9485"
+database_id = "15085bb6-994e-4837-acc0-0623c74cf444"

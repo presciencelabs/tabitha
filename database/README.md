@@ -77,11 +77,11 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 1. run migration, e.g., `sqlite3 -separator '' -init migrate.sql Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite .exit`
 1. rename migrated database, e.g., `cp Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
 1. add derived senses, e.g., `bun senses.js Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
-1. add complex terms, e.g., `bun complex_terms.js Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
 1. dump migrated database, e.g., `sqlite3 Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite .dump > Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
 1.	create new database, e.g., `wrangler d1 create Ontology.YYYY-MM-DD.#_#_####`  (need to update local `wrangler.toml`'s with new info)
 1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --local --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
+1. add latest complex terms by running a local test below.
 1. test app with new database locally
 1. deploy to remote, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. need to run another deployment either via `push` or "retry deployment" in Cloudflare dashboard
@@ -93,6 +93,8 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 Complex terms will be updated from the "How to" spreadsheet to the database on a regular schedule.
 
 #### Testing locally
+
+From within the `complex_terms` dir:
 
 `wrangler dev --test-scheduled`
 
