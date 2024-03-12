@@ -3,10 +3,11 @@
 	import {backtranslate} from '$lib/backtranslator'
 	import {parse} from '$lib/parser'
 	import {token_has_error} from '$lib/parser/token'
+	import { SaveButton, saved } from '$lib/save'
 	import {Tokens} from '$lib/tokens'
 	import Icon from '@iconify/svelte'
 
-	let entered_text = ''
+	let entered_text = $saved
 	$: english_back_translation = backtranslate(entered_text)
 
 	/**
@@ -23,7 +24,11 @@
 	<!-- svelte-ignore a11y-autofocus -->
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
 
-	<CopyButton content={entered_text} classes="mt-8 gap-4 self-center" />
+	<div class="mt-8">
+		<CopyButton content={entered_text} />
+
+		<SaveButton content={entered_text} classes="ms-4" />
+	</div>
 </form>
 
 {#await parse(entered_text)}
