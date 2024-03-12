@@ -115,7 +115,7 @@ const lookup_rules_json = [
 		'trigger': { 'stem': 'look' },
 		'context': { 'followedby': {'token': 'for'} },
 		'lookup': 'search',
-		'combine': 1,
+		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'look like -> appear-B',

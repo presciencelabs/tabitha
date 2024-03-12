@@ -255,6 +255,13 @@ const checker_rules_json = [
 			'message': '\'up\' must be hyphenated with the Verb (e.g. pick-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
 		},
 	},
+	{
+		'name': 'Suggest "trouble _plural" instead of "troubles"',
+		'trigger': { 'token': 'troubles' },
+		'require': {
+			'message': 'TBTA does not use the plural \'troubles\'. Use \'trouble _plural\' to indicate plurality.',
+		},
+	},
 ]
 
 /** @type {BuiltInRule[]} */

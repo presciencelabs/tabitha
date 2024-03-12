@@ -43,11 +43,11 @@ export function create_token_filter(filter_json) {
 	/** @type {string | undefined} */
 	const usage_json = filter_json['usage']
 	if (usage_json !== undefined) {
-		const value_checker = get_value_checker(usage_json)
-		filters.push(check_token_lookup(result => {
-			const usages = [...result.categorization].filter(usage => usage !== '_')
-			return usages.some(usage => value_checker(usage))
-		}))
+		// only support single character usages right now
+		filters.push(token => {
+			return token.lookup_results.length > 0
+				&& token.lookup_results.every(has_usage(usage_json))
+		})
 	}
 
 	if (filters.length === 0) {
@@ -329,36 +329,36 @@ export function create_token_transform(transform_json) {
 	} else {
 		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
 	}
+
+	/**
+	 * 
+	 * @param {Token} token 
+	 * @param {string} char 
+	 */
+	function filter_by_usage(token, char) {
+		if (token.lookup_results.some(has_usage(char))) {
+			token.lookup_results = token.lookup_results.filter(may_have_usage(char))
+		}
+		return token
+	}
 }
 
 /**
  * 
- * @param {Token} token 
- * @param {string} char 
+ * @param {string} char
+ * @returns {LookupFilter}
  */
-function filter_by_usage(token, char) {
-	if (token.lookup_results.some(has_usage(char))) {
-		token.lookup_results = token.lookup_results.filter(may_have_usage(char))
-	}
-	return token
+function has_usage(char) {
+	return result => result.categorization.includes(char)
+}
 
-	/**
-	 * 
-	 * @param {string} char
-	 * @returns {LookupFilter}
-	 */
-	function has_usage(char) {
-		return result => result.categorization.includes(char)
-	}
-	
-	/**
-	 * 
-	 * @param {string} char
-	 * @returns {LookupFilter}
-	 */
-	function may_have_usage(char) {
-		return result => result.categorization.length === 0 || result.categorization.includes(char)
-	}
+/**
+ * 
+ * @param {string} char
+ * @returns {LookupFilter}
+ */
+function may_have_usage(char) {
+	return result => result.categorization.length === 0 || result.categorization.includes(char)
 }
 
 /**
