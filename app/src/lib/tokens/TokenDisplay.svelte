@@ -1,5 +1,5 @@
 <script>
-	import {Badge} from '$lib'
+	import { Badge } from '$lib'
 
 	export let classes = ''
 </script>

@@ -1,15 +1,15 @@
-import {PUBLIC_ONTOLOGY_API_HOST} from '$env/static/public'
-import {json} from '@sveltejs/kit'
+import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+import { json } from '@sveltejs/kit'
 
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({url: {searchParams}}) {
+export async function GET({ url: { searchParams } }) {
 	/** @type {LookupTerm} */
 	const word = searchParams.get('word') ?? ''
 
 	let matches = await get_matches_from_ontology(word)
 
-	return response({term: word, matches})
+	return response({ term: word, matches })
 
 	/** @param {LookupResult<OntologyResult>} result  */
 	function response(result) {

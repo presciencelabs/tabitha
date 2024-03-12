@@ -1,5 +1,5 @@
 <script>
-	import {current_theme, set_theme} from '.'
+	import { current_theme, set_theme } from '.'
 	import themes from './themes'
 
 	/** @type {string} class(es) separated by space */

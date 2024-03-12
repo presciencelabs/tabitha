@@ -2,7 +2,7 @@
 	import LookupWord from './LookupWord.svelte'
 	import Added from './Added.svelte'
 	import SingleToken from './SingleToken.svelte'
-	import {TOKEN_TYPE} from '$lib/parser/token'
+	import { TOKEN_TYPE } from '$lib/parser/token'
 
 	/** @type {Token[]} */
 	export let tokens

@@ -1,5 +1,5 @@
-import {apply_token_transforms, create_context_filter, create_token_filter, create_token_transform} from '$lib/rules/rules_parser'
-import {TOKEN_TYPE} from '../parser/token'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform } from '$lib/rules/rules_parser'
+import { TOKEN_TYPE } from '../parser/token'
 
 /**
  * These words/phrases (and some others) are accepted by the Analyzer as alternates for
@@ -9,14 +9,14 @@ const lookup_rules_json = [
 	{
 		'name': 'in-order-to',
 		'trigger': { 'token': 'in' },
-		'context': { 'followedby': [{'token': 'order'}, {'token': 'to'}] },
+		'context': { 'followedby': [{ 'token': 'order' }, { 'token': 'to' }] },
 		'lookup': 'in-order-to',
 		'combine': 2,
 	},
 	{
 		'name': 'in-front-of',
 		'trigger': { 'token': 'in' },
-		'context': { 'followedby': [{'token': 'front'}, {'token': 'of'}] },
+		'context': { 'followedby': [{ 'token': 'front' }, { 'token': 'of' }] },
 		'lookup': 'in-front-of',
 		'combine': 2,
 	},
@@ -28,21 +28,21 @@ const lookup_rules_json = [
 	{
 		'name': 'just-like',
 		'trigger': { 'token': 'just' },
-		'context': { 'followedby': {'token': 'like'} },
+		'context': { 'followedby': { 'token': 'like' } },
 		'lookup': 'just-like',
 		'combine': 1,
 	},
 	{
 		'name': 'even-if',
 		'trigger': { 'token': 'Even|even' },
-		'context': { 'followedby': {'token': 'if'} },
+		'context': { 'followedby': { 'token': 'if' } },
 		'lookup': 'even-if',
 		'combine': 1,
 	},
 	{
 		'name': 'much becomes much-many if followed by a Noun',
 		'trigger': { 'token': 'Much|much' },
-		'context': { 'followedby': {'category': 'Noun'} },
+		'context': { 'followedby': { 'category': 'Noun' } },
 		'lookup': 'much-many',
 		'comment': 'something like "There is much water"',
 	},
@@ -64,70 +64,70 @@ const lookup_rules_json = [
 	{
 		'name': 'one tenth of',
 		'trigger': { 'token': 'One|one' },
-		'context': { 'followedby': [{'token': 'tenth'}, {'token': 'of'}] },
+		'context': { 'followedby': [{ 'token': 'tenth' }, { 'token': 'of' }] },
 		'lookup': '.1',
 		'combine': 2,
 	},
 	{
 		'name': 'because of becomes because-B',
 		'trigger': { 'token': 'because' },
-		'context': { 'followedby': {'token': 'of'} },
+		'context': { 'followedby': { 'token': 'of' } },
 		'lookup': 'because-B',
 		'combine': 1,
 	},
 	{
 		'name': 'give birth',
 		'trigger': { 'stem': 'give' },
-		'context': { 'followedby': {'token': 'birth'} },
+		'context': { 'followedby': { 'token': 'birth' } },
 		'lookup': 'birth',
 		'combine': 1,
 	},
 	{
 		'name': 'grow up',
 		'trigger': { 'stem': 'grow' },
-		'context': { 'followedby': {'token': 'up'} },
+		'context': { 'followedby': { 'token': 'up' } },
 		'lookup': 'grow-B',
 		'combine': 1,
 	},
 	{
 		'name': 'laugh at',
 		'trigger': { 'stem': 'laugh' },
-		'context': { 'followedby': {'token': 'at'} },
+		'context': { 'followedby': { 'token': 'at' } },
 		'lookup': 'laugh-B',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'lift up',
 		'trigger': { 'stem': 'lift' },
-		'context': { 'followedby': {'token': 'up', 'skip': 'all'} },
+		'context': { 'followedby': { 'token': 'up', 'skip': 'all' } },
 		'lookup': 'lift',
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'look at',
 		'trigger': { 'stem': 'look' },
-		'context': { 'followedby': {'token': 'at'} },
+		'context': { 'followedby': { 'token': 'at' } },
 		'lookup': 'look-A',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'look for -> search',
 		'trigger': { 'stem': 'look' },
-		'context': { 'followedby': {'token': 'for'} },
+		'context': { 'followedby': { 'token': 'for' } },
 		'lookup': 'search',
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'look like -> appear-B',
 		'trigger': { 'stem': 'look' },
-		'context': { 'followedby': {'token': 'like'} },
+		'context': { 'followedby': { 'token': 'like' } },
 		'lookup': 'appear-B',
 		'combine': 1,
 	},
 	{
 		'name': 'worry about',
 		'trigger': { 'stem': 'worry' },
-		'context': { 'followedby': {'token': 'about'} },
+		'context': { 'followedby': { 'token': 'about' } },
 		'lookup': 'worry',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
@@ -162,7 +162,7 @@ export function parse_lookup_rule(rule_json) {
 	 * @returns {number}
 	 */
 	function lookup_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = {...tokens[trigger_index], lookup_terms: [lookup_term]}
+		tokens[trigger_index] = { ...tokens[trigger_index], lookup_terms: [lookup_term] }
 
 		if (context_indexes.length === 0) {
 			return trigger_index + 1
@@ -178,7 +178,7 @@ export function parse_lookup_rule(rule_json) {
 		// combine context tokens into one
 		const tokens_to_combine = tokens.splice(trigger_index, combine + 1)
 		const new_token_value = tokens_to_combine.map(token => token.token).join(' ')
-		tokens.splice(trigger_index, 0, {...tokens_to_combine[0], token: new_token_value})
+		tokens.splice(trigger_index, 0, { ...tokens_to_combine[0], token: new_token_value })
 		return trigger_index + combine + 1
 	}
 }

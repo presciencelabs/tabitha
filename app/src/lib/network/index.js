@@ -1,6 +1,6 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
 import Status from './Status.svelte'
-import {writable} from 'svelte/store'
+import { writable } from 'svelte/store'
 
 /** @type {import('svelte/store').Writable<boolean>} */
 let offline

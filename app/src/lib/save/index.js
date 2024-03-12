@@ -9,7 +9,6 @@ function init() {
 	const store = writable('', set => {
 		const value = browser && localStorage?.getItem('saved') || ''
 		set(value)
-		console.log('const: ', value)
 	})
 
 	const { subscribe, set, update } = store
@@ -19,7 +18,6 @@ function init() {
 		set: value => {
 			browser && localStorage.setItem('saved', value)
 			set(value)
-			console.log('set: ', value)
 		},
 		update,
 	}

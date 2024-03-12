@@ -1,3 +1,3 @@
 import Tokens from './Tokens.svelte'
 
-export {Tokens}
+export { Tokens }

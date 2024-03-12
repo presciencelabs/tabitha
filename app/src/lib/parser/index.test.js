@@ -1,7 +1,7 @@
-import {parse_for_test} from '.'
-import {describe, expect, test} from 'vitest'
-import {TOKEN_TYPE} from './token'
-import {ERRORS} from './error_messages'
+import { parse_for_test } from '.'
+import { describe, expect, test } from 'vitest'
+import { TOKEN_TYPE } from './token'
+import { ERRORS } from './error_messages'
 
 describe('parse', () => {
 	describe('no problems', () => {

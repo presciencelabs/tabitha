@@ -1,5 +1,5 @@
-import {create_context_filter, create_token_map_action} from './rules_parser'
-import {TOKEN_TYPE, convert_to_error_token, token_has_error} from '../parser/token'
+import { create_context_filter, create_token_map_action } from './rules_parser'
+import { TOKEN_TYPE, convert_to_error_token, token_has_error } from '../parser/token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -62,9 +62,10 @@ const builtin_pronoun_rules = [
 				const pronoun = token.pronoun
 				const normalized_pronoun = pronoun.token.toLowerCase()
 
+				// TODO: need to pull those assignments out of the conditionals.
 				let tag, message
 				if (tag = PRONOUN_TAGS.get(normalized_pronoun)) {
-					return {...token, tag}
+					return { ...token, tag }
 				} else if (message = PRONOUN_MESSAGES.get(normalized_pronoun)) {
 					token.pronoun = convert_to_error_token(pronoun, message)
 				} else {
@@ -76,4 +77,4 @@ const builtin_pronoun_rules = [
 	},
 ]
 
-export const PRONOUN_RULES = builtin_pronoun_rules.map(({rule}) => rule)
+export const PRONOUN_RULES = builtin_pronoun_rules.map(({ rule }) => rule)

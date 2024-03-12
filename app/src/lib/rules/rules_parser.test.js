@@ -1,6 +1,6 @@
-import {describe, expect, test} from 'vitest'
-import {TOKEN_TYPE, create_token} from '../parser/token'
-import {create_context_filter, create_token_filter, create_token_transform} from './rules_parser'
+import { describe, expect, test } from 'vitest'
+import { TOKEN_TYPE, create_token } from '../parser/token'
+import { create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
 
 describe('token filters', () => {
 	test('all', () => {
@@ -8,8 +8,8 @@ describe('token filters', () => {
 		const filter = create_token_filter(filter_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
 		]
 		const results = tokens.map(token => filter(token))
@@ -20,10 +20,10 @@ describe('token filters', () => {
 		const filter = create_token_filter(filter_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text-A'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text-A' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 		]
 		const results = tokens.map(token => filter(token))
 
@@ -37,9 +37,9 @@ describe('token filters', () => {
 		const filter = create_token_filter(filter_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 		]
 		const results = tokens.map(token => filter(token))
 
@@ -52,12 +52,12 @@ describe('token filters', () => {
 		const filter = create_token_filter(filter_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: ''}),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag1'}),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag2'}),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag3'}),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag2|tag3'}),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, {tag: 'tag4|tag4'}),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: '' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag1' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag2' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag3' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag2|tag3' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag4|tag4' }),
 		]
 		const results = tokens.map(token => filter(token))
 
@@ -76,9 +76,9 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -89,9 +89,9 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -102,9 +102,9 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -118,10 +118,10 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -135,10 +135,10 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
-			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+			create_token('last', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'last' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -150,15 +150,15 @@ describe('context filters', () => {
 		expect(results[3].success).toBe(false)
 	})
 	test('followed by with multiple skips', () => {
-		const context_json = { 'followedby': { 'token': 'other', 'skip': [{'token': 'skip' }, {'tag': 'skip'}] } }
+		const context_json = { 'followedby': { 'token': 'other', 'skip': [{ 'token': 'skip' }, { 'tag': 'skip' }] } }
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('notskip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'notskip', tag: 'skip'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
-			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('notskip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'notskip', tag: 'skip' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+			create_token('last', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'last' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -176,10 +176,10 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -195,10 +195,10 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -212,11 +212,11 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
-			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+			create_token('last', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'last' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -234,12 +234,12 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'middle'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
-			create_token('last', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'last'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'middle' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+			create_token('last', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'last' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -266,13 +266,13 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'middle'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'middle' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -306,13 +306,13 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'middle'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'middle' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -344,13 +344,13 @@ describe('context filters', () => {
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'middle'}),
-			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'skip'}),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('middle', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'middle' }),
+			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
+			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 		]
 		const results = tokens.map((_, i) => filter(tokens, i))
 
@@ -377,7 +377,7 @@ describe('context filters', () => {
  * @param {number} [data.level=1] 
  * @returns {OntologyResult}
  */
-function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	return {
 		id: '0',
 		stem: stem,
@@ -394,7 +394,7 @@ describe('token transforms', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
@@ -405,7 +405,7 @@ describe('token transforms', () => {
 		const transform_json = { 'concept': 'concept-A' }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
@@ -417,10 +417,10 @@ describe('token transforms', () => {
 		const transform_json = { 'concept': 'concept-A' }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
 		token.lookup_results = [
-			create_lookup_result('concept', {'sense': 'A', 'part_of_speech': 'Noun'}),
-			create_lookup_result('concept', {'sense': 'B', 'part_of_speech': 'Noun'}),
+			create_lookup_result('concept', { 'sense': 'A', 'part_of_speech': 'Noun' }),
+			create_lookup_result('concept', { 'sense': 'B', 'part_of_speech': 'Noun' }),
 		]
 
 		const result = transform(token)
@@ -447,7 +447,7 @@ describe('token transforms', () => {
 		const transform_json = { 'other': 'other' }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'})
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
 		const result = transform(token)
 		expect(result).toEqual(token)
 	})

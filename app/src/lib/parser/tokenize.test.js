@@ -11,7 +11,7 @@ import { tokenize_input } from './tokenize'
  * @returns {Token}
  */
 function create_word_token(token, lookup_term=null) {
-	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: lookup_term || token})
+	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: lookup_term || token })
 }
 
 /**
@@ -48,7 +48,7 @@ function create_pronoun_token(pronoun, referent, referent_lookup=null) {
  * @returns {Token}
  */
 function create_error_token(token, message) {
-	return create_token(token, TOKEN_TYPE.NOTE, {error: message})
+	return create_token(token, TOKEN_TYPE.NOTE, { error: message })
 }
 
 describe('tokenize_input', () => {
@@ -239,7 +239,7 @@ describe('tokenize_input', () => {
 		test.each(Array.from(FUNCTION_WORDS).map(word => [[word]]))('%s', test_text => {
 			const [word, tag] = test_text[0]
 			const EXPECTED_OUTPUT = [
-				create_token(word, TOKEN_TYPE.FUNCTION_WORD, {tag}),
+				create_token(word, TOKEN_TYPE.FUNCTION_WORD, { tag }),
 			]
 
 			expect(tokenize_input(word)).toEqual(EXPECTED_OUTPUT)
@@ -250,7 +250,7 @@ describe('tokenize_input', () => {
 		test.each(Array.from(FUNCTION_WORDS).map(([word, tag]) => [[[word.toUpperCase(), tag]]]))('%s', test_text => {
 			const [word, tag] = test_text[0]
 			const EXPECTED_OUTPUT = [
-				create_token(word, TOKEN_TYPE.FUNCTION_WORD, {tag}),
+				create_token(word, TOKEN_TYPE.FUNCTION_WORD, { tag }),
 			]
 
 			expect(tokenize_input(word)).toEqual(EXPECTED_OUTPUT)

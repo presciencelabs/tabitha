@@ -1,7 +1,7 @@
-import {describe, expect, test} from 'vitest'
-import {PRONOUN_TAGS, PRONOUN_RULES} from './pronoun_rules'
-import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence} from '../parser/token'
-import {apply_rules} from './rules_processor'
+import { describe, expect, test } from 'vitest'
+import { PRONOUN_TAGS, PRONOUN_RULES } from './pronoun_rules'
+import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '../parser/token'
+import { apply_rules } from './rules_processor'
 
 /**
  *
@@ -43,7 +43,7 @@ describe('invalid tokens: pronouns', () => {
 			[[create_pronoun_token('each-other', 'people')], PRONOUN_TAGS.get('each-other')],
 		])('%s', (test_tokens, exptected_tag) => {
 			const INPUT = [create_sentence(test_tokens)]
-			const EXPECTED_OUTPUT = test_tokens.map(token => ({...token, tag: exptected_tag}))
+			const EXPECTED_OUTPUT = test_tokens.map(token => ({ ...token, tag: exptected_tag }))
 
 			const checked_tokens = apply_rules(INPUT, PRONOUN_RULES).flatMap(flatten_sentence)
 

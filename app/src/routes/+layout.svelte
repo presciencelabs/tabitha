@@ -1,7 +1,7 @@
 <script>
 	import '$lib/app.postcss'
-	import {Brand} from '$lib'
-	import {Selector} from '$lib/theme'
+	import { Brand } from '$lib'
+	import { Selector } from '$lib/theme'
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->

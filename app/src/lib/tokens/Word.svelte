@@ -1,5 +1,5 @@
 <script>
-	import {token_has_concept} from '$lib/parser/token'
+	import { token_has_concept } from '$lib/parser/token'
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'
 

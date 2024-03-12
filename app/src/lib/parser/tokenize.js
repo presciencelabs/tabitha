@@ -1,8 +1,8 @@
-import {CLAUSE_NOTATIONS} from './clause_notations'
-import {FUNCTION_WORDS} from './function_words'
-import {REGEXES} from '$lib/regexes'
-import {TOKEN_TYPE, create_token} from './token'
-import {ERRORS} from './error_messages'
+import { CLAUSE_NOTATIONS } from './clause_notations'
+import { FUNCTION_WORDS } from './function_words'
+import { REGEXES } from '$lib/regexes'
+import { TOKEN_TYPE, create_token } from './token'
+import { ERRORS } from './error_messages'
 
 /**
  * 
@@ -193,7 +193,7 @@ export function tokenize_input(text = '') {
 	 */
 	function get_function_word(token) {
 		const word_function = FUNCTION_WORDS.get(token.toLowerCase())
-		return word_function ? create_token(token, TOKEN_TYPE.FUNCTION_WORD, {tag: word_function}) : null
+		return word_function ? create_token(token, TOKEN_TYPE.FUNCTION_WORD, { tag: word_function }) : null
 	}
 
 	/**
@@ -241,7 +241,7 @@ export function tokenize_input(text = '') {
 	 * @returns {Token}
 	 */
 	function error_token(message) {
-		return create_token(collect_text(), TOKEN_TYPE.NOTE, {error: message})
+		return create_token(collect_text(), TOKEN_TYPE.NOTE, { error: message })
 	}
 
 	/**

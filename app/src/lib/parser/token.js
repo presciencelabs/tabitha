@@ -1,4 +1,4 @@
-import {REGEXES} from '$lib/regexes'
+import { REGEXES } from '$lib/regexes'
 
 /** @type {TokenType} */
 const PUNCTUATION = 'Punctuation'
@@ -41,7 +41,7 @@ export const TOKEN_TYPE = {
  * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, {error='', suggest= '', tag='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null}={}) {
+export function create_token(token, type, { error='', suggest= '', tag='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
 	return {
 		token,
 		type,
@@ -65,7 +65,7 @@ export function create_token(token, type, {error='', suggest= '', tag='', lookup
  * @param {string} [other_data.suggest=''] 
  * @returns {Token}
  */
-export function create_added_token(token, {error='', suggest=''}={}) {
+export function create_added_token(token, { error='', suggest='' }={}) {
 	return create_token(token, TOKEN_TYPE.ADDED, { error, suggest })
 }
 
@@ -76,7 +76,7 @@ export function create_added_token(token, {error='', suggest=''}={}) {
  * @returns {Token}
  */
 export function convert_to_error_token(token, message) {
-	return {...token, error_message: message}
+	return { ...token, error_message: message }
 }
 
 /**
@@ -114,7 +114,7 @@ export function set_token_concept(token, concept) {
 		return token
 	}
 
-	const {stem, sense} = split_stem_and_sense(concept)
+	const { stem, sense } = split_stem_and_sense(concept)
 	token.lookup_terms = [concept]
 	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.sense === sense)
 	return token
@@ -128,7 +128,7 @@ export function set_token_concept(token, concept) {
 		/** @type {RegExpMatchArray} */
 		// @ts-ignore the match will always succeed
 		const match = term.match(REGEXES.EXTRACT_STEM_AND_SENSE)
-		return {stem: match[1], sense: match[2] ?? ''}
+		return { stem: match[1], sense: match[2] ?? '' }
 	}
 }
 

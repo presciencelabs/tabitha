@@ -1,14 +1,14 @@
-import {json} from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
 
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({url: {searchParams}, locals: {db}}) {
+export async function GET({ url: { searchParams }, locals: { db } }) {
 	/** @type {LookupTerm} */
 	const word = searchParams.get('word') ?? ''
 
 	const matches = await get_form_matches(db)(word)
 
-	return response({term: word, matches})
+	return response({ term: word, matches })
 
 	/** @param {LookupResult<FormResult>} result  */
 	function response(result) {
@@ -43,7 +43,7 @@ function get_form_matches(db) {
 		`
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowInflection>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-		const {results} = await db.prepare(sql).bind(`%|${word}|%`, word).all()
+		const { results } = await db.prepare(sql).bind(`%|${word}|%`, word).all()
 
 		return results.map(result => transform_db_result(result, word))
 	}

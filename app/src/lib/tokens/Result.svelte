@@ -1,5 +1,5 @@
 <script>
-	import {concept_with_sense} from '$lib/parser/token'
+	import { concept_with_sense } from '$lib/parser/token'
 	import LinkedLookup from './LinkedLookup.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 

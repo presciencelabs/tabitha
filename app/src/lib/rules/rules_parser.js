@@ -1,4 +1,4 @@
-import {TOKEN_TYPE, check_token_lookup, set_token_concept} from '$lib/parser/token'
+import { TOKEN_TYPE, set_token_concept } from '$lib/parser/token'
 
 /**
  *
@@ -56,8 +56,8 @@ export function create_token_filter(filter_json) {
 	return token => filters.every(filter => filter(token))
 
 	/**
-	 * 
-	 * @param {string} property_name 
+	 *
+	 * @param {string} property_name
 	 * @param {(token: Token) => string?} value_getter
 	 */
 	function add_value_filter(property_name, value_getter) {
@@ -69,8 +69,8 @@ export function create_token_filter(filter_json) {
 	}
 
 	/**
-	 * 
-	 * @param {string} property_name 
+	 *
+	 * @param {string} property_name
 	 * @param {(concept: OntologyResult) => string} lookup_value_getter
 	 * @param {((form: FormResult) => string)?} form_value_getter
 	 * @param {((token: Token) => string)?} default_getter
@@ -82,13 +82,13 @@ export function create_token_filter(filter_json) {
 			filters.push(token => {
 				if (token.type !== TOKEN_TYPE.LOOKUP_WORD) {
 					return false
-					
+
 				} else if (token.lookup_results.length) {
 					return token.lookup_results.every(lookup => value_checker(lookup_value_getter(lookup)))
-	
+
 				} else if (form_value_getter && token.form_results.length) {
 					return token.form_results.every(form => value_checker(form_value_getter(form)))
-	
+
 				} else if (default_getter) {
 					return value_checker(default_getter(token))
 				}
@@ -98,8 +98,8 @@ export function create_token_filter(filter_json) {
 	}
 
 	/**
-	 * 
-	 * @param {string} filter_value 
+	 *
+	 * @param {string} filter_value
 	 * @returns {(value: string?) => boolean}
 	 */
 	function get_value_checker(filter_value) {
@@ -153,8 +153,8 @@ export function create_context_filter(context_json) {
 	}
 
 	/**
-	 * 
-	 * @param {TokenContextFilter} filter 
+	 *
+	 * @param {TokenContextFilter} filter
 	 * @returns {TokenContextFilter}
 	 */
 	function negate(filter) {
@@ -162,7 +162,7 @@ export function create_context_filter(context_json) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {TokenContextFilter[]} filters
 	 * @returns {TokenContextFilter}
 	 */
@@ -193,7 +193,7 @@ function create_directional_context_filter(context_json, offset) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {TokenContextFilter[]} filters
 	 * @param {boolean} reverse
 	 * @returns {TokenContextFilter}
@@ -208,7 +208,7 @@ function create_directional_context_filter(context_json, offset) {
 		return (tokens, start_index) => {
 			const all_indexes = []
 			for (let filter of filters) {
-				const {success, indexes} = filter(tokens, start_index)
+				const { success, indexes } = filter(tokens, start_index)
 				if (!success) {
 					return context_result(false)
 				}
@@ -225,9 +225,9 @@ function create_directional_context_filter(context_json, offset) {
 	}
 
 	/**
-	 * 
-	 * @param {any} context_json 
-	 * @param {number} offset 
+	 *
+	 * @param {any} context_json
+	 * @param {number} offset
 	 * @returns {TokenContextFilter}
 	 */
 	function create_single_context_filter(context_json, offset) {
@@ -237,15 +237,15 @@ function create_directional_context_filter(context_json, offset) {
 		const skip_filter = context_json['skip'] !== undefined
 			? create_skip_filter(context_json['skip'])
 			: () => false
-	
+
 		/** @type {(tokens: Token[], i: number) => boolean} */
 		const end_check = offset < 0 ? (_, i) => i >= 0 : (tokens, i) => i < tokens.length
-	
+
 		return check_context_with_skip
 
 		/**
-		 * @param {Token[]} tokens 
-		 * @param {number} start_index 
+		 * @param {Token[]} tokens
+		 * @param {number} start_index
 		 * @returns {ContextFilterResult}
 		 */
 		function check_context_with_skip(tokens, start_index) {
@@ -263,7 +263,7 @@ function create_directional_context_filter(context_json, offset) {
 
 	/**
 	 * Skip can have one token filter or an array of filters which act as OR conditions
-	 * @param {any} skip_json 
+	 * @param {any} skip_json
 	 * @returns {TokenFilter}
 	 */
 	function create_skip_filter(skip_json) {
@@ -276,9 +276,9 @@ function create_directional_context_filter(context_json, offset) {
 }
 
 /**
- * 
- * @param {boolean} success 
- * @param {number[]} indexes 
+ *
+ * @param {boolean} success
+ * @param {number[]} indexes
  */
 function context_result(success, ...indexes) {
 	return { success, indexes }
@@ -299,17 +299,17 @@ export function create_token_transform(transform_json) {
 
 	const type = transform_json['type']
 	if (type !== undefined) {
-		transforms.push(token => ({...token, type}))
+		transforms.push(token => ({ ...token, type }))
 	}
 
 	const tag = transform_json['tag']
 	if (tag !== undefined) {
-		transforms.push(token => ({...token, tag}))
+		transforms.push(token => ({ ...token, tag }))
 	}
 
 	const function_tag = transform_json['function']
 	if (function_tag !== undefined) {
-		transforms.push(token => ({...token, type: TOKEN_TYPE.FUNCTION_WORD, tag: function_tag, lookup_results: []}))
+		transforms.push(token => ({ ...token, type: TOKEN_TYPE.FUNCTION_WORD, tag: function_tag, lookup_results: [] }))
 	}
 
 	const concept = transform_json['concept']
@@ -331,9 +331,9 @@ export function create_token_transform(transform_json) {
 	}
 
 	/**
-	 * 
-	 * @param {Token} token 
-	 * @param {string} char 
+	 *
+	 * @param {Token} token
+	 * @param {string} char
 	 */
 	function filter_by_usage(token, char) {
 		if (token.lookup_results.some(has_usage(char))) {
@@ -344,7 +344,7 @@ export function create_token_transform(transform_json) {
 }
 
 /**
- * 
+ *
  * @param {string} char
  * @returns {LookupFilter}
  */
@@ -353,7 +353,7 @@ function has_usage(char) {
 }
 
 /**
- * 
+ *
  * @param {string} char
  * @returns {LookupFilter}
  */
@@ -362,10 +362,10 @@ function may_have_usage(char) {
 }
 
 /**
- * 
- * @param {Token[]} tokens 
- * @param {number[]} token_indexes 
- * @param {TokenTransform[]} transforms 
+ *
+ * @param {Token[]} tokens
+ * @param {number[]} token_indexes
+ * @param {TokenTransform[]} transforms
  */
 export function apply_token_transforms(tokens, token_indexes, transforms) {
 	for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
@@ -374,8 +374,8 @@ export function apply_token_transforms(tokens, token_indexes, transforms) {
 }
 
 /**
- * 
- * @param {(token: Token) => Token} mapper 
+ *
+ * @param {(token: Token) => Token} mapper
  * @returns {RuleAction}
  */
 export function create_token_map_action(mapper) {
@@ -386,8 +386,8 @@ export function create_token_map_action(mapper) {
 }
 
 /**
- * 
- * @param {(token: Token) => void} action 
+ *
+ * @param {(token: Token) => void} action
  * @returns {RuleAction}
  */
 export function create_token_modify_action(action) {

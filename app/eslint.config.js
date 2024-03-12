@@ -74,6 +74,9 @@ export default [
 
 			// https://eslint.org/docs/latest/rules/no-extra-parens
 			'no-extra-parens': 'error',
+
+			// https://eslint.style/rules/default/object-curly-spacing
+			'@stylistic/object-curly-spacing': ['error', 'always'],
 		},
 	},
 

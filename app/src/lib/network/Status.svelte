@@ -1,7 +1,7 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {offline} from '.'
-	import {Badge} from '$lib'
+	import { offline } from '.'
+	import { Badge } from '$lib'
 </script>
 
 {#if $offline}

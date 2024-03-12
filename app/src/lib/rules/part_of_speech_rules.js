@@ -1,4 +1,4 @@
-import {create_context_filter, create_token_filter, create_token_map_action} from './rules_parser'
+import { create_context_filter, create_token_filter, create_token_map_action } from './rules_parser'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -163,7 +163,7 @@ export function parse_part_of_speech_rule(rule_json) {
 		return create_token_map_action(token => {
 			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
 			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
-			return {...token, form_results, lookup_results}
+			return { ...token, form_results, lookup_results }
 		})
 	}
 }

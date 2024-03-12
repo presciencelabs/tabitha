@@ -1,7 +1,7 @@
-import {create_context_filter, create_token_filter, create_token_modify_action} from './rules_parser'
-import {REGEXES} from '$lib/regexes'
-import {TOKEN_TYPE} from '$lib/parser/token'
-import {ERRORS} from '$lib/parser/error_messages'
+import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
+import { REGEXES } from '$lib/regexes'
+import { TOKEN_TYPE } from '$lib/parser/token'
+import { ERRORS } from '$lib/parser/error_messages'
 
 /**
  * These rules are hardcoded because they shouldn't need to be edited or added to by the user.
@@ -24,7 +24,7 @@ const builtin_syntax_rules = [
 		name: 'Set tag for quote clauses',
 		comment: '',
 		rule: {
-			trigger: subordinate_clause_starts_with(create_token_filter({'token': '"'})),
+			trigger: subordinate_clause_starts_with(create_token_filter({ 'token': '"' })),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				token.tag = 'patient_clause|quote_begin'
@@ -35,8 +35,8 @@ const builtin_syntax_rules = [
 		name: 'Set tag for relative clauses based on relativizer',
 		comment: 'removes extra tags for words like "who" and "which". "that" is handled again in the next rule',
 		rule: {
-			trigger: subordinate_clause_starts_with(create_token_filter({'tag': 'relativizer'})),
-			context: create_context_filter({ 'precededby': { 'category': 'Noun'} }),
+			trigger: subordinate_clause_starts_with(create_token_filter({ 'tag': 'relativizer' })),
+			context: create_context_filter({ 'precededby': { 'category': 'Noun' } }),
 			action: create_token_modify_action(token => {
 				const relativizer = token.sub_tokens[1]
 				if (relativizer.token === 'that') {
@@ -54,8 +54,8 @@ const builtin_syntax_rules = [
 		name: 'Set tag for "that" when not preceded by a Noun',
 		comment: '"that" can only be a complementizer in this case',
 		rule: {
-			trigger: subordinate_clause_starts_with(create_token_filter({'token': 'that'})),
-			context: create_context_filter({ 'notprecededby': { 'category': 'Noun' }}),
+			trigger: subordinate_clause_starts_with(create_token_filter({ 'token': 'that' })),
+			context: create_context_filter({ 'notprecededby': { 'category': 'Noun' } }),
 			action: create_token_modify_action(token => {
 				token.tag = 'patient_clause'
 				token.sub_tokens[1].tag = 'complementizer'
@@ -66,7 +66,7 @@ const builtin_syntax_rules = [
 		name: 'All Clauses that have adpositions are Adverbial clauses',
 		comment: '',
 		rule: {
-			trigger: subordinate_clause_starts_with(create_token_filter({'category': 'Adposition'})),
+			trigger: subordinate_clause_starts_with(create_token_filter({ 'category': 'Adposition' })),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				token.tag = 'adverbial_clause'
@@ -160,7 +160,7 @@ const builtin_syntax_rules = [
 		name: 'Remove lookup results for certain functional Adpositions (up, down, etc)',
 		comment: 'While these have an entry in the Ontoloy, they are only used in the Analyzer with specific Verbs. They should not be recognized as words on their own.',
 		rule: {
-			trigger: create_token_filter({'token': 'down|off|out|up'}),
+			trigger: create_token_filter({ 'token': 'down|off|out|up' }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				token.lookup_results = []
@@ -169,7 +169,7 @@ const builtin_syntax_rules = [
 	},
 ]
 
-export const SYNTAX_RULES = builtin_syntax_rules.map(({rule}) => rule)
+export const SYNTAX_RULES = builtin_syntax_rules.map(({ rule }) => rule)
 
 /**
  * 

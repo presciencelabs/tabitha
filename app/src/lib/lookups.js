@@ -1,5 +1,5 @@
-import {TOKEN_TYPE} from './parser/token'
-import {REGEXES} from './regexes'
+import { TOKEN_TYPE } from './parser/token'
+import { REGEXES } from './regexes'
 
 // TODO move whole token pipeline to the server
 
@@ -83,7 +83,7 @@ async function check_forms(lookup_token) {
 
 	// The form lookup may have resulted in different stems (eg. saw).
 	// So add a lookup term for each unique stem (case-insensitive)
-	const unique_stems = new Set(results.matches.map(({stem}) => stem.toLowerCase()))
+	const unique_stems = new Set(results.matches.map(({ stem }) => stem.toLowerCase()))
 
 	// Add the original lookup stem in case there is a missing form (eg. Adjectives left, following)
 	unique_stems.add(stem.toLowerCase())

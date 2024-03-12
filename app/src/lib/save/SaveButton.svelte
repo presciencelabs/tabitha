@@ -1,6 +1,6 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import {saved} from '.'
+	import { saved } from '.'
 
 	/** @type {string} content */
 	export let content

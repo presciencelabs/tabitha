@@ -4,7 +4,7 @@
 	import Punctuation from './Punctuation.svelte'
 	import Word from './Word.svelte'
 	import Message from './Message.svelte'
-	import {TOKEN_TYPE, token_has_message} from '$lib/parser/token'
+	import { TOKEN_TYPE, token_has_message } from '$lib/parser/token'
 
 	/** @type {Token} */
 	export let token

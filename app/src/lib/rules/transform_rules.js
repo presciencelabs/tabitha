@@ -1,4 +1,4 @@
-import {apply_token_transforms, create_context_filter, create_token_filter, create_token_transform} from './rules_parser'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
 
 /**
  * These are words that may change their underlying data based on the context around them.
@@ -93,14 +93,14 @@ const transform_rules_json = [
 	{
 		'name': '\'of\' after group/crowd becomes a function word',
 		'trigger': { 'token': 'of' },
-		'context': { 'precededby': {'stem': 'group|crowd'} },
+		'context': { 'precededby': { 'stem': 'group|crowd' } },
 		'transform': { 'function': '-Group' },
 	},
 	{
 		'name': '\'that\' followed by the Adposition \'so\' does not have any function',
 		'trigger': { 'token': 'that' },
 		'context': {
-			'precededby': {'stem': 'so', 'category': 'Adposition'},
+			'precededby': { 'stem': 'so', 'category': 'Adposition' },
 		},
 		'transform': { 'tag': '' },
 		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
@@ -127,7 +127,7 @@ const transform_rules_json = [
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': [
-				{ 'token': 'like', 'skip': {'token': 'not'} },
+				{ 'token': 'like', 'skip': { 'token': 'not' } },
 			],
 		},
 		'transform': { 'concept': 'be-U' },
@@ -137,7 +137,7 @@ const transform_rules_json = [
 		'name': 'be before \'for\' becomes be-G',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': { 'token': 'for', 'skip': {'token': 'not'} },
+			'followedby': { 'token': 'for', 'skip': { 'token': 'not' } },
 		},
 		'transform': { 'concept': 'be-G' },
 		'context_transform': { 'function': 'state_role' },
@@ -146,7 +146,7 @@ const transform_rules_json = [
 		'name': 'be before \'with\' becomes be-I',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': { 'token': 'with', 'skip': {'token': 'not'} },
+			'followedby': { 'token': 'with', 'skip': { 'token': 'not' } },
 		},
 		'transform': { 'concept': 'be-I' },
 		'context_transform': { 'function': 'state_role' },
@@ -155,7 +155,7 @@ const transform_rules_json = [
 		'name': 'be before \'about\' becomes be-P',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': { 'token': 'about', 'skip': {'token': 'not'} },
+			'followedby': { 'token': 'about', 'skip': { 'token': 'not' } },
 		},
 		'transform': { 'concept': 'be-P' },
 		'context_transform': { 'function': 'state_role' },
@@ -166,7 +166,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': [
 				{ 'stem': 'in|on|before|after' },
-				{ 'stem': 'day|morning|afternoon|evening|Sabbath', 'skip': [{'token': 'the'}, {'category': 'Adjective'}] },
+				{ 'stem': 'day|morning|afternoon|evening|Sabbath', 'skip': [{ 'token': 'the' }, { 'category': 'Adjective' }] },
 			],
 		},
 		'transform': { 'concept': 'be-H' },
@@ -178,7 +178,7 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Adposition',
 				'usage': 'A|a',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'concept': 'be-F' },
@@ -254,7 +254,7 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'past participle',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'function': 'auxiliary|passive' },
@@ -266,7 +266,7 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'participle',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'function': 'auxiliary|imperfective_aspect' },
@@ -277,7 +277,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'category': 'Verb',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'function': 'auxiliary|flashback' },
@@ -289,7 +289,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'tag': 'auxiliary',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb'}],
+				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
 			},
 		},
 		'transform': { 'function': 'auxiliary' },
@@ -309,7 +309,7 @@ const transform_rules_json = [
 		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
 		'trigger': { 'category': 'Adposition' },
 		'context': {
-			'precededby': {'token': '['},
+			'precededby': { 'token': '[' },
 		},
 		'transform': { 'usage': 'C' },
 		'comment': 'C means "Always in an Adverbial clause". eg by-A (Adverbial - C) vs by-B (Adjunct - A)',

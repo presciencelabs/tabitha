@@ -1,10 +1,10 @@
-import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence, token_has_error} from '../parser/token'
-import {ERRORS} from '../parser/error_messages'
-import {apply_rules} from './rules_processor'
-import {SYNTAX_RULES} from './syntax_rules'
-import {tokenize_input} from '$lib/parser/tokenize'
-import {clausify} from '$lib/parser/clausify'
-import {describe, expect, test} from 'vitest'
+import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence, token_has_error } from '../parser/token'
+import { ERRORS } from '../parser/error_messages'
+import { apply_rules } from './rules_processor'
+import { SYNTAX_RULES } from './syntax_rules'
+import { tokenize_input } from '$lib/parser/tokenize'
+import { clausify } from '$lib/parser/clausify'
+import { describe, expect, test } from 'vitest'
 
 /**
  *
@@ -48,8 +48,8 @@ function create_pairing_token(left, right) {
  * @param {OntologyResult[]} [data.lookup_results=[]] 
  * @returns {Token}
  */
-function create_lookup_token(token, {lookup_results=[]}={}) {
-	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
+function create_lookup_token(token, { lookup_results=[] }={}) {
+	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token })
 	lookup_token.lookup_results = lookup_results
 	return lookup_token
 }
@@ -74,7 +74,7 @@ function create_sentence(tokens) {
  * @param {number} [data.level=1] 
  * @returns {OntologyResult}
  */
-function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	return {
 		id: '0',
 		stem: stem,
@@ -210,7 +210,7 @@ describe('sentence syntax: capitalization', () => {
 		test('Followers/disciples token. pairings get checked', () => {
 			const test_tokens = [
 				create_sentence([
-					create_token('Followers', TOKEN_TYPE.LOOKUP_WORD, {pairing: create_token('disciples', TOKEN_TYPE.LOOKUP_WORD)}),
+					create_token('Followers', TOKEN_TYPE.LOOKUP_WORD, { pairing: create_token('disciples', TOKEN_TYPE.LOOKUP_WORD) }),
 					create_token('token', TOKEN_TYPE.LOOKUP_WORD),
 					create_token('.', TOKEN_TYPE.PUNCTUATION),
 				]),
@@ -321,7 +321,7 @@ describe('sentence syntax: capitalization', () => {
 		test('followers/disciples. pairings get checked', () => {
 			const test_tokens = [
 				create_sentence([
-					create_token('followers', TOKEN_TYPE.LOOKUP_WORD, {pairing: create_token('disciples', TOKEN_TYPE.LOOKUP_WORD)}),
+					create_token('followers', TOKEN_TYPE.LOOKUP_WORD, { pairing: create_token('disciples', TOKEN_TYPE.LOOKUP_WORD) }),
 					create_token('token', TOKEN_TYPE.LOOKUP_WORD),
 					create_token('.', TOKEN_TYPE.PUNCTUATION),
 				]),
@@ -335,7 +335,7 @@ describe('sentence syntax: capitalization', () => {
 		test('you go. an existing error doesn\'t get overwritten', () => {
 			const test_tokens = [
 				create_sentence([
-					create_token('you', TOKEN_TYPE.LOOKUP_WORD, {error: 'Some error'}),
+					create_token('you', TOKEN_TYPE.LOOKUP_WORD, { error: 'Some error' }),
 					create_token('go', TOKEN_TYPE.LOOKUP_WORD),
 					create_token('.', TOKEN_TYPE.PUNCTUATION),
 				]),
@@ -374,9 +374,9 @@ describe('sentence syntax: capitalization', () => {
 describe('sentence syntax: tag setting', () => {
 	test('relative clause tag', () => {
 		const test_tokens = clausify(tokenize_input('People [who] say [who] person ["who].'))
-		test_tokens[0].clause.sub_tokens[0].lookup_results.push(create_lookup_result('person', {part_of_speech: 'Noun'}))
-		test_tokens[0].clause.sub_tokens[2].lookup_results.push(create_lookup_result('say', {part_of_speech: 'Verb'}))
-		test_tokens[0].clause.sub_tokens[4].lookup_results.push(create_lookup_result('person', {part_of_speech: 'Noun'}))
+		test_tokens[0].clause.sub_tokens[0].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
+		test_tokens[0].clause.sub_tokens[2].lookup_results.push(create_lookup_result('say', { part_of_speech: 'Verb' }))
+		test_tokens[0].clause.sub_tokens[4].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
 
 		const checked_tokens = apply_rules(test_tokens, SYNTAX_RULES)
 		const clause_tokens = checked_tokens[0].clause.sub_tokens
@@ -390,8 +390,8 @@ describe('sentence syntax: tag setting', () => {
 	})
 	test('"that" clause tag', () => {
 		const test_tokens = clausify(tokenize_input('That person [that]. John saw [that].'))
-		test_tokens[0].clause.sub_tokens[1].lookup_results.push(create_lookup_result('person', {part_of_speech: 'Noun'}))
-		test_tokens[1].clause.sub_tokens[1].lookup_results.push(create_lookup_result('see', {part_of_speech: 'Verb'}))
+		test_tokens[0].clause.sub_tokens[1].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
+		test_tokens[1].clause.sub_tokens[1].lookup_results.push(create_lookup_result('see', { part_of_speech: 'Verb' }))
 
 		const checked_tokens = apply_rules(test_tokens, SYNTAX_RULES)
 		
@@ -403,7 +403,7 @@ describe('sentence syntax: tag setting', () => {
 	})
 	test('Adverbial clause tag', () => {
 		const test_tokens = clausify(tokenize_input('[Because].'))
-		test_tokens[0].clause.sub_tokens[0].sub_tokens[1].lookup_results.push(create_lookup_result('because', {part_of_speech: 'Adposition'}))
+		test_tokens[0].clause.sub_tokens[0].sub_tokens[1].lookup_results.push(create_lookup_result('because', { part_of_speech: 'Adposition' }))
 
 		const checked_tokens = apply_rules(test_tokens, SYNTAX_RULES)
 		const clause_tokens = checked_tokens[0].clause.sub_tokens
@@ -417,8 +417,8 @@ describe('pairing part_of_speech disambiguation', () => {
 		const test_tokens = [create_sentence([
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
-				create_lookup_token('first', {lookup_results: [create_lookup_result('first', {level: 1})]}),
-				create_lookup_token('second', {lookup_results: [create_lookup_result('second', {level: 2})]}),
+				create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
+				create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 2 })] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		])]
@@ -431,14 +431,14 @@ describe('pairing part_of_speech disambiguation', () => {
 		const test_tokens = [create_sentence([
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
-				create_lookup_token('first', {lookup_results: [
-					create_lookup_result('first', {part_of_speech: 'Noun', level: 1}),
-					create_lookup_result('first', {part_of_speech: 'Verb', level: 1}),
-				]}),
-				create_lookup_token('second', {lookup_results: [
-					create_lookup_result('second', {part_of_speech: 'Verb', level: 2}),
-					create_lookup_result('second', {part_of_speech: 'Adjective', level: 2}),
-				]}),
+				create_lookup_token('first', { lookup_results: [
+					create_lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					create_lookup_result('first', { part_of_speech: 'Verb', level: 1 }),
+				] }),
+				create_lookup_token('second', { lookup_results: [
+					create_lookup_result('second', { part_of_speech: 'Verb', level: 2 }),
+					create_lookup_result('second', { part_of_speech: 'Adjective', level: 2 }),
+				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		])]
@@ -457,14 +457,14 @@ describe('pairing part_of_speech disambiguation', () => {
 		const test_tokens = [create_sentence([
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
-				create_lookup_token('first', {lookup_results: [
-					create_lookup_result('first', {part_of_speech: 'Noun', level: 1}),
-					create_lookup_result('first', {part_of_speech: 'Verb', level: 1}),
-				]}),
-				create_lookup_token('second', {lookup_results: [
-					create_lookup_result('second', {part_of_speech: 'Verb', level: 2}),
-					create_lookup_result('second', {part_of_speech: 'Noun', level: 2}),
-				]}),
+				create_lookup_token('first', { lookup_results: [
+					create_lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					create_lookup_result('first', { part_of_speech: 'Verb', level: 1 }),
+				] }),
+				create_lookup_token('second', { lookup_results: [
+					create_lookup_result('second', { part_of_speech: 'Verb', level: 2 }),
+					create_lookup_result('second', { part_of_speech: 'Noun', level: 2 }),
+				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		])]
@@ -477,14 +477,14 @@ describe('pairing part_of_speech disambiguation', () => {
 		const test_tokens = [create_sentence([
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
-				create_lookup_token('first', {lookup_results: [
-					create_lookup_result('first', {part_of_speech: 'Noun', level: 1}),
-					create_lookup_result('first', {part_of_speech: 'Verb', level: 1}),
-				]}),
-				create_lookup_token('second', {lookup_results: [
-					create_lookup_result('second', {part_of_speech: 'Adjective', level: 2}),
-					create_lookup_result('second', {part_of_speech: 'Adverb', level: 2}),
-				]}),
+				create_lookup_token('first', { lookup_results: [
+					create_lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					create_lookup_result('first', { part_of_speech: 'Verb', level: 1 }),
+				] }),
+				create_lookup_token('second', { lookup_results: [
+					create_lookup_result('second', { part_of_speech: 'Adjective', level: 2 }),
+					create_lookup_result('second', { part_of_speech: 'Adverb', level: 2 }),
+				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		])]

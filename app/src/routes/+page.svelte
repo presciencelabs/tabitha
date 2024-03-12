@@ -1,10 +1,10 @@
 <script>
 	import CopyButton from '$lib/CopyButton.svelte'
-	import {backtranslate} from '$lib/backtranslator'
-	import {parse} from '$lib/parser'
-	import {token_has_error} from '$lib/parser/token'
+	import { backtranslate } from '$lib/backtranslator'
+	import { parse } from '$lib/parser'
+	import { token_has_error } from '$lib/parser/token'
 	import { SaveButton, saved } from '$lib/save'
-	import {Tokens} from '$lib/tokens'
+	import { Tokens } from '$lib/tokens'
 	import Icon from '@iconify/svelte'
 
 	let entered_text = $saved

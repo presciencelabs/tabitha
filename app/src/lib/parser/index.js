@@ -1,8 +1,8 @@
-import {pipe} from '$lib/pipeline'
-import {tokenize_input} from './tokenize'
-import {perform_form_lookups, perform_ontology_lookups} from '$lib/lookups'
-import {clausify, flatten_sentences} from './clausify'
-import {CHECKER_RULES, LOOKUP_RULES, PART_OF_SPEECH_RULES, SYNTAX_RULES, TRANSFORM_RULES, PRONOUN_RULES, rules_applier} from '$lib/rules'
+import { pipe } from '$lib/pipeline'
+import { tokenize_input } from './tokenize'
+import { perform_form_lookups, perform_ontology_lookups } from '$lib/lookups'
+import { clausify, flatten_sentences } from './clausify'
+import { CHECKER_RULES, LOOKUP_RULES, PART_OF_SPEECH_RULES, SYNTAX_RULES, TRANSFORM_RULES, PRONOUN_RULES, rules_applier } from '$lib/rules'
 
 /**
  * @param {string} text

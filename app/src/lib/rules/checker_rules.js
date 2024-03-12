@@ -1,6 +1,6 @@
-import {ERRORS} from '$lib/parser/error_messages'
-import {TOKEN_TYPE, check_token_lookup, convert_to_error_token, create_added_token} from '$lib/parser/token'
-import {create_context_filter, create_token_filter, create_token_modify_action} from './rules_parser'
+import { ERRORS } from '$lib/parser/error_messages'
+import { TOKEN_TYPE, check_token_lookup, convert_to_error_token, create_added_token } from '$lib/parser/token'
+import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 const checker_rules_json = [
 	{
@@ -364,11 +364,11 @@ export function parse_checker_rule(rule_json) {
 		return (tokens, trigger_index) => {
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (require.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(require.precededby, {error: require.message}))
+				tokens.splice(trigger_index, 0, create_added_token(require.precededby, { error: require.message }))
 				return trigger_index + 2
 			}
 			if (require.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, {error: require.message}))
+				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, { error: require.message }))
 				return trigger_index + 2
 			}
 
@@ -386,21 +386,21 @@ export function parse_checker_rule(rule_json) {
 		return (tokens, trigger_index) => {
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (suggest.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(suggest.precededby, {suggest: suggest.message}))
+				tokens.splice(trigger_index, 0, create_added_token(suggest.precededby, { suggest: suggest.message }))
 				return trigger_index + 2
 			}
 			if (suggest.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(suggest.followedby, {suggest: suggest.message}))
+				tokens.splice(trigger_index + 1, 0, create_added_token(suggest.followedby, { suggest: suggest.message }))
 				return trigger_index + 2
 			}
 
-			tokens[trigger_index] = {...tokens[trigger_index], suggest_message: suggest.message}
+			tokens[trigger_index] = { ...tokens[trigger_index], suggest_message: suggest.message }
 			return trigger_index + 1
 		}
 	}
 }
 
-export const CHECKER_RULES = builtin_checker_rules.map(({rule}) => rule).concat(checker_rules_json.map(parse_checker_rule))
+export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).concat(checker_rules_json.map(parse_checker_rule))
 
 /**
  * 

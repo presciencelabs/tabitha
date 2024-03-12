@@ -1,10 +1,10 @@
-import {TOKEN_TYPE, create_clause_token, create_token, flatten_sentence} from '$lib/parser/token'
-import {describe, expect, test} from 'vitest'
-import {apply_rules} from './rules_processor'
-import {LOOKUP_RULES} from './lookup_rules'
-import {parse_transform_rule} from './transform_rules'
-import {parse_checker_rule} from './checker_rules'
-import {parse_part_of_speech_rule} from './part_of_speech_rules'
+import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '$lib/parser/token'
+import { describe, expect, test } from 'vitest'
+import { apply_rules } from './rules_processor'
+import { LOOKUP_RULES } from './lookup_rules'
+import { parse_transform_rule } from './transform_rules'
+import { parse_checker_rule } from './checker_rules'
+import { parse_part_of_speech_rule } from './part_of_speech_rules'
 
 /**
  * 
@@ -22,8 +22,8 @@ function create_sentence(tokens) {
  * @param {OntologyResult[]} [data.lookup_results=[]] 
  * @returns {Token}
  */
-function create_lookup_token(token, {lookup_results=[]}={}) {
-	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, {lookup_term: token})
+function create_lookup_token(token, { lookup_results=[] }={}) {
+	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token })
 	lookup_token.lookup_results = lookup_results
 	return lookup_token
 }
@@ -37,7 +37,7 @@ function create_lookup_token(token, {lookup_results=[]}={}) {
  * @param {number} [data.level=1] 
  * @returns {OntologyResult}
  */
-function create_lookup_result(stem, {sense='A', part_of_speech='Noun', level=1}={}) {
+function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	return {
 		id: '0',
 		stem: stem,
@@ -61,8 +61,8 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
-				create_token('other', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'other'}),
+				create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+				create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 			]),
 		]
 
@@ -82,8 +82,8 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-				create_token('text', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'text'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 			]),
 		]
 
@@ -103,11 +103,11 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('John\'s', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'John'}),
-				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'peanut'}),
-				create_token('was', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'was'}),
+				create_token('John\'s', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
+				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'peanut' }),
+				create_token('was', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'was' }),
 				create_token('a', TOKEN_TYPE.FUNCTION_WORD),
-				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'peanut'}),
+				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'peanut' }),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
 			]),
 		]
@@ -131,8 +131,8 @@ describe('transform rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_clause_token([
-					create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+					create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 				]),
 			]),
 		]
@@ -151,24 +151,24 @@ describe('transform rules', () => {
 			},
 			{
 				'trigger': { 'token': 'saw' },
-				'context': { 'followedby': {'token': 'cat', 'skip': 'all'} },
+				'context': { 'followedby': { 'token': 'cat', 'skip': 'all' } },
 				'transform': { 'concept': 'see-B' },
 			},
 		].map(parse_transform_rule)
 
 		const tokens = [
 			create_sentence([
-				create_token('John', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'John'}),
-				create_token('saw', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'see'}),
+				create_token('John', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
+				create_token('saw', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'see' }),
 				create_token('the', TOKEN_TYPE.FUNCTION_WORD),
-				create_token('cat', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'cat'}),
+				create_token('cat', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'cat' }),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
 			]),
 		]
 		tokens[0].clause.sub_tokens[1].lookup_results = [
-			create_lookup_result('see', {sense: 'A'}),
-			create_lookup_result('see', {sense: 'B'}),
-			create_lookup_result('see', {sense: 'C'}),
+			create_lookup_result('see', { sense: 'A' }),
+			create_lookup_result('see', { sense: 'B' }),
+			create_lookup_result('see', { sense: 'C' }),
 		]
 
 		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
@@ -187,10 +187,10 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 			]),
 			create_sentence([
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -210,9 +210,9 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 				create_clause_token([
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 				]),
 			]),
 		]
@@ -228,7 +228,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
@@ -238,7 +238,7 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('not_token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'not_token'}),
+				create_token('not_token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'not_token' }),
 			]),
 		]
 
@@ -250,7 +250,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
@@ -260,7 +260,7 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 			]),
 		]
 
@@ -272,7 +272,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
@@ -282,8 +282,8 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -299,7 +299,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'precededby': 'add',
 					'message': 'message',
@@ -309,8 +309,8 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -326,7 +326,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'precededby': 'add1',
 					'message': 'message1',
@@ -334,7 +334,7 @@ describe('checker rules', () => {
 			},
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': {
 					'precededby': 'add2',
 					'message': 'message2',
@@ -344,8 +344,8 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -363,15 +363,15 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context' }},
+				'context': { 'followedby': { 'token': 'context' } },
 				'require': { 'message': 'message' },
 			},
 		].map(parse_checker_rule)
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -386,7 +386,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context', 'skip': 'all' }},
+				'context': { 'followedby': { 'token': 'context', 'skip': 'all' } },
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
@@ -396,10 +396,10 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 			]),
 			create_sentence([
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 			]),
 		]
 
@@ -411,7 +411,7 @@ describe('checker rules', () => {
 		const rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': { 'token': 'context', 'skip': 'all' }},
+				'context': { 'followedby': { 'token': 'context', 'skip': 'all' } },
 				'require': {
 					'followedby': 'add',
 					'message': 'message',
@@ -421,9 +421,9 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
+				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
 				create_clause_token([
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 				]),
 			]),
 		]
@@ -448,8 +448,8 @@ describe('checker rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_clause_token([
-					create_token('token', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'token'}),
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'context'}),
+					create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
 				]),
 			]),
 		]
@@ -466,17 +466,17 @@ describe('lookup rules', () => {
 	test('built-in lookup rules', () => {
 		const input_tokens = [
 			create_sentence([
-				create_token('John', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'John'}),
-				create_token('ran', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'run'}),
+				create_token('John', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
+				create_token('ran', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'run' }),
 				create_clause_token([
 					create_token('[', TOKEN_TYPE.PUNCTUATION),
-					create_token('in', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'in'}),
-					create_token('order', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'order'}),
-					create_token('to', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'to'}),
-					create_token('take', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'take'}),
-					create_token('many', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'many'}),
-					create_token('books', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'book'}),
-					create_token('away', TOKEN_TYPE.LOOKUP_WORD, {lookup_term: 'away'}),
+					create_token('in', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'in' }),
+					create_token('order', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'order' }),
+					create_token('to', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'to' }),
+					create_token('take', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'take' }),
+					create_token('many', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'many' }),
+					create_token('books', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'book' }),
+					create_token('away', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'away' }),
 					create_token(']', TOKEN_TYPE.PUNCTUATION),
 				]),
 				create_token('.', TOKEN_TYPE.PUNCTUATION),
@@ -522,9 +522,9 @@ describe('part-of-speech rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_lookup_token('token', {lookup_results: [
-					create_lookup_result('token', {part_of_speech: 'Adjective'}),
-				]}),
+				create_lookup_token('token', { lookup_results: [
+					create_lookup_result('token', { part_of_speech: 'Adjective' }),
+				] }),
 			]),
 		]
 
@@ -543,10 +543,10 @@ describe('part-of-speech rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_lookup_token('token', {lookup_results: [
-					create_lookup_result('token1', {part_of_speech: 'Noun'}),
-					create_lookup_result('token2', {part_of_speech: 'Noun'}),
-				]}),
+				create_lookup_token('token', { lookup_results: [
+					create_lookup_result('token1', { part_of_speech: 'Noun' }),
+					create_lookup_result('token2', { part_of_speech: 'Noun' }),
+				] }),
 			]),
 		]
 
@@ -565,12 +565,12 @@ describe('part-of-speech rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_lookup_token('token', {lookup_results: [
-					create_lookup_result('token1', {part_of_speech: 'Noun'}),
-					create_lookup_result('token2', {part_of_speech: 'Noun'}),
-					create_lookup_result('token1', {part_of_speech: 'Verb'}),
-					create_lookup_result('token2', {part_of_speech: 'Verb'}),
-				]}),
+				create_lookup_token('token', { lookup_results: [
+					create_lookup_result('token1', { part_of_speech: 'Noun' }),
+					create_lookup_result('token2', { part_of_speech: 'Noun' }),
+					create_lookup_result('token1', { part_of_speech: 'Verb' }),
+					create_lookup_result('token2', { part_of_speech: 'Verb' }),
+				] }),
 			]),
 		]
 
@@ -591,13 +591,13 @@ describe('part-of-speech rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_lookup_token('token', {lookup_results: [
-					create_lookup_result('token1', {part_of_speech: 'Noun'}),
-					create_lookup_result('token2', {part_of_speech: 'Noun'}),
-					create_lookup_result('token1', {part_of_speech: 'Verb'}),
-					create_lookup_result('token2', {part_of_speech: 'Verb'}),
-					create_lookup_result('token1', {part_of_speech: 'Adjective'}),
-				]}),
+				create_lookup_token('token', { lookup_results: [
+					create_lookup_result('token1', { part_of_speech: 'Noun' }),
+					create_lookup_result('token2', { part_of_speech: 'Noun' }),
+					create_lookup_result('token1', { part_of_speech: 'Verb' }),
+					create_lookup_result('token2', { part_of_speech: 'Verb' }),
+					create_lookup_result('token1', { part_of_speech: 'Adjective' }),
+				] }),
 			]),
 		]
 
