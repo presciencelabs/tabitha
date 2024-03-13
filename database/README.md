@@ -22,8 +22,9 @@
 
 ## Interacting with the database
 
-> `--local` only operates on the local copy, i.e., the one in the closest .wrangler folder, removing that option will interact with the deployed database
+> `--local` only operates on the local copy and is the default in wrangler v3.33.0+
+> `--remote` operates on the remote database
 
-`wrangler d1 execute <DB_NAME> --local --file=./Editor.sqlite.sql`
-`wrangler d1 execute <DB_NAME> --local --command="select * from sqlite_master"`
+`wrangler d1 execute <DB_NAME> --file=./Editor.sqlite.sql`
+`wrangler d1 execute <DB_NAME> --command="select * from sqlite_master"`
 
