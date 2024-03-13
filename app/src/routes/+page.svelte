@@ -18,6 +18,10 @@
 			|| token.complex_pairing && token_has_error(token.complex_pairing)
 			|| token.pronoun && token_has_error(token.pronoun))
 	}
+
+	function clear() {
+		entered_text = ''
+	}
 </script>
 
 <form class="grid justify-items-center">
@@ -25,7 +29,13 @@
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
 
 	<div class="mt-8">
-		<CopyButton content={entered_text} />
+		<button on:click={ clear } class="btn btn-secondary">
+			Clear
+
+			<Icon icon="mdi:clear-bold" class="h-6 w-6" />
+		</button>
+
+		<CopyButton content={entered_text} classes="ms-4" />
 
 		<SaveButton content={entered_text} classes="ms-4" />
 	</div>
