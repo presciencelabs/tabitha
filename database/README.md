@@ -60,9 +60,10 @@ https://developers.cloudflare.com/workers/wrangler
 
 ### Interacting with the database
 
-> `--local` only operates on the local copy, removing that option will interact with the deployed database
+> `--local` only operates on the local copy and is the default in wrangler v3.33.0+
+> `--remote` operates on the remote database
 
-`wrangler d1 execute Targets.YYYY-MM-DD --local --file=./Targets.YYYY-MM-DD.tabitha.sqlite.sql`
+`wrangler d1 execute Targets.YYYY-MM-DD --file=./Targets.YYYY-MM-DD.tabitha.sqlite.sql`
 
-`wrangler d1 execute Targets.YYYY-MM-DD --local --command="select count(*) from English"`
+`wrangler d1 execute Targets.YYYY-MM-DD --command="select count(*) from English"`
 
