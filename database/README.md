@@ -55,11 +55,12 @@ https://developers.cloudflare.com/workers/wrangler
 
 ### Interacting with the database
 
-> `--local` only operates on the local copy, i.e., the one in the closest .wrangler folder, removing that option will interact with the deployed database
+> `--local` only operates on the local copy and is the default in wrangler v3.33.0+
+> `--remote` operates on the remote database
 
-`wrangler d1 execute <DB_NAME> --local --file=./<DB_NAME>.tabitha.sqlite.sql`
+`wrangler d1 execute <DB_NAME> --file=./<DB_NAME>.tabitha.sqlite.sql`
 
-`wrangler d1 execute <DB_NAME> --local --command="select part_of_speech, count(*) as count from Concepts group by part_of_speech order by count; select * from Version;"`
+`wrangler d1 execute <DB_NAME> --command="select part_of_speech, count(*) as count from Concepts group by part_of_speech order by count; select * from Version;"`
 
 ### Deployment
 
@@ -80,7 +81,7 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 1. dump migrated database, e.g., `sqlite3 Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite .dump > Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
 1.	create new database, e.g., `wrangler d1 create Ontology.YYYY-MM-DD.#_#_####`  (need to update local `wrangler.toml`'s with new info)
-1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --local --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
+1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
 1. add latest complex terms by running a local test below.
 1. test app with new database locally
 1. deploy to remote, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
