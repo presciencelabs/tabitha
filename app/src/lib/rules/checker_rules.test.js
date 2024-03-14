@@ -254,9 +254,9 @@ describe('built-in checker rules', () => {
 	
 			const checked_tokens = apply_rules(test_tokens, NO_LOOKUP_CHECK).flatMap(flatten_sentence)
 	
-			expect(checked_tokens[0].error_message).toMatch(/^This word is not in the Ontology/)
-			expect(checked_tokens[1].error_message).toMatch(/^This word is not in the Ontology/)
-			expect(checked_tokens[1].complex_pairing?.error_message).toMatch(/^This word is not in the Ontology/)
+			expect(checked_tokens[0].suggest_message).toMatch(/^This word is not in the Ontology/)
+			expect(checked_tokens[1].suggest_message).toMatch(/^This word is not in the Ontology/)
+			expect(checked_tokens[1].complex_pairing?.suggest_message).toMatch(/^This word is not in the Ontology/)
 		})
 	})
 })

@@ -5,7 +5,7 @@ export const FUNCTION_WORDS = new Map([
 	['certainly', 'emphatic_affirmative_polarity|modal'],
 	['could', 'conditional_could|modal'],
 	['definitely', 'definite_mood|modal'],
-	['extremely', 'extremely_intensified_degree|modal'],
+	['extremely', 'extremely_intensified_degree'],
 	['from', 'source_role'],
 	['here', 'at_this_place'],
 	['it', 'agent_proposition_subject'],

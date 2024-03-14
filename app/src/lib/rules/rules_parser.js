@@ -333,7 +333,7 @@ export function create_token_transform(transform_json) {
  * @returns {LookupFilter}
  */
 function has_usage(char) {
-	return ({ concept }) => concept !== null && concept.categorization.includes(char)
+	return ({ concept }) => !!concept?.categorization.includes(char)
 }
 
 /**
@@ -342,7 +342,7 @@ function has_usage(char) {
  * @returns {LookupFilter}
  */
 function may_have_usage(char) {
-	return ({ concept }) => concept !== null && (concept.categorization.length === 0 || concept.categorization.includes(char))
+	return ({ concept }) => !!(concept?.categorization.length === 0 || concept?.categorization.includes(char))
 }
 
 /**

@@ -1,4 +1,4 @@
-import { create_context_filter, create_token_filter, create_token_map_action } from './rules_parser'
+import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -38,7 +38,7 @@ const part_of_speech_rules_json = [
 			'precededby': { 'tag': 'negative_verb_polarity|modal' },
 		},
 		'remove': 'Noun',
-		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc'
+		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc',
 	},
 	{
 		'name': 'If Noun-Verb preceded by Verb, Adjective, Conjunction, delete the Verb',
@@ -119,7 +119,18 @@ const part_of_speech_rules_json = [
 			},
 		},
 		'remove': 'Verb',
-		'comment': 'The man held the stick in the man\'s left hand',
+		'comment': 'The man held the stick in the man\'s left(V/Adj) hand',
+	},
+	{
+		'name': 'If Verb-Adjective preceded by a degree indicator, remove Verb',
+		'category': 'Verb|Adjective',
+		'context': {
+			'precededby': {
+				'tag': 'intensified_degree|extremely_intensified_degree|least_degree|comparative_degree|too_degree',
+			},
+		},
+		'remove': 'Verb',
+		'comment': 'Daniel 3:24  Nebuchadnezzar was very surprised(V/Adj).',
 	},
 	{
 		'name': 'If Verb-Adjective preceded by a Noun, remove Adjective',
@@ -127,6 +138,14 @@ const part_of_speech_rules_json = [
 		'context': { 'precededby': { 'category': 'Noun' } },
 		'remove': 'Adjective',
 		'comment': 'The man left the house.',
+	},
+	{
+		'name': '\'pleased\' followed by \'with\' is the Adjective',
+		'category': 'Verb|Adjective',
+		'trigger': { 'token': 'pleased' },
+		'context': { 'followedby': { 'token': 'with' } },
+		'remove': 'Verb',
+		'comment': 'Luke 3:22 I am pleased(V/Adj) with you.',
 	},
 	{
 		'name': 'If Adverb-Adjective followed by Verb, remove Adjective',
@@ -173,10 +192,24 @@ export function parse_part_of_speech_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function create_remove_action(remove_json) {
-		return create_token_map_action(token => {
-			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
-			return { ...token, lookup_results }
+		const remove_category = remove_category_action(remove_json)
+
+		return create_token_modify_action(token => {
+			remove_category(token)
+
+			if (token.complex_pairing) {
+				remove_category(token.complex_pairing)
+			}
 		})
+	}
+
+	/**
+	 * 
+	 * @param {string} category 
+	 * @returns {(token: Token) => void}
+	 */
+	function remove_category_action(category) {
+		return token => token.lookup_results = token.lookup_results.filter(result => result.part_of_speech !== category)
 	}
 }
 

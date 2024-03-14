@@ -135,7 +135,7 @@ const builtin_syntax_rules = [
 		name: 'Filter lookup results for pairings based on part of speech',
 		comment: '',
 		rule: {
-			trigger: token => token.lookup_results.length > 0 && token.complex_pairing !== null && token.complex_pairing.lookup_results.length > 0,
+			trigger: token => !!(token.lookup_results.length && token.complex_pairing?.lookup_results.length),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				/** @type {Token[]} */
