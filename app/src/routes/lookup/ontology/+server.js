@@ -11,7 +11,7 @@ export async function GET({ url: { searchParams } }) {
 
 	return response({ term: word, matches })
 
-	/** @param {LookupResult<OntologyResult>} result  */
+	/** @param {LookupResponse<OntologyResult>} result  */
 	function response(result) {
 		const THREE_HOUR_CACHE = {
 			'cache-control': `max-age=${3 * 60 * 60}`,

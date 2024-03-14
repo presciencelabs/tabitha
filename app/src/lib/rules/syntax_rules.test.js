@@ -45,7 +45,7 @@ function create_pairing_token(left, right) {
  * 
  * @param {string} token 
  * @param {Object} [data={}] 
- * @param {OntologyResult[]} [data.lookup_results=[]] 
+ * @param {LookupResult[]} [data.lookup_results=[]] 
  * @returns {Token}
  */
 function create_lookup_token(token, { lookup_results=[] }={}) {
@@ -72,17 +72,24 @@ function create_sentence(tokens) {
  * @param {string} [data.sense='A'] 
  * @param {string} [data.part_of_speech='Noun'] 
  * @param {number} [data.level=1] 
- * @returns {OntologyResult}
+ * @returns {LookupResult}
  */
 function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
-	return {
+	const concept = {
 		id: '0',
-		stem: stem,
+		stem,
 		sense,
 		part_of_speech,
 		level,
 		gloss: '',
 		categorization: '',
+	}
+	return {
+		stem,
+		part_of_speech,
+		form: 'stem',
+		concept,
+		how_to: [],
 	}
 }
 

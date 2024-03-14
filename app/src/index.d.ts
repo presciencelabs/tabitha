@@ -7,10 +7,9 @@ type Token = {
 	suggest_message: string
 	tag: string
 	lookup_terms: LookupTerm[]
-	form_results: FormResult[]
-	lookup_results: OntologyResult[]
-	complex_pairing: Token?;
-	pronoun: Token?;
+	lookup_results: LookupResult[]
+	complex_pairing: Token | null
+	pronoun: Token | null
 	sub_tokens: Token[]
 }
 
@@ -22,25 +21,44 @@ type Sentence = {
 
 type LookupTerm = string
 
-type LookupResult<T> = {
+type LookupResponse<T> = {
 	term: LookupTerm
 	matches: T[]
 }
 
-type OntologyResult = {
-	id: string
+interface LookupWord {
 	stem: string
-	sense: string
 	part_of_speech: string
+}
+
+interface LookupResult extends LookupWord {
+	form: string
+	concept: OntologyResult | null
+	how_to: HowToResult[]
+}
+
+interface OntologyResult extends LookupWord {
+	id: string
+	sense: string
 	level: number
 	gloss: string
 	categorization: string
 }
 
-type FormResult = {
-	stem: string
-	part_of_speech: string
+interface FormResult extends LookupWord {
 	form: string
+}
+
+interface HowToResult extends LookupWord, HowToResponse {
+	sense: string
+}
+
+type HowToResponse = {
+	term: string
+	part_of_speech: string
+	structure: string
+	pairing: string
+	explication: string
 }
 
 type DbRowInflection = {
@@ -50,7 +68,7 @@ type DbRowInflection = {
 }
 
 type TokenFilter = (token: Token) => boolean
-type LookupFilter = (concept: OntologyResult) => boolean
+type LookupFilter = (concept: LookupResult) => boolean
 type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
 
 type ContextFilterResult = {

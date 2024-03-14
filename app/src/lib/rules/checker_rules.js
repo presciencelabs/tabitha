@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, check_token_lookup, convert_to_error_token, create_added_token } from '$lib/parser/token'
+import { TOKEN_TYPE, convert_to_error_token, create_added_token } from '$lib/parser/token'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 const checker_rules_json = [
@@ -296,12 +296,12 @@ const builtin_checker_rules = [
 			context: create_context_filter({}),
 			action: create_token_modify_action(token =>{
 				// the simple word should never be level 2 or 3
-				if (check_token_lookup(is_level_complex)(token)) {
+				if (check_token_level(is_level_complex)(token)) {
 					token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
 				}
 
-				// the complex word should never be level 0 or 1 (right?)
-				if (token.complex_pairing && check_token_lookup(is_level_simple)(token.complex_pairing)) {
+				// the complex word should never be level 0 or 1
+				if (token.complex_pairing && check_token_level(is_level_simple)(token.complex_pairing)) {
 					token.complex_pairing.error_message = ERRORS.WORD_LEVEL_TOO_LOW
 				}
 			}),
@@ -311,24 +311,55 @@ const builtin_checker_rules = [
 		name: 'Warn user if the word\'s complexity is ambiguous',
 		comment: '',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && token.lookup_results.length > 0,
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				// Alert if the first result is complex and there are also non-complex results (including proper nouns - see 'ark')
 				// If the first result is already simple, that will be selected by default and thus not ambiguous
-				if (is_level_complex(token.lookup_results[0]) && token.lookup_results.some(result => !is_level_complex(result))) {
+				if (check_ambiguous_level(is_level_complex)(token)) {
 					token.suggest_message = ERRORS.AMBIGUOUS_LEVEL
 				}
 
 				const pairing = token.complex_pairing
-				if (!pairing || pairing.lookup_results.length === 0) {
+				if (!pairing) {
 					return
 				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
-				if (is_level_simple(pairing.lookup_results[0]) && pairing.lookup_results.some(result => !is_level_simple(result))) {
+				if (check_ambiguous_level(is_level_simple)(pairing)) {
 					pairing.suggest_message = ERRORS.AMBIGUOUS_LEVEL
+				}
+			}),
+		},
+	},
+	{
+		name: 'Check for words not in the ontology',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				check_has_ontology_results(token)
+
+				if (token.complex_pairing) {
+					check_has_ontology_results(token.complex_pairing)
+				}
+				
+				/**
+				 * 
+				 * @param {Token} token 
+				 */
+				function check_has_ontology_results(token) {
+					if (token.lookup_results.some(result => result.concept !== null)) {
+						return
+					}
+
+					token.suggest_message = 'This word is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.'
+	
+					if (token.lookup_results.some(result => result.how_to.length > 0)) {
+						token.error_message = `This word is not in the Ontology. Hover over the word for hints from the How-To document.`
+					}
 				}
 			}),
 		},
@@ -404,16 +435,40 @@ export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).conca
 
 /**
  * 
- * @param {OntologyResult} result 
+ * @param {(result: OntologyResult?) => boolean} level_check 
+ * @returns {TokenFilter}
  */
-function is_level_simple(result) {
-	return result.level === 0 || result.level === 1
+function check_token_level(level_check) {
+	return token => {
+		return token.lookup_results.length > 0
+			&& token.lookup_results.every(result => level_check(result.concept))
+	}
+}
+/**
+ * 
+ * @param {(result: OntologyResult?) => boolean} level_check 
+ * @returns {TokenFilter}
+ */
+function check_ambiguous_level(level_check) {
+	return token => {
+		return token.lookup_results.length > 0
+			&& level_check(token.lookup_results[0].concept)
+			&& token.lookup_results.filter(result => result.concept !== null).some(result => !level_check(result.concept))
+	}
 }
 
 /**
  * 
- * @param {OntologyResult} result 
+ * @param {OntologyResult?} result 
+ */
+function is_level_simple(result) {
+	return result !== null && [0, 1].includes(result.level)
+}
+
+/**
+ * 
+ * @param {OntologyResult?} result 
  */
 function is_level_complex(result) {
-	return result.level === 2 || result.level === 3
+	return result !== null && [2, 3].includes(result.level)
 }

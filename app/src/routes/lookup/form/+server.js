@@ -10,7 +10,7 @@ export async function GET({ url: { searchParams }, locals: { db } }) {
 
 	return response({ term: word, matches })
 
-	/** @param {LookupResult<FormResult>} result  */
+	/** @param {LookupResponse<FormResult>} result  */
 	function response(result) {
 		const THREE_HOUR_CACHE = {
 			'cache-control': `max-age=${3 * 60 * 60}`,

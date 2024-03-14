@@ -8,8 +8,12 @@
 	export let classes = ''
 
 	// TODO: more work needed to handle multiple matches with possibly different levels, e.g., son
-	const concept = token.lookup_results[0]
-	const tooltip = token.lookup_results.map(concept_with_sense).join('; ')
+	/** @type {OntologyResult[]} */
+	// @ts-ignore
+	const concepts = token.lookup_results.map(result => result.concept).filter(concept => concept !== null)
+	
+	const concept = concepts[0]
+	const tooltip = concepts.map(concept_with_sense).join('; ')
 </script>
 
 <div class='tooltip' data-tip={tooltip}>

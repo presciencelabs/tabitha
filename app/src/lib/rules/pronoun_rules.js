@@ -54,19 +54,21 @@ const builtin_pronoun_rules = [
 		'name': 'Tag valid pronoun referents and check for invalid ones',
 		'comment': '',
 		'rule': {
-			trigger: token => token.pronoun !== null,
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
 			action: create_token_map_action(token => {
-				/** @type {Token} */
-				// @ts-ignore
+				if (token.pronoun === null) {
+					return token
+				}
+				
 				const pronoun = token.pronoun
 				const normalized_pronoun = pronoun.token.toLowerCase()
 
-				// TODO: need to pull those assignments out of the conditionals.
-				let tag, message
-				if (tag = PRONOUN_TAGS.get(normalized_pronoun)) {
+				const tag = PRONOUN_TAGS.get(normalized_pronoun)
+				const message = PRONOUN_MESSAGES.get(normalized_pronoun)
+				if (tag) {
 					return { ...token, tag }
-				} else if (message = PRONOUN_MESSAGES.get(normalized_pronoun)) {
+				} else if (message) {
 					token.pronoun = convert_to_error_token(pronoun, message)
 				} else {
 					token.pronoun = convert_to_error_token(pronoun, `Unrecognized pronoun "${pronoun.token}"`)

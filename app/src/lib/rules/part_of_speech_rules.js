@@ -20,12 +20,25 @@ const part_of_speech_rules_json = [
 		'comment': 'Definite Article: Daniel 3:4 I will read the command(N/V). Indefinite Article: Daniel 3:10 The king made a command(N/V). Near Demonstrative: Daniel 3:11 People who do not obey this command(N/V)... Remote Demonstrative: Daniel 5:17 You may give those rewards(N/V) to another person.  Remote-Demonstrative-Relativizer-Complmentizer:  Daniel 1:11 Daniel spoke to that guard(N/V).',
 	},
 	{
-		'name': 'If Noun-Verb preceded by Negative Verb Polarity, delete the Noun',
+		'name': 'If Noun-Verb followed by article or demonstrative, remove the Noun',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'tag': 'negative_verb_polarity' },
+			'followedby': {
+				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative',
+				'skip': { 'category': 'Adjective' },
+			},
 		},
 		'remove': 'Noun',
+		'comment': 'Daniel 1:5 The king allowed the men to drink(N/V) the king\'s wine.',
+	},
+	{
+		'name': 'If Noun-Verb preceded by Negative Verb Polarity or Modal words, delete the Noun',
+		'category': 'Noun|Verb',
+		'context': {
+			'precededby': { 'tag': 'negative_verb_polarity|modal' },
+		},
+		'remove': 'Noun',
+		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc'
 	},
 	{
 		'name': 'If Noun-Verb preceded by Verb, Adjective, Conjunction, delete the Verb',
@@ -161,9 +174,8 @@ export function parse_part_of_speech_rule(rule_json) {
 	 */
 	function create_remove_action(remove_json) {
 		return create_token_map_action(token => {
-			const form_results = token.form_results.filter(result => result.part_of_speech !== remove_json)
 			const lookup_results = token.lookup_results.filter(result => result.part_of_speech !== remove_json)
-			return { ...token, form_results, lookup_results }
+			return { ...token, lookup_results }
 		})
 	}
 }

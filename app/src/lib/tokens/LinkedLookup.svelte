@@ -6,8 +6,8 @@
 	export let token
 	export let classes = ''
 	
-	const lookup_term = token.lookup_results.length === 1
-		? concept_with_sense(token.lookup_results[0])
+	const lookup_term = token.lookup_results.length === 1 && token.lookup_results[0].concept !== null
+		? concept_with_sense(token.lookup_results[0].concept)
 		: token.lookup_results[0].stem
 
 </script>

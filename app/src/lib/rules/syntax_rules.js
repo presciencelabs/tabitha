@@ -248,6 +248,5 @@ function filter_results_by_capitalization(token) {
  * @param {Set<string>} parts_of_speech 
  */
 function filter_results_by_part_of_speech(token, parts_of_speech) {
-	token.form_results = token.form_results.filter(result => parts_of_speech.has(result.part_of_speech))
 	token.lookup_results = token.lookup_results.filter(result => parts_of_speech.has(result.part_of_speech))
 }

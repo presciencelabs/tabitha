@@ -49,7 +49,6 @@ export function create_token(token, type, { error='', suggest= '', tag='', looku
 		suggest_message: suggest,
 		tag,
 		lookup_terms: lookup_term ? [lookup_term] : [],
-		form_results: [],
 		lookup_results: [],
 		sub_tokens,
 		complex_pairing: pairing,
@@ -89,21 +88,6 @@ export function create_clause_token(sub_tokens) {
 
 /**
  * 
- * @param {LookupFilter} lookup_check 
- * @returns {TokenFilter}
- */
-export function check_token_lookup(lookup_check) {
-	return token => {
-		if (token.lookup_results.length > 0) {
-			return token.lookup_results.every(concept => lookup_check(concept))
-		} else {
-			return false
-		}
-	}
-}
-
-/**
- * 
  * @param {Token} token 
  * @param {string} concept must include the sense
  * @returns {Token}
@@ -116,20 +100,20 @@ export function set_token_concept(token, concept) {
 
 	const { stem, sense } = split_stem_and_sense(concept)
 	token.lookup_terms = [concept]
-	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.sense === sense)
+	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.concept?.sense === sense)
 	return token
+}
 
-	/**
-	 * 
-	 * @param {string} term 
-	 * @returns {{stem: string, sense: string}}
-	 */
-	function split_stem_and_sense(term) {
-		/** @type {RegExpMatchArray} */
-		// @ts-ignore the match will always succeed
-		const match = term.match(REGEXES.EXTRACT_STEM_AND_SENSE)
-		return { stem: match[1], sense: match[2] ?? '' }
-	}
+/**
+ * 
+ * @param {string} term 
+ * @returns {{stem: string, sense: string}}
+ */
+export function split_stem_and_sense(term) {
+	/** @type {RegExpMatchArray} */
+	// @ts-ignore the match will always succeed
+	const match = term.match(REGEXES.EXTRACT_STEM_AND_SENSE)
+	return { stem: match[1], sense: match[2] ?? '' }
 }
 
 /**
@@ -138,7 +122,7 @@ export function set_token_concept(token, concept) {
  * @returns {boolean}
  */
 export function token_has_concept(token) {
-	return token.lookup_results.length > 0
+	return token.lookup_results.some(result => result.concept)
 }
 
 /**

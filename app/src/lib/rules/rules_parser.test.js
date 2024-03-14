@@ -375,17 +375,24 @@ describe('context filters', () => {
  * @param {string} [data.sense='A'] 
  * @param {string} [data.part_of_speech='Noun'] 
  * @param {number} [data.level=1] 
- * @returns {OntologyResult}
+ * @returns {LookupResult}
  */
 function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
-	return {
+	const concept = {
 		id: '0',
-		stem: stem,
+		stem,
 		sense,
 		part_of_speech,
 		level,
 		gloss: '',
 		categorization: '',
+	}
+	return {
+		stem,
+		part_of_speech,
+		form: 'stem',
+		concept,
+		how_to: [],
 	}
 }
 
@@ -429,7 +436,7 @@ describe('token transforms', () => {
 		expect(result.lookup_terms.length).toBe(1)
 		expect(result.lookup_terms[0]).toBe('concept-A')
 		expect(result.lookup_results.length).toBe(1)
-		expect(result.lookup_results[0].sense).toBe('A')
+		expect(result.lookup_results[0].concept?.sense).toBe('A')
 		expect(result.error_message).toBe(token.error_message)
 	})
 	test('type and tag', () => {
