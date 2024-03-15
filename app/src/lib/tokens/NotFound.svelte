@@ -1,5 +1,6 @@
 <script>
-	import PopupTable from './PopupTable.svelte'
+	import PopupMenu from './PopupMenu.svelte'
+	import Table from './Table.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
 	/** @type {Token} */
@@ -13,27 +14,29 @@
 </script>
 
 {#if how_to_entries.length}
-	<PopupTable entries={how_to_entries}>
+	<PopupMenu>
 		<TokenDisplay {classes} slot="button_content">
 			{token.token}
 		</TokenDisplay>
 
-		<tr slot="header_row">
-			<th></th>
-			<th></th>
-			{#if has_structure}<th class="text-info-content">Structure</th>{/if}
-			{#if has_pairing}<th class="text-info-content">Pairing</th>{/if}
-			{#if has_explication}<th class="text-info-content">Explication</th>{/if}
-		</tr>
+		<Table slot="popup_content" entries={how_to_entries} classes="my-2">
+			<tr slot="header_row">
+				<th></th>
+				<th></th>
+				{#if has_structure}<th class="text-info-content">Structure</th>{/if}
+				{#if has_pairing}<th class="text-info-content">Pairing</th>{/if}
+				{#if has_explication}<th class="text-info-content">Explication</th>{/if}
+			</tr>
 
-		<tr slot="entry_row" let:entry>
-			<th class="whitespace-nowrap">{entry.term}</th>
-			<td class="whitespace-nowrap">{entry.part_of_speech}</td>
-			{#if has_structure}<td class="whitespace-nowrap">{entry.structure}</td>{/if}
-			{#if has_pairing}<td>{entry.pairing}</td>{/if}
-			{#if has_explication}<td>{entry.explication}</td>{/if}
-		</tr>
-	</PopupTable>
+			<tr slot="entry_row" let:entry>
+				<th class="whitespace-nowrap">{entry.term}</th>
+				<td class="whitespace-nowrap">{entry.part_of_speech}</td>
+				{#if has_structure}<td class="whitespace-nowrap">{entry.structure}</td>{/if}
+				{#if has_pairing}<td>{entry.pairing}</td>{/if}
+				{#if has_explication}<td>{entry.explication}</td>{/if}
+			</tr>
+		</Table>
+	</PopupMenu>
 {:else}
 <TokenDisplay {classes}>
 	{token.token}
