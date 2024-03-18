@@ -25,7 +25,7 @@
 				<th></th>
 				{#if has_structure}<th class="text-info-content">Structure</th>{/if}
 				{#if has_pairing}<th class="text-info-content">Pairing</th>{/if}
-				{#if has_explication}<th class="text-info-content">Explication</th>{/if}
+				{#if has_explication}<th class="text-info-content">Suggestion</th>{/if}
 			</tr>
 
 			<tr slot="entry_row" let:entry>
