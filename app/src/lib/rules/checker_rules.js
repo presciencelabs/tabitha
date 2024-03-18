@@ -63,12 +63,11 @@ const checker_rules_json = [
 		'trigger': { 'category': 'Verb' },
 		'context': {
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
-			'notprecededby': { 'token': '[' },
 		},
 		'require': {
 			'message': 'Cannot have multiple verbs in the same clause. Check for an unbracketed subordinate clause or consider splitting the sentence.',
 		},
-		'comment': 'Check for a [ error token in case an earlier check already identified a potential subordinate clause.',
+		'comment': 'See section 0.3 of the Phase 1 checklist',
 	},
 	{
 		'name': 'Check for an Imperative Verb with no subject at the beginning of a sentence',
@@ -110,11 +109,74 @@ const checker_rules_json = [
 		},
 	},
 	{
+		'name': 'Check for "Let\'s"',
+		'trigger': { 'token': 'Let\'s|let\'s' },
+		'require': {
+			'message': 'Write \'We(X) go _suggestiveLets\' instead. See P1 Checklist section 15.',
+		},
+	},
+	{
+		'name': 'Check for \'Let X...\'',
+		'trigger': { 'token': 'Let' },
+		'context': {
+			'followedby': { 'category': 'Noun' },
+		},
+		'require': {
+			'message': 'For the jussive write \'X (jussive) ...\' instead of \'Let X...\'. Or use \'(imp)\' for expressing permission. See P1 Checklist section 15.',
+		},
+	},
+	{
+		'name': 'Check for \'May X...\'',
+		'trigger': { 'token': 'May' },
+		'context': {
+			'followedby': { 'category': 'Noun' },
+		},
+		'require': {
+			'message': 'Write \'I(X) pray-hope [Y...]\' instead. See P1 Checklist section 15.',
+		},
+	},
+	{
 		'name': 'Avoid using \'way\'',
 		'trigger': { 'stem': 'way' },
 		'suggest': {
 			'message': 'Consider rewording to avoid the use of \'way\'. If that is impossible, you can still use it in the sense of means or method.',
 		},
+		'comment': 'See section X of the Phase 1 checklist',
+	},
+	{
+		'name': 'Cannot use \'even\'',
+		'trigger': { 'stem': 'even' },
+		'require': {
+			'message': 'Cannot use \'even\'. Simply omit it or reword the sentence to get the right emphasis. See P1 Checklist section 17.',
+		},
+		'comment': 'See section 17 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Cannot use \'any\'',
+		'trigger': { 'stem': 'any' },
+		'require': {
+			'message': 'Cannot use \'any\'. Simply use \'a\' instead. See P1 Checklist section 17.',
+		},
+		'comment': 'See section 17 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Cannot use \'really\'',
+		'trigger': { 'token': 'really' },
+		'require': {
+			'message': 'Cannot use \'really\'. Use \'actually\', \'truly\', \'very\', or \'much\' instead.',
+		},
+		'comment': 'See section 1 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Cannot say "X\'s own Y"',
+		'trigger': { 'token': 'own' },
+		'context': {
+			'precededby': { 'tag': 'genitive_saxon', 'skip': { 'token': 'very' } },
+		},
+		'require': {
+			'message': 'Cannot write "X\'s own Y". Simply omit \'own\' or write "X\'s _emphasized Y" if desired. See P1 Checklist section 17.',
+		},
+		'comment': 'See section 17 of the Phase 1 checklist',
 	},
 	{
 		'name': 'Avoid vague units of time',
@@ -249,7 +311,7 @@ const checker_rules_json = [
 		'name': 'Check for unhyphenated Verbs with \'up\'',
 		'trigger': { 'token': 'up' },
 		'context': {
-			'precededby': { 'stem': 'pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
+			'precededby': { 'stem': 'go|pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
 			'message': '\'up\' must be hyphenated with the Verb (e.g. pick-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
@@ -260,6 +322,137 @@ const checker_rules_json = [
 		'trigger': { 'token': 'troubles' },
 		'require': {
 			'message': 'TBTA does not use the plural \'troubles\'. Use \'trouble _plural\' to indicate plurality.',
+		},
+	},
+	{
+		'name': 'Don\'t allow \'what\' as a relativizer',
+		'trigger': { 'token': 'what' },
+		'context': {
+			'precededby': { 'token': '[' },
+			'notfollowedby': { 'token': '?', 'skip': 'all' },
+		},
+		'require': {
+			'message': 'Cannot use \'what\' as a relativizer. Use \'the thing [that...]\' instead.',
+		},
+		'comment': 'See section 0.41 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Warn about using \'what\' instead of \'which thing\'',
+		'trigger': { 'token': 'What|what' },
+		'suggest': {
+			'message': '\'what\' always becomes \'which thing-A\'. Consider writing \'which X\' if you want something different.',
+		},
+		'comment': 'See section 0.41 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Don\'t allow \'where\' as a relativizer',
+		'trigger': { 'token': 'where' },
+		'context': {
+			'precededby': { 'token': '[' },
+			'notfollowedby': { 'token': '?', 'skip': 'all' },
+		},
+		'require': {
+			'message': 'Cannot use \'where\' as a relativizer. Use \'the place [that...]\' instead.',
+		},
+		'comment': 'See section 0.8 of the Phase 1 checklist',
+	},
+	// TODO Look outside the subordinate clause for 'time'. Currently this falsely flags a 'when' adverbial clause. 
+	// {
+	// 	'name': 'Don\'t allow \'when\' as a relativizer',
+	// 	'trigger': { 'token': 'when' },
+	// 	'context': {
+	// 		'precededby': { 'token': '[' },
+	// 		'notfollowedby': { 'token': '?', 'skip': 'all' },
+	// 	},
+	// 	'require': {
+	// 		'message': 'Cannot use \'when\' as a relativizer. Use \'the time [that...]\' instead.',
+	// 	},
+	// 	'comment': 'See section 0.8 of the Phase 1 checklist.',
+	// },
+	{
+		'name': 'Don\'t allow \'whose\' as a relativizer',
+		'trigger': { 'token': 'whose' },
+		'require': {
+			'message': 'Cannot use \'whose\'. Use \'X [who had...]\' instead. See P1 Checklist section 6.',
+		},
+		'comment': 'See section 6 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Use \'all of\' rather than \'all\' for non-generic Nouns',
+		'trigger': { 'token': 'all' },
+		'context': {
+			'notfollowedby': [
+				{ 'token': 'of|_generic', 'skip': [
+					{ 'token': 'the|those|these' },
+					{ 'category': 'Noun' },
+				]},
+			],
+		},
+		'suggest': {
+			'followedby': 'of',
+			'message': 'Use \'all of\' unless the modified Noun should be generic, in which case add \'_generic\' after the Noun. See P1 Checklist 0.17.',
+		},
+		'comment': 'See section 0.17 of the Phase 1 checklist',
+	},
+	{
+		'name': 'Cannot use aspect auxilliaries (eg start) without another Verb',
+		'trigger': { 'stem': 'start|stop|continue|finish' },
+		'context': {
+			'notfollowedby': { 'category': 'Verb', 'skip': 'all' },
+		},
+		'require': {
+			'message': 'Must use start/stop/continue/finish with another Verb. See P1 Checklist 0.19.',
+		},
+		'comment': 'See section 0.19 of the Phase 1 checklist.',
+	},
+	{
+		'name': 'Must use \'X is able to\' instead of \'X can\'',
+		'trigger': { 'token': 'can' },
+		'require': {
+			'message': 'Use \'be able [to...]\' instead of \'can\'. See P1 Checklist 2.1.',
+		},
+		'comment': 'See section 2.1 of the Phase 1 checklist.',
+	},
+	{
+		'name': 'Cannot use \'could\' unless in a \'so\' adverbial clause',
+		'trigger': { 'token': 'could' },
+		'context': {
+			'notprecededby': [{ 'token': '[' }, { 'stem': 'so', 'skip': 'all' }],
+		},
+		'require': {
+			'message': 'Use \'be able [to...]\' instead of \'could\', unless in a \'so-that\' clause. See P1 Checklist 2.1.',
+		},
+		'comment': 'See section 2.1 of the Phase 1 checklist.',
+	},
+	{
+		'name': 'Cannot use \'is going to\' as a future marker',
+		'trigger': { 'stem': 'go' },
+		'context': {
+			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
+		},
+		'require': {
+			'message': 'Use \'will\' instead of \'going to\' to express future tense. See P1 Checklist 0.28.',
+		},
+		'comment': 'See section 0.28 of the Phase 1 checklist.',
+	},
+	{
+		'name': 'Cannot use \'is to {Verb}\' as an obligation',
+		'trigger': { 'stem': 'be' },
+		'context': {
+			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
+		},
+		'require': {
+			'message': 'Use \'will\', \'must\', or \'should\' instead of \'is to...\' to express a future obligation.',
+		},
+	},
+	{
+		'name': 'Cannot use \'have to {Verb}\' as an obligation',
+		'trigger': { 'stem': 'have' },
+		'context': {
+			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
+		},
+		'require': {
+			'message': 'Use \'must\' or \'should\' instead of \'have to...\' to express an obligation.',
 		},
 	},
 ]

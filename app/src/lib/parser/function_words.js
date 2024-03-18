@@ -29,9 +29,8 @@ export const FUNCTION_WORDS = new Map([
 	['very', 'intensified_degree'],
 	['will', 'future_time|modal'],
 	['would', 'conditional_would|modal'],
-	['who', 'interrogative_person|relativizer'],
+	['who', 'relativizer'],
 	['whom', 'relativizer'],
-	['what', 'interrogative_thing|relativizer'],
 	['which', 'interrogative_which|relativizer'],
 ])
 

@@ -110,6 +110,15 @@ const part_of_speech_rules_json = [
 		'comment': 'Dan. 1:12 Please give only(Adj/Adv) vegetables ...  Paul like most(Adj/Adv) books.',
 	},
 	{
+		'name': 'If Adverb-Adjective followed by Verb, remove Adjective',
+		'category': 'Adverb|Adjective',
+		'context': {
+			'followedby': { 'category': 'Verb' },
+		},
+		'remove': 'Adjective',
+		'comment': 'John only(Adv/Adj) saw a book.',
+	},
+	{
 		'name': 'If Verb-Adjective preceded by an article or possessive, remove Verb',
 		'category': 'Verb|Adjective',
 		'context': {

@@ -61,7 +61,7 @@
 								</tr>
 
 								<tr slot="entry_row" let:entry>
-									{#if has_structure}<td class="whitespace-nowrap">{entry.structure}</td>{/if}
+									{#if has_structure}<td>{entry.structure}</td>{/if}
 									{#if has_pairing}<td>{entry.pairing}</td>{/if}
 									{#if has_explication}<td>{entry.explication}</td>{/if}
 									{#if !(entry.structure || entry.pairing || entry.explication)}

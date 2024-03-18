@@ -131,6 +131,18 @@ const lookup_rules_json = [
 		'lookup': 'worry',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
+	{
+		'name': 'what becomes thing-A in a question',
+		'trigger': { 'token': 'What|what' },
+		'context': { 'followedby': { 'token': '?', 'skip': 'all' } },
+		'lookup': 'thing-A',
+	},
+	{
+		'name': 'who becomes person-A in a question',
+		'trigger': { 'token': 'Who|who' },
+		'context': { 'followedby': { 'token': '?', 'skip': 'all' } },
+		'lookup': 'person-A',
+	},
 ]
 
 /**
@@ -162,7 +174,7 @@ export function parse_lookup_rule(rule_json) {
 	 * @returns {number}
 	 */
 	function lookup_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = { ...tokens[trigger_index], lookup_terms: [lookup_term] }
+		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [lookup_term] }
 
 		if (context_indexes.length === 0) {
 			return trigger_index + 1

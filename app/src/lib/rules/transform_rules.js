@@ -106,6 +106,15 @@ const transform_rules_json = [
 		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
 	},
 	{
+		'name': '\'who\'/\'what\' gets tagged with interrogative_which when in a question',
+		'trigger': { 'token': 'Who|who|What|what' },
+		'context': {
+			'followedby': { 'token': '?', 'skip': 'all' },
+		},
+		'transform': { 'tag': 'interrogative_which' },
+		'comment': '"who/what" becomes "which person-A/thing-A" respectively when in a question',
+	},
+	{
 		'name': 'Adposition \'so\' followed by \'would\' becomes so-C',
 		'trigger': { 'stem': 'so', 'category': 'Adposition' },
 		'context': {
