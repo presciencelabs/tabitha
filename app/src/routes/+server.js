@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit'
 import { get_concepts } from '$lib/server/ontology'
 
-/** @type {import('./$types').RequestHandler} */
+/** @type {import('./(app)/$types').RequestHandler} */
 export async function GET({ url: { searchParams }, locals: { db } }) {
 	const query = (searchParams.get('q') || '').trim()
 

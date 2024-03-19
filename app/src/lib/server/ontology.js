@@ -90,22 +90,56 @@ export async function get_version(db) {
 
 /**
  * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {(term: string) => Promise<SimplificationHint[]>}
+ * @returns {(term: string) => Promise<SimplificationHint[]>} term is case-insensitive
  */
 export const get_simplification_hints = db => async term => {
 	const sql = `
 		SELECT *
 		FROM Complex_Terms
-		WHERE term = ?
+		WHERE term LIKE ?
 	`
+	/**
+	 * LIKE creates case-insensitivity, also supports % as a wildcard if explicitly requested
+	 *
+	 * handles situations like these:
+	 * 	- complex_term=accurate
+	 * 	- complex_term=Accurate
+	 * 	- complex_term=Accura%
+	 * 	- complex_term=accuse-A (results in multiple rows)
+	 *
+	 * but not this:
+	 * 	- complex_term=flourish (this must be flourish-A)
+	 *
+	 * @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>}
+	 */
+	let { results } = await db.prepare(sql).bind(term).all()
 
-	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
-	const { results } = await db.prepare(sql).bind(term).all()
+	if (results.length) {
+		return results.map(normalize_results)
+	}
 
-	return results.map(normalize)
+	/**
+	 * if the term had a sense and there were no matches, no need to try anything else, e.g., love-A
+	 */
+	const ENDS_IN_A_SENSE = /-[A-Z]$/
+	if (ENDS_IN_A_SENSE.test(term)) {
+		return []
+	}
+
+	const term_w_any_sense = `${term}-_` // _ here means a single character wildcard:  https://sqlite.org/lang_expr.html#like
+	/**
+	 * handles the following cases:
+	 *		- complex_term=flourish
+	 *		- complex_term=accuse (results in multiple rows for accuse, both accuse-A and accuse-B)
+	 *
+	 * @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>}
+	 */
+	const { results: results_second_try } = await db.prepare(sql).bind(term_w_any_sense).all()
+
+	return results_second_try.map(normalize_results)
 
 	/** @param {SimplificationHint} arg */
-	function normalize({ term, part_of_speech, structure, pairing, explication }) {
+	function normalize_results({ term, part_of_speech, structure, pairing, explication }) {
 		return { term, part_of_speech, structure, pairing, explication }
 	}
 }
