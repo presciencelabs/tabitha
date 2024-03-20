@@ -1,3 +1,4 @@
+import { ERRORS } from '$lib/parser/error_messages'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 /**
@@ -79,9 +80,9 @@ const part_of_speech_rules_json = [
 	{
 		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'tag': 'first_word' },
+		'trigger': { 'tag': 'first_word', 'stem': 'so' },
 		'remove': 'Adposition',
-		'comment': 'so and for',
+		'comment': 'only for \'so\'. \'for\' might be the \'for each...\' sense',
 	},
 	{
 		'name': '\'so-that\' will always be the Adposition',
@@ -117,6 +118,28 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Adjective',
 		'comment': 'John only(Adv/Adj) saw a book.',
+	},
+	{
+		'name': 'If Noun-Adjective is preceded by an article but not followed by Noun, remove Adjective',
+		'category': 'Noun|Adjective',
+		'context': {
+			'precededby': {
+				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative',
+				'skip': { 'category': 'Adjective' },
+			},
+			'notfollowedby': { 'category': 'Noun' },
+		},
+		'remove': 'Adjective',
+		'comment': 'John knew about the secret(N/Adj).',
+	},
+	{
+		'name': 'If Noun-Adjective followed by Noun, remove Noun',
+		'category': 'Noun|Adjective',
+		'context': {
+			'followedby': { 'category': 'Noun' },
+		},
+		'remove': 'Noun',
+		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal.',
 	},
 	{
 		'name': 'If Verb-Adjective preceded by an article or possessive, remove Verb',
@@ -167,6 +190,54 @@ const part_of_speech_rules_json = [
 	},
 ]
 
+/** @type {BuiltInRule[]} */
+const builtin_part_of_speech_rules = [
+	{
+		name: "Words with possessive 's must be a noun",
+		comment: '',
+		rule: {
+			trigger: token => token.tag.includes('genitive_saxon'),
+			context: create_context_filter({}),
+			action: create_token_modify_action(keep_parts_of_speech(new Set(['Noun']))),
+		},
+	},
+	{
+		name: 'Words with a pronoun must be a noun.',
+		comment: '',
+		rule: {
+			trigger: token => token.pronoun !== null,
+			context: create_context_filter({}),
+			action: create_token_modify_action(keep_parts_of_speech(new Set(['Noun']))),
+		},
+	},
+	{
+		name: 'Filter lookup results for pairings based on part of speech',
+		comment: '',
+		rule: {
+			trigger: token => !!(token.lookup_results.length && token.complex_pairing?.lookup_results.length),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				/** @type {Token[]} */
+				// @ts-ignore
+				const [left, right] = [token, token.complex_pairing]
+
+				// filter lookup results based on the overlap of the two concepts
+				const left_categories = new Set(left.lookup_results.map(result => result.part_of_speech))
+				const right_categories = new Set(right.lookup_results.map(result => result.part_of_speech))
+				const overlapping_categories = new Set([...left_categories].filter(x => right_categories.has(x)))
+
+				if (overlapping_categories.size > 0) {
+					const category_filter = keep_parts_of_speech(overlapping_categories)
+					category_filter(left)
+					category_filter(right)
+				} else {
+					left.error_message = ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH
+				}
+			}),
+		},
+	},
+]
+
 /**
  *
  * @param {any} rule_json
@@ -201,25 +272,35 @@ export function parse_part_of_speech_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function create_remove_action(remove_json) {
-		const remove_category = remove_category_action(remove_json)
+		const remove_action = remove_part_of_speech(remove_json)
 
 		return create_token_modify_action(token => {
-			remove_category(token)
+			remove_action(token)
 
 			if (token.complex_pairing) {
-				remove_category(token.complex_pairing)
+				remove_action(token.complex_pairing)
 			}
 		})
 	}
-
-	/**
-	 * 
-	 * @param {string} category 
-	 * @returns {(token: Token) => void}
-	 */
-	function remove_category_action(category) {
-		return token => token.lookup_results = token.lookup_results.filter(result => result.part_of_speech !== category)
-	}
 }
 
-export const PART_OF_SPEECH_RULES = part_of_speech_rules_json.map(parse_part_of_speech_rule)
+export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(({ rule }) => rule)
+	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
+
+/**
+ * 
+ * @param {Set<string>} parts_of_speech 
+ * @returns {(token: Token) => void}
+ */
+function keep_parts_of_speech(parts_of_speech) {
+	return token => token.lookup_results = token.lookup_results.filter(result => parts_of_speech.has(result.part_of_speech))
+}
+
+/**
+ * 
+ * @param {string} part_of_speech
+ * @returns {(token: Token) => void}
+ */
+function remove_part_of_speech(part_of_speech) {
+	return token => token.lookup_results = token.lookup_results.filter(result => result.part_of_speech !== part_of_speech)
+}

@@ -18,7 +18,7 @@ export const FUNCTION_WORDS = new Map([
 	['probably', 'probable_mood|modal'],
 	['should', 'should_mood|modal'],
 	['than', 'comparative_degree'],
-	['that', 'remote_demonstrative|relativizer|complementizer'],
+	['that', 'remote_demonstrative|relativizer'],
 	['the', 'definite_article'],
 	['there', 'at_that_place'],
 	['these', 'near_demonstrative'],

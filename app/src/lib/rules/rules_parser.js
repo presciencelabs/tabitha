@@ -127,6 +127,11 @@ export function create_context_filter(context_json) {
 		filters.push(negate(create_directional_context_filter(not_followed_by, +1)))
 	}
 
+	const subtokens = context_json['subtokens']
+	if (subtokens !== undefined) {
+		filters.push(create_subtokens_filter(subtokens))
+	}
+
 	if (filters.length === 0) {
 		return () => context_result(true)
 	} else if (filters.length === 1) {
@@ -157,6 +162,26 @@ export function create_context_filter(context_json) {
 			} else {
 				return context_result(false)
 			}
+		}
+	}
+
+	/**
+	 *
+	 * @param {any} subtoken_json
+	 * @returns {TokenContextFilter}
+	 */
+	function create_subtokens_filter(subtoken_json) {
+		const subtoken_filter = create_directional_context_filter(subtoken_json, +1)
+
+		return (tokens, start_index) => {
+			if (tokens[start_index].sub_tokens.length === 0) {
+				return context_result(false)
+			}
+
+			// TODO include the subtoken context indexes in the result
+			const clause = tokens[start_index]
+			const result = subtoken_filter(clause.sub_tokens, 0)
+			return result.success ? context_result(true, start_index) : result
 		}
 	}
 }
@@ -245,13 +270,17 @@ function create_directional_context_filter(context_json, offset) {
 	}
 
 	/**
-	 * Skip can have one token filter or an array of filters which act as OR conditions
-	 * @param {any} skip_json
+	 * Skip can have one token filter or an array of filters which act as OR conditions.
+	 * Skip can also use preset groups useful for skipping phrases and parts of phrases.
+	 * @param {any} skip_json 
 	 * @returns {TokenFilter}
 	 */
 	function create_skip_filter(skip_json) {
+		if (typeof skip_json === 'string' && SKIP_GROUPS.has(skip_json)) {
+			skip_json = SKIP_GROUPS.get(skip_json) ?? {}
+		}
 		if (Array.isArray(skip_json)) {
-			const filters = skip_json.map(create_token_filter)
+			const filters = skip_json.map(create_skip_filter)
 			return token => filters.some(filter => filter(token))
 		}
 		return create_token_filter(skip_json)
@@ -265,6 +294,18 @@ function create_directional_context_filter(context_json, offset) {
  */
 function context_result(success, ...indexes) {
 	return { success, indexes }
+}
+
+/**
+ *
+ * @param {any} transform_json
+ * @returns {TokenTransform[]}
+ */
+export function create_token_transforms(transform_json) {
+	if (Array.isArray(transform_json)) {
+		return transform_json.map(create_token_transform)
+	}
+	return [create_token_transform(transform_json)]
 }
 
 /**
@@ -380,3 +421,40 @@ export function create_token_modify_action(action) {
 		return trigger_index + 1
 	}
 }
+
+const SKIP_GROUPS = new Map([
+	['determiners', { 'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|negative_noun_polarity' }],
+	['degree_indicators', { 'tag': 'intensified_degree|extremely_intensified_degree|least_degree|comparative_degree|too_degree' }],
+	['adjp_modifiers', [
+		'degree_indicators',
+		{ 'category': 'Adverb' },
+	]],
+	['adjp', [
+		'adjp_modifiers',
+		{ 'category': 'Adjective' },
+	]],
+	['advp_modifiers', [
+		'degree_indicators',
+	]],
+	['advp', [
+		'advp_modifiers',
+		{ 'category': 'Adverb' },
+	]],
+	['np_modifiers', [
+		{ 'tag': 'genitive_saxon|genitive_norman|relative_clause' },
+		'determiners',
+		'adjp',
+	]],
+	['np', [
+		'np_modifiers',
+		{ 'category': 'Noun' },
+	]],
+	['vp_modifiers', [
+		{ 'tag': 'negative_verb_polarity|modal|infinitive|auxilliary' },
+		{ 'category': 'Adverb' },
+	]],
+	['vp', [
+		'vp_modifiers',
+		{ 'category': 'Verb' },
+	]],
+])

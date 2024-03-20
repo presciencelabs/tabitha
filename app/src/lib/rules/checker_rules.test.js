@@ -34,9 +34,7 @@ function create_lookup_token(token, { lookup_results=[] }={}) {
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
-	const clause = create_clause_token(tokens)
-	clause.tag = 'main_clause'
-	return { clause }
+	return { clause: create_clause_token(tokens, 'main_clause') }
 }
 
 /**

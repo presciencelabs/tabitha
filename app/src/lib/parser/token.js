@@ -81,9 +81,10 @@ export function convert_to_error_token(token, message) {
 /**
  * 
  * @param {Token[]} sub_tokens 
+ * @param {string} tag
  */
-export function create_clause_token(sub_tokens) {
-	return create_token('', TOKEN_TYPE.CLAUSE, { sub_tokens })
+export function create_clause_token(sub_tokens, tag='subordinate_clause') {
+	return create_token('', TOKEN_TYPE.CLAUSE, { sub_tokens, tag })
 }
 
 /**
@@ -99,8 +100,11 @@ export function set_token_concept(token, concept) {
 	}
 
 	const { stem, sense } = split_stem_and_sense(concept)
-	token.lookup_terms = [concept]
-	token.lookup_results = token.lookup_results.filter(result => result.stem === stem && result.concept?.sense === sense)
+	const concept_index = token.lookup_results.findIndex(result => result.stem === stem && result.concept?.sense === sense)
+	const selected_result = token.lookup_results.splice(concept_index, 1)
+
+	// put the selected sense at the top
+	token.lookup_results = [...selected_result, ...token.lookup_results]
 	return token
 }
 
@@ -141,6 +145,15 @@ export function token_has_error(token) {
  */
 export function token_has_message(token) {
 	return token.error_message.length > 0 || token.suggest_message.length > 0
+}
+
+/**
+ * 
+ * @param {Token} token 
+ * @param {string} tag 
+ */
+export function add_tag_to_token(token, tag) {
+	token.tag = token.tag ? `${token.tag}|${tag}` : tag
 }
 
 /**

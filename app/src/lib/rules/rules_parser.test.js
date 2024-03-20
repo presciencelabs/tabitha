@@ -421,7 +421,7 @@ describe('token transforms', () => {
 		expect(result.error_message).toBe(token.error_message)
 	})
 	test('concept with lookup results', () => {
-		const transform_json = { 'concept': 'concept-A' }
+		const transform_json = { 'concept': 'concept-B' }
 		const transform = create_token_transform(transform_json)
 
 		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
@@ -434,9 +434,8 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
 		expect(result.lookup_terms.length).toBe(1)
-		expect(result.lookup_terms[0]).toBe('concept-A')
-		expect(result.lookup_results.length).toBe(1)
-		expect(result.lookup_results[0].concept?.sense).toBe('A')
+		expect(result.lookup_results.length).toBe(2)
+		expect(result.lookup_results[0].concept?.sense).toBe('B')
 		expect(result.error_message).toBe(token.error_message)
 	})
 	test('type and tag', () => {

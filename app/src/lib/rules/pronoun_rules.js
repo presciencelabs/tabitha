@@ -1,5 +1,5 @@
 import { create_context_filter, create_token_map_action } from './rules_parser'
-import { TOKEN_TYPE, convert_to_error_token, token_has_error } from '../parser/token'
+import { TOKEN_TYPE, add_tag_to_token, convert_to_error_token, token_has_error } from '../parser/token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -31,6 +31,9 @@ export const PRONOUN_TAGS = new Map([
 	['each-other', 'reciprocal'],
 ])
 
+/**
+ * These rules are a subset of the syntax rules
+ */
 /** @type {BuiltInRule[]} */
 const builtin_pronoun_rules = [
 	{
@@ -67,7 +70,7 @@ const builtin_pronoun_rules = [
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
 				const message = PRONOUN_MESSAGES.get(normalized_pronoun)
 				if (tag) {
-					return { ...token, tag }
+					add_tag_to_token(token, tag)
 				} else if (message) {
 					token.pronoun = convert_to_error_token(pronoun, message)
 				} else {

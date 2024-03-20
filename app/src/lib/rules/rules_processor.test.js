@@ -149,17 +149,12 @@ describe('transform rules', () => {
 		expect(results[0].tag).toBe('tag')
 	})
 
-	test('concept does not get overwritten', () => {
+	test('concept selected is brought to top of results', () => {
 		const transform_rules = [
 			{
 				'trigger': { 'token': 'saw' },
 				'context': { 'followedby': 'all' },
-				'transform': { 'concept': 'see-A' },
-			},
-			{
-				'trigger': { 'token': 'saw' },
-				'context': { 'followedby': { 'token': 'cat', 'skip': 'all' } },
-				'transform': { 'concept': 'see-B' },
+				'transform': { 'concept': 'see-C' },
 			},
 		].map(parse_transform_rule)
 
@@ -180,7 +175,9 @@ describe('transform rules', () => {
 
 		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
 
-		expect(results[1].lookup_terms[0]).toBe('see-A')
+		expect(results[1].lookup_results[0].concept?.stem).toBe('see')
+		expect(results[1].lookup_results[0].concept?.sense).toBe('C')
+		expect(results[1].lookup_results.length).toBe(3)
 	})
 
 	test('not triggered across sentences', () => {

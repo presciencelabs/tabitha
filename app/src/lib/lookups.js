@@ -1,4 +1,7 @@
-import { TOKEN_TYPE, concept_with_sense, split_stem_and_sense } from './parser/token'
+import { TOKEN_TYPE, split_stem_and_sense } from './parser/token'
+import { REGEXES } from './regexes'
+import { create_context_filter, create_token_filter, create_token_modify_action } from './rules/rules_parser'
+import { apply_rule_to_tokens } from './rules/rules_processor'
 
 // TODO move whole token pipeline to the server
 
@@ -26,6 +29,8 @@ export async function perform_ontology_lookups(sentences) {
 	// TODO only send one api request for all occurrences of a term
 	await Promise.all(lookup_tokens.map(check_ontology))
 	await Promise.all(lookup_tokens.map(check_how_to))
+
+	result_filter_rules.forEach(({ rule }) => apply_rule_to_tokens(lookup_tokens, rule))
 
 	return sentences
 }
@@ -142,21 +147,32 @@ async function check_ontology(lookup_token) {
  */
 async function check_how_to(lookup_token) {
 	// get how-to for the possible stems and for any complex concepts
-	const terms = new Set(lookup_token.lookup_terms.map(term => `${term[0].toLowerCase()}${term.substring(1)}`))
-	lookup_token.lookup_results
-		.map(result => result.concept)
-		.filter(concept => concept !== null && [2, 3].includes(concept.level))
-		// @ts-ignore null values filtered out above
-		.map(concept_with_sense)
-		.forEach(term => terms.add(term))
+	const terms = new Set(lookup_token.lookup_terms.map(term => term.toLowerCase()))
 
 	const results = (await Promise.all([...terms].map(check_word_in_how_to))).flat()
 	
 	for (let how_to_result of results) {
 		const existing_result = lookup_token.lookup_results.find(lookup => lookups_match(lookup, how_to_result) && senses_match(lookup, how_to_result))
 		if (existing_result) {
+			// The sense exists in the ontology and the how-to
 			existing_result.how_to.push(how_to_result)
+
+		} else if (how_to_result.sense) {
+			// The sense exists in the how-to but not in the ontology, but is planned to be added
+			const new_result = create_lookup_result(how_to_result, { how_to: [how_to_result] })
+			new_result.concept = {
+				id: '0',
+				stem: new_result.stem,
+				sense: how_to_result.sense,
+				part_of_speech: new_result.part_of_speech,
+				level: 2,		// since it's in the how-to, it's expected to be complex
+				gloss: 'Not yet in Ontology (but should be soon)',
+				categorization: '',
+			}
+			lookup_token.lookup_results.push(new_result)
+
 		} else {
+			// The word exists in the how-to but not in the ontology, and may never be
 			const new_result = create_lookup_result(how_to_result, { how_to: [how_to_result] })
 			lookup_token.lookup_results.push(new_result)
 		}
@@ -215,4 +231,52 @@ function lookups_match(lookup1, lookup2) {
 function senses_match(lookup, how_to_result) {
 	return lookup.concept?.sense === how_to_result.sense
 		|| lookup.how_to.some(result => result.sense === how_to_result.sense)
+}
+
+/** @type {BuiltInRule[]} */
+const result_filter_rules = [
+	{
+		name: 'Filter lookup results based on upper/lowercase for words not at the start of the sentence.',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token.tag.includes('first_word'),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				filter_results_by_capitalization(token)
+				if (token.complex_pairing) {
+					filter_results_by_capitalization(token.complex_pairing)
+				}
+			}),
+		},
+	},
+	{
+		name: 'Remove lookup results for certain functional Adpositions (up, down, etc)',
+		comment: 'While these have an entry in the Ontology, they are only used in the Analyzer with specific Verbs. They should not be recognized as words on their own.',
+		rule: {
+			trigger: create_token_filter({ 'token': 'to|from|down|off|out|up' }),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				token.lookup_results = []
+			}),
+		},
+	},
+]
+
+/**
+ * 
+ * @param {string} text 
+ * @returns {boolean}
+ */
+function starts_lowercase(text) {
+	return REGEXES.STARTS_LOWERCASE.test(text)
+}
+
+/**
+ * 
+ * @param {Token} token 
+ */
+function filter_results_by_capitalization(token) {
+	token.lookup_results = starts_lowercase(token.token)
+		? token.lookup_results.filter(result => starts_lowercase(result.stem))
+		: token.lookup_results.filter(result => !starts_lowercase(result.stem))
 }

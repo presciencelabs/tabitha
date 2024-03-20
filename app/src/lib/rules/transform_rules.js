@@ -1,4 +1,4 @@
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_modify_action, create_token_transform, create_token_transforms } from './rules_parser'
 
 /**
  * These are words that may change their underlying data based on the context around them.
@@ -9,6 +9,12 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
  * 
  */
 const transform_rules_json = [
+	{
+		'name': '"no" before a noun becomes negative_noun_polarity',
+		'trigger': { 'token': 'no' },
+		'context': { 'followedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } } },
+		'transform': { 'function': 'negative_noun_polarity' },
+	},
 	{
 		'name': 'do with not becomes a function word',
 		'trigger': { 'stem': 'do' },
@@ -26,6 +32,31 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxiliary' },
 	},
 	{
+		'name': '"to" before a verb gets tagged as infinitive',
+		'trigger': { 'token': 'to' },
+		'context': {
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
+		},
+		'transform': { 'function': 'infinitive' },
+	},
+	{
+		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_subject\'',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'subtokens': { 'tag': 'infinitive', 'skip': { 'token': '[' } } },
+		'transform': { 'tag': 'patient_clause|same_subject' },
+	},
+	{
+		'name': 'tag subordinate clauses starting with an adposition as adverbial',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'subtokens': { 'category': 'Adposition', 'skip': { 'token': '[' } } },
+		'transform': { 'tag': 'adverbial_clause' },
+	},
+	{
+		'name': 'any remaining subordinate_clause is a \'stand_alone\' patient clause by default',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'transform': { 'tag': 'patient_clause|stand_alone' },
+	},
+	{
 		'name': 'most before adjective or adverb becomes a function word',
 		'trigger': { 'stem': 'most' },
 		'context': {
@@ -34,13 +65,10 @@ const transform_rules_json = [
 		'transform': { 'function': 'superlative_degree' },
 	},
 	{
-		'name': 'start before a verb becomes a function word',
-		'trigger': { 'stem': 'start' },
+		'name': 'start or begin before a verb becomes a function word',
+		'trigger': { 'stem': 'start|begin' },
 		'context': {
-			'followedby': {
-				'category': 'Verb',
-				'skip': { 'token': 'to' },
-			},
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary|inceptive_aspect' },
 		'comment': 'support both "started eating" and "started to eat"',
@@ -49,7 +77,7 @@ const transform_rules_json = [
 		'name': 'stop before a verb becomes a function word',
 		'trigger': { 'stem': 'stop' },
 		'context': {
-			'followedby': { 'category': 'Verb' },
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary|cessative_aspect' },
 	},
@@ -57,10 +85,7 @@ const transform_rules_json = [
 		'name': 'continue before a verb becomes a function word',
 		'trigger': { 'stem': 'continue' },
 		'context': {
-			'followedby': {
-				'category': 'Verb',
-				'skip': { 'token': 'to' },
-			},
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary|continuative_aspect' },
 		'comment': 'support both "continued eating" and "continued to eat"',
@@ -69,7 +94,7 @@ const transform_rules_json = [
 		'name': 'finish before a verb becomes a function word',
 		'trigger': { 'stem': 'finish' },
 		'context': {
-			'followedby': { 'category': 'Verb' },
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary|completive_aspect' },
 	},
@@ -231,7 +256,11 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'category': 'Adjective',
-				'skip': [{ 'token': 'not|very|extremely' }, { 'category': 'Adverb' }],
+				'skip': ['vp_modifiers', 'adjp_modifiers'],
+			},
+			'notfollowedby': {
+				'category': 'Noun',
+				'skip': ['vp_modifiers', 'adjp'],
 			},
 		},
 		'transform': { 'concept': 'be-D' },
@@ -242,7 +271,11 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'category': 'Adjective',
-				'skip': { 'token': 'very|extremely' },
+				'skip': ['vp_modifiers', 'adjp_modifiers'],
+			},
+			'notfollowedby': {
+				'category': 'Noun',
+				'skip': ['vp_modifiers', 'adjp'],
 			},
 		},
 		'transform': { 'concept': 'become-A' },
@@ -251,7 +284,7 @@ const transform_rules_json = [
 		'name': 'be before any verb becomes an auxiliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': { 'category': 'Verb' },
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary' },
 		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
@@ -263,7 +296,7 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'past participle',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
+				'skip': 'vp_modifiers',
 			},
 		},
 		'transform': { 'function': 'auxiliary|passive' },
@@ -275,7 +308,7 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'participle',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
+				'skip': 'vp_modifiers',
 			},
 		},
 		'transform': { 'function': 'auxiliary|imperfective_aspect' },
@@ -286,7 +319,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': {
 				'category': 'Verb',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
+				'skip': 'vp_modifiers',
 			},
 		},
 		'transform': { 'function': 'auxiliary|flashback' },
@@ -296,10 +329,7 @@ const transform_rules_json = [
 		'name': 'be before an auxiliary becomes an auxiliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': {
-				'tag': 'auxiliary',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
-			},
+			'followedby': { 'tag': 'auxiliary', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary' },
 	},
@@ -315,6 +345,7 @@ const transform_rules_json = [
 		'transform': { 'function': 'agent_of_passive' },
 	},
 	{
+		// TODO make this a case frame rule
 		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
 		'trigger': { 'category': 'Adposition' },
 		'context': {
@@ -322,6 +353,49 @@ const transform_rules_json = [
 		},
 		'transform': { 'usage': 'C' },
 		'comment': 'C means "Always in an Adverbial clause". eg by-A (Adverbial - C) vs by-B (Adjunct - A)',
+	},
+	{
+		'name': 'tag head nouns',
+		'trigger': { 'category': 'Noun' },
+		'context': {
+			'notprecededby': [{ 'category': 'Noun' }, { 'token': 'of', 'skip': 'np_modifiers' }],
+			'notfollowedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'transform': { 'tag': 'head_np' },
+	},
+]
+
+/** @type {BuiltInRule[]} */
+const builtin_transform_rules = [
+	{
+		name: 'Set tag for relative clauses based on relativizer',
+		comment: 'removes extra tags for words like "who" and "which". "that" also is not supposed to be used as a complementizer',
+		rule: {
+			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
+			context: create_context_filter({
+				'precededby': { 'category': 'Noun' },
+				'subtokens': { 'tag': 'relativizer', 'skip': { 'token': '[' } },
+			}),
+			action: create_token_modify_action(token => {
+				const relativizer = token.sub_tokens[1]
+				token.tag = 'relative_clause'
+				relativizer.tag = 'relativizer'
+			}),
+		},
+	},
+	{
+		name: 'Set tag for "that" when not preceded by a Noun',
+		comment: '"that" can only be a demonstrative in this case',
+		rule: {
+			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
+			context: create_context_filter({
+				'notprecededby': { 'category': 'Noun' },
+				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
+			}),
+			action: create_token_modify_action(token => {
+				token.sub_tokens[1].tag = 'remote_demonstrative'
+			}),
+		},
 	},
 ]
 
@@ -334,9 +408,7 @@ export function parse_transform_rule(rule_json) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])
 	const transform = create_token_transform(rule_json['transform'])
-
-	// TODO support multiple transforms if context requires multiple tokens
-	const context_transforms = [create_token_transform(rule_json['context_transform'])]
+	const context_transforms = create_token_transforms(rule_json['context_transform'])
 
 	return {
 		trigger,
@@ -359,4 +431,4 @@ export function parse_transform_rule(rule_json) {
 	}
 }
 
-export const TRANSFORM_RULES = transform_rules_json.map(parse_transform_rule)
+export const TRANSFORM_RULES = builtin_transform_rules.map(({ rule }) => rule).concat(transform_rules_json.map(parse_transform_rule))

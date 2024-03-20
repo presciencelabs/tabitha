@@ -1,4 +1,4 @@
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform } from '$lib/rules/rules_parser'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transforms } from '$lib/rules/rules_parser'
 import { TOKEN_TYPE } from '../parser/token'
 
 /**
@@ -157,8 +157,7 @@ export function parse_lookup_rule(rule_json) {
 	const lookup_term = rule_json['lookup']
 	const combine = rule_json['combine'] ?? 0
 
-	// TODO support multiple transforms if context requires multiple tokens
-	const context_transforms = [create_token_transform(rule_json['context_transform'])]
+	const context_transforms = create_token_transforms(rule_json['context_transform'])
 
 	return {
 		trigger,

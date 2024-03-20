@@ -69,9 +69,7 @@ export function clausify(tokens) {
 			end_clause()
 		}
 
-		const clause = create_clause()
-		clause.tag = 'main_clause'
-		sentences.push({ clause })
+		sentences.push({ clause: create_clause('main_clause') })
 	}
 
 	function start_clause() {
@@ -85,12 +83,17 @@ export function clausify(tokens) {
 			return
 		}
 
-		add_token_to_clause(create_clause())
+		add_token_to_clause(create_clause('subordinate_clause'))
 	}
 
-	function create_clause() {
+	/**
+	 * 
+	 * @param {string} tag 
+	 * @returns {Clause}
+	 */
+	function create_clause(tag) {
 		// @ts-ignore
-		return create_clause_token(clause_tokens.pop())
+		return create_clause_token(clause_tokens.pop(), tag)
 	}
 
 	/**
