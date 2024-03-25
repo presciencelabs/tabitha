@@ -49,7 +49,7 @@ tbta_sources_from_input.map(tbta_source_from_input => {
 				const {Source, Reference, Verse, AnalyzedVerse, Notes} = tbta_row
 
 				// transforms something like "Community_Development_Texts" into "Community Development Texts"
-				const type = Source.replace('_', ' ')
+				const type = Source.replaceAll('_', ' ')
 
 				// Reference looks like this: "Daniel 3:9" or "1_Chronicles 1:1"
 				const [, id_primary, id_secondary, id_tertiary] = /(.*) (\d+):(\d+)/.exec(Reference) ?? [,'', 0, 0]
