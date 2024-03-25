@@ -35,19 +35,21 @@ export const TOKEN_TYPE = {
  * @param {string} [other_data.error=''] 
  * @param {string} [other_data.suggest=''] 
  * @param {string} [other_data.tag=''] 
+ * @param {string} [other_data.specified_sense=''] 
  * @param {string} [other_data.lookup_term=''] 
  * @param {Token[]} [other_data.sub_tokens=[]] 
  * @param {Token?} [other_data.pairing=null] 
  * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, { error='', suggest= '', tag='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
+export function create_token(token, type, { error='', suggest= '', tag='', specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
 	return {
 		token,
 		type,
 		error_message: error,
 		suggest_message: suggest,
 		tag,
+		specified_sense,
 		lookup_terms: lookup_term ? [lookup_term] : [],
 		lookup_results: [],
 		sub_tokens,

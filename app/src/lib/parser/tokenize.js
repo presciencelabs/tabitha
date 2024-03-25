@@ -207,7 +207,7 @@ export function tokenize_input(text = '') {
 		// @ts-ignore the stem will always be there
 		const stem = lookup_match?.[1]
 		const sense = lookup_match?.[2] ?? ''
-		return create_token(text, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: `${stem}${sense}` })
+		return create_token(text, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: stem, specified_sense: sense })
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, split_stem_and_sense, create_lookup_result } from './parser/token'
+import { TOKEN_TYPE, create_lookup_result } from './parser/token'
 import { REGEXES } from './regexes'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules/rules_parser'
 import { apply_rule_to_tokens } from './rules/rules_processor'
@@ -72,7 +72,7 @@ function is_lookup_token(token) {
  */
 async function check_forms(lookup_token) {
 	// At this point there is always just one lookup term
-	const { stem, sense } = split_stem_and_sense(lookup_token.lookup_terms[0])
+	const stem = lookup_token.lookup_terms[0]
 
 	const response = await fetch(`/lookup/form?word=${stem}`)
 
@@ -93,7 +93,7 @@ async function check_forms(lookup_token) {
 	unique_stems.add(stem.toLowerCase())
 
 	// Reattach the sense if present
-	lookup_token.lookup_terms = sense ? [...unique_stems].map(stem => `${stem}-${sense}`) : [...unique_stems]
+	lookup_token.lookup_terms = [...unique_stems]
 
 	/**
 	 * 

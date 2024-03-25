@@ -7,35 +7,35 @@ import { tokenize_input } from './tokenize'
 
 /**
  * @param {string} token
- * @param {string?} lookup_term
+ * @param {Object} other_data
+ * @param {string?} [other_data.lookup_term=null]
+ * @param {string} [other_data.sense='']
  * @returns {Token}
  */
-function create_word_token(token, lookup_term=null) {
-	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: lookup_term || token })
+function create_word_token(token, { lookup_term=null, sense='' }={}) {
+	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: lookup_term || token, specified_sense: sense })
 }
 
 /**
- * @param {string} token
- * @param {string?} lookup_left
- * @param {string?} lookup_right
+ * @param {Token} left_token
+ * @param {Token} right_token
  * @returns {Token}
  */
-function create_pairing_token(token, lookup_left=null, lookup_right=null) {
-	const [left, right] = token.split('/')
-	const left_token = create_word_token(left, lookup_left)
-	const right_token = create_word_token(right, lookup_right)
+function create_pairing(left_token, right_token) {
+	// const [left, right] = token.split('/')
+	// const left_token = create_word_token(left, lookup_left)
+	// const right_token = create_word_token(right, lookup_right)
 	left_token.complex_pairing = right_token
 	return left_token
 }
 
 /**
  * @param {string} pronoun
- * @param {string} referent
- * @param {string?} referent_lookup
+ * @param {Token} referent_token
  * @returns {Token}
  */
-function create_pronoun_token(pronoun, referent, referent_lookup=null) {
-	const referent_token = create_word_token(referent, referent_lookup)
+function create_pronoun_token(pronoun, referent_token) {
+	// const referent_token = create_word_token(referent, referent_lookup)
 	const pronoun_token = create_token(pronoun, TOKEN_TYPE.FUNCTION_WORD)
 	referent_token.pronoun = pronoun_token
 	return referent_token
@@ -84,15 +84,15 @@ describe('tokenize_input', () => {
 		const INPUT = "token tokens token's token-A token's-A in-order-to Holy-Spirit's token123 123"
 
 		const EXPECTED_OUTPUT = [
-			create_word_token('token', 'token'),
-			create_word_token('tokens', 'tokens'),
-			create_word_token("token's", 'token'),
-			create_word_token('token-A', 'token-A'),
-			create_word_token("token's-A", 'token-A'),
-			create_word_token('in-order-to', 'in-order-to'),
-			create_word_token("Holy-Spirit's", 'Holy-Spirit'),
-			create_word_token('token123', 'token123'),
-			create_word_token('123', '123'),
+			create_word_token('token', { lookup_term: 'token' }),
+			create_word_token('tokens', { lookup_term: 'tokens' }),
+			create_word_token("token's", { lookup_term: 'token' }),
+			create_word_token('token-A', { lookup_term: 'token', sense: 'A' }),
+			create_word_token("token's-A", { lookup_term: 'token', sense: 'A' }),
+			create_word_token('in-order-to', { lookup_term: 'in-order-to' }),
+			create_word_token("Holy-Spirit's", { lookup_term: 'Holy-Spirit' }),
+			create_word_token('token123', { lookup_term: 'token123' }),
+			create_word_token('123', { lookup_term: '123' }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -102,13 +102,13 @@ describe('tokenize_input', () => {
 		const INPUT = '2.5 .5 .1. 3.88] 2.5'
 
 		const EXPECTED_OUTPUT = [
-			create_word_token('2.5', '2.5'),
-			create_word_token('.5', '.5'),
-			create_word_token('.1', '.1'),
+			create_word_token('2.5', { lookup_term: '2.5' }),
+			create_word_token('.5', { lookup_term: '.5' }),
+			create_word_token('.1', { lookup_term: '.1' }),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_word_token('3.88', '3.88'),
+			create_word_token('3.88', { lookup_term: '3.88' }),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_word_token('2.5', '2.5'),
+			create_word_token('2.5', { lookup_term: '2.5' }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -130,14 +130,14 @@ describe('tokenize_input', () => {
 		const INPUT = "you(Paul) abc(test) your(Paul's) your(son-C) your(son's-C) your(sons'-C)] you(Paul)."
 
 		const EXPECTED_OUTPUT = [
-			create_pronoun_token('you', 'Paul'),
-			create_pronoun_token('abc', 'test'),
-			create_pronoun_token('your', 'Paul\'s', 'Paul'),
-			create_pronoun_token('your', 'son-C'),
-			create_pronoun_token('your', 'son\'s-C', 'son-C'),
-			create_pronoun_token('your', 'sons\'-C', 'sons-C'),
+			create_pronoun_token('you', create_word_token('Paul')),
+			create_pronoun_token('abc', create_word_token('test')),
+			create_pronoun_token('your', create_word_token('Paul\'s', { lookup_term: 'Paul' })),
+			create_pronoun_token('your', create_word_token('son-C', { lookup_term: 'son', sense: 'C' })),
+			create_pronoun_token('your', create_word_token('son\'s-C', { lookup_term: 'son', sense: 'C' })),
+			create_pronoun_token('your', create_word_token('sons\'-C', { lookup_term: 'sons', sense: 'C' })),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_pronoun_token('you', 'Paul'),
+			create_pronoun_token('you', create_word_token('Paul')),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		]
 
@@ -223,7 +223,7 @@ describe('tokenize_input', () => {
 		const EXPECTED_OUTPUT = [
 			create_error_token('(imp', ERRORS.MISSING_CLOSING_PAREN),
 			create_error_token('imp)', ERRORS.MISSING_OPENING_PAREN),
-			create_pronoun_token('token', 'imp'),		// tokenizing at this time does not differentiate from a pronoun referent
+			create_pronoun_token('token', create_word_token('imp')),		// tokenizing at this time does not differentiate from a pronoun referent
 			create_error_token('(imp)token', ERRORS.INVALID_TOKEN_END('(imp)')),
 			create_error_token('(implicit_situational)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
 			create_error_token('(imperative)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
@@ -335,12 +335,12 @@ describe('tokenize_input', () => {
 		const INPUT = "Paul's Paul’s Jesus’ Jesus' sons’-C you(Paul’s)"
 
 		const EXPECTED_OUTPUT = [
-			create_word_token('Paul\'s', 'Paul'),
-			create_word_token('Paul\'s', 'Paul'),
-			create_word_token('Jesus\'', 'Jesus'),
-			create_word_token("Jesus'", 'Jesus'),
-			create_word_token('sons\'-C', 'sons-C'),
-			create_pronoun_token('you', 'Paul\'s', 'Paul'),
+			create_word_token('Paul\'s', { lookup_term: 'Paul' }),
+			create_word_token('Paul\'s', { lookup_term: 'Paul' }),
+			create_word_token('Jesus\'', { lookup_term: 'Jesus' }),
+			create_word_token("Jesus'", { lookup_term: 'Jesus' }),
+			create_word_token('sons\'-C', { lookup_term: 'sons', sense: 'C' }),
+			create_pronoun_token('you', create_word_token('Paul\'s', { lookup_term: 'Paul' })),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -382,14 +382,26 @@ describe('tokenize_input', () => {
 		const INPUT = "simple/complex simple's/complex's simples'/complexs' simples'-A/complexs' simple-A/complex-B. [simple/complex]"
 
 		const EXPECTED_OUTPUT = [
-			create_pairing_token('simple/complex'),
-			create_pairing_token("simple's/complex's", 'simple', 'complex'),
-			create_pairing_token("simples'/complexs'", 'simples', 'complexs'),
-			create_pairing_token("simples'-A/complexs'", 'simples-A', 'complexs'),
-			create_pairing_token('simple-A/complex-B', 'simple-A', 'complex-B'),
+			create_pairing(create_word_token('simple'), create_word_token('complex')),
+			create_pairing(
+				create_word_token("simple's", { lookup_term: 'simple' }),
+				create_word_token("complex's", { lookup_term: 'complex' }),
+			),
+			create_pairing(
+				create_word_token("simples'", { lookup_term: 'simples' }),
+				create_word_token("complexs'", { lookup_term: 'complexs' }),
+			),
+			create_pairing(
+				create_word_token("simples'-A", { lookup_term: 'simples', sense: 'A' }),
+				create_word_token("complexs'", { lookup_term: 'complexs' }),
+			),
+			create_pairing(
+				create_word_token('simple-A', { lookup_term: 'simple', sense: 'A' }),
+				create_word_token('complex-B', { lookup_term: 'complex', sense: 'B' }),
+			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_pairing_token('simple/complex', 'simple', 'complex'),
+			create_pairing(create_word_token('simple'), create_word_token('complex')),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
 		]
 

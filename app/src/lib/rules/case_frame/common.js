@@ -35,7 +35,7 @@ function extra_argument_message(concept, role_tag) {
 		['beneficiary', `${sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
 		['instrument', `${sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
 		['agent_clause', `${sense} cannot be used with an agent clause. ${consult_message}`],
-		['patient_clause_different_participant', `${sense} cannot be used with an different-participant patient clause. ${consult_message}`],
+		['patient_clause_different_participant', `${sense} cannot be used with a different-participant patient clause. ${consult_message}`],
 		['patient_clause_same_participant', `${sense} cannot be used with a same-participant patient clause. ${consult_message}`],
 		['patient_clause_simultaneous', `${sense} cannot be used with a simultaneous perception clause. ${consult_message}`],
 		['patient_clause_quote_begin', `${sense} cannot be used with direct speech. ${consult_message}`],

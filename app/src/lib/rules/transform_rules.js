@@ -293,7 +293,7 @@ const transform_rules_json = [
 					{ 'tag': 'genitive_saxon|relative_clause' },	// can't use 'np_modifiers' since we don't skip the genitive_norman 'of'
 					'determiners',
 					'adjp_attributive',
-				]
+				],
 			},
 		},
 		'transform': { 'tag': 'head_np' },

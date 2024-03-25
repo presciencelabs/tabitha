@@ -6,6 +6,7 @@ type Token = {
 	error_message: string
 	suggest_message: string
 	tag: string
+	specified_sense: string
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
 	complex_pairing: Token | null

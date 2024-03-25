@@ -19,7 +19,7 @@ const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'-]+)\)$/
 
 // Could be son son's sons' son-C son's-C sons'-C
 // This pulls out the stem and sense, which will then need to be put back together
-const EXTRACT_LOOKUP_TERM = /^(.+?)(?:'s|')?(-[A-Z])?$/
+const EXTRACT_LOOKUP_TERM = /^(.+?)(?:'s|')?(?:-([A-Z]))?$/
 const HAS_POSSESSIVE = /^(.+?)('s|')(-[A-Z])?$/
 const HAS_SENSE = /^(.+?)(-[A-Z])$/
 const EXTRACT_STEM_AND_SENSE = /^(.+?)(?:-([A-Z]))?$/
