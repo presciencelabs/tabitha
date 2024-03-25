@@ -35,6 +35,7 @@ interface LookupResult extends LookupWord {
 	form: string
 	concept: OntologyResult | null
 	how_to: HowToResult[]
+	case_frame: CaseFrameResult
 }
 
 interface OntologyResult extends LookupWord {
@@ -96,4 +97,44 @@ type BuiltInRule = {
 	name: string
 	comment: string
 	rule: TokenRule
+}
+
+type RoleTag = string
+type WordSense = string
+type WordStem = string
+
+type ArgumentRoleRule = {
+	role_tag: RoleTag
+	trigger: TokenFilter
+	context: TokenContextFilter
+	action: RoleRuleAction
+	missing_message: string
+}
+
+type ArgumentRulesForSense = {
+	sense: WordSense
+	rules: ArgumentRoleRule[]
+	other_required: RoleTag[]
+	other_optional: RoleTag[]
+	patient_clause_type: RoleTag
+}
+
+type RoleRuleAction = (tokens: Token[], role_match: RoleMatchResult) => void
+
+type ArgumentMatchFilter = (tokens: Token[], role_matches: RoleMatchResult[]) => boolean
+
+type RoleMatchResult = {
+	role_tag: RoleTag
+	success: boolean
+	trigger_index: number
+	context_indexes: number[]
+}
+
+type CaseFrameResult = {
+	is_valid: boolean
+	is_checked: boolean
+	rule: ArgumentRulesForSense
+	valid_arguments: RoleMatchResult[]
+	extra_arguments: RoleMatchResult[]
+	missing_arguments: RoleTag[]
 }

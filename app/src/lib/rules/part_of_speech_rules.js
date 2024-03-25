@@ -63,7 +63,7 @@ const part_of_speech_rules_json = [
 		'name': 'If Noun-Verb preceded by an \'s, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'tag': 'genitive_saxon', 'skip': { 'category': 'Adjective' } },
+			'precededby': { 'tag': 'genitive_saxon', 'skip': 'adjp_attributive' },
 		},
 		'remove': 'Verb',
 		'comment': 'Gideon returned to the Israelite\'s camp.',
@@ -120,26 +120,44 @@ const part_of_speech_rules_json = [
 		'comment': 'John only(Adv/Adj) saw a book.',
 	},
 	{
+		'name': 'If Noun-Adjective followed by Noun, remove Noun',
+		'category': 'Noun|Adjective',
+		'context': {
+			'followedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
+		},
+		'remove': 'Noun',
+		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal. The chief(N/Adj) evil spirit.',
+	},
+	{
 		'name': 'If Noun-Adjective is preceded by an article but not followed by Noun, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
 			'precededby': {
-				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative',
-				'skip': { 'category': 'Adjective' },
+				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|negative_noun_polarity',
+				'skip': 'adjp_attributive',
 			},
-			'notfollowedby': { 'category': 'Noun' },
+			'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
 		},
 		'remove': 'Adjective',
 		'comment': 'John knew about the secret(N/Adj).',
 	},
 	{
-		'name': 'If Noun-Adjective followed by Noun, remove Noun',
+		'name': 'If Noun-Adjective followed by Verb, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
-			'followedby': { 'category': 'Noun' },
+			'followedby': { 'category': 'Verb' },
 		},
 		'remove': 'Noun',
-		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal.',
+		'comment': 'Daniel 3:4 The one official(N/Adj) shouted ...',
+	},
+	{
+		'name': 'If Noun-Adjective preceded by \'be\' or \'feel\', remove Noun',
+		'category': 'Noun|Adjective',
+		'context': {
+			'precededby': { 'category': 'Verb', 'stem': 'be|feel', 'skip': ['vp_modifiers', 'adjp_modifiers_predicative'] },
+		},
+		'remove': 'Noun',
+		'comment': "Infected Eye 1:1 Melissa's eye is sore(N/Adj).  Infected Eye 1:15 Janet's eyes were still sore(N/Adj).",
 	},
 	{
 		'name': 'If Verb-Adjective preceded by an article or possessive, remove Verb',
@@ -180,6 +198,15 @@ const part_of_speech_rules_json = [
 		'comment': 'Luke 3:22 I am pleased(V/Adj) with you.',
 	},
 	{
+		'name': 'If Adjective-Adverb followed by Noun, remove the Adverb',
+		'category': 'Adverb|Adjective',
+		'context': {
+			'followedby': { 'category': 'Noun' },
+		},
+		'remove': 'Adverb',
+		'comment': 'Dan. 1:12 Please give only(Adj/Adv) vegetables ...',
+	},
+	{
 		'name': 'If Adverb-Adjective followed by Verb, remove Adjective',
 		'category': 'Adverb|Adjective',
 		'context': {
@@ -187,6 +214,33 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Adjective',
 		'comment': 'Infected Eye 1:5  You must first(Adj/Adv) wash ...',
+	},
+	{
+		'name': 'If Adverb-Adposition followed by a Noun, delete the Adverb',
+		'category': 'Adverb|Adposition',
+		'context': {
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'remove': 'Adverb',
+		'comment': 'Daniel 1:1 when(Adv/Adp) Jehoiakim ... 3:5 when(Adv/Adp) the people hear ...',
+	},
+	{
+		'name': 'If Verb-Adposition precededby by a modal or \'not\', delete the Adposition',
+		'category': 'Verb|Adposition',
+		'context': {
+			'precededby': { 'tag': 'modal|negative_verb_polarity', 'skip': 'vp_modifiers' },
+		},
+		'remove': 'Adposition',
+		'comment': 'John should like(V/Adp) that book.',
+	},
+	{
+		'name': 'If Verb-Adposition at the beginning of a clause, delete the Verb',
+		'category': 'Verb|Adposition',
+		'context': {
+			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
+		},
+		'remove': 'Verb',
+		'comment': 'Daniel 2:40  The fourth kingom will be strong [like(V/Adp) iron is strong].',
 	},
 ]
 

@@ -4,6 +4,7 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
+	import Icon from '@iconify/svelte'
 
 	/** @type {Token} */
 	export let token
@@ -24,9 +25,16 @@
 				{@const term = concept_with_sense(concept)}
 				<tr>
 					<td class="whitespace-nowrap">
-						<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${term}`} target="_blank">
-							{term}
-						</a>
+						<span>
+							<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${term}`} target="_blank">
+								{term}
+							</a>
+							{#if entry.case_frame.is_checked && entry.case_frame.is_valid}
+								<Icon icon="mdi:check-bold" class="h-4 w-4 text-success" />
+							{:else if entry.case_frame.is_checked}
+								<Icon icon="mdi:close-thick" class="h-4 w-4 text-error" />
+							{/if}
+						</span>
 					</td>
 					<td class="whitespace-nowrap">{concept.part_of_speech}</td>
 					<td class="whitespace-nowrap">

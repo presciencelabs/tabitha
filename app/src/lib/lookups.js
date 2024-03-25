@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, split_stem_and_sense } from './parser/token'
+import { TOKEN_TYPE, split_stem_and_sense, create_lookup_result } from './parser/token'
 import { REGEXES } from './regexes'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules/rules_parser'
 import { apply_rule_to_tokens } from './rules/rules_processor'
@@ -191,24 +191,6 @@ async function check_how_to(lookup_token) {
 		let matches = results.matches
 
 		return matches
-	}
-}
-
-/**
- * 
- * @param {LookupWord} lookup
- * @param {Object} [other_data={}] 
- * @param {string} [other_data.form='stem'] 
- * @param {OntologyResult?} [other_data.concept=null] 
- * @param {HowToResult[]} [other_data.how_to=[]] 
- */
-function create_lookup_result({ stem, part_of_speech }, { form='stem', concept=null, how_to=[] }={}) {
-	return {
-		stem,
-		part_of_speech,
-		form,
-		concept,
-		how_to,
 	}
 }
 

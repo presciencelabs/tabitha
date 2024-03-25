@@ -1,16 +1,17 @@
 import { ERRORS } from '$lib/parser/error_messages'
 import { TOKEN_TYPE, convert_to_error_token, create_added_token } from '$lib/parser/token'
+import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 const checker_rules_json = [
 	{
-		'name': 'Speak does not use quotes',
-		'trigger': { 'stem': 'speak' },
+		'name': 'Check for "it" apart from an agent clause',
+		'trigger': { 'tag': 'agent_proposition_subject' },
 		'context': {
-			'followedby': { 'tag': 'quote_begin', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'agent_clause', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'Speak\' cannot be used with a direct quote. Consider using \'say\' instead.',
+			'message': 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).',
 		},
 	},
 	{
@@ -18,7 +19,7 @@ const checker_rules_json = [
 		'trigger': { 'category': 'Verb' },
 		'context': {
 			'precededby': { 'tag': 'passive', 'skip': 'all' },
-			'notfollowedby': { 'tag': 'agent_of_passive', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'agent', 'skip': 'all' },
 		},
 		'require': {
 			'followedby': 'by X',
@@ -89,20 +90,11 @@ const checker_rules_json = [
 		},
 	},
 	{
-		'name': 'Check for an imperative note that does not follow the \'you\'',
+		'name': 'Check for an imperative note in a non-quote subordinate clause',
 		'trigger': { 'token': '(imp)' },
 		'context': {
-			'notprecededby': { 'tag': 'second_person' },
-		},
-		'suggest': {
-			'message': 'Consider putting the imperative (imp) notation after the \'you\' subject of the clause.',
-		},
-	},
-	{
-		'name': 'Check for an imperative note in a complement clause',
-		'trigger': { 'token': '(imp)' },
-		'context': {
-			'precededby': { 'tag': 'complementizer', 'skip': 'all' },
+			'precededby': { 'token': '[', 'skip': 'all' },
+			'notprecededby': { 'token': '"', 'skip': 'all' },
 		},
 		'require': {
 			'message': 'Cannot mark complement clauses as imperative.',
@@ -214,10 +206,11 @@ const checker_rules_json = [
 		},
 	},
 	{
+		// TODO check this via case frame/usage rules
 		'name': 'Expect a [ before an adverbial clause',
 		'trigger': { 'category': 'Adposition', 'usage': 'C' },
 		'context': {
-			'notprecededby': { 'token': '[' },
+			'notprecededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
 		},
 		'require': {
 			'precededby': '[',
@@ -233,6 +226,17 @@ const checker_rules_json = [
 		'require': {
 			'followedby': '[',
 			'message': 'Missing bracket before an opening quote',
+		},
+	},
+	{
+		'name': 'Expect a , before a quote_begin clause',
+		'trigger': { 'tag': 'patient_clause_quote_begin' },
+		'context': {
+			'notprecededby': { 'token': ',' },
+		},
+		'require': {
+			'precededby': ',',
+			'message': 'Missing comma before an opening quote',
 		},
 	},
 	{
@@ -379,23 +383,18 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Use \'all of\' rather than \'all\' for non-generic Nouns',
-		'trigger': { 'token': 'all' },
+		'trigger': { 'stem': 'all' },
 		'context': {
-			'notfollowedby': [
-				{
-					'token': 'of|_generic',
-					'skip': [
-						{ 'token': 'the|those|these' },
-						{ 'category': 'Noun' },
-					],
-				},
-			],
+			'notfollowedby': {
+				'token': 'of|_generic',
+				'skip': 'np',
+			},
 		},
-		'suggest': {
+		'require': {
 			'followedby': 'of',
 			'message': 'Use \'all of\' unless the modified Noun should be generic, in which case add \'_generic\' after the Noun. See P1 Checklist 0.17.',
 		},
-		'comment': 'See section 0.17 of the Phase 1 checklist',
+		'comment': 'This may still miss cases because it doesn\'t check if the \'of\' immediately follows the \'all\', but this is the best I could do.',
 	},
 	{
 		'name': 'Cannot use aspect auxilliaries (eg start) without another Verb',
@@ -563,6 +562,56 @@ const builtin_checker_rules = [
 					}
 				}
 			}),
+		},
+	},
+	{
+		name: 'Check argument structure/case frame',
+		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
+		rule: {
+			trigger: create_token_filter({ 'category': 'Verb' }),
+			context: create_context_filter({ }),
+			action: (tokens, trigger_index) => {
+				validate_case_frame(tokens, trigger_index)
+				return trigger_index + 1
+			},
+		},
+	},
+	{
+		name: 'Check for an errant \'that\' in a complement clause',
+		comment: 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
+		rule: {
+			trigger: create_token_filter({ 'tag': 'patient_clause_different_participant|agent_clause' }),
+			context: create_context_filter({
+				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
+			}),
+			action: create_token_modify_action(token => {
+				token.sub_tokens[1].suggest_message = 'If this \'that\' is not supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.'
+			}),
+		},
+	},
+	{
+		name: 'Check for a relative clause that might supposed to be a complement clause',
+		comment: 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
+		rule: {
+			trigger: create_token_filter({ 'tag': 'relative_clause_that' }),
+			context: create_context_filter({
+				'precededby': { 'category': 'Verb', 'skip': 'all' },
+			}),
+			action: (tokens, trigger_index, context_indexes) => {
+				const verb_token = tokens[context_indexes[0]]
+				const case_frames = verb_token.lookup_results.map(result => result.case_frame)
+				if (case_frames.length === 0 || case_frames[0].is_valid) {
+					return trigger_index + 1
+				}
+				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments))
+
+				// Only show the message if all senses are invalid, but some are missing a patient clause
+				if (['agent_clause', 'patient_clause_different_participant'].some(role => missing_arguments.has(role))) {
+					const that_token = tokens[trigger_index].sub_tokens[1]
+					that_token.suggest_message = 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.'
+				}
+				return trigger_index + 1
+			},
 		},
 	},
 ]

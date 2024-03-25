@@ -19,7 +19,7 @@ describe('sentence syntax: tag setting', () => {
 		expect(clause_tokens[3].type).toBe(TOKEN_TYPE.CLAUSE)
 		expect(clause_tokens[3].tag).toBe('subordinate_clause')
 		expect(clause_tokens[5].type).toBe(TOKEN_TYPE.CLAUSE)
-		expect(clause_tokens[5].tag).toBe('patient_clause|quote_begin')
+		expect(clause_tokens[5].tag).toBe('patient_clause_quote_begin')
 	})
 })
 

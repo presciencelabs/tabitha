@@ -42,11 +42,14 @@ export function create_token_filter(filter_json) {
 	// only support single character usages right now
 	add_lookup_filter('usage', filter_value => has_usage(filter_value))
 
-	add_lookup_filter('form', filter_value => lookup => get_value_checker(lookup.form)(filter_value))
+	add_lookup_filter('form', filter_value => {
+		const filter_forms = filter_value.split('|')
+		return lookup => {
+			const lookup_forms = lookup.form.split('|')
+			return lookup_forms.some(form => filter_forms.includes(form))
+		}
+	})
 
-	if (filters.length === 0) {
-		return () => false
-	}
 	return token => filters.every(filter => filter(token))
 
 	/**
@@ -425,12 +428,20 @@ export function create_token_modify_action(action) {
 const SKIP_GROUPS = new Map([
 	['determiners', { 'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|negative_noun_polarity' }],
 	['degree_indicators', { 'tag': 'intensified_degree|extremely_intensified_degree|least_degree|comparative_degree|too_degree' }],
-	['adjp_modifiers', [
+	['adjp_modifiers_predicative', [
 		'degree_indicators',
+		{ 'tag': 'patient_clause_same_participant|patient_clause_different_participant' },	// some adjectives can take a patient argument
 		{ 'category': 'Adverb' },
 	]],
-	['adjp', [
-		'adjp_modifiers',
+	['adjp_predicative', [
+		'adjp_modifiers_predicative',
+		{ 'category': 'Adjective' },
+	]],
+	['adjp_modifiers_attributive', [
+		'degree_indicators',
+	]],
+	['adjp_attributive', [
+		'adjp_modifiers_attributive',
 		{ 'category': 'Adjective' },
 	]],
 	['advp_modifiers', [
@@ -443,14 +454,14 @@ const SKIP_GROUPS = new Map([
 	['np_modifiers', [
 		{ 'tag': 'genitive_saxon|genitive_norman|relative_clause' },
 		'determiners',
-		'adjp',
+		'adjp_attributive',
 	]],
 	['np', [
 		'np_modifiers',
 		{ 'category': 'Noun' },
 	]],
 	['vp_modifiers', [
-		{ 'tag': 'negative_verb_polarity|modal|infinitive|auxilliary' },
+		{ 'tag': 'negative_verb_polarity|modal|infinitive|auxiliary' },
 		{ 'category': 'Adverb' },
 	]],
 	['vp', [

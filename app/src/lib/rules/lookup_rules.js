@@ -125,6 +125,12 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
+		'name': 'like -> just-like (the adposition)',
+		'trigger': { 'token': 'like' },
+		'lookup': 'like|just-like',
+		'comment': 'this is needed so the adposition is found as well, which is handled by words like be/seem/sound/etc',
+	},
+	{
 		'name': 'worry about',
 		'trigger': { 'stem': 'worry' },
 		'context': { 'followedby': { 'token': 'about' } },
@@ -173,7 +179,7 @@ export function parse_lookup_rule(rule_json) {
 	 * @returns {number}
 	 */
 	function lookup_rule_action(tokens, trigger_index, context_indexes) {
-		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [lookup_term] }
+		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: lookup_term.split('|') }
 
 		if (context_indexes.length === 0) {
 			return trigger_index + 1

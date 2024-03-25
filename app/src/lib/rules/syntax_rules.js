@@ -16,7 +16,7 @@ const builtin_syntax_rules = [
 			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
 			action: create_token_modify_action(token => {
-				token.tag = 'patient_clause|quote_begin'
+				token.tag = 'patient_clause_quote_begin'
 			}),
 		},
 	},
@@ -24,7 +24,7 @@ const builtin_syntax_rules = [
 		name: 'Set tag for first words of sentences',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'tag': 'main_clause|quote_begin' }),
+			trigger: create_token_filter({ 'tag': 'main_clause|patient_clause_quote_begin' }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				// find first word token, even if nested in another clause

@@ -1,4 +1,4 @@
-import { TOKEN_TYPE } from '../parser/token'
+import { TOKEN_TYPE, create_lookup_result } from '../parser/token'
 import { tokenize_input } from '../parser/tokenize'
 import { clausify } from '../parser/clausify'
 import { apply_rules } from './rules_processor'
@@ -14,7 +14,7 @@ import { TRANSFORM_RULES } from './transform_rules'
  * @param {number} [data.level=1] 
  * @returns {LookupResult}
  */
-function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
+function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	const concept = {
 		id: '0',
 		stem,
@@ -24,13 +24,7 @@ function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 
 		gloss: '',
 		categorization: '',
 	}
-	return {
-		stem,
-		part_of_speech,
-		form: 'stem',
-		concept,
-		how_to: [],
-	}
+	return create_lookup_result({ stem, part_of_speech }, { concept })
 }
 
 describe('builtin tag setting', () => {
@@ -38,9 +32,9 @@ describe('builtin tag setting', () => {
 
 	test('relative clause tag', () => {
 		const test_tokens = clausify(tokenize_input('People [who] say [who] person ["who].'))
-		test_tokens[0].clause.sub_tokens[0].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
-		test_tokens[0].clause.sub_tokens[2].lookup_results.push(create_lookup_result('say', { part_of_speech: 'Verb' }))
-		test_tokens[0].clause.sub_tokens[4].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
+		test_tokens[0].clause.sub_tokens[0].lookup_results.push(lookup_w_concept('person', { part_of_speech: 'Noun' }))
+		test_tokens[0].clause.sub_tokens[2].lookup_results.push(lookup_w_concept('say', { part_of_speech: 'Verb' }))
+		test_tokens[0].clause.sub_tokens[4].lookup_results.push(lookup_w_concept('person', { part_of_speech: 'Noun' }))
 
 		const checked_tokens = apply_rules(test_tokens, TRANSFORM_RULES_BUILTIN)
 		const clause_tokens = checked_tokens[0].clause.sub_tokens
@@ -54,12 +48,12 @@ describe('builtin tag setting', () => {
 	})
 	test('"that" clause tag', () => {
 		const test_tokens = clausify(tokenize_input('That person [that]. John saw [that].'))
-		test_tokens[0].clause.sub_tokens[1].lookup_results.push(create_lookup_result('person', { part_of_speech: 'Noun' }))
-		test_tokens[1].clause.sub_tokens[1].lookup_results.push(create_lookup_result('see', { part_of_speech: 'Verb' }))
+		test_tokens[0].clause.sub_tokens[1].lookup_results.push(lookup_w_concept('person', { part_of_speech: 'Noun' }))
+		test_tokens[1].clause.sub_tokens[1].lookup_results.push(lookup_w_concept('see', { part_of_speech: 'Verb' }))
 
 		const checked_tokens = apply_rules(test_tokens, TRANSFORM_RULES_BUILTIN)
 		
-		expect(checked_tokens[0].clause.sub_tokens[2].tag).toBe('relative_clause')
+		expect(checked_tokens[0].clause.sub_tokens[2].tag).toBe('relative_clause|relative_clause_that')
 		expect(checked_tokens[0].clause.sub_tokens[2].sub_tokens[1].tag).toBe('relativizer')
 		
 		expect(checked_tokens[1].clause.sub_tokens[2].tag).toBe('subordinate_clause')

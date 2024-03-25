@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '../parser/token'
+import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '../parser/token'
 import { ERRORS } from '../parser/error_messages'
 import { apply_rules } from './rules_processor'
 import { describe, expect, test } from 'vitest'
@@ -46,7 +46,7 @@ function create_sentence(tokens) {
  * @param {number} [data.level=1] 
  * @returns {LookupResult}
  */
-function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
+function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	const concept = {
 		id: '0',
 		stem,
@@ -56,13 +56,7 @@ function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 
 		gloss: '',
 		categorization: '',
 	}
-	return {
-		stem,
-		part_of_speech,
-		form: 'stem',
-		concept,
-		how_to: [],
-	}
+	return create_lookup_result({ stem, part_of_speech }, { concept })
 }
 
 describe('built-in checker rules', () => {
@@ -71,11 +65,11 @@ describe('built-in checker rules', () => {
 
 		test('different levels', () => {
 			const test_tokens = [create_sentence([
-				create_lookup_token('token0', { lookup_results: [create_lookup_result('token0', { level: 0 })] }),
-				create_lookup_token('token1', { lookup_results: [create_lookup_result('token1', { level: 1 })] }),
-				create_lookup_token('token2', { lookup_results: [create_lookup_result('token2', { level: 2 })] }),
-				create_lookup_token('token3', { lookup_results: [create_lookup_result('token3', { level: 3 })] }),
-				create_lookup_token('token4', { lookup_results: [create_lookup_result('token4', { level: 4 })] }),
+				create_lookup_token('token0', { lookup_results: [lookup_w_concept('token0', { level: 0 })] }),
+				create_lookup_token('token1', { lookup_results: [lookup_w_concept('token1', { level: 1 })] }),
+				create_lookup_token('token2', { lookup_results: [lookup_w_concept('token2', { level: 2 })] }),
+				create_lookup_token('token3', { lookup_results: [lookup_w_concept('token3', { level: 3 })] }),
+				create_lookup_token('token4', { lookup_results: [lookup_w_concept('token4', { level: 4 })] }),
 			])]
 	
 			const checked_tokens = apply_rules(test_tokens, LEVEL_CHECK_RULES).flatMap(flatten_sentence)
@@ -89,12 +83,12 @@ describe('built-in checker rules', () => {
 		test('pairing: both words right level', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 0 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 2 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 0 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 2 })] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 3 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 3 })] }),
 				),
 			])]
 	
@@ -105,8 +99,8 @@ describe('built-in checker rules', () => {
 		test('pairing: level 4 words are valid for both', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 4 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 4 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 4 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 4 })] }),
 				),
 			])]
 	
@@ -117,12 +111,12 @@ describe('built-in checker rules', () => {
 		test('pairing: first word wrong level', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 2 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 2 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 2 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 2 })] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 3 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 3 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 3 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 3 })] }),
 				),
 			])]
 	
@@ -136,12 +130,12 @@ describe('built-in checker rules', () => {
 		test('pairing: second word wrong level', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 0 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 0 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 0 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 0 })] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 1 })] }),
 				),
 			])]
 	
@@ -155,12 +149,12 @@ describe('built-in checker rules', () => {
 		test('pairing: both words wrong level', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 2 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 0 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 2 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 0 })] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 3 })] }),
-					create_lookup_token('second', { lookup_results: [create_lookup_result('second', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 3 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 1 })] }),
 				),
 			])]
 	
@@ -180,16 +174,16 @@ describe('built-in checker rules', () => {
 			const test_tokens = [create_sentence([
 				create_lookup_token('token', { lookup_results: [] }),
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token', { level: 1 }),
-					create_lookup_result('token2', { level: 2 }),
+					lookup_w_concept('token', { level: 1 }),
+					lookup_w_concept('token2', { level: 2 }),
 				] }),
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token', { level: 1 }),
-					create_lookup_result('token4', { level: 4 }),
+					lookup_w_concept('token', { level: 1 }),
+					lookup_w_concept('token4', { level: 4 }),
 				] }),
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token', { level: 2 }),
-					create_lookup_result('token1', { level: 1 }),
+					lookup_w_concept('token', { level: 2 }),
+					lookup_w_concept('token1', { level: 1 }),
 				] }),
 			])]
 	
@@ -203,28 +197,28 @@ describe('built-in checker rules', () => {
 		test('complex pairing level check', () => {
 			const test_tokens = [create_sentence([
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [
-						create_lookup_result('second', { level: 2 }),
-						create_lookup_result('second1', { level: 1 }),
+						lookup_w_concept('second', { level: 2 }),
+						lookup_w_concept('second1', { level: 1 }),
 					] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [
-						create_lookup_result('second', { level: 2 }),
-						create_lookup_result('second1', { level: 4 }),
+						lookup_w_concept('second', { level: 2 }),
+						lookup_w_concept('second1', { level: 4 }),
 					] }),
 				),
 				create_pairing_token(
-					create_lookup_token('first', { lookup_results: [create_lookup_result('first', { level: 1 })] }),
+					create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [
-						create_lookup_result('second', { level: 1 }),
-						create_lookup_result('second2', { level: 2 }),
+						lookup_w_concept('second', { level: 1 }),
+						lookup_w_concept('second2', { level: 2 }),
 					] }),
 				),
 			])]

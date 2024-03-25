@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '$lib/parser/token'
+import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '$lib/parser/token'
 import { describe, expect, test } from 'vitest'
 import { apply_rules } from './rules_processor'
 import { LOOKUP_RULES } from './lookup_rules'
@@ -37,7 +37,7 @@ function create_lookup_token(token, { lookup_results=[] }={}) {
  * @param {number} [data.level=1] 
  * @returns {LookupResult}
  */
-function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
+function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
 	const concept = {
 		id: '0',
 		stem,
@@ -47,13 +47,7 @@ function create_lookup_result(stem, { sense='A', part_of_speech='Noun', level=1 
 		gloss: '',
 		categorization: '',
 	}
-	return {
-		stem,
-		part_of_speech,
-		form: 'stem',
-		concept,
-		how_to: [],
-	}
+	return create_lookup_result({ stem, part_of_speech }, { concept })
 }
 
 describe('transform rules', () => {
@@ -168,9 +162,9 @@ describe('transform rules', () => {
 			]),
 		]
 		tokens[0].clause.sub_tokens[1].lookup_results = [
-			create_lookup_result('see', { sense: 'A' }),
-			create_lookup_result('see', { sense: 'B' }),
-			create_lookup_result('see', { sense: 'C' }),
+			lookup_w_concept('see', { sense: 'A' }),
+			lookup_w_concept('see', { sense: 'B' }),
+			lookup_w_concept('see', { sense: 'C' }),
 		]
 
 		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
@@ -527,7 +521,7 @@ describe('part-of-speech rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token', { part_of_speech: 'Adjective' }),
+					lookup_w_concept('token', { part_of_speech: 'Adjective' }),
 				] }),
 			]),
 		]
@@ -548,8 +542,8 @@ describe('part-of-speech rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token1', { part_of_speech: 'Noun' }),
-					create_lookup_result('token2', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token1', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token2', { part_of_speech: 'Noun' }),
 				] }),
 			]),
 		]
@@ -570,10 +564,10 @@ describe('part-of-speech rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token1', { part_of_speech: 'Noun' }),
-					create_lookup_result('token2', { part_of_speech: 'Noun' }),
-					create_lookup_result('token1', { part_of_speech: 'Verb' }),
-					create_lookup_result('token2', { part_of_speech: 'Verb' }),
+					lookup_w_concept('token1', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token2', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token1', { part_of_speech: 'Verb' }),
+					lookup_w_concept('token2', { part_of_speech: 'Verb' }),
 				] }),
 			]),
 		]
@@ -596,11 +590,11 @@ describe('part-of-speech rules', () => {
 		const input_tokens = [
 			create_sentence([
 				create_lookup_token('token', { lookup_results: [
-					create_lookup_result('token1', { part_of_speech: 'Noun' }),
-					create_lookup_result('token2', { part_of_speech: 'Noun' }),
-					create_lookup_result('token1', { part_of_speech: 'Verb' }),
-					create_lookup_result('token2', { part_of_speech: 'Verb' }),
-					create_lookup_result('token1', { part_of_speech: 'Adjective' }),
+					lookup_w_concept('token1', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token2', { part_of_speech: 'Noun' }),
+					lookup_w_concept('token1', { part_of_speech: 'Verb' }),
+					lookup_w_concept('token2', { part_of_speech: 'Verb' }),
+					lookup_w_concept('token1', { part_of_speech: 'Adjective' }),
 				] }),
 			]),
 		]

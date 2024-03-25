@@ -2,35 +2,9 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
 
 /**
  * These are words that may change their underlying data based on the context around them.
- * These can look at the lookup results of the surrounding tokens (ie syntactic category)
- * and can be used to decide between senses.
- * 
- * TODO Move the sense-determining/case frame rules to a different file and/or create a different type of rule for them
- * 
+ * These can look at the lookup results of the surrounding tokens (ie syntactic category).
  */
 const transform_rules_json = [
-	{
-		'name': '"no" before a noun becomes negative_noun_polarity',
-		'trigger': { 'token': 'no' },
-		'context': { 'followedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } } },
-		'transform': { 'function': 'negative_noun_polarity' },
-	},
-	{
-		'name': 'do with not becomes a function word',
-		'trigger': { 'stem': 'do' },
-		'context': {
-			'followedby': { 'token': 'not' },
-		},
-		'transform': { 'function': 'auxiliary' },
-	},
-	{
-		'name': 'do in a question becomes an auxiliary',
-		'trigger': { 'stem': 'do' },
-		'context': {
-			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
-		},
-		'transform': { 'function': 'auxiliary' },
-	},
 	{
 		'name': '"to" before a verb gets tagged as infinitive',
 		'trigger': { 'token': 'to' },
@@ -38,31 +12,6 @@ const transform_rules_json = [
 			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'infinitive' },
-	},
-	{
-		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_subject\'',
-		'trigger': { 'tag': 'subordinate_clause' },
-		'context': { 'subtokens': { 'tag': 'infinitive', 'skip': { 'token': '[' } } },
-		'transform': { 'tag': 'patient_clause|same_subject' },
-	},
-	{
-		'name': 'tag subordinate clauses starting with an adposition as adverbial',
-		'trigger': { 'tag': 'subordinate_clause' },
-		'context': { 'subtokens': { 'category': 'Adposition', 'skip': { 'token': '[' } } },
-		'transform': { 'tag': 'adverbial_clause' },
-	},
-	{
-		'name': 'any remaining subordinate_clause is a \'stand_alone\' patient clause by default',
-		'trigger': { 'tag': 'subordinate_clause' },
-		'transform': { 'tag': 'patient_clause|stand_alone' },
-	},
-	{
-		'name': 'most before adjective or adverb becomes a function word',
-		'trigger': { 'stem': 'most' },
-		'context': {
-			'followedby': { 'category': 'Adjective|Adverb' },
-		},
-		'transform': { 'function': 'superlative_degree' },
 	},
 	{
 		'name': 'start or begin before a verb becomes a function word',
@@ -97,6 +46,90 @@ const transform_rules_json = [
 			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': 'auxiliary|completive_aspect' },
+	},
+	{
+		'name': 'tag subordinate clauses starting with an adposition as adverbial',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'subtokens': { 'category': 'Adposition', 'skip': { 'token': '[' } } },
+		'transform': { 'tag': 'adverbial_clause' },
+	},
+	{
+		'name': 'tag subordinate clauses along with \'it\' as agent clauses',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'precededby': { 'tag': 'agent_proposition_subject', 'skip': 'all' } },
+		'transform': { 'tag': 'agent_clause' },
+		'comment': 'Ruth 2:22 It is good that you continue working...',
+	},
+	{
+		'name': 'tag subordinate clauses that directly precede the verb as agent clauses',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'followedby': { 'category': 'Verb' } },
+		'transform': { 'tag': 'agent_clause' },
+		'comment': 'It is true that John read that book',
+	},
+	{
+		'name': 'tag \'that\' relative clauses that occur with \'it\' as agent clauses',
+		'trigger': { 'tag': 'relative_clause_that' },
+		'context': {
+			'precededby': { 'tag': 'agent_proposition_subject', 'skip': ['np', 'vp'] },
+		},
+		'transform': { 'tag': 'agent_clause' },
+		'comment': 'It please Mary [that John read this book]. - this was originally tagged as a relative clause but the \'it\' takes priority',
+	},
+	{
+		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_participant\'',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': { 'subtokens': { 'tag': 'infinitive', 'skip': { 'token': '[' } } },
+		'transform': { 'tag': 'patient_clause_same_participant' },
+	},
+	{
+		'name': 'tag subordinate clauses where the verb is a participle for see/hear',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': {
+			'precededby': { 'category': 'Verb', 'stem': 'see|hear', 'skip': 'all' },
+			'subtokens': {
+				'category': 'Verb',
+				'form': 'stem|participle',
+				'skip': 'all',
+			},
+		},
+		'transform': { 'tag': 'patient_clause_simultaneous|patient_clause_different_participant' },
+		'comment': 'eg. "John saw [Mary walking]." This rule should apply before setting "be" as an auxilliary, but after setting the aspect verbs as auxilliaries',
+	},
+	{
+		'name': 'any remaining subordinate_clause is a \'different_participant\' patient clause by default',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'transform': { 'tag': 'patient_clause_different_participant' },
+	},
+	{
+		'name': '"no" before a noun becomes negative_noun_polarity',
+		'trigger': { 'token': 'no' },
+		'context': { 'followedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } } },
+		'transform': { 'function': 'negative_noun_polarity' },
+	},
+	{
+		'name': 'do with not becomes a function word',
+		'trigger': { 'stem': 'do' },
+		'context': {
+			'followedby': { 'token': 'not' },
+		},
+		'transform': { 'function': 'auxiliary' },
+	},
+	{
+		'name': 'do in a question becomes an auxiliary',
+		'trigger': { 'stem': 'do' },
+		'context': {
+			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
+		},
+		'transform': { 'function': 'auxiliary' },
+	},
+	{
+		'name': 'most before adjective or adverb becomes a function word',
+		'trigger': { 'stem': 'most' },
+		'context': {
+			'followedby': { 'category': 'Adjective|Adverb' },
+		},
+		'transform': { 'function': 'superlative_degree' },
 	},
 	{
 		'name': '\'named\' before a name and after a Verb becomes a function word',
@@ -148,146 +181,32 @@ const transform_rules_json = [
 		'transform': { 'concept': 'so-C' },
 	},
 	{
-		'name': 'be after \'there\' becomes be-E (existential)',
-		'trigger': { 'stem': 'be' },
+		'name': 'Tag \'there\' before \'be\' as existential',
+		'trigger': { 'token': 'There|there' },
 		'context': {
-			'precededby': { 'token': 'There|there' },
+			'followedby': { 'stem': 'be' },
 		},
-		'transform': { 'concept': 'be-E' },
-		'context_transform': { 'function': 'existential' },
+		'transform': { 'function': 'existential' },
+		'comment': 'We have to keep this as a transform rule so we can handle the "there" properly.',
 	},
 	{
-		'name': 'be before \'like\' becomes be-U',
-		'trigger': { 'stem': 'be' },
+		'name': '\'part\' after \'be\' becomes a function word',
+		'trigger': { 'token': 'part' },
 		'context': {
-			'followedby': [
-				{ 'token': 'like', 'skip': { 'token': 'not' } },
-			],
+			'precededby': { 'stem': 'be', 'skip': 'vp_modifiers' },
 		},
-		'transform': { 'concept': 'be-U' },
-		'context_transform': { 'function': 'state_role' },
+		'transform': { 'function': '' },
+		'comment': 'Since \'part\' is also a noun, this ensures the right head noun is found for be-R',
 	},
 	{
-		'name': 'be before \'for\' becomes be-G',
-		'trigger': { 'stem': 'be' },
+		'name': '\'made of\' after \'be\' becomes a function word',
+		'trigger': { 'token': 'made' },
 		'context': {
-			'followedby': { 'token': 'for', 'skip': { 'token': 'not' } },
+			'precededby': { 'stem': 'be', 'skip': 'vp_modifiers' },
+			'followedby': { 'token': 'of' },
 		},
-		'transform': { 'concept': 'be-G' },
-		'context_transform': { 'function': 'state_role' },
-	},
-	{
-		'name': 'be before \'with\' becomes be-I',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': { 'token': 'with', 'skip': { 'token': 'not' } },
-		},
-		'transform': { 'concept': 'be-I' },
-		'context_transform': { 'function': 'state_role' },
-	},
-	{
-		'name': 'be before \'about\' becomes be-P',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': { 'token': 'about', 'skip': { 'token': 'not' } },
-		},
-		'transform': { 'concept': 'be-P' },
-		'context_transform': { 'function': 'state_role' },
-	},
-	{
-		'name': 'be before an adposition and temporal words becomes be-H',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': [
-				{ 'stem': 'in|on|before|after' },
-				{ 'stem': 'day|morning|afternoon|evening|Sabbath', 'skip': [{ 'token': 'the' }, { 'category': 'Adjective' }] },
-			],
-		},
-		'transform': { 'concept': 'be-H' },
-	},
-	{
-		'name': 'be before an adposition becomes be-F',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': {
-				'category': 'Adposition',
-				'usage': 'A|a',
-				'skip': [{ 'token': 'not' }, { 'category': 'Adverb' }],
-			},
-		},
-		'transform': { 'concept': 'be-F' },
-	},
-	{
-		'name': 'be after \'date\' becomes be-J',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'precededby': { 'token': 'date' },
-		},
-		'transform': { 'concept': 'be-J' },
-	},
-	{
-		'name': 'be after \'time\' becomes be-N',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'precededby': { 'token': 'time' },
-		},
-		'transform': { 'concept': 'be-N' },
-		'context_transform': { 'concept': 'time-A' },
-	},
-	{
-		'name': 'be after \'weather\' becomes be-O',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'precededby': { 'token': 'weather' },
-		},
-		'transform': { 'concept': 'be-O' },
-	},
-	{
-		'name': 'be after the noun \'name\' becomes be-K',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'precededby': { 'category': 'Noun', 'stem': 'name', 'skip': 'all' },
-		},
-		'transform': { 'concept': 'be-K' },
-	},
-	{
-		'name': 'be before an adjective becomes be-D if can be used predicatively',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': {
-				'category': 'Adjective',
-				'skip': ['vp_modifiers', 'adjp_modifiers'],
-			},
-			'notfollowedby': {
-				'category': 'Noun',
-				'skip': ['vp_modifiers', 'adjp'],
-			},
-		},
-		'transform': { 'concept': 'be-D' },
-	},
-	{
-		'name': 'become before an adjective becomes become-A',
-		'trigger': { 'stem': 'become' },
-		'context': {
-			'followedby': {
-				'category': 'Adjective',
-				'skip': ['vp_modifiers', 'adjp_modifiers'],
-			},
-			'notfollowedby': {
-				'category': 'Noun',
-				'skip': ['vp_modifiers', 'adjp'],
-			},
-		},
-		'transform': { 'concept': 'become-A' },
-	},
-	{
-		'name': 'be before any verb becomes an auxiliary',
-		'trigger': { 'stem': 'be' },
-		'context': {
-			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
-		},
-		'transform': { 'function': 'auxiliary' },
-		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
+		'transform': { 'function': '' },
+		'comment': 'The Analyzer always fully deletes the phrase "made of", but we can be more specific',
 	},
 	{
 		'name': 'be before a past participle Verb indicates passive',
@@ -312,6 +231,15 @@ const transform_rules_json = [
 			},
 		},
 		'transform': { 'function': 'auxiliary|imperfective_aspect' },
+	},
+	{
+		'name': 'Any \'be\' verb remaining before another verb becomes a generic auxiliary',
+		'trigger': { 'category': 'Verb', 'stem': 'be' },
+		'context': {
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
+		},
+		'transform': { 'function': 'auxiliary' },
+		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
 	},
 	{
 		'name': 'have before a Verb indicates flashback/perfect',
@@ -345,7 +273,7 @@ const transform_rules_json = [
 		'transform': { 'function': 'agent_of_passive' },
 	},
 	{
-		// TODO make this a case frame rule
+		// TODO make this a case frame/sense selection rule
 		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
 		'trigger': { 'category': 'Adposition' },
 		'context': {
@@ -359,9 +287,26 @@ const transform_rules_json = [
 		'trigger': { 'category': 'Noun' },
 		'context': {
 			'notprecededby': [{ 'category': 'Noun' }, { 'token': 'of', 'skip': 'np_modifiers' }],
-			'notfollowedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+			'notfollowedby': {
+				'category': 'Noun',
+				'skip': [
+					{ 'tag': 'genitive_saxon|relative_clause' },	// can't use 'np_modifiers' since we don't skip the genitive_norman 'of'
+					'determiners',
+					'adjp_attributive',
+				]
+			},
 		},
 		'transform': { 'tag': 'head_np' },
+	},
+	{
+		// TODO handle this in adjective case frame rules
+		'name': 'tag predicate adjectives',
+		'trigger': { 'category': 'Adjective' },
+		'context': {
+			'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'adjp_modifiers_predicative'] },
+			'notfollowedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'transform': { 'tag': 'predicate_adjective' },
 	},
 ]
 
@@ -378,7 +323,7 @@ const builtin_transform_rules = [
 			}),
 			action: create_token_modify_action(token => {
 				const relativizer = token.sub_tokens[1]
-				token.tag = 'relative_clause'
+				token.tag = relativizer.token === 'that' ? 'relative_clause|relative_clause_that' : 'relative_clause'
 				relativizer.tag = 'relativizer'
 			}),
 		},
