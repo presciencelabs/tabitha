@@ -174,6 +174,10 @@ function find_matching_sense(tokens, token_index) {
  * @param {number} verb_index
  */
 function select_word_sense(tokens, verb_index) {
+	if (tokens[verb_index].lookup_results.length === 0) {
+		return
+	}
+	
 	const verb_token = tokens[verb_index]
 	const stem = verb_token.lookup_results[0].stem
 
