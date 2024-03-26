@@ -14,6 +14,14 @@ const transform_rules_json = [
 		'transform': { 'function': 'infinitive' },
 	},
 	{
+		'name': 'infinitive "to" as the first word of a subordinate should be tagged as "same subject"',
+		'trigger': { 'tag': 'infinitive' },
+		'context': {
+			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
+		},
+		'transform': { 'function': 'infinitive|infinitive_same_subject' },
+	},
+	{
 		'name': 'start or begin before a verb becomes a function word',
 		'trigger': { 'stem': 'start|begin' },
 		'context': {
@@ -79,7 +87,7 @@ const transform_rules_json = [
 	{
 		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_participant\'',
 		'trigger': { 'tag': 'subordinate_clause' },
-		'context': { 'subtokens': { 'tag': 'infinitive', 'skip': { 'token': '[' } } },
+		'context': { 'subtokens': { 'tag': 'infinitive_same_subject', 'skip': { 'token': '[' } } },
 		'transform': { 'tag': 'patient_clause_same_participant' },
 	},
 	{
@@ -100,6 +108,16 @@ const transform_rules_json = [
 		'name': 'any remaining subordinate_clause is a \'different_participant\' patient clause by default',
 		'trigger': { 'tag': 'subordinate_clause' },
 		'transform': { 'tag': 'patient_clause_different_participant' },
+	},
+	{
+		'name': 'tag \'that\' at the beginning of a main clause as remove_demonstrative when followed by a noun',
+		'trigger': { 'token': 'That|that' },
+		'context': {
+			'notprecededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'transform': { 'tag': 'remote_demonstrative' },
+		'comment': 'this clears the relativizer tag',
 	},
 	{
 		'name': '"no" before a noun becomes negative_noun_polarity',
@@ -215,10 +233,11 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'past participle',
-				'skip': 'vp_modifiers',
+				'skip': 'all',
 			},
 		},
 		'transform': { 'function': 'auxiliary|passive' },
+		'comment': 'skip all because it may be a question (eg. "Are those words written in the book?"). We\'ll have to assume it\'s not an error.',
 	},
 	{
 		'name': 'be before a participle Verb indicates imperfective',
@@ -227,16 +246,17 @@ const transform_rules_json = [
 			'followedby': {
 				'category': 'Verb',
 				'form': 'participle',
-				'skip': 'vp_modifiers',
+				'skip': 'all',
 			},
 		},
 		'transform': { 'function': 'auxiliary|imperfective_aspect' },
+		'comment': 'skip all because it may be a question (eg. "Are those people going?"). We\'ll have to assume it\'s not an error.',
 	},
 	{
 		'name': 'Any \'be\' verb remaining before another verb becomes a generic auxiliary',
 		'trigger': { 'category': 'Verb', 'stem': 'be' },
 		'context': {
-			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
+			'followedby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary' },
 		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
@@ -245,10 +265,7 @@ const transform_rules_json = [
 		'name': 'have before a Verb indicates flashback/perfect',
 		'trigger': { 'stem': 'have' },
 		'context': {
-			'followedby': {
-				'category': 'Verb',
-				'skip': 'vp_modifiers',
-			},
+			'followedby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary|flashback' },
 		'comment': 'don\'t check for the past participle form because of cases like "have cry-out"',
@@ -257,9 +274,10 @@ const transform_rules_json = [
 		'name': 'be before an auxiliary becomes an auxiliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
-			'followedby': { 'tag': 'auxiliary', 'skip': 'vp_modifiers' },
+			'followedby': { 'tag': 'auxiliary', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary' },
+		'comment': 'skip all because it may be a question (eg. "Is that bread being eaten?"). We\'ll have to assume it\'s not an error.',
 	},
 	{
 		'name': 'by preceded by a passive be indicates the agent',
@@ -303,13 +321,14 @@ const transform_rules_json = [
 		'name': 'tag predicate adjectives',
 		'trigger': { 'category': 'Adjective' },
 		'context': {
-			'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'adjp_modifiers_predicative'] },
-			'notfollowedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+			'precededby': { 'category': 'Verb', 'skip': 'all' },
+			'notfollowedby': { 'category': 'Noun', 'skip': ['np_modifiers', 'adjp_modifiers_predicative'] },
 		},
 		'transform': { 'tag': 'predicate_adjective' },
 	},
 ]
 
+// TODO make these not built-in when we support subtokens context transforms. These need to be here in order to set the tag on the relativizers.
 /** @type {BuiltInRule[]} */
 const builtin_transform_rules = [
 	{
@@ -319,7 +338,7 @@ const builtin_transform_rules = [
 			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
 			context: create_context_filter({
 				'precededby': { 'category': 'Noun' },
-				'subtokens': { 'tag': 'relativizer', 'skip': { 'token': '[' } },
+				'subtokens': { 'tag': 'relativizer', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
 			}),
 			action: create_token_modify_action(token => {
 				const relativizer = token.sub_tokens[1]
@@ -335,7 +354,7 @@ const builtin_transform_rules = [
 			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
 			context: create_context_filter({
 				'notprecededby': { 'category': 'Noun' },
-				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
+				'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
 			}),
 			action: create_token_modify_action(token => {
 				token.sub_tokens[1].tag = 'remote_demonstrative'

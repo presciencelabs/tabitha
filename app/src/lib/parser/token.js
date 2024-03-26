@@ -223,17 +223,15 @@ export function create_lookup_result({ stem, part_of_speech }, { form='stem', co
  * @param {Object} [data={}] 
  * @param {boolean} [data.is_valid=false] 
  * @param {boolean} [data.is_checked=false] 
- * @param {ArgumentRulesForSense?} [data.rule={}] 
  * @param {RoleMatchResult[]} [data.valid_arguments=[]] 
  * @param {RoleMatchResult[]} [data.extra_arguments=[]] 
- * @param {RoleTag[]} [data.missing_arguments=[]] 
+ * @param {ArgumentRoleRule[]} [data.missing_arguments=[]] 
  * @returns {CaseFrameResult}
  */
-export function create_case_frame({ is_valid=false, is_checked=false, rule=null, valid_arguments=[], extra_arguments=[], missing_arguments=[] }={}) {
+export function create_case_frame({ is_valid=false, is_checked=false, valid_arguments=[], extra_arguments=[], missing_arguments=[] }={}) {
 	return {
 		is_valid,
 		is_checked,
-		rule: rule ?? { sense: '', rules: [], other_optional: [], other_required: [], patient_clause_type: '' },
 		valid_arguments,
 		extra_arguments,
 		missing_arguments,

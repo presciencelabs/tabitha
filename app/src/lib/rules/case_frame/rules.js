@@ -6,11 +6,11 @@ import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs'
 const case_frame_rules = [
 	{
 		name: 'Verb case frame, active',
-		comment: 'For now, only trigger when not within a relative clause, question, or possible same-subject clause since arguments get moved around',
+		comment: 'For now, only trigger when not within a relative clause, question, or same-subject clause since arguments get moved around or are missing',
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
-				'notprecededby': { 'tag': 'relativizer|passive|infinitive', 'skip': 'all' },
+				'notprecededby': { 'tag': 'relativizer|passive|infinitive_same_subject', 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
 			action: (tokens, trigger_index) => {
@@ -21,12 +21,12 @@ const case_frame_rules = [
 	},
 	{
 		name: 'Verb case frame, passive',
-		comment: 'For now, only trigger when not within a relative clause or a question since arguments get moved around',
+		comment: 'For now, only trigger when not within a relative clause or a question since arguments get moved around or are missing',
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
 				'precededby': { 'tag': 'passive', 'skip': 'all' },
-				'notprecededby': { 'tag': 'relativizer', 'skip': 'all' },
+				'notprecededby': { 'tag': 'relativizer|infinitive_same_subject', 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
 			action: (tokens, trigger_index) => {

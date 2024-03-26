@@ -85,21 +85,11 @@ const part_of_speech_rules_json = [
 		'comment': 'only for \'so\'. \'for\' might be the \'for each...\' sense',
 	},
 	{
-		'name': '\'so-that\' will always be the Adposition',
-		'category': 'Adposition|Conjunction',
-		'trigger': { 'token': 'so-that' },
-		'remove': 'Conjunction',
-		'comment': '',
-	},
-	{
-		'name': 'If \'so\' is at the start of a subordinate clause, remove the Conjunction',
+		'name': 'If "so" appears anywhere else in the sentence, remove Conjunction',
 		'category': 'Adposition|Conjunction',
 		'trigger': { 'stem': 'so' },
-		'context': {
-			'precededby': { 'token': '[' },
-		},
 		'remove': 'Conjunction',
-		'comment': '',
+		'comment': 'This relies on the previous rule to catch all uses of the conjunction',
 	},
 	{
 		'name': 'If Adverb-Adjective followed by Noun, remove Adverb',

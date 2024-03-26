@@ -12,6 +12,11 @@ import { create_context_filter, create_token_filter } from './rules_parser'
  * @type {[WordStem, SenseRules[]][]}
  */
 const verb_sense_rules = [
+	['ask', [
+		['ask-B', { }],	// prioritize ask-B over ask-A
+		['ask-D', { }],	// prioritize ask-D over ask-A
+		['ask-F', { }],	// prioritize ask-F over ask-A
+	]],
 	['be', [
 		// 'be' is very particular and so each sense is specified to make the priority clear. Not all verbs will need this.
 		// For example, both be-I and be-F would match 'John is with Mary'
@@ -68,6 +73,10 @@ const verb_sense_rules = [
 	['know', [
 		['know-C', { 'patient': { 'stem': 'law|meaning|name|secret|thing' } }],
 	]],
+	['make', [
+		['make-C', { 'patient': { 'stem': 'command|fire|god|peace|promise|wave|covenant' } }],
+		['make-E', { 'patient': { 'stem': 'bread|food' } }],
+	]],
 	['say', [
 		['say-D', { 'agent': { 'stem': 'law' } }],
 	]],
@@ -81,6 +90,9 @@ const verb_sense_rules = [
 	['tell', [
 		// prioritize tell-C over tell-A due to the presence of the 'about'. tell-A may count as valid if there is a relative clause on its patient.
 		['tell-C', { }],
+	]],
+	['want', [
+		['want-D', { 'patient': { 'stem': 'peace|health|life' } }],
 	]],
 ]
 
@@ -147,6 +159,10 @@ export const SENSE_RULES = sense_rules.map(({ rule }) => rule)
  */
 function find_matching_sense(tokens, token_index) {
 	const token = tokens[token_index]
+	if (!token.lookup_results.some(result => result.case_frame.is_checked)) {
+		return undefined
+	}
+	
 	const stem = token.lookup_results[0].stem
 	const category = token.lookup_results[0].part_of_speech
 	const sense_filters = SENSE_FILTER_RULES.get(category)?.get(stem) ?? []
@@ -177,39 +193,36 @@ function select_word_sense(tokens, verb_index) {
 	if (tokens[verb_index].lookup_results.length === 0) {
 		return
 	}
-	
-	const verb_token = tokens[verb_index]
-	const stem = verb_token.lookup_results[0].stem
+
+	const token = tokens[verb_index]
+	const stem = token.lookup_results[0].stem
 
 	// Move the valid lookups to the top
-	const valid_lookups = verb_token.lookup_results.filter(result => result.case_frame.is_valid)
-	const invalid_lookups = verb_token.lookup_results.filter(result => !result.case_frame.is_valid)
-	verb_token.lookup_results = [...valid_lookups, ...invalid_lookups]
+	const valid_lookups = token.lookup_results.filter(result => result.case_frame.is_valid)
+	const invalid_lookups = token.lookup_results.filter(result => !result.case_frame.is_valid)
+	token.lookup_results = [...valid_lookups, ...invalid_lookups]
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.
 	// The lookups should already be ordered alphabetically so the first valid sense is the lowest letter
 	const default_matching_sense = find_matching_sense(tokens, verb_index)
 		|| `${stem}-${valid_lookups.at(0)?.concept?.sense ?? 'A'}`
 
-	const specified_sense = verb_token.specified_sense ? `${stem}-${verb_token.specified_sense}` : ''
+	const specified_sense = token.specified_sense ? `${stem}-${token.specified_sense}` : ''
 
 	if (specified_sense === default_matching_sense) {
-		verb_token.suggest_message = 'Consider removing the sense, as it would be selected by default.'
+		token.suggest_message = 'Consider removing the sense, as it would be selected by default.'
 	}
 
 	const sense_to_select = specified_sense ? specified_sense : default_matching_sense
-	set_token_concept(verb_token, sense_to_select)
+	set_token_concept(token, sense_to_select)
 
-	const selected_result = verb_token.lookup_results[0]
+	const selected_result = token.lookup_results[0]
 	if (!selected_result.case_frame.is_valid) {
 		return
 	}
 
 	// apply the selected result's argument actions
 	for (const valid_argument of selected_result.case_frame.valid_arguments) {
-		/** @type {ArgumentRoleRule} */
-		// @ts-ignore a valid argument will always have a rule associated with it
-		const argument_rule = selected_result.case_frame.rule.rules.find(rule => rule.role_tag === valid_argument.role_tag)
-		argument_rule.action(tokens, valid_argument)
+		valid_argument.rule.action(tokens, valid_argument)
 	}
 }

@@ -110,6 +110,7 @@ type ArgumentRoleRule = {
 	context: TokenContextFilter
 	action: RoleRuleAction
 	missing_message: string
+	extra_message: string
 }
 
 type ArgumentRulesForSense = {
@@ -129,13 +130,13 @@ type RoleMatchResult = {
 	success: boolean
 	trigger_index: number
 	context_indexes: number[]
+	rule: ArgumentRoleRule
 }
 
 type CaseFrameResult = {
 	is_valid: boolean
 	is_checked: boolean
-	rule: ArgumentRulesForSense
 	valid_arguments: RoleMatchResult[]
 	extra_arguments: RoleMatchResult[]
-	missing_arguments: RoleTag[]
+	missing_arguments: ArgumentRoleRule[]
 }

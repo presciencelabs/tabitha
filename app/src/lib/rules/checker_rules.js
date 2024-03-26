@@ -19,7 +19,7 @@ const checker_rules_json = [
 		'trigger': { 'category': 'Verb' },
 		'context': {
 			'precededby': { 'tag': 'passive', 'skip': 'all' },
-			'notfollowedby': { 'tag': 'agent', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'agent|agent_of_passive', 'skip': 'all' },
 		},
 		'require': {
 			'followedby': 'by X',
@@ -603,7 +603,7 @@ const builtin_checker_rules = [
 				if (case_frames.length === 0 || case_frames[0].is_valid) {
 					return trigger_index + 1
 				}
-				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments))
+				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments.map(rule => rule.role_tag)))
 
 				// Only show the message if all senses are invalid, but some are missing a patient clause
 				if (['agent_clause', 'patient_clause_different_participant'].some(role => missing_arguments.has(role))) {

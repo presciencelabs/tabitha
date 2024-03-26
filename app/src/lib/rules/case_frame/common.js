@@ -9,13 +9,13 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
  */
 function missing_argument_message(role_tag) {
 	const messages = new Map([
-		['agent_clause', "And agent clause is required (e.g. 'It Verb [X...]' or '[X...] Verb...')."],
+		['agent_clause', "Couldn't find an agent clause (e.g. 'It Verb [X...]' or '[X...] Verb...')."],
 		['patient_clause_quote_begin', 'A direct-speech patient clause is required.'],
 		['patient_clause_different_participant', 'A different-participant patient clause is required (i.e. the clause subject must be explicit).'],
 		['patient_clause_same_participant', "A same-participant patient clause is required (e.g. '... [to sing]')."],
 		['patient_clause_simultaneous', "A simultaneous perception clause is required (e.g. 'John saw [Mary singing]')."],
 	])
-	return messages.get(role_tag) ?? `A ${role_tag} is required.`
+	return messages.get(role_tag) ?? `Couldn't find the ${role_tag} for this Verb.`
 }
 
 /**
@@ -48,16 +48,21 @@ function extra_argument_message(concept, role_tag) {
 /**
  * 
  * @param {[RoleTag, any]} rule_json 
- * @returns {ArgumentRoleRule}
+ * @returns {ArgumentRoleRule[]}
  */
 export function parse_case_frame_rule([role_tag, rule_json]) {
+	if (Array.isArray(rule_json)) {
+		// An argument role may have multiple possible trigger rules, ie different structures that are allowed.
+		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option]))
+	}
+
 	const by_adposition = rule_json['by_adposition']
 	if (by_adposition) {
 		rule_json = {
 			'trigger': { 'tag': 'head_np' },
 			'context': { 'precededby': { 'token': by_adposition, 'skip': 'np_modifiers' } },
 			'context_transform': { 'function': '' },
-			'missing_message': `A ${role_tag} argument is required, which for this verb must be preceded by '${by_adposition}'.`,
+			'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${by_adposition}' before it.`,
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
 	}
@@ -99,7 +104,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 				],
 			},
 			'context_transform': [{}, { 'function': '' }],
-			'missing_message': `A ${role_tag} is required, which for this verb must be preceded by '${directly_after_verb_with_adposition}'.`,
+			'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${directly_after_verb_with_adposition}' before it.`,
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
 	}
@@ -120,14 +125,16 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const transform = create_token_transform({ 'tag': role_tag, ...rule_json['transform'] ?? {} })
 	const context_transforms = create_token_transforms(rule_json['context_transform'])
 	const missing_message = rule_json['missing_message'] ?? missing_argument_message(role_tag)
+	const extra_message = rule_json['extra_message'] ?? ''
 
-	return {
+	return [{
 		role_tag,
 		trigger,
 		context,
 		action: case_frame_rule_action,
 		missing_message,
-	}
+		extra_message,
+	}]
 
 	/**
 	 * 
@@ -155,13 +162,17 @@ export function parse_sense_rules(rule_json, defaults) {
 	 * @returns {(rule_json: [WordSense, any]) => ArgumentRulesForSense}
 	 */
 	function parse_sense_rule(defaults) {
-		return ([sense, rules_json]) => ({
-			sense,
-			rules: defaults.map(rule => rule.role_tag in rules_json ? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]]) : rule),
-			other_optional: rules_json['other_optional']?.split('|') ?? [],
-			other_required: rules_json['other_required']?.split('|') ?? [],
-			patient_clause_type: rules_json['patient_clause_type'] ?? '',
-		})
+		return ([sense, rules_json]) => {
+			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json ? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]]) : [rule])
+			const other_extra = 'other_extra' in rules_json ? Object.entries(rules_json['other_extra']).flatMap(parse_case_frame_rule) : []
+			return {
+				sense,
+				rules: role_rules.concat(other_extra),
+				other_optional: rules_json['other_optional']?.split('|') ?? [],
+				other_required: rules_json['other_required']?.split('|') ?? [],
+				patient_clause_type: rules_json['patient_clause_type'] ?? '',
+			}
+		}
 	}
 }
 
@@ -197,6 +208,7 @@ function get_rules_for_sense(rules_by_sense, default_rules) {
 		rules: default_rules,
 		other_optional: [],
 		other_required: [],
+		other_extra: [],
 		patient_clause_type: '',
 	}
 	return lookup => {
@@ -236,6 +248,7 @@ function match_argument_rule(tokens, rule) {
 			success: true,
 			trigger_index: i,
 			context_indexes: context_result.indexes,
+			rule,
 		}
 	}
 	return {
@@ -243,6 +256,7 @@ function match_argument_rule(tokens, rule) {
 		success: false,
 		trigger_index: -1,
 		context_indexes: [],
+		rule,
 	}
 }
 
@@ -279,7 +293,14 @@ function check_usage(role_letter_map) {
 
 		const valid_arguments = role_matches.filter(({ role_tag }) => possible_roles.includes(role_tag))
 		const extra_arguments = role_matches.filter(({ role_tag }) => !possible_roles.includes(role_tag))
-		const missing_arguments = required_roles.filter(role => !role_matches.some(({ role_tag }) => role_tag === role))
+
+		/** @type {ArgumentRoleRule[]} */
+		// @ts-ignore there will always be a rule
+		const missing_arguments = required_roles
+			.filter(role => !role_matches.some(({ role_tag }) => role_tag === role))
+			.map(role => role_rules.rules.find(rule => rule.role_tag === role))	// TODO all we really care about here is the message
+			.filter(rule => rule)
+
 		const is_valid = extra_arguments.length === 0 && missing_arguments.length === 0
 
 		return create_case_frame({
@@ -288,7 +309,6 @@ function check_usage(role_letter_map) {
 			valid_arguments,
 			missing_arguments,
 			extra_arguments,
-			rule: role_rules,
 		})
 	}
 }
@@ -301,8 +321,14 @@ function check_usage(role_letter_map) {
 export function validate_case_frame(tokens, trigger_index) {
 	const token = tokens[trigger_index]
 
-	if (token.lookup_results.length > 1 && !token.lookup_results.some(result => result.case_frame.is_valid)) {
-		token.error_message = 'No senses match the argument structure found in this sentence. Specify a sense to get more info about its expected structure.'
+	if (token.lookup_results.length > 1 && !token.specified_sense && !token.lookup_results.some(result => result.case_frame.is_valid)) {
+		// If no sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
+		// This will likely be a common occurrence and so can be handled specially.
+		if (token.lookup_results.every(result => result.case_frame.missing_arguments.some(rule => rule.role_tag.includes('agent')))) {
+			token.error_message = 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.'
+		} else {
+			token.error_message = 'No senses match the argument structure found in this sentence. Specify a sense to get more info about its expected structure.'
+		}
 		return
 	}
 
@@ -311,9 +337,7 @@ export function validate_case_frame(tokens, trigger_index) {
 
 	// Show errors for missing and unexpected arguments
 	if (case_frame.missing_arguments.length) {
-		const missing_messages = case_frame.missing_arguments
-			.map(role_tag => case_frame.rule.rules.find(rule => rule.role_tag === role_tag))
-			.map(rule => rule?.missing_message)
+		const missing_messages = case_frame.missing_arguments.map(rule => rule.missing_message)
 		
 		// TODO add appropriate error tokens instead of putting all the messages on the verb
 		token.error_message = `${missing_messages.join(' | ')} Consult the Ontology for correct usage.`
@@ -324,7 +348,7 @@ export function validate_case_frame(tokens, trigger_index) {
 		const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
 
 		// @ts-ignore there will always be a concept
-		const message = extra_argument_message(selected_result.concept, extra_argument.role_tag)
+		const message = extra_argument.rule.extra_message || extra_argument_message(selected_result.concept, extra_argument.role_tag)
 
 		if (['beneficiary', 'instrument'].includes(extra_argument.role_tag)) {
 			// These arguments are not necessarily an error, as many verbs could technically take them.
