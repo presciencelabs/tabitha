@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, concept_with_sense, create_case_frame } from '$lib/parser/token'
+import { TOKEN_TYPE, concept_with_sense, create_case_frame, format_token_message, set_error_message } from '$lib/parser/token'
 import { pipe } from '$lib/pipeline'
 import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform, create_token_transforms } from '../rules_parser'
 
@@ -9,40 +9,36 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
  */
 function missing_argument_message(role_tag) {
 	const messages = new Map([
-		['agent_clause', "Couldn't find an agent clause (e.g. 'It Verb [X...]' or '[X...] Verb...')."],
+		['agent_clause', "Couldn't find an agent clause (e.g. 'It {stem} [X...]' or '[X...] {stem}...')."],
 		['patient_clause_quote_begin', 'A direct-speech patient clause is required.'],
 		['patient_clause_different_participant', 'A different-participant patient clause is required (i.e. the clause subject must be explicit).'],
 		['patient_clause_same_participant', "A same-participant patient clause is required (e.g. '... [to sing]')."],
-		['patient_clause_simultaneous', "A simultaneous perception clause is required (e.g. 'John saw [Mary singing]')."],
+		['patient_clause_simultaneous', "A simultaneous perception clause is required (e.g. 'John {token} [Mary singing]')."],
 	])
-	return messages.get(role_tag) ?? `Couldn't find the ${role_tag} for this Verb.`
+	return messages.get(role_tag) ?? `Couldn't find the ${role_tag} for this {category}.`
 }
 
 /**
- * 
- * @param {OntologyResult} concept
  * @param {RoleTag} role_tag 
  * @returns {string}
  */
-function extra_argument_message(concept, role_tag) {
-	const sense = concept_with_sense(concept)
-	const category = concept.part_of_speech
-	const consult_message = `Consult the ${category}'s Theta Grid usage.`
+function extra_argument_message(role_tag) {
+	const consult_message = "Consult the {category}'s Theta Grid usage."
 	const messages = new Map([
-		['patient', `Unexpected ${role_tag} for ${sense}. ${consult_message}`],
-		['source', `Unexpected ${role_tag} for ${sense}. ${consult_message}`],
-		['destination', `Unexpected ${role_tag} for ${sense}. ${consult_message}`],
-		['beneficiary', `${sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
-		['instrument', `${sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
-		['agent_clause', `${sense} cannot be used with an agent clause. ${consult_message}`],
-		['patient_clause_different_participant', `${sense} cannot be used with a different-participant patient clause. ${consult_message}`],
-		['patient_clause_same_participant', `${sense} cannot be used with a same-participant patient clause. ${consult_message}`],
-		['patient_clause_simultaneous', `${sense} cannot be used with a simultaneous perception clause. ${consult_message}`],
-		['patient_clause_quote_begin', `${sense} cannot be used with direct speech. ${consult_message}`],
-		['predicate_adjective', `${sense} cannot be used with a predicate Adjective. ${consult_message}`],
+		['patient', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
+		['source', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
+		['destination', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
+		['beneficiary', `{sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
+		['instrument', `{sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
+		['agent_clause', `{sense} cannot be used with an agent clause. ${consult_message}`],
+		['patient_clause_different_participant', `{sense} cannot be used with a different-participant patient clause. ${consult_message}`],
+		['patient_clause_same_participant', `{sense} cannot be used with a same-participant patient clause. ${consult_message}`],
+		['patient_clause_simultaneous', `{sense} cannot be used with a simultaneous perception clause. ${consult_message}`],
+		['patient_clause_quote_begin', `{sense} cannot be used with direct speech. ${consult_message}`],
+		['predicate_adjective', `{sense} cannot be used with a predicate Adjective. ${consult_message}`],
 	])
 
-	return messages.get(role_tag) ?? `Unexpected ${role_tag} for ${sense}. Consult its usage in the Ontology.`
+	return messages.get(role_tag) ?? `Unexpected ${role_tag} for {sense}. Consult its usage in the Ontology.`
 }
 
 /**
@@ -247,7 +243,7 @@ function match_argument_rule(tokens, rule) {
 			role_tag: rule.role_tag,
 			success: true,
 			trigger_index: i,
-			context_indexes: context_result.indexes,
+			context_indexes: context_result.context_indexes,
 			rule,
 		}
 	}
@@ -321,14 +317,27 @@ function check_usage(role_letter_map) {
 export function validate_case_frame(tokens, trigger_index) {
 	const token = tokens[trigger_index]
 
-	if (token.lookup_results.length > 1 && !token.specified_sense && !token.lookup_results.some(result => result.case_frame.is_valid)) {
-		// If no sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
-		// This will likely be a common occurrence and so can be handled specially.
-		if (token.lookup_results.every(result => result.case_frame.missing_arguments.some(rule => rule.role_tag.includes('agent')))) {
-			token.error_message = 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.'
+	if (!token.lookup_results.some(result => result.case_frame.is_valid) && token.lookup_results.length > 1 && !token.specified_sense) {
+		if (role_is_missing_for_all('agent', token)) {
+			// If no sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
+			// This will likely be a common occurrence and so can be handled specially.
+			set_error_message(token, 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.')
+
 		} else {
-			token.error_message = 'No senses match the argument structure found in this sentence. Specify a sense to get more info about its expected structure.'
+			set_error_message(token, 'No senses match the argument structure found in this sentence. Specify a sense to get more info about its expected structure.')
 		}
+
+		// Some extra arguments are common mistakes and can be flagged even when no sense is specified
+		flag_extra_argument_for_all(
+			'patient_clause_same_participant',
+			'Unexpected patient clause for {category} \'{stem}\'. This likely should be \'[in-order-to...]\' instead.',
+		)(token, tokens)
+
+		flag_extra_argument_for_all(
+			'patient_clause_quote_begin',
+			'\'{stem}\' can never be used with direct speech. Consult its usage in the Ontology.',
+		)(token, tokens)
+
 		return
 	}
 
@@ -337,26 +346,72 @@ export function validate_case_frame(tokens, trigger_index) {
 
 	// Show errors for missing and unexpected arguments
 	if (case_frame.missing_arguments.length) {
-		const missing_messages = case_frame.missing_arguments.map(rule => rule.missing_message)
-		
 		// TODO add appropriate error tokens instead of putting all the messages on the verb
-		token.error_message = `${missing_messages.join(' | ')} Consult the Ontology for correct usage.`
+		const missing_messages = case_frame.missing_arguments.map(rule => rule.missing_message)
+		set_error_message(token, `${missing_messages.join(' | ')} Consult the Ontology for correct usage.`)
 	}
 
 	for (const extra_argument of case_frame.extra_arguments) {
+		const message = extra_argument.rule.extra_message || extra_argument_message(extra_argument.role_tag)
+		flag_extra_argument(message)(extra_argument, token, tokens)
+	}
+}
+
+/**
+ * 
+ * @param {RoleTag} role_tag 
+ * @param {Token} token 
+ * @returns {boolean}
+ */
+function role_is_missing_for_all(role_tag, token) {
+	return token.lookup_results.every(result => result.case_frame.missing_arguments.some(rule => rule.role_tag.includes(role_tag)))
+}
+
+/**
+ * 
+ * @param {RoleTag} role_tag 
+ * @param {Token} token 
+ * @returns {boolean}
+ */
+function role_is_extra_for_all(role_tag, token) {
+	return token.lookup_results.every(result => result.case_frame.extra_arguments.some(match => match.role_tag.includes(role_tag)))
+}
+
+/**
+ * 
+ * @param {RoleTag} role_tag 
+ * @param {string} message 
+ * @returns {(token: Token, tokens: Token[]) => void}
+ */
+function flag_extra_argument_for_all(role_tag, message) {
+	return (token, tokens) => {
+		const extra_argument = token.lookup_results[0].case_frame.extra_arguments.find(match => match.role_tag === role_tag)
+		if (extra_argument && role_is_extra_for_all(role_tag, token)) {
+			flag_extra_argument(message)(extra_argument, token, tokens)
+		}
+	}
+}
+
+/**
+ * 
+ * @param {string} message
+ * @returns {(extra_argument: RoleMatchResult, token: Token, tokens: Token[]) => void}
+ */
+function flag_extra_argument(message) {
+	return (extra_argument, token, tokens) => {
 		const argument_token = tokens[extra_argument.trigger_index]
 		const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
-
-		// @ts-ignore there will always be a concept
-		const message = extra_argument.rule.extra_message || extra_argument_message(selected_result.concept, extra_argument.role_tag)
-
+	
+		// The message is formatted based on the verb token, not the argument token
+		const formatted_message = format_token_message(token, message)
+	
 		if (['beneficiary', 'instrument'].includes(extra_argument.role_tag)) {
 			// These arguments are not necessarily an error, as many verbs could technically take them.
 			// Sometimes they just haven't occurred yet for a sense and so don't appear in the Verb categorization.
 			// So show a suggest message (or info message??) instead of an error.
-			token_to_flag.suggest_message = message
+			token_to_flag.suggest_message = formatted_message
 		} else {
-			token_to_flag.error_message = message
+			token_to_flag.error_message = formatted_message
 		}
 	}
 }

@@ -75,7 +75,8 @@ type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilte
 
 type ContextFilterResult = {
 	success: boolean
-	indexes: number[]
+	context_indexes: number[]
+	subtoken_indexes: number[]
 }
 
 type TokenTransform = (token: Token) => Token
@@ -86,7 +87,7 @@ type CheckerAction = {
 	message: string
 }
 
-type RuleAction = (tokens: Token[], trigger_index: number, context_indexes: number[]) => number
+type RuleAction = (tokens: Token[], trigger_index: number, context_result: ContextFilterResult) => number
 
 type TokenRule = {
 	trigger: TokenFilter

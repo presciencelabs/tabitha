@@ -77,7 +77,73 @@ export function create_added_token(token, { error='', suggest='' }={}) {
  * @returns {Token}
  */
 export function convert_to_error_token(token, message) {
-	return { ...token, error_message: message }
+	return { ...token, error_message: format_token_message(token, message) }
+}
+
+/**
+ * 
+ * @param {Token} token 
+ * @param {string} message 
+ * @param {Object} [context_data={}]
+ * @param {Token[]} [context_data.tokens=[]]
+ * @param {ContextFilterResult} [context_data.context_result]
+ */
+export function set_error_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
+	token.error_message = format_token_message(token, message, { tokens, context_result })
+	return token
+}
+
+/**
+ * 
+ * @param {Token} token 
+ * @param {string} message 
+ * @param {Object} [context_data={}]
+ * @param {Token[]} [context_data.tokens=[]]
+ * @param {ContextFilterResult} [context_data.context_result]
+ */
+export function set_suggest_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
+	token.suggest_message = format_token_message(token, message, { tokens, context_result })
+	return token
+}
+
+/**
+ * TODO support markers for subtokens?
+ * @param {Token} token 
+ * @param {string} message 
+ * @param {Object} [context_data={}]
+ * @param {Token[]} [context_data.tokens=[]]
+ * @param {ContextFilterResult} [context_data.context_result]
+ */
+export function format_token_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
+	return context_result.context_indexes.reduce(replace_context_markers, replace_markers(message, token))
+
+	/**
+	 * @param {string} text 
+	 * @param {number} token_index 
+	 * @param {number} context_number 
+	 */
+	function replace_context_markers(text, token_index, context_number) {
+		return replace_markers(text, tokens[token_index], `${context_number}:`)
+	}
+
+	/**
+	 * @param {string} text 
+	 * @param {Token} token 
+	 * @param {string} context_prefix 
+	 */
+	function replace_markers(text, token, context_prefix='') {
+		const result = token.lookup_results.at(0)
+		const stem = result?.stem ?? token.token
+		return text
+			.replaceAll(`{${context_prefix}stem}`, stem)
+			.replaceAll(`{${context_prefix}token}`, token.token)
+			.replaceAll(`{${context_prefix}category}`, result?.part_of_speech ?? 'word')
+			.replaceAll(`{${context_prefix}sense}`, result?.concept ? concept_with_sense(result.concept) : stem)
+	}
+}
+
+function default_context_result() {
+	return { success: true, context_indexes: [], subtoken_indexes: [] }
 }
 
 /**

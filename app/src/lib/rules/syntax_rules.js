@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, add_tag_to_token } from '$lib/parser/token'
+import { TOKEN_TYPE, add_tag_to_token, set_error_message } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
@@ -48,8 +48,8 @@ const builtin_syntax_rules = [
 				// before the 'first_word' tag possibly gets overwritten in the transform rules.
 				// TODO expand the 'tag' system so things don't get overwritten?
 				const token_to_test = token.pronoun ? token.pronoun : token
-				if (starts_lowercase(token_to_test.token)) {
-					token_to_test.error_message = token_to_test.error_message || ERRORS.FIRST_WORD_NOT_CAPITALIZED
+				if (starts_lowercase(token_to_test.token) && !token_to_test.error_message) {
+					set_error_message(token_to_test, ERRORS.FIRST_WORD_NOT_CAPITALIZED)
 				}
 			}),
 		},

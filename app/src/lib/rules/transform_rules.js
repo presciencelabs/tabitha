@@ -1,4 +1,4 @@
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_modify_action, create_token_transform, create_token_transforms } from './rules_parser'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform, create_token_transforms } from './rules_parser'
 
 /**
  * These are words that may change their underlying data based on the context around them.
@@ -56,9 +56,40 @@ const transform_rules_json = [
 		'transform': { 'function': 'auxiliary|completive_aspect' },
 	},
 	{
+		'name': 'Set tag for relative clauses and relativizers',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': {
+			'precededby': { 'category': 'Noun' },
+			'subtokens': { 'tag': 'relativizer', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+		},
+		'transform': { 'tag': 'relative_clause' },
+		'subtoken_transform': { 'tag': 'relativizer' },
+		'comment': 'removes extra tags for words like "who" and "which". "that" also is not supposed to be used as a complementizer',
+	},
+	{
+		'name': 'Set extra tag for relative clauses that use "that"',
+		'trigger': { 'tag': 'relative_clause' },
+		'context': {
+			'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+		},
+		'transform': { 'tag': 'relative_clause|relative_clause_that' },
+		'subtoken_transform': { 'tag': 'relativizer' },
+		'comment': 'a later rule needs to know if the relativizer is "that"',
+	},
+	{
+		'name': 'Set tag for "that" when not preceded by a Noun',
+		'trigger': { 'tag': 'subordinate_clause' },
+		'context': {
+			'notprecededby': { 'category': 'Noun' },
+			'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+		},
+		'subtoken_transform': { 'tag': 'remote_demonstrative' },
+		'comment': '"that" should only be a demonstrative in this case',
+	},
+	{
 		'name': 'tag subordinate clauses starting with an adposition as adverbial',
 		'trigger': { 'tag': 'subordinate_clause' },
-		'context': { 'subtokens': { 'category': 'Adposition', 'skip': { 'token': '[' } } },
+		'context': { 'subtokens': { 'category': 'Adposition', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] } },
 		'transform': { 'tag': 'adverbial_clause' },
 	},
 	{
@@ -257,27 +288,30 @@ const transform_rules_json = [
 		'trigger': { 'category': 'Verb', 'stem': 'be' },
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'infinitive', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary' },
-		'comment': 'the more precise function may be ambiguous e.g. "was cry-out"',
+		'comment': 'the more precise function may be ambiguous e.g. "was cry-out". But ignore "be to cry-out" which is incorrect',
 	},
 	{
 		'name': 'have before a Verb indicates flashback/perfect',
 		'trigger': { 'stem': 'have' },
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'infinitive', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary|flashback' },
-		'comment': 'don\'t check for the past participle form because of cases like "have cry-out"',
+		'comment': 'don\'t check for the past participle form because of cases like "have cry-out". But ignore "have to cry-out" which is incorrect',
 	},
 	{
 		'name': 'be before an auxiliary becomes an auxiliary',
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': { 'tag': 'auxiliary', 'skip': 'all' },
+			'notfollowedby': { 'tag': 'infinitive', 'skip': 'all' },
 		},
 		'transform': { 'function': 'auxiliary' },
-		'comment': 'skip all because it may be a question (eg. "Is that bread being eaten?"). We\'ll have to assume it\'s not an error.',
+		'comment': 'skip all because it may be a question (eg. "Is that bread being eaten?"). But ignore "Is that bread to be eaten?" which is incorrect',
 	},
 	{
 		'name': 'by preceded by a passive be indicates the agent',
@@ -308,13 +342,25 @@ const transform_rules_json = [
 			'notfollowedby': {
 				'category': 'Noun',
 				'skip': [
-					{ 'tag': 'genitive_saxon|relative_clause' },	// can't use 'np_modifiers' since we don't skip the genitive_norman 'of'
+					{ 'tag': 'genitive_saxon|relative_clause' },
 					'determiners',
 					'adjp_attributive',
 				],
 			},
 		},
 		'transform': { 'tag': 'head_np' },
+		'comment': "can't use 'np_modifiers' in the 'notfollowedby' skip since we don't want to skip the genitive_norman 'of'",
+	},
+	{
+		'name': 'tag addressee nouns',
+		'trigger': { 'tag': 'head_np' },
+		'context': {
+			'followedby': [
+				{ 'token': ',', 'skip': [{ 'category': 'Conjunction' }, 'np'] },
+				{ 'category': 'Verb', 'skip': 'all' },
+			],
+		},
+		'transform': { 'tag': 'addressee' },
 	},
 	{
 		// TODO handle this in adjective case frame rules
@@ -328,41 +374,6 @@ const transform_rules_json = [
 	},
 ]
 
-// TODO make these not built-in when we support subtokens context transforms. These need to be here in order to set the tag on the relativizers.
-/** @type {BuiltInRule[]} */
-const builtin_transform_rules = [
-	{
-		name: 'Set tag for relative clauses based on relativizer',
-		comment: 'removes extra tags for words like "who" and "which". "that" also is not supposed to be used as a complementizer',
-		rule: {
-			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
-			context: create_context_filter({
-				'precededby': { 'category': 'Noun' },
-				'subtokens': { 'tag': 'relativizer', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
-			}),
-			action: create_token_modify_action(token => {
-				const relativizer = token.sub_tokens[1]
-				token.tag = relativizer.token === 'that' ? 'relative_clause|relative_clause_that' : 'relative_clause'
-				relativizer.tag = 'relativizer'
-			}),
-		},
-	},
-	{
-		name: 'Set tag for "that" when not preceded by a Noun',
-		comment: '"that" can only be a demonstrative in this case',
-		rule: {
-			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
-			context: create_context_filter({
-				'notprecededby': { 'category': 'Noun' },
-				'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
-			}),
-			action: create_token_modify_action(token => {
-				token.sub_tokens[1].tag = 'remote_demonstrative'
-			}),
-		},
-	},
-]
-
 /**
  *
  * @param {any} rule_json
@@ -373,6 +384,7 @@ export function parse_transform_rule(rule_json) {
 	const context = create_context_filter(rule_json['context'])
 	const transform = create_token_transform(rule_json['transform'])
 	const context_transforms = create_token_transforms(rule_json['context_transform'])
+	const subtoken_transforms = create_token_transforms(rule_json['subtoken_transform'])
 
 	return {
 		trigger,
@@ -384,15 +396,18 @@ export function parse_transform_rule(rule_json) {
 	 * 
 	 * @param {Token[]} tokens 
 	 * @param {number} trigger_index 
-	 * @param {number[]} context_indexes 
+	 * @param {ContextFilterResult} context_result 
 	 * @returns {number}
 	 */
-	function transform_rule_action(tokens, trigger_index, context_indexes) {
+	function transform_rule_action(tokens, trigger_index, { context_indexes, subtoken_indexes }) {
 		const transforms = [transform, ...context_transforms]
 		const indexes = [trigger_index, ...context_indexes]
+
 		apply_token_transforms(tokens, indexes, transforms)
+		apply_token_transforms(tokens[trigger_index].sub_tokens, subtoken_indexes, subtoken_transforms)
+
 		return trigger_index + 1
 	}
 }
 
-export const TRANSFORM_RULES = builtin_transform_rules.map(({ rule }) => rule).concat(transform_rules_json.map(parse_transform_rule))
+export const TRANSFORM_RULES = transform_rules_json.map(parse_transform_rule)

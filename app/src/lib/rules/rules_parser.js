@@ -31,8 +31,8 @@ export function create_token_filter(filter_json) {
 		return lookup => value_checker(lookup.stem)
 	})
 	add_lookup_filter('category', filter_value => {
-		const value_checker = get_value_checker(filter_value)
-		return lookup => value_checker(lookup.part_of_speech)
+		const value_checker = get_value_checker(filter_value.toLowerCase())
+		return lookup => value_checker(lookup.part_of_speech.toLowerCase())
 	})
 	add_lookup_filter('level', filter_value => {
 		const value_checker = get_value_checker(filter_value)
@@ -161,7 +161,10 @@ export function create_context_filter(context_json) {
 		return (tokens, start_index) => {
 			const results = filters.map(filter => filter(tokens, start_index))
 			if (results.every(result => result.success)) {
-				return context_result(true, ...results.flatMap(result => result.indexes))
+				return context_result(true, {
+					context_indexes: results.flatMap(result => result.context_indexes),
+					subtoken_indexes: results.flatMap(result => result.subtoken_indexes),
+				})
 			} else {
 				return context_result(false)
 			}
@@ -181,10 +184,9 @@ export function create_context_filter(context_json) {
 				return context_result(false)
 			}
 
-			// TODO include the subtoken context indexes in the result
 			const clause = tokens[start_index]
-			const result = subtoken_filter(clause.sub_tokens, 0)
-			return result.success ? context_result(true, start_index) : result
+			const result = subtoken_filter(clause.sub_tokens, -1)	// use -1 so that the checks start at 0
+			return result.success ? context_result(true, { subtoken_indexes: result.context_indexes }) : result
 		}
 	}
 }
@@ -219,7 +221,7 @@ function create_directional_context_filter(context_json, offset) {
 		return (tokens, start_index) => {
 			const all_indexes = []
 			for (let filter of filters) {
-				const { success, indexes } = filter(tokens, start_index)
+				const { success, context_indexes: indexes } = filter(tokens, start_index)
 				if (!success) {
 					return context_result(false)
 				}
@@ -231,7 +233,7 @@ function create_directional_context_filter(context_json, offset) {
 				all_indexes.reverse()
 			}
 
-			return context_result(true, ...all_indexes)
+			return context_result(true, { context_indexes: all_indexes })
 		}
 	}
 
@@ -262,7 +264,7 @@ function create_directional_context_filter(context_json, offset) {
 		function check_context_with_skip(tokens, start_index) {
 			for (let i = start_index + offset; end_check(tokens, i); i += offset) {
 				if (filter(tokens[i])) {
-					return context_result(true, i)
+					return context_result(true, { context_indexes: [i] })
 				}
 				if (!skip_filter(tokens[i]) && tokens[i].type !== TOKEN_TYPE.NOTE) {
 					return context_result(false)
@@ -293,10 +295,12 @@ function create_directional_context_filter(context_json, offset) {
 /**
  *
  * @param {boolean} success
- * @param {number[]} indexes
+ * @param {Object} [indexes={}]
+ * @param {number[]} [indexes.context_indexes=[]]
+ * @param {number[]}[indexes.subtoken_indexes=[]]
  */
-function context_result(success, ...indexes) {
-	return { success, indexes }
+function context_result(success, { context_indexes=[], subtoken_indexes=[] }={}) {
+	return { success, context_indexes, subtoken_indexes }
 }
 
 /**

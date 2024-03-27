@@ -1,4 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
+import { set_error_message } from '$lib/parser/token'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 /**
@@ -275,7 +276,7 @@ const builtin_part_of_speech_rules = [
 					category_filter(left)
 					category_filter(right)
 				} else {
-					left.error_message = ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH
+					set_error_message(left, ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH)
 				}
 			}),
 		},

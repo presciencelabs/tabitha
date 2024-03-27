@@ -142,7 +142,13 @@ const sense_rules = [
 			trigger: create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }),
 			context: create_context_filter({ }),
 			action: (tokens, trigger_index) => {
-				select_word_sense(tokens, trigger_index)
+				const token = tokens[trigger_index]
+				select_word_sense(tokens, token)
+
+				if (token.complex_pairing) {
+					select_word_sense(tokens, token.complex_pairing)
+				}
+				
 				return trigger_index + 1
 			},
 		},
@@ -154,11 +160,10 @@ export const SENSE_RULES = sense_rules.map(({ rule }) => rule)
 /**
  * 
  * @param {Token[]} tokens 
- * @param {number} token_index 
+ * @param {Token} token
  * @returns {WordSense | undefined}
  */
-function find_matching_sense(tokens, token_index) {
-	const token = tokens[token_index]
+function find_matching_sense(tokens, token) {
 	if (!token.lookup_results.some(result => result.case_frame.is_checked)) {
 		return undefined
 	}
@@ -187,14 +192,13 @@ function find_matching_sense(tokens, token_index) {
 /**
  * 
  * @param {Token[]} tokens
- * @param {number} verb_index
+ * @param {Token} token
  */
-function select_word_sense(tokens, verb_index) {
-	if (tokens[verb_index].lookup_results.length === 0) {
+function select_word_sense(tokens, token) {
+	if (token.lookup_results.length === 0) {
 		return
 	}
 
-	const token = tokens[verb_index]
 	const stem = token.lookup_results[0].stem
 
 	// Move the valid lookups to the top
@@ -204,7 +208,7 @@ function select_word_sense(tokens, verb_index) {
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.
 	// The lookups should already be ordered alphabetically so the first valid sense is the lowest letter
-	const default_matching_sense = find_matching_sense(tokens, verb_index)
+	const default_matching_sense = find_matching_sense(tokens, token)
 		|| `${stem}-${valid_lookups.at(0)?.concept?.sense ?? 'A'}`
 
 	const specified_sense = token.specified_sense ? `${stem}-${token.specified_sense}` : ''

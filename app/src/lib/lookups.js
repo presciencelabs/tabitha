@@ -224,7 +224,12 @@ const result_filter_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token.tag.includes('first_word'),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
-				filter_results_by_capitalization(token)
+				if (token.token !== 'null') {
+					// 'null' is used for some double pairings like 'friends/brothers and null/sisters'.
+					// But the concept in the ontology is NULL, so should not be filtered by capitalization
+					filter_results_by_capitalization(token)
+				}
+
 				if (token.complex_pairing) {
 					filter_results_by_capitalization(token.complex_pairing)
 				}

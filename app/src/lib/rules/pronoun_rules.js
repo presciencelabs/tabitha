@@ -1,5 +1,5 @@
 import { create_context_filter, create_token_map_action } from './rules_parser'
-import { TOKEN_TYPE, add_tag_to_token, convert_to_error_token, token_has_error } from '../parser/token'
+import { TOKEN_TYPE, add_tag_to_token, convert_to_error_token, set_error_message, token_has_error } from '../parser/token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -11,9 +11,9 @@ const PRONOUN_MESSAGES = new Map([
 	['yours', '"yours" should be replaced with "your() X", e.g., That book is your(Paul\'s) book.'],
 	['each-other', '"each-other" requires its respective Noun in parentheses, e.g., each-other(people).'],
 ])
-FIRST_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'First person pronouns require their respective Noun in parentheses, e.g., I(Paul).'))
-SECOND_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'Second person pronouns require their respective Noun in parentheses, e.g., you(Paul).'))
-THIRD_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).'))
+FIRST_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'First person pronouns require their respective Noun in parentheses, e.g., {token}(Paul).'))
+SECOND_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'Second person pronouns require their respective Noun in parentheses, e.g., {token}(Paul).'))
+THIRD_PERSON.forEach(p => PRONOUN_MESSAGES.set(p, 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of {token}).'))
 
 export const PRONOUN_TAGS = new Map([
 	['i', 'first_person|singular'],
@@ -68,13 +68,11 @@ const builtin_pronoun_rules = [
 				const normalized_pronoun = pronoun.token.toLowerCase()
 
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
-				const message = PRONOUN_MESSAGES.get(normalized_pronoun)
+				const message = PRONOUN_MESSAGES.get(normalized_pronoun) ?? 'Unrecognized pronoun "{token}"'
 				if (tag) {
 					add_tag_to_token(token, tag)
-				} else if (message) {
-					token.pronoun = convert_to_error_token(pronoun, message)
 				} else {
-					token.pronoun = convert_to_error_token(pronoun, `Unrecognized pronoun "${pronoun.token}"`)
+					set_error_message(pronoun, message)
 				}
 				return token
 			}),

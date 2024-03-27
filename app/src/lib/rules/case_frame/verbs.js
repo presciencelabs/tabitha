@@ -23,10 +23,6 @@ const default_verb_case_frame_json = {
 		// TODO check feature on lexicon word like the Analyzer does. instruments have to be a thing, not a person
 		'comment': 'An instrument is not present by default ("with" could mean other things as well)',
 	},
-	'addressee': {
-		'trigger': { 'tag': 'head_np' },
-		'context': { 'followedby': [{ 'token': ',' }, { 'category': 'Verb', 'skip': 'all' }] },
-	},
 	'beneficiary': {
 		// TODO check feature on lexicon word like the Analyzer does. beneficiaries have to be animate, not things.
 		// For now only accept proper names. Not a big deal because the beneficiary is rarely required (only provide-A requires it)

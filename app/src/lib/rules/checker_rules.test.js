@@ -192,7 +192,7 @@ describe('built-in checker rules', () => {
 			expect(checked_tokens[0].suggest_message).toBe('')
 			expect(checked_tokens[1].suggest_message).toBe('')
 			expect(checked_tokens[2].suggest_message).toBe('')
-			expect(checked_tokens[3].suggest_message).toBe(ERRORS.AMBIGUOUS_LEVEL)
+			expect(checked_tokens[3].suggest_message).toMatch(/^This word has multiple senses/)
 		})
 		test('complex pairing level check', () => {
 			const test_tokens = [create_sentence([
@@ -228,7 +228,7 @@ describe('built-in checker rules', () => {
 			expect(checked_tokens[0].complex_pairing?.suggest_message).toBe('')
 			expect(checked_tokens[1].complex_pairing?.suggest_message).toBe('')
 			expect(checked_tokens[2].complex_pairing?.suggest_message).toBe('')
-			expect(checked_tokens[3].complex_pairing?.suggest_message).toBe(ERRORS.AMBIGUOUS_LEVEL)
+			expect(checked_tokens[3].complex_pairing?.suggest_message).toMatch(/^This word has multiple senses/)
 		})
 	})
 	
@@ -246,9 +246,9 @@ describe('built-in checker rules', () => {
 	
 			const checked_tokens = apply_rules(test_tokens, NO_LOOKUP_CHECK).flatMap(flatten_sentence)
 	
-			expect(checked_tokens[0].suggest_message).toMatch(/^This word is not in the Ontology/)
-			expect(checked_tokens[1].suggest_message).toMatch(/^This word is not in the Ontology/)
-			expect(checked_tokens[1].complex_pairing?.suggest_message).toMatch(/^This word is not in the Ontology/)
+			expect(checked_tokens[0].suggest_message).toMatch(/^'token' is not in the Ontology/)
+			expect(checked_tokens[1].suggest_message).toMatch(/^'first' is not in the Ontology/)
+			expect(checked_tokens[1].complex_pairing?.suggest_message).toMatch(/^'second' is not in the Ontology/)
 		})
 	})
 })

@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, convert_to_error_token, create_added_token } from '$lib/parser/token'
+import { TOKEN_TYPE, create_added_token, format_token_message, set_error_message, set_suggest_message } from '$lib/parser/token'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
@@ -66,7 +66,7 @@ const checker_rules_json = [
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': 'Cannot have multiple verbs in the same clause. Check for an unbracketed subordinate clause or consider splitting the sentence.',
+			'message': 'Cannot have multiple verbs in the same clause ({0:stem} and {stem}). Check for an unbracketed subordinate clause or consider splitting the sentence.',
 		},
 		'comment': 'See section 0.3 of the Phase 1 checklist',
 	},
@@ -103,18 +103,21 @@ const checker_rules_json = [
 	{
 		'name': 'Check for "Let\'s"',
 		'trigger': { 'token': 'Let\'s|let\'s' },
+		'context': {
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
+		},
 		'require': {
-			'message': 'Write \'We(X) go _suggestiveLets\' instead. See P1 Checklist section 15.',
+			'message': 'Write \'We(X) {0:stem} _suggestiveLets\' instead. See P1 Checklist section 15.',
 		},
 	},
 	{
 		'name': 'Check for \'Let X...\'',
 		'trigger': { 'token': 'Let' },
 		'context': {
-			'followedby': { 'category': 'Noun' },
+			'followedby': [{ 'category': 'Noun' }, { 'category': 'Verb', 'form': 'stem', 'skip': 'vp_modifiers' }],
 		},
 		'require': {
-			'message': 'For the jussive write \'X (jussive) ...\' instead of \'Let X...\'. Or use \'(imp)\' for expressing permission. See P1 Checklist section 15.',
+			'message': 'For the jussive write \'{0:token} {1:stem} (jussive) ...\' instead of \'Let {0:token} {1:stem}...\'. Or use \'(imp)\' for expressing permission. See P1 Checklist section 15.',
 		},
 	},
 	{
@@ -124,7 +127,7 @@ const checker_rules_json = [
 			'followedby': { 'category': 'Noun' },
 		},
 		'require': {
-			'message': 'Write \'I(X) pray-hope [Y...]\' instead. See P1 Checklist section 15.',
+			'message': 'Write \'I(X) pray-hope [{0:token}...]\' instead. See P1 Checklist section 15.',
 		},
 	},
 	{
@@ -160,13 +163,15 @@ const checker_rules_json = [
 		'comment': 'See section 1 of the Phase 1 checklist',
 	},
 	{
+		// TODO this doesn't work now because the possessive noun's tag is overwritten with 'head_np'.
 		'name': 'Cannot say "X\'s own Y"',
 		'trigger': { 'token': 'own' },
 		'context': {
 			'precededby': { 'tag': 'genitive_saxon', 'skip': { 'token': 'very' } },
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
 		},
 		'require': {
-			'message': 'Cannot write "X\'s own Y". Simply omit \'own\' or write "X\'s _emphasized Y" if desired. See P1 Checklist section 17.',
+			'message': 'Cannot write "{0:token} own {1:token}". Simply omit \'own\' or write "{0:token} _emphasized {1:token}" if desired. See P1 Checklist section 17.',
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
 	},
@@ -256,7 +261,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'turn', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'around\' must be hyphenated with the Verb (e.g. turn-around). DO NOT inflect the Verb (e.g. NOT turned-around).',
+			'message': '\'around\' must be hyphenated with the Verb (i.e. {0:stem}-around). DO NOT inflect the Verb (e.g. NOT turned-around).',
 		},
 	},
 	{
@@ -266,7 +271,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'chase|take|walk', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'away\' must be hyphenated with the Verb (e.g. take-away). DO NOT inflect the Verb (e.g. NOT took-away).',
+			'message': '\'away\' must be hyphenated with the Verb (i.e. {0:stem}-away). DO NOT inflect the Verb (e.g. NOT took-away).',
 		},
 	},
 	{
@@ -276,7 +281,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'cut|knock|lie|run|sit|walk|write', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'down\' must be hyphenated with the Verb (e.g. run-down). DO NOT inflect the Verb (e.g. NOT ran-down).',
+			'message': '\'down\' must be hyphenated with the Verb (i.e. {0:stem}-down). DO NOT inflect the Verb (e.g. NOT ran-down).',
 		},
 	},
 	{
@@ -286,7 +291,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'cut|pull|take', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'off\' must be hyphenated with the Verb (e.g. take-off). DO NOT inflect the Verb (e.g. NOT took-off).',
+			'message': '\'off\' must be hyphenated with the Verb (i.e. {0:stem}-off). DO NOT inflect the Verb (e.g. NOT took-off).',
 		},
 	},
 	{
@@ -297,7 +302,7 @@ const checker_rules_json = [
 			'followedby': { 'stem': 'clothes|glove|sandal|shirt|shoe' },
 		},
 		'require': {
-			'message': '\'on\' must be hyphenated with the Verb (e.g. put-on).',
+			'message': '\'on\' must be hyphenated with the Verb (i.e. put-on).',
 		},
 		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
 	},
@@ -308,7 +313,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'come|cry|pour|pull', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'out\' must be hyphenated with the Verb (e.g. cry-out). DO NOT inflect the Verb (e.g. NOT cried-out).',
+			'message': '\'out\' must be hyphenated with the Verb (i.e. {0:stem}-out). DO NOT inflect the Verb (e.g. NOT cried-out).',
 		},
 	},
 	{
@@ -318,14 +323,14 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'go|pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': '\'up\' must be hyphenated with the Verb (e.g. pick-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
+			'message': '\'up\' must be hyphenated with the Verb (i.e. {0:stem}-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
 		},
 	},
 	{
-		'name': 'Suggest "trouble _plural" instead of "troubles"',
-		'trigger': { 'token': 'troubles' },
+		'name': 'Some noun plurals aren\'t recognized',
+		'trigger': { 'token': 'troubles|lands' },
 		'require': {
-			'message': 'TBTA does not use the plural \'troubles\'. Use \'trouble _plural\' to indicate plurality.',
+			'message': 'TBTA does not use the plural \'{token}\'. Put \'_plural\' after the singular form to indicate plurality.',
 		},
 	},
 	{
@@ -385,16 +390,13 @@ const checker_rules_json = [
 		'name': 'Use \'all of\' rather than \'all\' for non-generic Nouns',
 		'trigger': { 'stem': 'all' },
 		'context': {
-			'notfollowedby': {
-				'token': 'of|_generic',
-				'skip': 'np',
-			},
+			'followedby': { 'tag': 'definite_article|remote_demonstrative|near_demonstrative' },
 		},
 		'require': {
 			'followedby': 'of',
-			'message': 'Use \'all of\' unless the modified Noun should be generic, in which case add \'_generic\' after the Noun. See P1 Checklist 0.17.',
+			'message': 'Use \'all of\', unless the modified Noun is generic. See P1 Checklist 0.17.',
 		},
-		'comment': 'This may still miss cases because it doesn\'t check if the \'of\' immediately follows the \'all\', but this is the best I could do.',
+		'comment': 'Catches "all the|these|those people" but allows "all people"',
 	},
 	{
 		'name': 'Cannot use aspect auxilliaries (eg start) without another Verb',
@@ -403,7 +405,7 @@ const checker_rules_json = [
 			'notfollowedby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'require': {
-			'message': 'Must use start/stop/continue/finish with another Verb. See P1 Checklist 0.19.',
+			'message': 'Must use \'{stem}\' with another Verb. See P1 Checklist 0.19.',
 		},
 		'comment': 'See section 0.19 of the Phase 1 checklist.',
 	},
@@ -428,12 +430,12 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Cannot use \'is going to\' as a future marker',
-		'trigger': { 'stem': 'go' },
+		'trigger': { 'token': 'going' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'require': {
-			'message': 'Use \'will\' instead of \'going to\' to express future tense. See P1 Checklist 0.28.',
+			'message': 'Use \'will {1:stem}\' instead of \'going to {1:token}\' to express future tense. See P1 Checklist 0.28.',
 		},
 		'comment': 'See section 0.28 of the Phase 1 checklist.',
 	},
@@ -444,7 +446,7 @@ const checker_rules_json = [
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'require': {
-			'message': 'Use \'will\', \'must\', or \'should\' instead of \'is to...\' to express a future obligation.',
+			'message': 'Use \'will\', \'must\', or \'should\' instead of \'{token} to...\' to express a future obligation.',
 		},
 	},
 	{
@@ -454,7 +456,41 @@ const checker_rules_json = [
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'require': {
-			'message': 'Use \'must\' or \'should\' instead of \'have to...\' to express an obligation.',
+			'message': 'Use \'must\' or \'should\' instead of \'{token} to...\' to express an obligation.',
+		},
+	},
+	{
+		'name': 'Warn that \'come\' cannot be used for events, only things that move',
+		'trigger': { 'stem': 'come' },
+		'suggest': {
+			'message': 'Note that \'come\' can only be used for things that move, NOT for events.',
+		},
+	},
+	{
+		'name': 'Cannot have two conjunctions to begin a sentence',
+		'trigger': { 'category': 'Conjunction' },
+		'context': {
+			'precededby': { 'category': 'Conjunction' },
+		},
+		'require': {
+			'message': 'Cannot use two conjunctions. Pick the one that is most meaningful.',
+		},
+	},
+	{
+		'name': 'Cannot use \'now\' as a conjuntion to start a sentence',
+		'trigger': { 'token': 'Now', 'tag': 'first_word' },
+		'suggest': {
+			'message': "Note TBTA does not have the discourse marker 'now', only the adverb 'now' meaning 'at the present time'.",
+		},
+	},
+	{
+		'name': 'Suggest using an attributive Adjective instead of a predicative relative clause',
+		'trigger': { 'tag': 'predicate_adjective' },
+		'context': {
+			'precededby': { 'tag': 'relativizer', 'skip': 'all' },
+		},
+		'suggest': {
+			'message': 'Consider writing \'{stem} X\' instead of \'X [{0:token} be {stem}]\'. The attributive adjective is generally preferred over a relative clause.',
 		},
 	},
 ]
@@ -467,8 +503,8 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: create_token_filter({ 'level': '3' }),
 			context: create_context_filter({ 'notprecededby': { 'token': '(complex)', 'skip': 'all' } }),
-			action: create_token_modify_action(token =>{
-				token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+			action: create_token_modify_action(token => {
+				set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
 			}),
 		},
 	},
@@ -478,8 +514,8 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: create_token_filter({ 'level': '2' }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token =>{
-				token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+			action: create_token_modify_action(token => {
+				set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
 			}),
 		},
 	},
@@ -489,15 +525,15 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: token => token.complex_pairing !== null,
 			context: create_context_filter({}),
-			action: create_token_modify_action(token =>{
+			action: create_token_modify_action(token => {
 				// the simple word should never be level 2 or 3
 				if (check_token_level(is_level_complex)(token)) {
-					token.error_message = ERRORS.WORD_LEVEL_TOO_HIGH
+					set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
 				}
 
 				// the complex word should never be level 0 or 1
 				if (token.complex_pairing && check_token_level(is_level_simple)(token.complex_pairing)) {
-					token.complex_pairing.error_message = ERRORS.WORD_LEVEL_TOO_LOW
+					set_error_message(token.complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
 				}
 			}),
 		},
@@ -513,7 +549,7 @@ const builtin_checker_rules = [
 				// If the first result is already simple, that will be selected by default and thus not ambiguous.
 				// Level 2 and 3 words are treated differently, so a combination of the two should also be ambiguous - see 'kingdom'
 				if (check_ambiguous_level(is_level(2))(token) || check_ambiguous_level(is_level(3))(token)) {
-					token.suggest_message = ERRORS.AMBIGUOUS_LEVEL
+					set_suggest_message(token, ERRORS.AMBIGUOUS_LEVEL)
 				}
 
 				const pairing = token.complex_pairing
@@ -524,7 +560,7 @@ const builtin_checker_rules = [
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
 				if (check_ambiguous_level(is_level_simple)(pairing)) {
-					pairing.suggest_message = ERRORS.AMBIGUOUS_LEVEL
+					set_suggest_message(pairing, ERRORS.AMBIGUOUS_LEVEL)
 				}
 			}),
 		},
@@ -540,26 +576,6 @@ const builtin_checker_rules = [
 
 				if (token.complex_pairing) {
 					check_lookup_results(token.complex_pairing)
-				}
-				
-				/**
-				 * 
-				 * @param {Token} token 
-				 */
-				function check_lookup_results(token) {
-					if (token.lookup_results.some(result => result.concept !== null && result.concept.id !== '0')) {
-						return
-					}
-
-					if (token.lookup_results.at(0)?.concept?.id === '0') {
-						token.suggest_message = 'This word is not yet in the Ontology, but should be soon. Consult the How-To document for more info.'
-
-					} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
-						token.error_message = 'This word is not in the Ontology. Hover over the word for hints from the How-To document.'
-						
-					} else {
-						token.suggest_message = 'This word is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.'
-					}
 				}
 			}),
 		},
@@ -585,7 +601,7 @@ const builtin_checker_rules = [
 				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
 			}),
 			action: create_token_modify_action(token => {
-				token.sub_tokens[1].suggest_message = 'If this \'that\' is not supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.'
+				set_suggest_message(token.sub_tokens[1], 'Unless this \'that\' is supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.')
 			}),
 		},
 	},
@@ -597,7 +613,7 @@ const builtin_checker_rules = [
 			context: create_context_filter({
 				'precededby': { 'category': 'Verb', 'skip': 'all' },
 			}),
-			action: (tokens, trigger_index, context_indexes) => {
+			action: (tokens, trigger_index, { context_indexes }) => {
 				const verb_token = tokens[context_indexes[0]]
 				const case_frames = verb_token.lookup_results.map(result => result.case_frame)
 				if (case_frames.length === 0 || case_frames[0].is_valid) {
@@ -608,8 +624,31 @@ const builtin_checker_rules = [
 				// Only show the message if all senses are invalid, but some are missing a patient clause
 				if (['agent_clause', 'patient_clause_different_participant'].some(role => missing_arguments.has(role))) {
 					const that_token = tokens[trigger_index].sub_tokens[1]
-					that_token.suggest_message = 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.'
+					set_suggest_message(that_token, 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.')
 				}
+				return trigger_index + 1
+			},
+		},
+	},
+	{
+		name: 'Warn when there is no clause with (simple) after a clause with (complex)',
+		comment: 'a simple alternate should (usually) follow a complex alternate',
+		rule: {
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE }),
+			context: create_context_filter({
+				'subtokens': { 'token': '(complex)', 'skip': 'all' },
+			}),
+			action: (tokens, trigger_index, context_result) => {
+				const next_clause_index = trigger_index + 1
+				const next_clause_context_filter = create_context_filter({
+					'subtokens': { 'token': '(simple)', 'skip': 'all' },
+				})
+
+				if (next_clause_index >= tokens.length || !next_clause_context_filter(tokens, next_clause_index).success) {
+					const complex_token = tokens[trigger_index].sub_tokens[context_result.subtoken_indexes[0]]
+					set_suggest_message(complex_token, 'A simple vocabulary alternate typically directly follows a complex alternate, but no simple alternate was found.')
+				}
+
 				return trigger_index + 1
 			},
 		},
@@ -642,18 +681,20 @@ export function parse_checker_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function checker_require_action(require) {
-		return (tokens, trigger_index) => {
+		return (tokens, trigger_index, context_result) => {
+			const formatted_message = format_token_message(tokens[trigger_index], require.message, { tokens, context_result })
+
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (require.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(require.precededby, { error: require.message }))
+				tokens.splice(trigger_index, 0, create_added_token(require.precededby, { error: formatted_message }))
 				return trigger_index + 2
 			}
 			if (require.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, { error: require.message }))
+				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, { error: formatted_message }))
 				return trigger_index + 2
 			}
 
-			tokens[trigger_index] = convert_to_error_token(tokens[trigger_index], require.message)
+			tokens[trigger_index].error_message = formatted_message
 			return trigger_index + 1
 		}
 	}
@@ -664,18 +705,20 @@ export function parse_checker_rule(rule_json) {
 	 * @returns {RuleAction}
 	 */
 	function checker_suggest_action(suggest) {
-		return (tokens, trigger_index) => {
+		return (tokens, trigger_index, context_result) => {
+			const formatted_message = format_token_message(tokens[trigger_index], suggest.message, { tokens, context_result })
+
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (suggest.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(suggest.precededby, { suggest: suggest.message }))
+				tokens.splice(trigger_index, 0, create_added_token(suggest.precededby, { suggest: formatted_message }))
 				return trigger_index + 2
 			}
 			if (suggest.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(suggest.followedby, { suggest: suggest.message }))
+				tokens.splice(trigger_index + 1, 0, create_added_token(suggest.followedby, { suggest: formatted_message }))
 				return trigger_index + 2
 			}
 
-			tokens[trigger_index] = { ...tokens[trigger_index], suggest_message: suggest.message }
+			tokens[trigger_index].suggest_message = formatted_message
 			return trigger_index + 1
 		}
 	}
@@ -704,6 +747,26 @@ function check_ambiguous_level(level_check) {
 		return token.lookup_results.length > 0
 			&& level_check(token.lookup_results[0].concept)
 			&& token.lookup_results.filter(result => result.concept).some(result => !level_check(result.concept))
+	}
+}
+
+/**
+ * 
+ * @param {Token} token 
+ */
+function check_lookup_results(token) {
+	if (token.lookup_results.some(result => result.concept !== null && result.concept.id !== '0')) {
+		return
+	}
+
+	if (token.lookup_results.at(0)?.concept?.id === '0') {
+		set_suggest_message(token, 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.')
+
+	} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
+		set_error_message(token, 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.')
+		
+	} else {
+		set_suggest_message(token, '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.')
 	}
 }
 

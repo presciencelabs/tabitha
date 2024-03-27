@@ -175,10 +175,10 @@ export function parse_lookup_rule(rule_json) {
 	 * 
 	 * @param {Token[]} tokens 
 	 * @param {number} trigger_index 
-	 * @param {number[]} context_indexes 
+	 * @param {ContextFilterResult} context_result 
 	 * @returns {number}
 	 */
-	function lookup_rule_action(tokens, trigger_index, context_indexes) {
+	function lookup_rule_action(tokens, trigger_index, { context_indexes }) {
 		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: lookup_term.split('|') }
 
 		if (context_indexes.length === 0) {

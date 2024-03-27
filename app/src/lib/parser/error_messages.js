@@ -14,9 +14,9 @@ const MISSING_PERIOD = 'Each verse must end in a period (or ? and !).'
 const FIRST_WORD_NOT_CAPITALIZED = 'The first word of each sentence should be capitalized.'
 const PAIRING_DIFFERENT_PARTS_OF_SPEECH = 'Cannot pair words of different parts of speech'
 
-const WORD_LEVEL_TOO_HIGH = 'Word must be a level 0 or 1'
+const WORD_LEVEL_TOO_HIGH = 'Word must be a level 0 or 1. Hover over the word to get pairing or explication hints.'
 const WORD_LEVEL_TOO_LOW = 'Word must be a level 2 or 3'
-const AMBIGUOUS_LEVEL = 'This word has multiple senses and ambiguous complexity. Consider including the sense (e.g. son-A).'
+const AMBIGUOUS_LEVEL = 'This word has multiple senses and ambiguous complexity. Consider including the sense (e.g. {stem}-A).'
 
 /**
  *
