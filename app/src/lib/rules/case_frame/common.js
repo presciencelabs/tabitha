@@ -55,7 +55,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const by_adposition = rule_json['by_adposition']
 	if (by_adposition) {
 		rule_json = {
-			'trigger': { 'tag': 'head_np' },
+			'trigger': { 'tag': { 'syntax': 'head_np' } },
 			'context': { 'precededby': { 'token': by_adposition, 'skip': 'np_modifiers' } },
 			'context_transform': { 'function': '' },
 			'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${by_adposition}' before it.`,
@@ -66,7 +66,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const by_clause_tag = rule_json['by_clause_tag']
 	if (by_clause_tag) {
 		rule_json = {
-			'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': by_clause_tag },
+			'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': by_clause_tag } },
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
 	}
@@ -74,7 +74,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const directly_before_verb = rule_json['directly_before_verb']
 	if (directly_before_verb) {
 		rule_json = {
-			'trigger': { 'tag': 'head_np', ...directly_before_verb },
+			'trigger': { 'tag': { 'syntax': 'head_np' }, ...directly_before_verb },
 			'context': { 'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' } },
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
@@ -83,7 +83,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const directly_after_verb = rule_json['directly_after_verb']
 	if (directly_after_verb) {
 		rule_json = {
-			'trigger': { 'tag': 'head_np', ...directly_after_verb },
+			'trigger': { 'tag': { 'syntax': 'head_np' }, ...directly_after_verb },
 			'context': { 'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] } },
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
@@ -92,7 +92,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const directly_after_verb_with_adposition = rule_json['directly_after_verb_with_adposition']
 	if (directly_after_verb_with_adposition) {
 		rule_json = {
-			'trigger': { 'tag': 'head_np' },
+			'trigger': { 'tag': { 'syntax': 'head_np' } },
 			'context': {
 				'precededby': [
 					{ 'category': 'Verb', 'skip': 'vp_modifiers' },
@@ -108,7 +108,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	const predicate_adjective = rule_json['predicate_adjective']
 	if (predicate_adjective) {
 		rule_json = {
-			'trigger': { 'category': 'Adjective', 'tag': 'predicate_adjective' },
+			'trigger': { 'category': 'Adjective', 'tag': { 'syntax': 'predicate_adjective' } },
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
 	}
@@ -118,7 +118,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 
 	const context = create_context_filter(rule_json['context'])
 
-	const transform = create_token_transform({ 'tag': role_tag, ...rule_json['transform'] ?? {} })
+	const transform = create_token_transform({ 'tag': { 'role': role_tag }, ...rule_json['transform'] ?? {} })
 	const context_transforms = create_token_transforms(rule_json['context_transform'])
 	const missing_message = rule_json['missing_message'] ?? missing_argument_message(role_tag)
 	const extra_message = rule_json['extra_message'] ?? ''

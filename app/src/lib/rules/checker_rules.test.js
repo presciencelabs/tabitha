@@ -20,10 +20,11 @@ function create_pairing_token(left, right) {
  * @param {string} token 
  * @param {Object} [data={}] 
  * @param {LookupResult[]} [data.lookup_results=[]] 
+ * @param {Tag} [data.tag={}] 
  * @returns {Token}
  */
-function create_lookup_token(token, { lookup_results=[] }={}) {
-	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token })
+function create_lookup_token(token, { lookup_results=[], tag={} }={}) {
+	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token, tag })
 	lookup_token.lookup_results = lookup_results
 	return lookup_token
 }
@@ -34,7 +35,7 @@ function create_lookup_token(token, { lookup_results=[] }={}) {
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
-	return { clause: create_clause_token(tokens, 'main_clause') }
+	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }
 }
 
 /**
@@ -60,8 +61,47 @@ function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}
 }
 
 describe('built-in checker rules', () => {
+	describe('sentence capitalization', () => {
+		const CAPITALIZATION_RULE = CHECKER_RULES.slice(0, 1)
+
+		test('valid', () => {
+			const test_tokens = [create_sentence([
+				create_lookup_token('Token', { tag: { 'position': 'first_word' } }),
+				create_pairing_token(
+					create_lookup_token('First', { tag: { 'position': 'first_word' } }),
+					create_lookup_token('second'),
+				),
+				create_token('Function', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'position': 'first_word' } }),
+				create_token('name', TOKEN_TYPE.LOOKUP_WORD, { tag: { 'position': 'first_word' }, pronoun: create_token('You', TOKEN_TYPE.FUNCTION_WORD) }),
+			])]
+
+			const checked_tokens = apply_rules(test_tokens, CAPITALIZATION_RULE)
+
+			expect(checked_tokens).toEqual(test_tokens)
+		})
+
+		test('invalid', () => {
+			const test_tokens = [create_sentence([
+				create_lookup_token('token', { tag: { 'position': 'first_word' } }),
+				create_pairing_token(
+					create_lookup_token('first', { tag: { 'position': 'first_word' } }),
+					create_lookup_token('second'),
+				),
+				create_token('function', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'position': 'first_word' } }),
+				create_token('name', TOKEN_TYPE.LOOKUP_WORD, { tag: { 'position': 'first_word' }, pronoun: create_token('you', TOKEN_TYPE.FUNCTION_WORD) }),
+			])]
+
+			const checked_tokens = apply_rules(test_tokens, CAPITALIZATION_RULE).flatMap(flatten_sentence)
+
+			expect(checked_tokens[0].error_message).toBe(ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+			expect(checked_tokens[1].error_message).toBe(ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+			expect(checked_tokens[2].error_message).toBe(ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+			expect(checked_tokens[3].pronoun?.error_message).toBe(ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+		})
+	})
+
 	describe('complexity level check', () => {
-		const LEVEL_CHECK_RULES = CHECKER_RULES.slice(0, 3)
+		const LEVEL_CHECK_RULES = CHECKER_RULES.slice(1, 4)
 
 		test('different levels', () => {
 			const test_tokens = [create_sentence([
@@ -168,7 +208,7 @@ describe('built-in checker rules', () => {
 	})
 	
 	describe('ambiguous level check', () => {
-		const AMBIGUOUS_LEVEL_CHECK = CHECKER_RULES.slice(3, 4)
+		const AMBIGUOUS_LEVEL_CHECK = CHECKER_RULES.slice(4, 5)
 
 		test('main token level check', () => {
 			const test_tokens = [create_sentence([
@@ -233,7 +273,7 @@ describe('built-in checker rules', () => {
 	})
 	
 	describe('no lookup check', () => {
-		const NO_LOOKUP_CHECK = CHECKER_RULES.slice(4, 5)
+		const NO_LOOKUP_CHECK = CHECKER_RULES.slice(5, 6)
 
 		test('no results, lookup error', () => {
 			const test_tokens = [create_sentence([

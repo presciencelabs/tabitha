@@ -47,26 +47,93 @@ describe('token filters', () => {
 		expect(results[1]).toBe(true)
 		expect(results[2]).toBe(false)
 	})
-	test('by tag', () => {
-		const filter_json = { 'tag': 'tag1|tag2' }
+	test('by tag key', () => {
+		const filter_json = { 'tag': 'key1|key2'  }
 		const filter = create_token_filter(filter_json)
 
 		const tokens = [
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: '' }),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag1' }),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag2' }),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag3' }),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag2|tag3' }),
-			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: 'tag4|tag4' }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: {} }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': '' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key2': '' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key2': 'value', 'other_key': 'value' } }),
 		]
 		const results = tokens.map(token => filter(token))
 
 		expect(results[0]).toBe(false)
-		expect(results[1]).toBe(true)
+		expect(results[1]).toBe(false)
+		expect(results[2]).toBe(false)
+		expect(results[3]).toBe(true)
+		expect(results[4]).toBe(false)
+		expect(results[5]).toBe(true)
+	})
+	test('by tag value', () => {
+		const filter_json = { 'tag': { 'key': 'tag1|tag2' } }
+		const filter = create_token_filter(filter_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: {} }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'other_key': 'tag1' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag1' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag2' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag3' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag2|tag3' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag4|tag4' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key': 'tag1', 'other_key': 'tag1' } }),
+		]
+		const results = tokens.map(token => filter(token))
+
+		expect(results[0]).toBe(false)
+		expect(results[1]).toBe(false)
 		expect(results[2]).toBe(true)
+		expect(results[3]).toBe(true)
+		expect(results[4]).toBe(false)
+		expect(results[5]).toBe(true)
+		expect(results[6]).toBe(false)
+		expect(results[7]).toBe(true)
+	})
+	test('by multiple tag values', () => {
+		const filter_json = { 'tag': { 'key1': 'value1', 'key2': 'value2' } }
+		const filter = create_token_filter(filter_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: {} }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'not_value', 'key2': 'value2' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'key2': 'value2', 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1|value3', 'key2': 'value4|value2' } }),
+		]
+		const results = tokens.map(token => filter(token))
+
+		expect(results[0]).toBe(false)
+		expect(results[1]).toBe(false)
+		expect(results[2]).toBe(false)
 		expect(results[3]).toBe(false)
 		expect(results[4]).toBe(true)
-		expect(results[5]).toBe(false)
+		expect(results[5]).toBe(true)
+	})
+	test('by multiple tag options', () => {
+		const filter_json = { 'tag': [{ 'key1': 'value1' }, { 'key2': 'value2' }] }
+		const filter = create_token_filter(filter_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: {} }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'not_value', 'key2': 'value2' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'key2': 'value2', 'other_key': 'value' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1|value3', 'key2': 'value4|value2' } }),
+		]
+		const results = tokens.map(token => filter(token))
+
+		expect(results[0]).toBe(false)
+		expect(results[1]).toBe(false)
+		expect(results[2]).toBe(true)
+		expect(results[3]).toBe(true)
+		expect(results[4]).toBe(true)
+		expect(results[5]).toBe(true)
 	})
 })
 
@@ -163,13 +230,13 @@ describe('context filters', () => {
 		expect(results[3].success).toBe(false)
 	})
 	test('followed by with multiple skips', () => {
-		const context_json = { 'followedby': { 'token': 'other', 'skip': [{ 'token': 'skip' }, { 'tag': 'skip' }] } }
+		const context_json = { 'followedby': { 'token': 'other', 'skip': [{ 'token': 'skip' }, { 'tag': { 'skip': 'skip' } }] } }
 		const filter = create_context_filter(context_json)
 
 		const tokens = [
 			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
 			create_token('skip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'skip' }),
-			create_token('notskip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'notskip', tag: 'skip' }),
+			create_token('notskip', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'notskip', tag:  { 'skip': 'skip' } }),
 			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
 			create_token('last', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'last' }),
 		]
@@ -445,15 +512,37 @@ describe('token transforms', () => {
 		expect(result.lookup_results[0].concept?.sense).toBe('B')
 		expect(result.error_message).toBe(token.error_message)
 	})
+	test('tag with existing tag on token', () => {
+		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
+		const transform = create_token_transform(transform_json)
+
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { tag: { 'old_key': 'old_value' } })
+		const result = transform(token)
+		expect(result.token).toBe(token.token)
+		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+		expect(result.tag).toEqual({ 'key': 'value', 'old_key': 'old_value' })
+		expect(result.error_message).toBe(token.error_message)
+	})
+	test('tag gets overwritten', () => {
+		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
+		const transform = create_token_transform(transform_json)
+
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { tag: { 'key': 'old_value' } })
+		const result = transform(token)
+		expect(result.token).toBe(token.token)
+		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
+		expect(result.tag).toEqual({ 'key': 'value' })
+		expect(result.error_message).toBe(token.error_message)
+	})
 	test('type and tag', () => {
-		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': 'tag' }
+		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
 		const transform = create_token_transform(transform_json)
 
 		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD)
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
-		expect(result.tag).toBe('tag')
+		expect(result.tag).toEqual({ 'key': 'value' })
 		expect(result.error_message).toBe(token.error_message)
 	})
 	test('unrecognized', () => {

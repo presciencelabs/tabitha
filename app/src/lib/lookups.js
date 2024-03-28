@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_lookup_result } from './parser/token'
+import { TOKEN_TYPE, create_lookup_result, token_has_tag } from './parser/token'
 import { REGEXES } from './regexes'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules/rules_parser'
 import { apply_rule_to_tokens } from './rules/rules_processor'
@@ -221,7 +221,7 @@ const result_filter_rules = [
 		name: 'Filter lookup results based on upper/lowercase for words not at the start of the sentence.',
 		comment: '',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token.tag.includes('first_word'),
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag(token, { 'position': 'first_word' }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				if (token.token !== 'null') {

@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, set_token_concept } from '$lib/parser/token'
+import { TOKEN_TYPE, set_token_concept, token_has_tag } from '$lib/parser/token'
 
 /**
  *
@@ -19,11 +19,7 @@ export function create_token_filter(filter_json) {
 	// a token tag can have | separated values
 	const tag_json = filter_json['tag']
 	if (tag_json !== undefined) {
-		const value_checker = get_value_checker(tag_json)
-		filters.push(token => {
-			const token_tags = token.tag.split('|')
-			return token_tags.some(tag => value_checker(tag))
-		})
+		filters.push(token => token_has_tag(token, tag_json))
 	}
 
 	add_lookup_filter('stem', filter_value => {
@@ -40,6 +36,7 @@ export function create_token_filter(filter_json) {
 	})
 
 	// only support single character usages right now
+	// TODO remove this and use the case frame/sense selection rules instead
 	add_lookup_filter('usage', filter_value => has_usage(filter_value))
 
 	add_lookup_filter('form', filter_value => {
@@ -335,13 +332,18 @@ export function create_token_transform(transform_json) {
 
 	const tag = transform_json['tag']
 	if (tag !== undefined) {
-		transforms.push(token => ({ ...token, tag }))
+		transforms.push(token => ({ ...token, tag: add_value_to_tag(token.tag, tag) }))
 	}
 
 	const function_tag = transform_json['function']
 	if (function_tag !== undefined) {
 		// TODO keep form name value from lookup somehow
-		transforms.push(token => ({ ...token, type: TOKEN_TYPE.FUNCTION_WORD, tag: function_tag, lookup_results: [] }))
+		transforms.push(token => ({
+			...token,
+			type: TOKEN_TYPE.FUNCTION_WORD,
+			tag: add_value_to_tag(token.tag, function_tag),
+			lookup_results: [],
+		}))
 	}
 
 	const concept = transform_json['concept']
@@ -349,6 +351,7 @@ export function create_token_transform(transform_json) {
 		transforms.push(token => set_token_concept(token, concept))
 	}
 
+	// TODO remove this and use the case frame/sense selection rules instead
 	const usage = transform_json['usage']
 	if (usage !== undefined) {
 		transforms.push(token => filter_by_usage(token, usage))
@@ -372,6 +375,16 @@ export function create_token_transform(transform_json) {
 			token.lookup_results = token.lookup_results.filter(may_have_usage(char))
 		}
 		return token
+	}
+
+	/**
+	 * 
+	 * @param {Tag} old_tag 
+	 * @param {Tag} new_values 
+	 * @returns {Tag}
+	 */
+	function add_value_to_tag(old_tag, new_values) {
+		return { ...old_tag, ...new_values }
 	}
 }
 
@@ -430,11 +443,13 @@ export function create_token_modify_action(action) {
 }
 
 const SKIP_GROUPS = new Map([
-	['determiners', { 'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|negative_noun_polarity' }],
-	['degree_indicators', { 'tag': 'intensified_degree|extremely_intensified_degree|least_degree|comparative_degree|too_degree' }],
 	['adjp_modifiers_predicative', [
-		'degree_indicators',
-		{ 'tag': 'patient_clause_same_participant|patient_clause_different_participant' },	// some adjectives can take a patient argument
+		{
+			'tag': [
+				'degree',
+				{ 'clause_type': 'patient_clause_same_participant|patient_clause_different_participant' }, 	// some adjectives can take a patient argument
+			], 
+		},
 		{ 'category': 'Adverb' },
 	]],
 	['adjp_predicative', [
@@ -442,22 +457,21 @@ const SKIP_GROUPS = new Map([
 		{ 'category': 'Adjective' },
 	]],
 	['adjp_modifiers_attributive', [
-		'degree_indicators',
+		{ 'tag': 'degree' },
 	]],
 	['adjp_attributive', [
 		'adjp_modifiers_attributive',
 		{ 'category': 'Adjective' },
 	]],
 	['advp_modifiers', [
-		'degree_indicators',
+		{ 'tag': 'degree' },
 	]],
 	['advp', [
 		'advp_modifiers',
 		{ 'category': 'Adverb' },
 	]],
 	['np_modifiers', [
-		{ 'tag': 'genitive_saxon|genitive_norman|relative_clause' },
-		'determiners',
+		{ 'tag': ['determiner|relation', { 'clause_type': 'relative_clause' }] },
 		'adjp_attributive',
 	]],
 	['np', [
@@ -465,7 +479,7 @@ const SKIP_GROUPS = new Map([
 		{ 'category': 'Noun' },
 	]],
 	['vp_modifiers', [
-		{ 'tag': 'negative_verb_polarity|modal|infinitive|auxiliary' },
+		{ 'tag': ['verb_polarity|modal|auxiliary', { 'syntax': 'infinitive' }] },
 		{ 'category': 'Adverb' },
 	]],
 	['vp', [

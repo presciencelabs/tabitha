@@ -12,7 +12,7 @@ import { parse_part_of_speech_rule } from './part_of_speech_rules'
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
-	return { clause: create_clause_token(tokens) }
+	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }
 }
 
 /**
@@ -98,7 +98,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'peanut' },
 				'context': { 'precededby': { 'token': 'a' } },
-				'transform': { 'tag': 'tag' },
+				'transform': { 'tag': { 'key': 'value' } },
 			},
 		].map(parse_transform_rule)
 
@@ -116,8 +116,8 @@ describe('transform rules', () => {
 		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(6)
-		expect(results[1].tag).toBe('')
-		expect(results[4].tag).toBe('tag')
+		expect(results[1].tag).toEqual({})
+		expect(results[4].tag).toEqual({ 'key': 'value' })
 	})
 
 	test('triggered within a subordinate clauses', () => {
@@ -125,7 +125,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'transform': { 'tag': 'tag' },
+				'transform': { 'tag': { 'key': 'value' } },
 			},
 		].map(parse_transform_rule)
 
@@ -140,7 +140,7 @@ describe('transform rules', () => {
 
 		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
 
-		expect(results[0].tag).toBe('tag')
+		expect(results[0].tag).toEqual({ 'key': 'value' })
 	})
 
 	test('concept selected is brought to top of results', () => {

@@ -1,5 +1,4 @@
-import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, add_tag_to_token, set_error_message } from '$lib/parser/token'
+import { TOKEN_TYPE, add_tag_to_token } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
@@ -13,10 +12,10 @@ const builtin_syntax_rules = [
 		name: 'Set tag for quote clauses',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'tag': 'subordinate_clause' }),
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'subordinate_clause' } }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
 			action: create_token_modify_action(token => {
-				token.tag = 'patient_clause_quote_begin'
+				add_tag_to_token(token, { 'clause_type': 'patient_clause_quote_begin' })
 			}),
 		},
 	},
@@ -24,7 +23,7 @@ const builtin_syntax_rules = [
 		name: 'Set tag for first words of sentences',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'tag': 'main_clause|patient_clause_quote_begin' }),
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause|patient_clause_quote_begin' } }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
 				// find first word token, even if nested in another clause
@@ -33,24 +32,7 @@ const builtin_syntax_rules = [
 					return
 				}
 
-				add_tag_to_token(word_token, 'first_word')
-			}),
-		},
-	},
-	{
-		name: 'Check capitalization for first word in a sentence or quote',
-		comment: '',
-		rule: {
-			trigger: create_token_filter({ 'tag': 'first_word' }),
-			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
-				// While this check may make more sense in the checker rules, it must be done here
-				// before the 'first_word' tag possibly gets overwritten in the transform rules.
-				// TODO expand the 'tag' system so things don't get overwritten?
-				const token_to_test = token.pronoun ? token.pronoun : token
-				if (starts_lowercase(token_to_test.token) && !token_to_test.error_message) {
-					set_error_message(token_to_test, ERRORS.FIRST_WORD_NOT_CAPITALIZED)
-				}
+				add_tag_to_token(word_token, { 'position': 'first_word' })
 			}),
 		},
 	},
@@ -61,7 +43,7 @@ const builtin_syntax_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
 			context: create_context_filter({}),
 			action: create_token_modify_action(token => {
-				add_tag_to_token(token, 'genitive_saxon')
+				add_tag_to_token(token, { 'relation': 'genitive_saxon' })
 			}),
 		},
 	},
@@ -98,13 +80,4 @@ export function find_first_word(token) {
 		return word_types.includes(token.type)
 			|| token.token.length > 0 && REGEXES.WORD_START_CHAR.test(token.token[0])
 	}
-}
-
-/**
- * 
- * @param {string} text 
- * @returns {boolean}
- */
-function starts_lowercase(text) {
-	return REGEXES.STARTS_LOWERCASE.test(text)
 }

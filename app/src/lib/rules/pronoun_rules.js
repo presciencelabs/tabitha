@@ -70,7 +70,7 @@ const builtin_pronoun_rules = [
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
 				const message = PRONOUN_MESSAGES.get(normalized_pronoun) ?? 'Unrecognized pronoun "{token}"'
 				if (tag) {
-					add_tag_to_token(token, tag)
+					add_tag_to_token(token, { 'pronoun': tag })
 				} else {
 					set_error_message(pronoun, message)
 				}

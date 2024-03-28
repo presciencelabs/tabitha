@@ -5,7 +5,7 @@ type Token = {
 	type: TokenType
 	error_message: string
 	suggest_message: string
-	tag: string
+	tag: Tag
 	specified_sense: string
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
@@ -13,6 +13,8 @@ type Token = {
 	pronoun: Token | null
 	sub_tokens: Token[]
 }
+
+type Tag = { [tag: string]: string }
 
 type Clause = Token
 

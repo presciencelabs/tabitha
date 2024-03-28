@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, find_result_index, set_token_concept } from '$lib/parser/token'
+import { TOKEN_TYPE, find_result_index, set_suggest_message, set_token_concept } from '$lib/parser/token'
 import { create_context_filter, create_token_filter } from './rules_parser'
 
 /**
@@ -43,7 +43,7 @@ const verb_sense_rules = [
 		// senses with unique states
 		['be-C', { 'state': {
 			'stem': 'man|woman',
-			'context': { 'precededby': [{ 'tag': 'indefinite_article', 'skip': 'adjp_modifiers_attributive' }, { 'category': 'Adjective' }] },
+			'context': { 'precededby': [{ 'tag': { 'determiner': 'indefinite_article' }, 'skip': 'adjp_modifiers_attributive' }, { 'category': 'Adjective' }] },
 		} }],	// class membership (eg. John is a wicked man)
 		['be-Q', { 'state': { 'stem': 'bronze|clay|cloth|gold|iron|metal|sackcloth|silver|wood' } } ],	// substance (made of)
 		['be-M', { 'state': { 'stem': 'ancestor|brother|child|daughter|descendant|father|husband|mother|sister|son|wife' } }],	// kinship
@@ -214,7 +214,7 @@ function select_word_sense(tokens, token) {
 	const specified_sense = token.specified_sense ? `${stem}-${token.specified_sense}` : ''
 
 	if (specified_sense === default_matching_sense) {
-		token.suggest_message = 'Consider removing the sense, as it would be selected by default.'
+		set_suggest_message(token, 'Consider removing the sense, as it would be selected by default.')
 	}
 
 	const sense_to_select = specified_sense ? specified_sense : default_matching_sense

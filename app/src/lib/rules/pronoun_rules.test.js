@@ -29,7 +29,7 @@ function create_pronoun_token(pronoun, referent, referent_lookup=null) {
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
-	return { clause: create_clause_token(tokens) }
+	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }
 }
 
 describe('invalid tokens: pronouns', () => {
@@ -43,7 +43,7 @@ describe('invalid tokens: pronouns', () => {
 			[[create_pronoun_token('each-other', 'people')], PRONOUN_TAGS.get('each-other')],
 		])('%s', (test_tokens, exptected_tag) => {
 			const INPUT = [create_sentence(test_tokens)]
-			const EXPECTED_OUTPUT = test_tokens.map(token => ({ ...token, tag: exptected_tag }))
+			const EXPECTED_OUTPUT = test_tokens.map(token => ({ ...token, tag: { 'pronoun': exptected_tag } }))
 
 			const checked_tokens = apply_rules(INPUT, PRONOUN_RULES).flatMap(flatten_sentence)
 

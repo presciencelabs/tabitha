@@ -14,7 +14,7 @@ const part_of_speech_rules_json = [
 		'category': 'Noun|Verb',
 		'context': {
 			'precededby': {
-				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative',
+				'tag': 'determiner',
 				'skip': { 'category': 'Adjective' },
 			},
 		},
@@ -26,7 +26,7 @@ const part_of_speech_rules_json = [
 		'category': 'Noun|Verb',
 		'context': {
 			'followedby': {
-				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative',
+				'tag': 'determiner',
 				'skip': { 'category': 'Adjective' },
 			},
 		},
@@ -37,7 +37,7 @@ const part_of_speech_rules_json = [
 		'name': 'If Noun-Verb preceded by Negative Verb Polarity or Modal words, delete the Noun',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'tag': 'negative_verb_polarity|modal' },
+			'precededby': { 'tag': 'verb_polarity|modal' },
 		},
 		'remove': 'Noun',
 		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc',
@@ -64,7 +64,7 @@ const part_of_speech_rules_json = [
 		'name': 'If Noun-Verb preceded by an \'s, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'tag': 'genitive_saxon', 'skip': 'adjp_attributive' },
+			'precededby': { 'tag': { 'relation': 'genitive_saxon' }, 'skip': 'adjp_attributive' },
 		},
 		'remove': 'Verb',
 		'comment': 'Gideon returned to the Israelite\'s camp.',
@@ -81,7 +81,7 @@ const part_of_speech_rules_json = [
 	{
 		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'tag': 'first_word', 'stem': 'so' },
+		'trigger': { 'tag': { 'position': 'first_word' }, 'stem': 'so' },
 		'remove': 'Adposition',
 		'comment': 'only for \'so\'. \'for\' might be the \'for each...\' sense',
 	},
@@ -124,7 +124,7 @@ const part_of_speech_rules_json = [
 		'category': 'Noun|Adjective',
 		'context': {
 			'precededby': {
-				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|negative_noun_polarity',
+				'tag': 'determiner',
 				'skip': 'adjp_attributive',
 			},
 			'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
@@ -155,20 +155,18 @@ const part_of_speech_rules_json = [
 		'category': 'Verb|Adjective',
 		'context': {
 			'precededby': {
-				'tag': 'indefinite_article|definite_article|near_demonstrative|remote_demonstrative|genitive_saxon',
+				'tag': ['determiner', { 'relation': 'genitive_saxon' }],
 				'skip': { 'category': 'Adjective' },
 			},
 		},
 		'remove': 'Verb',
-		'comment': 'The man held the stick in the man\'s left(V/Adj) hand',
+		'comment': 'The man held the stick in the (man\'s) left(V/Adj) hand',
 	},
 	{
 		'name': 'If Verb-Adjective preceded by a degree indicator, remove Verb',
 		'category': 'Verb|Adjective',
 		'context': {
-			'precededby': {
-				'tag': 'intensified_degree|extremely_intensified_degree|least_degree|comparative_degree|too_degree',
-			},
+			'precededby': { 'tag': 'degree' },
 		},
 		'remove': 'Verb',
 		'comment': 'Daniel 3:24  Nebuchadnezzar was very surprised(V/Adj).',
@@ -219,7 +217,7 @@ const part_of_speech_rules_json = [
 		'name': 'If Verb-Adposition precededby by a modal or \'not\', delete the Adposition',
 		'category': 'Verb|Adposition',
 		'context': {
-			'precededby': { 'tag': 'modal|negative_verb_polarity', 'skip': 'vp_modifiers' },
+			'precededby': { 'tag': 'modal|verb_polarity', 'skip': 'vp_modifiers' },
 		},
 		'remove': 'Adposition',
 		'comment': 'John should like(V/Adp) that book.',
@@ -241,7 +239,7 @@ const builtin_part_of_speech_rules = [
 		name: "Words with possessive 's must be a noun",
 		comment: '',
 		rule: {
-			trigger: token => token.tag.includes('genitive_saxon'),
+			trigger: create_token_filter({ 'tag': { 'relation': 'genitive_saxon' } }),
 			context: create_context_filter({}),
 			action: create_token_modify_action(keep_parts_of_speech(new Set(['Noun']))),
 		},

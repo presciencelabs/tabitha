@@ -1,14 +1,15 @@
 import { ERRORS } from '$lib/parser/error_messages'
 import { TOKEN_TYPE, create_added_token, format_token_message, set_error_message, set_suggest_message } from '$lib/parser/token'
+import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
 
 const checker_rules_json = [
 	{
 		'name': 'Check for "it" apart from an agent clause',
-		'trigger': { 'tag': 'agent_proposition_subject' },
+		'trigger': { 'tag': { 'syntax': 'agent_proposition_subject' } },
 		'context': {
-			'notfollowedby': { 'tag': 'agent_clause', 'skip': 'all' },
+			'notfollowedby': { 'tag': { 'clause_type': 'agent_clause' }, 'skip': 'all' },
 		},
 		'require': {
 			'message': 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).',
@@ -18,8 +19,8 @@ const checker_rules_json = [
 		'name': 'Expect an agent of a passive',
 		'trigger': { 'category': 'Verb' },
 		'context': {
-			'precededby': { 'tag': 'passive', 'skip': 'all' },
-			'notfollowedby': { 'tag': 'agent|agent_of_passive', 'skip': 'all' },
+			'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
+			'notfollowedby': { 'tag': [{ 'role': 'agent' }, { 'syntax': 'agent_of_passive' }], 'skip': 'all' },
 		},
 		'require': {
 			'followedby': 'by X',
@@ -28,7 +29,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Suggest avoiding the Perfect aspect',
-		'trigger': { 'tag': 'flashback' },
+		'trigger': { 'tag': { 'auxiliary': 'flashback' } },
 		'suggest': {
 			'message': 'The perfect is only allowed if it would have the right meaning if changed to the simple past tense with "recently" or "previously".',
 		},
@@ -72,7 +73,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Check for an Imperative Verb with no subject at the beginning of a sentence',
-		'trigger': { 'category': 'Verb', 'form': 'stem', 'tag': 'first_word' },
+		'trigger': { 'category': 'Verb', 'form': 'stem', 'tag': { 'position': 'first_word' } },
 		'require': {
 			'precededby': 'You(X) (imp)',
 			'message': 'An imperative clause must have an explicit subject.',
@@ -82,7 +83,7 @@ const checker_rules_json = [
 		'name': 'Check for an Imperative Verb with no subject after a conjunction at the beginning of a sentence',
 		'trigger': { 'category': 'Verb', 'form': 'stem' },
 		'context': {
-			'precededby': { 'category': 'Conjunction', 'tag': 'first_word' },
+			'precededby': { 'category': 'Conjunction', 'tag': { 'position': 'first_word' } },
 		},
 		'require': {
 			'precededby': 'you(X) (imp)',
@@ -163,11 +164,10 @@ const checker_rules_json = [
 		'comment': 'See section 1 of the Phase 1 checklist',
 	},
 	{
-		// TODO this doesn't work now because the possessive noun's tag is overwritten with 'head_np'.
 		'name': 'Cannot say "X\'s own Y"',
 		'trigger': { 'token': 'own' },
 		'context': {
-			'precededby': { 'tag': 'genitive_saxon', 'skip': { 'token': 'very' } },
+			'precededby': { 'tag': { 'relation': 'genitive_saxon' }, 'skip': { 'token': 'very' } },
 			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
 		},
 		'require': {
@@ -201,7 +201,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Expect a [ before a relative clause',
-		'trigger': { 'tag': 'relativizer' },
+		'trigger': { 'tag': { 'syntax': 'relativizer' } },
 		'context': {
 			'precededby': { 'category': 'Noun' },
 		},
@@ -235,7 +235,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Expect a , before a quote_begin clause',
-		'trigger': { 'tag': 'patient_clause_quote_begin' },
+		'trigger': { 'tag': { 'clause_type': 'patient_clause_quote_begin' } },
 		'context': {
 			'notprecededby': { 'token': ',' },
 		},
@@ -390,7 +390,7 @@ const checker_rules_json = [
 		'name': 'Use \'all of\' rather than \'all\' for non-generic Nouns',
 		'trigger': { 'stem': 'all' },
 		'context': {
-			'followedby': { 'tag': 'definite_article|remote_demonstrative|near_demonstrative' },
+			'followedby': { 'tag': 'determiner' },
 		},
 		'require': {
 			'followedby': 'of',
@@ -478,16 +478,16 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Cannot use \'now\' as a conjuntion to start a sentence',
-		'trigger': { 'token': 'Now', 'tag': 'first_word' },
+		'trigger': { 'token': 'Now', 'tag': { 'position': 'first_word' } },
 		'suggest': {
 			'message': "Note TBTA does not have the discourse marker 'now', only the adverb 'now' meaning 'at the present time'.",
 		},
 	},
 	{
 		'name': 'Suggest using an attributive Adjective instead of a predicative relative clause',
-		'trigger': { 'tag': 'predicate_adjective' },
+		'trigger': { 'tag': { 'syntax': 'predicate_adjective' } },
 		'context': {
-			'precededby': { 'tag': 'relativizer', 'skip': 'all' },
+			'precededby': { 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
 		},
 		'suggest': {
 			'message': 'Consider writing \'{stem} X\' instead of \'X [{0:token} be {stem}]\'. The attributive adjective is generally preferred over a relative clause.',
@@ -497,6 +497,20 @@ const checker_rules_json = [
 
 /** @type {BuiltInRule[]} */
 const builtin_checker_rules = [
+	{
+		name: 'Check capitalization for first word in a sentence or quote',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'position': 'first_word' } }),
+			context: create_context_filter({}),
+			action: create_token_modify_action(token => {
+				const token_to_test = token.pronoun ? token.pronoun : token
+				if (REGEXES.STARTS_LOWERCASE.test(token_to_test.token) && !token_to_test.error_message) {
+					set_error_message(token_to_test, ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+				}
+			}),
+		},
+	},
 	{
 		name: 'Check that level 3 words are within a (complex) alternate',
 		comment: '',
@@ -596,7 +610,7 @@ const builtin_checker_rules = [
 		name: 'Check for an errant \'that\' in a complement clause',
 		comment: 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
 		rule: {
-			trigger: create_token_filter({ 'tag': 'patient_clause_different_participant|agent_clause' }),
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_different_participant|agent_clause' } }),
 			context: create_context_filter({
 				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
 			}),
@@ -609,7 +623,7 @@ const builtin_checker_rules = [
 		name: 'Check for a relative clause that might supposed to be a complement clause',
 		comment: 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
 		rule: {
-			trigger: create_token_filter({ 'tag': 'relative_clause_that' }),
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause_that' } }),
 			context: create_context_filter({
 				'precededby': { 'category': 'Verb', 'skip': 'all' },
 			}),

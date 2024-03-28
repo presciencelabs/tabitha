@@ -93,7 +93,7 @@ export function clausify(tokens) {
 	 */
 	function create_clause(tag) {
 		// @ts-ignore
-		return create_clause_token(clause_tokens.pop(), tag)
+		return create_clause_token(clause_tokens.pop(), { 'clause_type': tag })
 	}
 
 	/**

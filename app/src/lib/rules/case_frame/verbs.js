@@ -26,7 +26,7 @@ const default_verb_case_frame_json = {
 	'beneficiary': {
 		// TODO check feature on lexicon word like the Analyzer does. beneficiaries have to be animate, not things.
 		// For now only accept proper names. Not a big deal because the beneficiary is rarely required (only provide-A requires it)
-		'trigger': { 'tag': 'head_np', 'level': '4' },	
+		'trigger': { 'tag': { 'syntax': 'head_np' }, 'level': '4' },	
 		'context': { 'precededby': { 'token': 'for', 'skip': 'np_modifiers' } },
 		'context_transform': { 'function': '' },
 		'comment': '"for" could mean other things as well. TODO These should be set in the transform rules',
@@ -69,9 +69,9 @@ const verb_case_frames = new Map([
 				'trigger': { 'category': 'Noun' },
 				'context': {
 					'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'np'] },
-					'notfollowedby': { 'category': 'Noun', 'tag': 'head_np', 'skip': 'np_modifiers' },
+					'notfollowedby': { 'category': 'Noun', 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
 				},
-				'transform': { 'tag': 'patient' },
+				'transform': { 'tag': { 'role': 'patient' } },
 				'missing_message': "ask-A should be written in the format 'X asked (destination) (patient)' e.g. 'John asked Mary a question'.",
 			},
 			'destination': [
@@ -80,9 +80,9 @@ const verb_case_frames = new Map([
 					'trigger': { 'category': 'Noun' },
 					'context': {
 						'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] },
-						'followedby': { 'category': 'Noun', 'tag': 'head_np', 'skip': 'np_modifiers' },
+						'followedby': { 'category': 'Noun', 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
 					},
-					'transform': { 'tag': 'destination' },
+					'transform': { 'tag': { 'role': 'destination' } },
 					'comment': 'could be between the verb and the patient',
 				},
 			],
@@ -135,15 +135,15 @@ const verb_case_frames = new Map([
 		}],
 		['be-E', {
 			'agent': {
-				'trigger': { 'tag': 'head_np' },
-				'context': { 'precededby': [{ 'tag': 'existential' }, { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] }] },
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
+				'context': { 'precededby': [{ 'tag': { 'syntax': 'existential' } }, { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] }] },
 				'missing_message': 'be-E requires the format \'there be X\'.',
 			},
 			'state': { },
 		}],
 		['be-F', {
 			'state': {
-				'trigger': { 'tag': 'head_np' },
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
 				'context': { 'precededby': { 'category': 'Adposition', 'skip': 'np_modifiers' } },
 			},
 		}],
@@ -153,7 +153,7 @@ const verb_case_frames = new Map([
 		}],
 		['be-H', {
 			'state': {
-				'trigger': { 'tag': 'head_np' },
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
 				'context': { 'precededby': { 'category': 'Adposition', 'skip': 'np_modifiers' } },
 			},
 		}],
@@ -190,7 +190,7 @@ const verb_case_frames = new Map([
 		}],
 		['be-Q', {
 			'state': {
-				'trigger': { 'tag': 'head_np' },
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
 				'context': { 'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers', { 'token': 'made' }] } },
 			},
 			'comment': 'there may or may not be "made of" before the np',
@@ -254,17 +254,17 @@ const verb_case_frames = new Map([
 			'instrument': [
 				{
 					'by_adposition': 'by',
-					'trigger': { 'tag': 'head_np', 'stem': 'God|Yahweh' },
+					'trigger': { 'tag': { 'syntax': 'head_np' }, 'stem': 'God|Yahweh' },
 				},
 				{
 					'by_adposition': 'in',
-					'trigger': { 'tag': 'head_np', 'stem': 'name' },
+					'trigger': { 'tag': { 'syntax': 'head_np' }, 'stem': 'name' },
 				},
 			],
 			'destination': [
 				{ 'by_adposition': 'to' },
 				{
-					'trigger': { 'tag': 'head_np' },
+					'trigger': { 'tag': { 'syntax': 'head_np' } },
 					'context': { 'precededby': [{ 'stem': 'covenant' }, { 'token': 'with', 'skip': 'np_modifiers' }] },
 					'context_transform': [{}, { 'function': '' }],
 				},

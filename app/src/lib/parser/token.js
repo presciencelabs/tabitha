@@ -34,7 +34,7 @@ export const TOKEN_TYPE = {
  * @param {Object} [other_data={}] 
  * @param {string} [other_data.error=''] 
  * @param {string} [other_data.suggest=''] 
- * @param {string} [other_data.tag=''] 
+ * @param {Tag} [other_data.tag={}] 
  * @param {string} [other_data.specified_sense=''] 
  * @param {string} [other_data.lookup_term=''] 
  * @param {Token[]} [other_data.sub_tokens=[]] 
@@ -42,7 +42,7 @@ export const TOKEN_TYPE = {
  * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, { error='', suggest= '', tag='', specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
+export function create_token(token, type, { error='', suggest= '', tag={}, specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
 	return {
 		token,
 		type,
@@ -149,9 +149,9 @@ function default_context_result() {
 /**
  * 
  * @param {Token[]} sub_tokens 
- * @param {string} tag
+ * @param {Tag} tag
  */
-export function create_clause_token(sub_tokens, tag='subordinate_clause') {
+export function create_clause_token(sub_tokens, tag={ 'clause_type': 'subordinate_clause' }) {
 	return create_token('', TOKEN_TYPE.CLAUSE, { sub_tokens, tag })
 }
 
@@ -228,10 +228,33 @@ export function token_has_message(token) {
 /**
  * 
  * @param {Token} token 
- * @param {string} tag 
+ * @param {Tag} tag 
  */
 export function add_tag_to_token(token, tag) {
-	token.tag = token.tag ? `${token.tag}|${tag}` : tag
+	token.tag = { ...token.tag, ...tag }
+}
+
+/**
+ * This checks if there is any value for a specific key, or if any of the given values
+ * are present for the specified keys.
+ * 
+ * @param {Token} token 
+ * @param {Tag | string | (Tag | string)[]} tag_to_check 
+ * @returns {boolean}
+ */
+export function token_has_tag(token, tag_to_check) {
+	if (Array.isArray(tag_to_check)) {
+		return tag_to_check.some(tag => token_has_tag(token, tag))
+	}
+	if (typeof tag_to_check === 'string') {
+		const filter_keys = tag_to_check.split('|')
+		return filter_keys.some(key => token.tag[key]?.length > 0 )
+	}
+	return Object.entries(tag_to_check).every(([key, value]) => {
+		const filter_values = value.split('|')
+		const tag_values = token.tag[key]?.split('|') ?? []
+		return tag_values.some(tag => filter_values.includes(tag))
+	})
 }
 
 /**

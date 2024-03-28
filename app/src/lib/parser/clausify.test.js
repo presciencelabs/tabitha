@@ -20,7 +20,7 @@ function create_tokens(tokens) {
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
-	return { clause: create_clause_token(tokens, 'main_clause') }
+	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }
 }
 
 /**

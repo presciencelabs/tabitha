@@ -10,7 +10,7 @@ const case_frame_rules = [
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
-				'notprecededby': { 'tag': 'relativizer|passive|infinitive_same_subject', 'skip': 'all' },
+				'notprecededby': { 'tag': [{ 'syntax': 'relativizer|infinitive_same_subject' }, { 'auxiliary': 'passive' }], 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
 			action: (tokens, trigger_index) => {
@@ -25,8 +25,8 @@ const case_frame_rules = [
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
-				'precededby': { 'tag': 'passive', 'skip': 'all' },
-				'notprecededby': { 'tag': 'relativizer|infinitive_same_subject', 'skip': 'all' },
+				'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
+				'notprecededby': { 'tag': { 'syntax': 'relativizer|infinitive_same_subject' }, 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
 			action: (tokens, trigger_index) => {
