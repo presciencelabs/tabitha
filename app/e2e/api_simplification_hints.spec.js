@@ -1,0 +1,48 @@
+// https://playwright.dev/docs/writing-tests#first-test
+// @ts-check
+import { test, expect } from '@playwright/test'
+
+// https://playwright.dev/docs/test-fixtures#built-in-fixtures
+test('check API contract, e.g., /simplification_hints?complex_term=disciple', async ({ request }) => {
+	const response = await request.get('/simplification_hints?complex_term=disciple')
+	const matches = await response.json()
+
+	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-contain-equal
+	expect(matches).toContainEqual({
+		term: 'disciple-A',
+		part_of_speech: expect.any(String),
+		pairing: expect.any(String),
+		explication: expect.any(String),
+	})
+})
+
+test('ensure search is case-insensitive, e.g., /simplification_hints?complex_term=DISciPlE-a', async ({ request }) => {
+	const lowercase_matches = await (await request.get('/simplification_hints?complex_term=disciple-A')).json()
+	const uppercase_matches = await (await request.get('/simplification_hints?complex_term=DISciPlE-a')).json()
+
+	expect(lowercase_matches).toEqual(uppercase_matches)
+})
+
+test("ensure missing parameter is handled properly, e.g., /, /?, /?complex_term, /?complex_term=, /?complex_term=''", async ({ request }) => {
+	const bad_requests = [
+		'/',
+		'/?',
+		'/?complex_term',
+		'/?complex_term=',
+		"/?complex_term=''",
+	]
+
+	for (const bad_request of bad_requests) {
+		const response = await request.get(bad_request)
+		const matches = await response.json()
+
+		expect(matches).toEqual([])
+	}
+})
+
+test('ensure search with no matches is handled properly, e.g., /simplification_hints?complex_term=supercalifragilisticexpialidocious', async ({ request }) => {
+	const response = await request.get('/simplification_hints?complex_term=supercalifragilisticexpialidocious')
+	const matches = await response.json()
+
+	expect(matches).toEqual([])
+})

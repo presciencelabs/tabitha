@@ -1,6 +1,6 @@
 import { get_concepts } from '$lib/server/ontology'
 
-/** @type {import('./(app)/$types').PageServerLoad} */
+/** @type {import('./$types').PageServerLoad} */
 export async function load({ url: { searchParams }, locals: { db } }) {
 	const query = (searchParams.get('q') || '').trim()
 
