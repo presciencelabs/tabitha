@@ -11,6 +11,7 @@ test('check API contract, e.g., /simplification_hints?complex_term=disciple', as
 	expect(matches).toContainEqual({
 		term: 'disciple-A',
 		part_of_speech: expect.any(String),
+		structure: expect.any(String),
 		pairing: expect.any(String),
 		explication: expect.any(String),
 	})
