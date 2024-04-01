@@ -163,6 +163,24 @@ const part_of_speech_rules_json = [
 		'comment': 'The man held the stick in the (man\'s) left(V/Adj) hand',
 	},
 	{
+		'name': 'If Verb-Adjective followed by an article/demonstrative, remove Adjective',
+		'category': 'Verb|Adjective',
+		'context': {
+			'followedby': { 'tag': 'determiner', 'skip': 'vp_modifiers' },
+		},
+		'remove': 'Adjective',
+		'comment': 'Some people have left(V/Adj) the faith.',
+	},
+	{
+		'name': 'If Verb-Adjective preceded by an aspectual auxiliary, remove Adjective',
+		'category': 'Verb|Adjective',
+		'context': {
+			'precededby': { 'stem': 'start|begin|stop|continue|finish', 'skip': { 'token': 'to' } },
+		},
+		'remove': 'Adjective',
+		'comment': 'Some people have stopped following(V/Adj) Christ Jesus.',
+	},
+	{
 		'name': 'If Verb-Adjective preceded by a degree indicator, remove Verb',
 		'category': 'Verb|Adjective',
 		'context': {

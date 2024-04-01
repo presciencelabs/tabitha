@@ -75,7 +75,7 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 	if (directly_before_verb) {
 		rule_json = {
 			'trigger': { 'tag': { 'syntax': 'head_np' }, ...directly_before_verb },
-			'context': { 'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' } },
+			'context': { 'followedby': { 'category': 'Verb', 'skip': ['np_modifiers', 'vp_modifiers'] } },
 			...rule_json,		// allow a rule to overwrite or add any part of this
 		}
 	}
@@ -336,6 +336,11 @@ export function validate_case_frame(tokens, trigger_index) {
 		flag_extra_argument_for_all(
 			'patient_clause_quote_begin',
 			'\'{stem}\' can never be used with direct speech. Consult its usage in the Ontology.',
+		)(token, tokens)
+
+		flag_extra_argument_for_all(
+			'predicate_adjective',
+			'\'{stem}\' can never be used with a predicate adjective. Consider using something like \'cause [X to be...]\'. Consult its usage in the Ontology.',
 		)(token, tokens)
 
 		return
