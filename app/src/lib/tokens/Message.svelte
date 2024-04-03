@@ -2,7 +2,7 @@
 	import { Badge } from '$lib'
 	import Icon from '@iconify/svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 </script>
 

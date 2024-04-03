@@ -3,7 +3,7 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 
 	/**
@@ -12,7 +12,7 @@
 	 * bad: /disciple follower/ disciple/disciple disciple/follower /
 	 */
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	// @ts-ignore the pairing will always be non-null at this point
 	$: pairing_token = token.complex_pairing
 </script>

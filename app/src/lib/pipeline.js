@@ -15,3 +15,18 @@ export function pipe(...fns) {
 		return fns.reduce((result, f) => f(result), args)
 	}
 }
+
+/**
+ * Adapted to allow for async functions, taken from https://stackoverflow.com/a/60137179
+ *
+ * @param  {...Function} fns
+ * @returns {Function}
+ */
+export function pipe_async(...fns) {
+	return sequencer
+
+	/** @param {any} args */
+	function sequencer(args) {
+		return fns.reduce(async (result, f) => f(await result), args)
+	}
+}

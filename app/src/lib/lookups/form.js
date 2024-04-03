@@ -1,41 +1,21 @@
-import { json } from '@sveltejs/kit'
-
-
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url: { searchParams }, locals: { db } }) {
-	/** @type {LookupTerm} */
-	const word = searchParams.get('word') ?? ''
-
-	const matches = await get_form_matches(db)(word)
-
-	return response({ term: word, matches })
-
-	/** @param {LookupResponse<FormResult>} result  */
-	function response(result) {
-		const THREE_HOUR_CACHE = {
-			'cache-control': `max-age=${3 * 60 * 60}`,
-		}
-
-		return json(result, {
-			headers: THREE_HOUR_CACHE,
-		})
-	}
-}
+import { create_lookup_result } from '$lib/parser/token'
 
 /**
- * This expects no sense attached to the word
- * 
  * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {(term: LookupTerm) => Promise<FormResult[]>}
+ * @returns {(token: Token) => Promise<void>}
  */
-function get_form_matches(db) {
+export function check_forms(db) {
 	return lookup
 
 	/**
-	 * @param {LookupTerm} word
-	 * @returns {Promise<FormResult[]>}
+	 * @param {Token} token
+	 * @returns {Promise<void>}
 	 */
-	async function lookup(word) {
+	async function lookup(token) {
+		// At this point there is always just one lookup term
+		// The term is expected to have no sense attached to it
+		const term = token.lookup_terms[0]
+
 		const sql = `
 			SELECT *
 			FROM Inflections
@@ -43,16 +23,30 @@ function get_form_matches(db) {
 		`
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowInflection>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-		const { results } = await db.prepare(sql).bind(`%|${word}|%`, word).all()
+		const { results } = await db.prepare(sql).bind(`%|${term}|%`, term).all()
 
-		return results.map(result => transform_db_result(result, word))
+		const lookup_results = results.map(result => transform_db_result(result, term))
+
+		if (lookup_results.length === 0) {
+			return
+		}
+
+		// The form lookup may have resulted in different stems (eg. saw).
+		// So add a lookup term for each unique stem (case-insensitive)
+		const unique_stems = new Set(lookup_results.map(({ stem }) => stem.toLowerCase()))
+
+		// Add the original lookup stem in case there is a missing form (eg. Adjectives left, following)
+		unique_stems.add(term.toLowerCase())
+
+		token.lookup_terms = [...unique_stems]
+		token.lookup_results = lookup_results
 	}
 
 	/**
 	 * 
 	 * @param {DbRowInflection} result 
 	 * @param {string} term
-	 * @returns {FormResult}
+	 * @returns {LookupResult}
 	 */
 	function transform_db_result(result, term) {
 		/** @type {string[]} */
@@ -68,11 +62,9 @@ function get_form_matches(db) {
 			.map(index => form_names[index])
 			.join('|')
 
-		return {
-			stem: result.stem,
-			part_of_speech: result.part_of_speech,
-			form: matched_forms || 'stem',
-		}
+		const form = matched_forms || 'stem'
+
+		return create_lookup_result(result, { form })
 	}
 }
 

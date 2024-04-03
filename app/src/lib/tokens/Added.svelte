@@ -3,7 +3,7 @@
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 </script>
 

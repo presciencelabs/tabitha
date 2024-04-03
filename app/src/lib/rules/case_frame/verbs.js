@@ -1,4 +1,3 @@
-import { token_has_concept } from '$lib/parser/token'
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from './common'
 
 const default_verb_case_frame_json = {
@@ -382,9 +381,6 @@ const VERB_CASE_FRAME_RULES = create_verb_argument_rules()
  */
 export function check_verb_case_frames(tokens, verb_index, rules_modifier=rules => rules) {
 	const verb_token = tokens[verb_index]
-	if (!token_has_concept(verb_token)) {
-		return
-	}
 
 	const stem = verb_token.lookup_results[0].stem
 	const argument_rules_by_sense = VERB_CASE_FRAME_RULES.get(stem)

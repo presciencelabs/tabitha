@@ -3,14 +3,15 @@
 	import Table from './Table.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 	export let classes = ''
 
-	const how_to_entries = token.lookup_results.flatMap(result => result.how_to)
-	const has_structure = how_to_entries.some(result => result.structure)
-	const has_pairing = how_to_entries.some(result => result.pairing)
-	const has_explication = how_to_entries.some(result => result.explication)
+	/** @type {{lookup: SimpleLookupResult, how_to: SimpleHowToResult}[]} */
+	const how_to_entries = token.lookup_results.flatMap(lookup => lookup.how_to_hints.map(how_to => ({ lookup, how_to })))
+	const has_structure = how_to_entries.some(entry => entry.how_to.structure)
+	const has_pairing = how_to_entries.some(entry => entry.how_to.pairing)
+	const has_explication = how_to_entries.some(entry => entry.how_to.explication)
 </script>
 
 {#if how_to_entries.length}
@@ -29,11 +30,11 @@
 			</tr>
 
 			<tr slot="entry_row" let:entry>
-				<th class="whitespace-nowrap">{entry.term}</th>
-				<td class="whitespace-nowrap">{entry.part_of_speech}</td>
-				{#if has_structure}<td class="whitespace-nowrap">{entry.structure}</td>{/if}
-				{#if has_pairing}<td>{entry.pairing}</td>{/if}
-				{#if has_explication}<td>{entry.explication}</td>{/if}
+				<th class="whitespace-nowrap">{entry.lookup.concept}</th>
+				<td class="whitespace-nowrap">{entry.lookup.part_of_speech}</td>
+				{#if has_structure}<td class="whitespace-nowrap">{entry.how_to.structure}</td>{/if}
+				{#if has_pairing}<td>{entry.how_to.pairing}</td>{/if}
+				{#if has_explication}<td>{entry.how_to.explication}</td>{/if}
 			</tr>
 		</Table>
 	</PopupMenu>

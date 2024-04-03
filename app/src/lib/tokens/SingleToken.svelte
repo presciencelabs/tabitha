@@ -6,7 +6,7 @@
 	import Message from './Message.svelte'
 	import { TOKEN_TYPE, token_has_message } from '$lib/parser/token'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 
 	/** @type {Map<TokenType, typeof Word>}*/

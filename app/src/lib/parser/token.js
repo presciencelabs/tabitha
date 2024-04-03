@@ -200,16 +200,7 @@ export function split_stem_and_sense(term) {
 
 /**
  * 
- * @param {Token} token 
- * @returns {boolean}
- */
-export function token_has_concept(token) {
-	return token.lookup_results.some(result => result.concept)
-}
-
-/**
- * 
- * @param {Token} token 
+ * @param {MessagedToken} token 
  * @returns {boolean}
  */
 export function token_has_error(token) {
@@ -218,7 +209,7 @@ export function token_has_error(token) {
 
 /**
  * 
- * @param {Token} token 
+ * @param {MessagedToken} token 
  * @returns {boolean}
  */
 export function token_has_message(token) {

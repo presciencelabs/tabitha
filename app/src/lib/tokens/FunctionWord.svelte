@@ -1,7 +1,7 @@
 <script>
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 	export let classes = ''
 </script>

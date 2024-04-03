@@ -3,10 +3,10 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	export let token
 
-	/** @type {Token} */
+	/** @type {SimpleToken} */
 	// @ts-ignore the pronoun will always be non-null at this point
 	const pronoun = token.pronoun
 </script>

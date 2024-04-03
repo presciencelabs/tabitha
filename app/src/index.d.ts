@@ -1,11 +1,14 @@
 type TokenType = 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Clause' |'Added'
 
-type Token = {
+interface MessagedToken {
 	token: string
 	type: TokenType
+	tag: Tag
 	error_message: string
 	suggest_message: string
-	tag: Tag
+}
+
+interface Token extends MessagedToken {
 	specified_sense: string
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
@@ -19,7 +22,7 @@ type Tag = { [tag: string]: string }
 type Clause = Token
 
 type Sentence = {
-	clause: Clause,
+	clause: Clause
 }
 
 type LookupTerm = string
@@ -49,10 +52,6 @@ interface OntologyResult extends LookupWord {
 	categorization: string
 }
 
-interface FormResult extends LookupWord {
-	form: string
-}
-
 interface HowToResult extends LookupWord, HowToResponse {
 	sense: string
 }
@@ -65,9 +64,7 @@ type HowToResponse = {
 	explication: string
 }
 
-type DbRowInflection = {
-	stem: string
-	part_of_speech: string
+interface DbRowInflection extends LookupWord {
 	inflections: string
 }
 
@@ -142,4 +139,42 @@ type CaseFrameResult = {
 	valid_arguments: RoleMatchResult[]
 	extra_arguments: RoleMatchResult[]
 	missing_arguments: ArgumentRoleRule[]
+}
+
+type CheckResponse = {
+	has_error: boolean
+	tokens: SimpleToken[]
+	back_translation: string
+}
+
+interface SimpleToken extends MessagedToken {
+	lookup_results: SimpleLookupResult[]
+	complex_pairing: SimpleToken | null
+	pronoun: SimpleToken | null
+	sub_tokens: SimpleToken[]
+}
+
+type SimpleLookupResult = {
+	concept: string
+	part_of_speech: string
+	form: string
+	level: number
+	gloss: string
+	categorization: string
+	how_to_hints: SimpleHowToResult[]
+	case_frame: SimpleCaseFrameResult
+}
+
+type SimpleHowToResult = {
+	structure: string
+	pairing: string
+	explication: string
+}
+
+type SimpleCaseFrameResult = {
+	is_valid: boolean
+	is_checked: boolean
+	valid_arguments: RoleTag[]
+	extra_arguments: RoleTag[]
+	missing_arguments: RoleTag[]
 }
