@@ -7,5 +7,16 @@ export async function GET({ url: { searchParams }, locals: { db } }) {
 
 	const matches = await get_simplification_hints(db)(complex_term)
 
-	return json(matches)
+	return response(matches)
+
+	/** @param {SimplificationHint[]} result  */
+	function response(result) {
+		const THREE_HOUR_CACHE = {
+			'cache-control': `max-age=${3 * 60 * 60}`,
+		}
+
+		return json(result, {
+			headers: THREE_HOUR_CACHE,
+		})
+	}
 }
