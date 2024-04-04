@@ -61,61 +61,59 @@ export function create_token(token, type, { error='', suggest= '', tag={}, speci
 /**
  * 
  * @param {string} token 
- * @param {Object} [other_data={}] 
- * @param {string} [other_data.error=''] 
- * @param {string} [other_data.suggest=''] 
+ * @param {Message} message
  * @returns {Token}
  */
-export function create_added_token(token, { error='', suggest='' }={}) {
-	return create_token(token, TOKEN_TYPE.ADDED, { error, suggest })
+export function create_added_token(token, message) {
+	return create_token(token, TOKEN_TYPE.ADDED, { ...message })
 }
 
 /**
+ * Set the message on the given token in the message info, or the trigger token by default.
+ * The message will be formatted based on the given token and the token context values within the rule context.
+ * 
+ * @param {RuleTriggerContext} trigger_context 
+ * @param {MessageInfo} message_info 
+ */
+export function set_message(trigger_context, message_info) {
+	const token_to_flag = message_info.token_to_flag ?? trigger_context.trigger_token
+	
+	if (message_info.plain) {
+		set_message_plain(token_to_flag, message_info)
+		return
+	}
+
+	const error = message_info.error ? format_token_message(trigger_context, message_info.error, token_to_flag) : ''
+	const suggest = message_info.suggest ? format_token_message(trigger_context, message_info.suggest, token_to_flag) : ''
+	set_message_plain(token_to_flag, { error, suggest })
+}
+
+/**
+ * Set the message on the given token. No formatting is performed.
  * 
  * @param {Token} token 
- * @param {string} message 
- * @returns {Token}
+ * @param {Message} message
  */
-export function convert_to_error_token(token, message) {
-	return { ...token, error_message: format_token_message(token, message) }
+export function set_message_plain(token, message) {
+	if (message.error) {
+		token.error_message = message.error
+	}
+	if (message.suggest) {
+		token.suggest_message = message.suggest
+	}
 }
 
 /**
- * 
- * @param {Token} token 
- * @param {string} message 
- * @param {Object} [context_data={}]
- * @param {Token[]} [context_data.tokens=[]]
- * @param {ContextFilterResult} [context_data.context_result]
- */
-export function set_error_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
-	token.error_message = format_token_message(token, message, { tokens, context_result })
-	return token
-}
-
-/**
- * 
- * @param {Token} token 
- * @param {string} message 
- * @param {Object} [context_data={}]
- * @param {Token[]} [context_data.tokens=[]]
- * @param {ContextFilterResult} [context_data.context_result]
- */
-export function set_suggest_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
-	token.suggest_message = format_token_message(token, message, { tokens, context_result })
-	return token
-}
-
-/**
+ * Format the message based on the trigger token or the given token if provided.
+ * The message will also be formatted based on the token context values within the rule context.
  * TODO support markers for subtokens?
- * @param {Token} token 
+ * 
+ * @param {RuleTriggerContext} trigger_context
  * @param {string} message 
- * @param {Object} [context_data={}]
- * @param {Token[]} [context_data.tokens=[]]
- * @param {ContextFilterResult} [context_data.context_result]
+ * @param {Token} token 
  */
-export function format_token_message(token, message, { tokens=[], context_result=default_context_result() }={}) {
-	return context_result.context_indexes.reduce(replace_context_markers, replace_markers(message, token))
+export function format_token_message({ tokens, trigger_token, context_indexes }, message, token=trigger_token) {
+	return context_indexes.reduce(replace_context_markers, replace_markers(message, token))
 
 	/**
 	 * @param {string} text 
@@ -140,10 +138,6 @@ export function format_token_message(token, message, { tokens=[], context_result
 			.replaceAll(`{${context_prefix}category}`, result?.part_of_speech ?? 'word')
 			.replaceAll(`{${context_prefix}sense}`, result?.concept ? concept_with_sense(result.concept) : stem)
 	}
-}
-
-function default_context_result() {
-	return { success: true, context_indexes: [], subtoken_indexes: [] }
 }
 
 /**

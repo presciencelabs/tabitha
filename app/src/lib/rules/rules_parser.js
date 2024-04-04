@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, set_token_concept, token_has_tag } from '$lib/parser/token'
+import { TOKEN_TYPE, set_message, set_token_concept, token_has_tag } from '$lib/parser/token'
 
 /**
  *
@@ -420,25 +420,34 @@ export function apply_token_transforms(tokens, token_indexes, transforms) {
 
 /**
  *
- * @param {(token: Token) => Token} mapper
+ * @param {(trigger_context: RuleTriggerContext) => void} action
  * @returns {RuleAction}
  */
-export function create_token_map_action(mapper) {
-	return (tokens, trigger_index) => {
-		tokens[trigger_index] = mapper(tokens[trigger_index])
-		return trigger_index + 1
+export function simple_rule_action(action) {
+	return trigger_context => {
+		action(trigger_context)
+		return trigger_context.trigger_index + 1
 	}
 }
 
 /**
- *
- * @param {(token: Token) => void} action
+ * @param {(trigger_context: RuleTriggerContext) => Iterable<MessageInfo> | MessageInfo | undefined } action
  * @returns {RuleAction}
  */
-export function create_token_modify_action(action) {
-	return (tokens, trigger_index) => {
-		action(tokens[trigger_index])
-		return trigger_index + 1
+export function message_set_action(action) {
+	return trigger_context => {
+		const result = action(trigger_context)
+		if (result === undefined) {
+			return trigger_context.trigger_index + 1
+		}
+
+		if (Symbol.iterator in result) {
+			[...result].forEach(message => set_message(trigger_context, message))
+		} else {
+			set_message(trigger_context, result)
+		}
+
+		return trigger_context.trigger_index + 1
 	}
 }
 

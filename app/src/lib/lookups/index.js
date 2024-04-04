@@ -1,6 +1,6 @@
 import { TOKEN_TYPE, token_has_tag } from '../parser/token'
 import { REGEXES } from '../regexes'
-import { create_context_filter, create_token_filter, create_token_modify_action } from '../rules/rules_parser'
+import { create_context_filter, create_token_filter, simple_rule_action } from '../rules/rules_parser'
 import { apply_rule_to_tokens } from '../rules/rules_processor'
 import { check_forms } from './form'
 import { check_how_to } from './how_to'
@@ -77,7 +77,7 @@ const result_filter_rules = [
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag(token, { 'position': 'first_word' }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: simple_rule_action(({ trigger_token: token }) => {
 				if (token.token !== 'null') {
 					// 'null' is used for some double pairings like 'friends/brothers and null/sisters'.
 					// But the concept in the ontology is NULL, so should not be filtered by capitalization
@@ -96,8 +96,8 @@ const result_filter_rules = [
 		rule: {
 			trigger: create_token_filter({ 'token': 'to|from|down|off|out|up' }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
-				token.lookup_results = []
+			action: simple_rule_action(({ trigger_token }) => {
+				trigger_token.lookup_results = []
 			}),
 		},
 	},

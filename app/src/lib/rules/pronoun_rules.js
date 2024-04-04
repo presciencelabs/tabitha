@@ -1,5 +1,5 @@
-import { create_context_filter, create_token_map_action } from './rules_parser'
-import { TOKEN_TYPE, add_tag_to_token, convert_to_error_token, set_error_message, token_has_error } from '../parser/token'
+import { create_context_filter, message_set_action } from './rules_parser'
+import { TOKEN_TYPE, add_tag_to_token, token_has_error } from '../parser/token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -42,15 +42,7 @@ const builtin_pronoun_rules = [
 		'rule': {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_error(token),
 			context: create_context_filter({}),
-			action: create_token_map_action(token => {
-				const normalized_token = token.token.toLowerCase()
-
-				if (PRONOUN_MESSAGES.has(normalized_token)) {
-					// @ts-ignore
-					return convert_to_error_token(token, PRONOUN_MESSAGES.get(normalized_token))
-				}
-				return token
-			}),
+			action: message_set_action(({ trigger_token: { token } }) => ({ error: PRONOUN_MESSAGES.get(token.toLowerCase()) })),
 		},
 	},
 	{
@@ -59,22 +51,21 @@ const builtin_pronoun_rules = [
 		'rule': {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
-			action: create_token_map_action(token => {
-				if (token.pronoun === null) {
-					return token
+			action: message_set_action(({ trigger_token }) => {
+				if (trigger_token.pronoun === null) {
+					return
 				}
 				
-				const pronoun = token.pronoun
+				const pronoun = trigger_token.pronoun
 				const normalized_pronoun = pronoun.token.toLowerCase()
 
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
 				const message = PRONOUN_MESSAGES.get(normalized_pronoun) ?? 'Unrecognized pronoun "{token}"'
 				if (tag) {
-					add_tag_to_token(token, { 'pronoun': tag })
+					add_tag_to_token(trigger_token, { 'pronoun': tag })
 				} else {
-					set_error_message(pronoun, message)
+					return { token_to_flag: pronoun, error: message }
 				}
-				return token
 			}),
 		},
 	},

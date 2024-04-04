@@ -76,6 +76,13 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
+		'name': 'close to becomes close',
+		'trigger': { 'token': 'close' },
+		'context': { 'followedby': { 'token': 'to' } },
+		'lookup': 'close',
+		'combine': 1,
+	},
+	{
 		'name': 'give birth',
 		'trigger': { 'stem': 'give' },
 		'context': { 'followedby': { 'token': 'birth' } },
@@ -173,12 +180,10 @@ export function parse_lookup_rule(rule_json) {
 
 	/**
 	 * 
-	 * @param {Token[]} tokens 
-	 * @param {number} trigger_index 
-	 * @param {ContextFilterResult} context_result 
+	 * @param {RuleTriggerContext} trigger_context 
 	 * @returns {number}
 	 */
-	function lookup_rule_action(tokens, trigger_index, { context_indexes }) {
+	function lookup_rule_action({ tokens, trigger_index, context_indexes }) {
 		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: lookup_term.split('|') }
 
 		if (context_indexes.length === 0) {

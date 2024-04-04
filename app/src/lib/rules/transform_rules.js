@@ -22,6 +22,11 @@ const transform_rules_json = [
 		'transform': { 'function': { 'syntax': 'infinitive|infinitive_same_subject' } },
 	},
 	{
+		'name': 'tag "in-order-to" as "same subject"',
+		'trigger': { 'stem': 'in-order-to' },
+		'transform': { 'tag': { 'syntax': 'infinitive_same_subject' } },
+	},
+	{
 		'name': 'start or begin before a verb becomes a function word',
 		'trigger': { 'stem': 'start|begin' },
 		'context': {
@@ -117,8 +122,24 @@ const transform_rules_json = [
 	{
 		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_participant\'',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
-		'context': { 'subtokens': { 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': { 'token': '[' } } },
+		'context': { 
+			'subtokens': { 'token': 'to', 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': { 'token': '[' } },
+		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
+		'comment': 'eg John wanted [to sing]',
+	},
+	{
+		'name': 'tag subordinate clauses starting with a participle Verb as \'same_participant\'',
+		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
+		'context': {
+			'subtokens': {
+				'category': 'Verb',
+				'form': 'stem|participle',
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
+		},
+		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
+		'comment': 'eg John likes [singing]',
 	},
 	{
 		'name': 'tag subordinate clauses where the verb is a participle for see/hear',
@@ -337,6 +358,54 @@ const transform_rules_json = [
 		'comment': "can't use 'np_modifiers' in the 'notfollowedby' skip since we don't want to skip the genitive_norman 'of'",
 	},
 	{
+		// TODO handle this in adjective case frame rules
+		'name': 'handle certain adjectives with a patient NP with "to"',
+		'trigger': { 'stem': 'faithful|attracted|cruel|kind' },
+		'context': {
+			'followedby': [{ 'token': 'to' }, { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' }],
+		},
+		'context_transform': [{ 'function': '' }, { 'tag': { 'role': 'adjective_patient', 'syntax': 'nested_np' } }],
+		'comment': "eg 'faithful to X', 'attracted to X'. X should not be interpreted as a destination argument of a Verb",
+	},
+	{
+		// TODO handle this in adjective case frame rules
+		'name': 'handle certain adjectives with a patient NP with "from"',
+		'trigger': { 'stem': 'different|far' },
+		'context': {
+			'followedby': [{ 'token': 'from' }, { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' }],
+		},
+		'context_transform': [{ 'function': '' }, { 'tag': { 'role': 'adjective_patient', 'syntax': 'nested_np' } }],
+		'comment': "eg 'different from X'. X should not be interpreted as a source argument of a Verb",
+	},
+	{
+		// TODO handle this in adjective case frame rules
+		'name': 'handle unit arguments for measurement adjectives',
+		'trigger': { 'stem': 'long|wide|tall|deep' },
+		'context': {
+			'precededby': { 'category': 'Noun' },
+		},
+		'context_transform': { 'tag': { 'role': 'adjective_patient', 'syntax': 'nested_np' } },
+		'comment': "eg '20 meters tall'. A unit like this should not be interpreted as an argument of a Verb",
+	},
+	{
+		'name': 'handle noun argument for relationship with X',
+		'trigger': { 'stem': 'relationship' },
+		'context': {
+			'followedby': [{ 'token': 'with' }, { 'category': 'Noun', 'skip': 'np_modifiers' }],
+		},
+		'context_transform': [{ 'function': '' }, { 'tag': { 'syntax': 'nested_np' } }],
+		'comment': "eg 'relationship with X'. X should not be interpreted as an argument of a Verb",
+	},
+	{
+		'name': 'handle noun argument for faith in X',
+		'trigger': { 'stem': 'faith' },
+		'context': {
+			'followedby': [{ 'token': 'in' }, { 'category': 'Noun', 'skip': 'np_modifiers' }],
+		},
+		'context_transform': [{ 'function': '' }, { 'tag': { 'syntax': 'nested_np' } }],
+		'comment': "eg 'faith in X'. X should not be interpreted as an argument of a Verb",
+	},
+	{
 		'name': 'tag addressee nouns',
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': {
@@ -379,12 +448,10 @@ export function parse_transform_rule(rule_json) {
 
 	/**
 	 * 
-	 * @param {Token[]} tokens 
-	 * @param {number} trigger_index 
-	 * @param {ContextFilterResult} context_result 
+	 * @param {RuleTriggerContext} trigger_context 
 	 * @returns {number}
 	 */
-	function transform_rule_action(tokens, trigger_index, { context_indexes, subtoken_indexes }) {
+	function transform_rule_action({ tokens, trigger_index, context_indexes, subtoken_indexes }) {
 		const transforms = [transform, ...context_transforms]
 		const indexes = [trigger_index, ...context_indexes]
 

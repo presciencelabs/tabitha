@@ -57,7 +57,12 @@ export function apply_rule_to_tokens(tokens, rule) {
 			i++
 			continue
 		}
-		i = rule.action(tokens, i, context_result)
+		i = rule.action({
+			tokens,
+			trigger_index: i,
+			trigger_token: tokens[i],
+			...context_result,
+		})
 	}
 
 	return tokens

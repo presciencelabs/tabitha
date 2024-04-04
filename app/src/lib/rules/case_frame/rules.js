@@ -1,4 +1,4 @@
-import { create_context_filter, create_token_filter } from '../rules_parser'
+import { create_context_filter, create_token_filter, simple_rule_action } from '../rules_parser'
 import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs'
 
 
@@ -13,10 +13,7 @@ const case_frame_rules = [
 				'notprecededby': { 'tag': [{ 'syntax': 'relativizer|infinitive_same_subject' }, { 'auxiliary': 'passive' }], 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
-			action: (tokens, trigger_index) => {
-				check_verb_case_frames(tokens, trigger_index)
-				return trigger_index + 1
-			},
+			action: simple_rule_action(check_verb_case_frames),
 		},
 	},
 	{
@@ -29,10 +26,7 @@ const case_frame_rules = [
 				'notprecededby': { 'tag': { 'syntax': 'relativizer|infinitive_same_subject' }, 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
-			action: (tokens, trigger_index) => {
-				check_verb_case_frames_passive(tokens, trigger_index)
-				return trigger_index + 1
-			},
+			action: simple_rule_action(check_verb_case_frames_passive),
 		},
 	},
 ]

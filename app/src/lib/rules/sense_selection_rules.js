@@ -1,5 +1,5 @@
-import { TOKEN_TYPE, find_result_index, set_suggest_message, set_token_concept } from '$lib/parser/token'
-import { create_context_filter, create_token_filter } from './rules_parser'
+import { TOKEN_TYPE, find_result_index, set_message, set_token_concept } from '$lib/parser/token'
+import { create_context_filter, simple_rule_action, create_token_filter } from './rules_parser'
 
 /**
  * These rules help decide which sense to select from the ones that match the argument structure.
@@ -47,17 +47,33 @@ const verb_sense_rules = [
 		} }],	// class membership (eg. John is a wicked man)
 		['be-Q', { 'state': { 'stem': 'bronze|clay|cloth|gold|iron|metal|sackcloth|silver|wood' } } ],	// substance (made of)
 		['be-M', { 'state': { 'stem': 'ancestor|brother|child|daughter|descendant|father|husband|mother|sister|son|wife' } }],	// kinship
-		['be-L', { 'state': { 'stem': 'apostle|captain|emperor|governor|judge|king|leader|officer|official|priest|prince|prophet|queen|ruler|servant|slave' } }],	// social role
+		['be-L', { 'state': { 'stem': 'apostle|captain|emperor|farmer|governor|judge|king|leader|officer|official|priest|prince|prophet|queen|ruler|servant|slave|teacher' } }],	// social role
 		['be-S', { }],	// age
 		['be-B', { }],	// equative
 		// senses with adjectives
 		['be-D', { }],	// predicative
 		['be-F', { }],	// general locative
 	]],
+	['become', [
+		// 'become' is very particular and so each sense is specified to make the priority clear. Not all verbs will need this.
+		['become-G', { }],	// become like
+		['become-J', { }],	// metaphorical
+		['become-F', { 'agent': { 'stem': 'weather' } }],	// weather
+		['become-I', { 'state': { 'stem': 'day|morning|afternoon|evening|Sabbath' } }],	// temporal TODO check features of word from lexicon
+		['become-H', { 'state': { 'stem': 'bronze|clay|cloth|gold|iron|metal|sackcloth|silver|wood' } } ],	// substance (made of)
+		['become-E', { 'state': { 'stem': 'ancestor|brother|child|daughter|descendant|father|husband|mother|sister|son|wife' } }],	// kinship
+		['become-C', { 'state': { 'stem': 'apostle|captain|emperor|farmer|governor|judge|king|leader|officer|official|priest|prince|prophet|queen|ruler|servant|slave|teacher' } }],	// social role
+		['become-B', { }],	// class membership
+		['become-D', { }],	// equative
+		['become-A', { }],	// predicative
+	]],
 	['give', [
 		['give-B', { 'patient': { 'stem': 'ring|vaccine' } }],
 		// TODO add another give-B entry to use a lexicon feature to check for any person.
 		['give-C', { 'patient': { 'stem': 'authority|law|name|peace|power|promise|skill|wisdom' } }],
+	]],
+	['go', [
+		['go-B', { 'agent': { 'stem': 'border' } }],
 	]],
 	['have', [
 		['have-H', { 'state': { 'stem': 'eunuch|man|servant|slave' } }],
@@ -73,6 +89,13 @@ const verb_sense_rules = [
 	['know', [
 		['know-C', { 'patient': { 'stem': 'law|meaning|name|secret|thing' } }],
 	]],
+	['leave', [
+		['leave-B', { 'patient': { 'stem': 'father|king|man|Mary|Naomi|person|woman|Simon|Jesus|boy' } }],	// TODO use lexicon rules. these values were copied from the analyzer
+	]],
+	['live', [
+		['live-B', { 'lifespan_oblique': { } }],
+		['live-C', { 'just_like_clause': { } }],
+	]],
 	['make', [
 		['make-C', { 'patient': { 'stem': 'command|fire|god|peace|promise|wave|covenant' } }],
 		['make-E', { 'patient': { 'stem': 'bread|food' } }],
@@ -84,8 +107,18 @@ const verb_sense_rules = [
 		['see-D', { 'patient': { 'stem': 'dream|vision' } }],
 		['see-C', { }],	// prioritize see-C over see-B gets selected
 	]],
+	['send', [
+		['send-B', { 'patient': { 'stem': 'letter|message' } }],
+	]],
 	['speak', [
 		['speak-B', { }],	// prioritize speak-B over speak-A
+	]],
+	['take', [
+		['take-B', { 'patient': { 'level': '4' } }], // TODO use a lexicon feature to check for any person.
+		['take-B', { 'patient': { 'stem': 'person|man|woman|child|son|daughter' } }],
+		['take-C', { 'patient': { 'stem': 'rooster|sheep|horse' } }],
+		['take-D', { 'source': { 'stem': 'person|man|woman|child|son|daughter' } }], // TODO use a lexicon feature to check for any person.
+		['take-E', { 'destination': { 'stem': 'person|man|woman|child|son|daughter' } }], // TODO use a lexicon feature to check for any person.
 	]],
 	['tell', [
 		// prioritize tell-C over tell-A due to the presence of the 'about'. tell-A may count as valid if there is a relative clause on its patient.
@@ -97,13 +130,12 @@ const verb_sense_rules = [
 ]
 
 /**
- * @typedef {(tokens: Token[], role_matches: RoleMatchResult[]) => boolean} ArgumentMatchFilter
  * @param {SenseRules} sense_rules 
  * @returns {[WordSense, ArgumentMatchFilter]}
  */
 function parse_verb_sense_rule([sense, sense_rule_json]) {
 	const role_filters = Object.entries(sense_rule_json).map(parse_sense_rule)
-	return [sense, (tokens, role_match) => role_filters.every(filter => filter(tokens, role_match))]
+	return [sense, role_match => role_filters.every(filter => filter(role_match))]
 
 	/**
 	 * 
@@ -114,14 +146,14 @@ function parse_verb_sense_rule([sense, sense_rule_json]) {
 		const trigger = create_token_filter(role_filter_json)
 		const context = create_context_filter(role_filter_json['context'])
 
-		return (tokens, role_matches) => {
+		return role_matches => {
 			const match_result = role_matches.find(match => match.role_tag === role_tag)
 			if (!match_result) {
 				return false
 			}
 
-			const index = match_result.trigger_index
-			return trigger(tokens[index]) && context(tokens, index).success
+			const { tokens, trigger_index, trigger_token } = match_result.trigger_context
+			return trigger(trigger_token) && context(tokens, trigger_index).success
 		}
 	}
 }
@@ -141,16 +173,14 @@ const sense_rules = [
 		rule: {
 			trigger: create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }),
 			context: create_context_filter({ }),
-			action: (tokens, trigger_index) => {
-				const token = tokens[trigger_index]
-				select_word_sense(tokens, token)
+			action: simple_rule_action(trigger_context => {
+				const token = trigger_context.trigger_token
+				select_word_sense(token, trigger_context)
 
 				if (token.complex_pairing) {
-					select_word_sense(tokens, token.complex_pairing)
+					select_word_sense(token.complex_pairing, trigger_context)
 				}
-				
-				return trigger_index + 1
-			},
+			}),
 		},
 	},
 ]
@@ -159,11 +189,10 @@ export const SENSE_RULES = sense_rules.map(({ rule }) => rule)
 
 /**
  * 
- * @param {Token[]} tokens 
  * @param {Token} token
  * @returns {WordSense | undefined}
  */
-function find_matching_sense(tokens, token) {
+function find_matching_sense(token) {
 	if (!token.lookup_results.some(result => result.case_frame.is_checked)) {
 		return undefined
 	}
@@ -185,16 +214,16 @@ function find_matching_sense(tokens, token) {
 		}
 
 		const result = token.lookup_results[result_index]
-		return result.case_frame.is_valid && match_filter(tokens, result.case_frame.valid_arguments)
+		return result.case_frame.is_valid && match_filter(result.case_frame.valid_arguments)
 	}
 }
 
 /**
  * 
- * @param {Token[]} tokens
  * @param {Token} token
+ * @param {RuleTriggerContext} trigger_context
  */
-function select_word_sense(tokens, token) {
+function select_word_sense(token, trigger_context) {
 	if (token.lookup_results.length === 0) {
 		return
 	}
@@ -208,13 +237,13 @@ function select_word_sense(tokens, token) {
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.
 	// The lookups should already be ordered alphabetically so the first valid sense is the lowest letter
-	const default_matching_sense = find_matching_sense(tokens, token)
+	const default_matching_sense = find_matching_sense(token)
 		|| `${stem}-${valid_lookups.at(0)?.concept?.sense ?? 'A'}`
 
 	const specified_sense = token.specified_sense ? `${stem}-${token.specified_sense}` : ''
 
 	if (specified_sense === default_matching_sense) {
-		set_suggest_message(token, 'Consider removing the sense, as it would be selected by default.')
+		set_message(trigger_context, { token_to_flag: token, suggest: 'Consider removing the sense, as it would be selected by default.', plain: true })
 	}
 
 	const sense_to_select = specified_sense ? specified_sense : default_matching_sense
@@ -227,6 +256,6 @@ function select_word_sense(tokens, token) {
 
 	// apply the selected result's argument actions
 	for (const valid_argument of selected_result.case_frame.valid_arguments) {
-		valid_argument.rule.action(tokens, valid_argument)
+		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
 	}
 }

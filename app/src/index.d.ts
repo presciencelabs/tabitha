@@ -25,6 +25,16 @@ type Sentence = {
 	clause: Clause
 }
 
+interface Message {
+	error?: string
+	suggest?: string
+}
+
+interface MessageInfo extends Message {
+	token_to_flag?: Token
+	plain?: boolean
+}
+
 type LookupTerm = string
 
 type LookupResponse<T> = {
@@ -81,12 +91,21 @@ type ContextFilterResult = {
 type TokenTransform = (token: Token) => Token
 
 type CheckerAction = {
+	on: string?;
 	precededby: string?;
 	followedby: string?;
 	message: string
 }
 
-type RuleAction = (tokens: Token[], trigger_index: number, context_result: ContextFilterResult) => number
+type RuleTriggerContext = {
+	trigger_token: Token
+	trigger_index: number
+	tokens: Token[]
+	context_indexes: number[]
+	subtoken_indexes: number[]
+}
+
+type RuleAction = (trigger_context: RuleTriggerContext) => number
 
 type TokenRule = {
 	trigger: TokenFilter
@@ -106,9 +125,7 @@ type WordStem = string
 
 type ArgumentRoleRule = {
 	role_tag: RoleTag
-	trigger: TokenFilter
-	context: TokenContextFilter
-	action: RoleRuleAction
+	trigger_rule: TokenRule
 	missing_message: string
 	extra_message: string
 }
@@ -121,15 +138,12 @@ type ArgumentRulesForSense = {
 	patient_clause_type: RoleTag
 }
 
-type RoleRuleAction = (tokens: Token[], role_match: RoleMatchResult) => void
-
-type ArgumentMatchFilter = (tokens: Token[], role_matches: RoleMatchResult[]) => boolean
+type ArgumentMatchFilter = (role_matches: RoleMatchResult[]) => boolean
 
 type RoleMatchResult = {
 	role_tag: RoleTag
 	success: boolean
-	trigger_index: number
-	context_indexes: number[]
+	trigger_context: RuleTriggerContext
 	rule: ArgumentRoleRule
 }
 

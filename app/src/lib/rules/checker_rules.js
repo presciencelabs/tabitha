@@ -1,8 +1,8 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, create_added_token, format_token_message, set_error_message, set_suggest_message } from '$lib/parser/token'
+import { TOKEN_TYPE, create_added_token, format_token_message, set_message_plain } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
-import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
+import { create_context_filter, create_token_filter, message_set_action } from './rules_parser'
 
 const checker_rules_json = [
 	{
@@ -365,19 +365,19 @@ const checker_rules_json = [
 		},
 		'comment': 'See section 0.8 of the Phase 1 checklist',
 	},
-	// TODO Look outside the subordinate clause for 'time'. Currently this falsely flags a 'when' adverbial clause. 
-	// {
-	// 	'name': 'Don\'t allow \'when\' as a relativizer',
-	// 	'trigger': { 'token': 'when' },
-	// 	'context': {
-	// 		'precededby': { 'token': '[' },
-	// 		'notfollowedby': { 'token': '?', 'skip': 'all' },
-	// 	},
-	// 	'require': {
-	// 		'message': 'Cannot use \'when\' as a relativizer. Use \'the time [that...]\' instead.',
-	// 	},
-	// 	'comment': 'See section 0.8 of the Phase 1 checklist.',
-	// },
+	{
+		'name': 'Don\'t allow \'when\' as a relativizer',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
+		'context': {
+			'precededby': { 'token': 'time' },
+			'subtokens': { 'token': 'when', 'skip': { 'token': '[' } },
+		},
+		'require': {
+			'on': 'subtokens:0',
+			'message': 'Cannot use \'when\' as a relativizer. Use \'the time [that...]\' instead. See P1 Checklist 0.8.',
+		},
+		'comment': 'See section 0.8 of the Phase 1 checklist.',
+	},
 	{
 		'name': 'Don\'t allow \'whose\' as a relativizer',
 		'trigger': { 'token': 'whose' },
@@ -493,6 +493,56 @@ const checker_rules_json = [
 			'message': 'Consider writing \'{stem} X\' instead of \'X [{0:token} be {stem}]\'. The attributive adjective is generally preferred over a relative clause.',
 		},
 	},
+	{
+		'name': 'Check for an errant \'that\' in a complement clause',
+		'trigger': { 'tag': { 'clause_type': 'patient_clause_different_participant|agent_clause' } },
+		'context': {
+			'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
+		},
+		'suggest': {
+			'on': 'subtokens:0',
+			'message': 'Unless this \'that\' is supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.',
+		},
+		'comment': 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
+	},
+	{
+		'name': 'Don\'t allow passives in \'same subject\' patient clauses',
+		'trigger': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
+		'context': {
+			'precededby': { 'category': 'Verb', 'skip': 'all' },
+			'subtokens': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
+		},
+		'require': {
+			'on': 'subtokens:0',
+			'message': 'Cannot use a passive within this patient clause because its subject is required to be the same as the outer Verb. Try making the subject explicit, or reword the sentence. See P1 Checklist 24.',
+		},
+		'comment': 'eg. John wanted XX[to be seen by Mary]XX.',
+	},
+	{
+		'name': 'Don\'t allow passives in \'same subject\' adverbial clauses',
+		'trigger': { 'tag': { 'auxiliary': 'passive' } },
+		'context': {
+			'precededby': { 'stem': 'in-order-to', 'skip': 'all' },
+		},
+		'require': {
+			'message': "Cannot use a passive within an 'in-order-to' clause because its subject is required to be the same as the outer Verb. Consider using 'so-that' instead. See P1 Checklist 24.",
+		},
+		'comment': 'eg. John went to the market XX[in-order-to be seen by Mary]XX.',
+	},
+	
+	{
+		'name': "Don't allow negatives with 'purpose' adverbial clauses",
+		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },
+		'context': {
+			'precededby': { 'tag': { 'verb_polarity': 'negative' }, 'skip': 'all' },
+			'subtokens': { 'stem': 'in-order-to|because|so', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+		},
+		'suggest': {
+			'on': 'context:0',
+			'message': "Avoid using a negative verb outside a clause expressing cause or purpose, as the scope of the 'not' is ambiguous. See P1 Checklist 27 for suggestions.",
+		},
+		'comment': "See Phase 1 Checklist section 27. eg 'John did not go [in-order-to buy food].' - does this mean he didn't go at all or he went for a different reason?",
+	},
 ]
 
 /** @type {BuiltInRule[]} */
@@ -503,22 +553,24 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'position': 'first_word' } }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: message_set_action(({ trigger_token: token }) => {
 				const token_to_test = token.pronoun ? token.pronoun : token
 				if (REGEXES.STARTS_LOWERCASE.test(token_to_test.token) && !token_to_test.error_message) {
-					set_error_message(token_to_test, ERRORS.FIRST_WORD_NOT_CAPITALIZED)
+					return { token_to_flag: token_to_test, error: ERRORS.FIRST_WORD_NOT_CAPITALIZED }
 				}
 			}),
 		},
 	},
 	{
 		name: 'Check that level 3 words are within a (complex) alternate',
-		comment: '',
+		comment: 'The complex word may be in a nested clause within the clause that has the (complex) tag',
 		rule: {
 			trigger: create_token_filter({ 'level': '3' }),
 			context: create_context_filter({ 'notprecededby': { 'token': '(complex)', 'skip': 'all' } }),
-			action: create_token_modify_action(token => {
-				set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
+			action: message_set_action(() => {
+				return {}
+				// TODO Re-enable when we support looking out from nested clauses.
+				// return { error: ERRORS.WORD_LEVEL_TOO_HIGH }
 			}),
 		},
 	},
@@ -528,9 +580,7 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: create_token_filter({ 'level': '2' }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
-				set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
-			}),
+			action: message_set_action(() => ({ error: ERRORS.WORD_LEVEL_TOO_HIGH })),
 		},
 	},
 	{
@@ -539,15 +589,15 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: token => token.complex_pairing !== null,
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: message_set_action(function* ({ trigger_token: token }) {
 				// the simple word should never be level 2 or 3
 				if (check_token_level(is_level_complex)(token)) {
-					set_error_message(token, ERRORS.WORD_LEVEL_TOO_HIGH)
+					yield { error: ERRORS.WORD_LEVEL_TOO_HIGH }
 				}
 
 				// the complex word should never be level 0 or 1
 				if (token.complex_pairing && check_token_level(is_level_simple)(token.complex_pairing)) {
-					set_error_message(token.complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+					yield { token_to_flag: token.complex_pairing, error: ERRORS.WORD_LEVEL_TOO_LOW }
 				}
 			}),
 		},
@@ -558,23 +608,18 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: message_set_action(function* ({ trigger_token: token }) {
 				// Alert if the first result is complex and there are also non-complex results (including proper nouns - see 'ark')
 				// If the first result is already simple, that will be selected by default and thus not ambiguous.
 				// Level 2 and 3 words are treated differently, so a combination of the two should also be ambiguous - see 'kingdom'
 				if (check_ambiguous_level(is_level(2))(token) || check_ambiguous_level(is_level(3))(token)) {
-					set_suggest_message(token, ERRORS.AMBIGUOUS_LEVEL)
-				}
-
-				const pairing = token.complex_pairing
-				if (!pairing) {
-					return
+					yield { suggest: ERRORS.AMBIGUOUS_LEVEL }
 				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
-				if (check_ambiguous_level(is_level_simple)(pairing)) {
-					set_suggest_message(pairing, ERRORS.AMBIGUOUS_LEVEL)
+				if (token.complex_pairing && check_ambiguous_level(is_level_simple)(token.complex_pairing)) {
+					yield { token_to_flag: token.complex_pairing, suggest: ERRORS.AMBIGUOUS_LEVEL }
 				}
 			}),
 		},
@@ -585,11 +630,11 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
-				check_lookup_results(token)
+			action: message_set_action(function* ({ trigger_token: token }) {
+				yield check_lookup_results(token)
 
 				if (token.complex_pairing) {
-					check_lookup_results(token.complex_pairing)
+					yield check_lookup_results(token.complex_pairing)
 				}
 			}),
 		},
@@ -600,23 +645,7 @@ const builtin_checker_rules = [
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({ }),
-			action: (tokens, trigger_index) => {
-				validate_case_frame(tokens, trigger_index)
-				return trigger_index + 1
-			},
-		},
-	},
-	{
-		name: 'Check for an errant \'that\' in a complement clause',
-		comment: 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
-		rule: {
-			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_different_participant|agent_clause' } }),
-			context: create_context_filter({
-				'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
-			}),
-			action: create_token_modify_action(token => {
-				set_suggest_message(token.sub_tokens[1], 'Unless this \'that\' is supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.')
-			}),
+			action: message_set_action(validate_case_frame),
 		},
 	},
 	{
@@ -627,21 +656,23 @@ const builtin_checker_rules = [
 			context: create_context_filter({
 				'precededby': { 'category': 'Verb', 'skip': 'all' },
 			}),
-			action: (tokens, trigger_index, { context_indexes }) => {
+			action: message_set_action(({ tokens, trigger_token, context_indexes }) => {
 				const verb_token = tokens[context_indexes[0]]
 				const case_frames = verb_token.lookup_results.map(result => result.case_frame)
 				if (case_frames.length === 0 || case_frames[0].is_valid) {
-					return trigger_index + 1
+					return
 				}
 				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments.map(rule => rule.role_tag)))
 
 				// Only show the message if all senses are invalid, but some are missing a patient clause
 				if (['agent_clause', 'patient_clause_different_participant'].some(role => missing_arguments.has(role))) {
-					const that_token = tokens[trigger_index].sub_tokens[1]
-					set_suggest_message(that_token, 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.')
+					const that_token = trigger_token.sub_tokens[1]
+					return {
+						token_to_flag: that_token,
+						suggest: 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.',
+					}
 				}
-				return trigger_index + 1
-			},
+			}),
 		},
 	},
 	{
@@ -652,19 +683,20 @@ const builtin_checker_rules = [
 			context: create_context_filter({
 				'subtokens': { 'token': '(complex)', 'skip': 'all' },
 			}),
-			action: (tokens, trigger_index, context_result) => {
+			action: message_set_action(({ tokens, trigger_index, subtoken_indexes }) => {
 				const next_clause_index = trigger_index + 1
 				const next_clause_context_filter = create_context_filter({
 					'subtokens': { 'token': '(simple)', 'skip': 'all' },
 				})
 
 				if (next_clause_index >= tokens.length || !next_clause_context_filter(tokens, next_clause_index).success) {
-					const complex_token = tokens[trigger_index].sub_tokens[context_result.subtoken_indexes[0]]
-					set_suggest_message(complex_token, 'A simple vocabulary alternate typically directly follows a complex alternate, but no simple alternate was found.')
+					const complex_token = tokens[trigger_index].sub_tokens[subtoken_indexes[0]]
+					return {
+						token_to_flag: complex_token,
+						suggest: 'A simple vocabulary alternate typically directly follows a complex alternate, but no simple alternate was found.',
+					}
 				}
-
-				return trigger_index + 1
-			},
+			}),
 		},
 	},
 ]
@@ -681,7 +713,7 @@ export function parse_checker_rule(rule_json) {
 	// one of these has to be present, but not both
 	const require_json = rule_json['require']
 	const suggest_json = rule_json['suggest']
-	const action = require_json ? checker_require_action(require_json) : checker_suggest_action(suggest_json)
+	const action = require_json ? checker_action(require_json, 'error') : checker_action(suggest_json, 'suggest')
 
 	return {
 		trigger,
@@ -690,51 +722,46 @@ export function parse_checker_rule(rule_json) {
 	}
 
 	/**
-	 * 
-	 * @param {CheckerAction} require
+	 * @param {CheckerAction} action 
+	 * @param {'error'|'suggest'} message_type 
 	 * @returns {RuleAction}
 	 */
-	function checker_require_action(require) {
-		return (tokens, trigger_index, context_result) => {
-			const formatted_message = format_token_message(tokens[trigger_index], require.message, { tokens, context_result })
+	function checker_action(action, message_type) {
+		return trigger_context => {
+			const { tokens, trigger_index } = trigger_context
+
+			const formatted_message = format_token_message(trigger_context, action.message)
+			const message = { [message_type]: formatted_message }
 
 			// The action will have a precededby, followedby, or neither. Never both.
-			if (require.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(require.precededby, { error: formatted_message }))
+			if (action.precededby) {
+				tokens.splice(trigger_index, 0, create_added_token(action.precededby, message))
 				return trigger_index + 2
 			}
-			if (require.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(require.followedby, { error: formatted_message }))
+			if (action.followedby) {
+				tokens.splice(trigger_index + 1, 0, create_added_token(action.followedby, message))
 				return trigger_index + 2
 			}
 
-			tokens[trigger_index].error_message = formatted_message
+			const token_to_flag = get_token_to_flag(action, trigger_context)
+			set_message_plain(token_to_flag, message)
 			return trigger_index + 1
 		}
 	}
 
 	/**
 	 * 
-	 * @param {CheckerAction} suggest
-	 * @returns {RuleAction}
+	 * @param {CheckerAction} action 
+	 * @param {RuleTriggerContext} trigger_context 
 	 */
-	function checker_suggest_action(suggest) {
-		return (tokens, trigger_index, context_result) => {
-			const formatted_message = format_token_message(tokens[trigger_index], suggest.message, { tokens, context_result })
-
-			// The action will have a precededby, followedby, or neither. Never both.
-			if (suggest.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(suggest.precededby, { suggest: formatted_message }))
-				return trigger_index + 2
-			}
-			if (suggest.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(suggest.followedby, { suggest: formatted_message }))
-				return trigger_index + 2
-			}
-
-			tokens[trigger_index].suggest_message = formatted_message
-			return trigger_index + 1
+	function get_token_to_flag(action, { tokens, trigger_token, context_indexes, subtoken_indexes }) {
+		if (!action.on) {
+			return trigger_token
 		}
+		const [name, index] = action.on.split(':')
+		return name === 'context' ? tokens[context_indexes[parseInt(index)]] :
+			name === 'subtokens' ? trigger_token.sub_tokens[subtoken_indexes[parseInt(index)]] :
+				trigger_token
 	}
 }
 
@@ -767,20 +794,21 @@ function check_ambiguous_level(level_check) {
 /**
  * 
  * @param {Token} token 
+ * @returns {MessageInfo}
  */
 function check_lookup_results(token) {
 	if (token.lookup_results.some(result => result.concept !== null && result.concept.id !== '0')) {
-		return
+		return {}
 	}
 
 	if (token.lookup_results.at(0)?.concept?.id === '0') {
-		set_suggest_message(token, 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.')
+		return { token_to_flag: token, suggest: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
 
 	} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
-		set_error_message(token, 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.')
+		return { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 		
 	} else {
-		set_suggest_message(token, '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.')
+		return { token_to_flag: token, suggest: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
 	}
 }
 

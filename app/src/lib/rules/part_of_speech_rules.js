@@ -1,6 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { set_error_message } from '$lib/parser/token'
-import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
+import { create_context_filter, create_token_filter, message_set_action, simple_rule_action } from './rules_parser'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -190,6 +189,14 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 3:24  Nebuchadnezzar was very surprised(V/Adj).',
 	},
 	{
+		'name': 'If Verb-Adjective "long" preceded by a unit of length, remove Verb',
+		'category': 'Verb|Adjective',
+		'trigger': { 'token': 'long' },
+		'context': { 'precededby': { 'stem': 'meter|kilometer|cubit' } },
+		'remove': 'Verb',
+		'comment': 'The boat was 200 meters long(V/Adj/Adv).',
+	},
+	{
 		'name': 'If Verb-Adjective preceded by a Noun, remove Adjective',
 		'category': 'Verb|Adjective',
 		'context': { 'precededby': { 'category': 'Noun' } },
@@ -203,6 +210,22 @@ const part_of_speech_rules_json = [
 		'context': { 'followedby': { 'token': 'with' } },
 		'remove': 'Verb',
 		'comment': 'Luke 3:22 I am pleased(V/Adj) with you.',
+	},
+	{
+		'name': 'If amazed/surprised NOT followed by any Noun, remove the Verb',
+		'category': 'Verb|Adjective',
+		'trigger': { 'token': 'amazed|surprised|surprised-B' },
+		'context': { 'notfollowedby': { 'category': 'Noun', 'skip': 'all' } },
+		'remove': 'Verb',
+		'comment': 'The people were amazed(V/Adj). The people were amazed(V/Adj) [Jesus said those things].',
+	},
+	{
+		'name': 'If amazed/surprised IS followed by any Noun, remove the Adjective',
+		'category': 'Verb|Adjective',
+		'trigger': { 'token': 'amazed|surprised' },
+		'context': { 'followedby': { 'category': 'Noun', 'skip': 'all' } },
+		'remove': 'Adjective',
+		'comment': 'The people were amazed(V/Adj) by Jesus\' words.',
 	},
 	{
 		'name': 'If Adjective-Adverb followed by Noun, remove the Adverb',
@@ -223,6 +246,14 @@ const part_of_speech_rules_json = [
 		'comment': 'Infected Eye 1:5  You must first(Adj/Adv) wash ...',
 	},
 	{
+		'name': 'If Adverb-Adjective "long" preceded by the verb be, remove Adverb',
+		'category': 'Adverb|Adjective',
+		'trigger': { 'token': 'long' },
+		'context': { 'precededby': { 'category': 'Verb', 'stem': 'be', 'skip': 'all' } },
+		'remove': 'Adverb',
+		'comment': 'The boat was 200 meters long(V/Adj/Adv).',
+	},
+	{
 		'name': 'If Adverb-Adposition followed by a Noun, delete the Adverb',
 		'category': 'Adverb|Adposition',
 		'context': {
@@ -230,6 +261,13 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Adverb',
 		'comment': 'Daniel 1:1 when(Adv/Adp) Jehoiakim ... 3:5 when(Adv/Adp) the people hear ...',
+	},
+	{
+		'name': "If 'close' is followed by 'to', remove the Verb",
+		'category': 'Verb|Adposition',
+		'trigger': { 'token': 'close to' },
+		'remove': 'Verb',
+		'comment': 'e.g. Peter sat close(Adp/Adj/Verb) to the fire. A lookup rule combined "close" and "to"',
 	},
 	{
 		'name': 'If Verb-Adposition precededby by a modal or \'not\', delete the Adposition',
@@ -259,7 +297,7 @@ const builtin_part_of_speech_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'relation': 'genitive_saxon' } }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(keep_parts_of_speech(new Set(['Noun']))),
+			action: simple_rule_action(({ trigger_token }) => keep_parts_of_speech(new Set(['Noun']))(trigger_token)),
 		},
 	},
 	{
@@ -268,7 +306,7 @@ const builtin_part_of_speech_rules = [
 		rule: {
 			trigger: token => token.pronoun !== null,
 			context: create_context_filter({}),
-			action: create_token_modify_action(keep_parts_of_speech(new Set(['Noun']))),
+			action: simple_rule_action(({ trigger_token }) => keep_parts_of_speech(new Set(['Noun']))(trigger_token)),
 		},
 	},
 	{
@@ -277,9 +315,9 @@ const builtin_part_of_speech_rules = [
 		rule: {
 			trigger: token => !!(token.lookup_results.length && token.complex_pairing?.lookup_results.length),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: message_set_action(({ trigger_token: token }) => {
 				/** @type {Token[]} */
-				// @ts-ignore
+				// @ts-ignore there will always be a pairing at this point
 				const [left, right] = [token, token.complex_pairing]
 
 				// filter lookup results based on the overlap of the two concepts
@@ -292,7 +330,7 @@ const builtin_part_of_speech_rules = [
 					category_filter(left)
 					category_filter(right)
 				} else {
-					set_error_message(left, ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH)
+					return { error: ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH }
 				}
 			}),
 		},
@@ -335,11 +373,11 @@ export function parse_part_of_speech_rule(rule_json) {
 	function create_remove_action(remove_json) {
 		const remove_action = remove_part_of_speech(remove_json)
 
-		return create_token_modify_action(token => {
-			remove_action(token)
+		return simple_rule_action(({ trigger_token }) => {
+			remove_action(trigger_token)
 
-			if (token.complex_pairing) {
-				remove_action(token.complex_pairing)
+			if (trigger_token.complex_pairing) {
+				remove_action(trigger_token.complex_pairing)
 			}
 		})
 	}

@@ -1,7 +1,7 @@
 import { TOKEN_TYPE, add_tag_to_token } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
-import { create_context_filter, create_token_filter, create_token_modify_action } from './rules_parser'
+import { create_context_filter, create_token_filter, simple_rule_action } from './rules_parser'
 
 /**
  * These rules are for tagging tokens based on the syntax. These cannot rely on any lookup data.
@@ -14,8 +14,8 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'subordinate_clause' } }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
-			action: create_token_modify_action(token => {
-				add_tag_to_token(token, { 'clause_type': 'patient_clause_quote_begin' })
+			action: simple_rule_action(({ trigger_token }) => {
+				add_tag_to_token(trigger_token, { 'clause_type': 'patient_clause_quote_begin' })
 			}),
 		},
 	},
@@ -25,9 +25,9 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause|patient_clause_quote_begin' } }),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
+			action: simple_rule_action(({ trigger_token }) => {
 				// find first word token, even if nested in another clause
-				const word_token = find_first_word(token)
+				const word_token = find_first_word(trigger_token)
 				if (!word_token) {
 					return
 				}
@@ -42,8 +42,8 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
 			context: create_context_filter({}),
-			action: create_token_modify_action(token => {
-				add_tag_to_token(token, { 'relation': 'genitive_saxon' })
+			action: simple_rule_action(({ trigger_token }) => {
+				add_tag_to_token(trigger_token, { 'relation': 'genitive_saxon' })
 			}),
 		},
 	},
