@@ -119,6 +119,15 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal. The chief(N/Adj) evil spirit.',
 	},
 	{
+		'name': 'If Noun-Adjective preceded by Adjective, remove Adjective',
+		'category': 'Noun|Adjective',
+		'context': {
+			'precededby': { 'category': 'Adjective' },
+		},
+		'remove': 'Adjective',
+		'comment': "eg. Daniel 1:3 'royal offical(N/Adj)'. eg. 'And God lives in extremely bright light(N/Adj).' This rule must be after the 'remove Noun if followed by a Noun' rule",
+	},
+	{
 		'name': 'If Noun-Adjective is preceded by an article but not followed by Noun, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
