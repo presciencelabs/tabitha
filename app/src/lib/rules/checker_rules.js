@@ -15,6 +15,7 @@ const checker_rules_json = [
 			'message': 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).',
 		},
 	},
+	// TODO make an error again when certain passive-like verbs are dealt with better (eg. united-C with, married with, locked, etc, see #105)
 	{
 		'name': 'Expect an agent of a passive',
 		'trigger': { 'category': 'Verb' },
@@ -22,10 +23,11 @@ const checker_rules_json = [
 			'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 			'notfollowedby': { 'tag': [{ 'role': 'agent' }, { 'syntax': 'agent_of_passive' }], 'skip': 'all' },
 		},
-		'require': {
+		'suggest': {
 			'followedby': 'by X',
-			'message': 'Missing agent of passive verb. Use _implicitActiveAgent if necessary.',
+			'message': 'If this is a passive Verb, make sure to include an explicit agent. Use _implicitActiveAgent if necessary.',
 		},
+		'comment': 'A passive verb requires a "by X" agent. Some verbs that look like passives aren\'t actually passives, so make this a suggestion instead of error.',
 	},
 	{
 		'name': 'Suggest avoiding the Perfect aspect',
@@ -519,7 +521,7 @@ const checker_rules_json = [
 		'comment': 'eg. John wanted XX[to be seen by Mary]XX.',
 	},
 	{
-		'name': 'Don\'t allow passives in \'same subject\' adverbial clauses',
+		'name': 'Don\'t allow passives in \'in-order-to\' adverbial clauses',
 		'trigger': { 'tag': { 'auxiliary': 'passive' } },
 		'context': {
 			'precededby': { 'stem': 'in-order-to', 'skip': 'all' },
@@ -529,7 +531,17 @@ const checker_rules_json = [
 		},
 		'comment': 'eg. John went to the market XX[in-order-to be seen by Mary]XX.',
 	},
-	
+	{
+		'name': 'Don\'t allow passives in \'by\' adverbial clauses',
+		'trigger': { 'tag': { 'auxiliary': 'passive' } },
+		'context': {
+			'precededby': { 'stem': 'by', 'skip': 'all' },
+		},
+		'require': {
+			'message': "Cannot use a passive within a 'by' clause because its subject is required to be the same as the outer Verb. Consider using 'because' instead. See P1 Checklist 24.",
+		},
+		'comment': 'eg. John went to the market XX[by being taken by Mary]XX.',
+	},
 	{
 		'name': "Don't allow negatives with 'purpose' adverbial clauses",
 		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },

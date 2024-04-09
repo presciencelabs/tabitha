@@ -22,8 +22,11 @@ const transform_rules_json = [
 		'transform': { 'function': { 'syntax': 'infinitive|infinitive_same_subject' } },
 	},
 	{
-		'name': 'tag "in-order-to" as "same subject"',
-		'trigger': { 'stem': 'in-order-to' },
+		'name': 'tag "in-order-to" and "by" as "same subject"',
+		'trigger': { 'stem': 'in-order-to|by' },
+		'context': {
+			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
+		},
 		'transform': { 'tag': { 'syntax': 'infinitive_same_subject' } },
 	},
 	{
