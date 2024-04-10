@@ -67,12 +67,12 @@ const transform_rules_json = [
 		'name': 'Set tag for relative clauses and relativizers',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': {
-			'precededby': { 'category': 'Noun' },
+			'precededby': { 'category': 'Noun', 'skip': { 'tag': { 'clause_type': 'relative_clause' } } },
 			'subtokens': { 'tag': { 'syntax': 'relativizer' }, 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
 		},
 		'transform': { 'tag': { 'clause_type': 'relative_clause' } },
 		'subtoken_transform': { 'tag': { 'determiner': '' } },
-		'comment': 'removes extra tags for words like "who" and "which". clear the determiner tag but keep the syntax one',
+		'comment': 'removes extra tags for words like "who" and "which". clear the determiner tag but keep the syntax one. This also handles coordinate relative clauses.',
 	},
 	{
 		'name': 'Set extra tag for relative clauses that use "that"',
@@ -126,7 +126,7 @@ const transform_rules_json = [
 		'name': 'tag subordinate clauses starting with the infinitive \'to\' as \'same_participant\'',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 
-			'subtokens': { 'token': 'to', 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': { 'token': '[' } },
+			'subtokens': { 'token': 'to', 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': 'all' },
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John wanted [to sing]',

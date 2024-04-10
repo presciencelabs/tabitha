@@ -78,6 +78,15 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 3:9  I(astrologer) hope(N/V) that...',
 	},
 	{
+		'name': 'If Noun-Verb followed by a Noun, delete the Noun',
+		'category': 'Noun|Verb',
+		'context': {
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'remove': 'Noun',
+		'comment': '"The people [that are in the tribe named Levi] saw(N/V) Mary." This only works because cases like "the judge\'s(N/V) house" are handled earlier.',
+	},
+	{
 		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
 		'trigger': { 'tag': { 'position': 'first_word' }, 'stem': 'so' },
