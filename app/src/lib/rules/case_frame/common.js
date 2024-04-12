@@ -79,7 +79,8 @@ const ROLE_RULE_PRESETS = [
 	})],
 	['directly_before_verb', preset_value => ({
 		'trigger': { 'tag': { 'syntax': 'head_np' }, ...preset_value },
-		'context': { 'followedby': { 'category': 'Verb', 'skip': ['np_modifiers', 'vp_modifiers'] } },
+		'context': { 'followedby': { 'category': 'Verb', 'skip': ['np', 'vp_modifiers'] } },
+		// skip 'np' because there might be a genitive (eg 'man of God')
 	})],
 	['directly_after_verb', preset_value => ({
 		'trigger': { 'tag': { 'syntax': 'head_np' }, ...preset_value },
