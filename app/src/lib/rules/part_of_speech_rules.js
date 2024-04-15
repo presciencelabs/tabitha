@@ -54,16 +54,16 @@ const part_of_speech_rules_json = [
 		'name': 'If Noun-Verb preceded by certain Adpositions, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'stem': 'from|of|with' },
+			'precededby': { 'token': 'from|with' },
 		},
 		'remove': 'Verb',
 		'comment': '',
 	},
 	{
-		'name': 'If Noun-Verb preceded by an \'s, delete the Verb',
+		'name': 'If Noun-Verb preceded by a relation, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'tag': { 'relation': 'genitive_saxon' }, 'skip': 'adjp_attributive' },
+			'precededby': { 'tag': 'relation', 'skip': 'adjp_attributive' },
 		},
 		'remove': 'Verb',
 		'comment': 'Gideon returned to the Israelite\'s camp.',
