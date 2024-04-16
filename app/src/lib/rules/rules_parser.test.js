@@ -480,7 +480,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.lookup_terms).toEqual(token.lookup_terms)
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('concept no lookup results', () => {
 		const transform_json = { 'concept': 'concept-A' }
@@ -492,7 +492,7 @@ describe('token transforms', () => {
 		expect(result.type).toBe(token.type)
 		expect(result.lookup_terms[0]).toBe('token')
 		expect(result.lookup_results.length).toBe(0)
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('concept with lookup results', () => {
 		const transform_json = { 'concept': 'concept-B' }
@@ -510,7 +510,7 @@ describe('token transforms', () => {
 		expect(result.lookup_terms.length).toBe(1)
 		expect(result.lookup_results.length).toBe(2)
 		expect(result.lookup_results[0].concept?.sense).toBe('B')
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('tag with existing tag on token', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
@@ -521,7 +521,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.tag).toEqual({ 'key': 'value', 'old_key': 'old_value' })
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('tag gets overwritten', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
@@ -532,7 +532,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.tag).toEqual({ 'key': 'value' })
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('type and tag', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
@@ -543,7 +543,7 @@ describe('token transforms', () => {
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.tag).toEqual({ 'key': 'value' })
-		expect(result.error_message).toBe(token.error_message)
+		expect(result.messages).toEqual(token.messages)
 	})
 	test('unrecognized', () => {
 		const transform_json = { 'other': 'other' }

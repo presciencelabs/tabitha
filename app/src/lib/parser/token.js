@@ -1,30 +1,21 @@
 import { REGEXES } from '$lib/regexes'
 
-/** @type {TokenType} */
-const PUNCTUATION = 'Punctuation'
-
-/** @type {TokenType} */
-const NOTE = 'Note'
-
-/** @type {TokenType} */
-const FUNCTION_WORD = 'FunctionWord'
-
-/** @type {TokenType} */
-const LOOKUP_WORD = 'Word'
-
-/** @type {TokenType} */
-const CLAUSE = 'Clause'
-
-/** @type {TokenType} */
-const ADDED = 'Added'
-
+/** @type { { [key: string]: TokenType } } */
 export const TOKEN_TYPE = {
-	PUNCTUATION,
-	NOTE,
-	FUNCTION_WORD,
-	LOOKUP_WORD,
-	CLAUSE,
-	ADDED,
+	PUNCTUATION: 'Punctuation',
+	NOTE: 'Note',
+	FUNCTION_WORD: 'FunctionWord',
+	LOOKUP_WORD: 'Word',
+	CLAUSE: 'Clause',
+	ADDED: 'Added',
+}
+
+/** @type { { [key: string]: MessageType } } */
+export const MESSAGE_TYPE = {
+	ERROR: { label: 'error', severity: 0 },
+	WARNING: { label: 'warning', severity: 1 },
+	SUGGEST: { label: 'suggest', severity: 2 },
+	INFO: { label: 'info', severity: 3 },
 }
 
 /**
@@ -32,8 +23,7 @@ export const TOKEN_TYPE = {
  * @param {string} token 
  * @param {TokenType} type 
  * @param {Object} [other_data={}] 
- * @param {string} [other_data.error=''] 
- * @param {string} [other_data.suggest=''] 
+ * @param {Message?} [other_data.message=null] 
  * @param {Tag} [other_data.tag={}] 
  * @param {string} [other_data.specified_sense=''] 
  * @param {string} [other_data.lookup_term=''] 
@@ -42,12 +32,11 @@ export const TOKEN_TYPE = {
  * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, { error='', suggest= '', tag={}, specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
+export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
 	return {
 		token,
 		type,
-		error_message: error,
-		suggest_message: suggest,
+		messages: message ? [message] : [],
 		tag,
 		specified_sense,
 		lookup_terms: lookup_term ? [lookup_term] : [],
@@ -65,7 +54,26 @@ export function create_token(token, type, { error='', suggest= '', tag={}, speci
  * @returns {Token}
  */
 export function create_added_token(token, message) {
-	return create_token(token, TOKEN_TYPE.ADDED, { ...message })
+	return create_token(token, TOKEN_TYPE.ADDED, { message })
+}
+
+/**
+ * 
+ * @param {Token[]} sub_tokens 
+ * @param {Tag} tag
+ */
+export function create_clause_token(sub_tokens, tag={ 'clause_type': 'subordinate_clause' }) {
+	return create_token('', TOKEN_TYPE.CLAUSE, { sub_tokens, tag })
+}
+
+/**
+ * 
+ * @param {MessageLabel} label 
+ * @returns {MessageType}
+ */
+export function get_message_type(label) {
+	// @ts-ignore
+	return Object.values(MESSAGE_TYPE).find(message_type => message_type.label === label)
 }
 
 /**
@@ -77,15 +85,18 @@ export function create_added_token(token, message) {
  */
 export function set_message(trigger_context, message_info) {
 	const token_to_flag = message_info.token_to_flag ?? trigger_context.trigger_token
-	
-	if (message_info.plain) {
-		set_message_plain(token_to_flag, message_info)
+
+	const message_type = Object.values(MESSAGE_TYPE).find(message_type => message_type.label in message_info)
+	const message_text = message_type ? message_info[message_type.label] : undefined
+	if (!message_text || !message_type) {
 		return
 	}
 
-	const error = message_info.error ? format_token_message(trigger_context, message_info.error, token_to_flag) : ''
-	const suggest = message_info.suggest ? format_token_message(trigger_context, message_info.suggest, token_to_flag) : ''
-	set_message_plain(token_to_flag, { error, suggest })
+	const message = {
+		...message_type,
+		message: message_info.plain ? message_text : format_token_message(trigger_context, message_text, token_to_flag),
+	}
+	set_message_plain(token_to_flag, message)
 }
 
 /**
@@ -95,12 +106,7 @@ export function set_message(trigger_context, message_info) {
  * @param {Message} message
  */
 export function set_message_plain(token, message) {
-	if (message.error) {
-		token.error_message = message.error
-	}
-	if (message.suggest) {
-		token.suggest_message = message.suggest
-	}
+	token.messages.push(message)
 }
 
 /**
@@ -142,11 +148,23 @@ export function format_token_message({ tokens, trigger_token, context_indexes },
 
 /**
  * 
- * @param {Token[]} sub_tokens 
- * @param {Tag} tag
+ * @param {MessagedToken} token 
+ * @returns {boolean}
  */
-export function create_clause_token(sub_tokens, tag={ 'clause_type': 'subordinate_clause' }) {
-	return create_token('', TOKEN_TYPE.CLAUSE, { sub_tokens, tag })
+export function token_has_error(token) {
+	return token_has_message(token, 'error')
+}
+
+/**
+ * 
+ * @param {MessagedToken} token 
+ * @param {MessageLabel?} type_to_check
+ * @returns {boolean}
+ */
+export function token_has_message(token, type_to_check=null) {
+	return type_to_check
+		? token.messages.some(({ label }) => label === type_to_check)
+		: token.messages.length > 0
 }
 
 /**
@@ -190,24 +208,6 @@ export function split_stem_and_sense(term) {
 	// @ts-ignore the match will always succeed
 	const match = term.match(REGEXES.EXTRACT_STEM_AND_SENSE)
 	return { stem: match[1], sense: match[2] ?? '' }
-}
-
-/**
- * 
- * @param {MessagedToken} token 
- * @returns {boolean}
- */
-export function token_has_error(token) {
-	return token.error_message.length > 0
-}
-
-/**
- * 
- * @param {MessagedToken} token 
- * @returns {boolean}
- */
-export function token_has_message(token) {
-	return token.error_message.length > 0 || token.suggest_message.length > 0
 }
 
 /**

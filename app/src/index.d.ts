@@ -4,8 +4,7 @@ interface MessagedToken {
 	token: string
 	type: TokenType
 	tag: Tag
-	error_message: string
-	suggest_message: string
+	messages: Message[]
 }
 
 interface Token extends MessagedToken {
@@ -25,12 +24,24 @@ type Sentence = {
 	clause: Clause
 }
 
-interface Message {
-	error?: string
-	suggest?: string
+type MessageLabel = 'error' | 'warning' | 'suggest' | 'info'
+
+interface MessageType {
+	label: MessageLabel
+	severity: number
 }
 
-interface MessageInfo extends Message {
+interface Message extends MessageType {
+	message: string
+	// TODO #101 add optional fix_action structure
+}
+
+type MessageInfo = {
+	// TODO find a more elegant way to do this?
+	error?: string
+	warning?: string
+	suggest?: string
+	info?: string
 	token_to_flag?: Token
 	plain?: boolean
 }

@@ -1,5 +1,5 @@
 import { create_context_filter, message_set_action } from './rules_parser'
-import { TOKEN_TYPE, add_tag_to_token, token_has_error } from '../parser/token'
+import { TOKEN_TYPE, add_tag_to_token } from '../parser/token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']
@@ -40,7 +40,7 @@ const builtin_pronoun_rules = [
 		'name': 'Check for invalid stand-alone pronouns',
 		'comment': '',
 		'rule': {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_error(token),
+			trigger: ({ token }) => PRONOUN_MESSAGES.has(token.toLowerCase()),
 			context: create_context_filter({}),
 			action: message_set_action(({ trigger_token: { token } }) => ({ error: PRONOUN_MESSAGES.get(token.toLowerCase()) })),
 		},

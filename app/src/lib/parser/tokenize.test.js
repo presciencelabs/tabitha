@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { CLAUSE_NOTATIONS } from './clause_notations'
 import { ERRORS } from './error_messages'
 import { FUNCTION_WORDS } from './function_words'
-import { TOKEN_TYPE, create_token } from './token'
+import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from './token'
 import { tokenize_input } from './tokenize'
 
 /**
@@ -22,9 +22,6 @@ function create_word_token(token, { lookup_term=null, sense='' }={}) {
  * @returns {Token}
  */
 function create_pairing(left_token, right_token) {
-	// const [left, right] = token.split('/')
-	// const left_token = create_word_token(left, lookup_left)
-	// const right_token = create_word_token(right, lookup_right)
 	left_token.complex_pairing = right_token
 	return left_token
 }
@@ -35,7 +32,6 @@ function create_pairing(left_token, right_token) {
  * @returns {Token}
  */
 function create_pronoun_token(pronoun, referent_token) {
-	// const referent_token = create_word_token(referent, referent_lookup)
 	const pronoun_token = create_token(pronoun, TOKEN_TYPE.FUNCTION_WORD)
 	referent_token.pronoun = pronoun_token
 	return referent_token
@@ -48,7 +44,7 @@ function create_pronoun_token(pronoun, referent_token) {
  * @returns {Token}
  */
 function create_error_token(token, message) {
-	return create_token(token, TOKEN_TYPE.NOTE, { error: message })
+	return create_token(token, TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message: message } })
 }
 
 describe('tokenize_input', () => {

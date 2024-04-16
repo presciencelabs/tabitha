@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, create_added_token, format_token_message, set_message_plain } from '$lib/parser/token'
+import { TOKEN_TYPE, create_added_token, format_token_message, get_message_type, set_message_plain } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, message_set_action } from './rules_parser'
@@ -32,7 +32,7 @@ const checker_rules_json = [
 	{
 		'name': 'Suggest avoiding the Perfect aspect',
 		'trigger': { 'tag': { 'auxiliary': 'flashback' } },
-		'suggest': {
+		'info': {
 			'message': 'The perfect is only allowed if it would have the right meaning if changed to the simple past tense with "recently" or "previously".',
 		},
 	},
@@ -350,7 +350,7 @@ const checker_rules_json = [
 	{
 		'name': 'Warn about using \'what\' instead of \'which thing\'',
 		'trigger': { 'token': 'What|what' },
-		'suggest': {
+		'warning': {
 			'message': '\'what\' always becomes \'which thing-A\'. Consider writing \'which X\' if you want something different.',
 		},
 		'comment': 'See section 0.41 of the Phase 1 checklist',
@@ -464,7 +464,7 @@ const checker_rules_json = [
 	{
 		'name': 'Warn that \'come\' cannot be used for events, only things that move',
 		'trigger': { 'stem': 'come' },
-		'suggest': {
+		'warning': {
 			'message': 'Note that \'come\' can only be used for things that move, NOT for events.',
 		},
 	},
@@ -481,7 +481,7 @@ const checker_rules_json = [
 	{
 		'name': 'Cannot use \'now\' as a conjuntion to start a sentence',
 		'trigger': { 'token': 'Now', 'tag': { 'position': 'first_word' } },
-		'suggest': {
+		'warning': {
 			'message': "Note TBTA does not have the discourse marker 'now', only the adverb 'now' meaning 'at the present time'.",
 		},
 	},
@@ -549,7 +549,7 @@ const checker_rules_json = [
 			'precededby': { 'tag': { 'verb_polarity': 'negative' }, 'skip': 'all' },
 			'subtokens': { 'stem': 'in-order-to|because|so', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
 		},
-		'suggest': {
+		'warning': {
 			'on': 'context:0',
 			'message': "Avoid using a negative verb outside a clause expressing cause or purpose, as the scope of the 'not' is ambiguous. See P1 Checklist 27 for suggestions.",
 		},
@@ -567,7 +567,7 @@ const builtin_checker_rules = [
 			context: create_context_filter({}),
 			action: message_set_action(({ trigger_token: token }) => {
 				const token_to_test = token.pronoun ? token.pronoun : token
-				if (REGEXES.STARTS_LOWERCASE.test(token_to_test.token) && !token_to_test.error_message) {
+				if (REGEXES.STARTS_LOWERCASE.test(token_to_test.token)) {
 					return { token_to_flag: token_to_test, error: ERRORS.FIRST_WORD_NOT_CAPITALIZED }
 				}
 			}),
@@ -590,7 +590,7 @@ const builtin_checker_rules = [
 		name: 'Check that level 2 words are not on their own',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'level': '2' }),
+			trigger: check_token_level(is_level(2)),
 			context: create_context_filter({}),
 			action: message_set_action(() => ({ error: ERRORS.WORD_LEVEL_TOO_HIGH })),
 		},
@@ -625,13 +625,13 @@ const builtin_checker_rules = [
 				// If the first result is already simple, that will be selected by default and thus not ambiguous.
 				// Level 2 and 3 words are treated differently, so a combination of the two should also be ambiguous - see 'kingdom'
 				if (check_ambiguous_level(is_level(2))(token) || check_ambiguous_level(is_level(3))(token)) {
-					yield { suggest: ERRORS.AMBIGUOUS_LEVEL }
+					yield { warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
 				if (token.complex_pairing && check_ambiguous_level(is_level_simple)(token.complex_pairing)) {
-					yield { token_to_flag: token.complex_pairing, suggest: ERRORS.AMBIGUOUS_LEVEL }
+					yield { token_to_flag: token.complex_pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 			}),
 		},
@@ -681,7 +681,7 @@ const builtin_checker_rules = [
 					const that_token = trigger_token.sub_tokens[1]
 					return {
 						token_to_flag: that_token,
-						suggest: 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.',
+						warning: 'This is being interpreted as a relative clause. If it\'s supposed to be a complement clause, remove the \'that\'.',
 					}
 				}
 			}),
@@ -705,7 +705,7 @@ const builtin_checker_rules = [
 					const complex_token = tokens[trigger_index].sub_tokens[subtoken_indexes[0]]
 					return {
 						token_to_flag: complex_token,
-						suggest: 'A simple vocabulary alternate typically directly follows a complex alternate, but no simple alternate was found.',
+						warning: 'A simple vocabulary alternate typically directly follows a complex alternate, but no simple alternate was found.',
 					}
 				}
 			}),
@@ -722,10 +722,18 @@ export function parse_checker_rule(rule_json) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])
 
-	// one of these has to be present, but not both
-	const require_json = rule_json['require']
-	const suggest_json = rule_json['suggest']
-	const action = require_json ? checker_action(require_json, 'error') : checker_action(suggest_json, 'suggest')
+	// TODO #101 use 'error' instead of require, and change 'precededby/followedby' to insert actions
+
+	/** @type {string} */
+	// @ts-ignore there will always be a message tag
+	const message_tag = ['require', 'warning', 'suggest', 'info'].find(tag => tag in rule_json)
+
+	/** @type {MessageLabel} */
+	// @ts-ignore the string will always be a MessageType
+	const message_label = message_tag === 'require' ? 'error' : message_tag
+	const message_type = get_message_type(message_label)
+
+	const action = checker_action(rule_json[message_tag], message_type)
 
 	return {
 		trigger,
@@ -735,7 +743,7 @@ export function parse_checker_rule(rule_json) {
 
 	/**
 	 * @param {CheckerAction} action 
-	 * @param {'error'|'suggest'} message_type 
+	 * @param {MessageType} message_type
 	 * @returns {RuleAction}
 	 */
 	function checker_action(action, message_type) {
@@ -743,7 +751,10 @@ export function parse_checker_rule(rule_json) {
 			const { tokens, trigger_index } = trigger_context
 
 			const formatted_message = format_token_message(trigger_context, action.message)
-			const message = { [message_type]: formatted_message }
+			const message = {
+				...message_type,
+				message: formatted_message,
+			}
 
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (action.precededby) {
@@ -787,7 +798,8 @@ export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).conca
 function check_token_level(level_check) {
 	return token => {
 		return token.lookup_results.length > 0
-			&& token.lookup_results.every(result => level_check(result.concept))
+			&& (token.specified_sense && level_check(token.lookup_results[0].concept)
+				|| token.lookup_results.every(result => level_check(result.concept)))
 	}
 }
 /**
@@ -797,7 +809,8 @@ function check_token_level(level_check) {
  */
 function check_ambiguous_level(level_check) {
 	return token => {
-		return token.lookup_results.length > 0
+		return token.specified_sense.length === 0
+			&& token.lookup_results.length > 0
 			&& level_check(token.lookup_results[0].concept)
 			&& token.lookup_results.filter(result => result.concept).some(result => !level_check(result.concept))
 	}
@@ -814,13 +827,13 @@ function check_lookup_results(token) {
 	}
 
 	if (token.lookup_results.at(0)?.concept?.id === '0') {
-		return { token_to_flag: token, suggest: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
+		return { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
 
 	} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
 		return { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 		
 	} else {
-		return { token_to_flag: token, suggest: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
+		return { token_to_flag: token, warning: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
 	}
 }
 

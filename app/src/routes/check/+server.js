@@ -1,6 +1,6 @@
 import { backtranslate } from '$lib/backtranslator'
 import { parse } from '$lib/parser'
-import { concept_with_sense } from '$lib/parser/token'
+import { concept_with_sense, token_has_error } from '$lib/parser/token'
 import { json } from '@sveltejs/kit'
 
 
@@ -29,9 +29,9 @@ export async function GET({ url: { searchParams }, locals: { db } }) {
  * @returns {boolean}
  */
 function has_error(tokens) {
-	return tokens.some(token => token.error_message
-		|| token.complex_pairing?.error_message
-		|| token.pronoun?.error_message
+	return tokens.some(token => token_has_error(token)
+		|| token.complex_pairing && token_has_error(token.complex_pairing)
+		|| token.pronoun && token_has_error(token.pronoun)
 		|| has_error(token.sub_tokens))
 }
 
@@ -48,13 +48,12 @@ function simplify_tokens(sentences) {
 	 * @param {Token} token 
 	 * @returns {SimpleToken}
 	 */
-	function simplify_token({ token, type, tag, error_message, suggest_message, lookup_results, complex_pairing, pronoun, sub_tokens }) {
+	function simplify_token({ token, type, tag, messages, lookup_results, complex_pairing, pronoun, sub_tokens }) {
 		return {
 			token,
 			type,
 			tag,
-			error_message,
-			suggest_message,
+			messages: messages.toSorted((a, b) => a.severity - b.severity),
 			lookup_results: lookup_results.map(simplify_lookup),
 			complex_pairing: complex_pairing ? simplify_token(complex_pairing) : null,
 			pronoun: pronoun ? simplify_token(pronoun) : null,

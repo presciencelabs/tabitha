@@ -3,6 +3,7 @@ import { ERRORS } from '../parser/error_messages'
 import { apply_rules } from './rules_processor'
 import { describe, expect, test } from 'vitest'
 import { PART_OF_SPEECH_RULES } from './part_of_speech_rules'
+import { expect_error } from '$lib/test_helps'
 
 /**
  * 
@@ -92,11 +93,11 @@ describe('pairing part_of_speech disambiguation', () => {
 
 		const checked_tokens = apply_rules(test_tokens, PART_OF_SPEECH_RULES).flatMap(flatten_sentence)
 
-		expect(checked_tokens[1].error_message).toBe('')
+		expect(checked_tokens[1].messages.length).toBe(0)
 		expect(checked_tokens[1].lookup_results.length).toBe(1)
 		expect(checked_tokens[1].lookup_results[0].part_of_speech).toBe('Verb')
 
-		expect(checked_tokens[1].complex_pairing?.error_message).toBe('')
+		expect(checked_tokens[1].complex_pairing?.messages.length).toBe(0)
 		expect(checked_tokens[1].complex_pairing?.lookup_results.length).toBe(1)
 		expect(checked_tokens[1].complex_pairing?.lookup_results[0].part_of_speech).toBe('Verb')
 	})
@@ -138,10 +139,10 @@ describe('pairing part_of_speech disambiguation', () => {
 
 		const checked_tokens = apply_rules(test_tokens, PART_OF_SPEECH_RULES).flatMap(flatten_sentence)
 
-		expect(checked_tokens[1].error_message).toBe(ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH)
+		expect_error(checked_tokens[1], ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH)
 		expect(checked_tokens[1].lookup_results.length).toBe(2)
 
-		expect(checked_tokens[1].complex_pairing?.error_message).toBe('')
+		expect(checked_tokens[1].complex_pairing?.messages.length).toBe(0)
 		expect(checked_tokens[1].complex_pairing?.lookup_results.length).toBe(2)
 	})
 })
