@@ -12,8 +12,8 @@ export async function check_ontology(lookup_token) {
 	lookup_token.lookup_results = found_results.concat(not_found_results)
 
 	/**
-	 * 
-	 * @param {OntologyResult} ontology_result 
+	 *
+	 * @param {OntologyResult} ontology_result
 	 * @returns {LookupResult}
 	 */
 	function transform_result(ontology_result) {
@@ -29,7 +29,7 @@ export async function check_ontology(lookup_token) {
  * @returns {Promise<OntologyResult[]>}
  */
 async function get_matches_from_ontology(lookup_term) {
-	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/?q=${lookup_term}`)
+	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=${lookup_term}`)
 
 	if (!response.ok) return []
 
@@ -37,9 +37,9 @@ async function get_matches_from_ontology(lookup_term) {
 }
 
 /**
- * 
- * @param {LookupWord} lookup1 
- * @param {LookupWord} lookup2 
+ *
+ * @param {LookupWord} lookup1
+ * @param {LookupWord} lookup2
  * @returns {boolean}
  */
 function lookups_match(lookup1, lookup2) {
