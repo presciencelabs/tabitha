@@ -44,11 +44,11 @@
 	}
 
 	$: selected_reference = {
-			source: selected_source,
-			book: selected_book,
-			chapter: selected_chapter,
-			verse: selected_verse,
-		}
+		source: selected_source,
+		book: selected_book,
+		chapter: selected_chapter,
+		verse: selected_verse,
+	}
 </script>
 
 <article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
