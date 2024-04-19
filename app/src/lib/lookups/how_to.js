@@ -13,6 +13,11 @@ export async function check_how_to(lookup_token) {
 			// The sense exists in the ontology and the how-to
 			existing_result.how_to.push(how_to_result)
 
+		} else if (how_to_result.stem.toLowerCase() !== lookup_token.lookup_terms[0].toLowerCase()) {
+			// The word exists in the how-to but it doesn't match the token based on the form
+			// eg. the token 'witnessing' should not match with the how-to result for the Noun 'witness'
+			// don't add it to the results
+			
 		} else if (how_to_result.sense) {
 			// The sense exists in the how-to but not in the ontology, but is planned to be added
 			const new_result = create_lookup_result(how_to_result, { how_to: [how_to_result] })

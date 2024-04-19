@@ -35,10 +35,11 @@ export function check_forms(db) {
 		// So add a lookup term for each unique stem (case-insensitive)
 		const unique_stems = new Set(lookup_results.map(({ stem }) => stem.toLowerCase()))
 
-		// Add the original lookup stem in case there is a missing form (eg. Adjectives left, following)
-		unique_stems.add(term.toLowerCase())
+		// Exclude the original lookup stem as it's handled separately
+		unique_stems.delete(term.toLowerCase())
 
-		token.lookup_terms = [...unique_stems]
+		// Keep the original token-based term as the first lookup term
+		token.lookup_terms = [term.toLowerCase(), ...unique_stems]
 		token.lookup_results = lookup_results
 	}
 

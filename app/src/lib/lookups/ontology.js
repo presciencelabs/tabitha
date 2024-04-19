@@ -7,19 +7,28 @@ import { create_lookup_result } from '$lib/parser/token'
 export async function check_ontology(lookup_token) {
 	const results = (await Promise.all(lookup_token.lookup_terms.map(get_matches_from_ontology))).flat()
 
-	const found_results = results.map(transform_result)
+	const found_results = results.reduce(transform_results, [])
 	const not_found_results = lookup_token.lookup_results.filter(lookup => !results.some(result => lookups_match(lookup, result)))
 	lookup_token.lookup_results = found_results.concat(not_found_results)
 
 	/**
-	 *
+	 * @param {LookupResult[]} transformed_results
 	 * @param {OntologyResult} ontology_result
-	 * @returns {LookupResult}
+	 * @returns {LookupResult[]}
 	 */
-	function transform_result(ontology_result) {
+	function transform_results(transformed_results, ontology_result) {
 		const existing_result = lookup_token.lookup_results.find(lookup => lookups_match(lookup, ontology_result))
+		
+		if (!existing_result && ontology_result.stem.toLowerCase() !== lookup_token.lookup_terms[0].toLowerCase()) {
+			// Don't include new results that don't match the original token lookup term
+			// eg. 'covering' should not match the noun 'cover', even though it matches the ontology search for the verb stem 'cover'
+			return transformed_results
+		}
+		
 		const form = existing_result?.form ?? 'stem'
-		return create_lookup_result(ontology_result, { form, concept: ontology_result })
+		const result = create_lookup_result(ontology_result, { form, concept: ontology_result })
+		transformed_results.push(result)
+		return transformed_results
 	}
 }
 
