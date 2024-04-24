@@ -206,7 +206,7 @@ const verb_case_frames = new Map([
 		['be-U', { 'state': { 'directly_after_verb_with_adposition': 'like' } }],
 		['be-V', { 'other_required': 'predicate_adjective' }],
 		['be-W', { 'state': { 'directly_after_verb_with_adposition': 'in' } }],
-		['be-X', { 'state': { 'directly_after_verb_with_adposition': 'like' } }],
+		['be-X', { 'state': { 'directly_after_verb': { } } }],
 	]],
 	['become', [
 		['become-A', {
