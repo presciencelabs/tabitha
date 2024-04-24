@@ -3,9 +3,9 @@ import { get_concepts } from '$lib/server/ontology'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url: { searchParams }, locals: { db } }) {
-	const query = searchParams.get('q') ?? ''
+	const search_criteria = Object.fromEntries(searchParams)
 
-	const matches = await get_concepts(db)(query)
+	const matches = await get_concepts(db)(search_criteria)
 
 	const lite_matches = matches.map(make_lite)
 

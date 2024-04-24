@@ -10,17 +10,24 @@ import { transform } from './transformers'
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
  *
- * @returns {(filter: string) => Promise<Concept[]>}
+ * @returns {(filter: SearchFilter) => Promise<Concept[]>}
  */
 export const get_concepts = db => async filter => {
+	/** @type {ConceptSearchFilter} */
+	const concept_filter = {
+		q: '',
+		scope: 'stems',
+		...filter,
+	}
+
 	// senses follow the form word-A, /^(.*)-([A-Z])$/
-	const matches = filter.match(/^(.*)-([A-Z])$/)
+	const matches = concept_filter.q.match(/^(.*)-([A-Z])$/)
 	if (matches) {
 		const [, stem, sense] = matches
 		return await by_sense({ stem, sense })
 	}
 
-	return await by_filter(filter)
+	return await by_filter(concept_filter)
 
 	/**
 	 * @param {{stem: string, sense: string}} input
@@ -30,7 +37,7 @@ export const get_concepts = db => async filter => {
 		const sql = `
 			SELECT *
 			FROM Concepts
-			WHERE stem like ?
+			WHERE stem LIKE ?
 			AND sense = ?
 		`
 
@@ -41,18 +48,30 @@ export const get_concepts = db => async filter => {
 	}
 
 	/**
-	 * @param {string} filter
+	 * @param {ConceptSearchFilter} filter
 	 * @returns {Promise<Concept[]>}
 	 */
 	async function by_filter(filter) {
-		const sql = `
-			SELECT *
-			FROM Concepts
-			WHERE stem like ?
-		`
+		const normalized_q = normalize_wildcards(filter.q)
+
+		const prepared_stmts = {
+			stems: db.prepare(`
+				SELECT *
+				FROM Concepts
+				WHERE stem LIKE ?`).bind(normalized_q),
+			glosses: db.prepare(`
+				SELECT *
+				FROM Concepts
+				WHERE gloss LIKE ?`).bind(`%${normalized_q}%`),
+			all: db.prepare(`
+				SELECT *
+				FROM Concepts
+				WHERE stem LIKE ?
+					OR gloss LIKE ?`).bind(normalized_q, `%${normalized_q}%`),
+		}
 
 		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
-		const { results } = await db.prepare(sql).bind(normalize_wildcards(filter)).all()
+		const { results } = await prepared_stmts[filter.scope].all()
 
 		return normalize(results)
 	}

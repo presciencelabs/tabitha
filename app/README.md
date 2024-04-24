@@ -1,8 +1,17 @@
 # Ontology web app
 
+Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
+
+## API
+
+`https://ontology.tbta.bible/search?q=love[&scope=[**stems**|glosses|all]]`
+
+
+## Local development
+
 `pnpm i`
 
-## Running locally
+### Running locally
 
 for the sake of CORS and accessing the sources/targets API, `ontology.local.tbta.bible` needs to be added as an additonal alias for the loopback:
 
@@ -17,13 +26,13 @@ pnpm dev
 
 Then access the site via: [http://ontology.local.tbta.bible:8788](http://ontology.local.tbta.bible:8788)
 
-## Static analysis
+### Static analysis
 
 ```bash
 pnpm check
 ```
 
-## Building
+### Building
 
 Creates a production version of the app:
 
@@ -31,7 +40,7 @@ Creates a production version of the app:
 pnpm build
 ```
 
-## Contributing
+### Contributing
 
 Always start your work in a new branch.
 

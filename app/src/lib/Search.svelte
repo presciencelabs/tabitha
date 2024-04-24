@@ -1,15 +1,32 @@
 <script>
 	import { navigating, page } from '$app/stores'
 	import Icon from '@iconify/svelte'
+	import { onMount } from 'svelte'
+	import { writable } from 'svelte/store'
 
 	export let autofocus = false
 
 	/** @type {string|null} */
 	let value = new URLSearchParams($page.url.search).get('q')
 
+	let scope = writable('')
+
+	onMount(() => {
+		const requested_scope = new URLSearchParams($page.url.search).get('scope')
+		const stored_scope = localStorage.getItem('search_scope')
+
+		$scope = requested_scope || stored_scope || 'stems'
+	})
+
 	/** @param {HTMLInputElement} input */
 	function auto_focus(input) {
 		autofocus && input.focus()
+	}
+
+	function store_scope() {
+		localStorage.setItem('search_scope', $scope)
+
+		console.info('search scope saved: ', $scope)
 	}
 </script>
 
@@ -20,12 +37,16 @@
 
 		decided against daisy's "join" approach in favor of positioning so I could get a focus ring around the input AND button.  See https://github.com/saadeghi/daisyui/discussions/2400>
 	-->
-	<form role="search" class="relative">
-		<div class="form-control">
-			<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg" />
-		</div>
+	<form role="search" class="join w-full">
+		<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg w-full join-item" />
 
-		<button class="btn btn-primary btn-lg absolute right-0 top-0 rounded-s-none">
+		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-primary select-lg join-item">
+			<option value="stems">Stems only</option>
+			<option value="glosses">Glosses only</option>
+			<option value="all">Stems and Glosses</option>
+		</select>
+
+		<button class="btn btn-primary btn-lg join-item">
 			<span class="hidden sm:inline">Search</span>
 			<Icon icon="material-symbols:search" class="h-6 w-6" />
 		</button>

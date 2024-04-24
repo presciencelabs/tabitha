@@ -20,12 +20,20 @@ type SimplificationHint = {
 	explication: string
 }
 
-
 interface Concept extends DbRowConcept {
 	categories: string[]
 	examples: Example[]
 	curated_examples: CuratedExample[]
 	occurrences: number
+}
+
+type SearchFilter = {
+	[key: string]: string
+}
+
+type ConceptSearchFilter = {
+	q: string
+	scope: 'stems' | 'glosses' | 'all'
 }
 
 type CuratedExample = {
