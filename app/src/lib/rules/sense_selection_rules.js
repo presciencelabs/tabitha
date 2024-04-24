@@ -32,7 +32,6 @@ const verb_sense_rules = [
 		['be-R', { }],	// partitive (part)
 		['be-T', { }],	// place of origin (from)
 		['be-U', { }],	// be like
-		['be-X', { }],	// metaphorical
 		['be-H', { 'state': { 'stem': 'day|morning|afternoon|evening|Sabbath' } }],	// temporal TODO check features of word from lexicon
 		['be-W', { 'state': { 'stem': 'family|tribe' } }],
 		// senses with unique agents
@@ -50,6 +49,7 @@ const verb_sense_rules = [
 		['be-L', { 'state': { 'stem': 'apostle|captain|emperor|farmer|governor|judge|king|leader|officer|official|priest|prince|prophet|queen|ruler|servant|slave|teacher' } }],	// social role
 		['be-S', { }],	// age
 		['be-B', { }],	// equative
+		['be-X', { }],	// metaphorical
 		// senses with adjectives
 		['be-D', { }],	// predicative
 		['be-F', { }],	// general locative
