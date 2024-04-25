@@ -643,11 +643,27 @@ const builtin_checker_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
 			action: message_set_action(function* ({ trigger_token: token }) {
-				yield check_lookup_results(token)
+				yield* check_lookup_results(token)
 
 				if (token.complex_pairing) {
-					yield check_lookup_results(token.complex_pairing)
+					yield* check_lookup_results(token.complex_pairing)
 				}
+			}),
+		},
+	},
+	{
+		name: 'Check for words with ambiguous parts of speech',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			context: create_context_filter({}),
+			action: message_set_action(function* ({ trigger_token: token }) {
+				if (token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())) {
+					return {}
+				}
+				
+				yield { warning: 'The editor cannot determine which part of speech this word is, so some errors and warnings within the same clause may not be accurate.' }
+				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', or '_adp' after '{token}' if you want the editor to check the syntax more accurately." }
 			}),
 		},
 	},
@@ -819,21 +835,25 @@ function check_ambiguous_level(level_check) {
 /**
  * 
  * @param {Token} token 
- * @returns {MessageInfo}
  */
-function check_lookup_results(token) {
+function* check_lookup_results(token) {
 	if (token.lookup_results.some(result => result.concept !== null && result.concept.id !== '0')) {
 		return {}
 	}
 
 	if (token.lookup_results.at(0)?.concept?.id === '0') {
-		return { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
+		yield { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
 
 	} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
-		return { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
+		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 		
+	} else if (token.lookup_results.length > 0) {
+		// a dummy result for an unknown word
+		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
 	} else {
-		return { token_to_flag: token, warning: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
+		yield { token_to_flag: token, warning: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
+		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
+		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', or '_adp' after the unknown word if you want the editor to check the syntax more accurately." }
 	}
 }
 

@@ -1,5 +1,6 @@
 import { ERRORS } from '$lib/parser/error_messages'
 import { create_context_filter, create_token_filter, message_set_action, simple_rule_action } from './rules_parser'
+import { TOKEN_TYPE, create_lookup_result } from '$lib/parser/token'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -349,6 +350,31 @@ const builtin_part_of_speech_rules = [
 					category_filter(right)
 				} else {
 					return { error: ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH }
+				}
+			}),
+		},
+	},
+	{
+		name: 'Select part-of-speech based on a note',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp' } }),
+			action: simple_rule_action(({ trigger_token, tokens, context_indexes }) => {
+				const part_of_speech_note = tokens[context_indexes[0]].token
+				const part_of_speech = new Map([
+					['_noun', 'Noun'],
+					['_verb', 'Verb'],
+					['_adj', 'Adjective'],
+					['_adv', 'Adverb'],
+					['_adp', 'Adposition'],
+				]).get(part_of_speech_note) ?? ''
+
+				keep_parts_of_speech(new Set([part_of_speech]))(trigger_token)
+
+				// if no results remain, add a dummy one so the word acts like that part-of-speech
+				if (trigger_token.lookup_results.length === 0) {
+					trigger_token.lookup_results.push(create_lookup_result({ stem: trigger_token.token, part_of_speech }))
 				}
 			}),
 		},
