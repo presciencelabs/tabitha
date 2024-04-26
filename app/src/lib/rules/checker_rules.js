@@ -50,7 +50,7 @@ const checker_rules_json = [
 	{
 		'name': 'Suggest expanding \'there\' to \'at that place\' for clarity',
 		'trigger': { 'token': 'There|there' },
-		'context': { 'notfollowedby': { 'stem': 'be' } },	// TODO trigger on 'not tag existential' instead
+		'context': { 'notfollowedby': { 'stem': 'be', 'skip': 'vp_modifiers' } },	// TODO trigger on 'not tag existential' instead
 		'suggest': {
 			'message': 'Consider using \'at that place\' instead of \'there\', especially if a preposition other than \'at\' is wanted.',
 		},
