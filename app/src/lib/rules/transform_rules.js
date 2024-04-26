@@ -256,19 +256,19 @@ const transform_rules_json = [
 		'name': 'Tag \'there\' before \'be\' as existential',
 		'trigger': { 'token': 'There|there' },
 		'context': {
-			'followedby': { 'stem': 'be' },
+			'followedby': { 'stem': 'be', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': { 'syntax': 'existential' } },
 		'comment': 'We have to keep this as a transform rule so we can handle the "there" properly.',
 	},
 	{
-		'name': '\'part\' after \'be\' becomes a function word',
-		'trigger': { 'token': 'part' },
+		'name': "'part' and 'like' after 'be' become function words",
+		'trigger': { 'token': 'part|like' },
 		'context': {
 			'precededby': { 'stem': 'be', 'skip': 'vp_modifiers' },
 		},
 		'transform': { 'function': {} },
-		'comment': 'Since \'part\' is also a noun, this ensures the right head noun is found for be-R',
+		'comment': "Since 'part' and 'like' are also words in the Ontology, this ensures the clause is interpreted correctly",
 	},
 	{
 		'name': '\'made of\' after \'be\' becomes a function word',
