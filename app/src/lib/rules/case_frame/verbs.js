@@ -123,7 +123,12 @@ const verb_case_frames = new Map([
 		['be-E', {
 			'agent': {
 				'trigger': { 'tag': { 'syntax': 'head_np' } },
-				'context': { 'precededby': [{ 'tag': { 'syntax': 'existential' } }, { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] }] },
+				'context': {
+					'precededby': [
+						{ 'tag': { 'syntax': 'existential' }, 'skip': 'vp_modifiers' },
+						{ 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] }
+					],
+				},
 				'missing_message': 'be-E requires the format \'there be X\'.',
 			},
 			'state': { },
