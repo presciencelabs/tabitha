@@ -320,7 +320,7 @@ describe('tokenize_input', () => {
 			create_word_token('token'),
 			create_token(',', TOKEN_TYPE.PUNCTUATION),
 			create_word_token('5'),
-			create_token(':', TOKEN_TYPE.PUNCTUATION),
+			create_token(':', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: '-ReferenceMarker' }),
 			create_word_token('5'),
 		]
 

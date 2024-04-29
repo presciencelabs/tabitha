@@ -1,5 +1,5 @@
 import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transforms } from '$lib/rules/rules_parser'
-import { TOKEN_TYPE } from '../parser/token'
+import { TOKEN_TYPE, split_stem_and_sense } from '../parser/token'
 
 /**
  * These words/phrases (and some others) are accepted by the Analyzer as alternates for
@@ -70,7 +70,7 @@ const lookup_rules_json = [
 	},
 	{
 		'name': 'because of becomes because-B',
-		'trigger': { 'token': 'because' },
+		'trigger': { 'token': 'Because|because' },
 		'context': { 'followedby': { 'token': 'of' } },
 		'lookup': 'because-B',
 		'combine': 1,
@@ -107,7 +107,7 @@ const lookup_rules_json = [
 		'name': 'lift up',
 		'trigger': { 'stem': 'lift' },
 		'context': { 'followedby': { 'token': 'up', 'skip': 'all' } },
-		'lookup': 'lift',
+		'lookup': 'lift',		// TODO make this a case frame rule
 		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
@@ -183,8 +183,20 @@ export function parse_lookup_rule(rule_json) {
 	 * @param {RuleTriggerContext} trigger_context 
 	 * @returns {number}
 	 */
-	function lookup_rule_action({ tokens, trigger_index, context_indexes }) {
-		tokens[trigger_index] = { ...tokens[trigger_index], type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: lookup_term.split('|') }
+	function lookup_rule_action({ tokens, trigger_index, trigger_token, context_indexes }) {
+		const lookup_terms = lookup_term.split('|')
+
+		// specify the sense if given in the lookup value
+		const { stem, sense } = split_stem_and_sense(lookup_terms[0])
+		lookup_terms[0] = stem
+		
+		tokens[trigger_index] = {
+			...trigger_token,
+			type: TOKEN_TYPE.LOOKUP_WORD,
+			specified_sense: sense || trigger_token.specified_sense,
+			lookup_terms,
+			lookup_results: trigger_token.lookup_results.filter(result => lookup_terms.includes(result.stem)),
+		}
 
 		if (context_indexes.length === 0) {
 			return trigger_index + 1
@@ -199,7 +211,7 @@ export function parse_lookup_rule(rule_json) {
 		
 		// combine context tokens into one
 		const tokens_to_combine = tokens.splice(trigger_index, combine + 1)
-		const new_token_value = tokens_to_combine.map(token => token.token).join(' ')
+		const new_token_value = tokens_to_combine.map(({ token }) => token).join(' ')
 		tokens.splice(trigger_index, 0, { ...tokens_to_combine[0], token: new_token_value })
 		return trigger_index + combine + 1
 	}

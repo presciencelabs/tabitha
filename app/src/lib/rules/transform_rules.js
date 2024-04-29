@@ -429,6 +429,16 @@ const transform_rules_json = [
 		},
 		'transform': { 'tag': { 'syntax': 'predicate_adjective' } },
 	},
+	{
+		'name': 'tag adjectives around verse references',
+		'trigger': { 'token': ':', 'stem': '-ReferenceMarker' },
+		'context': {
+			'precededby': { 'category': 'Adjective' },
+			'followedby': { 'category': 'Adjective' },
+		},
+		'context_transform': [{ 'tag': { 'syntax': '' } }, { 'tag': { 'syntax': '' } }],
+		'comment': 'remove the "predicate_adjective" tag from verse reference numbers',
+	},
 ]
 
 /**

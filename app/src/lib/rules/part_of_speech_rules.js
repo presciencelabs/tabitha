@@ -43,13 +43,13 @@ const part_of_speech_rules_json = [
 		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc',
 	},
 	{
-		'name': 'If Noun-Verb preceded by Verb, Adjective, Conjunction, delete the Verb',
+		'name': 'If Noun-Verb preceded by Adjective or Conjunction, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
-			'precededby': { 'category': 'Verb|Adjective|Conjunction' },
+			'precededby': { 'category': 'Adjective|Conjunction' },
 		},
 		'remove': 'Verb',
-		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Preceded by an Adjective: Daniel 1:7 The official gave new names(N/V) to the men... Preceded by a Conjunction: Because we don\'t allow coordinate VPs in these propositions, if there\'s a Conjunction preceding the Noun/Verb, the word must be a Noun. Daniel 2:37 God has given wealth and honor(N/V) to you.',
+		'comment': 'Preceded by an Adjective: Daniel 1:7 The official gave new names(N/V) to the men... Preceded by a Conjunction: Because we don\'t allow coordinate VPs in these propositions, if there\'s a Conjunction preceding the Noun/Verb, the word must be a Noun. Daniel 2:37 God has given wealth and honor(N/V) to you.',
 	},
 	{
 		'name': 'If Noun-Verb preceded by certain Adpositions, delete the Verb',
@@ -88,6 +88,15 @@ const part_of_speech_rules_json = [
 		'comment': '"The people [that are in the tribe named Levi] saw(N/V) Mary." This only works because cases like "the judge\'s(N/V) house" are handled earlier.',
 	},
 	{
+		'name': 'If Noun-Verb preceded by Verb, delete the Verb',
+		'category': 'Noun|Verb',
+		'context': {
+			'precededby': { 'category': 'Verb' },
+		},
+		'remove': 'Verb',
+		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Sometimes wrongly selects Noun when preceded by "be": You(people) should be teaching(N/V) other people about those things. (not sure how to fix this without breaking other cases)',
+	},
+	{
 		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
 		'trigger': { 'tag': { 'position': 'first_word' }, 'stem': 'so' },
@@ -95,11 +104,11 @@ const part_of_speech_rules_json = [
 		'comment': 'only for \'so\'. \'for\' might be the \'for each...\' sense',
 	},
 	{
-		'name': 'If "so" appears anywhere else in the sentence, remove Conjunction',
+		'name': 'If "so/for" appears anywhere else in the sentence, remove Conjunction',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'stem': 'so' },
+		'trigger': { 'token': 'so|for' },
 		'remove': 'Conjunction',
-		'comment': 'This relies on the previous rule to catch all uses of the conjunction',
+		'comment': 'This relies on the fact these conjunctions must be the first word and therefore capitalized',
 	},
 	{
 		'name': 'If Adverb-Adjective followed by Noun, remove Adverb',
@@ -359,7 +368,7 @@ const builtin_part_of_speech_rules = [
 		comment: '',
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
-			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp' } }),
+			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp|_conj' } }),
 			action: simple_rule_action(({ trigger_token, tokens, context_indexes }) => {
 				const part_of_speech_note = tokens[context_indexes[0]].token
 				const part_of_speech = new Map([
@@ -368,6 +377,7 @@ const builtin_part_of_speech_rules = [
 					['_adj', 'Adjective'],
 					['_adv', 'Adverb'],
 					['_adp', 'Adposition'],
+					['_conj', 'Conjunction'],
 				]).get(part_of_speech_note) ?? ''
 
 				keep_parts_of_speech(new Set([part_of_speech]))(trigger_token)
@@ -375,6 +385,30 @@ const builtin_part_of_speech_rules = [
 				// if no results remain, add a dummy one so the word acts like that part-of-speech
 				if (trigger_token.lookup_results.length === 0) {
 					trigger_token.lookup_results.push(create_lookup_result({ stem: trigger_token.token, part_of_speech }))
+				}
+			}),
+		},
+	},
+	{
+		name: 'Disambiguate part-of-speech based on the selected sense',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && token.specified_sense.length > 0,
+			context: create_context_filter({}),
+			action: message_set_action(({ trigger_token: token }) => {
+				if (token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())) {
+					return {}
+				}
+
+				// get all results that match the specified sense
+				const parts_of_speech_for_sense = new Set(token.lookup_results
+					.filter(result => result.concept?.sense === token.specified_sense)
+					.map(result => result.part_of_speech))
+
+				if (parts_of_speech_for_sense.size > 0) {
+					keep_parts_of_speech(parts_of_speech_for_sense)(token)
+				} else {
+					return { warning: `No sense '${token.specified_sense}' was found for this word in any part-of-speech.` }
 				}
 			}),
 		},

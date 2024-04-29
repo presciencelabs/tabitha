@@ -126,7 +126,7 @@ const verb_case_frames = new Map([
 				'context': {
 					'precededby': [
 						{ 'tag': { 'syntax': 'existential' }, 'skip': 'vp_modifiers' },
-						{ 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] }
+						{ 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] },
 					],
 				},
 				'missing_message': 'be-E requires the format \'there be X\'.',
