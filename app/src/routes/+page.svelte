@@ -80,7 +80,7 @@
 			</p>
 
 			<CopyButton content={back_translation} classes="mt-8 gap-4 self-center">
-				Copy Back Translation
+				Copy back translation
 			</CopyButton>
 		</section>
 	{/if}
