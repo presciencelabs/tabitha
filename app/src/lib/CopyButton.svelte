@@ -16,7 +16,7 @@
 </script>
 
 <button on:click={ copy } class="btn btn-secondary {classes}">
-	Copy to clipboard
+	<slot>Copy to clipboard</slot>
 
 	<Icon icon={ content !== '' && copied === content ? 'mdi:check' : 'mdi:content-copy' } class="h-6 w-6" />
 </button>

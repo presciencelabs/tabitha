@@ -32,7 +32,9 @@
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
 			</button>
 	
-			<CopyButton content={entered_text} classes="ms-4" />
+			<CopyButton content={entered_text} classes="ms-4">
+				Copy Phase 1
+			</CopyButton>
 	
 			<SaveButton content={entered_text} classes="ms-4" />
 		</div>
@@ -77,7 +79,9 @@
 				{back_translation}
 			</p>
 
-			<CopyButton content={back_translation} classes="mt-8 gap-4 self-center" />
+			<CopyButton content={back_translation} classes="mt-8 gap-4 self-center">
+				Copy Back Translation
+			</CopyButton>
 		</section>
 	{/if}
 {/if}
