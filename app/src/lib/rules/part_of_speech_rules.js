@@ -83,6 +83,7 @@ const part_of_speech_rules_json = [
 		'category': 'Noun|Verb',
 		'context': {
 			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+			'notfollowedby': { 'token': 'of' },
 		},
 		'remove': 'Noun',
 		'comment': '"The people [that are in the tribe named Levi] saw(N/V) Mary." This only works because cases like "the judge\'s(N/V) house" are handled earlier.',
