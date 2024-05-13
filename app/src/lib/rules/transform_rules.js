@@ -208,7 +208,7 @@ const transform_rules_json = [
 		'trigger': { 'token': 'named' },
 		'context': {
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
-			'followedby': { 'category': 'Noun' },
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
 		},
 		'transform': { 'function': { 'relation': 'name' } },
 	},
@@ -216,7 +216,10 @@ const transform_rules_json = [
 		'name': '\'named\' before a name and before a Verb becomes a function word',
 		'trigger': { 'token': 'named' },
 		'context': {
-			'followedby': [{ 'category': 'Noun' }, { 'category': 'Verb', 'skip': 'all' }],
+			'followedby': [
+				{ 'category': 'Noun', 'skip': 'np_modifiers' },
+				{ 'category': 'Verb', 'skip': 'all' },
+			],
 		},
 		'transform': { 'function': { 'relation': 'name' } },
 	},
