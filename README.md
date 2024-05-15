@@ -125,6 +125,7 @@ graph TD
 	C-NP2-AdjP --> C-NP2-Adj[Adjective]
 	C-NP2-N -.- C-NP2-n([house])
 	C-NP2-Adj -.- C-NP2-adj([big])
+```
 
 #### Semantic representaion structure
 
