@@ -104,27 +104,26 @@ graph TD
 	s --> C[Clause]
 	s --> P[Punctuation]
 
-	C -.- c([John lives in a big house])
+	C --> NP1[NounPhrase]
+	C --> VP[VerbPhrase]
+	C --> NP2[NounPhrase]
+
 	P -.- t([.])
 
-	c --> C-NP1[NounPhrase]
-	c --> C-VP[VerbPhrase]
-	c --> C-NP2[NounPhrase]
+	NP1 --> NP1-N[Noun]
+	VP --> VP-V[Verb]
+	NP2 --> NP2-Adp[Adposition]
+	NP2 --> NP2-FW[FunctionWord]
+	NP2 --> NP2-AdjP[AdjectivePhrase]
+	NP2 --> NP2-N[Noun]
 
-	C-NP1 --> CNP1-N[Noun]
-	C-VP --> CVP-V[Verb]
-	C-NP2 --> CNP2-Adp[Adposition]
-	C-NP2 --> C-NP2-FW[FunctionWord]
-	C-NP2 --> C-NP2-AdjP[AdjectivePhrase]
-	C-NP2 --> C-NP2-N[Noun]
-
-	CNP1-N -.- CNP1-N-n([John])
-	CVP-V -.- CVP-V-v([lives])
-	CNP2-Adp -.- CNP2-adp([in])
-	C-NP2-FW -.- C-NP2-fw([a])
-	C-NP2-AdjP --> C-NP2-Adj[Adjective]
-	C-NP2-N -.- C-NP2-n([house])
-	C-NP2-Adj -.- C-NP2-adj([big])
+	NP1-N -.- NP1-N-n([John])
+	VP-V -.- VP-V-v([lives])
+	NP2-Adp -.- NP2-adp([in])
+	NP2-FW -.- NP2-fw([a])
+	NP2-AdjP --> NP2-Adj[Adjective]
+	NP2-N -.- NP2-n([house])
+	NP2-Adj -.- NP2-adj([big])
 ```
 
 #### Semantic representaion structure
@@ -136,23 +135,22 @@ graph TD
 	s --> C[Clause]
 	s --> P[Punctuation]
 
-	C -.- c([John lives in a big house])
+	C --> NP1[NounPhrase]
+	C --> VP[VerbPhrase]
+	C --> NP2[NounPhrase]
+
 	P -.- t([.])
 
-	c --> C-NP1[NounPhrase]
-	c --> C-VP[VerbPhrase]
-	c --> C-NP2[NounPhrase]
+	NP1 --> NP1-N[Noun]
+	VP --> VP-V[Verb]
+	NP2 --> NP2-Adp[Adposition]
+	NP2 --> NP2-AdjP[AdjectivePhrase]
+	NP2 --> NP2-N[Noun]
 
-	C-NP1 --> CNP1-N[Noun]
-	C-VP --> CVP-V[Verb]
-	C-NP2 --> CNP2-Adp[Adposition]
-	C-NP2 --> C-NP2-AdjP[AdjectivePhrase]
-	C-NP2 --> C-NP2-N[Noun]
-
-	CNP1-N -.- CNP1-N-n([John])
-	CVP-V -.- CVP-V-v([lives])
-	CNP2-Adp -.- CNP2-adp([in])
-	C-NP2-AdjP --> C-NP2-Adj[Adjective]
-	C-NP2-N -.- C-NP2-n([house])
-	C-NP2-Adj -.- C-NP2-adj([big])
+	NP1-N -.- NP1-N-n([John])
+	VP-V -.- VP-V-v([lives])
+	NP2-Adp -.- NP2-adp([in])
+	NP2-AdjP --> NP2-Adj[Adjective]
+	NP2-N -.- NP2-n([house])
+	NP2-Adj -.- NP2-adj([big])
 ```
