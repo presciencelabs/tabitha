@@ -154,3 +154,86 @@ graph TD
 	NP2-N -.- NP2-n([house])
 	NP2-Adj -.- NP2-adj([big])
 ```
+
+### Sentence
+
+> John's very tall friend wants to go to that store.
+
+#### Phase 1 structure
+
+```mermaid
+graph TD
+	Sentence -.- s([John's very tall friend wants to go to that store.])
+
+	s --> C[Clause]
+
+	C --> NP1-friend[NounPhrase]
+	C --> VP1-want[VerbPhrase]
+	C --> CSub[Clause]
+	C --> P[.]
+
+	NP1-friend --> NP2-John[NounPhrase]
+	NP1-friend --> AdjP-tall[AdjectivePhrase]
+	NP1-friend --> N1[Noun]
+	AdjP-tall --> FW1[FunctionWord]
+	AdjP-tall --> Adj1[Adjective]
+	NP2-John --> N2[Noun]
+	VP1-want --> V1[Verb]
+    
+	CSub --> VP2-go[VerbPhrase]
+	CSub --> NP3-store[NounPhrase]
+	VP2-go --> FW2[FunctionWord]
+	VP2-go --> V2[Verb]
+	NP3-store --> FW3[FunctionWord]
+	NP3-store --> FW4[FunctionWord]
+	NP3-store --> N3[Noun]
+
+	N2 -.- N2-John([John's])
+	FW1 -.- FW1-very([very])
+	Adj1 -.- Adj1-tall([tall])
+	N1 -.- N1-friend([friend])
+	V1 -.- V1-want([wants])
+	FW2 -.- FW2-to([to])
+	V2 -.- V2-go([go])
+	FW3 -.- FW3-to([to])
+	FW4 -.- FW4-to([that])
+	N3 -.- N3-store([store])
+```
+
+#### Semantic representation structure
+
+```mermaid
+graph TD
+	Sentence -.- s([John's very tall friend wants to go to that store.])
+
+	s --> C[Clause]
+
+	C -->|Agent| NP1-friend["NounPhrase"]
+	C --> VP1-want[VerbPhrase]
+	C --> CSub[Clause]
+	C --> P[.]
+
+	NP1-friend --> N1[Noun]
+	NP1-friend --> AdjP-tall[AdjectivePhrase]
+	NP1-friend --> NP2-John[NounPhrase]
+	AdjP-tall -->|"Intensified (very)"| Adj1[Adjective]
+	NP2-John -->|Relation from 's| Adp1[Adposition]
+	NP2-John --> N2[Noun]
+	VP1-want -->|Present| V1[Verb]
+    
+	CSub -->|"Agent (implied)"| NP4-friend[NounPhrase]
+	CSub --> VP2-go[VerbPhrase]
+	CSub -->|"Destination (to)"| NP3-store[NounPhrase]
+	NP4-friend --> N4[Noun]
+	VP2-go --> V2[Verb]
+	NP3-store -->|"Contextually Near (that)"| N3[Noun]
+
+	N2 -.- N2-John([John])
+	Adp1 -.- Adp1-genitive([-GenericGenitive])
+	Adj1 -.- Adj1-tall([tall])
+	N1 -.- N1-friend([friend])
+	V1 -.- V1-want([want])
+	N4 -.- N4-friend([friend])
+	V2 -.- V2-go([go])
+	N3 -.- N3-store([store])
+```
