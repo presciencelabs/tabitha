@@ -93,50 +93,65 @@ The rules to accomplish transforming the semantic representation into target lan
 
 ### Sentence
 
-> John lives in a big house and sees it often.
+> John lives in a big house.
+
+#### Phase 1 structure
 
 ```mermaid
 graph TD
-	Sentence -.- s([John lives in a big house and sees it often.])
+	Sentence -.- s([John lives in a big house.])
 
-	s --> C1[Clause]
-	s --> Conjunction
-	s --> C2[Clause]
+	s --> C[Clause]
 	s --> P[Punctuation]
 
-	C1 -.- c1([John lives in a big house])
-	Conjunction -.- conjunction([and])
-	C2 -.- c2([sees it often])
-	P -.- p([.])
+	C -.- c([John lives in a big house])
+	P -.- t([.])
 
-	c1 --> C1-NP[NounPhrase]
-	c1 --> C1-VP[VerbPhrase]
-	c1 --> C1-PP[PrepositionalPhrase]
-	c2 --> C2-NP[NounPhrase]
-	c2 --> C2-VP[VerbPhrase]
+	c --> C-NP1[NounPhrase]
+	c --> C-VP[VerbPhrase]
+	c --> C-NP2[NounPhrase]
 
-	C1-NP --> C1NP-N[Noun]
-	C1-VP --> C1VP-V[Verb]
-	C1-PP --> C1PP-P[Preposition]
-	C1-PP --> C1PP-NP[NounPhrase]
-	C2-NP --> C2NP-N[Noun]
-	C2-VP --> C2VP-V[Verb]
-	C2-VP --> C2VP-Pro[Pronoun]
-	C2-VP --> C2VP-Adv[Adverb]
+	C-NP1 --> CNP1-N[Noun]
+	C-VP --> CVP-V[Verb]
+	C-NP2 --> CNP2-Adp[Adposition]
+	C-NP2 --> C-NP2-FW[FunctionWord]
+	C-NP2 --> C-NP2-AdjP[AdjectivePhrase]
+	C-NP2 --> C-NP2-N[Noun]
 
-	C1NP-N -.- C1NP-N-n([John])
-	C1VP-V -.- C1VP-V-v([lives])
-	C1PP-P -.- C1PP-p([in])
-	C1PP-NP --> C1PPNP-FW[FunctionWord]
-	C1PP-NP --> C1PPNP-Adj[Adjective]
-	C1PP-NP --> C1PPNP-N[Noun]
-	C2NP-N -. implicit .- C2NP-N-n[/John/]
-	C2VP-V -.- C2VP-V-v([sees])
-	C2VP-Pro -.- C2VP-Pro-pro([it])
-	C2VP-Adv -.- C2VP-Adv-adv([often])
+	CNP1-N -.- CNP1-N-n([John])
+	CVP-V -.- CVP-V-v([lives])
+	CNP2-Adp -.- CNP2-adp([in])
+	C-NP2-FW -.- C-NP2-fw([a])
+	C-NP2-AdjP --> C-NP2-Adj[Adjective]
+	C-NP2-N -.- C-NP2-n([house])
+	C-NP2-Adj -.- C-NP2-adj([big])
 
-	C1PPNP-FW -.- C1PPNP-fw([a])
-	C1PPNP-Adj -.- C1PPNP-adj([big])
-	C1PPNP-N -.- C1PPNP-n([house])
-	C2VP-Pro-pro -. implicit .- C2VP-Pro-pro-n[/house/]
+#### Semantic representaion structure
+
+```mermaid
+graph TD
+	Sentence -.- s([John lives in a big house.])
+
+	s --> C[Clause]
+	s --> P[Punctuation]
+
+	C -.- c([John lives in a big house])
+	P -.- t([.])
+
+	c --> C-NP1[NounPhrase]
+	c --> C-VP[VerbPhrase]
+	c --> C-NP2[NounPhrase]
+
+	C-NP1 --> CNP1-N[Noun]
+	C-VP --> CVP-V[Verb]
+	C-NP2 --> CNP2-Adp[Adposition]
+	C-NP2 --> C-NP2-AdjP[AdjectivePhrase]
+	C-NP2 --> C-NP2-N[Noun]
+
+	CNP1-N -.- CNP1-N-n([John])
+	CVP-V -.- CVP-V-v([lives])
+	CNP2-Adp -.- CNP2-adp([in])
+	C-NP2-AdjP --> C-NP2-Adj[Adjective]
+	C-NP2-N -.- C-NP2-n([house])
+	C-NP2-Adj -.- C-NP2-adj([big])
 ```
