@@ -667,7 +667,7 @@ const builtin_checker_rules = [
 		name: 'Check argument structure/case frame',
 		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
 		rule: {
-			trigger: create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }),
+			trigger: token => token.lookup_results.length > 0,
 			context: create_context_filter({ }),
 			action: message_set_action(validate_case_frame),
 		},
