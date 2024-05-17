@@ -134,8 +134,12 @@ type RoleTag = string
 type WordSense = string
 type WordStem = string
 
+type RoleRulePreset = [string, (preset_value: any, role_tag: RoleTag) => any]
+
 type ArgumentRoleRule = {
 	role_tag: RoleTag
+	// if the trigger rule is relative to the trigger word, this index tells the rule which context index the argument is at
+	relative_context_index: number
 	trigger_rule: TokenRule
 	missing_message: string
 	extra_message: string
@@ -147,6 +151,11 @@ type ArgumentRulesForSense = {
 	other_required: RoleTag[]
 	other_optional: RoleTag[]
 	patient_clause_type: RoleTag
+}
+
+type RoleUsageInfo = {
+	possible_roles: string[]
+	required_roles: string[]
 }
 
 type ArgumentMatchFilter = (role_matches: RoleMatchResult[]) => boolean

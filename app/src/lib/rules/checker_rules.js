@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, create_added_token, format_token_message, get_message_type, set_message_plain } from '$lib/parser/token'
+import { TOKEN_TYPE, create_added_token, format_token_message, get_message_type, is_one_part_of_speech, set_message_plain } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, message_set_action } from './rules_parser'
@@ -655,13 +655,9 @@ const builtin_checker_rules = [
 		name: 'Check for words with ambiguous parts of speech',
 		comment: '',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !is_one_part_of_speech(token),
 			context: create_context_filter({}),
-			action: message_set_action(function* ({ trigger_token: token }) {
-				if (token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())) {
-					return {}
-				}
-				
+			action: message_set_action(function* () {
 				yield { warning: 'The editor cannot determine which part of speech this word is, so some errors and warnings within the same clause may not be accurate.' }
 				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after '{token}' if you want the editor to check the syntax more accurately." }
 			}),
@@ -671,7 +667,7 @@ const builtin_checker_rules = [
 		name: 'Check argument structure/case frame',
 		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
 		rule: {
-			trigger: create_token_filter({ 'category': 'Verb' }),
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }),
 			context: create_context_filter({ }),
 			action: message_set_action(validate_case_frame),
 		},

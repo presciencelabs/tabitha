@@ -1,5 +1,6 @@
-import { TOKEN_TYPE, concept_with_sense, create_case_frame, format_token_message } from '$lib/parser/token'
+import { TOKEN_TYPE, concept_with_sense, create_case_frame, create_token, format_token_message } from '$lib/parser/token'
 import { pipe } from '$lib/pipeline'
+import { create_token_transform } from '../rules_parser'
 import { parse_transform_rule } from '../transform_rules'
 
 /**
@@ -36,6 +37,7 @@ function extra_argument_message(role_tag) {
 		['patient_clause_simultaneous', `{sense} cannot be used with a simultaneous perception clause. ${consult_message}`],
 		['patient_clause_quote_begin', `{sense} cannot be used with direct speech. ${consult_message}`],
 		['predicate_adjective', `{sense} cannot be used with a predicate Adjective. ${consult_message}`],
+		['modified_noun', `{sense} cannot be used attributively. ${consult_message}`],
 	])
 
 	return messages.get(role_tag) ?? `Unexpected ${role_tag} for {sense}. Consult its usage in the Ontology.`
@@ -48,78 +50,30 @@ const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = [
 	['predicate_adjective', '\'{stem}\' can never be used with a predicate adjective. Consider using something like \'cause [X to be...]\'. Consult its usage in the Ontology.'],
 ]
 
-/** @type {Map<string, any>} */
-const SENSE_RULE_PRESETS = new Map([
-	['patient_from_subordinate_clause', {
-		'patient': {
-			'by_clause_tag': 'patient_clause_different_participant',
-			'missing_message': "{sense} should be written in the format 'X {stem} [Y to Verb]'.",
-		},
-		'other_rules': {
-			'extra_patient': {
-				'directly_after_verb': { },
-				'extra_message': "{sense} should not be written with the patient. Use the format 'X {stem} [Y to Verb]'.",
-			},
-		},
-		'comment': 'the patient is omitted in the phase 1 and copied from within the subordinate. so treat the clause like the patient',
-	}],
-])
-
-/** @type {[string, (preset_value: any, role_tag: RoleTag) => any][]} */
-// @ts-ignore the map initializer array doesn't like the different object structures
-const ROLE_RULE_PRESETS = [
-	['by_adposition', (preset_value, role_tag) => ({
-		'trigger': { 'tag': { 'syntax': 'head_np' } },
-		'context': { 'precededby': { 'token': preset_value, 'skip': 'np_modifiers' } },
-		'context_transform': { 'function': '' },
-		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
-	})],
-	['by_clause_tag', preset_value => ({
-		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': preset_value } },
-	})],
-	['directly_before_verb', preset_value => ({
-		'trigger': { 'tag': { 'syntax': 'head_np' }, ...preset_value },
-		'context': { 'followedby': { 'category': 'Verb', 'skip': ['np', 'vp_modifiers'] } },
-		// skip 'np' because there might be a genitive (eg 'man of God')
-	})],
-	['directly_after_verb', preset_value => ({
-		'trigger': { 'tag': { 'syntax': 'head_np' }, ...preset_value },
-		'context': { 'precededby': { 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] } },
-	})],
-	['directly_after_verb_with_adposition', (preset_value, role_tag) => ({
-		'trigger': { 'tag': { 'syntax': 'head_np' } },
-		'context': {
-			'precededby': [
-				{ 'category': 'Verb', 'skip': 'vp_modifiers' },
-				{ 'token': preset_value, 'skip': 'np_modifiers' },
-			],
-		},
-		'context_transform': [{}, { 'function': '' }],
-		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
-	})],
-	['predicate_adjective', () => ({
-		'trigger': { 'category': 'Adjective', 'tag': { 'syntax': 'predicate_adjective' } },
-	})],
-]
-
 /**
  * 
  * @param {[RoleTag, any]} rule_json 
+ * @param {RoleRulePreset[]} [presets=[]] 
  * @returns {ArgumentRoleRule[]}
  */
-export function parse_case_frame_rule([role_tag, rule_json]) {
+export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
 	if (Array.isArray(rule_json)) {
 		// An argument role may have multiple possible trigger rules, ie different structures that are allowed.
-		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option]))
+		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option], presets))
 	}
 
-	const preset = ROLE_RULE_PRESETS.find(([key]) => key in rule_json)
-	if (preset) {
-		const [preset_tag, preset_rule] = preset
-		const preset_value = rule_json[preset_tag]
-		rule_json = {
-			...preset_rule(preset_value, role_tag),
-			...rule_json,		// allow a rule to overwrite or add any part of a preset
+	rule_json = { ...rule_json }	// create a copy so we can modify it with 'delete'
+	
+	while (presets.some(([key]) => key in rule_json)) {
+		const preset = presets.find(([key]) => key in rule_json)
+		if (preset) {
+			const [preset_tag, preset_rule] = preset
+			const preset_value = rule_json[preset_tag]
+			delete rule_json[preset_tag]
+			rule_json = {
+				...preset_rule(preset_value, role_tag),
+				...rule_json,		// allow a rule to overwrite or add any part of a preset
+			}
 		}
 	}
 
@@ -128,11 +82,15 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 		return []
 	}
 
-	rule_json['transform'] = { 'tag': { 'role': role_tag }, ...rule_json['transform'] ?? {} }
+	const tag_role = rule_json['tag_role'] ?? true
+	const tag_transform = tag_role ? { 'tag': { 'role': role_tag } } : {}
+
+	rule_json['transform'] = { ...tag_transform, ...rule_json['transform'] ?? {} }
 
 	return [{
 		role_tag,
 		trigger_rule: parse_transform_rule(rule_json),
+		relative_context_index: rule_json['argument_context_index'] ?? -1,
 		missing_message: rule_json['missing_message'] ?? missing_argument_message(role_tag),
 		extra_message: rule_json['extra_message'] ?? '',
 	}]
@@ -141,9 +99,12 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 /**
  * @param {[WordSense, any][]} rule_json
  * @param {ArgumentRoleRule[]} defaults
+ * @param {Object} presets
+ * @param {Map<string, any>?} [presets.sense_presets]
+ * @param {RoleRulePreset[]} [presets.role_presets]
  * @returns {ArgumentRulesForSense[]}
  */
-export function parse_sense_rules(rule_json, defaults) {
+export function parse_sense_rules(rule_json, defaults, { sense_presets=null, role_presets=[] }) {
 	return rule_json.map(parse_sense_rule(defaults))
 
 	/**
@@ -153,11 +114,15 @@ export function parse_sense_rules(rule_json, defaults) {
 	 */
 	function parse_sense_rule(defaults) {
 		return ([sense, rules_json]) => {
-			rules_json = SENSE_RULE_PRESETS.get(rules_json) ?? rules_json
+			rules_json = sense_presets?.get(rules_json) ?? rules_json
 
-			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json ? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]]) : [rule])
+			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json
+				? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]], role_presets)
+				: [rule])
 
-			const other_rules = 'other_rules' in rules_json ? Object.entries(rules_json['other_rules']).flatMap(parse_case_frame_rule) : []
+			const other_rules = 'other_rules' in rules_json
+				? Object.entries(rules_json['other_rules']).flatMap(rule => parse_case_frame_rule(rule, role_presets))
+				: []
 
 			return {
 				sense,
@@ -165,27 +130,27 @@ export function parse_sense_rules(rule_json, defaults) {
 				other_optional: rules_json['other_optional']?.split('|') ?? [],
 				other_required: rules_json['other_required']?.split('|') ?? [],
 				patient_clause_type: rules_json['patient_clause_type'] ?? '',
+				transform: create_token_transform(rules_json['transform']),
 			}
 		}
 	}
 }
 
 /**
+ * @typedef {(categorization: string, role_rules: ArgumentRulesForSense) => RoleUsageInfo} RoleInfoGetter
+ * @typedef {{ rules_by_sense: ArgumentRulesForSense[], default_rules: ArgumentRoleRule[], role_info_getter: RoleInfoGetter }} RuleInfo
  * 
  * @param {RuleTriggerContext} trigger_context
- * @param {Object} rule_info
- * @param {ArgumentRulesForSense[]} [rule_info.rules_by_sense] 
- * @param {ArgumentRoleRule[]} [rule_info.default_rules] 
- * @param {Map<string, RoleTag>} [rule_info.role_letter_map] 
+ * @param {RuleInfo} rule_info
  */
-export function check_case_frames({ tokens, trigger_token }, { rules_by_sense=[], default_rules=[], role_letter_map=new Map() }) {
+export function check_case_frames(trigger_context, { rules_by_sense, default_rules, role_info_getter }) {
 	const pipeline = pipe(
 		get_rules_for_sense(rules_by_sense, default_rules),
-		match_sense_rules(tokens),
-		check_usage(role_letter_map),
+		match_sense_rules(trigger_context),
+		check_usage(role_info_getter),
 	)
 
-	for (const lookup of trigger_token.lookup_results.filter(result => result.concept)) {
+	for (const lookup of trigger_context.trigger_token.lookup_results.filter(result => result.concept)) {
 		lookup.case_frame = pipeline(lookup)
 	}
 }
@@ -197,7 +162,9 @@ export function check_case_frames({ tokens, trigger_token }, { rules_by_sense=[]
  * @returns {(lookup: LookupResult) => [LookupResult, ArgumentRulesForSense]}
  */
 function get_rules_for_sense(rules_by_sense, default_rules) {
+	/** @type {ArgumentRulesForSense} */
 	const defaults_for_stem = {
+		sense: '',
 		rules: default_rules,
 		other_optional: [],
 		other_required: [],
@@ -205,57 +172,90 @@ function get_rules_for_sense(rules_by_sense, default_rules) {
 	}
 	return lookup => {
 		const sense = lookup.concept ? concept_with_sense(lookup.concept) : lookup.stem
-		return [lookup, rules_by_sense.find(rule => rule.sense === sense) ?? { sense, ...defaults_for_stem }]
+		return [lookup, rules_by_sense.find(rule => rule.sense === sense) ?? { ...defaults_for_stem, sense }]
 	}
 }
 
 /**
  * 
- * @param {Token[]} tokens 
+ * @param {RuleTriggerContext} main_trigger_context 
  * @returns {(param: [LookupResult, ArgumentRulesForSense]) => [LookupResult, ArgumentRulesForSense, RoleMatchResult[]]}
  */
-function match_sense_rules(tokens) {
-	return ([lookup, sense_rule]) => [lookup, sense_rule, sense_rule.rules.map(rule => match_argument_rule(tokens, rule)).filter(match => match.success)]
+function match_sense_rules(main_trigger_context) {
+	return ([lookup, sense_rule]) => [
+		lookup,
+		sense_rule,
+		sense_rule.rules.map(rule => match_argument_rule(main_trigger_context, rule)).filter(match => match.success),
+	]
 }
 
 /**
  * 
- * @param {Token[]} tokens 
+ * @param {RuleTriggerContext} main_trigger_context 
  * @param {ArgumentRoleRule} rule 
  * @returns {RoleMatchResult}
  */
-function match_argument_rule(tokens, rule) {
+function match_argument_rule(main_trigger_context, rule) {
+	const { tokens } = main_trigger_context
 	const { trigger, context } = rule.trigger_rule
 
-	for (let i = 0; i < tokens.length;) {
-		if (!trigger(tokens[i])) {
-			i++
-			continue
-		}
-		const context_result = context(tokens, i)
+	if (rule.relative_context_index >= 0) {
+		// The rule should be interpreted as relative to the main word
+		const context_result = context(tokens, main_trigger_context.trigger_index)
+
 		if (!context_result.success) {
-			i++
-			continue
+			return create_role_match_result(rule, false)
 		}
-		return {
-			role_tag: rule.role_tag,
-			success: true,
-			trigger_context: {
+
+		const argument_index = context_result.context_indexes[rule.relative_context_index]
+
+		return create_role_match_result(rule, true, {
+			tokens,
+			trigger_index: argument_index,
+			trigger_token: tokens[argument_index],
+			...context_result,
+		})
+
+	} else {
+		// The rule stands alone within the clause, not relative to the main word
+		for (let i = 0; i < tokens.length;) {
+			if (!trigger(tokens[i])) {
+				i++
+				continue
+			}
+			const context_result = context(tokens, i)
+			if (!context_result.success) {
+				i++
+				continue
+			}
+
+			return create_role_match_result(rule, true, {
 				tokens,
 				trigger_index: i,
 				trigger_token: tokens[i],
 				...context_result,
-			},
-			rule,
+			})
 		}
+
+		return create_role_match_result(rule, false)
 	}
+}
+
+/**
+ * 
+ * @param {ArgumentRoleRule} rule 
+ * @param {boolean} success 
+ * @param {RuleTriggerContext?} argument_context 
+ * @returns {RoleMatchResult}
+ */
+function create_role_match_result(rule, success, argument_context=null) {
 	return {
 		role_tag: rule.role_tag,
-		success: false,
-		trigger_context: {
+		success,
+		trigger_context: argument_context ?? {
 			tokens: [],
 			trigger_index: -1,
-			trigger_token: tokens[0],
+			trigger_token: create_token('', TOKEN_TYPE.NOTE),
 			context_indexes: [],
 			subtoken_indexes: [],
 		},
@@ -264,35 +264,16 @@ function match_argument_rule(tokens, rule) {
 }
 
 /**
- * @param {Map<string, RoleTag>} role_letter_map
+ * @param {RoleInfoGetter} role_info_getter
  * @returns {(param: [LookupResult, ArgumentRulesForSense, RoleMatchResult[]]) => CaseFrameResult}
  */
-function check_usage(role_letter_map) {
+function check_usage(role_info_getter) {
 	return ([lookup, role_rules, role_matches]) => {
 		if (lookup.concept === null) {
 			return create_case_frame({ is_valid: false, is_checked: false })
 		}
 
-		const role_letters = [...lookup.concept.categorization].filter(c => c !== '_')
-
-		// Replace 'patient_clause' with the appropriate clause type
-		const patient_clause_type = role_rules.patient_clause_type || 'patient_clause_different_participant'
-
-		/** @type {string[]} */
-		// @ts-ignore
-		const possible_roles = role_letters
-			.map(c => role_letter_map.get(c.toUpperCase()))
-			.map(role => role === 'patient_clause' ? patient_clause_type : role)
-			.concat([...role_rules.other_optional, ...role_rules.other_required])
-			.filter(role => role)
-
-		/** @type {string[]} */
-		// @ts-ignore
-		const required_roles = role_letters
-			.map(c => role_letter_map.get(c))
-			.map(role => role === 'patient_clause' ? patient_clause_type : role)
-			.concat(role_rules.other_required)
-			.filter(role => role)
+		const { possible_roles, required_roles } = role_info_getter(lookup.concept.categorization, role_rules)
 
 		const valid_arguments = role_matches.filter(({ role_tag }) => possible_roles.includes(role_tag))
 		const extra_arguments = role_matches.filter(({ role_tag }) => !possible_roles.includes(role_tag))

@@ -1,5 +1,7 @@
-import { TOKEN_TYPE, find_result_index, set_message, set_token_concept } from '$lib/parser/token'
-import { create_context_filter, simple_rule_action, create_token_filter } from './rules_parser'
+import { find_result_index, set_message, set_token_concept } from '$lib/parser/token'
+import { create_context_filter, create_token_filter } from '../rules_parser'
+
+/** @typedef {[string, any]} SenseRules */
 
 /**
  * These rules help decide which sense to select from the ones that match the argument structure.
@@ -8,7 +10,6 @@ import { create_context_filter, simple_rule_action, create_token_filter } from '
  * A sense can also have multiple rows in case there are multiple incompatible filters to check.
  * TODO store these in the db
  * 
- * @typedef {[string, any]} SenseRules
  * @type {[WordStem, SenseRules[]][]}
  */
 const verb_sense_rules = [
@@ -130,10 +131,52 @@ const verb_sense_rules = [
 ]
 
 /**
+ * These rules help decide which sense to select from the ones that match the argument structure.
+ * They are ordered by priority, and can provide additional filtering of the verb or arguments to
+ * narrow down the match.
+ * A sense can also have multiple rows in case there are multiple incompatible filters to check.
+ * Many adjective sense B's have a nominal argument where sense A does not, so if sense B has a
+ * valid argument, it needs to be entered here in order to prioritize it over sense A.
+ * 
+ * @type {[WordStem, SenseRules[]][]}
+ */
+const adjective_sense_rules = [
+	['afraid', [['afraid-B', { }]]],
+	['amazed', [['amazed-B', { }]]],
+	['angry', [['angry-B', { }]]],
+	['ashamed', [['ashamed-B', { }]]],
+	['close', [['close-B', { }]]],
+	['cruel', [['cruel-B', { }]]],
+	['faithful', [
+		['faithful-B', { }],
+		// When faithful-C has a nominal argument, it should be prioritized over -A
+		['faithful-C', { 'nominal_argument': { } }],
+	]],
+	['gentle', [['gentle-B', { }]]],
+	['kind', [['kind-B', { }]]],
+	['long', [
+		['long-C', { }],
+		['long-B', { 'nominal_argument': { 'stem': 'time' } }],
+	]],
+	['merciful', [['merciful-B', { }]]],
+	['old', [['old-B', { }]]],
+	['patient', [['patient-B', { }]]],
+	['sad', [
+		// Only when sad-B has a nominal argument should it be prioritized over sad-A
+		['sad-B', { 'nominal_argument': { } }],
+	]],
+	['upset', [
+		['upset-B', { }],
+		['upset-C', { }],
+	]],
+	['wide', [['wide-B', { }]]],
+]
+
+/**
  * @param {SenseRules} sense_rules 
  * @returns {[WordSense, ArgumentMatchFilter]}
  */
-function parse_verb_sense_rule([sense, sense_rule_json]) {
+function parse_sense_rule([sense, sense_rule_json]) {
 	const role_filters = Object.entries(sense_rule_json).map(parse_sense_rule)
 	return [sense, role_match => role_filters.every(filter => filter(role_match))]
 
@@ -159,33 +202,26 @@ function parse_verb_sense_rule([sense, sense_rule_json]) {
 }
 
 /** @type {Map<WordStem, [WordSense, ArgumentMatchFilter][]>} */
-const VERB_SENSE_FILTER_RULES = new Map(verb_sense_rules.map(([stem, sense_rules]) => [stem, sense_rules.map(parse_verb_sense_rule)]))
+const VERB_SENSE_FILTER_RULES = new Map(verb_sense_rules.map(([stem, sense_rules]) => [stem, sense_rules.map(parse_sense_rule)]))
+const ADJECTIVE_SENSE_FILTER_RULES = new Map(adjective_sense_rules.map(([stem, sense_rules]) => [stem, sense_rules.map(parse_sense_rule)]))
 
 const SENSE_FILTER_RULES = new Map([
 	['Verb', VERB_SENSE_FILTER_RULES],
+	['Adjective', ADJECTIVE_SENSE_FILTER_RULES],
 ])
 
-/** @type {BuiltInRule[]} */
-const sense_rules = [
-	{
-		name: 'Word sense selection',
-		comment: '',
-		rule: {
-			trigger: create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }),
-			context: create_context_filter({ }),
-			action: simple_rule_action(trigger_context => {
-				const token = trigger_context.trigger_token
-				select_word_sense(token, trigger_context)
+/**
+ * 
+ * @param {RuleTriggerContext} trigger_context 
+ */
+export function select_sense(trigger_context) {
+	const token = trigger_context.trigger_token
+	select_word_sense(token, trigger_context)
 
-				if (token.complex_pairing) {
-					select_word_sense(token.complex_pairing, trigger_context)
-				}
-			}),
-		},
-	},
-]
-
-export const SENSE_RULES = sense_rules.map(({ rule }) => rule)
+	if (token.complex_pairing) {
+		select_word_sense(token.complex_pairing, trigger_context)
+	}
+}
 
 /**
  * 
@@ -249,13 +285,8 @@ function select_word_sense(token, trigger_context) {
 	const sense_to_select = specified_sense ? specified_sense : default_matching_sense
 	set_token_concept(token, sense_to_select)
 
-	const selected_result = token.lookup_results[0]
-	if (!selected_result.case_frame.is_valid) {
-		return
-	}
-
 	// apply the selected result's argument actions
-	for (const valid_argument of selected_result.case_frame.valid_arguments) {
+	for (const valid_argument of token.lookup_results[0].case_frame.valid_arguments) {
 		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
 	}
 }

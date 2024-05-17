@@ -423,7 +423,7 @@ const builtin_part_of_speech_rules = [
  */
 export function parse_part_of_speech_rule(rule_json) {
 	const category = category_filter(rule_json['category'])
-	const trigger = create_token_filter(rule_json['trigger']) 
+	const trigger = create_token_filter(rule_json['trigger'] ?? 'all') 
 	const context = create_context_filter(rule_json['context'])
 	const action = create_remove_action(rule_json['remove'])
 

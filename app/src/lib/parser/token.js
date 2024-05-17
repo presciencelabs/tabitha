@@ -200,6 +200,15 @@ export function set_token_concept(token, concept) {
 
 /**
  * 
+ * @param {Token} token 
+ * @returns {boolean}
+ */
+export function is_one_part_of_speech(token) {
+	return token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())
+}
+
+/**
+ * 
  * @param {string} term 
  * @returns {{stem: string, sense: string}}
  */

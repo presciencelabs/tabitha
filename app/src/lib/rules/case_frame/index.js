@@ -1,7 +1,7 @@
 import { validate_case_frame } from './common'
-import { CASE_FRAME_RULES } from './rules'
+import { ARGUMENT_AND_SENSE_RULES } from './rules'
 
 export {
-	CASE_FRAME_RULES,
+	ARGUMENT_AND_SENSE_RULES,
 	validate_case_frame,
 }

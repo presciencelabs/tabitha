@@ -19,8 +19,7 @@ export async function parse(text, db) {
 		perform_ontology_lookups,
 		rules_applier(RULES.PART_OF_SPEECH),
 		rules_applier(RULES.TRANSFORM),
-		rules_applier(RULES.CASE_FRAME),
-		rules_applier(RULES.SENSE),
+		rules_applier(RULES.ARGUMENT_AND_SENSE),
 		rules_applier(RULES.CHECKER),
 	)(text)
 }
@@ -39,8 +38,7 @@ export function parse_for_test(text) {
 		rules_applier(RULES.LOOKUP),
 		rules_applier(RULES.PART_OF_SPEECH),
 		rules_applier(RULES.TRANSFORM),
-		rules_applier(RULES.CASE_FRAME),
-		rules_applier(RULES.SENSE),
+		rules_applier(RULES.ARGUMENT_AND_SENSE),
 		rules_applier(RULES.CHECKER.slice(0,4)),	// TODO remove slice when e2e testing is set up (skips the 'no lookup' check)
 		flatten_sentences,
 	)(text)

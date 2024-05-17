@@ -6,7 +6,10 @@ import { TOKEN_TYPE, set_message, set_token_concept, token_has_tag } from '$lib/
  * @returns {TokenFilter}
  */
 export function create_token_filter(filter_json) {
-	if (filter_json === undefined || filter_json === 'all') {
+	if (filter_json === undefined || filter_json === 'none') {
+		return () => false
+	}
+	if (filter_json === 'all') {
 		return () => true
 	}
 

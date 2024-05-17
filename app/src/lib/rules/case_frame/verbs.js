@@ -1,3 +1,4 @@
+import { TOKEN_TYPE } from '$lib/parser/token'
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from './common'
 
 const default_verb_case_frame_json = {
@@ -48,9 +49,78 @@ const default_verb_case_frame_json = {
 		'by_clause_tag': 'patient_clause_quote_begin',
 	},
 	'predicate_adjective': {
-		'predicate_adjective': {},
+		'predicate_adjective': { },
 	},
 }
+
+/** @type {Map<string, any>} */
+const SENSE_RULE_PRESETS = new Map([
+	['patient_from_subordinate_clause', {
+		'patient': {
+			'by_clause_tag': 'patient_clause_different_participant',
+			'missing_message': "{sense} should be written in the format 'X {stem} [Y to Verb]'.",
+		},
+		'other_rules': {
+			'extra_patient': {
+				'directly_after_verb': { },
+				'extra_message': "{sense} should not be written with the patient. Use the format 'X {stem} [Y to Verb]'.",
+			},
+		},
+		'comment': 'the patient is omitted in the phase 1 and copied from within the subordinate. so treat the clause like the patient',
+	}],
+])
+
+/** @type {RoleRulePreset[]} */
+// @ts-ignore the map initializer array doesn't like the different object structures
+const ROLE_RULE_PRESETS = [
+	['by_adposition', (preset_value, role_tag) => ({
+		'trigger': { 'tag': { 'syntax': 'head_np' } },
+		'context': { 'precededby': { 'token': preset_value, 'skip': 'np_modifiers' } },
+		'context_transform': { 'function': {} },
+		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
+	})],
+	['by_clause_tag', preset_value => ({
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': preset_value, 'role': 'none' } },
+	})],
+	['directly_before_verb', preset_value => ({
+		// relative to the word whose case frame we're checking
+		'by_relative_context': {
+			'precededby': {
+				'tag': { 'syntax': 'head_np' },
+				'skip': ['np', 'vp_modifiers'], // skip 'np' because there might be a genitive (eg 'man of God')
+				...preset_value,
+			},
+		},
+	})],
+	['directly_after_verb', preset_value => ({
+		'by_relative_context': {
+			'followedby': {
+				'tag': { 'syntax': 'head_np' },
+				'skip': ['vp_modifiers', 'np_modifiers'],
+				...preset_value,
+			},
+		},
+	})],
+	['directly_after_verb_with_adposition', (preset_value, role_tag) => ({
+		'by_relative_context': {
+			'followedby': [
+				{ 'token': preset_value, 'skip': 'vp_modifiers' },
+				{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+			],
+			'argument_context_index': 1,
+		},
+		'context_transform': { 'function': {} },	// make the adposition a function word
+		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
+	})],
+	['predicate_adjective', () => ({
+		'trigger': { 'category': 'Adjective', 'tag': { 'syntax': 'predicate_adjective' } },
+	})],
+	['by_relative_context', preset_value => ({
+		'trigger': 'all',
+		'context': preset_value,
+		'argument_context_index': preset_value['argument_context_index'] ?? 0,
+	})],
+]
 
 /**
  * These rules allow each verb sense to specify rules for each argument that is different from the default.
@@ -195,12 +265,10 @@ const verb_case_frames = new Map([
 		}],
 		['be-S', {
 			'predicate_adjective': {
-				'trigger': { 'token': 'old' },
+				'trigger': { 'stem': 'old' },
 				'context': { 'precededby': [{ 'category': 'Adjective' }, { 'stem': 'year|month|day' }] },
-				'transform': { 'concept': 'old-B' },
 				'missing_message': 'be-S requires the format \'be X years//months//etc old(-B)\'.',
 			},
-			'state': { },
 			'other_required': 'predicate_adjective',
 			'comment': "clear the 'state' argument so it doesn't get triggered by 'year/month/day' etc. 'old' is the predicate adjective.",
 		}],
@@ -292,6 +360,7 @@ const verb_case_frames = new Map([
 				'lifespan_oblique': {
 					'trigger': { 'tag': { 'syntax': 'head_np' } , 'stem': 'year|time' },
 					'context': { 'precededby': { 'token': 'for', 'skip': 'np_modifiers' } },
+					'tag_role': false,
 					'comment': 'eg Adam lived for 930 years',
 				},
 			},
@@ -304,6 +373,7 @@ const verb_case_frames = new Map([
 					'context': {
 						'subtokens': { 'stem': 'just-like', 'skip': { 'token': '[' } },
 					},
+					'tag_role': false,
 				},
 			},
 			'other_optional': 'just_like_clause',
@@ -420,23 +490,12 @@ const verb_case_frames = new Map([
 	]],
 ])
 
-const VERB_LETTER_TO_ROLE = new Map([
-	['A', 'agent'],
-	['B', 'patient'],
-	['C', 'state'],
-	['D', 'source'],
-	['E', 'destination'],
-	['F', 'instrument'],
-	['G', 'beneficiary'],
-	['H', 'patient_clause'],
-	['I', 'agent_clause'],
-])
-
 /**
  * @returns {ArgumentRoleRule[]}
  */
 function create_default_argument_rules() {
-	return Object.entries(default_verb_case_frame_json).flatMap(parse_case_frame_rule)
+	return Object.entries(default_verb_case_frame_json)
+		.flatMap(rule_json => parse_case_frame_rule(rule_json, ROLE_RULE_PRESETS))
 }
 
 /**
@@ -452,7 +511,8 @@ function create_verb_argument_rules() {
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
 		const defaults = get_default_rules_for_stem(stem)
-		return [stem, parse_sense_rules(sense_rules_json, defaults)]
+		const presets = { sense_presets: SENSE_RULE_PRESETS, role_presets: ROLE_RULE_PRESETS }
+		return [stem, parse_sense_rules(sense_rules_json, defaults, presets)]
 	}
 }
 
@@ -488,8 +548,51 @@ export function check_verb_case_frames(trigger_context, rules_modifier=rules => 
 	check_case_frames(trigger_context, {
 		rules_by_sense: argument_rules_by_sense.map(rules_for_sense => ({ ...rules_for_sense, rules: rules_modifier(rules_for_sense.rules) })),
 		default_rules: rules_modifier(get_default_rules_for_stem(stem)),
-		role_letter_map: VERB_LETTER_TO_ROLE,
+		role_info_getter: get_verb_usage_info,
 	})
+}
+
+const VERB_LETTER_TO_ROLE = new Map([
+	['A', 'agent'],
+	['B', 'patient'],
+	['C', 'state'],
+	['D', 'source'],
+	['E', 'destination'],
+	['F', 'instrument'],
+	['G', 'beneficiary'],
+	['H', 'patient_clause'],
+	['I', 'agent_clause'],
+])
+
+/**
+ * 
+ * @param {string} categorization 
+ * @param {ArgumentRulesForSense} role_rules
+ * @returns {RoleUsageInfo}
+ */
+function get_verb_usage_info(categorization, role_rules) {
+	const role_letters = [...categorization].filter(c => c !== '_')
+
+	// Replace 'patient_clause' with the appropriate clause type
+	const patient_clause_type = role_rules.patient_clause_type || 'patient_clause_different_participant'
+
+	/** @type {string[]} */
+	// @ts-ignore
+	const possible_roles = role_letters
+		.map(c => VERB_LETTER_TO_ROLE.get(c.toUpperCase()))
+		.map(role => role === 'patient_clause' ? patient_clause_type : role)
+		.concat([...role_rules.other_optional, ...role_rules.other_required])
+		.filter(role => role)
+
+	/** @type {string[]} */
+	// @ts-ignore
+	const required_roles = role_letters
+		.map(c => VERB_LETTER_TO_ROLE.get(c))
+		.map(role => role === 'patient_clause' ? patient_clause_type : role)
+		.concat(role_rules.other_required)
+		.filter(role => role)
+
+	return { possible_roles, required_roles }
 }
 
 /**
@@ -508,7 +611,8 @@ export function check_verb_case_frames_passive(trigger_context) {
 			'missing_message': 'An agent is required, which for a passive is preceded by \'by\'.',
 		},
 	}
-	const passive_rules = Object.entries(passive_rules_json).flatMap(parse_case_frame_rule)
+	const passive_rules = Object.entries(passive_rules_json)
+		.flatMap(rule_json => parse_case_frame_rule(rule_json, ROLE_RULE_PRESETS))
 
 	check_verb_case_frames(
 		trigger_context,
