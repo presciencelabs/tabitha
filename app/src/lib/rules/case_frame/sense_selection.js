@@ -161,6 +161,7 @@ const adjective_sense_rules = [
 	['merciful', [['merciful-B', { }]]],
 	['old', [['old-B', { }]]],
 	['patient', [['patient-B', { }]]],
+	['proud', [['proud-B', { }]]],
 	['sad', [
 		// Only when sad-B has a nominal argument should it be prioritized over sad-A
 		['sad-B', { 'nominal_argument': { } }],
