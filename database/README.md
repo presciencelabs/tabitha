@@ -65,5 +65,7 @@ https://developers.cloudflare.com/workers/wrangler
 
 `wrangler d1 execute Targets.YYYY-MM-DD --file=./Targets.YYYY-MM-DD.tabitha.sqlite.sql`
 
+> NOTE: ⚠️ There are some manual steps when trying to import to remote ⚠️, check https://developers.cloudflare.com/d1/build-with-d1/import-data/#convert-sqlite-database-files for the latest instructions.
+
 `wrangler d1 execute Targets.YYYY-MM-DD --command="select count(*) from English"`
 

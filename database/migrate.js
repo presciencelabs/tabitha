@@ -28,16 +28,16 @@ const target_tablenames_tbta = tbta_db.query(`
 `).all().map(({name}) => name)
 console.log('done.')
 
-
 console.log(`Transforming data from ${tbta_db_name}...`)
 const transformed_data = target_tablenames_tbta.map(table_name => tbta_db.query(`
 		SELECT Reference, Verse
 		FROM ${table_name}
+		WHERE Reference NOT NULL
 	`).all().map(transform) // array of books
 ).flat() // flattens all 66 books into one array of all verses
 
 function transform ({Reference, Verse}) {
-	// Reference looks like this: "Daniel 3:9"
+	// References are expected to look like this: "Daniel 3:9"
 	const [, book, chapter, verse] = /(.*) (\d+):(\d+)/.exec(Reference)
 
 	// Verse looks like this: "Those astrologers said to King Nebuchadnezzar, “May you, the king, live forever!~!~(NP those[Pre-Nominal] astrologer+s[Plural] ) (VP said ) (NP to (NP _ King ) Nebuchadnezzar ) [ ,_“ (VP may[CP-VP] ) (NP you (NP , the[Pre-Nominal] king , ) ) (VP live ) (AdvP forever ) ! ] . Those astrologers said to King Nebuchadnezzar, “May you, the king, live forever! Those astrologers said to the king, “We hope that you'll live forever.~!~(NP those[Pre-Nominal] astrologer+s[Plural] ) (VP said ) (NP to the[Pre-Nominal] king ) [ ,_“ (NP we ) (VP hope ) [ that[Complementizer] (NP you ) (VP will[Pre-Verbal] live ) (AdvP forever ) ] ] . "
