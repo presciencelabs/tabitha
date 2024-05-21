@@ -4,10 +4,12 @@ alert,Adjective,|alert  more|alert  most|
 alive,Adjective,|alive  more|alive  most|
 amazed,Adjective,|amazed  more|amazed  most|
 angry,Adjective,|angrier|angriest|
+arrogant,Adjective,|arrogant  more|arrogant  most|
 ashamed,Adjective,|ashamed  more|ashamed  most|
 attracted,Adjective,|attracted  more|attracted  most|
 attractive,Adjective,|attractive  more|attractive  most|
 awake,Adjective,|awake  more|awake  most|
+awesome,Adjective,|awesome  more|awesome  most|
 bad,Adjective,|worse|worst|
 barren,Adjective,|barren  more|barren  most|
 beautiful,Adjective,|beautiful  more|beautiful  most|
@@ -28,6 +30,8 @@ cold,Adjective,|colder|coldest|
 comfortable,Adjective,|comfortable  more|comfortable  most|
 common,Adjective,|common  more|common  most|
 compassionate,Adjective,|compassionate  more|compassionate  most|
+complicated,Adjective,|complicated  more|complicated  most|
+confident,Adjective,|confident  more|confident  most|
 confused,Adjective,|confused  more|confused  most|
 conscious,Adjective,|conscious  more|conscious  most|
 content,Adjective,|content  more|content  most|
@@ -36,6 +40,7 @@ correct,Adjective,|correct  more|correct  most|
 corrupt,Adjective,|corrupt  more|corrupt  most|
 courageous,Adjective,|courageous  more|courageous  most|
 crazy,Adjective,|crazier|craziest|
+crippled,Adjective,|crippled  more|crippled  most|
 cruel,Adjective,|crueler|cruelest|
 dangerous,Adjective,|dangerous  more|dangerous  most|
 dark,Adjective,|darker|darkest|
@@ -43,14 +48,17 @@ dead,Adjective,|deader|deadest|
 deaf,Adjective,|deafer|deafest|
 deep,Adjective,|deeper|deepest|
 delicious,Adjective,|delicious  more|delicious  most|
+detestable,Adjective,|detestable  more|detestable  most|
 difficult,Adjective,|difficult  more|difficult  most|
 dirty,Adjective,|dirtier|dirtiest|
+discouraged,Adjective,|discouraged  more|discouraged  most|
 drunk,Adjective,|drunk  more|drunk  most|
 dry,Adjective,|drier|driest|
 early,Adjective,|earlier|earliest|
 easy,Adjective,|easier|easiest|
 empty,Adjective,|empty  more|empty  most|
 evil,Adjective,|evil  more|evil  most|
+excellent,Adjective,|excellent  more|excellent  most|
 excited,Adjective,|excited  more|excited  most|
 expensive,Adjective,|expensive  more|expensive  most|
 extraordinary,Adjective,|extraordinary  more|extraordinary  most|
@@ -63,11 +71,14 @@ fast,Adjective,|faster|fastest|
 fat,Adjective,|fatter|fattest|
 fertile,Adjective,|fertile  more|fertile  most|
 few,Adjective,|fewer|fewest|
+fierce,Adjective,|fiercer|fiercest|
 flat,Adjective,|flatter|flattest|
 foolish,Adjective,|foolish  more|foolish  most|
+fortified,Adjective,|fortified  more|fortified  most|
 fortunate,Adjective,|fortunate  more|fortunate  most|
 free,Adjective,|free  more|free  most|
 fresh,Adjective,|fresher|freshest|
+friendly,Adjective,|friendlier|friendliest|
 fruitful,Adjective,|fruitful  more|fruitful  most|
 full,Adjective,|fuller|fullest|
 generous,Adjective,|generous  more|generous  most|
@@ -75,7 +86,10 @@ gentle,Adjective,|gentle  more|gentle  most|
 glad,Adjective,|glad  more|glad  most|
 glorious,Adjective,|glorious  more|glorious  most|
 good,Adjective,|better|best|
+gracious,Adjective,|gracious  more|gracious  most|
+gray,Adjective,|grayer|grayest|
 great,Adjective,|greater|greatest|
+greedy,Adjective,|greedy  more|greedy  most|
 green,Adjective,|greener|greenest|
 guilty,Adjective,|guilty  more|guilty  most|
 handsome,Adjective,|handsome  more|handsome  most|
@@ -88,12 +102,15 @@ holy,Adjective,|holier|holiest|
 honest,Adjective,|honest  more|honest  most|
 horizontal,Adjective,|horizontal  more|horizontal  most|
 hot,Adjective,|hotter|hottest|
+human,Adjective,|human  more|human  most|
 humble,Adjective,|humble  more|humble  most|
 hungry,Adjective,|hungrier|hungriest|
 important,Adjective,|important  more|important  most|
+impure,Adjective,|impure  more|impure  most|
 infectious,Adjective,|infectious  more|infectious  most|
 inner,Adjective,|inner  more|inner  most|
 innocent,Adjective,|innocent  more|innocent  most|
+intelligent,Adjective,|intelligent  more|intelligent  most|
 interested,Adjective,|interested  more|interested  most|
 interesting,Adjective,|interesting  more|interesting  most|
 jealous,Adjective,|jealous  more|jealous  most|
@@ -102,6 +119,7 @@ joyful,Adjective,|joyful  more|joyful  most|
 just,Adjective,|just  more|just  most|
 kind,Adjective,|kinder|kindest|
 lame,Adjective,|lame  more|lame  most|
+late,Adjective,|later|latest|
 lazy,Adjective,|lazier|laziest|
 light,Adjective,|lighter|lightest|
 living,Adjective,|living  more|living  most|
@@ -110,6 +128,7 @@ long,Adjective,|longer|longest|
 lost,Adjective,|lost  more|lost  most|
 loud,Adjective,|louder|loudest|
 low,Adjective,|lower|lowest|
+loyal,Adjective,|loyal  more|loyal  most|
 lucky,Adjective,|lucky  more|lucky  most|
 mature,Adjective,|mature  more|mature  most|
 merciful,Adjective,|merciful  more|merciful  most|
@@ -119,23 +138,34 @@ naked,Adjective,|naked  more|naked  most|
 narrow,Adjective,|narrower|narrowest|
 new,Adjective,|newer|newest|
 noble,Adjective,|nobler|noblest|
+noisy,Adjective,|noisier|noisiest|
+normal,Adjective,|normal  more|normal  most|
 old,Adjective,|older|oldest|
+open,Adjective,|open  more|open  most|
 ordinary,Adjective,|ordinarier|ordinariest|
+overwhelmed,Adjective,|overwhelmed  more|overwhelmed  most|
 paralyzed,Adjective,|paralyzed  more|paralyzed  most|
 patient,Adjective,|patient  more|patient  most|
 peaceful,Adjective,|peaceful  more|peaceful  most|
 perfect,Adjective,|perfect  more|perfect  most|
+perverse,Adjective,|perverse  more|perverse  most|
+pleasant,Adjective,|pleasant  more|pleasant  most|
 pleased,Adjective,|pleased  more|pleased  most|
 poisonous,Adjective,|poisonous  more|poisonous  most|
 poor,Adjective,|poorer|poorest|
 powerful,Adjective,|powerful  more|powerful  most|
+precious,Adjective,|precious  more|precious  most|
 pregnant,Adjective,|pregnant  more|pregnant  most|
 prosperous,Adjective,|prosperous  more|prosperous  most|
 proud,Adjective,|prouder|proudest|
+prudent,Adjective,|prudent  more|prudent  most|
+public,Adjective,|public  more|public  most|
 pure,Adjective,|purer|purest|
 quiet,Adjective,|quiet  more|quiet  most|
 raw,Adjective,|rawer|rawest|
 ready,Adjective,|readier|readiest|
+real,Adjective,|real  more|real  most|
+rebellious,Adjective,|rebellious  more|rebellious  most|
 red,Adjective,|redder|reddest|
 religious,Adjective,|religious  more|religious  most|
 responsible,Adjective,|responsible  more|responsible  most|
@@ -144,6 +174,7 @@ righteous,Adjective,|righteous  more|righteous  most|
 ripe,Adjective,|riper|ripest|
 rough,Adjective,|rougher|roughest|
 rude,Adjective,|ruder|rudest|
+sacred,Adjective,|sacred  more|sacred  most|
 sad,Adjective,|sadder|saddest|
 safe,Adjective,|safer|safest|
 satisfied,Adjective,|satisfied  more|satisfied  most|
@@ -151,13 +182,19 @@ selfish,Adjective,|selfish  more|selfish  most|
 sensible,Adjective,|sensible  more|sensible  most|
 serious,Adjective,|serious  more|serious  most|
 severe,Adjective,|severe  more|severe  most|
+shallow,Adjective,|shallower|shallowest|
 sharp,Adjective,|sharper|sharpest|
 shiny,Adjective,|shinier|shiniest|
 short,Adjective,|shorter|shortest|
 shriveled,Adjective,|shriveled  more|shriveled  most|
 sick,Adjective,|sicker|sickest|
+silent,Adjective,|silent  more|silent  most|
 similar,Adjective,|similar  more|similar  most|
+simple,Adjective,|simpler|simplest|
+sincere,Adjective,|sincere  more|sincere  most|
+sinful,Adjective,|sinful  more|sinful  most|
 sleepy,Adjective,|sleepier|sleepiest|
+slow,Adjective,|slower|slowest|
 small,Adjective,|smaller|smallest|
 smooth,Adjective,|smoother|smoothest|
 soft,Adjective,|softer|softest|
@@ -179,6 +216,7 @@ sweet,Adjective,|sweeter|sweetest|
 tall,Adjective,|taller|tallest|
 terrible,Adjective,|terrible  more|terrible  most|
 terrified,Adjective,|terrified  more|terrified  most|
+thick,Adjective,|thicker|thickest|
 thin,Adjective,|thinner|thinnest|
 thirsty,Adjective,|thirsty  more|thirsty  most|
 thorny,Adjective,|thornier|thorniest|
@@ -187,7 +225,10 @@ troubled,Adjective,|troubled  more|troubled  most|
 true,Adjective,|truer|truest|
 ugly,Adjective,|uglier|ugliest|
 unclean,Adjective,|unclean  more|unclean  most|
+unrighteous,Adjective,|unrighteous  more|unrighteous  most|
 upset,Adjective,|upset  more|upset  most|
+useful,Adjective,|useful  more|useful  most|
+useless,Adjective,|useless  more|useless  most|
 valuable,Adjective,|valuable  more|valuable  most|
 violent,Adjective,|violent  more|violent  most|
 warm,Adjective,|warmer|warmest|
@@ -204,4 +245,4 @@ wonderful,Adjective,|wonderful  more|wonderful  most|
 worthless,Adjective,|worthless  more|worthless  most|
 worthy,Adjective,|worthy  more|worthy  most|
 young,Adjective,|younger|youngest|
-left,Adjective,||
+left,Adjective,|||

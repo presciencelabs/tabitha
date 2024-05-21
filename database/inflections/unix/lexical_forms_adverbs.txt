@@ -42,403 +42,503 @@
 	Comparative: 
 	Superlative: 
 
-12.  backward
+12.  angrily
 	Comparative: 
 	Superlative: 
 
-13.  badly
+13.  backward
+	Comparative: 
+	Superlative: 
+
+14.  badly
 	Comparative: badlier
 	Superlative: badliest
 
-14.  boldly
+15.  bitterly
 	Comparative: 
 	Superlative: 
 
-15.  bravely
+16.  boldly
 	Comparative: 
 	Superlative: 
 
-16.  carefully
+17.  bravely
+	Comparative: 
+	Superlative: 
+
+18.  brightly
+	Comparative: brightly  more
+	Superlative: brightly  most
+
+19.  carefully
 	Comparative: carefully  more
 	Superlative: carefully  most
 
-17.  carelessly
+20.  carelessly
 	Comparative: 
 	Superlative: 
 
-18.  clearly
+21.  clearly
 	Comparative: 
 	Superlative: 
 
-19.  completely
+22.  completely
 	Comparative: completely  more
 	Superlative: completely  most
 
-20.  continuously
+23.  confidently
 	Comparative: 
 	Superlative: 
 
-21.  correctly
+24.  continuously
+	Comparative: 
+	Superlative: 
+
+25.  correctly
 	Comparative: correctly  more
 	Superlative: correctly  most
 
-22.  cruelly
+26.  cruelly
 	Comparative: cruelly  more
 	Superlative: cruelly  most
 
-23.  dearly
+27.  dearly
 	Comparative: 
 	Superlative: 
 
-24.  deeply
+28.  deeply
 	Comparative: 
 	Superlative: 
 
-25.  differently
+29.  differently
 	Comparative: 
 	Superlative: 
 
-26.  eagerly
+30.  eagerly
 	Comparative: 
 	Superlative: 
 
-27.  earlier
+31.  earlier
 	Comparative: 
 	Superlative: 
 
-28.  early
+32.  early
 	Comparative: earlier
 	Superlative: earliest
 
-29.  earnestly
+33.  earnestly
 	Comparative: earnestly  more
 	Superlative: earnestly  most
 
-30.  easily
+34.  easily
 	Comparative: easily  more
 	Superlative: easily  most
 
-31.  emphatically
+35.  emphatically
 	Comparative: 
 	Superlative: 
 
-32.  eternally
+36.  eternally
 	Comparative: 
 	Superlative: 
 
-33.  even
+37.  even
 	Comparative: 
 	Superlative: 
 
-34.  fairly
+38.  eventually
+	Comparative: 
+	Superlative: 
+
+39.  fairly
 	Comparative: fairly  more
 	Superlative: fairly  most
 
-35.  faithfully
+40.  faithfully
 	Comparative: 
 	Superlative: 
 
-36.  far
+41.  far
 	Comparative: 
 	Superlative: 
 
-37.  fiercely
+42.  fiercely
 	Comparative: fiercely  more
 	Superlative: fiercely  most
 
-38.  finally
+43.  finally
 	Comparative: 
 	Superlative: 
 
-39.  first
+44.  first
 	Comparative: 
 	Superlative: 
 
-40.  forever
+45.  foolishly
 	Comparative: 
 	Superlative: 
 
-41.  gently
+46.  forever
+	Comparative: 
+	Superlative: 
+
+47.  freely
+	Comparative: 
+	Superlative: 
+
+48.  generously
+	Comparative: 
+	Superlative: 
+
+49.  gently
 	Comparative: gently  more
 	Superlative: gently  most
 
-42.  graciously
+50.  gladly
 	Comparative: 
 	Superlative: 
 
-43.  greatly
+51.  gloriously
+	Comparative: 
+	Superlative: 
+
+52.  graciously
+	Comparative: 
+	Superlative: 
+
+53.  greatly
 	Comparative: greater   (suppletive)
 	Superlative: greatest   (suppletive)
 
-44.  happily
+54.  habitually
 	Comparative: 
 	Superlative: 
 
-45.  hard
+55.  happily
+	Comparative: 
+	Superlative: 
+
+56.  hard
 	Comparative: harder
 	Superlative: hardest
 
-46.  harshly
+57.  harshly
 	Comparative: 
 	Superlative: 
 
-47.  highly
+58.  highly
 	Comparative: 
 	Superlative: 
 
-48.  honestly
+59.  honestly
 	Comparative: 
 	Superlative: 
 
-49.  how
+60.  how
 	Comparative: 
 	Superlative: 
 
-50.  how long
+61.  how long
 	Comparative: 
 	Superlative: 
 
-51.  immediately
+62.  immediately
 	Comparative: 
 	Superlative: 
 
-52.  intently
+63.  immorally
 	Comparative: 
 	Superlative: 
 
-53.  joyfully
+64.  intensely
 	Comparative: 
 	Superlative: 
 
-54.  kindly
+65.  intently
+	Comparative: 
+	Superlative: 
+
+66.  joyfully
+	Comparative: 
+	Superlative: 
+
+67.  justly
+	Comparative: 
+	Superlative: 
+
+68.  kindly
 	Comparative: kindly  more
 	Superlative: kindly  most
 
-55.  last
+69.  last
 	Comparative: 
 	Superlative: 
 
-56.  later
+70.  later
 	Comparative: laterer
 	Superlative: laterest
 
-57.  less
+71.  less
 	Comparative: 
 	Superlative: 
 
-58.  loudly
+72.  long
+	Comparative: 
+	Superlative: 
+
+73.  loudly
 	Comparative: loudly  more
 	Superlative: loudly  most
 
-59.  more
+74.  more
 	Comparative: 
 	Superlative: 
 
-60.  much
+75.  much
 	Comparative: 
 	Superlative: 
 
-61.  never
+76.  never
 	Comparative: 
 	Superlative: 
 
-62.  no longer
+77.  no longer
 	Comparative: 
 	Superlative: 
 
-63.  now
+78.  now
 	Comparative: 
 	Superlative: 
 
-64.  often
+79.  often
 	Comparative: often  more
 	Superlative: often  most
 
-65.  peacefully
+80.  partly
+	Comparative: 
+	Superlative: 
+
+81.  patiently
+	Comparative: 
+	Superlative: 
+
+82.  peacefully
 	Comparative: peacefully  more
 	Superlative: peacefully  most
 
-66.  perfectly
+83.  perfectly
 	Comparative: 
 	Superlative: 
 
-67.  perhaps
+84.  perhaps
 	Comparative: 
 	Superlative: 
 
-68.  previously
+85.  powerfully
+	Comparative: powerfully  more
+	Superlative: powerfully  most
+
+86.  previously
 	Comparative: 
 	Superlative: 
 
-69.  publicly
+87.  proudly
 	Comparative: 
 	Superlative: 
 
-70.  quickly
+88.  publicly
+	Comparative: 
+	Superlative: 
+
+89.  quickly
 	Comparative: quickly  more
 	Superlative: quickly  most
 
-71.  quietly
+90.  quietly
 	Comparative: quietly  more
 	Superlative: quietly  most
 
-72.  really
+91.  really
 	Comparative: 
 	Superlative: 
 
-73.  recently
+92.  recently
 	Comparative: recently  more
 	Superlative: recently  most
 
-74.  regularly
+93.  regularly
 	Comparative: regularly  more
 	Superlative: regularly  most
 
-75.  religiously
+94.  religiously
 	Comparative: 
 	Superlative: 
 
-76.  repeatedly
+95.  repeatedly
 	Comparative: 
 	Superlative: 
 
-77.  respectfully
+96.  respectfully
 	Comparative: respectfully  more
 	Superlative: respectfully  most
 
-78.  safely
+97.  safely
 	Comparative: safely  more
 	Superlative: safely  most
 
-79.  secretly
+98.  secretly
 	Comparative: 
 	Superlative: 
 
-80.  sensibly
+99.  securely
+	Comparative: securely  more
+	Superlative: securely  most
+
+100.  sensibly
 	Comparative: 
 	Superlative: 
 
-81.  severely
+101.  severely
 	Comparative: severely  more
 	Superlative: severely  most
 
-82.  sincerely
+102.  similarly
+	Comparative: 
+	Superlative: 
+
+103.  sincerely
 	Comparative: sincerely  more
 	Superlative: sincerely  most
 
-83.  skillfully
+104.  skillfully
 	Comparative: skillfully  more
 	Superlative: skillfully  most
 
-84.  slowly
+105.  slowly
 	Comparative: slowly  more
 	Superlative: slowly  most
 
-85.  sometimes
+106.  sometimes
 	Comparative: 
 	Superlative: 
 
-86.  soon
+107.  soon
 	Comparative: 
 	Superlative: 
 
-87.  sternly
+108.  sternly
 	Comparative: 
 	Superlative: 
 
-88.  still
+109.  still
 	Comparative: 
 	Superlative: 
 
-89.  still
+110.  still
 	Comparative: 
 	Superlative: 
 
-90.  successfully
+111.  straight
+	Comparative: straighter
+	Superlative: straightest
+
+112.  stupidly
+	Comparative: 
+	Superlative: 
+
+113.  successfully
 	Comparative: successfully  more
 	Superlative: successfully  most
 
-91.  suddenly
+114.  suddenly
 	Comparative: 
 	Superlative: 
 
-92.  the most
+115.  temporarily
 	Comparative: 
 	Superlative: 
 
-93.  thoroughly
+116.  the most
+	Comparative: 
+	Superlative: 
+
+117.  thoroughly
 	Comparative: thoroughly  more
 	Superlative: thoroughly  most
 
-94.  tightly
+118.  tightly
 	Comparative: 
 	Superlative: 
 
-95.  today
+119.  today
 	Comparative: 
 	Superlative: 
 
-96.  tomorrow
+120.  tomorrow
 	Comparative: 
 	Superlative: 
 
-97.  tonight
+121.  tonight
 	Comparative: 
 	Superlative: 
 
-98.  truly
+122.  truly
 	Comparative: 
 	Superlative: 
 
-99.  urgently
+123.  urgently
 	Comparative: urgently  more
 	Superlative: urgently  most
 
-100.  usually
+124.  usually
 	Comparative: 
 	Superlative: 
 
-101.  viciously
+125.  viciously
 	Comparative: 
 	Superlative: 
 
-102.  violently
+126.  violently
 	Comparative: violently  more
 	Superlative: violently  most
 
-103.  well
+127.  well
 	Comparative: better   (suppletive)
 	Superlative: best   (suppletive)
 
-104.  when
+128.  when
 	Comparative: 
 	Superlative: 
 
-105.  where
+129.  where
 	Comparative: 
 	Superlative: 
 
-106.  wholeheartedly
+130.  wholeheartedly
 	Comparative: 
 	Superlative: 
 
-107.  why
+131.  why
 	Comparative: 
 	Superlative: 
 
-108.  wickedly
+132.  wickedly
 	Comparative: 
 	Superlative: 
 
-109.  wisely
+133.  willingly
+	Comparative: 
+	Superlative: 
+
+134.  wisely
 	Comparative: wisely  more
 	Superlative: wisely  most
 
-110.  yesterday
+135.  yesterday
 	Comparative: 
 	Superlative: 
 
-111.  yet
+136.  yet
 	Comparative: 
 	Superlative: 
 

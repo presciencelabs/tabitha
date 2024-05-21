@@ -82,2239 +82,2503 @@
 	Comparative: 
 	Superlative: 
 
-22.  170
+22.  16,000
 	Comparative: 
 	Superlative: 
 
-23.  172
+23.  170
 	Comparative: 
 	Superlative: 
 
-24.  18
+24.  172
 	Comparative: 
 	Superlative: 
 
-25.  188
+25.  18
 	Comparative: 
 	Superlative: 
 
-26.  2
+26.  188
 	Comparative: 
 	Superlative: 
 
-27.  20
+27.  2
 	Comparative: 
 	Superlative: 
 
-28.  2,067
+28.  20
 	Comparative: 
 	Superlative: 
 
-29.  21
+29.  2,067
 	Comparative: 
 	Superlative: 
 
-30.  2,172
+30.  21
 	Comparative: 
 	Superlative: 
 
-31.  2,322
+31.  2,172
 	Comparative: 
 	Superlative: 
 
-32.  24
+32.  2,322
 	Comparative: 
 	Superlative: 
 
-33.  242
+33.  24
 	Comparative: 
 	Superlative: 
 
-34.  245
+34.  242
 	Comparative: 
 	Superlative: 
 
-35.  25
+35.  245
 	Comparative: 
 	Superlative: 
 
-36.  2.5
+36.  25
 	Comparative: 
 	Superlative: 
 
-37.  25th
+37.  2.5
 	Comparative: 
 	Superlative: 
 
-38.  26
+38.  25th
 	Comparative: 
 	Superlative: 
 
-39.  275
+39.  26
 	Comparative: 
 	Superlative: 
 
-40.  2,818
+40.  275
 	Comparative: 
 	Superlative: 
 
-41.  284
+41.  276
 	Comparative: 
 	Superlative: 
 
-42.  3
+42.  28
 	Comparative: 
 	Superlative: 
 
-43.  320
+43.  2,818
 	Comparative: 
 	Superlative: 
 
-44.  324
+44.  284
 	Comparative: 
 	Superlative: 
 
-45.  328
+45.  3
 	Comparative: 
 	Superlative: 
 
-46.  3,300
+46.  30
 	Comparative: 
 	Superlative: 
 
-47.  372
+47.  320
 	Comparative: 
 	Superlative: 
 
-48.  392
+48.  324
 	Comparative: 
 	Superlative: 
 
-49.  3,930
+49.  328
 	Comparative: 
 	Superlative: 
 
-50.  4
+50.  3,300
 	Comparative: 
 	Superlative: 
 
-51.  40
+51.  340
 	Comparative: 
 	Superlative: 
 
-52.  42,360
+52.  372
 	Comparative: 
 	Superlative: 
 
-53.  435
+53.  39
 	Comparative: 
 	Superlative: 
 
-54.  44,000
+54.  392
 	Comparative: 
 	Superlative: 
 
-55.  4.6
+55.  3,930
 	Comparative: 
 	Superlative: 
 
-56.  46
+56.  4
 	Comparative: 
 	Superlative: 
 
-57.  460
+57.  40
 	Comparative: 
 	Superlative: 
 
-58.  468
+58.  42,360
 	Comparative: 
 	Superlative: 
 
-59.  480
+59.  43
 	Comparative: 
 	Superlative: 
 
-60.  5
+60.  435
 	Comparative: 
 	Superlative: 
 
-61.  52
+61.  44,000
 	Comparative: 
 	Superlative: 
 
-62.  53
+62.  4.6
 	Comparative: 
 	Superlative: 
 
-63.  530
+63.  46
 	Comparative: 
 	Superlative: 
 
-64.  550
+64.  460
 	Comparative: 
 	Superlative: 
 
-65.  56
+65.  468
 	Comparative: 
 	Superlative: 
 
-66.  5.7
+66.  47
 	Comparative: 
 	Superlative: 
 
-67.  6
+67.  480
 	Comparative: 
 	Superlative: 
 
-68.  621
+68.  5
 	Comparative: 
 	Superlative: 
 
-69.  628
+69.  50
 	Comparative: 
 	Superlative: 
 
-70.  642
+70.  50,000
 	Comparative: 
 	Superlative: 
 
-71.  648
+71.  50th
 	Comparative: 
 	Superlative: 
 
-72.  652
+72.  52
 	Comparative: 
 	Superlative: 
 
-73.  655
+73.  53
 	Comparative: 
 	Superlative: 
 
-74.  666
+74.  530
 	Comparative: 
 	Superlative: 
 
-75.  667
+75.  550
 	Comparative: 
 	Superlative: 
 
-76.  67
+76.  56
 	Comparative: 
 	Superlative: 
 
-77.  6,720
+77.  5.7
 	Comparative: 
 	Superlative: 
 
-78.  7
+78.  6
 	Comparative: 
 	Superlative: 
 
-79.  721
+79.  621
 	Comparative: 
 	Superlative: 
 
-80.  7,337
+80.  628
 	Comparative: 
 	Superlative: 
 
-81.  736
+81.  642
 	Comparative: 
 	Superlative: 
 
-82.  74
+82.  648
 	Comparative: 
 	Superlative: 
 
-83.  743
+83.  652
 	Comparative: 
 	Superlative: 
 
-84.  760
+84.  655
 	Comparative: 
 	Superlative: 
 
-85.  78
+85.  666
 	Comparative: 
 	Superlative: 
 
-86.  8
+86.  667
 	Comparative: 
 	Superlative: 
 
-87.  80,000
+87.  67
 	Comparative: 
 	Superlative: 
 
-88.  822
+88.  6,720
 	Comparative: 
 	Superlative: 
 
-89.  8.4
+89.  7
 	Comparative: 
 	Superlative: 
 
-90.  845
+90.  721
 	Comparative: 
 	Superlative: 
 
-91.  8.5
+91.  73
 	Comparative: 
 	Superlative: 
 
-92.  9
+92.  7,337
 	Comparative: 
 	Superlative: 
 
-93.  91
+93.  736
 	Comparative: 
 	Superlative: 
 
-94.  928
+94.  74
 	Comparative: 
 	Superlative: 
 
-95.  95
+95.  743
 	Comparative: 
 	Superlative: 
 
-96.  973
+96.  760
 	Comparative: 
 	Superlative: 
 
-97.  able
+97.  78
+	Comparative: 
+	Superlative: 
+
+98.  8
+	Comparative: 
+	Superlative: 
+
+99.  80,000
+	Comparative: 
+	Superlative: 
+
+100.  822
+	Comparative: 
+	Superlative: 
+
+101.  8.4
+	Comparative: 
+	Superlative: 
+
+102.  845
+	Comparative: 
+	Superlative: 
+
+103.  8.5
+	Comparative: 
+	Superlative: 
+
+104.  9
+	Comparative: 
+	Superlative: 
+
+105.  91
+	Comparative: 
+	Superlative: 
+
+106.  928
+	Comparative: 
+	Superlative: 
+
+107.  95
+	Comparative: 
+	Superlative: 
+
+108.  973
+	Comparative: 
+	Superlative: 
+
+109.  able
 	Comparative: able  more
 	Superlative: able  most
 
-98.  about
+110.  about
 	Comparative: 
 	Superlative: 
 
-99.  afraid
+111.  afraid
 	Comparative: afraid  more
 	Superlative: afraid  most
 
-100.  alert
+112.  alert
 	Comparative: alert  more
 	Superlative: alert  most
 
-101.  alive
+113.  alive
 	Comparative: alive  more
 	Superlative: alive  most
 
-102.  all
+114.  all
 	Comparative: 
 	Superlative: 
 
-103.  almost
+115.  almost
 	Comparative: 
 	Superlative: 
 
-104.  alone
+116.  alone
 	Comparative: 
 	Superlative: 
 
-105.  a lot of
+117.  a lot of
 	Comparative: 
 	Superlative: 
 
-106.  amazed
+118.  amazed
 	Comparative: amazed  more
 	Superlative: amazed  most
 
-107.  angry
+119.  angry
 	Comparative: angrier
 	Superlative: angriest
 
-108.  another
+120.  another
 	Comparative: 
 	Superlative: 
 
-109.  any
+121.  any
 	Comparative: 
 	Superlative: 
 
-110.  ashamed
+122.  appropriate
+	Comparative: 
+	Superlative: 
+
+123.  arrogant
+	Comparative: arrogant  more
+	Superlative: arrogant  most
+
+124.  ashamed
 	Comparative: ashamed  more
 	Superlative: ashamed  most
 
-111.  attracted
+125.  a tithe
+	Comparative: 
+	Superlative: 
+
+126.  attracted
 	Comparative: attracted  more
 	Superlative: attracted  most
 
-112.  attractive
+127.  attractive
 	Comparative: attractive  more
 	Superlative: attractive  most
 
-113.  awake
+128.  awake
 	Comparative: awake  more
 	Superlative: awake  most
 
-114.  bad
+129.  awesome
+	Comparative: awesome  more
+	Superlative: awesome  most
+
+130.  bad
 	Comparative: worse   (suppletive)
 	Superlative: worst   (suppletive)
 
-115.  barren
+131.  barren
 	Comparative: barren  more
 	Superlative: barren  most
 
-116.  beautiful
+132.  beautiful
 	Comparative: beautiful  more
 	Superlative: beautiful  most
 
-117.  big
+133.  big
 	Comparative: bigger
 	Superlative: biggest
 
-118.  bitter
+134.  bitter
 	Comparative: bitter  more
 	Superlative: bitter  most
 
-119.  black
+135.  black
 	Comparative: blacker
 	Superlative: blackest
 
-120.  blameless
+136.  blameless
 	Comparative: blameless  more
 	Superlative: blameless  most
 
-121.  blind
+137.  blind
 	Comparative: blinder
 	Superlative: blindest
 
-122.  blue
+138.  blue
 	Comparative: blue  more
 	Superlative: blue  most
 
-123.  both
+139.  both
 	Comparative: 
 	Superlative: 
 
-124.  bottom
+140.  bottom
 	Comparative: 
 	Superlative: 
 
-125.  brave
+141.  brave
 	Comparative: braver
 	Superlative: bravest
 
-126.  bright
+142.  bright
 	Comparative: brighter
 	Superlative: brightest
 
-127.  calm
+143.  calm
 	Comparative: calm  more
 	Superlative: calm  most
 
-128.  careful
+144.  careful
 	Comparative: careful  more
 	Superlative: careful  most
 
-129.  certain
+145.  certain
 	Comparative: 
 	Superlative: 
 
-130.  chief
+146.  chief
 	Comparative: 
 	Superlative: 
 
-131.  clean
+147.  clean
 	Comparative: cleaner
 	Superlative: cleanest
 
-132.  clever
+148.  clever
 	Comparative: clever  more
 	Superlative: clever  most
 
-133.  close
+149.  close
 	Comparative: closer
 	Superlative: closest
 
-134.  cold
+150.  cold
 	Comparative: colder
 	Superlative: coldest
 
-135.  comfortable
+151.  comfortable
 	Comparative: comfortable  more
 	Superlative: comfortable  most
 
-136.  common
+152.  common
 	Comparative: common  more
 	Superlative: common  most
 
-137.  compassionate
+153.  compassionate
 	Comparative: compassionate  more
 	Superlative: compassionate  most
 
-138.  confused
+154.  complicated
+	Comparative: complicated  more
+	Superlative: complicated  most
+
+155.  confident
+	Comparative: confident  more
+	Superlative: confident  most
+
+156.  confused
 	Comparative: confused  more
 	Superlative: confused  most
 
-139.  conscious
+157.  conscious
 	Comparative: conscious  more
 	Superlative: conscious  most
 
-140.  content
+158.  content
 	Comparative: content  more
 	Superlative: content  most
 
-141.  cool
+159.  cool
 	Comparative: cooler
 	Superlative: coolest
 
-142.  correct
+160.  correct
 	Comparative: correct  more
 	Superlative: correct  most
 
-143.  corrupt
+161.  corrupt
 	Comparative: corrupt  more
 	Superlative: corrupt  most
 
-144.  courageous
+162.  courageous
 	Comparative: courageous  more
 	Superlative: courageous  most
 
-145.  crazy
+163.  crazy
 	Comparative: crazier
 	Superlative: craziest
 
-146.  cruel
+164.  crippled
+	Comparative: crippled  more
+	Superlative: crippled  most
+
+165.  cruel
 	Comparative: crueler
 	Superlative: cruelest
 
-147.  dangerous
+166.  dangerous
 	Comparative: dangerous  more
 	Superlative: dangerous  most
 
-148.  dark
+167.  dark
 	Comparative: darker
 	Superlative: darkest
 
-149.  dead
+168.  dead
 	Comparative: deader
 	Superlative: deadest
 
-150.  deaf
+169.  deaf
 	Comparative: deafer
 	Superlative: deafest
 
-151.  deep
+170.  deep
 	Comparative: deeper
 	Superlative: deepest
 
-152.  delicious
+171.  delicious
 	Comparative: delicious  more
 	Superlative: delicious  most
 
-153.  different
+172.  detestable
+	Comparative: detestable  more
+	Superlative: detestable  most
+
+173.  different
 	Comparative: 
 	Superlative: 
 
-154.  difficult
+174.  difficult
 	Comparative: difficult  more
 	Superlative: difficult  most
 
-155.  dirty
+175.  dirty
 	Comparative: dirtier
 	Superlative: dirtiest
 
-156.  drunk
+176.  discouraged
+	Comparative: discouraged  more
+	Superlative: discouraged  most
+
+177.  drunk
 	Comparative: drunk  more
 	Superlative: drunk  most
 
-157.  dry
+178.  dry
 	Comparative: drier
 	Superlative: driest
 
-158.  each
+179.  each
 	Comparative: 
 	Superlative: 
 
-159.  early
+180.  early
 	Comparative: earlier
 	Superlative: earliest
 
-160.  eastern
+181.  eastern
 	Comparative: 
 	Superlative: 
 
-161.  easy
+182.  easy
 	Comparative: easier
 	Superlative: easiest
 
-162.  Egyptian
+183.  Egyptian
 	Comparative: 
 	Superlative: 
 
-163.  eight
+184.  eight
 	Comparative: 
 	Superlative: 
 
-164.  eighteen
+185.  eighteen
 	Comparative: 
 	Superlative: 
 
-165.  eighteenth
+186.  eighteenth
 	Comparative: 
 	Superlative: 
 
-166.  eighth
+187.  eighth
 	Comparative: 
 	Superlative: 
 
-167.  eight tenths
+188.  eight tenths
 	Comparative: 
 	Superlative: 
 
-168.  eighty four
+189.  eighty four
 	Comparative: 
 	Superlative: 
 
-169.  empty
+190.  empty
 	Comparative: empty  more
 	Superlative: empty  most
 
-170.  enough
+191.  enough
 	Comparative: 
 	Superlative: 
 
-171.  equal
+192.  equal
 	Comparative: 
 	Superlative: 
 
-172.  eternal
+193.  eternal
 	Comparative: 
 	Superlative: 
 
-173.  every
+194.  every
 	Comparative: 
 	Superlative: 
 
-174.  evil
+195.  evil
 	Comparative: evil  more
 	Superlative: evil  most
 
-175.  exactly
+196.  exactly
 	Comparative: 
 	Superlative: 
 
-176.  except
+197.  excellent
+	Comparative: excellent  more
+	Superlative: excellent  most
+
+198.  except
 	Comparative: 
 	Superlative: 
 
-177.  excited
+199.  excited
 	Comparative: excited  more
 	Superlative: excited  most
 
-178.  expensive
+200.  expensive
 	Comparative: expensive  more
 	Superlative: expensive  most
 
-179.  extra
+201.  extra
 	Comparative: 
 	Superlative: 
 
-180.  extraordinary
+202.  extraordinary
 	Comparative: extraordinary  more
 	Superlative: extraordinary  most
 
-181.  fair
+203.  fair
 	Comparative: fairer
 	Superlative: fairest
 
-182.  faithful
+204.  faithful
 	Comparative: faithful  more
 	Superlative: faithful  most
 
-183.  false
+205.  false
 	Comparative: false  more
 	Superlative: false  most
 
-184.  famous
+206.  famous
 	Comparative: famous  more
 	Superlative: famous  most
 
-185.  far
+207.  far
 	Comparative: further   (suppletive)
 	Superlative: furthest   (suppletive)
 
-186.  fast
+208.  fast
 	Comparative: faster
 	Superlative: fastest
 
-187.  fat
+209.  fat
 	Comparative: fatter
 	Superlative: fattest
 
-188.  female
+210.  female
 	Comparative: 
 	Superlative: 
 
-189.  fertile
+211.  fertile
 	Comparative: fertile  more
 	Superlative: fertile  most
 
-190.  few
+212.  few
 	Comparative: fewer
 	Superlative: fewest
 
-191.  fifteen
+213.  fierce
+	Comparative: fiercer
+	Superlative: fiercest
+
+214.  fifteen
 	Comparative: 
 	Superlative: 
 
-192.  fifteenth
+215.  fifteenth
 	Comparative: 
 	Superlative: 
 
-193.  fifth
+216.  fifth
 	Comparative: 
 	Superlative: 
 
-194.  fifty
+217.  fifty
 	Comparative: 
 	Superlative: 
 
-195.  first
+218.  first
 	Comparative: 
 	Superlative: 
 
-196.  firstborn
+219.  firstborn
 	Comparative: 
 	Superlative: 
 
-197.  five
+220.  five
 	Comparative: 
 	Superlative: 
 
-198.  five hundred
+221.  five hundred
 	Comparative: 
 	Superlative: 
 
-199.  five thousand
+222.  five thousand
 	Comparative: 
 	Superlative: 
 
-200.  flat
+223.  flat
 	Comparative: flatter
 	Superlative: flattest
 
-201.  flint
+224.  flint
 	Comparative: 
 	Superlative: 
 
-202.  following
+225.  following
 	Comparative: 
 	Superlative: 
 
-203.  foolish
+226.  foolish
 	Comparative: foolish  more
 	Superlative: foolish  most
 
-204.  foreign
+227.  foreign
 	Comparative: 
 	Superlative: 
 
-205.  formless
+228.  formless
 	Comparative: 
 	Superlative: 
 
-206.  fortunate
+229.  fortified
+	Comparative: fortified  more
+	Superlative: fortified  most
+
+230.  fortunate
 	Comparative: fortunate  more
 	Superlative: fortunate  most
 
-207.  forty
+231.  forty
 	Comparative: 
 	Superlative: 
 
-208.  forty nine
+232.  forty-seven
 	Comparative: 
 	Superlative: 
 
-209.  four
+233.  forty nine
 	Comparative: 
 	Superlative: 
 
-210.  fourteenth
+234.  four
 	Comparative: 
 	Superlative: 
 
-211.  fourth
+235.  fourteenth
 	Comparative: 
 	Superlative: 
 
-212.  free
+236.  fourth
+	Comparative: 
+	Superlative: 
+
+237.  free
 	Comparative: free  more
 	Superlative: free  most
 
-213.  fresh
+238.  fresh
 	Comparative: fresher
 	Superlative: freshest
 
-214.  fruitful
+239.  friendly
+	Comparative: friendlier
+	Superlative: friendliest
+
+240.  fruitful
 	Comparative: fruitful  more
 	Superlative: fruitful  most
 
-215.  full
+241.  full
 	Comparative: fuller
 	Superlative: fullest
 
-216.  generous
+242.  generous
 	Comparative: generous  more
 	Superlative: generous  most
 
-217.  gentle
+243.  gentle
 	Comparative: gentle  more
 	Superlative: gentle  most
 
-218.  glad
+244.  glad
 	Comparative: glad  more
 	Superlative: glad  most
 
-219.  glorious
+245.  glorious
 	Comparative: glorious  more
 	Superlative: glorious  most
 
-220.  good
+246.  good
 	Comparative: better   (suppletive)
 	Superlative: best   (suppletive)
 
-221.  great
+247.  gracious
+	Comparative: gracious  more
+	Superlative: gracious  most
+
+248.  gray
+	Comparative: grayer   (suppletive)
+	Superlative: grayest   (suppletive)
+
+249.  great
 	Comparative: greater
 	Superlative: greatest
 
-222.  green
+250.  greedy
+	Comparative: greedy  more
+	Superlative: greedy  most
+
+251.  green
 	Comparative: greener
 	Superlative: greenest
 
-223.  guilty
+252.  guilty
 	Comparative: guilty  more
 	Superlative: guilty  most
 
-224.  half
+253.  half
 	Comparative: 
 	Superlative: 
 
-225.  handsome
+254.  handsome
 	Comparative: handsome  more
 	Superlative: handsome  most
 
-226.  happy
+255.  happy
 	Comparative: happier
 	Superlative: happiest
 
-227.  hard
+256.  hard
 	Comparative: harder
 	Superlative: hardest
 
-228.  healthy
+257.  healthy
 	Comparative: healthier
 	Superlative: healthiest
 
-229.  heavy
+258.  heavy
 	Comparative: heavier
 	Superlative: heaviest
 
-230.  high
+259.  high
 	Comparative: higher
 	Superlative: highest
 
-231.  holy
+260.  holy
 	Comparative: holier
 	Superlative: holiest
 
-232.  honest
+261.  honest
 	Comparative: honest  more
 	Superlative: honest  most
 
-233.  horizontal
+262.  horizontal
 	Comparative: horizontal  more
 	Superlative: horizontal  most
 
-234.  hot
+263.  hot
 	Comparative: hotter
 	Superlative: hottest
 
-235.  how many
+264.  how many
 	Comparative: 
 	Superlative: 
 
-236.  how much
+265.  how much
 	Comparative: 
 	Superlative: 
 
-237.  humble
+266.  human
+	Comparative: human  more
+	Superlative: human  most
+
+267.  humble
 	Comparative: humble  more
 	Superlative: humble  most
 
-238.  hundreds
+268.  hundreds
 	Comparative: 
 	Superlative: 
 
-239.  hungry
+269.  hungry
 	Comparative: hungrier
 	Superlative: hungriest
 
-240.  important
+270.  important
 	Comparative: important  more
 	Superlative: important  most
 
-241.  infectious
+271.  impure
+	Comparative: impure  more
+	Superlative: impure  most
+
+272.  infectious
 	Comparative: infectious  more
 	Superlative: infectious  most
 
-242.  inner
+273.  inner
 	Comparative: inner  more
 	Superlative: inner  most
 
-243.  innocent
+274.  innocent
 	Comparative: innocent  more
 	Superlative: innocent  most
 
-244.  interested
+275.  intelligent
+	Comparative: intelligent  more
+	Superlative: intelligent  most
+
+276.  interested
 	Comparative: interested  more
 	Superlative: interested  most
 
-245.  interesting
+277.  interesting
 	Comparative: interesting  more
 	Superlative: interesting  most
 
-246.  jealous
+278.  jealous
 	Comparative: jealous  more
 	Superlative: jealous  most
 
-247.  Jewish
+279.  Jewish
 	Comparative: Jewish  more
 	Superlative: Jewish  most
 
-248.  joyful
+280.  joyful
 	Comparative: joyful  more
 	Superlative: joyful  most
 
-249.  just
+281.  just
 	Comparative: just  more
 	Superlative: just  most
 
-250.  kind
+282.  kind
 	Comparative: kinder
 	Superlative: kindest
 
-251.  lame
+283.  lame
 	Comparative: lame  more
 	Superlative: lame  most
 
-252.  last
+284.  last
 	Comparative: 
 	Superlative: 
 
-253.  lazy
+285.  late
+	Comparative: later
+	Superlative: latest
+
+286.  lazy
 	Comparative: lazier
 	Superlative: laziest
 
-254.  left
+287.  left
 	Comparative: 
 	Superlative: 
 
-255.  less
+288.  less
 	Comparative: 
 	Superlative: 
 
-256.  light
+289.  light
 	Comparative: lighter
 	Superlative: lightest
 
-257.  little
+290.  little
 	Comparative: 
 	Superlative: 
 
-258.  living
+291.  living
 	Comparative: living  more
 	Superlative: living  most
 
-259.  lonely
+292.  lonely
 	Comparative: lonelier
 	Superlative: loneliest
 
-260.  long
+293.  long
 	Comparative: longer
 	Superlative: longest
 
-261.  lost
+294.  lost
 	Comparative: lost  more
 	Superlative: lost  most
 
-262.  loud
+295.  loud
 	Comparative: louder
 	Superlative: loudest
 
-263.  low
+296.  low
 	Comparative: lower
 	Superlative: lowest
 
-264.  lucky
+297.  loyal
+	Comparative: loyal  more
+	Superlative: loyal  most
+
+298.  lucky
 	Comparative: lucky  more
 	Superlative: lucky  most
 
-265.  male
+299.  male
 	Comparative: 
 	Superlative: 
 
-266.  many
+300.  many
 	Comparative: 
 	Superlative: 
 
-267.  mature
+301.  mature
 	Comparative: mature  more
 	Superlative: mature  most
 
-268.  merciful
+302.  merciful
 	Comparative: merciful  more
 	Superlative: merciful  most
 
-269.  middle
+303.  middle
 	Comparative: 
 	Superlative: 
 
-270.  millions
+304.  military
 	Comparative: 
 	Superlative: 
 
-271.  miserable
+305.  millions
+	Comparative: 
+	Superlative: 
+
+306.  miserable
 	Comparative: miserable  more
 	Superlative: miserable  most
 
-272.  more
+307.  more
 	Comparative: 
 	Superlative: 
 
-273.  more than
+308.  more than
 	Comparative: 
 	Superlative: 
 
-274.  most
+309.  most
 	Comparative: 
 	Superlative: 
 
-275.  much
+310.  much
 	Comparative: 
 	Superlative: 
 
-276.  mute
+311.  mute
 	Comparative: mute  more
 	Superlative: mute  most
 
-277.  naked
+312.  naked
 	Comparative: naked  more
 	Superlative: naked  most
 
-278.  narrow
+313.  narrow
 	Comparative: narrower
 	Superlative: narrowest
 
-279.  new
+314.  new
 	Comparative: newer
 	Superlative: newest
 
-280.  next
+315.  next
 	Comparative: 
 	Superlative: 
 
-281.  nine
+316.  nine
 	Comparative: 
 	Superlative: 
 
-282.  ninety
+317.  ninety
 	Comparative: 
 	Superlative: 
 
-283.  ninth
+318.  ninth
 	Comparative: 
 	Superlative: 
 
-284.  noble
+319.  noble
 	Comparative: nobler
 	Superlative: noblest
 
-285.  northern
+320.  noisy
+	Comparative: noisier
+	Superlative: noisiest
+
+321.  normal
+	Comparative: normal  more
+	Superlative: normal  most
+
+322.  northeastern
 	Comparative: 
 	Superlative: 
 
-286.  northwestern
+323.  northern
 	Comparative: 
 	Superlative: 
 
-287.  old
+324.  northwestern
+	Comparative: 
+	Superlative: 
+
+325.  old
 	Comparative: older
 	Superlative: oldest
 
-288.  one
+326.  one
 	Comparative: 
 	Superlative: 
 
-289.  one and a half
+327.  one and a half
 	Comparative: 
 	Superlative: 
 
-290.  one eighth
+328.  one eighth
 	Comparative: 
 	Superlative: 
 
-291.  one fifth
+329.  one fifth
 	Comparative: 
 	Superlative: 
 
-292.  one fourth
+330.  one fourth
 	Comparative: 
 	Superlative: 
 
-293.  one half
+331.  one half
 	Comparative: 
 	Superlative: 
 
-294.  one hundred
+332.  one hundred
 	Comparative: 
 	Superlative: 
 
-295.  one tenth
+333.  one tenth
 	Comparative: 
 	Superlative: 
 
-296.  one third
+334.  one third
 	Comparative: 
 	Superlative: 
 
-297.  one thousand
+335.  one thousand
 	Comparative: 
 	Superlative: 
 
-298.  only
+336.  only
 	Comparative: 
 	Superlative: 
 
-299.  only
+337.  only
 	Comparative: 
 	Superlative: 
 
-300.  only
+338.  only
 	Comparative: 
 	Superlative: 
 
-301.  ordinary
+339.  open
+	Comparative: open  more
+	Superlative: open  most
+
+340.  ordinary
 	Comparative: ordinarier
 	Superlative: ordinariest
 
-302.  other
+341.  other
 	Comparative: 
 	Superlative: 
 
-303.  paralyzed
+342.  overwhelmed
+	Comparative: overwhelmed  more
+	Superlative: overwhelmed  most
+
+343.  paralyzed
 	Comparative: paralyzed  more
 	Superlative: paralyzed  most
 
-304.  patient
+344.  patient
 	Comparative: patient  more
 	Superlative: patient  most
 
-305.  peaceful
+345.  peaceful
 	Comparative: peaceful  more
 	Superlative: peaceful  most
 
-306.  perfect
+346.  perfect
 	Comparative: perfect  more
 	Superlative: perfect  most
 
-307.  pleased
+347.  perverse
+	Comparative: perverse  more
+	Superlative: perverse  most
+
+348.  physical
+	Comparative: 
+	Superlative: 
+
+349.  pleasant
+	Comparative: pleasant  more
+	Superlative: pleasant  most
+
+350.  pleased
 	Comparative: pleased  more
 	Superlative: pleased  most
 
-308.  poisonous
+351.  poisonous
 	Comparative: poisonous  more
 	Superlative: poisonous  most
 
-309.  poor
+352.  poor
 	Comparative: poorer
 	Superlative: poorest
 
-310.  possible
+353.  possible
 	Comparative: 
 	Superlative: 
 
-311.  powerful
+354.  powerful
 	Comparative: powerful  more
 	Superlative: powerful  most
 
-312.  pregnant
+355.  precious
+	Comparative: precious  more
+	Superlative: precious  most
+
+356.  pregnant
 	Comparative: pregnant  more
 	Superlative: pregnant  most
 
-313.  previous
+357.  previous
 	Comparative: 
 	Superlative: 
 
-314.  prosperous
+358.  prosperous
 	Comparative: prosperous  more
 	Superlative: prosperous  most
 
-315.  proud
+359.  proud
 	Comparative: prouder
 	Superlative: proudest
 
-316.  pure
+360.  prudent
+	Comparative: prudent  more
+	Superlative: prudent  most
+
+361.  public
+	Comparative: public  more
+	Superlative: public  most
+
+362.  pure
 	Comparative: purer
 	Superlative: purest
 
-317.  purple
+363.  purple
 	Comparative: 
 	Superlative: 
 
-318.  quiet
+364.  quiet
 	Comparative: quiet  more
 	Superlative: quiet  most
 
-319.  rainy
+365.  rainy
 	Comparative: 
 	Superlative: 
 
-320.  raw
+366.  raw
 	Comparative: rawer
 	Superlative: rawest
 
-321.  ready
+367.  ready
 	Comparative: readier
 	Superlative: readiest
 
-322.  red
+368.  real
+	Comparative: real  more
+	Superlative: real  most
+
+369.  rebellious
+	Comparative: rebellious  more
+	Superlative: rebellious  most
+
+370.  red
 	Comparative: redder
 	Superlative: reddest
 
-323.  religious
+371.  religious
 	Comparative: religious  more
 	Superlative: religious  most
 
-324.  responsible
+372.  responsible
 	Comparative: responsible  more
 	Superlative: responsible  most
 
-325.  rich
+373.  rich
 	Comparative: richer
 	Superlative: richest
 
-326.  right
+374.  right
 	Comparative: 
 	Superlative: 
 
-327.  righteous
+375.  righteous
 	Comparative: righteous  more
 	Superlative: righteous  most
 
-328.  ripe
+376.  ripe
 	Comparative: riper
 	Superlative: ripest
 
-329.  Roman
+377.  Roman
 	Comparative: 
 	Superlative: 
 
-330.  rough
+378.  rough
 	Comparative: rougher
 	Superlative: roughest
 
-331.  royal
+379.  royal
 	Comparative: 
 	Superlative: 
 
-332.  rude
+380.  rude
 	Comparative: ruder
 	Superlative: rudest
 
-333.  sad
+381.  sacred
+	Comparative: sacred  more
+	Superlative: sacred  most
+
+382.  sad
 	Comparative: sadder
 	Superlative: saddest
 
-334.  safe
+383.  safe
 	Comparative: safer
 	Superlative: safest
 
-335.  same
+384.  same
 	Comparative: 
 	Superlative: 
 
-336.  satisfied
+385.  satisfied
 	Comparative: satisfied  more
 	Superlative: satisfied  most
 
-337.  scarlet
+386.  scarlet
 	Comparative: 
 	Superlative: 
 
-338.  second
+387.  second
 	Comparative: 
 	Superlative: 
 
-339.  selfish
+388.  secret
+	Comparative: 
+	Superlative: 
+
+389.  selfish
 	Comparative: selfish  more
 	Superlative: selfish  most
 
-340.  sensible
+390.  sensible
 	Comparative: sensible  more
 	Superlative: sensible  most
 
-341.  serious
+391.  serious
 	Comparative: serious  more
 	Superlative: serious  most
 
-342.  seven
+392.  seven
 	Comparative: 
 	Superlative: 
 
-343.  seven and a half
+393.  seven and a half
 	Comparative: 
 	Superlative: 
 
-344.  seventh
+394.  seventh
 	Comparative: 
 	Superlative: 
 
-345.  seventy
+395.  seventy
 	Comparative: 
 	Superlative: 
 
-346.  seventy-two
+396.  seventy-two
 	Comparative: 
 	Superlative: 
 
-347.  several
+397.  several
 	Comparative: 
 	Superlative: 
 
-348.  severe
+398.  severe
 	Comparative: severe  more
 	Superlative: severe  most
 
-349.  sharp
+399.  shallow
+	Comparative: shallower
+	Superlative: shallowest
+
+400.  sharp
 	Comparative: sharper
 	Superlative: sharpest
 
-350.  shiny
+401.  shiny
 	Comparative: shinier
 	Superlative: shiniest
 
-351.  short
+402.  short
 	Comparative: shorter
 	Superlative: shortest
 
-352.  shriveled
+403.  shriveled
 	Comparative: shriveled  more
 	Superlative: shriveled  most
 
-353.  sick
+404.  sick
 	Comparative: sicker
 	Superlative: sickest
 
-354.  similar
+405.  silent
+	Comparative: silent  more
+	Superlative: silent  most
+
+406.  similar
 	Comparative: similar  more
 	Superlative: similar  most
 
-355.  six
+407.  simple
+	Comparative: simpler
+	Superlative: simplest
+
+408.  sincere
+	Comparative: sincere  more
+	Superlative: sincere  most
+
+409.  sinful
+	Comparative: sinful  more
+	Superlative: sinful  most
+
+410.  six
 	Comparative: 
 	Superlative: 
 
-356.  sixth
+411.  sixth
 	Comparative: 
 	Superlative: 
 
-357.  sixty-two
+412.  sixty-two
 	Comparative: 
 	Superlative: 
 
-358.  sleepy
+413.  sleepy
 	Comparative: sleepier
 	Superlative: sleepiest
 
-359.  small
+414.  slow
+	Comparative: slower
+	Superlative: slowest
+
+415.  small
 	Comparative: smaller
 	Superlative: smallest
 
-360.  smooth
+416.  smooth
 	Comparative: smoother
 	Superlative: smoothest
 
-361.  soft
+417.  soft
 	Comparative: softer
 	Superlative: softest
 
-362.  solid
+418.  solid
 	Comparative: solid  more
 	Superlative: solid  most
 
-363.  some
+419.  some
 	Comparative: 
 	Superlative: 
 
-364.  sore
+420.  sore
 	Comparative: sore  more
 	Superlative: sore  most
 
-365.  sorry
+421.  sorry
 	Comparative: sorry  more
 	Superlative: sorry  most
 
-366.  sour
+422.  sour
 	Comparative: sour  more
 	Superlative: sour  most
 
-367.  southern
+423.  southern
 	Comparative: 
 	Superlative: 
 
-368.  special
+424.  southwestern
+	Comparative: 
+	Superlative: 
+
+425.  special
 	Comparative: special  more
 	Superlative: special  most
 
-369.  steep
+426.  steep
 	Comparative: steeper
 	Superlative: steepest
 
-370.  straight
+427.  straight
 	Comparative: straighter
 	Superlative: straightest
 
-371.  strange
+428.  strange
 	Comparative: stranger
 	Superlative: strangest
 
-372.  strict
+429.  strict
 	Comparative: stricter
 	Superlative: strictest
 
-373.  strong
+430.  strong
 	Comparative: stronger
 	Superlative: strongest
 
-374.  stubborn
+431.  stubborn
 	Comparative: stubborn  more
 	Superlative: stubborn  most
 
-375.  stupid
+432.  stupid
 	Comparative: stupid  more
 	Superlative: stupid  most
 
-376.  successful
+433.  successful
 	Comparative: successful  more
 	Superlative: successful  most
 
-377.  surprised
+434.  sudden
+	Comparative: 
+	Superlative: 
+
+435.  surprised
 	Comparative: surprised  more
 	Superlative: surprised  most
 
-378.  sweet
+436.  sweet
 	Comparative: sweeter
 	Superlative: sweetest
 
-379.  tall
+437.  tall
 	Comparative: taller
 	Superlative: tallest
 
-380.  ten
+438.  ten
 	Comparative: 
 	Superlative: 
 
-381.  ten and a half
+439.  ten and a half
 	Comparative: 
 	Superlative: 
 
-382.  tenth
+440.  tens
 	Comparative: 
 	Superlative: 
 
-383.  tenth
+441.  tenth
 	Comparative: 
 	Superlative: 
 
-384.  terrible
+442.  tenth
+	Comparative: 
+	Superlative: 
+
+443.  terrible
 	Comparative: terrible  more
 	Superlative: terrible  most
 
-385.  terrified
+444.  terrified
 	Comparative: terrified  more
 	Superlative: terrified  most
 
-386.  thin
+445.  thick
+	Comparative: thicker
+	Superlative: thickest
+
+446.  thin
 	Comparative: thinner
 	Superlative: thinnest
 
-387.  third
+447.  third
 	Comparative: 
 	Superlative: 
 
-388.  thirsty
+448.  thirsty
 	Comparative: thirsty  more
 	Superlative: thirsty  most
 
-389.  thirteenth
+449.  thirteenth
 	Comparative: 
 	Superlative: 
 
-390.  thirty
+450.  thirty
 	Comparative: 
 	Superlative: 
 
-391.  thirty-second
+451.  thirty-second
 	Comparative: 
 	Superlative: 
 
-392.  thorny
+452.  thorny
 	Comparative: thornier
 	Superlative: thorniest
 
-393.  thousands
+453.  thousands
 	Comparative: 
 	Superlative: 
 
-394.  three
+454.  three
 	Comparative: 
 	Superlative: 
 
-395.  three and a half
+455.  three and a half
 	Comparative: 
 	Superlative: 
 
-396.  three hundred
+456.  three hundred
 	Comparative: 
 	Superlative: 
 
-397.  tired
+457.  tired
 	Comparative: tired  more
 	Superlative: tired  most
 
-398.  top
+458.  top
 	Comparative: 
 	Superlative: 
 
-399.  traditional
+459.  total
 	Comparative: 
 	Superlative: 
 
-400.  troubled
+460.  traditional
+	Comparative: 
+	Superlative: 
+
+461.  troubled
 	Comparative: troubled  more
 	Superlative: troubled  most
 
-401.  true
+462.  true
 	Comparative: truer
 	Superlative: truest
 
-402.  twelfth
+463.  twelfth
 	Comparative: 
 	Superlative: 
 
-403.  twelve
+464.  twelve
 	Comparative: 
 	Superlative: 
 
-404.  twenty
+465.  twenty
 	Comparative: 
 	Superlative: 
 
-405.  twenty-one
+466.  twenty-one
 	Comparative: 
 	Superlative: 
 
-406.  twenty fifth
+467.  twenty fifth
 	Comparative: 
 	Superlative: 
 
-407.  twenty five
+468.  twenty five
 	Comparative: 
 	Superlative: 
 
-408.  two
+469.  two
 	Comparative: 
 	Superlative: 
 
-409.  two tenths
+470.  two tenths
 	Comparative: 
 	Superlative: 
 
-410.  ugly
+471.  two thirds
+	Comparative: 
+	Superlative: 
+
+472.  ugly
 	Comparative: uglier
 	Superlative: ugliest
 
-411.  unclean
+473.  unclean
 	Comparative: unclean  more
 	Superlative: unclean  most
 
-412.  upset
+474.  unrighteous
+	Comparative: unrighteous  more
+	Superlative: unrighteous  most
+
+475.  upset
 	Comparative: upset  more
 	Superlative: upset  most
 
-413.  valuable
+476.  useful
+	Comparative: useful  more
+	Superlative: useful  most
+
+477.  useless
+	Comparative: useless  more
+	Superlative: useless  most
+
+478.  valuable
 	Comparative: valuable  more
 	Superlative: valuable  most
 
-414.  violent
+479.  violent
 	Comparative: violent  more
 	Superlative: violent  most
 
-415.  warm
+480.  warm
 	Comparative: warmer
 	Superlative: warmest
 
-416.  weak
+481.  weak
 	Comparative: weaker
 	Superlative: weakest
 
-417.  well
+482.  weary
+	Comparative: 
+	Superlative: 
+
+483.  well
 	Comparative: weller
 	Superlative: wellest
 
-418.  western
+484.  western
 	Comparative: 
 	Superlative: 
 
-419.  wet
+485.  wet
 	Comparative: wetter   (suppletive)
 	Superlative: wettest   (suppletive)
 
-420.  white
+486.  white
 	Comparative: whiter
 	Superlative: whitest
 
-421.  whole
+487.  whole
 	Comparative: 
 	Superlative: 
 
-422.  wicked
+488.  wicked
 	Comparative: wicked  more
 	Superlative: wicked  most
 
-423.  wide
+489.  wide
 	Comparative: wider
 	Superlative: widest
 
-424.  wild
+490.  wild
 	Comparative: wilder
 	Superlative: wildest
 
-425.  willing
+491.  willing
 	Comparative: willing  more
 	Superlative: willing  most
 
-426.  wise
+492.  wise
 	Comparative: wiser
 	Superlative: wisest
 
-427.  wonderful
+493.  wonderful
 	Comparative: wonderful  more
 	Superlative: wonderful  most
 
-428.  worthless
+494.  worthless
 	Comparative: worthless  more
 	Superlative: worthless  most
 
-429.  worthy
+495.  worthy
 	Comparative: worthy  more
 	Superlative: worthy  most
 
-430.  wrong
+496.  wrong
 	Comparative: 
 	Superlative: 
 
-431.  yellow
+497.  yellow
 	Comparative: 
 	Superlative: 
 
-432.  young
+498.  young
 	Comparative: younger
 	Superlative: youngest
 
-433.  10th
+499.  10th
 	Comparative: 
 	Superlative: 
 
-434.  10,000
+500.  10,000
 	Comparative: 
 	Superlative: 
 
-435.  105
+501.  105
 	Comparative: 
 	Superlative: 
 
-436.  109
+502.  109
 	Comparative: 
 	Superlative: 
 
-437.  11
+503.  11
 	Comparative: 
 	Superlative: 
 
-438.  110
+504.  110
 	Comparative: 
 	Superlative: 
 
-439.  114
+505.  114
 	Comparative: 
 	Superlative: 
 
-440.  115
+506.  115
 	Comparative: 
 	Superlative: 
 
-441.  119
+507.  119
 	Comparative: 
 	Superlative: 
 
-442.  120
+508.  120
 	Comparative: 
 	Superlative: 
 
-443.  12,000
+509.  12,000
 	Comparative: 
 	Superlative: 
 
-444.  120,000
+510.  120,000
 	Comparative: 
 	Superlative: 
 
-445.  127
+511.  127
 	Comparative: 
 	Superlative: 
 
-446.  1,290
+512.  1,290
 	Comparative: 
 	Superlative: 
 
-447.  13
+513.  13
 	Comparative: 
 	Superlative: 
 
-448.  130
+514.  130
 	Comparative: 
 	Superlative: 
 
-449.  133
+515.  133
 	Comparative: 
 	Superlative: 
 
-450.  1,335
+516.  1,335
 	Comparative: 
 	Superlative: 
 
-451.  135
+517.  135
 	Comparative: 
 	Superlative: 
 
-452.  137
+518.  137
 	Comparative: 
 	Superlative: 
 
-453.  14
+519.  14
 	Comparative: 
 	Superlative: 
 
-454.  1.4
+520.  1.4
 	Comparative: 
 	Superlative: 
 
-455.  140
+521.  140
 	Comparative: 
 	Superlative: 
 
-456.  147
+522.  147
 	Comparative: 
 	Superlative: 
 
-457.  1.5
+523.  1.5
 	Comparative: 
 	Superlative: 
 
-458.  150
+524.  150
 	Comparative: 
 	Superlative: 
 
-459.  15,000
+525.  15,000
 	Comparative: 
 	Superlative: 
 
-460.  16
+526.  16
 	Comparative: 
 	Superlative: 
 
-461.  1,600
+527.  1,600
 	Comparative: 
 	Superlative: 
 
-462.  162
+528.  162
 	Comparative: 
 	Superlative: 
 
-463.  17
+529.  17
 	Comparative: 
 	Superlative: 
 
-464.  17th
+530.  17th
 	Comparative: 
 	Superlative: 
 
-465.  175
+531.  175
 	Comparative: 
 	Superlative: 
 
-466.  180
+532.  180
 	Comparative: 
 	Superlative: 
 
-467.  18,000
+533.  18,000
 	Comparative: 
 	Superlative: 
 
-468.  182
+534.  182
 	Comparative: 
 	Superlative: 
 
-469.  187
+535.  187
 	Comparative: 
 	Superlative: 
 
-470.  19
+536.  19
 	Comparative: 
 	Superlative: 
 
-471.  200
+537.  200
 	Comparative: 
 	Superlative: 
 
-472.  2,000
+538.  2,000
 	Comparative: 
 	Superlative: 
 
-473.  20,000
+539.  20,000
 	Comparative: 
 	Superlative: 
 
-474.  200,000
+540.  200,000
 	Comparative: 
 	Superlative: 
 
-475.  205
+541.  205
 	Comparative: 
 	Superlative: 
 
-476.  207
+542.  207
 	Comparative: 
 	Superlative: 
 
-477.  209
+543.  209
 	Comparative: 
 	Superlative: 
 
-478.  21st
+544.  21st
 	Comparative: 
 	Superlative: 
 
-479.  22
+545.  22
 	Comparative: 
 	Superlative: 
 
-480.  220
+546.  220
 	Comparative: 
 	Superlative: 
 
-481.  22,000
+547.  22,000
 	Comparative: 
 	Superlative: 
 
-482.  225
+548.  225
 	Comparative: 
 	Superlative: 
 
-483.  2.25
+549.  2.25
 	Comparative: 
 	Superlative: 
 
-484.  23
+550.  23
 	Comparative: 
 	Superlative: 
 
-485.  23rd
+551.  23rd
 	Comparative: 
 	Superlative: 
 
-486.  230
+552.  230
 	Comparative: 
 	Superlative: 
 
-487.  2,300
+553.  2,300
 	Comparative: 
 	Superlative: 
 
-488.  24th
+554.  24th
 	Comparative: 
 	Superlative: 
 
-489.  25
+555.  25
 	Comparative: 
 	Superlative: 
 
-490.  25,000
+556.  25,000
 	Comparative: 
 	Superlative: 
 
-491.  25,100
+557.  25,100
 	Comparative: 
 	Superlative: 
 
-492.  26,000
+558.  26,000
 	Comparative: 
 	Superlative: 
 
-493.  27
+559.  27
 	Comparative: 
 	Superlative: 
 
-494.  27th
+560.  27th
 	Comparative: 
 	Superlative: 
 
-495.  2.8
+561.  2.8
 	Comparative: 
 	Superlative: 
 
-496.  29
+562.  29
 	Comparative: 
 	Superlative: 
 
-497.  3
+563.  3
 	Comparative: 
 	Superlative: 
 
-498.  30
+564.  30
 	Comparative: 
 	Superlative: 
 
-499.  3,000
+565.  3,000
 	Comparative: 
 	Superlative: 
 
-500.  30,000
+566.  30,000
 	Comparative: 
 	Superlative: 
 
-501.  300,000
+567.  300,000
 	Comparative: 
 	Superlative: 
 
-502.  31
+568.  31
 	Comparative: 
 	Superlative: 
 
-503.  318
+569.  318
 	Comparative: 
 	Superlative: 
 
-504.  32
+570.  32
 	Comparative: 
 	Superlative: 
 
-505.  3,200
+571.  3,200
 	Comparative: 
 	Superlative: 
 
-506.  32,000
+572.  32,000
 	Comparative: 
 	Superlative: 
 
-507.  33
+573.  33
 	Comparative: 
 	Superlative: 
 
-508.  34
+574.  34
 	Comparative: 
 	Superlative: 
 
-509.  345
+575.  345
 	Comparative: 
 	Superlative: 
 
-510.  35
+576.  35
 	Comparative: 
 	Superlative: 
 
-511.  350
+577.  350
 	Comparative: 
 	Superlative: 
 
-512.  36
+578.  36
 	Comparative: 
 	Superlative: 
 
-513.  360
+579.  360
 	Comparative: 
 	Superlative: 
 
-514.  365
+580.  365
 	Comparative: 
 	Superlative: 
 
-515.  37
+581.  37
 	Comparative: 
 	Superlative: 
 
-516.  3.75
+582.  3.75
 	Comparative: 
 	Superlative: 
 
-517.  38
+583.  38
 	Comparative: 
 	Superlative: 
 
-518.  400
+584.  400
 	Comparative: 
 	Superlative: 
 
-519.  4,000
+585.  4,000
 	Comparative: 
 	Superlative: 
 
-520.  40,000
+586.  40,000
 	Comparative: 
 	Superlative: 
 
-521.  400,000
+587.  400,000
 	Comparative: 
 	Superlative: 
 
-522.  403
+588.  403
 	Comparative: 
 	Superlative: 
 
-523.  42
+589.  42
 	Comparative: 
 	Superlative: 
 
-524.  420
+590.  420
 	Comparative: 
 	Superlative: 
 
-525.  42,000
+591.  42,000
 	Comparative: 
 	Superlative: 
 
-526.  430
+592.  430
 	Comparative: 
 	Superlative: 
 
-527.  434
+593.  434
 	Comparative: 
 	Superlative: 
 
-528.  45
+594.  45
 	Comparative: 
 	Superlative: 
 
-529.  450
+595.  450
 	Comparative: 
 	Superlative: 
 
-530.  450
+596.  450
 	Comparative: 
 	Superlative: 
 
-531.  48
+597.  48
 	Comparative: 
 	Superlative: 
 
-532.  490
+598.  490
 	Comparative: 
 	Superlative: 
 
-533.  500
+599.  500
 	Comparative: 
 	Superlative: 
 
-534.  500,000
+600.  500,000
 	Comparative: 
 	Superlative: 
 
-535.  575
+601.  575
 	Comparative: 
 	Superlative: 
 
-536.  58
+602.  58
 	Comparative: 
 	Superlative: 
 
-537.  595
+603.  595
 	Comparative: 
 	Superlative: 
 
-538.  60
+604.  60
 	Comparative: 
 	Superlative: 
 
-539.  600
+605.  600
 	Comparative: 
 	Superlative: 
 
-540.  6,000
+606.  6,000
 	Comparative: 
 	Superlative: 
 
-541.  600,000
+607.  600,000
 	Comparative: 
 	Superlative: 
 
-542.  601
+608.  601
 	Comparative: 
 	Superlative: 
 
-543.  65
+609.  65
 	Comparative: 
 	Superlative: 
 
-544.  66
+610.  66
 	Comparative: 
 	Superlative: 
 
-545.  68
+611.  68
 	Comparative: 
 	Superlative: 
 
-546.  69
+612.  69
 	Comparative: 
 	Superlative: 
 
-547.  70
+613.  70
 	Comparative: 
 	Superlative: 
 
-548.  700
+614.  700
 	Comparative: 
 	Superlative: 
 
-549.  7,000
+615.  7,000
 	Comparative: 
 	Superlative: 
 
-550.  70,000
+616.  70,000
 	Comparative: 
 	Superlative: 
 
-551.  72
+617.  72
 	Comparative: 
 	Superlative: 
 
-552.  75
+618.  75
 	Comparative: 
 	Superlative: 
 
-553.  7.5
+619.  7.5
 	Comparative: 
 	Superlative: 
 
-554.  75,000
+620.  75,000
 	Comparative: 
 	Superlative: 
 
-555.  77
+621.  77
 	Comparative: 
 	Superlative: 
 
-556.  777
+622.  777
 	Comparative: 
 	Superlative: 
 
-557.  782
+623.  782
 	Comparative: 
 	Superlative: 
 
-558.  8
+624.  8
 	Comparative: 
 	Superlative: 
 
-559.  80
+625.  80
 	Comparative: 
 	Superlative: 
 
-560.  800
+626.  800
 	Comparative: 
 	Superlative: 
 
-561.  800,000
+627.  800,000
 	Comparative: 
 	Superlative: 
 
-562.  807
+628.  807
 	Comparative: 
 	Superlative: 
 
-563.  815
+629.  815
 	Comparative: 
 	Superlative: 
 
-564.  83
+630.  83
 	Comparative: 
 	Superlative: 
 
-565.  830
+631.  830
 	Comparative: 
 	Superlative: 
 
-566.  840
+632.  840
 	Comparative: 
 	Superlative: 
 
-567.  85
+633.  85
 	Comparative: 
 	Superlative: 
 
-568.  86
+634.  86
 	Comparative: 
 	Superlative: 
 
-569.  895
+635.  895
 	Comparative: 
 	Superlative: 
 
-570.  90
+636.  90
 	Comparative: 
 	Superlative: 
 
-571.  900
+637.  900
 	Comparative: 
 	Superlative: 
 
-572.  905
+638.  905
 	Comparative: 
 	Superlative: 
 
-573.  910
+639.  910
 	Comparative: 
 	Superlative: 
 
-574.  912
+640.  912
 	Comparative: 
 	Superlative: 
 
-575.  930
+641.  930
 	Comparative: 
 	Superlative: 
 
-576.  950
+642.  950
 	Comparative: 
 	Superlative: 
 
-577.  962
+643.  962
 	Comparative: 
 	Superlative: 
 
-578.  969
+644.  969
 	Comparative: 
 	Superlative: 
 
-579.  98
+645.  98
 	Comparative: 
 	Superlative: 
 
-580.  99
+646.  99
 	Comparative: 
 	Superlative: 
 

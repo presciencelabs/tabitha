@@ -108,11 +108,7 @@ function output() {
 			Verb: [
 				['goodbye', ['goodbied','goodbied','goodbying','goodbyes']],
 				['pity', ['pitied','pitied','pitying','pities']],
-				['prophesy', ['prophesied','prophesied','prophesying','prophesies']],
 				['sex', ['sexed','sexed','sexing','sexes']],
-			],
-			Noun: [
-				['result', ['results']],
 			],
 		}
 		return missing_words[part_of_speech] || []
