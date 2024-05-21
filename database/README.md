@@ -61,6 +61,7 @@ https://developers.cloudflare.com/workers/wrangler
 ### Interacting with the database
 
 > `--local` only operates on the local copy and is the default in wrangler v3.33.0+
+
 > `--remote` operates on the remote database
 
 `wrangler d1 execute Targets.YYYY-MM-DD --file=./Targets.YYYY-MM-DD.tabitha.sqlite.sql`
