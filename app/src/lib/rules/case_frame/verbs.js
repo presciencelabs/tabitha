@@ -333,6 +333,7 @@ const verb_case_frames = new Map([
 	['help', [
 		['help-B', 'patient_from_subordinate_clause'],
 	]],
+	['kill', []],
 	['know', [
 		['know-D', { 'patient': { 'directly_after_verb_with_adposition': 'about' } }],
 		['know-B', { 'instrument': { 'by_adposition': 'with' } }],
@@ -484,6 +485,23 @@ const verb_case_frames = new Map([
 			},
 			'patient_clause_type': 'patient_clause_same_participant',
 		}],
+	]],
+	['throw', [
+		['throw-A', { 'destination': { 'by_adposition': 'at' } }],
+		['throw-B', {
+			'destination': { 'by_adposition': 'into' },
+			'source': {
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
+				'context': {
+					'precededby': [
+						{ 'token': 'out' },
+						{ 'token': 'of', 'skip': 'np_modifiers' },
+					],
+				},
+				'context_transform': [{ 'function': {} }, { 'relation': '' }],
+			},
+		}],
+		['throw-E', { 'destination': { 'by_adposition': 'into' } }],
 	]],
 	['want', [
 		['want-B', { 'patient_clause_type': 'patient_clause_same_participant' }],

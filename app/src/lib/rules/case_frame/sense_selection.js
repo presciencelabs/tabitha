@@ -125,6 +125,11 @@ const verb_sense_rules = [
 		// prioritize tell-C over tell-A due to the presence of the 'about'. tell-A may count as valid if there is a relative clause on its patient.
 		['tell-C', { }],
 	]],
+	['throw', [
+		['throw-C', { }],
+		['throw-D', { 'destination': { 'stem': 'ground|floor' } }],
+		['throw-E', { 'destination': { 'stem': 'air' } }],
+	]],
 	['want', [
 		['want-D', { 'patient': { 'stem': 'peace|health|life' } }],
 	]],
