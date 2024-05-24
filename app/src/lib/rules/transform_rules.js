@@ -103,14 +103,14 @@ const transform_rules_json = [
 		'name': 'tag subordinate clauses along with \'it\' as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': 'all' } },
-		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
 		'comment': 'Ruth 2:22 It is good that you continue working...',
 	},
 	{
 		'name': 'tag subordinate clauses that directly precede the verb as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'followedby': { 'category': 'Verb' } },
-		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
 		'comment': 'It is true that John read that book',
 	},
 	{
@@ -119,7 +119,7 @@ const transform_rules_json = [
 		'context': {
 			'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': ['np', 'vp'] },
 		},
-		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
 		'comment': 'It please Mary [that John read this book]. - this was originally tagged as a relative clause but the \'it\' takes priority',
 	},
 	{
