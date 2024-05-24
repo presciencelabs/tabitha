@@ -43,6 +43,15 @@ const part_of_speech_rules_json = [
 		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc',
 	},
 	{
+		'name': 'If Noun-Verb preceded by an aspectual auxiliary, remove Adjective',
+		'category': 'Noun|Verb',
+		'context': {
+			'precededby': { 'stem': 'start|begin|stop|continue|finish', 'skip': { 'token': 'to' } },
+		},
+		'remove': 'Noun',
+		'comment': 'People will continue to hope(N/V) in Christ Jesus.',
+	},
+	{
 		'name': 'If Noun-Verb preceded by Adjective or Conjunction, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
