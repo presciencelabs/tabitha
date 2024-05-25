@@ -103,14 +103,14 @@ const transform_rules_json = [
 		'name': 'tag subordinate clauses along with \'it\' as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': 'all' } },
-		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
 		'comment': 'Ruth 2:22 It is good that you continue working...',
 	},
 	{
 		'name': 'tag subordinate clauses that directly precede the verb as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'followedby': { 'category': 'Verb' } },
-		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
 		'comment': 'It is true that John read that book',
 	},
 	{
@@ -119,7 +119,7 @@ const transform_rules_json = [
 		'context': {
 			'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': ['np', 'vp'] },
 		},
-		'transform': { 'tag': { 'clause_type': 'agent_clause', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'agent_clause' } },
 		'comment': 'It please Mary [that John read this book]. - this was originally tagged as a relative clause but the \'it\' takes priority',
 	},
 	{
@@ -128,7 +128,7 @@ const transform_rules_json = [
 		'context': { 
 			'subtokens': { 'token': 'to', 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': 'all' },
 		},
-		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John wanted [to sing]',
 	},
 	{
@@ -141,7 +141,7 @@ const transform_rules_json = [
 				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
 			},
 		},
-		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John likes [singing]',
 	},
 	{
@@ -155,13 +155,19 @@ const transform_rules_json = [
 				'skip': 'all',
 			},
 		},
-		'transform': { 'tag': { 'clause_type': 'patient_clause_simultaneous|patient_clause_different_participant', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'patient_clause_simultaneous|patient_clause_different_participant' } },
 		'comment': 'eg. "John saw [Mary walking]." This rule should apply before setting "be" as an auxilliary, but after setting the aspect verbs as auxilliaries',
 	},
 	{
 		'name': 'any remaining subordinate_clause is a \'different_participant\' patient clause by default',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
-		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant', 'role': 'none' } },
+		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant' } },
+	},
+	{
+		'name': 'tag all clause arguments with role: "none"',
+		'trigger': { 'tag': { 'clause_type': 'patient_clause_different_participant|patient_clause_same_participant|patient_clause_quote_begin|agent_clause' } },
+		'transform': { 'tag': { 'role': 'none' } },
+		'comment': 'Setting up for the case frame rules',
 	},
 	{
 		'name': 'tag \'that\' at the beginning of a main clause as remove_demonstrative when followed by a noun',
