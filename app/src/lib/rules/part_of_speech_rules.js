@@ -148,6 +148,16 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal. The chief(N/Adj) evil spirit.',
 	},
 	{
+		'name': 'If chief is followed by a common ambiguous Noun, remove the Noun',
+		'category': 'Noun|Adjective',
+		'trigger': { 'stem': 'chief' },
+		'context': {
+			'followedby': { 'stem': 'stone|guard|judge' },
+		},
+		'remove': 'Noun',
+		'comment': 'Jesus is-X the chief(N/Adj) stone(N/V). stone, judge, guard, etc will not be disambiguated properly otherwise',
+	},
+	{
 		'name': 'If Noun-Adjective preceded by Adjective, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
