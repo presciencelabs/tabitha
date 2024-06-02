@@ -61,6 +61,16 @@ const part_of_speech_rules_json = [
 		'comment': 'Preceded by an Adjective: Daniel 1:7 The official gave new names(N/V) to the men... Preceded by a Conjunction: Because we don\'t allow coordinate VPs in these propositions, if there\'s a Conjunction preceding the Noun/Verb, the word must be a Noun. Daniel 2:37 God has given wealth and honor(N/V) to you.',
 	},
 	{
+		'name': 'If certain Noun/Verbs are preceded by chief, remove the Verb',
+		'category': 'Noun|Verb',
+		'trigger': { 'stem': 'stone|guard|judge' },
+		'context': {
+			'precededby': { 'stem': 'chief' },
+		},
+		'remove': 'Verb',
+		'comment': 'Jesus is-X the chief(N/Adj) stone(N/V). stone, judge, guard, etc will not be disambiguated properly otherwise',
+	},
+	{
 		'name': 'If Noun-Verb preceded by certain Adpositions, delete the Verb',
 		'category': 'Noun|Verb',
 		'context': {
@@ -146,16 +156,6 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Noun',
 		'comment': 'Daniel 7:4 I saw the second(N/Adj) animal. The chief(N/Adj) evil spirit.',
-	},
-	{
-		'name': 'If chief is followed by a common ambiguous Noun, remove the Noun',
-		'category': 'Noun|Adjective',
-		'trigger': { 'stem': 'chief' },
-		'context': {
-			'followedby': { 'stem': 'stone|guard|judge' },
-		},
-		'remove': 'Noun',
-		'comment': 'Jesus is-X the chief(N/Adj) stone(N/V). stone, judge, guard, etc will not be disambiguated properly otherwise',
 	},
 	{
 		'name': 'If Noun-Adjective preceded by Adjective, remove Adjective',
