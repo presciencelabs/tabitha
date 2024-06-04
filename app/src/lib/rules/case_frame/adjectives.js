@@ -123,6 +123,15 @@ const adjective_case_frames = new Map([
 	['different', [
 		['different-B', { 'nominal_argument': { 'by_adposition': 'from' } }],
 	]],
+	['each', [
+		['each-A', {
+			'modified_noun': [
+				{ 'modified_noun_of_adjective': { } },
+				{ 'subgroup_with_of': { } },
+			],
+			'comment': "'each X' and 'each of X' are both supported",
+		}],
+	]],
 	['faithful', [
 		['faithful-B', { 'nominal_argument': { 'by_adposition': 'to' } }],
 		['faithful-C', { 'nominal_argument': { 'by_adposition': 'with' } }],
@@ -154,8 +163,26 @@ const adjective_case_frames = new Map([
 	['merciful', [
 		['merciful-B', { 'nominal_argument': { 'by_adposition': 'to' } }],
 	]],
+	['much-many', [
+		['much-many-A', {
+			'modified_noun': [
+				{ 'modified_noun_of_adjective': { } },
+				{ 'subgroup_with_of': { } },
+			],
+			'comment': "'muhc/many X' and 'much/many of X' are both supported",
+		}],
+	]],
 	['old', [
 		['old-B', { 'nominal_argument': { 'unit_with_measure': 'time' } }],
+	]],
+	['one', [
+		['one-A', {
+			'modified_noun': [
+				{ 'modified_noun_of_adjective': { } },
+				{ 'subgroup_with_of': { } },
+			],
+			'comment': "'one X' and 'one of X' are both supported",
+		}],
 	]],
 	['patient', [
 		['patient-B', { 'nominal_argument': { 'by_adposition': 'with' } }],
@@ -172,6 +199,15 @@ const adjective_case_frames = new Map([
 	['sad', [
 		['sad-A', { 'nominal_argument': { 'by_adposition': 'about' } }],
 		['sad-B', { 'nominal_argument': { 'by_adposition': 'for' } }],
+	]],
+	['some', [
+		['some-A', {
+			'modified_noun': [
+				{ 'modified_noun_of_adjective': { } },
+				{ 'subgroup_with_of': { } },
+			],
+			'comment': "'some X' and 'some of X' are both supported",
+		}],
 	]],
 	['tall', [
 		['tall-A', { 'nominal_argument': { 'unit_with_measure': 'length' } }],
