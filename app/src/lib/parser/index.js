@@ -20,7 +20,6 @@ export async function parse(text, db) {
 		rules_applier(RULES.PART_OF_SPEECH),
 		rules_applier(RULES.TRANSFORM),
 		rules_applier(RULES.ARGUMENT_AND_SENSE),
-		rules_applier(RULES.CHECKER),
 	)(text)
 }
 

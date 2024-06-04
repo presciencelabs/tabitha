@@ -76,7 +76,7 @@ const ROLE_RULE_PRESETS = [
 	['by_adposition', (preset_value, role_tag) => ({
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': { 'precededby': { 'token': preset_value, 'skip': 'np_modifiers' } },
-		'context_transform': { 'function': {} },
+		'context_transform': { 'function': { 'syntax': 'argument_adposition' } },
 		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
 	})],
 	['by_clause_tag', preset_value => ({
@@ -109,7 +109,7 @@ const ROLE_RULE_PRESETS = [
 			],
 			'argument_context_index': 1,
 		},
-		'context_transform': { 'function': {} },	// make the adposition a function word
+		'context_transform': { 'function': { 'syntax': 'argument_adposition' } },	// make the adposition a function word
 		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
 	})],
 	['predicate_adjective', () => ({

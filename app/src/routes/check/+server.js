@@ -1,6 +1,8 @@
 import { backtranslate } from '$lib/backtranslator'
 import { parse } from '$lib/parser'
 import { concept_with_sense, token_has_error } from '$lib/parser/token'
+import { RULES } from '$lib/rules'
+import { apply_rules } from '$lib/rules/rules_processor'
 import { json } from '@sveltejs/kit'
 
 
@@ -10,10 +12,10 @@ export async function GET({ url: { searchParams }, locals: { db } }) {
 	const text = searchParams.get('text') ?? ''
 
 	const sentences = await parse(text, db)
-	const tokens = simplify_tokens(sentences)
+	const checked_sentences = apply_rules(sentences, RULES.CHECKER)
+	const tokens = simplify_tokens(checked_sentences)
 
-	// TODO use tokens to generate back translation
-	const back_translation = backtranslate(text)
+	const back_translation = backtranslate(sentences)
 
 	return response({ has_error: has_error(tokens), tokens, back_translation })
 

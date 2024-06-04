@@ -273,23 +273,23 @@ function create_directional_context_filter(context_json, offset) {
 			return context_result(false)
 		}
 	}
+}
 
-	/**
-	 * Skip can have one token filter or an array of filters which act as OR conditions.
-	 * Skip can also use preset groups useful for skipping phrases and parts of phrases.
-	 * @param {any} skip_json 
-	 * @returns {TokenFilter}
-	 */
-	function create_skip_filter(skip_json) {
-		if (typeof skip_json === 'string' && SKIP_GROUPS.has(skip_json)) {
-			skip_json = SKIP_GROUPS.get(skip_json) ?? {}
-		}
-		if (Array.isArray(skip_json)) {
-			const filters = skip_json.map(create_skip_filter)
-			return token => filters.some(filter => filter(token))
-		}
-		return create_token_filter(skip_json)
+/**
+ * Skip can have one token filter or an array of filters which act as OR conditions.
+ * Skip can also use preset groups useful for skipping phrases and parts of phrases.
+ * @param {any} skip_json 
+ * @returns {TokenFilter}
+ */
+export function create_skip_filter(skip_json) {
+	if (typeof skip_json === 'string' && SKIP_GROUPS.has(skip_json)) {
+		skip_json = SKIP_GROUPS.get(skip_json) ?? {}
 	}
+	if (Array.isArray(skip_json)) {
+		const filters = skip_json.map(create_skip_filter)
+		return token => filters.some(filter => filter(token))
+	}
+	return create_token_filter(skip_json)
 }
 
 /**
@@ -492,7 +492,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['vp_modifiers', [
 		{ 'tag': ['verb_polarity|modal|auxiliary', { 'syntax': 'infinitive' }] },
-		{ 'category': 'Adverb' },
+		'advp',
 	]],
 	['vp', [
 		'vp_modifiers',

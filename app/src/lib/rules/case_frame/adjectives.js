@@ -28,7 +28,7 @@ const ROLE_RULE_PRESETS = [
 			'argument_context_index': 1,
 		},
 		'transform': { 'tag': { 'role': 'adjective_nominal_argument', 'syntax': 'nested_np' } },
-		'context_transform': { 'function': { 'syntax': '', 'relation': '' } },	// make the adposition a function word and clear other tag values
+		'context_transform': { 'function': { 'syntax': 'argument_adposition', 'relation': '' } },	// make the adposition a function word and clear other tag values
 		'missing_message': `Couldn't find the nominal argument, which in this case should have '${preset_value}' before it.`,
 	})],
 	['by_clause_tag', preset_value => ({
