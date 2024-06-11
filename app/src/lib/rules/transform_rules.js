@@ -67,8 +67,14 @@ const transform_rules_json = [
 		'name': 'Set tag for relative clauses and relativizers',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': {
-			'precededby': { 'category': 'Noun', 'skip': { 'tag': { 'clause_type': 'relative_clause' } } },
-			'subtokens': { 'tag': { 'syntax': 'relativizer' }, 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+			'precededby': {
+				'category': 'Noun',
+				'skip': [{ 'tag': { 'clause_type': 'relative_clause' } }, { 'token': ',' }],
+			},
+			'subtokens': {
+				'tag': { 'syntax': 'relativizer' },
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
 		},
 		'transform': { 'tag': { 'clause_type': 'relative_clause' } },
 		'subtoken_transform': { 'tag': { 'determiner': '' } },
@@ -78,7 +84,10 @@ const transform_rules_json = [
 		'name': 'Set extra tag for relative clauses that use "that"',
 		'trigger': { 'tag': { 'clause_type': 'relative_clause' } },
 		'context': {
-			'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+			'subtokens': {
+				'token': 'that',
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
 		},
 		'transform': { 'tag': { 'clause_type': 'relative_clause|relative_clause_that' } },
 		'comment': 'a later rule needs to know if the relativizer is "that". clear the determiner tag but keep the syntax one',
@@ -88,7 +97,10 @@ const transform_rules_json = [
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': {
 			'notprecededby': { 'category': 'Noun' },
-			'subtokens': { 'token': 'that', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+			'subtokens': {
+				'token': 'that',
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
 		},
 		'subtoken_transform': { 'tag': { 'syntax': '' } },
 		'comment': '"that" should only be a demonstrative in this case. clear the syntax tag but keep the determiner one',
@@ -96,7 +108,12 @@ const transform_rules_json = [
 	{
 		'name': 'tag subordinate clauses starting with an adposition as adverbial',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
-		'context': { 'subtokens': { 'category': 'Adposition', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] } },
+		'context': {
+			'subtokens': {
+				'category': 'Adposition',
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
+		},
 		'transform': { 'tag': { 'clause_type': 'adverbial_clause' } },
 	},
 	{
@@ -388,24 +405,22 @@ const transform_rules_json = [
 		'comment': "eg 'faith in X'. X should not be interpreted as an argument of a Verb",
 	},
 	{
-		'name': 'tag addressee nouns',
+		'name': 'tag all commas',
+		'trigger': { 'token': ',' },
+		'transform': { 'tag': { 'syntax': 'comma' } },
+	},
+	{
+		'name': 'tag addressee nouns and commas',
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': {
 			'followedby': [
 				{ 'token': ',', 'skip': [{ 'category': 'Conjunction' }, 'np'] },
+				{ 'tag': { 'syntax': 'head_np' }, 'skip': 'all' },	// the agent
 				{ 'category': 'Verb', 'skip': 'all' },
 			],
 		},
 		'transform': { 'tag': { 'role': 'addressee' } },
-	},
-	{
-		'name': 'tag adjectives around verse references',
-		'trigger': { 'token': ':', 'stem': '-ReferenceMarker' },
-		'context': {
-			'precededby': { 'category': 'Adjective' },
-			'followedby': { 'category': 'Adjective' },
-		},
-		'context_transform': [{ 'tag': { 'role': 'verse_ref' } }, { 'tag': { 'role': 'verse_ref' } }],
+		'context_transform': [{ 'tag': { 'syntax': 'comma_addressee' } }],
 	},
 ]
 

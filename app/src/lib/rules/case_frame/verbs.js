@@ -308,7 +308,12 @@ const verb_case_frames = new Map([
 				'context': { 'precededby': { 'category': 'Adposition', 'skip': 'np_modifiers' } },
 			},
 		}],
-		['become-J', { 'state': { 'directly_after_verb_with_adposition': 'like' } }],
+		['become-J', {
+			'state': [
+				{ 'directly_after_verb': { } },
+				{ 'directly_after_verb_with_adposition': 'like' },
+			],
+		}],
 	]],
 	['cause', []],
 	['come', []],
@@ -590,6 +595,15 @@ const VERB_LETTER_TO_ROLE = new Map([
  */
 function get_verb_usage_info(categorization, role_rules) {
 	const role_letters = [...categorization].filter(c => c !== '_')
+	
+	// some categorizations are blank (eg become-J)
+	// treat all arguments as possible and not required
+	if (role_letters.length === 0) {
+		return {
+			possible_roles: [...VERB_LETTER_TO_ROLE.values()],
+			required_roles: [],
+		}
+	}
 
 	// Replace 'patient_clause' with the appropriate clause type
 	const patient_clause_type = role_rules.patient_clause_type || 'patient_clause_different_participant'

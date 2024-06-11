@@ -58,7 +58,6 @@ const verb_sense_rules = [
 	['become', [
 		// 'become' is very particular and so each sense is specified to make the priority clear. Not all verbs will need this.
 		['become-G', { }],	// become like
-		['become-J', { }],	// metaphorical
 		['become-F', { 'agent': { 'stem': 'weather' } }],	// weather
 		['become-I', { 'state': { 'stem': 'day|morning|afternoon|evening|Sabbath' } }],	// temporal TODO check features of word from lexicon
 		['become-H', { 'state': { 'stem': 'bronze|clay|cloth|gold|iron|metal|sackcloth|silver|wood' } } ],	// substance (made of)
@@ -66,6 +65,7 @@ const verb_sense_rules = [
 		['become-C', { 'state': { 'stem': 'apostle|captain|emperor|farmer|governor|judge|king|leader|officer|official|priest|prince|prophet|queen|ruler|servant|slave|teacher' } }],	// social role
 		['become-B', { }],	// class membership
 		['become-D', { }],	// equative
+		['become-J', { }],	// metaphorical
 		['become-A', { }],	// predicative
 	]],
 	['give', [

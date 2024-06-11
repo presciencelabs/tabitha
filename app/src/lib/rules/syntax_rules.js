@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, add_tag_to_token } from '$lib/parser/token'
+import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, simple_rule_action } from './rules_parser'
@@ -37,7 +37,7 @@ const builtin_syntax_rules = [
 		},
 	},
 	{
-		name: "Set tag for words with possessive 's  as genitive_saxon",
+		name: "Set tag for words with possessive 's as genitive_saxon",
 		comment: '',
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
@@ -45,6 +45,52 @@ const builtin_syntax_rules = [
 			action: simple_rule_action(({ trigger_token }) => {
 				add_tag_to_token(trigger_token, { 'relation': 'genitive_saxon' })
 			}),
+		},
+	},
+	{
+		name: 'Tag numbers at the start of a verse references',
+		comment: '',
+		rule: {
+			trigger: token => /^\d/.test(token.token),
+			context: create_context_filter({
+				'followedby': { 'tag': { 'syntax': 'verse_ref_colon' } },
+			}),
+			action: simple_rule_action(({ trigger_token }) => {
+				add_tag_to_token(trigger_token, { 'role': 'verse_ref' })
+			}),
+		},
+	},
+	{
+		name: 'Tag and/or split numbers at the end of a verse references',
+		comment: '',
+		rule: {
+			trigger: token => /^\d/.test(token.token),
+			context: create_context_filter({
+				'precededby': { 'tag': { 'syntax': 'verse_ref_colon' } },
+			}),
+			action: ({ tokens, trigger_index, trigger_token }) => {
+				if (trigger_token.token.includes('-')) {
+					// this is a verse range (eg. Jeremiah 31:31-34)
+					const verse_numbers = trigger_token.token.split('-')
+
+					tokens.splice(trigger_index, 1,
+						create_token(verse_numbers[0], TOKEN_TYPE.LOOKUP_WORD, {
+							lookup_term: verse_numbers[0],
+							tag: { 'role': 'verse_ref' },
+						}),
+						create_token('-', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'syntax': 'verse_ref_hyphen' } }),
+						create_token(verse_numbers[1], TOKEN_TYPE.LOOKUP_WORD, {
+							lookup_term: verse_numbers[1],
+							tag: { 'role': 'verse_ref' },
+						}),
+					)
+					return trigger_index + 3	// add 2 and advance 1
+				}
+
+				add_tag_to_token(trigger_token, { 'role': 'verse_ref' })
+
+				return trigger_index + 1
+			},
 		},
 	},
 ]

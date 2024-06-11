@@ -22,7 +22,7 @@
 				temperature,
 				frequency_penalty,
 				presence_penalty,
-			})
+			}),
 		})
 
 		const generate_response = await response.json()

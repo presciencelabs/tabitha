@@ -91,7 +91,10 @@ export function tokenize_input(text = '') {
 	function colon() {
 		if (peek_match(/\d/)) {
 			// verse reference
-			return create_token(collect_text(), TOKEN_TYPE.LOOKUP_WORD, { lookup_term: '-ReferenceMarker' })
+			return create_token(collect_text(), TOKEN_TYPE.LOOKUP_WORD, {
+				lookup_term: '-ReferenceMarker',
+				tag: { 'syntax': 'verse_ref_colon' },
+			})
 		}
 		return check_boundary_for_token(() => simple_token(TOKEN_TYPE.PUNCTUATION))
 	}

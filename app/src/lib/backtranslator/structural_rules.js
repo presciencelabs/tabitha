@@ -112,7 +112,7 @@ const structural_rules_json = [
 					...implicit_phrase,
 					tokens[named_index],
 					create_token('>>', TOKEN_TYPE.PUNCTUATION),
-					...explicit_phrase
+					...explicit_phrase,
 				])
 
 				return trigger_index + 3	// add 2 and move forward 1
@@ -123,7 +123,7 @@ const structural_rules_json = [
 		name: 'Literal and dynamic expansion and metonymy',
 		comment: 'The noun phrases get switched around. eg "The Lord of the eyes _literalExpansion..." -> "<<The eyes of>> the Lord...',
 		rule: {
-			trigger: create_token_filter({ 'token': '_literalExpansion|_dynamicExpansion|_metonymy'}),
+			trigger: create_token_filter({ 'token': '_literalExpansion|_dynamicExpansion|_metonymy' }),
 			context: create_context_filter({
 				'precededby': [
 					{ 'category': 'Noun', 'skip': 'np_modifiers' },
@@ -149,7 +149,7 @@ const structural_rules_json = [
 					...implicit_phrase,
 					tokens[of_index],
 					create_token('>>', TOKEN_TYPE.PUNCTUATION),
-					...explicit_phrase
+					...explicit_phrase,
 				])
 
 				return trigger_index + 3	// add 2 and move forward 1

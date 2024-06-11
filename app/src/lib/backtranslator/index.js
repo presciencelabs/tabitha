@@ -67,6 +67,10 @@ export function textify(sentences) {
  */
 export function find_replace(text) {
 	return text
+		// remove all hyphens within words
+		.replace(/(\w)-(\w)/g, '$1 $2')
+		// remove both spaces around hyphen (found in verse references)
+		.replace(/ - /g, '-')
 		// always remove spaces before certain punctuation
 		.replace(/ ([.,:?!>])/g, '$1')
 		// always remove spaces after some punctuation
@@ -77,8 +81,6 @@ export function find_replace(text) {
 		.replace(/, " /g, ', "')
 		// remove spaces before closing quotes
 		.replace(/([.?!]) "/g, '$1"')
-		// remove all hyphens
-		.replace(/-/g, ' ')
 		// remove neighboring implicit markers
 		.replace(/>> <</g, ' ')
 		.replace(/([^>])> <([^<])/g, '$1 $2')

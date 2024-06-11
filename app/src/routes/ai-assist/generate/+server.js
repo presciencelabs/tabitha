@@ -4,7 +4,7 @@ import { PHASE1_AI_ASSIST_API_KEY } from '$env/static/private'
 
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST({ request,  }) {
+export async function POST({ request }) {
 	const { message, temperature, frequency_penalty, presence_penalty } = await request.json()
 
 	const openai = new OpenAI({ apiKey: PHASE1_AI_ASSIST_API_KEY })

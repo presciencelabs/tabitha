@@ -281,16 +281,17 @@ const ADJECTIVE_LETTER_TO_ROLE = new Map([
  * @returns {RoleUsageInfo}
  */
 function get_adjective_usage_info(categorization, role_rules) {
-	// some categorizations are blank - treat all arguments as possible and not required
-	if (categorization.length === 0) {
+	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc) and not used for usage
+	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
+	
+	// some categorizations are blank or erroneously all underscores (eg early-A)
+	// treat all arguments as possible and not required
+	if (role_letters.length === 0) {
 		return {
 			possible_roles: [...ADJECTIVE_LETTER_TO_ROLE.values()],
 			required_roles: [],
 		}
 	}
-
-	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc) and not used for usage
-	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
 
 	/** @type {string[]} */
 	// @ts-ignore

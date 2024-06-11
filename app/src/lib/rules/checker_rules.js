@@ -489,7 +489,10 @@ const checker_rules_json = [
 		'name': 'Suggest using an attributive Adjective instead of a predicative relative clause',
 		'trigger': { 'tag': { 'syntax': 'predicate_adjective' } },
 		'context': {
-			'precededby': { 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
+			'precededby': [
+				{ 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
+				{ 'stem': 'be', 'skip': 'all' },
+			],
 		},
 		'suggest': {
 			'message': 'Consider writing \'{stem} X\' instead of \'X [{0:token} be {stem}]\'. The attributive adjective is generally preferred over a relative clause.',
