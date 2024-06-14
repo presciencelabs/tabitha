@@ -99,9 +99,22 @@ function simplify_tokens(sentences) {
 		return {
 			is_valid,
 			is_checked,
-			valid_arguments: valid_arguments.map(match => match.role_tag),
-			extra_arguments: extra_arguments.map(match => match.role_tag),
+			valid_arguments: valid_arguments.reduce(simplify_argument_result, {}),
+			extra_arguments: extra_arguments.reduce(simplify_argument_result, {}),
 			missing_arguments: missing_arguments.map(rule => rule.role_tag),
+		}
+
+		/**
+		 * 
+		 * @param {SimpleRoleArgResult} result 
+		 * @param {RoleMatchResult} match 
+		 */
+		function simplify_argument_result(result, match) {
+			const { trigger_token } = match.trigger_context
+			return {
+				...result,
+				[match.role_tag]: trigger_token.lookup_results.at(0)?.stem ?? trigger_token.token,
+			}
 		}
 	}
 }

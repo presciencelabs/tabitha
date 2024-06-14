@@ -208,7 +208,11 @@ type SimpleHowToResult = {
 type SimpleCaseFrameResult = {
 	is_valid: boolean
 	is_checked: boolean
-	valid_arguments: RoleTag[]
-	extra_arguments: RoleTag[]
+	valid_arguments: SimpleRoleArgResult
+	extra_arguments: SimpleRoleArgResult
 	missing_arguments: RoleTag[]
+}
+
+type SimpleRoleArgResult = {
+	[role: RoleTag]: string
 }

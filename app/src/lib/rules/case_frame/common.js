@@ -77,11 +77,6 @@ export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
 		}
 	}
 
-	// An empty object means no rule applies. Since a valid rule always needs a trigger, this test works
-	if (!('trigger' in rule_json)) {
-		return []
-	}
-
 	const tag_role = rule_json['tag_role'] ?? true
 	const tag_transform = tag_role ? { 'tag': { 'role': role_tag } } : {}
 

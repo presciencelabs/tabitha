@@ -338,6 +338,11 @@ export function create_token_transform(transform_json) {
 		transforms.push(token => ({ ...token, tag: add_value_to_tag(token.tag, tag) }))
 	}
 
+	const remove_tag = transform_json['remove_tag']
+	if (remove_tag !== undefined) {
+		transforms.push(token => ({ ...token, tag: remove_tag_labels(token.tag, remove_tag) }))
+	}
+
 	const function_tag = transform_json['function']
 	if (function_tag !== undefined) {
 		// TODO keep form name value from lookup somehow
@@ -388,6 +393,19 @@ export function create_token_transform(transform_json) {
 	 */
 	function add_value_to_tag(old_tag, new_values) {
 		return { ...old_tag, ...new_values }
+	}
+
+	/**
+	 * 
+	 * @param {Tag} old_tag 
+	 * @param {string|string[]} tags_to_remove 
+	 * @returns {Tag}
+	 */
+	function remove_tag_labels(old_tag, tags_to_remove) {
+		if (!Array.isArray(tags_to_remove)) {
+			tags_to_remove = [tags_to_remove]
+		}
+		return Object.fromEntries(Object.entries(old_tag).filter(([k]) => !tags_to_remove.includes(k)))
 	}
 }
 

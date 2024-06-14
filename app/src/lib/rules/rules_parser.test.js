@@ -534,6 +534,41 @@ describe('token transforms', () => {
 		expect(result.tag).toEqual({ 'key': 'value' })
 		expect(result.messages).toEqual(token.messages)
 	})
+	test('remove tag', () => {
+		const transform_json = { 'remove_tag': 'key1' }
+		const transform = create_token_transform(transform_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'key2': 'value2' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key2': 'value2' } }),
+		]
+		const results = tokens.map(transform)
+
+		expect(results[0].tag).toEqual({ 'key2': 'value2' })
+		expect(results[1].tag).toEqual({ 'key2': 'value2' })
+	})
+	test('remove multiple tags', () => {
+		const transform_json = { 'remove_tag': ['key1', 'key2'] }
+		const transform = create_token_transform(transform_json)
+
+		const tokens = [
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'key2': 'value2' } }),
+			create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key2': 'value2', 'key3': 'value3' } }),
+		]
+		const results = tokens.map(transform)
+
+		expect(results[0].tag).toEqual({ })
+		expect(results[1].tag).toEqual({ 'key3': 'value3' })
+	})
+	test('add and remove tag', () => {
+		const transform_json = { 'tag': { 'key5': 'value5' }, 'remove_tag': 'key1' }
+		const transform = create_token_transform(transform_json)
+
+		const token = create_token('token', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'key1': 'value1', 'key2': 'value2' } })
+		const result = transform(token)
+
+		expect(result.tag).toEqual({ 'key2': 'value2', 'key5': 'value5' })
+	})
 	test('type and tag', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
 		const transform = create_token_transform(transform_json)

@@ -33,6 +33,12 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
+		'name': 'like -> just-like (the adposition)',
+		'trigger': { 'token': 'like' },
+		'lookup': 'like|just-like',
+		'comment': 'this is needed so the adposition is found as well, which is handled by words like be/seem/sound/etc',
+	},
+	{
 		'name': 'even-if',
 		'trigger': { 'token': 'Even|even' },
 		'context': { 'followedby': { 'token': 'if' } },
@@ -90,71 +96,28 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
-		'name': 'grow up',
-		'trigger': { 'stem': 'grow' },
-		'context': { 'followedby': { 'token': 'up' } },
-		'lookup': 'grow-B',
-		'combine': 1,
-	},
-	{
-		'name': 'laugh at',
-		'trigger': { 'stem': 'laugh' },
-		'context': { 'followedby': { 'token': 'at' } },
-		'lookup': 'laugh-B',		// TODO make this a case frame rule
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
-	},
-	{
-		'name': 'lift up',
-		'trigger': { 'stem': 'lift' },
-		'context': { 'followedby': { 'token': 'up', 'skip': 'all' } },
-		'lookup': 'lift',		// TODO make this a case frame rule
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
-	},
-	{
-		'name': 'look at',
-		'trigger': { 'stem': 'look' },
-		'context': { 'followedby': { 'token': 'at' } },
-		'lookup': 'look-A',		// TODO make this a case frame rule
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
-	},
-	{
 		'name': 'look for -> search',
 		'trigger': { 'stem': 'look' },
 		'context': { 'followedby': { 'token': 'for' } },
 		'lookup': 'search',
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 	},
 	{
 		'name': 'look like -> appear-B',
 		'trigger': { 'stem': 'look' },
 		'context': { 'followedby': { 'token': 'like' } },
-		'lookup': 'appear-B',
-		'combine': 1,
-	},
-	{
-		'name': 'like -> just-like (the adposition)',
-		'trigger': { 'token': 'like' },
-		'lookup': 'like|just-like',
-		'comment': 'this is needed so the adposition is found as well, which is handled by words like be/seem/sound/etc',
-	},
-	{
-		'name': 'worry about',
-		'trigger': { 'stem': 'worry' },
-		'context': { 'followedby': { 'token': 'about' } },
-		'lookup': 'worry',		// TODO make this a case frame rule
-		'context_transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
+		'lookup': 'appear',
 	},
 	{
 		'name': 'what becomes thing-A in a question',
 		'trigger': { 'token': 'What|what' },
 		'context': { 'followedby': { 'token': '?', 'skip': 'all' } },
-		'lookup': 'thing-A',
+		'lookup': 'thing',
 	},
 	{
 		'name': 'who becomes person-A in a question',
 		'trigger': { 'token': 'Who|who' },
 		'context': { 'followedby': { 'token': '?', 'skip': 'all' } },
-		'lookup': 'person-A',
+		'lookup': 'person',
 	},
 ]
 
