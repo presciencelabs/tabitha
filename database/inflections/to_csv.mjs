@@ -76,8 +76,6 @@ function output() {
 	Array.from(extracted_data)
 		.filter(has_inflections)
 		.filter(has_no_space)
-		.map(add_missing_inflections)
-		.concat(add_missing_words())
 		.map(log_csv)
 
 	function has_inflections([, inflections]) {
@@ -86,32 +84,6 @@ function output() {
 
 	function has_no_space([stem]) {
 		return !stem.includes(' ')
-	}
-
-	function add_missing_inflections([stem, inflections]) {
-		if (stem === 'be') {
-			// these forms are not present in TBTA's lexical data because be is so irregular...
-			// they are only produced during the rules phase so they need to be added manually here.
-			inflections.push('am', 'are', 'were')
-		}
-
-		return [stem, inflections]
-	}
-
-	function add_missing_words() {
-		// TODO add more or remove some when we include Analyzer inflections as well
-		// see https://github.com/presciencelabs/tabitha-editor/issues/37
-		const missing_words = {
-			Adjective: [
-				['left', ['','']],	// important for disambiguation with 'leave'
-			],
-			Verb: [
-				['goodbye', ['goodbied','goodbied','goodbying','goodbyes']],
-				['pity', ['pitied','pitied','pitying','pities']],
-				['sex', ['sexed','sexed','sexing','sexes']],
-			],
-		}
-		return missing_words[part_of_speech] || []
 	}
 
 	function log_csv([stem, inflections]) {

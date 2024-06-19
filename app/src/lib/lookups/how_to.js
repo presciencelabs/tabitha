@@ -1,5 +1,6 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import { create_lookup_result, split_stem_and_sense } from '$lib/parser/token'
+import { lookups_match, senses_match } from './common'
 
 /**
  * @param {Token} lookup_token
@@ -64,25 +65,4 @@ async function get_matches_from_how_to(lookup_term) {
 	if (!response.ok) return []
 
 	return response.json()
-}
-
-/**
- * 
- * @param {LookupWord} lookup1 
- * @param {LookupWord} lookup2 
- * @returns {boolean}
- */
-function lookups_match(lookup1, lookup2) {
-	return lookup1.stem === lookup2.stem && lookup1.part_of_speech === lookup2.part_of_speech
-}
-
-/**
- * 
- * @param {LookupResult} lookup 
- * @param {HowToResult} how_to_result 
- * @returns {boolean}
- */
-function senses_match(lookup, how_to_result) {
-	return lookup.concept?.sense === how_to_result.sense
-		|| lookup.how_to.some(result => result.sense === how_to_result.sense)
 }

@@ -1,5 +1,6 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import { create_lookup_result } from '$lib/parser/token'
+import { lookups_match } from './common'
 
 /**
  * @param {Token} lookup_token
@@ -43,14 +44,4 @@ async function get_matches_from_ontology(lookup_term) {
 	if (!response.ok) return []
 
 	return response.json()
-}
-
-/**
- *
- * @param {LookupWord} lookup1
- * @param {LookupWord} lookup2
- * @returns {boolean}
- */
-function lookups_match(lookup1, lookup2) {
-	return lookup1.stem === lookup2.stem && lookup1.part_of_speech === lookup2.part_of_speech
 }
