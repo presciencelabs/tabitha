@@ -6,6 +6,7 @@ export const CLAUSE_NOTATIONS = [
 	'(alternate-5)',
 	'(begin-comment)',
 	'(begin-poetry)',
+	'(blank-line)',
 	'(comment-begin)',
 	'(comment-end)',
 	'(complex)',
