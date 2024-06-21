@@ -27,7 +27,7 @@ export const CLAUSE_NOTATIONS = [
 	'(norhetorical)',
 	'(paragraph)',
 	'(poetry-begin)',
-	'(poetry-end)'
+	'(poetry-end)',
 	'(primary)',
 	'(rhetorical)',
 	'(simple)',
