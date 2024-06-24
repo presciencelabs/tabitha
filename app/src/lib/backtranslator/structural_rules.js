@@ -36,7 +36,19 @@ const structural_rules_json = [
 					return
 				}
 
-				trigger_token.sub_tokens.splice(1, 0, create_token('that', TOKEN_TYPE.FUNCTION_WORD))
+				const that_index = get_index_for_that()
+				trigger_token.sub_tokens.splice(that_index, 0, create_token('that', TOKEN_TYPE.FUNCTION_WORD))
+
+				function get_index_for_that() {
+					// Put the 'that' after a conjunction, if present. eg 'X knows that Y and that Z.'
+					
+					const first_word_index = trigger_token.sub_tokens.findIndex(create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }))
+					if (first_word_index !== -1 && create_token_filter({ 'category': 'Conjunction' })(trigger_token.sub_tokens[first_word_index])) {
+						return first_word_index + 1
+					} else {
+						return 1
+					}
+				}
 			}),
 		},
 	},
