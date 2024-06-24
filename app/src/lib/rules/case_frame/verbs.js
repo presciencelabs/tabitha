@@ -142,7 +142,12 @@ const verb_case_frames = new Map([
 		['answer-A', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
 	['appear', [
-		['appear-B', { 'patient': { 'directly_after_verb_with_adposition': 'like' } }],
+		['appear-B', {
+			'patient': [
+				{ 'directly_after_verb': { } },
+				{ 'directly_after_verb_with_adposition': 'like' },
+			],
+		}],
 	]],
 	['ask', [
 		['ask-A', {
