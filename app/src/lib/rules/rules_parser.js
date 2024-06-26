@@ -473,10 +473,6 @@ export function message_set_action(action) {
 }
 
 const SKIP_GROUPS = new Map([
-	['coordination', [
-		{ 'stem': 'and' },
-		{ 'tag': { 'syntax': 'comma' } },
-	]],
 	['adjp_modifiers_predicative', [
 		{
 			'tag': [
@@ -488,7 +484,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['adjp_predicative', [
 		'adjp_modifiers_predicative',
-		'coordination',
+		{ 'tag': { 'syntax': 'and_adj|comma' } },
 		{ 'category': 'Adjective' },
 	]],
 	['adjp_modifiers_attributive', [
@@ -496,7 +492,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['adjp_attributive', [
 		'adjp_modifiers_attributive',
-		'coordination',
+		{ 'tag': { 'syntax': 'and_adj|comma' } },
 		{ 'category': 'Adjective' },
 	]],
 	['advp_modifiers', [
@@ -504,7 +500,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['advp', [
 		'advp_modifiers',
-		'coordination',
+		{ 'tag': { 'syntax': 'and_adv|comma' } },
 		{ 'category': 'Adverb' },
 	]],
 	['np_modifiers', [
@@ -513,7 +509,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['np', [
 		'np_modifiers',
-		'coordination',
+		{ 'tag': { 'syntax': 'and_noun|comma' } },
 		{ 'category': 'Noun' },
 	]],
 	['vp_modifiers', [

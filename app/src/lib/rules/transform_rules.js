@@ -429,6 +429,34 @@ const transform_rules_json = [
 		'transform': { 'tag': { 'role': 'addressee' } },
 		'context_transform': [{ 'tag': { 'syntax': 'comma_addressee' } }],
 	},
+	{
+		'name': 'by default, tag all "and" as "noun" ands',
+		'trigger': { 'stem': 'and' },
+		'transform': { 'tag': { 'syntax': 'and_noun' } },
+	},
+	{
+		'name': 'tag "and" with adjectives',
+		'trigger': { 'stem': 'and' },
+		'context': { 'precededby': { 'category': 'Adjective', 'skip': { 'token': ',' } } },
+		'transform': { 'tag': { 'syntax': 'and_adj' } },
+	},
+	{
+		'name': 'tag "and" with adverbs',
+		'trigger': { 'stem': 'and' },
+		'context': { 'precededby': { 'category': 'Adverb', 'skip': { 'token': ',' } } },
+		'transform': { 'tag': { 'syntax': 'and_adv' } },
+	},
+	{
+		'name': 'tag "and" at start of sentences',
+		'trigger': { 'stem': 'and' },
+		'context': { 'precededby': { 'token': '[' } },
+		'transform': { 'tag': { 'syntax': 'and_clause' } },
+	},
+	{
+		'name': 'tag "and" at start of subordinate clauses',
+		'trigger': { 'stem': 'and', 'tag': { 'position': 'first_word' } },
+		'transform': { 'tag': { 'syntax': 'and_clause' } },
+	},
 ]
 
 /**

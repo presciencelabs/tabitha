@@ -240,6 +240,11 @@ const structural_rules_json = [
 ]
 
 /**
+ * The 'pre_head' filters are similar to 'precededby' context filters.
+ * The 'other_pre_relations' are simple token filters that are not part of the 'pre_head' filters, but
+ * should be included at the start of the phrase (eg. adpositions).
+ * The 'post_head' filters are similar to 'followedby' context filters.
+ * 
  * @typedef {{ pre_head: any[], other_pre_relations: any[], post_head: any[] }} PhraseFilters
  * @type {Map<string, PhraseFilters>}
  */
@@ -247,14 +252,14 @@ const PHRASE_FILTERS = new Map([
 	['Noun', {
 		pre_head: [
 			// The 'np' skip filter includes 'of' and 'named' relations, but we don't want those here
-			{ 'tag': ['determiner', { 'relation': 'genitive_saxon' }] },
+			{ 'tag': ['determiner', { 'relation': 'genitive_saxon|made_of' }] },
 			'adjp_attributive',
-			{ 'category': 'Noun' },
 		],
 		other_pre_relations: [
 			{ 'category': 'Adposition' },
 			{ 'tag': 'relation' },	// 'of' or 'named'
 			{ 'tag': { 'syntax': 'agent_of_passive|argument_adposition' } },	// 'by'
+			{ 'tag': { 'syntax': 'and_noun' } },
 		],
 		post_head: [
 			{ 'tag': { 'clause_type': 'relative_clause' } },
@@ -262,12 +267,12 @@ const PHRASE_FILTERS = new Map([
 	}],
 	['Adjective', {
 		pre_head: ['adjp_modifiers_attributive'],
-		other_pre_relations: [],
+		other_pre_relations: [{ 'tag': { 'syntax': 'and_adj' } }],
 		post_head: [],
 	}],
 	['Adverb', {
 		pre_head: ['advp_modifiers'],
-		other_pre_relations: [],
+		other_pre_relations: [{ 'tag': { 'syntax': 'and_adv' } }],
 		post_head: [],
 	}],
 	['Verb', {
