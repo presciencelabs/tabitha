@@ -9,7 +9,9 @@
 			{category}
 		</span>
 	{:else}
-		No theta grid information available.
+		<span class="whitespace-nowrap border-4 border-double p-2">
+			No theta grid information available.
+		</span>
 	{/each}
 </figure>
 

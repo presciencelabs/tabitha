@@ -106,9 +106,10 @@ INSERT INTO Concepts
 	SELECT ID, Roots, '', 'Particle', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Particles;
 
-SELECT '======= loading Pronouns into Concepts table =======';
+-- This category of concepts used to be called Pronouns, but are now referred to as Phrasals
+SELECT '======= loading Phrasals into Concepts table =======';
 INSERT INTO Concepts
-	SELECT ID, Roots, '', 'Pronoun', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
+	SELECT ID, Roots, '', 'Phrasal', Occurrences, "LN Gloss", "Brief Gloss", Categories, "Exhaustive Examples", Examples, Level
 	FROM Pronouns;
 
 SELECT '======= loading Verbs into Concepts table =======';
@@ -136,8 +137,8 @@ SELECT '-------------------------';
 SELECT 'Particles:					', count(ID) FROM Particles;
 SELECT 'Concepts[Particles]:		', count(id) FROM Concepts WHERE part_of_speech = 'Particle';
 SELECT '-------------------------';
-SELECT 'Pronouns:						', count(ID) FROM Pronouns;
-SELECT 'Concepts[Pronouns]:		', count(id) FROM Concepts WHERE part_of_speech = 'Pronoun';
+SELECT 'Phrasals:						', count(ID) FROM Pronouns;
+SELECT 'Concepts[Phrasals]:		', count(id) FROM Concepts WHERE part_of_speech = 'Phrasal';
 SELECT '-------------------------';
 SELECT 'Verbs:							', count(ID) FROM Verbs;
 SELECT 'Concepts[Verbs]:			', count(id) FROM Concepts WHERE part_of_speech = 'Verb';

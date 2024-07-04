@@ -101,6 +101,8 @@ From within the `complex_terms` dir:
 
  Hit `curl 'http://localhost:8787/__scheduled'` in a separate terminal to run it.
 
+ See the `README.md` within the `/complex_terms` directory for more details
+
 #### Deployment
 
 > ⚠️ You will need Cloudflare credentials to deploy.

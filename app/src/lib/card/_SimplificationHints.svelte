@@ -9,7 +9,10 @@
 	async function get_hints(concept) {
 		const response = await fetch(`/simplification_hints?complex_term=${concept.stem}-${concept.sense}`)
 
-		return await response.json()
+		/** @type {SimplificationHint[]}*/
+		const results = await response.json()
+
+		return results.filter(result => result.part_of_speech === concept.part_of_speech)
 	}
 </script>
 
