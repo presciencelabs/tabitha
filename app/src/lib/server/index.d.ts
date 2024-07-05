@@ -34,6 +34,7 @@ type SearchFilter = {
 type ConceptSearchFilter = {
 	q: string
 	scope: 'stems' | 'glosses' | 'all'
+	category: string
 }
 
 type CuratedExample = {

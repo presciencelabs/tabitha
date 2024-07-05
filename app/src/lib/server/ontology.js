@@ -17,64 +17,43 @@ export const get_concepts = db => async filter => {
 	const concept_filter = {
 		q: '',
 		scope: 'stems',
+		category: '',
 		...filter,
+	}
+
+	const query_builder = build_concept_query(db)
+
+	if (concept_filter.category && concept_filter.category !== 'all') {
+		query_builder.add_filter('part_of_speech = ?', [concept_filter.category])
 	}
 
 	// senses follow the form word-A, /^(.*)-([A-Z])$/
 	const matches = concept_filter.q.match(/^(.*)-([A-Z])$/)
 	if (matches) {
 		const [, stem, sense] = matches
-		return await by_sense({ stem, sense })
-	}
+		query_builder
+			.add_filter('stem LIKE ?', [stem])
+			.add_filter('sense = ?', [sense])
 
-	return await by_filter(concept_filter)
+	} else {
+		const normalized_q = normalize_wildcards(concept_filter.q)
 
-	/**
-	 * @param {{stem: string, sense: string}} input
-	 * @returns {Promise<Concept[]>}
-	 */
-	async function by_sense({ stem, sense }) {
-		const sql = `
-			SELECT *
-			FROM Concepts
-			WHERE stem LIKE ?
-			AND sense = ?
-		`
-
-		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-		const { results } = await db.prepare(sql).bind(stem, sense).all() // note: love-A will still return 2 results, the noun and the verb
-
-		return normalize(results)
-	}
-
-	/**
-	 * @param {ConceptSearchFilter} filter
-	 * @returns {Promise<Concept[]>}
-	 */
-	async function by_filter(filter) {
-		const normalized_q = normalize_wildcards(filter.q)
-
-		const prepared_stmts = {
-			stems: db.prepare(`
-				SELECT *
-				FROM Concepts
-				WHERE stem LIKE ?`).bind(normalized_q),
-			glosses: db.prepare(`
-				SELECT *
-				FROM Concepts
-				WHERE gloss LIKE ?`).bind(`%${normalized_q}%`),
-			all: db.prepare(`
-				SELECT *
-				FROM Concepts
-				WHERE stem LIKE ?
-					OR gloss LIKE ?`).bind(normalized_q, `%${normalized_q}%`),
+		/**
+		 * @typedef {[filter: string, params: string[]]} FilterArgs
+		 * @type {{ [k: string]: FilterArgs }}
+		 */
+		const scope_filters = {
+			stems: ['stem LIKE ?', [normalized_q]],
+			glosses: ['gloss LIKE ?', [`%${normalized_q}%`]],
+			all: ['stem LIKE ? OR gloss LIKE ?', [normalized_q, `%${normalized_q}%`]],
 		}
-
-		/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
-		const { results } = await prepared_stmts[filter.scope].all()
-
-		return normalize(results)
+		query_builder.add_filter(...scope_filters[concept_filter.scope])
 	}
+
+	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
+	const { results } = await query_builder.prepare().all()
+
+	return normalize(results)
 
 	/**
 	 * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
@@ -160,5 +139,49 @@ export const get_simplification_hints = db => async term => {
 	/** @param {SimplificationHint} arg */
 	function normalize_results({ term, part_of_speech, structure, pairing, explication }) {
 		return { term, part_of_speech, structure, pairing, explication }
+	}
+}
+
+/**
+ * @typedef {{
+ * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
+ * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
+ * }} ConceptQueryBuilder
+ * 
+ * @param {import('@cloudflare/workers-types').D1Database} db 
+ * @returns { ConceptQueryBuilder }
+ */
+function build_concept_query(db) {
+	/** @type {string[]} */
+	const all_filters = []
+
+	/** @type {string[]} */
+	const all_params = []
+
+	/**
+	 * @param {string} filter
+	 * @param {string[]} params
+	 * @this {ConceptQueryBuilder}
+	 */
+	function add_filter(filter, params) {
+		all_filters.push(filter)
+		all_params.push(...params)
+		return this
+	}
+
+	/**
+	 * @returns {import('@cloudflare/workers-types').D1PreparedStatement}
+	 */
+	function prepare() {
+		const joined_filters = all_filters.map(filter => `(${filter})`).join(' AND ')
+		return db.prepare(`
+			SELECT *
+			FROM Concepts
+			WHERE ${joined_filters}`).bind(...all_params)
+	}
+
+	return {
+		add_filter,
+		prepare,
 	}
 }

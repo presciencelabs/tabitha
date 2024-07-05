@@ -9,6 +9,10 @@
 	/** @type {string|null} */
 	let value = new URLSearchParams($page.url.search).get('q')
 
+	/** @type {string} */
+	let category = new URLSearchParams($page.url.search).get('category') || 'all'
+	const categories = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal']
+
 	let scope = writable('')
 
 	onMount(() => {
@@ -34,11 +38,16 @@
 <search>
 	<!--
 		used role="search" ∵ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility.
-
-		decided against daisy's "join" approach in favor of positioning so I could get a focus ring around the input AND button.  See https://github.com/saadeghi/daisyui/discussions/2400>
 	-->
 	<form role="search" class="join w-full">
 		<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg w-full join-item" />
+
+		<select name="category" bind:value={category} class="select select-primary select-lg join-item">
+			<option value="all">All Concepts</option>
+			{#each categories as category_value}
+				<option value="{category_value}">{category_value}s</option>
+			{/each}
+		</select>
 
 		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-primary select-lg join-item">
 			<option value="stems">Stems only</option>
