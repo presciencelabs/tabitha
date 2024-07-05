@@ -260,6 +260,13 @@ const transform_rules_json = [
 		'comment': 'eg. a gold statue; a bamboo chair. The Nouns are always right next to each other',
 	},
 	{
+		'name': 'certain Noun-Noun combinations are "title"',
+		'trigger': { 'category': 'Noun', 'stem': 'king|queen|Christ|Caesar|Lord' },
+		'context': { 'followedby': { 'category': 'Noun' } },
+		'transform': { 'tag': { 'relation': 'title' } },
+		'comment': 'eg. King Herod, Lord Jesus',
+	},
+	{
 		'name': '\'that\' followed by the Adposition \'so\' does not have any function',
 		'trigger': { 'token': 'that' },
 		'context': {
@@ -388,8 +395,8 @@ const transform_rules_json = [
 		'comment': "can't use 'np_modifiers' in the 'notfollowedby' skip since we don't want to skip the genitive_norman 'of'",
 	},
 	{
-		'name': 'remove head_np tag from saxon genitives and made_of relations',
-		'trigger': { 'tag': { 'relation': 'genitive_saxon|made_of' } },
+		'name': 'remove head_np tag from saxon genitives, made_of, and title relations',
+		'trigger': { 'tag': { 'relation': 'genitive_saxon|made_of|title' } },
 		'context': { },
 		'transform': { 'remove_tag': ['syntax', 'role'] },
 	},

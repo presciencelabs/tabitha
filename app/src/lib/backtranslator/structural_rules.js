@@ -156,13 +156,22 @@ const structural_rules_json = [
 					implicit_phrase[0].token = capitalize_token(implicit_phrase[0])
 				}
 
-				tokens.splice(explicit_phrase_start, trigger_index - explicit_phrase_start, ...[
-					create_token('<<', TOKEN_TYPE.PUNCTUATION),
-					...implicit_phrase,
-					tokens[of_index],
-					create_token('>>', TOKEN_TYPE.PUNCTUATION),
-					...explicit_phrase,
-				])
+				const new_tokens = tokens[trigger_index].token === '_literalExpansion'
+					? [
+						// Don't have implicit markings for literal expansion
+						...implicit_phrase,
+						tokens[of_index],
+						...explicit_phrase,
+					]
+					: [
+						create_token('<<', TOKEN_TYPE.PUNCTUATION),
+						...implicit_phrase,
+						tokens[of_index],
+						create_token('>>', TOKEN_TYPE.PUNCTUATION),
+						...explicit_phrase,
+					]
+
+				tokens.splice(explicit_phrase_start, trigger_index - explicit_phrase_start, ...new_tokens)
 
 				return trigger_index + 3	// add 2 and move forward 1
 			},
@@ -252,7 +261,7 @@ const PHRASE_FILTERS = new Map([
 	['Noun', {
 		pre_head: [
 			// The 'np' skip filter includes 'of' and 'named' relations, but we don't want those here
-			{ 'tag': ['determiner', { 'relation': 'genitive_saxon|made_of' }] },
+			{ 'tag': ['determiner', { 'relation': 'genitive_saxon|made_of|title' }] },
 			'adjp_attributive',
 		],
 		other_pre_relations: [
