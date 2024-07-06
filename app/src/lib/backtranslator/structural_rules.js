@@ -268,7 +268,7 @@ const PHRASE_FILTERS = new Map([
 			{ 'category': 'Adposition' },
 			{ 'tag': 'relation' },	// 'of' or 'named'
 			{ 'tag': { 'syntax': 'agent_of_passive|argument_adposition' } },	// 'by'
-			{ 'tag': { 'syntax': 'and_noun' } },
+			{ 'tag': { 'syntax': 'coord_noun' } },
 		],
 		post_head: [
 			{ 'tag': { 'clause_type': 'relative_clause' } },
@@ -276,12 +276,12 @@ const PHRASE_FILTERS = new Map([
 	}],
 	['Adjective', {
 		pre_head: ['adjp_modifiers_attributive'],
-		other_pre_relations: [{ 'tag': { 'syntax': 'and_adj' } }],
+		other_pre_relations: [{ 'tag': { 'syntax': 'coord_adj' } }],
 		post_head: [],
 	}],
 	['Adverb', {
 		pre_head: ['advp_modifiers'],
-		other_pre_relations: [{ 'tag': { 'syntax': 'and_adv' } }],
+		other_pre_relations: [{ 'tag': { 'syntax': 'coord_adv' } }],
 		post_head: [],
 	}],
 	['Verb', {

@@ -438,31 +438,31 @@ const transform_rules_json = [
 	},
 	{
 		'name': 'by default, tag all "and" as "noun" ands',
-		'trigger': { 'stem': 'and' },
-		'transform': { 'tag': { 'syntax': 'and_noun' } },
+		'trigger': { 'stem': 'and|or' },
+		'transform': { 'tag': { 'syntax': 'coord_noun' } },
 	},
 	{
 		'name': 'tag "and" with adjectives',
-		'trigger': { 'stem': 'and' },
+		'trigger': { 'stem': 'and|or' },
 		'context': { 'precededby': { 'category': 'Adjective', 'skip': { 'token': ',' } } },
-		'transform': { 'tag': { 'syntax': 'and_adj' } },
+		'transform': { 'tag': { 'syntax': 'coord_adj' } },
 	},
 	{
 		'name': 'tag "and" with adverbs',
 		'trigger': { 'stem': 'and' },
 		'context': { 'precededby': { 'category': 'Adverb', 'skip': { 'token': ',' } } },
-		'transform': { 'tag': { 'syntax': 'and_adv' } },
-	},
-	{
-		'name': 'tag "and" at start of sentences',
-		'trigger': { 'stem': 'and' },
-		'context': { 'precededby': { 'token': '[' } },
-		'transform': { 'tag': { 'syntax': 'and_clause' } },
+		'transform': { 'tag': { 'syntax': 'coord_adv' } },
 	},
 	{
 		'name': 'tag "and" at start of subordinate clauses',
-		'trigger': { 'stem': 'and', 'tag': { 'position': 'first_word' } },
-		'transform': { 'tag': { 'syntax': 'and_clause' } },
+		'trigger': { 'stem': 'and|or' },
+		'context': { 'precededby': { 'token': '[' } },
+		'transform': { 'tag': { 'syntax': 'coord_clause' } },
+	},
+	{
+		'name': 'tag "and" at start of sentences',
+		'trigger': { 'stem': 'and|or', 'tag': { 'position': 'first_word' } },
+		'transform': { 'tag': { 'syntax': 'coord_clause' } },
 	},
 ]
 

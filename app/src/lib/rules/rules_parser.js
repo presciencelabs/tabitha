@@ -484,7 +484,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['adjp_predicative', [
 		'adjp_modifiers_predicative',
-		{ 'tag': { 'syntax': 'and_adj|comma' } },
+		{ 'tag': { 'syntax': 'coord_adj|comma' } },
 		{ 'category': 'Adjective' },
 	]],
 	['adjp_modifiers_attributive', [
@@ -492,7 +492,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['adjp_attributive', [
 		'adjp_modifiers_attributive',
-		{ 'tag': { 'syntax': 'and_adj|comma' } },
+		{ 'tag': { 'syntax': 'coord_adj|comma' } },
 		{ 'category': 'Adjective' },
 	]],
 	['advp_modifiers', [
@@ -500,7 +500,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['advp', [
 		'advp_modifiers',
-		{ 'tag': { 'syntax': 'and_adv|comma' } },
+		{ 'tag': { 'syntax': 'coord_adv|comma' } },
 		{ 'category': 'Adverb' },
 	]],
 	['np_modifiers', [
@@ -509,7 +509,7 @@ const SKIP_GROUPS = new Map([
 	]],
 	['np', [
 		'np_modifiers',
-		{ 'tag': { 'syntax': 'and_noun|comma' } },
+		{ 'tag': { 'syntax': 'coord_noun|comma' } },
 		{ 'category': 'Noun' },
 	]],
 	['vp_modifiers', [
