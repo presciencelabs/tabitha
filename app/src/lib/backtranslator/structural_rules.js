@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_token } from '$lib/parser/token'
+import { TOKEN_TYPE, create_token, token_has_tag } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
 import { create_context_filter, create_skip_filter, create_token_filter, simple_rule_action } from '$lib/rules/rules_parser'
 
@@ -220,18 +220,23 @@ const structural_rules_json = [
 		},
 	},
 	{
-		name: "God's book -> the Scriptures",
+		name: "God's book (says) -> the Scriptures (say)",
 		comment: '',
 		rule: {
 			trigger: create_token_filter({ 'token': 'book' }),
 			context: create_context_filter({ 'precededby': { 'token': "God's" } }),
-			action: simple_rule_action(({ tokens, context_indexes }) => {
+			action: simple_rule_action(({ tokens, trigger_index, context_indexes }) => {
 				const new_tokens = [
 					create_token('the', TOKEN_TYPE.FUNCTION_WORD),
 					create_token('Scriptures', TOKEN_TYPE.LOOKUP_WORD),
 				]
 				tokens.splice(context_indexes[0], 2, ...new_tokens)
-				// no need to specify trigger_index because no net tokens are changed
+
+				// If the next word is a verb, change it from singular to plural
+				const next_word = find_next_word(tokens, trigger_index)
+				if (next_word?.token === 'says') {
+					next_word.token = 'say'
+				}
 			}),
 		},
 	},
@@ -243,6 +248,17 @@ const structural_rules_json = [
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.token = TOKEN_TEXT_MAP.get(trigger_token.token) ?? trigger_token.token
+			}),
+		},
+	},
+	{
+		name: 'Simple number text mappings',
+		comment: "Change some numbers to text (eg. 2 -> two), unless they are part of a verse reference (eg. Habakkuk 2:3)",
+		rule: {
+			trigger: token => NUMBER_TOKEN_TEXT_MAP.has(token.token) && !token_has_tag(token, { 'role': 'verse_ref' }),
+			context: create_context_filter({ }),
+			action: simple_rule_action(({ trigger_token }) => {
+				trigger_token.token = NUMBER_TOKEN_TEXT_MAP.get(trigger_token.token) ?? trigger_token.token
 			}),
 		},
 	},
@@ -296,6 +312,9 @@ const PHRASE_FILTERS = new Map([
 
 const TOKEN_TEXT_MAP = new Map([
 	['_paragraph', '(paragraph)'],
+])
+
+const NUMBER_TOKEN_TEXT_MAP = new Map([
 	['2', 'two'],
 	['3', 'three'],
 	['4', 'four'],
@@ -337,6 +356,20 @@ function find_phrase_end(part_of_speech, tokens, head_index) {
 	const post_head_filters = create_skip_filter(PHRASE_FILTERS.get(part_of_speech)?.post_head ?? [])
 	let phrase_end = tokens.findIndex((token, index) => index > head_index && !post_head_filters(token))
 	return phrase_end === -1 ? head_index + 1 : phrase_end
+}
+
+/**
+ * 
+ * @param {Token[]} tokens 
+ * @param {number} start_index 
+ */
+function find_next_word(tokens, start_index) {
+	// Find the next word in the sentence (skip any notes or implicit markers)
+	const skip_filters = [
+		create_token_filter({ 'type': TOKEN_TYPE.NOTE }),
+		create_token_filter({ 'token': '<<|>>|<|>' })
+	]
+	return tokens.find((token, index) => index > start_index && !skip_filters.some(filter => filter(token)))
 }
 
 /**
