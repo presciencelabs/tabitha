@@ -75,6 +75,8 @@ export function find_replace(text) {
 		.replace(/ ([.,:?!>])/g, '$1')
 		// always remove spaces after some punctuation
 		.replace(/< /g, '<')
+		// remove spaces after a verse-reference colon
+		.replace(/(\d:) (\d)/g, '$1$2')
 		// remove comma before other punctuation
 		.replace(/,([.:?!])/g, '$1')
 		// remove spaces after opening quotes
