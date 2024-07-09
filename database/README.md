@@ -4,8 +4,8 @@ https://www.sqlite.org
 
 ## Convert Ontology.mdb to a sqlite database
 
-1. currently using a manual process, i.e., TBTA's `Ontology.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`Ontology.VERSION.mdb.sqlite`)
-1. `database/migrate.sql` can then be run against it to create the new database (`Ontology.tabitha.sqlite`)
+1. currently using a manual process, i.e., TBTA's `Ontology.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`Ontology.VERSION.YYY-MM-DD.mdb.sqlite`)
+1. `database/migrate.sql` can then be run against it to create the new database, see Migrate section below.
 
 > if an mdb is larger than 40M, the MDB Viewer app will not work unfortunately.  There is an option to buy MDB ACCB Viewer (for macs).
 
@@ -74,17 +74,16 @@ Databases can be diffed using sqldiff (https://www.sqlite.org/sqldiff.html), mac
 
 ### Migrate
 
-1. make a new database from downloaded one, e.g., `cp Ontology.YYYY-MM-DD.mdb.sqlite Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite`
-1. run migration, e.g., `sqlite3 -separator '' -init migrate.sql Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite .exit`
-1. rename migrated database, e.g., `cp Ontology.YYYY-MM-DD.#_#_####.mdb.sqlite Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
-1. add derived senses, e.g., `bun senses.js Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite`
-1. dump migrated database, e.g., `sqlite3 Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite .dump > Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
+1. run migration, e.g., `sqlite3 -separator '' -init migrate.sql Ontology.VERSION.YYY-MM-DD.mdb.sqlite .exit`
+1. rename migrated database, e.g., `mv Ontology.VERSION.YYY-MM-DD.mdb.sqlite Ontology.VERSION.YYY-MM-DD.tabitha.sqlite`
+1. add derived senses, e.g., `bun senses.js Ontology.VERSION.YYY-MM-DD.tabitha.sqlite`
+1. dump migrated database, e.g., `sqlite3 Ontology.VERSION.YYY-MM-DD.tabitha.sqlite .dump > Ontology.VERSION.YYY-MM-DD.tabitha.sqlite.sql`
 1. compare diff's of `.sql` files if interested
-1.	create new database, e.g., `wrangler d1 create Ontology.YYYY-MM-DD.#_#_####`  (need to update local `wrangler.toml`'s with new info)
-1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
+1.	create new database, e.g., `wrangler d1 create Ontology.VERSION.YYYY-MM-DD`  (need to update local `wrangler.toml`'s with new info)
+1. wherever testing is going to occur, load the data there locally only, e.g., `wrangler d1 execute Ontology.VERSION.YYYY-MM-DD --file=./Ontology.VERSION.YYY-MM-DD.tabitha.sqlite.sql`
 1. add latest complex terms by running a local test below. (⚠️ see ./complex_terms/README.md for additional steps required now to update the remote database)
 1. test app with new database locally
-1. deploy to remote, e.g., `wrangler d1 execute Ontology.YYYY-MM-DD.#_#_#### --file=./Ontology.YYYY-MM-DD.#_#_####.tabitha.sqlite.sql`
+1. deploy to remote, e.g., `wrangler d1 execute Ontology.VERSION.YYYY-MM-DD --file=./Ontology.VERSION.YYY-MM-DD.tabitha.sqlite.sql`
 1. need to run another deployment either via `push` or "retry deployment" in Cloudflare dashboard
 
 ## Automated updates
