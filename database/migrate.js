@@ -1,9 +1,11 @@
 import {Database} from 'bun:sqlite'
 
-const tabitha_db_name = Bun.argv.at(-1)
+const tabitha_db_name 			= Bun.argv.at(-1)
 const tbta_sources_from_input = Bun.argv.slice(2, -1)
+const tabitha_sources_db 		= new Database(tabitha_db_name)
 
-const tabitha_sources_db = new Database(tabitha_db_name)
+// drastic perf improvement: https://www.sqlite.org/pragma.html#pragma_journal_mode
+tabitha_sources_db.exec('PRAGMA journal_mode = WAL')
 
 console.log(`Prepping Sources table in ${tabitha_db_name}...`)
 tabitha_sources_db.query(`
