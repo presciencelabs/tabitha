@@ -9,7 +9,7 @@ test('get all books in the Bible (English project)', async ({ request }) => {
 	const books = await response.json()
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-have-length
-	// TODO: Philippians is currently missing in the English project. expect(books).toHaveLength(66)
+	expect(books).toHaveLength(66)
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-contain-2
 	expect(books).toContain('1 Samuel')

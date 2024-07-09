@@ -2,7 +2,7 @@
 
 https://www.sqlite.org
 
-## Convert the target mdb's to a sqlite database
+## Convert the target mdb to a sqlite database
 
 1. currently using a manual process, i.e., TBTA's `*.mdb` -> Google Drive -> MDB Viewer app -> download sqlite file (`*.YYYY-MM-DD.mdb.sqlite`)
 
@@ -68,5 +68,5 @@ https://developers.cloudflare.com/workers/wrangler
 
 > NOTE: ⚠️ There are some manual steps when trying to import to remote ⚠️, check https://developers.cloudflare.com/d1/build-with-d1/import-data/#convert-sqlite-database-files for the latest instructions.
 
-`wrangler d1 execute Targets.YYYY-MM-DD --command="select count(*) from English"`
+`wrangler d1 execute Targets.YYYY-MM-DD --command="select name from sqlite_master"`
 
