@@ -463,6 +463,22 @@ const builtin_part_of_speech_rules = [
 			}),
 		},
 	},
+	{
+		name: 'If an ambiguous word could be a Verb, and there are no other Verbs in the clause, select the Verb',
+		comment: 'this is an implicit rule in the Analyzer',
+		rule: {
+			trigger: token => has_part_of_speech(token, 'Verb'),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ tokens, trigger_token, trigger_index }) => {
+				// Can't use the context filter, because there may be another ambiguous word somewhere.
+				// The context filter only matches words whose part of speech has been fully determined.
+				// But we want to prevent this rule from applying if there is ANY possibility of another Verb.
+				if (!tokens.some((token, index) => index !== trigger_index && has_part_of_speech(token, 'Verb'))) {
+					keep_parts_of_speech(new Set(['Verb']))(trigger_token)
+				}
+			}),
+		},
+	},
 ]
 
 /**
@@ -513,6 +529,15 @@ export function parse_part_of_speech_rule(rule_json) {
 
 export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(({ rule }) => rule)
 	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
+
+/**
+ * 
+ * @param {Token} token
+ * @param {string} part_of_speech 
+ */
+function has_part_of_speech(token, part_of_speech) {
+	return token.lookup_results.some(result => result.part_of_speech === part_of_speech)
+}
 
 /**
  * 

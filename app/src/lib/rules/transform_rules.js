@@ -397,7 +397,7 @@ const transform_rules_json = [
 		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
 		'trigger': { 'category': 'Adposition' },
 		'context': {
-			'precededby': { 'token': '[' },
+			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
 		},
 		'transform': { 'usage': 'C' },
 		'comment': 'C means "Always in an Adverbial clause". eg by-A (Adverbial - C) vs by-B (Adjunct - A)',

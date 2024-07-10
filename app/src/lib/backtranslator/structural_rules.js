@@ -277,12 +277,12 @@ const PHRASE_FILTERS = new Map([
 	['Noun', {
 		pre_head: [
 			// The 'np' skip filter includes 'of' and 'named' relations, but we don't want those here
-			{ 'tag': ['determiner', { 'relation': 'genitive_saxon|made_of|title' }] },
+			{ 'tag': ['determiner', { 'relation': 'genitive_saxon|made_of|title|subgroup' }] },
 			'adjp_attributive',
 		],
 		other_pre_relations: [
 			{ 'category': 'Adposition' },
-			{ 'tag': 'relation' },	// 'of' or 'named'
+			{ 'tag': 'relation' },	// genitive_norman 'of', group 'of', or 'named'
 			{ 'tag': { 'syntax': 'agent_of_passive|argument_adposition' } },	// 'by'
 			{ 'tag': { 'syntax': 'coord_noun' } },
 		],

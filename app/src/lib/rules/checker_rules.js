@@ -372,7 +372,7 @@ const checker_rules_json = [
 		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
 		'context': {
 			'precededby': { 'token': 'time' },
-			'subtokens': { 'token': 'when', 'skip': { 'token': '[' } },
+			'subtokens': { 'token': 'when', 'skip': 'clause_start' },
 		},
 		'require': {
 			'on': 'subtokens:0',
@@ -423,7 +423,7 @@ const checker_rules_json = [
 		'name': 'Cannot use \'could\' unless in a \'so\' adverbial clause',
 		'trigger': { 'token': 'could' },
 		'context': {
-			'notprecededby': [{ 'token': '[' }, { 'stem': 'so', 'skip': 'all' }],
+			'notprecededby': [{ 'token': '[', 'skip': { 'category': 'Conjunction' } }, { 'stem': 'so', 'skip': 'all' }],
 		},
 		'require': {
 			'message': 'Use \'be able [to...]\' instead of \'could\', unless in a \'so-that\' clause. See P1 Checklist 2.1.',
@@ -502,7 +502,7 @@ const checker_rules_json = [
 		'name': 'Check for an errant \'that\' in a complement clause',
 		'trigger': { 'tag': { 'clause_type': 'patient_clause_different_participant|agent_clause' } },
 		'context': {
-			'subtokens': { 'token': 'that', 'skip': { 'token': '[' } },
+			'subtokens': { 'token': 'that', 'skip': 'clause_start' },
 		},
 		'suggest': {
 			'on': 'subtokens:0',
@@ -550,7 +550,7 @@ const checker_rules_json = [
 		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },
 		'context': {
 			'precededby': { 'tag': { 'verb_polarity': 'negative' }, 'skip': 'all' },
-			'subtokens': { 'stem': 'in-order-to|because|so', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+			'subtokens': { 'stem': 'in-order-to|because|so', 'skip': 'clause_start' },
 		},
 		'warning': {
 			'on': 'context:0',
