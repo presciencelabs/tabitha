@@ -5,6 +5,7 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
  * These can look at the lookup results of the surrounding tokens (ie syntactic category).
  */
 const transform_rules_json = [
+	// Verb Infinitives
 	{
 		'name': '"to" before a verb gets tagged as infinitive',
 		'trigger': { 'token': 'to' },
@@ -29,6 +30,7 @@ const transform_rules_json = [
 		},
 		'transform': { 'tag': { 'syntax': 'infinitive_same_subject' } },
 	},
+	// Aspect Auxiliaries
 	{
 		'name': 'start or begin before a verb becomes a function word',
 		'trigger': { 'stem': 'start|begin' },
@@ -63,6 +65,7 @@ const transform_rules_json = [
 		},
 		'transform': { 'function': { 'auxiliary': 'completive_aspect' } },
 	},
+	// Clause type setting
 	{
 		'name': 'Set tag for relative clauses and relativizers',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
@@ -196,6 +199,7 @@ const transform_rules_json = [
 		'transform': { 'remove_tag': 'syntax' },
 		'comment': 'this clears the relativizer tag but keeps the determiner tag',
 	},
+	// General function words
 	{
 		'name': '"no" before a noun becomes negative_noun_polarity',
 		'trigger': { 'token': 'no' },
@@ -219,13 +223,32 @@ const transform_rules_json = [
 		'transform': { 'function': { 'auxiliary': 'yes_no_interrogative' } },
 	},
 	{
-		'name': 'most before adjective or adverb becomes a function word',
+		'name': '"most" before adjective or adverb becomes a function word',
 		'trigger': { 'stem': 'most' },
 		'context': {
 			'followedby': { 'category': 'Adjective|Adverb' },
 		},
 		'transform': { 'function': { 'degree': 'superlative' } },
 	},
+	{
+		'name': '"more" before adjective of adverb and "than" becomes a function word',
+		'trigger': { 'stem': 'more' },
+		'context': {
+			'followedby': [{ 'category': 'Adjective|Adverb' }, { 'tag': { 'syntax': 'comparative_than' } }],
+		},
+		'transform': { 'function': { 'degree': 'comparative' } },
+		'comment': "eg 'more content than X', etc ",
+	},
+	{
+		'name': '\'who\'/\'what\' gets tagged with interrogative_which when in a question',
+		'trigger': { 'token': 'Who|who|What|what' },
+		'context': {
+			'followedby': { 'token': '?', 'skip': 'all' },
+		},
+		'transform': { 'tag': { 'determiner': 'interrogative' }, 'remove_tag': 'syntax' },
+		'comment': '"who/what" becomes "which person-A/thing-A" respectively when in a question. So tag it, but do not make it a function word',
+	},
+	// Noun-Noun relationships
 	{
 		'name': '\'named\' before a name and after a Verb becomes a function word',
 		'trigger': { 'token': 'named' },
@@ -266,33 +289,7 @@ const transform_rules_json = [
 		'transform': { 'tag': { 'relation': 'title' } },
 		'comment': 'eg. King Herod, Lord Jesus',
 	},
-	{
-		'name': '\'that\' followed by the Adposition \'so\' does not have any function',
-		'trigger': { 'token': 'that' },
-		'context': {
-			'precededby': { 'stem': 'so', 'category': 'Adposition' },
-		},
-		'transform': { 'remove_tag': ['syntax', 'determiner'] },
-		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
-	},
-	{
-		'name': '\'who\'/\'what\' gets tagged with interrogative_which when in a question',
-		'trigger': { 'token': 'Who|who|What|what' },
-		'context': {
-			'followedby': { 'token': '?', 'skip': 'all' },
-		},
-		'transform': { 'tag': { 'determiner': 'interrogative' }, 'remove_tag': 'syntax' },
-		'comment': '"who/what" becomes "which person-A/thing-A" respectively when in a question',
-	},
-	{
-		// TODO replace with adposition sense-selection
-		'name': 'Adposition \'so\' followed by \'would\' becomes so-C',
-		'trigger': { 'stem': 'so', 'category': 'Adposition' },
-		'context': {
-			'followedby': { 'tag': { 'modal': 'conditional_would' }, 'skip': 'all' },
-		},
-		'transform': { 'concept': 'so-C' },
-	},
+	// Senses of 'be'
 	{
 		'name': 'Tag \'there\' before \'be\' as existential',
 		'trigger': { 'token': 'There|there' },
@@ -321,6 +318,7 @@ const transform_rules_json = [
 		'transform': { 'function': {} },
 		'comment': 'The Analyzer always fully deletes the phrase "made of", but we can be more specific',
 	},
+	// Other Verb auxiliaries
 	{
 		'name': 'have before a Verb indicates flashback/perfect',
 		'trigger': { 'stem': 'have' },
@@ -375,6 +373,25 @@ const transform_rules_json = [
 		},
 		'transform': { 'function': { 'syntax': 'agent_of_passive' } },
 	},
+	// Adpositions
+	{
+		'name': '\'that\' followed by the Adposition \'so\' does not have any function',
+		'trigger': { 'token': 'that' },
+		'context': {
+			'precededby': { 'stem': 'so', 'category': 'Adposition' },
+		},
+		'transform': { 'remove_tag': ['syntax', 'determiner'] },
+		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
+	},
+	{
+		// TODO replace with adposition sense-selection
+		'name': 'Adposition \'so\' followed by \'would\' becomes so-C',
+		'trigger': { 'stem': 'so', 'category': 'Adposition' },
+		'context': {
+			'followedby': { 'tag': { 'modal': 'conditional_would' }, 'skip': 'all' },
+		},
+		'transform': { 'concept': 'so-C' },
+	},
 	{
 		// TODO make this a case frame/sense selection rule
 		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
@@ -385,6 +402,7 @@ const transform_rules_json = [
 		'transform': { 'usage': 'C' },
 		'comment': 'C means "Always in an Adverbial clause". eg by-A (Adverbial - C) vs by-B (Adjunct - A)',
 	},
+	// Noun Phrase handling
 	{
 		'name': 'tag head nouns',
 		'trigger': { 'category': 'Noun' },
@@ -419,6 +437,16 @@ const transform_rules_json = [
 		'comment': "eg 'faith in X'. X should not be interpreted as an argument of a Verb",
 	},
 	{
+		'name': 'handle comparative noun arguments',
+		'trigger': { 'tag': { 'syntax': 'comparative_than' } },
+		'context': {
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'context_transform': { 'tag': { 'syntax': 'nested_np|comparative_np' } },
+		'comment': "eg 'bigger than X', 'more content than X', 'more food than X', etc ",
+	},
+	// Commas and Coordination
+	{
 		'name': 'tag all commas',
 		'trigger': { 'token': ',' },
 		'transform': { 'tag': { 'syntax': 'comma' } },
@@ -437,12 +465,12 @@ const transform_rules_json = [
 		'context_transform': [{ 'tag': { 'syntax': 'comma_addressee' } }],
 	},
 	{
-		'name': 'by default, tag all "and" as "noun" ands',
+		'name': 'by default, tag all "and/or" as "noun" coordination',
 		'trigger': { 'stem': 'and|or' },
 		'transform': { 'tag': { 'syntax': 'coord_noun' } },
 	},
 	{
-		'name': 'tag "and" with adjectives',
+		'name': 'tag "and/or" with adjectives',
 		'trigger': { 'stem': 'and|or' },
 		'context': { 'precededby': { 'category': 'Adjective', 'skip': { 'token': ',' } } },
 		'transform': { 'tag': { 'syntax': 'coord_adj' } },
@@ -454,13 +482,13 @@ const transform_rules_json = [
 		'transform': { 'tag': { 'syntax': 'coord_adv' } },
 	},
 	{
-		'name': 'tag "and" at start of subordinate clauses',
+		'name': 'tag "and/or" at start of subordinate clauses',
 		'trigger': { 'stem': 'and|or' },
 		'context': { 'precededby': { 'token': '[' } },
 		'transform': { 'tag': { 'syntax': 'coord_clause' } },
 	},
 	{
-		'name': 'tag "and" at start of sentences',
+		'name': 'tag "and/or" at start of sentences',
 		'trigger': { 'stem': 'and|or', 'tag': { 'position': 'first_word' } },
 		'transform': { 'tag': { 'syntax': 'coord_clause' } },
 	},

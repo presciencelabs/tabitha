@@ -18,7 +18,7 @@ export const FUNCTION_WORDS = new Map([
 	['of', { 'relation': 'genitive_norman' }],
 	['probably', { 'modal': 'probable_mood' }],
 	['should',  { 'modal': 'should_mood' }],
-	['than', { 'degree': 'comparative' }],
+	['than', { 'syntax': 'comparative_than' }],
 	['that', { 'determiner': 'remote_demonstrative', 'syntax': 'relativizer' }],
 	['the', { 'determiner': 'definite_article' }],
 	['there', { 'expansion': 'at_that_place' }],
