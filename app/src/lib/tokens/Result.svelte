@@ -4,24 +4,11 @@
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import Icon from '@iconify/svelte'
+    import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
 	/** @type {SimpleToken} */
 	export let token
 	export let classes = ''
-
-	/**
-	 * @param {SimpleLookupResult} lookup
-	 */
-	function is_in_ontology(lookup) {
-		return lookup.level !== -1
-	}
-
-	/**
-	 * @param {SimpleLookupResult} lookup
-	 */
-	function is_complex(lookup) {
-		return [2, 3].includes(lookup.level)
-	}
 </script>
 
 <PopupMenu>
@@ -31,14 +18,15 @@
 
 	<Table slot="popup_content" entries={token.lookup_results} classes="my-2">
 		<svelte:fragment slot="entry_row" let:entry>
-			{@const show_hints = !is_in_ontology(entry) || is_complex(entry)}
+			{@const show_hints = !LOOKUP_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(entry) || LOOKUP_FILTERS.IS_LEVEL_COMPLEX(entry)}
+			{@const concept = `${entry.stem}-${entry.sense}`}
 	
-			{#if is_in_ontology(entry)}
+			{#if LOOKUP_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(entry)}
 				<tr>
 					<td class="whitespace-nowrap">
 						<span>
-							<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${entry.concept}`} target="_blank">
-								{entry.concept}
+							<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank">
+								{concept}
 							</a>
 							{#if entry.case_frame.is_checked && entry.case_frame.is_valid}
 								<Icon icon="mdi:check-bold" class="h-4 w-4 text-success" />
@@ -55,7 +43,7 @@
 				</tr>
 			{:else}
 				<tr>
-					<td class="whitespace-nowrap">{entry.concept}</td>
+					<td class="whitespace-nowrap">{concept}</td>
 					<td class="whitespace-nowrap">{entry.part_of_speech}</td>
 					<td>N/A</td>
 					<td>Not in Ontology.</td>
@@ -63,16 +51,16 @@
 			{/if}
 			
 			{#if show_hints}
-				{@const has_structure = entry.how_to_hints.some(hint => hint.structure)}
-				{@const has_pairing = entry.how_to_hints.some(hint => hint.pairing)}
-				{@const has_explication = entry.how_to_hints.some(hint => hint.explication)}
+				{@const has_structure = entry.how_to_entries.some(how_to => how_to.structure)}
+				{@const has_pairing = entry.how_to_entries.some(how_to => how_to.pairing)}
+				{@const has_explication = entry.how_to_entries.some(how_to => how_to.explication)}
 				{@const has_any_hint = has_structure || has_pairing || has_explication}
 	
 				<tr class="border-none">
 					<td></td>
 					<td colspan="3" class="pb-2" class:ps-0={has_any_hint}>
 						{#if has_any_hint}
-							<Table entries={entry.how_to_hints} classes="my-0 border-none table-inner">
+							<Table entries={entry.how_to_entries} classes="my-0 border-none table-inner">
 								<tr slot="header_row">
 									{#if has_structure}<th class="text-info-content">Structure</th>{/if}
 									{#if has_pairing}<th class="text-info-content">Pairing</th>{/if}

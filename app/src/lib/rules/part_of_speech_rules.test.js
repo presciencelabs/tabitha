@@ -24,9 +24,7 @@ function create_pairing_token(left, right) {
  * @returns {Token}
  */
 function create_lookup_token(token, { lookup_results=[] }={}) {
-	const lookup_token = create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token })
-	lookup_token.lookup_results = lookup_results
-	return lookup_token
+	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token, lookup_results })
 }
 
 /**
@@ -45,19 +43,11 @@ function create_sentence(tokens) {
  * @param {string} [data.sense='A'] 
  * @param {string} [data.part_of_speech='Noun'] 
  * @param {number} [data.level=1] 
+ * @param {number} [data.ontology_id=1] 
  * @returns {LookupResult}
  */
-function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
-	const concept = {
-		id: '0',
-		stem,
-		sense,
-		part_of_speech,
-		level,
-		gloss: '',
-		categorization: '',
-	}
-	return create_lookup_result({ stem, part_of_speech }, { concept })
+function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_id=1 }={}) {
+	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_id })
 }
 
 describe('pairing part_of_speech disambiguation', () => {
@@ -65,8 +55,8 @@ describe('pairing part_of_speech disambiguation', () => {
 		const test_tokens = [create_sentence([
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
-				create_lookup_token('first', { lookup_results: [lookup_w_concept('first', { level: 1 })] }),
-				create_lookup_token('second', { lookup_results: [lookup_w_concept('second', { level: 2 })] }),
+				create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
+				create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 		])]
@@ -80,12 +70,12 @@ describe('pairing part_of_speech disambiguation', () => {
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
 				create_lookup_token('first', { lookup_results: [
-					lookup_w_concept('first', { part_of_speech: 'Noun', level: 1 }),
-					lookup_w_concept('first', { part_of_speech: 'Verb', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Verb', level: 1 }),
 				] }),
 				create_lookup_token('second', { lookup_results: [
-					lookup_w_concept('second', { part_of_speech: 'Verb', level: 2 }),
-					lookup_w_concept('second', { part_of_speech: 'Adjective', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Verb', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Adjective', level: 2 }),
 				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
@@ -106,12 +96,12 @@ describe('pairing part_of_speech disambiguation', () => {
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
 				create_lookup_token('first', { lookup_results: [
-					lookup_w_concept('first', { part_of_speech: 'Noun', level: 1 }),
-					lookup_w_concept('first', { part_of_speech: 'Verb', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Verb', level: 1 }),
 				] }),
 				create_lookup_token('second', { lookup_results: [
-					lookup_w_concept('second', { part_of_speech: 'Verb', level: 2 }),
-					lookup_w_concept('second', { part_of_speech: 'Noun', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Verb', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Noun', level: 2 }),
 				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
@@ -126,12 +116,12 @@ describe('pairing part_of_speech disambiguation', () => {
 			create_token('A', TOKEN_TYPE.FUNCTION_WORD),
 			create_pairing_token(
 				create_lookup_token('first', { lookup_results: [
-					lookup_w_concept('first', { part_of_speech: 'Noun', level: 1 }),
-					lookup_w_concept('first', { part_of_speech: 'Verb', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Noun', level: 1 }),
+					lookup_result('first', { part_of_speech: 'Adverb', level: 1 }),
 				] }),
 				create_lookup_token('second', { lookup_results: [
-					lookup_w_concept('second', { part_of_speech: 'Adjective', level: 2 }),
-					lookup_w_concept('second', { part_of_speech: 'Adverb', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Adjective', level: 2 }),
+					lookup_result('second', { part_of_speech: 'Adposition', level: 2 }),
 				] }),
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),

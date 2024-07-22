@@ -7,8 +7,8 @@
 	export let token
 	export let classes = ''
 
-	/** @type {{lookup: SimpleLookupResult, how_to: SimpleHowToResult}[]} */
-	const how_to_entries = token.lookup_results.flatMap(lookup => lookup.how_to_hints.map(how_to => ({ lookup, how_to })))
+	/** @type {{lookup: SimpleLookupResult, how_to: HowToEntry}[]} */
+	const how_to_entries = token.lookup_results.flatMap(lookup => lookup.how_to_entries.map(how_to => ({ lookup, how_to })))
 	const has_structure = how_to_entries.some(entry => entry.how_to.structure)
 	const has_pairing = how_to_entries.some(entry => entry.how_to.pairing)
 	const has_explication = how_to_entries.some(entry => entry.how_to.explication)
@@ -30,7 +30,7 @@
 			</tr>
 
 			<tr slot="entry_row" let:entry>
-				<th class="whitespace-nowrap">{entry.lookup.concept}</th>
+				<th class="whitespace-nowrap">{entry.lookup.stem}</th>
 				<td class="whitespace-nowrap">{entry.lookup.part_of_speech}</td>
 				{#if has_structure}<td class="whitespace-nowrap">{entry.how_to.structure}</td>{/if}
 				{#if has_pairing}<td>{entry.how_to.pairing}</td>{/if}

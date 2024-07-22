@@ -1,5 +1,9 @@
 # Editor databases
 
+As of https://github.com/presciencelabs/tabitha-editor/pull/132 the Editor no longer needs a database, and the instructions in the README are obsolete.
+
+This README file and the whole /database folder will be removed in a future update. See https://github.com/presciencelabs/tabitha-databases/tree/main .
+
 ## Create the table
 
 `sqlite3 Editor.sqlite < <table>/create_table.sql`

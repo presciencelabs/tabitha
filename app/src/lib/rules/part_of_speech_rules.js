@@ -1,6 +1,7 @@
 import { ERRORS } from '$lib/parser/error_messages'
 import { create_context_filter, create_token_filter, message_set_action, simple_rule_action } from './rules_parser'
-import { TOKEN_TYPE, create_lookup_result } from '$lib/parser/token'
+import { TOKEN_TYPE, create_lookup_result, is_one_part_of_speech } from '$lib/parser/token'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -446,13 +447,13 @@ const builtin_part_of_speech_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && token.specified_sense.length > 0,
 			context: create_context_filter({}),
 			action: message_set_action(({ trigger_token: token }) => {
-				if (token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())) {
+				if (is_one_part_of_speech(token)) {
 					return {}
 				}
 
 				// get all results that match the specified sense
 				const parts_of_speech_for_sense = new Set(token.lookup_results
-					.filter(result => result.concept?.sense === token.specified_sense)
+					.filter(result => result.sense === token.specified_sense)
 					.map(result => result.part_of_speech))
 
 				if (parts_of_speech_for_sense.size > 0) {
@@ -506,7 +507,7 @@ export function parse_part_of_speech_rule(rule_json) {
 	function category_filter(categories_json) {
 		// the token must have at least one result from each given category
 		const categories = categories_json.split('|')
-		return token => categories.every(category => token.lookup_results.some(result => result.part_of_speech === category))
+		return token => categories.every(category => token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(category)))
 	}
 
 	/**
@@ -536,7 +537,7 @@ export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(({ rule }) 
  * @param {string} part_of_speech 
  */
 function has_part_of_speech(token, part_of_speech) {
-	return token.lookup_results.some(result => result.part_of_speech === part_of_speech)
+	return token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech))
 }
 
 /**

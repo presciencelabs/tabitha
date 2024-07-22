@@ -1,17 +1,17 @@
 import { backtranslate } from '$lib/backtranslator'
 import { parse } from '$lib/parser'
-import { concept_with_sense, token_has_error } from '$lib/parser/token'
+import { token_has_error } from '$lib/parser/token'
 import { RULES } from '$lib/rules'
 import { apply_rules } from '$lib/rules/rules_processor'
 import { json } from '@sveltejs/kit'
 
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ url: { searchParams }, locals: { db } }) {
+export async function GET({ url: { searchParams } }) {
 	/** @type {string} */
 	const text = searchParams.get('text') ?? ''
 
-	const sentences = await parse(text, db)
+	const sentences = await parse(text)
 	const checked_sentences = apply_rules(sentences, RULES.CHECKER)
 	const tokens = simplify_tokens(checked_sentences)
 
@@ -68,26 +68,20 @@ function simplify_tokens(sentences) {
 	 * @param {LookupResult} lookup 
 	 * @returns {SimpleLookupResult}
 	 */
-	function simplify_lookup(lookup) {
+	function simplify_lookup({ lexicon_id, ontology_id, stem, part_of_speech, sense, form, level, gloss, categorization, how_to_entries, case_frame }) {
 		return {
-			concept: lookup.concept ? concept_with_sense(lookup.concept) : lookup.stem,
-			part_of_speech: lookup.part_of_speech,
-			form: lookup.form,
-			level: lookup.concept?.level ?? -1,
-			gloss: lookup.concept?.gloss ?? '',
-			categorization: lookup.concept?.categorization ?? '',
-			how_to_hints: lookup.how_to.map(simplify_how_to),
-			case_frame: simplify_case_frame(lookup.case_frame),
+			lexicon_id,
+			ontology_id,
+			stem,
+			part_of_speech,
+			sense,
+			form,
+			level,
+			gloss,
+			categorization,
+			how_to_entries,
+			case_frame: simplify_case_frame(case_frame),
 		}
-	}
-
-	/**
-	 * 
-	 * @param {HowToResult} how_to 
-	 * @returns {SimpleHowToResult}
-	 */
-	function simplify_how_to({ structure, pairing, explication }) {
-		return { structure, pairing, explication }
 	}
 
 	/**

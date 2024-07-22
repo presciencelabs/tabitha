@@ -1,6 +1,6 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/parser/token'
-import { lookups_match } from './common'
 
 /**
  * @param {Token} lookup_token
@@ -9,7 +9,7 @@ export async function check_ontology(lookup_token) {
 	const results = (await Promise.all(lookup_token.lookup_terms.map(get_matches_from_ontology))).flat()
 
 	const found_results = results.reduce(transform_results, [])
-	const not_found_results = lookup_token.lookup_results.filter(lookup => !results.some(result => lookups_match(lookup, result)))
+	const not_found_results = lookup_token.lookup_results.filter(lookup => !results.some(LOOKUP_FILTERS.MATCHES_LOOKUP(lookup)))
 	lookup_token.lookup_results = found_results.concat(not_found_results)
 
 	/**
@@ -18,17 +18,28 @@ export async function check_ontology(lookup_token) {
 	 * @returns {LookupResult[]}
 	 */
 	function transform_results(transformed_results, ontology_result) {
-		const existing_result = lookup_token.lookup_results.find(lookup => lookups_match(lookup, ontology_result))
-		
-		if (!existing_result && ontology_result.stem.toLowerCase() !== lookup_token.lookup_terms[0].toLowerCase()) {
+		const existing_result = lookup_token.lookup_results.find(LOOKUP_FILTERS.MATCHES_LOOKUP(ontology_result))
+
+		if (existing_result) {
+			// The stem was found in the form lookup
+			transformed_results.push({
+				...existing_result,
+				...ontology_result,
+				ontology_id: parseInt(ontology_result.id),
+			})
+
+		} else if (ontology_result.stem.toLowerCase() !== lookup_token.lookup_terms[0].toLowerCase()) {
 			// Don't include new results that don't match the original token lookup term
 			// eg. 'covering' should not match the noun 'cover', even though it matches the ontology search for the verb stem 'cover'
-			return transformed_results
+			// don't add it to the results
+
+		} else {
+			// The word exists in the Ontology, but was not found in the form lookup
+			// This is the case for concepts like 'take-away'
+			const new_result = create_lookup_result(ontology_result, { ontology_id: parseInt(ontology_result.id), ...ontology_result })
+			transformed_results.push(new_result)
 		}
-		
-		const form = existing_result?.form ?? 'stem'
-		const result = create_lookup_result(ontology_result, { form, concept: ontology_result })
-		transformed_results.push(result)
+
 		return transformed_results
 	}
 }

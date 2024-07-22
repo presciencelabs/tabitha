@@ -5,7 +5,7 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
  * These can look at the lookup results of the surrounding tokens (ie syntactic category).
  */
 const transform_rules_json = [
-	// Verb Infinitives
+	// Verb infinitives and forms
 	{
 		'name': '"to" before a verb gets tagged as infinitive',
 		'trigger': { 'token': 'to' },
@@ -29,6 +29,18 @@ const transform_rules_json = [
 			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
 		},
 		'transform': { 'tag': { 'syntax': 'infinitive_same_subject' } },
+	},
+	{
+		'name': 'Mark a Verb with the present form as present',
+		'trigger': { 'category': 'Verb', 'form': 'third singular present|present' },
+		'context': {},
+		'transform': { 'tag': { 'time': 'present' } },
+	},
+	{
+		'name': 'Mark a Verb with the past form as past. And make it a function word',
+		'trigger': { 'category': 'Verb', 'form': 'past' },
+		'context': {},
+		'transform': { 'tag': { 'time': 'past' } },
 	},
 	// Aspect Auxiliaries
 	{
@@ -207,22 +219,6 @@ const transform_rules_json = [
 		'transform': { 'function': { 'determiner': 'negative_noun_polarity' } },
 	},
 	{
-		'name': 'do with not becomes a function word',
-		'trigger': { 'stem': 'do' },
-		'context': {
-			'followedby': { 'token': 'not' },
-		},
-		'transform': { 'function': { 'auxiliary': 'negation' } },
-	},
-	{
-		'name': 'do in a question becomes an auxiliary',
-		'trigger': { 'stem': 'do' },
-		'context': {
-			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
-		},
-		'transform': { 'function': { 'auxiliary': 'yes_no_interrogative' } },
-	},
-	{
 		'name': '"most" before adjective or adverb becomes a function word',
 		'trigger': { 'stem': 'most' },
 		'context': {
@@ -320,14 +316,30 @@ const transform_rules_json = [
 	},
 	// Other Verb auxiliaries
 	{
+		'name': 'do with not becomes an auxiliary',
+		'trigger': { 'stem': 'do' },
+		'context': {
+			'followedby': { 'token': 'not' },
+		},
+		'transform': { 'tag': { 'auxiliary': 'negation' } },
+	},
+	{
+		'name': 'do in a question becomes an auxiliary',
+		'trigger': { 'stem': 'do' },
+		'context': {
+			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
+		},
+		'transform': { 'tag': { 'auxiliary': 'yes_no_interrogative' } },
+	},
+	{
 		'name': 'have before a Verb indicates flashback/perfect',
 		'trigger': { 'stem': 'have' },
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
 			'notfollowedby': { 'tag': { 'syntax': 'infinitive' }, 'skip': 'all' },
 		},
-		'transform': { 'function': { 'auxiliary': 'flashback' } },
-		'comment': 'don\'t check for the past participle form because of cases like "have cry-out". But ignore "have to cry-out" which is incorrect',
+		'transform': { 'function': { 'auxiliary': 'flashback', 'time': 'past' } },
+		'comment': 'don\'t check for the perfect form because of cases like "have cry-out". But ignore "have to cry-out" which is incorrect. The perfect is always indicative of the past in TBTA',
 	},
 	{
 		'name': 'be before a participle Verb indicates imperfective',
@@ -343,12 +355,12 @@ const transform_rules_json = [
 		'comment': 'skip all because it may be a question (eg. "Are those people going?"). We\'ll have to assume it\'s not an error.',
 	},
 	{
-		'name': 'be before a past participle Verb indicates passive',
+		'name': 'be before a perfect Verb indicates passive',
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': {
 				'category': 'Verb',
-				'form': 'past participle',
+				'form': 'perfect',
 				'skip': 'all',
 			},
 		},
@@ -390,7 +402,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'tag': { 'modal': 'conditional_would' }, 'skip': 'all' },
 		},
-		'transform': { 'concept': 'so-C' },
+		'transform': { 'sense': 'C' },
 	},
 	{
 		// TODO make this a case frame/sense selection rule

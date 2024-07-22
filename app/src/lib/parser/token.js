@@ -1,3 +1,4 @@
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { REGEXES } from '$lib/regexes'
 
 /** @type { { [key: string]: TokenType } } */
@@ -27,12 +28,13 @@ export const MESSAGE_TYPE = {
  * @param {Tag} [other_data.tag={}] 
  * @param {string} [other_data.specified_sense=''] 
  * @param {string} [other_data.lookup_term=''] 
+ * @param {LookupResult[]} [other_data.lookup_results=[]] 
  * @param {Token[]} [other_data.sub_tokens=[]] 
  * @param {Token?} [other_data.pairing=null] 
  * @param {Token?} [other_data.pronoun=null] 
  * @return {Token}
  */
-export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', sub_tokens=[], pairing=null, pronoun=null }={}) {
+export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', lookup_results=[], sub_tokens=[], pairing=null, pronoun=null }={}) {
 	return {
 		token,
 		type,
@@ -40,7 +42,7 @@ export function create_token(token, type, { message=null, tag={}, specified_sens
 		tag,
 		specified_sense,
 		lookup_terms: lookup_term ? [lookup_term] : [],
-		lookup_results: [],
+		lookup_results,
 		sub_tokens,
 		complex_pairing: pairing,
 		pronoun,
@@ -142,7 +144,7 @@ export function format_token_message({ tokens, trigger_token, context_indexes },
 			.replaceAll(`{${context_prefix}stem}`, stem)
 			.replaceAll(`{${context_prefix}token}`, token.token)
 			.replaceAll(`{${context_prefix}category}`, result?.part_of_speech ?? 'word')
-			.replaceAll(`{${context_prefix}sense}`, result?.concept ? concept_with_sense(result.concept) : stem)
+			.replaceAll(`{${context_prefix}sense}`, result ? stem_with_sense(result) : stem)
 	}
 }
 
@@ -170,41 +172,11 @@ export function token_has_message(token, type_to_check=null) {
 /**
  * 
  * @param {Token} token 
- * @param {WordSense} concept 
- * @return {number}
- */
-export function find_result_index(token, concept) {
-	const { stem, sense } = split_stem_and_sense(concept)
-	return token.lookup_results.findIndex(result => result.stem === stem && result.concept?.sense === sense)
-}
-
-/**
- * 
- * @param {Token} token 
- * @param {WordSense} concept must include the sense
- * @returns {Token}
- */
-export function set_token_concept(token, concept) {
-	// If a specific sense is already selected, don't overwrite it
-	if (token.lookup_results.length <= 1) {
-		return token
-	}
-
-	const concept_index = find_result_index(token, concept)
-	const selected_result = token.lookup_results.splice(concept_index, 1)
-
-	// put the selected sense at the top
-	token.lookup_results = [...selected_result, ...token.lookup_results]
-	return token
-}
-
-/**
- * 
- * @param {Token} token 
  * @returns {boolean}
  */
 export function is_one_part_of_speech(token) {
-	return token.lookup_results.every(result => result.part_of_speech.toLowerCase() === token.lookup_results[0].part_of_speech.toLowerCase())
+	const part_of_speech_0 = token.lookup_results.at(0)?.part_of_speech ?? ''
+	return token.lookup_results.every(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech_0))
 }
 
 /**
@@ -273,30 +245,43 @@ export function flatten_sentence(sentence) {
 }
 
 /**
- * @param {OntologyResult} concept
+ * @param {{stem: string, sense: string}} result
  * @returns {string}
  */
-export function concept_with_sense(concept) {
-	return `${concept.stem}-${concept.sense}`
+export function stem_with_sense(result) {
+	return result.sense.length ? `${result.stem}-${result.sense}` : result.stem
 }
 
 /**
  * 
- * @param {LookupWord} lookup
+ * @param {{ stem: string, part_of_speech: string }} lookup
  * @param {Object} [other_data={}] 
- * @param {string} [other_data.form='stem'] 
- * @param {OntologyResult?} [other_data.concept=null] 
+ * @param {number} [other_data.lexicon_id=-1] 
+ * @param {number} [other_data.ontology_id=-1] 
+ * @param {string} [other_data.form=''] 
+ * @param {string} [other_data.sense=''] 
+ * @param {number} [other_data.level=-1] 
+ * @param {string} [other_data.gloss=''] 
+ * @param {string} [other_data.categorization=''] 
  * @param {HowToResult[]} [other_data.how_to=[]] 
  * @param {CaseFrameResult?} [other_data.case_frame=null] 
  * @returns {LookupResult}
  */
-export function create_lookup_result({ stem, part_of_speech }, { form='stem', concept=null, how_to=[], case_frame=null }={}) {
+export function create_lookup_result(
+	{ stem, part_of_speech },
+	{ lexicon_id=0, ontology_id=0, form='stem', sense='', level=-1, gloss='', categorization='', how_to=[], case_frame=null }={},
+) {
 	return {
 		stem,
 		part_of_speech,
-		form,
-		concept,
-		how_to,
+		lexicon_id,
+		ontology_id,
+		form: form.toLowerCase(),
+		sense,
+		level,
+		gloss,
+		categorization,
+		how_to_entries: how_to,
 		case_frame: case_frame ?? create_case_frame({ is_valid: true, is_checked: false }),
 	}
 }

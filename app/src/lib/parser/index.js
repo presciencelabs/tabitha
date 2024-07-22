@@ -6,15 +6,14 @@ import { RULES, rules_applier } from '$lib/rules'
 
 /**
  * @param {string} text
- * @param {import('@cloudflare/workers-types').D1Database} db
  * @returns {Promise<Sentence[]>}
  */
-export async function parse(text, db) {
+export async function parse(text) {
 	return await pipe_async(
 		tokenize_input,
 		clausify,
 		rules_applier(RULES.SYNTAX),
-		perform_form_lookups(db),
+		perform_form_lookups,
 		rules_applier(RULES.LOOKUP),
 		perform_ontology_lookups,
 		rules_applier(RULES.PART_OF_SPEECH),
@@ -38,7 +37,7 @@ export function parse_for_test(text) {
 		rules_applier(RULES.PART_OF_SPEECH),
 		rules_applier(RULES.TRANSFORM),
 		rules_applier(RULES.ARGUMENT_AND_SENSE),
-		rules_applier(RULES.CHECKER.slice(0,4)),	// TODO remove slice when e2e testing is set up (skips the 'no lookup' check)
+		rules_applier(RULES.CHECKER.slice(0,5)),	// TODO remove slice when e2e testing is set up (skips the 'no lookup' check)
 		flatten_sentences,
 	)(text)
 }

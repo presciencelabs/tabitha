@@ -28,7 +28,7 @@ export const FUNCTION_WORDS = new Map([
 	['to', {}],
 	['too', { 'degree': 'too' }],
 	['very', { 'degree': 'intensified' }],
-	['will', { 'modal': 'future_tense' }],
+	['will', { 'modal': 'future', 'time': 'future' }],
 	['would', { 'modal': 'conditional_would' }],
 	['who', { 'syntax': 'relativizer' }],
 	['whom', { 'syntax': 'relativizer' }],

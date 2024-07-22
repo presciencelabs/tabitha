@@ -1,3 +1,4 @@
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { ERRORS } from '$lib/parser/error_messages'
 import { TOKEN_TYPE, create_added_token, format_token_message, get_message_type, is_one_part_of_speech, set_message_plain } from '$lib/parser/token'
 import { REGEXES } from '$lib/regexes'
@@ -577,6 +578,15 @@ const builtin_checker_rules = [
 		},
 	},
 	{
+		name: 'Check argument structure/case frame',
+		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
+		rule: {
+			trigger: token => token.lookup_results.length > 0,
+			context: create_context_filter({ }),
+			action: message_set_action(validate_case_frame),
+		},
+	},
+	{
 		name: 'Check that level 3 words are within a (complex) alternate',
 		comment: 'The complex word may be in a nested clause within the clause that has the (complex) tag',
 		rule: {
@@ -593,7 +603,7 @@ const builtin_checker_rules = [
 		name: 'Check that level 2 words are not on their own',
 		comment: '',
 		rule: {
-			trigger: check_token_level(is_level(2)),
+			trigger: check_token_level(LOOKUP_FILTERS.IS_LEVEL(2)),
 			context: create_context_filter({}),
 			action: message_set_action(() => ({ error: ERRORS.WORD_LEVEL_TOO_HIGH })),
 		},
@@ -606,12 +616,12 @@ const builtin_checker_rules = [
 			context: create_context_filter({}),
 			action: message_set_action(function* ({ trigger_token: token }) {
 				// the simple word should never be level 2 or 3
-				if (check_token_level(is_level_complex)(token)) {
+				if (check_token_level(LOOKUP_FILTERS.IS_LEVEL_COMPLEX)(token)) {
 					yield { error: ERRORS.WORD_LEVEL_TOO_HIGH }
 				}
 
 				// the complex word should never be level 0 or 1
-				if (token.complex_pairing && check_token_level(is_level_simple)(token.complex_pairing)) {
+				if (token.complex_pairing && check_token_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.complex_pairing)) {
 					yield { token_to_flag: token.complex_pairing, error: ERRORS.WORD_LEVEL_TOO_LOW }
 				}
 			}),
@@ -627,13 +637,13 @@ const builtin_checker_rules = [
 				// Alert if the first result is complex and there are also non-complex results (including proper nouns - see 'ark')
 				// If the first result is already simple, that will be selected by default and thus not ambiguous.
 				// Level 2 and 3 words are treated differently, so a combination of the two should also be ambiguous - see 'kingdom'
-				if (check_ambiguous_level(is_level(2))(token) || check_ambiguous_level(is_level(3))(token)) {
+				if (check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(2))(token) || check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(3))(token)) {
 					yield { warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
-				if (token.complex_pairing && check_ambiguous_level(is_level_simple)(token.complex_pairing)) {
+				if (token.complex_pairing && check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.complex_pairing)) {
 					yield { token_to_flag: token.complex_pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 			}),
@@ -664,15 +674,6 @@ const builtin_checker_rules = [
 				yield { warning: 'The editor cannot determine which part of speech this word is, so some errors and warnings within the same clause may not be accurate.' }
 				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after '{token}' if you want the editor to check the syntax more accurately." }
 			}),
-		},
-	},
-	{
-		name: 'Check argument structure/case frame',
-		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
-		rule: {
-			trigger: token => token.lookup_results.length > 0,
-			context: create_context_filter({ }),
-			action: message_set_action(validate_case_frame),
 		},
 	},
 	{
@@ -807,27 +808,27 @@ export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).conca
 
 /**
  * 
- * @param {(result: OntologyResult?) => boolean} level_check 
+ * @param {LookupFilter} level_check 
  * @returns {TokenFilter}
  */
 function check_token_level(level_check) {
 	return token => {
 		return token.lookup_results.length > 0
-			&& (token.specified_sense && level_check(token.lookup_results[0].concept)
-				|| token.lookup_results.every(result => level_check(result.concept)))
+			&& (token.specified_sense && level_check(token.lookup_results[0])
+				|| token.lookup_results.every(result => level_check(result)))
 	}
 }
 /**
  * 
- * @param {(result: OntologyResult?) => boolean} level_check 
+ * @param {LookupFilter} level_check 
  * @returns {TokenFilter}
  */
 function check_ambiguous_level(level_check) {
 	return token => {
 		return token.specified_sense.length === 0
 			&& token.lookup_results.length > 0
-			&& level_check(token.lookup_results[0].concept)
-			&& token.lookup_results.filter(result => result.concept).some(result => !level_check(result.concept))
+			&& level_check(token.lookup_results[0])
+			&& token.lookup_results.some(result => !level_check(result))
 	}
 }
 
@@ -836,47 +837,23 @@ function check_ambiguous_level(level_check) {
  * @param {Token} token 
  */
 function* check_lookup_results(token) {
-	if (token.lookup_results.some(result => result.concept !== null && result.concept.id !== '0')) {
+	if (token.lookup_results.some(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 		return {}
 	}
 
-	if (token.lookup_results.at(0)?.concept?.id === '0') {
-		yield { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
-
-	} else if (token.lookup_results.some(result => result.how_to.length > 0)) {
-		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
-		
-	} else if (token.lookup_results.length > 0) {
-		// a dummy result for an unknown word
-		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
-	} else {
+	if (token.lookup_results.length === 0) {
 		yield { token_to_flag: token, warning: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
 		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word if you want the editor to check the syntax more accurately." }
+
+	} else if (token.lookup_results.some(result => result.sense)) {
+		yield { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
+
+	} else if (token.lookup_results.some(result => result.how_to_entries.length > 0)) {
+		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
+		
+	} else {
+		// a dummy result for an unknown word
+		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
 	}
-}
-
-/**
- * 
- * @param {number} level 
- * @returns {(concept: OntologyResult?) => boolean}
- */
-function is_level(level) {
-	return concept => concept?.level === level
-}
-
-/**
- * 
- * @param {OntologyResult?} result 
- */
-function is_level_simple(result) {
-	return is_level(0)(result) || is_level(1)(result)
-}
-
-/**
- * 
- * @param {OntologyResult?} result 
- */
-function is_level_complex(result) {
-	return is_level(2)(result) || is_level(3)(result)
 }

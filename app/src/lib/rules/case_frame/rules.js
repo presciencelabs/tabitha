@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/parser/token'
+import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/parser/token'
 import { create_context_filter, create_token_filter, simple_rule_action } from '../rules_parser'
 import { select_sense } from './sense_selection'
 import { check_adjective_case_frames } from './adjectives'
@@ -66,7 +66,7 @@ const argument_and_sense_rules = [
 		name: 'Other word sense selection',
 		comment: 'Adjective senses have already been selected',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD
+			trigger: token => token.lookup_results.length > 0
 					&& is_one_part_of_speech(token)
 					&& !create_token_filter({ 'category': 'Adjective' })(token),
 			context: create_context_filter({}),

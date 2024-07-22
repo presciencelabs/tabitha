@@ -1,4 +1,5 @@
-import { find_result_index, set_message, set_token_concept } from '$lib/parser/token'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
+import { set_message, split_stem_and_sense } from '$lib/parser/token'
 import { create_context_filter, create_token_filter } from '../rules_parser'
 
 /** @typedef {[string, any]} PriorityOverrideRules */
@@ -300,7 +301,7 @@ export function select_sense(trigger_context) {
 /**
  * 
  * @param {Token} token
- * @returns {WordSense | undefined}
+ * @returns {string | undefined} the sense letter or undefined
  */
 function find_matching_sense(token) {
 	if (!token.lookup_results.some(result => result.case_frame.is_checked)) {
@@ -310,20 +311,20 @@ function find_matching_sense(token) {
 	const stem = token.lookup_results[0].stem
 	const category = token.lookup_results[0].part_of_speech
 	const sense_filters = SENSE_FILTER_RULES.get(category)?.get(stem) ?? []
-	return sense_filters.find(sense_matches)?.[0]
+	const matching_sense = sense_filters.find(sense_matches)?.[0]
+	return matching_sense ? split_stem_and_sense(matching_sense).sense : undefined
 
 	/**
 	 * 
 	 * @param {[WordSense, ArgumentMatchFilter]} sense_match_filters 
-	 * @returns 
+	 * @returns {boolean}
 	 */
 	function sense_matches([sense, match_filter]) {
-		const result_index = find_result_index(token, sense)
-		if (result_index === -1) {
+		const result = token.lookup_results.find(LOOKUP_FILTERS.MATCHES_SENSE(split_stem_and_sense(sense)))
+		if (!result) {
 			return false
 		}
 
-		const result = token.lookup_results[result_index]
 		return result.case_frame.is_valid && match_filter(result.case_frame.valid_arguments)
 	}
 }
@@ -334,7 +335,7 @@ function find_matching_sense(token) {
  * @param {RuleTriggerContext} trigger_context
  */
 function select_word_sense(token, trigger_context) {
-	if (token.lookup_results.length === 0) {
+	if (!token.lookup_results.some(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 		return
 	}
 
@@ -347,20 +348,21 @@ function select_word_sense(token, trigger_context) {
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.
 	// The lookups should already be ordered alphabetically so the first valid sense is the lowest letter
-	const default_matching_sense = find_matching_sense(token)
-		|| `${stem}-${valid_lookups.at(0)?.concept?.sense ?? 'A'}`
+	const default_matching_sense = find_matching_sense(token) ?? valid_lookups.at(0)?.sense ?? 'A'
 
-	const specified_sense = token.specified_sense ? `${stem}-${token.specified_sense}` : ''
-
-	if (specified_sense === default_matching_sense) {
+	if (token.specified_sense && token.specified_sense === default_matching_sense) {
 		set_message(trigger_context, { token_to_flag: token, suggest: 'Consider removing the sense, as it would be selected by default.', plain: true })
 	}
 
-	const sense_to_select = specified_sense ? specified_sense : default_matching_sense
-	set_token_concept(token, sense_to_select)
+	const sense_to_select = token.specified_sense || default_matching_sense
+	
+	// put the selected sense at the top of the results
+	const selected_index = token.lookup_results.findIndex(LOOKUP_FILTERS.MATCHES_SENSE({ stem, sense: sense_to_select }))
+	const selected_result = token.lookup_results.splice(selected_index, 1)[0]
+	token.lookup_results = [selected_result, ...token.lookup_results]
 
 	// apply the selected result's argument actions
-	for (const valid_argument of token.lookup_results[0].case_frame.valid_arguments) {
+	for (const valid_argument of selected_result.case_frame.valid_arguments) {
 		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
 	}
 }

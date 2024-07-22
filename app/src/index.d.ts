@@ -24,6 +24,7 @@ type Sentence = {
 	clause: Clause
 }
 
+// Messages
 type MessageLabel = 'error' | 'warning' | 'suggest' | 'info'
 
 interface MessageType {
@@ -46,12 +47,8 @@ type MessageInfo = {
 	plain?: boolean
 }
 
+// Lookup values
 type LookupTerm = string
-
-type LookupResponse<T> = {
-	term: LookupTerm
-	matches: T[]
-}
 
 interface LookupWord {
 	stem: string
@@ -59,10 +56,28 @@ interface LookupWord {
 }
 
 interface LookupResult extends LookupWord {
+	lexicon_id: number
 	form: string
-	concept: OntologyResult | null
-	how_to: HowToResult[]
+	// TODO include features
+	ontology_id: number
+	sense: string
+	level: number
+	gloss: string
+	categorization: string
+	how_to_entries: HowToEntry[]
 	case_frame: CaseFrameResult
+}
+
+type HowToEntry = {
+	structure: string
+	pairing: string
+	explication: string
+}
+
+// External API Responses
+interface LexicalFormResult extends LookupWord {
+	id: number
+	form: string
 }
 
 interface OntologyResult extends LookupWord {
@@ -73,22 +88,12 @@ interface OntologyResult extends LookupWord {
 	categorization: string
 }
 
-interface HowToResult extends LookupWord, HowToResponse {
-	sense: string
-}
-
-type HowToResponse = {
+interface HowToResult extends HowToEntry {
 	term: string
 	part_of_speech: string
-	structure: string
-	pairing: string
-	explication: string
 }
 
-interface DbRowInflection extends LookupWord {
-	inflections: string
-}
-
+// Token rules
 type TokenFilter = (token: Token) => boolean
 type LookupFilter = (concept: LookupResult) => boolean
 type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
@@ -130,6 +135,7 @@ type BuiltInRule = {
 	rule: TokenRule
 }
 
+// Case frames
 type RoleTag = string
 type WordSense = string
 type WordStem = string
@@ -175,6 +181,7 @@ type CaseFrameResult = {
 	missing_arguments: ArgumentRoleRule[]
 }
 
+// Internal API response
 type CheckResponse = {
 	has_error: boolean
 	tokens: SimpleToken[]
@@ -188,21 +195,17 @@ interface SimpleToken extends MessagedToken {
 	sub_tokens: SimpleToken[]
 }
 
-type SimpleLookupResult = {
-	concept: string
-	part_of_speech: string
+interface SimpleLookupResult extends LookupWord {
+	lexicon_id: number
 	form: string
+	// TODO include features
+	ontology_id: number
+	sense: string
 	level: number
 	gloss: string
 	categorization: string
-	how_to_hints: SimpleHowToResult[]
+	how_to_entries: HowToEntry[]
 	case_frame: SimpleCaseFrameResult
-}
-
-type SimpleHowToResult = {
-	structure: string
-	pairing: string
-	explication: string
 }
 
 type SimpleCaseFrameResult = {

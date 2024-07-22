@@ -1,4 +1,5 @@
-import { TOKEN_TYPE, concept_with_sense, create_case_frame, create_token, format_token_message } from '$lib/parser/token'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
+import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message } from '$lib/parser/token'
 import { pipe } from '$lib/pipeline'
 import { create_token_transform } from '../rules_parser'
 import { parse_transform_rule } from '../transform_rules'
@@ -145,7 +146,7 @@ export function check_case_frames(trigger_context, { rules_by_sense, default_rul
 		check_usage(role_info_getter),
 	)
 
-	for (const lookup of trigger_context.trigger_token.lookup_results.filter(result => result.concept)) {
+	for (const lookup of trigger_context.trigger_token.lookup_results.filter(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 		lookup.case_frame = pipeline(lookup)
 	}
 }
@@ -166,7 +167,7 @@ function get_rules_for_sense(rules_by_sense, default_rules) {
 		patient_clause_type: '',
 	}
 	return lookup => {
-		const sense = lookup.concept ? concept_with_sense(lookup.concept) : lookup.stem
+		const sense = stem_with_sense(lookup)
 		return [lookup, rules_by_sense.find(rule => rule.sense === sense) ?? { ...defaults_for_stem, sense }]
 	}
 }
@@ -264,11 +265,11 @@ function create_role_match_result(rule, success, argument_context=null) {
  */
 function check_usage(role_info_getter) {
 	return ([lookup, role_rules, role_matches]) => {
-		if (lookup.concept === null) {
+		if (lookup.ontology_id === 0) {
 			return create_case_frame({ is_valid: false, is_checked: false })
 		}
 
-		const { possible_roles, required_roles } = role_info_getter(lookup.concept.categorization, role_rules)
+		const { possible_roles, required_roles } = role_info_getter(lookup.categorization, role_rules)
 
 		const valid_arguments = role_matches.filter(({ role_tag }) => possible_roles.includes(role_tag))
 		const extra_arguments = role_matches.filter(({ role_tag }) => !possible_roles.includes(role_tag))
@@ -345,7 +346,7 @@ export function* validate_case_frame(trigger_context) {
  * @returns {boolean}
  */
 function no_matches_and_ambiguous_sense(token) {
-	return !token.lookup_results.some(result => result.case_frame.is_valid) && token.lookup_results.length > 1 && !token.specified_sense
+	return !token.lookup_results.some(lookup => lookup.case_frame.is_valid) && token.lookup_results.length > 1 && !token.specified_sense
 }
 
 /**
@@ -355,7 +356,7 @@ function no_matches_and_ambiguous_sense(token) {
  * @returns {boolean}
  */
 function role_is_missing_for_all(role_tag, token) {
-	return token.lookup_results.every(result => result.case_frame.missing_arguments.some(rule => rule.role_tag.includes(role_tag)))
+	return token.lookup_results.every(LOOKUP_FILTERS.HAS_MISSING_ARGUMENT(role_tag))
 }
 
 /**
@@ -365,7 +366,7 @@ function role_is_missing_for_all(role_tag, token) {
  * @returns {boolean}
  */
 function role_is_extra_for_all(role_tag, token) {
-	return token.lookup_results.every(result => result.case_frame.extra_arguments.some(match => match.role_tag.includes(role_tag)))
+	return token.lookup_results.every(LOOKUP_FILTERS.HAS_EXTRA_ARGUMENT(role_tag))
 }
 
 /**

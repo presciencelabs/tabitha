@@ -8,17 +8,15 @@ import { check_ontology } from './ontology'
 
 /**
  * 
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {(sentences: Sentence[]) => Promise<Sentence[]>}
+ * @param {Sentence[]} sentences 
+ * @returns {Promise<Sentence[]>}
  */
-export function perform_form_lookups(db) {
-	return async sentences => {
-		const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)
-	
-		await Promise.all(lookup_tokens.map(check_forms(db)))
-	
-		return sentences
-	}
+export async function perform_form_lookups(sentences) {
+	const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)
+
+	await Promise.all(lookup_tokens.map(check_forms))
+
+	return sentences
 }
 
 /**

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { TOKEN_TYPE, create_token, create_lookup_result } from '../parser/token'
+import { TOKEN_TYPE, create_token } from '../parser/token'
 import { create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
 
 describe('token filters', () => {
@@ -448,28 +448,6 @@ describe('context filters', () => {
 	})
 })
 
-/**
- * 
- * @param {string} stem
- * @param {Object} [data={}] 
- * @param {string} [data.sense='A'] 
- * @param {string} [data.part_of_speech='Noun'] 
- * @param {number} [data.level=1] 
- * @returns {LookupResult}
- */
-function lookup_w_concept(stem, { sense='A', part_of_speech='Noun', level=1 }={}) {
-	const concept = {
-		id: '0',
-		stem,
-		sense,
-		part_of_speech,
-		level,
-		gloss: '',
-		categorization: '',
-	}
-	return create_lookup_result({ stem, part_of_speech }, { concept })
-}
-
 describe('token transforms', () => {
 	test('type', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD }
@@ -482,34 +460,34 @@ describe('token transforms', () => {
 		expect(result.lookup_terms).toEqual(token.lookup_terms)
 		expect(result.messages).toEqual(token.messages)
 	})
-	test('concept no lookup results', () => {
-		const transform_json = { 'concept': 'concept-A' }
+	test('sense', () => {
+		const transform_json = { 'sense': 'A' }
 		const transform = create_token_transform(transform_json)
 
 		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
+		expect(token.specified_sense).toBe('')
+
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
+		expect(result.specified_sense).toBe('A')
 		expect(result.lookup_terms[0]).toBe('token')
 		expect(result.lookup_results.length).toBe(0)
 		expect(result.messages).toEqual(token.messages)
 	})
-	test('concept with lookup results', () => {
-		const transform_json = { 'concept': 'concept-B' }
+	test('sense with existing specified_sense', () => {
+		const transform_json = { 'sense': 'A' }
 		const transform = create_token_transform(transform_json)
 
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
-		token.lookup_results = [
-			lookup_w_concept('concept', { 'sense': 'A', 'part_of_speech': 'Noun' }),
-			lookup_w_concept('concept', { 'sense': 'B', 'part_of_speech': 'Noun' }),
-		]
+		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token', specified_sense: 'B' })
+		expect(token.specified_sense).toBe('B')
 
 		const result = transform(token)
 		expect(result.token).toBe(token.token)
 		expect(result.type).toBe(token.type)
-		expect(result.lookup_terms.length).toBe(1)
-		expect(result.lookup_results.length).toBe(2)
-		expect(result.lookup_results[0].concept?.sense).toBe('B')
+		expect(result.specified_sense).toBe('B')
+		expect(result.lookup_terms[0]).toBe('token')
+		expect(result.lookup_results.length).toBe(0)
 		expect(result.messages).toEqual(token.messages)
 	})
 	test('tag with existing tag on token', () => {

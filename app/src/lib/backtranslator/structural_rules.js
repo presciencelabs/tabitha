@@ -253,7 +253,7 @@ const structural_rules_json = [
 	},
 	{
 		name: 'Simple number text mappings',
-		comment: "Change some numbers to text (eg. 2 -> two), unless they are part of a verse reference (eg. Habakkuk 2:3)",
+		comment: 'Change some numbers to text (eg. 2 -> two), unless they are part of a verse reference (eg. Habakkuk 2:3)',
 		rule: {
 			trigger: token => NUMBER_TOKEN_TEXT_MAP.has(token.token) && !token_has_tag(token, { 'role': 'verse_ref' }),
 			context: create_context_filter({ }),
@@ -367,7 +367,7 @@ function find_next_word(tokens, start_index) {
 	// Find the next word in the sentence (skip any notes or implicit markers)
 	const skip_filters = [
 		create_token_filter({ 'type': TOKEN_TYPE.NOTE }),
-		create_token_filter({ 'token': '<<|>>|<|>' })
+		create_token_filter({ 'token': '<<|>>|<|>' }),
 	]
 	return tokens.find((token, index) => index > start_index && !skip_filters.some(filter => filter(token)))
 }
