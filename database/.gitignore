@@ -1,4 +1,3 @@
-*.bak*
 *.tabitha.sqlite
 *-shm
 *-wal
