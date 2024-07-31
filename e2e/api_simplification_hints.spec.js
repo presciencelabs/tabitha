@@ -17,20 +17,20 @@ test('check API contract, e.g., /simplification_hints?complex_term=disciple', as
 	})
 })
 
-test('ensure search is case-insensitive, e.g., /simplification_hints?complex_term=DISciPlE-a', async ({ request }) => {
+test('ensure API is case-insensitive, e.g., /simplification_hints?complex_term=DISciPlE-a', async ({ request }) => {
 	const lowercase_matches = await (await request.get('/simplification_hints?complex_term=disciple-A')).json()
 	const uppercase_matches = await (await request.get('/simplification_hints?complex_term=DISciPlE-a')).json()
 
 	expect(lowercase_matches).toEqual(uppercase_matches)
 })
 
-test("ensure missing parameter is handled properly, e.g., /, /?, /?complex_term, /?complex_term=, /?complex_term=''", async ({ request }) => {
+test("ensure missing parameter is handled properly, e.g., /simplification_hints, /simplification_hints?, /simplification_hints?complex_term, /simplification_hints?complex_term=, /simplification_hints?complex_term=''", async ({ request }) => {
 	const bad_requests = [
-		'/',
-		'/?',
-		'/?complex_term',
-		'/?complex_term=',
-		"/?complex_term=''",
+		'/simplification_hints',
+		'/simplification_hints?',
+		'/simplification_hints?complex_term',
+		'/simplification_hints?complex_term=',
+		"/simplification_hints?complex_term=''",
 	]
 
 	for (const bad_request of bad_requests) {
@@ -41,7 +41,7 @@ test("ensure missing parameter is handled properly, e.g., /, /?, /?complex_term,
 	}
 })
 
-test('ensure search with no matches is handled properly, e.g., /simplification_hints?complex_term=supercalifragilisticexpialidocious', async ({ request }) => {
+test('ensure call with no matches is handled properly, e.g., /simplification_hints?complex_term=supercalifragilisticexpialidocious', async ({ request }) => {
 	const response = await request.get('/simplification_hints?complex_term=supercalifragilisticexpialidocious')
 	const matches = await response.json()
 

@@ -5,6 +5,6 @@
 command = "pnpm build"
 
 [[d1_databases]]
-binding = "DB_Ontology" # i.e. available in your Worker on env.DB
-database_name = "Ontology.9489.2024-06-27"
-database_id = "b49b6a69-9f69-4b85-9b36-593cd28e2440"
+binding = "DB_Ontology"
+database_name = "Ontology.9488.2024-04-01"
+database_id = "6275cd70-3487-41e7-87a0-bd3123c0f10c"

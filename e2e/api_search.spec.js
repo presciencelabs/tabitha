@@ -3,8 +3,8 @@
 import { test, expect } from '@playwright/test'
 
 // https://playwright.dev/docs/test-fixtures#built-in-fixtures
-test('check API contract, e.g., /?q=love', async ({ request }) => {
-	const response = await request.get('/?q=love')
+test('check API contract, e.g., /search?q=love', async ({ request }) => {
+	const response = await request.get('/search?q=love')
 	const matches = await response.json()
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-contain-equal
@@ -19,20 +19,20 @@ test('check API contract, e.g., /?q=love', async ({ request }) => {
 	})
 })
 
-test('ensure search is case-insensitive, e.g., /?q=Love', async ({ request }) => {
-	const lowercase_matches = await (await request.get('/?q=love')).json()
-	const uppercase_matches = await (await request.get('/?q=Love')).json()
+test('ensure API is case-insensitive, e.g., /search?q=Love', async ({ request }) => {
+	const lowercase_matches = await (await request.get('/search?q=love')).json()
+	const uppercase_matches = await (await request.get('/search?q=Love')).json()
 
 	expect(lowercase_matches).toEqual(uppercase_matches)
 })
 
-test("ensure missing parameter is handled properly, e.g., /, /?, /?q, /?q=, /?q=''", async ({ request }) => {
+test("ensure missing parameter is handled properly, e.g., /search, /search?, /search?q, /search?q=, /search?q=''", async ({ request }) => {
 	const bad_requests = [
-		'/',
-		'/?',
-		'/?q',
-		'/?q=',
-		"/?q=''",
+		'/search',
+		'/search?',
+		'/search?q',
+		'/search?q=',
+		"/search?q=''",
 	]
 
 	for (const bad_request of bad_requests) {
@@ -43,8 +43,8 @@ test("ensure missing parameter is handled properly, e.g., /, /?, /?q, /?q=, /?q=
 	}
 })
 
-test('ensure query with no matches is handled properly, e.g., /?q=supercalifragilisticexpialidocious', async ({ request }) => {
-	const response = await request.get('/?q=supercalifragilisticexpialidocious')
+test('ensure call with no matches is handled properly, e.g., /search?q=supercalifragilisticexpialidocious', async ({ request }) => {
+	const response = await request.get('/search?q=supercalifragilisticexpialidocious')
 	const matches = await response.json()
 
 	expect(matches).toEqual([])

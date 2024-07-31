@@ -17,9 +17,9 @@ export default defineConfig({
 
 	webServer: {
 		command: 'pnpm dev',
-		url: 'http://localhost:8787',
+		url: 'http://localhost:8788',
 	},
 	use: {
-		baseURL: 'http://localhost:8787',
+		baseURL: 'http://localhost:8788',
 	},
 })
