@@ -321,7 +321,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'token': 'not' },
 		},
-		'transform': { 'tag': { 'auxiliary': 'negation' } },
+		'transform': { 'function': { 'auxiliary': 'negation' } },
 	},
 	{
 		'name': 'do in a question becomes an auxiliary',
@@ -329,7 +329,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
 		},
-		'transform': { 'tag': { 'auxiliary': 'yes_no_interrogative' } },
+		'transform': { 'function': { 'auxiliary': 'yes_no_interrogative' } },
 	},
 	{
 		'name': 'have before a Verb indicates flashback/perfect',
