@@ -70,6 +70,12 @@ const test_data = [
 			{ stem: 'tell', part_of_speech: 'Verb', form: 'Perfect' },
 		],
 	},
+	{
+		test_word: 'People',
+		expected_forms: [
+			{ stem: 'person', part_of_speech: 'Noun', form: 'Plural' },
+		],
+	},
 ]
 
 for (const { test_word, expected_forms } of test_data) {
