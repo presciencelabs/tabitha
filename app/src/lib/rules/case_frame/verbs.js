@@ -114,7 +114,12 @@ const ROLE_RULE_PRESETS = [
 		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
 	})],
 	['predicate_adjective', () => ({
-		'trigger': { 'category': 'Adjective', 'tag': { 'syntax': 'predicate_adjective' } },
+		'by_relative_context': {
+			'followedby': {
+				'category': 'Adjective',
+				'tag': { 'syntax': 'predicate_adjective' },
+			},
+		},
 	})],
 	['by_relative_context', preset_value => ({
 		'trigger': 'all',
