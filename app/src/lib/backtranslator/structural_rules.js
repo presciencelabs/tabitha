@@ -31,7 +31,12 @@ const structural_rules_json = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_different_participant' } }),
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
-				// Don't add that if the patient clause includes an infinitive 'to'
+				// Don't add 'that' if the patient clause is like 'John heard [Mary speaking].'
+				if (token_has_tag(trigger_token, { 'clause_type': 'patient_clause_simultaneous' })) {
+					return
+				}
+				
+				// Don't add 'that' if the patient clause includes an infinitive 'to'
 				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive' } }))) {
 					return
 				}
