@@ -6,7 +6,6 @@ Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
 
 `https://ontology.tbta.bible/search?q=love[&scope=[**stems**|glosses|all]]`
 
-
 ## Local development
 
 `pnpm i`
