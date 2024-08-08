@@ -1,3 +1,0 @@
-type Source = {
-	type: string
-}
