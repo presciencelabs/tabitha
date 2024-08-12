@@ -44,7 +44,7 @@ const part_of_speech_rules_json = [
 		'comment': 'I will judge(N/V). I do not judge(N/V). I should judge(N/V). etc',
 	},
 	{
-		'name': 'If Noun-Verb preceded by an aspectual auxiliary, remove Adjective',
+		'name': 'If Noun-Verb preceded by an aspectual auxiliary, remove Noun',
 		'category': 'Noun|Verb',
 		'context': {
 			'precededby': { 'stem': 'start|begin|stop|continue|finish', 'skip': { 'token': 'to' } },
@@ -115,7 +115,7 @@ const part_of_speech_rules_json = [
 			'precededby': { 'category': 'Verb' },
 		},
 		'remove': 'Verb',
-		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Sometimes wrongly selects Noun when preceded by "be": You(people) should be teaching(N/V) other people about those things. (not sure how to fix this without breaking other cases)',
+		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Sometimes wrongly selects Noun when preceded by "be": You(people) should be teaching(N/V) other people about those things. (handled in a hard-coded rule)',
 	},
 	{
 		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
@@ -460,6 +460,22 @@ const builtin_part_of_speech_rules = [
 					keep_parts_of_speech(parts_of_speech_for_sense)(token)
 				} else {
 					return { warning: `No sense '${token.specified_sense}' was found for this word in any part-of-speech.` }
+				}
+			}),
+		},
+	},
+	{
+		name: 'Disambiguate "is Xing"',
+		comment: 'When a verb like "saying" or "teaching" is preceded by "be", another rule wrongly selects the Noun. In these cases, a Noun like this would never immediately follow "be", so we can select the Verb instead.',
+		rule: {
+			trigger: token => has_part_of_speech(token, 'Verb') && has_part_of_speech(token, 'Noun'),
+			context: create_context_filter({ 'precededby': { 'stem': 'be' } }),
+			action: simple_rule_action(({ trigger_token }) => {
+				if (trigger_token.lookup_results
+						.filter(result => result.part_of_speech === 'Verb')
+						.every(result => result.form === 'participle')
+				) {
+					remove_part_of_speech('Noun')(trigger_token)
 				}
 			}),
 		},

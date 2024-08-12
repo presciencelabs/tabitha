@@ -19,7 +19,8 @@ const structural_rules_json = [
 					next_word.token = capitalize_token(next_word)
 				}
 
-				tokens.splice(context_indexes[0], 2)	// remove the You() (imp)
+				tokens.splice(trigger_index, 1)	// remove the (imp)
+				tokens.splice(context_indexes[0], 1)	// remove the You()
 				return trigger_index - 1	// remove 2 tokens and move forward one
 			},
 		},
