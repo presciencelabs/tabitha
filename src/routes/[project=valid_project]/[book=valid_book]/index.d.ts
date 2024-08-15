@@ -1,0 +1,3 @@
+type ChapterResult = {
+	chapter: string
+}
