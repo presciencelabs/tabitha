@@ -1,44 +1,8 @@
 
-// TODO: maybe this belongs in the data layer...need to consider
-/**
- * Transforms a list of examples with "flat" References into a nested structure
- *
- *	{
- *		{
- *			source: string
- *			book: string
- *			chapter: number
- *			verse: number
- *		},
- *		context_arguments: Map<string, string>,
- *	}
- *	=>
- *	{
- *		source: {
- *			book: {
- *				'chapter:verse': [context_arguments],
- *			},
- *		},
- *	}
- *
- * @param {Record<string, Record<string, Record<string, Array<Map<string, string>>>>>} transformed_examples
- * @param {Concept['examples'][0]} example
- */
-export function transform_example(transformed_examples, example) {
-	const { source, book, chapter, verse } = example.reference
-	const chapter_verse = `${chapter}:${verse}`
-
-	// There may be more than one occurrence within the verse, and we want to show all of them
-	transformed_examples[source] ??= {}
-	transformed_examples[source][book] ??= {}
-	transformed_examples[source][book][chapter_verse] ??= []
-	transformed_examples[source][book][chapter_verse].push(example.context_arguments)
-
-	return transformed_examples
-}
+/** @typedef {Map<string, string>} ContextArguments */
 
 /**
- * @type {Record<string, (stem: string, context_arguments: Map<string, string>) => string>}
+ * @type {Record<string, (stem: string, context_arguments: ContextArguments) => string>}
  */
 const context_argument_displayer = {
 	Noun: display_noun_arguments,
@@ -51,7 +15,7 @@ const context_argument_displayer = {
 /**
  *
  * @param {Concept} concept
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string} a readable string to display, representing the context arguments
  */
@@ -66,7 +30,7 @@ export function display_context_arguments(concept, context_arguments) {
  * for other roles -> 'Verb Noun(R)' where R is the role character
  *
  * @param {string} stem
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string}
  */
@@ -91,7 +55,7 @@ function display_noun_arguments(stem, context_arguments) {
  * If passive, include (passive)
  *
  * @param {string} stem
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string}
  */
@@ -120,7 +84,7 @@ function display_verb_arguments(stem, context_arguments) {
  * It it currently understood (but not confirmed) that a Modified Noun never occurs with a Patient Noun/Clause
  *
  * @param {string} stem
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string}
  */
@@ -155,7 +119,7 @@ function display_adjective_arguments(stem, context_arguments) {
  * All arguments except the stem are optional
  *
  * @param {string} stem
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string}
  */
@@ -175,7 +139,7 @@ function display_adverb_arguments(stem, context_arguments) {
  * In adverbial clause -> [stem... ]
 
  * @param {string} stem
- * @param {Map<string, string>} context_arguments
+ * @param {ContextArguments} context_arguments
  *
  * @returns {string}
  */
