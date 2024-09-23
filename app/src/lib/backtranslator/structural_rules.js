@@ -89,6 +89,34 @@ const structural_rules_json = [
 		},
 	},
 	{
+		name: 'Add a trailing comma for an adverbial clause that starts a sentence',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'adverbial_clause' } }),
+			context: create_context_filter({ 'subtokens': { 'tag': { 'position': 'first_word' }, 'skip': 'all' } }),
+			action: simple_rule_action(({ trigger_token }) => {
+				trigger_token.sub_tokens = [
+					...trigger_token.sub_tokens,
+					create_token(',', TOKEN_TYPE.PUNCTUATION),
+				]
+			}),
+		},
+	},
+	{
+		name: 'Add a trailing comma for an adverbial clause that starts a sentence but follows a conjunction',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'adverbial_clause' } }),
+			context: create_context_filter({ 'precededby': { 'category': 'Conjunction', 'tag': { 'position': 'first_word' } } }),
+			action: simple_rule_action(({ trigger_token }) => {
+				trigger_token.sub_tokens = [
+					...trigger_token.sub_tokens,
+					create_token(',', TOKEN_TYPE.PUNCTUATION),
+				]
+			}),
+		},
+	},
+	{
 		name: 'Change "tribe//region//city//town//country//place named Y" -> "X of Y"',
 		comment: '',
 		rule: {
