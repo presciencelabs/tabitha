@@ -6,5 +6,5 @@ command = "pnpm build"
 
 [[d1_databases]]
 binding = "DB_Ontology"
-database_name = "Ontology.9489.2024-06-31"
-database_id = "b09dcfea-153f-4ae9-a346-0deff9b3947a"
+database_name = "Ontology.9489.2024-09-23"
+database_id = "9c76866b-3512-454a-823e-edd886588d07"
