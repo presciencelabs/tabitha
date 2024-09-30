@@ -18,28 +18,28 @@
     "clean:powerwash": "(pnpm clean:svelte & pnpm clean:node) && pnpm install"
   },
   "dependencies": {
-    "@sveltejs/kit": "^2.5.20",
-    "svelte": "^4.2.18"
+    "@sveltejs/kit": "^2.6.1",
+    "svelte": "^4.2.19"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240806.0",
-    "@eslint/js": "^9.8.0",
-    "@playwright/test": "^1.46.0",
-    "@stylistic/eslint-plugin": "^2.6.2",
-    "@sveltejs/adapter-cloudflare": "^4.7.0",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "@types/node": "^22.1.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.1",
-    "@typescript-eslint/parser": "^8.0.1",
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "@eslint/js": "^9.11.1",
+    "@playwright/test": "^1.47.2",
+    "@stylistic/eslint-plugin": "^2.8.0",
+    "@sveltejs/adapter-cloudflare": "^4.7.2",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@types/node": "^22.7.4",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.8.0",
-    "eslint-plugin-svelte": "^2.43.0",
+    "eslint": "^9.11.1",
+    "eslint-plugin-svelte": "^2.44.1",
     "globals": "^15.9.0",
-    "postcss": "^8.4.41",
+    "postcss": "^8.4.47",
     "rimraf": "^6.0.1",
-    "svelte-check": "^3.8.5",
-    "svelte-eslint-parser": "^0.41.0",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.0"
+    "svelte-check": "^3.8.6",
+    "svelte-eslint-parser": "^0.41.1",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
   }
 }

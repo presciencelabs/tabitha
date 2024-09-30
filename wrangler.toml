@@ -6,6 +6,6 @@ command = "pnpm build"
 
 [[d1_databases]]
 binding = "DB_Sources" # i.e. available in your Worker on env.DB
-database_name = "Sources.2024-07-09"
-database_id = "321f83a6-4be8-41dd-a9b0-2afa4c8db526"
+database_name = "Sources.2024-09-30"
+database_id = "3f9d2695-23cc-4bc0-8efc-a3f3331637e2"
 
