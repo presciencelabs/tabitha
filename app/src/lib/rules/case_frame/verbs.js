@@ -118,6 +118,7 @@ const ROLE_RULE_PRESETS = [
 			'followedby': {
 				'category': 'Adjective',
 				'tag': { 'syntax': 'predicate_adjective' },
+				'skip': ['adjp_modifiers_predicative', 'advp', { 'tag': 'verb_polarity' }],
 			},
 		},
 	})],
