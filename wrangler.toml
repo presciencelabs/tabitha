@@ -1,5 +1,9 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
+# https://developers.cloudflare.com/workers/wrangler/configuration#local-development-settings
+[dev]
+port = 8789
+
 # https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds
 [build]
 command = "pnpm build"
@@ -8,4 +12,3 @@ command = "pnpm build"
 binding = "DB_Sources" # i.e. available in your Worker on env.DB
 database_name = "Sources.2024-09-30"
 database_id = "3f9d2695-23cc-4bc0-8efc-a3f3331637e2"
-
