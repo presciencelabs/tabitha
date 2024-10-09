@@ -236,6 +236,16 @@ const transform_rules_json = [
 		'comment': "eg 'more content than X', etc ",
 	},
 	{
+		'name': '"as" in "as Adj/Adv as..." becomes a function word',
+		'trigger': { 'stem': 'as' },
+		'context': {
+			'followedby': [{ 'category': 'Adjective|Adverb' }, { 'stem': 'as' }],
+		},
+		'transform': { 'function': { 'degree': 'equality' } },
+		'context_transform': [{ }, { 'function': { 'syntax': 'comparative_as' } }],
+		'comment': "eg 'as valuable as X', etc ",
+	},
+	{
 		'name': '\'who\'/\'what\' gets tagged with interrogative_which when in a question',
 		'trigger': { 'token': 'Who|who|What|what' },
 		'context': {
