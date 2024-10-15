@@ -9,6 +9,7 @@ export const TOKEN_TYPE = {
 	LOOKUP_WORD: 'Word',
 	CLAUSE: 'Clause',
 	ADDED: 'Added',
+	PHRASE: 'Phrase',
 }
 
 /** @type { { [key: string]: MessageType } } */

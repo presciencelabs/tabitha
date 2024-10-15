@@ -261,7 +261,7 @@ function create_directional_context_filter(context_json, offset) {
 				if (filter(tokens[i])) {
 					return context_result(true, { context_indexes: [i] })
 				}
-				if (!skip_filter(tokens[i]) && tokens[i].type !== TOKEN_TYPE.NOTE) {
+				if (!skip_filter(tokens[i]) && ![TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE].includes(tokens[i].type)) {
 					return context_result(false)
 				}
 			}
@@ -517,7 +517,6 @@ const SKIP_GROUPS = new Map([
 	]],
 	['vp', [
 		'vp_modifiers',
-		'coordination',
 		{ 'category': 'Verb' },
 	]],
 ])

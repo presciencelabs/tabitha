@@ -89,6 +89,7 @@ export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
 		relative_context_index: rule_json['argument_context_index'] ?? -1,
 		missing_message: rule_json['missing_message'] ?? missing_argument_message(role_tag),
 		extra_message: rule_json['extra_message'] ?? '',
+		main_word_tag: rule_json['main_word_tag'] ?? {},
 	}]
 }
 
@@ -133,15 +134,16 @@ export function parse_sense_rules(rule_json, defaults, { sense_presets=null, rol
 }
 
 /**
+ * @typedef {(lookup: LookupResult) => ArgumentRoleRule[]} DefaultRuleGetter
  * @typedef {(categorization: string, role_rules: ArgumentRulesForSense) => RoleUsageInfo} RoleInfoGetter
- * @typedef {{ rules_by_sense: ArgumentRulesForSense[], default_rules: ArgumentRoleRule[], role_info_getter: RoleInfoGetter }} RuleInfo
+ * @typedef {{ rules_by_sense: ArgumentRulesForSense[], default_rule_getter: DefaultRuleGetter, role_info_getter: RoleInfoGetter }} RuleInfo
  * 
  * @param {RuleTriggerContext} trigger_context
  * @param {RuleInfo} rule_info
  */
-export function check_case_frames(trigger_context, { rules_by_sense, default_rules, role_info_getter }) {
+export function check_case_frames(trigger_context, { rules_by_sense, default_rule_getter, role_info_getter }) {
 	const pipeline = pipe(
-		get_rules_for_sense(rules_by_sense, default_rules),
+		get_rules_for_sense(rules_by_sense, default_rule_getter),
 		match_sense_rules(trigger_context),
 		check_usage(role_info_getter),
 	)
@@ -154,19 +156,20 @@ export function check_case_frames(trigger_context, { rules_by_sense, default_rul
 /**
  * 
  * @param {ArgumentRulesForSense[]} rules_by_sense 
- * @param {ArgumentRoleRule[]} default_rules
+ * @param {DefaultRuleGetter} default_rule_getter
  * @returns {(lookup: LookupResult) => [LookupResult, ArgumentRulesForSense]}
  */
-function get_rules_for_sense(rules_by_sense, default_rules) {
+function get_rules_for_sense(rules_by_sense, default_rule_getter) {
 	/** @type {ArgumentRulesForSense} */
-	const defaults_for_stem = {
-		sense: '',
-		rules: default_rules,
-		other_optional: [],
-		other_required: [],
-		patient_clause_type: '',
-	}
 	return lookup => {
+		const defaults_for_stem = {
+			sense: '',
+			rules: default_rule_getter(lookup),
+			other_optional: [],
+			other_required: [],
+			patient_clause_type: '',
+		}
+
 		const sense = stem_with_sense(lookup)
 		return [lookup, rules_by_sense.find(rule => rule.sense === sense) ?? { ...defaults_for_stem, sense }]
 	}

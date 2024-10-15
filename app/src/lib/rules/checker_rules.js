@@ -22,7 +22,7 @@ const checker_rules_json = [
 		'trigger': { 'category': 'Verb' },
 		'context': {
 			'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
-			'notfollowedby': { 'tag': [{ 'role': 'agent' }, { 'syntax': 'agent_of_passive' }], 'skip': 'all' },
+			'notfollowedby': { 'tag': [{ 'role': 'agent' }, { 'pre_np_adposition': 'agent_of_passive' }], 'skip': 'all' },
 		},
 		'suggest': {
 			'followedby': 'by X',
@@ -488,7 +488,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': 'Suggest using an attributive Adjective instead of a predicative relative clause',
-		'trigger': { 'tag': { 'syntax': 'predicate_adjective' } },
+		'trigger': { 'tag': { 'adj_usage': 'predicative' } },
 		'context': {
 			'precededby': [
 				{ 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },

@@ -77,7 +77,7 @@ const ROLE_RULE_PRESETS = [
 	['by_adposition', (preset_value, role_tag) => ({
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': { 'precededby': { 'token': preset_value, 'skip': 'np_modifiers' } },
-		'context_transform': { 'function': { 'syntax': 'argument_adposition' } },
+		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
 		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
 	})],
 	['by_clause_tag', preset_value => ({
@@ -110,7 +110,7 @@ const ROLE_RULE_PRESETS = [
 			],
 			'argument_context_index': 1,
 		},
-		'context_transform': { 'function': { 'syntax': 'argument_adposition' } },	// make the adposition a function word
+		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },	// make the adposition a function word
 		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
 	})],
 	['predicate_adjective', () => ({
@@ -405,7 +405,7 @@ const verb_case_frames = new Map([
 			'other_rules': {
 				'up': {
 					'by_relative_context': { 'followedby': { 'token': 'up' } },
-					'context_transform': { 'function': { 'syntax': 'argument_adposition' } },
+					'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
 					'tag_role': false,
 				},
 			},
@@ -628,7 +628,10 @@ const verb_case_frames = new Map([
 						{ 'token': 'of', 'skip': 'np_modifiers' },
 					],
 				},
-				'context_transform': [{ 'function': {} }, { 'remove_tag': 'relation' }],
+				'context_transform': [
+					{ 'function': { 'syntax': 'verbal_adposition' } },
+					{ 'tag': { 'pre_np_adposition': 'verb_argument' }, 'remove_tag': 'relation' },
+				],
 			},
 		}],
 		['throw-E', { 'destination': { 'by_adposition': 'into' } }],
@@ -706,7 +709,7 @@ export function check_verb_case_frames(trigger_context, rules_modifier=rules => 
 
 	check_case_frames(trigger_context, {
 		rules_by_sense: argument_rules_by_sense.map(rules_for_sense => ({ ...rules_for_sense, rules: rules_modifier(rules_for_sense.rules) })),
-		default_rules: rules_modifier(get_default_rules_for_stem(stem)),
+		default_rule_getter: () => rules_modifier(get_default_rules_for_stem(stem)),
 		role_info_getter: get_verb_usage_info,
 	})
 }

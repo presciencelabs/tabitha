@@ -1,6 +1,7 @@
 import { TOKEN_TYPE } from '$lib/parser/token'
 import { pipe } from '$lib/pipeline'
 import { rules_applier } from '$lib/rules'
+import { phrasify } from './phrasify'
 import { BT_STRUCTURAL_RULES } from './structural_rules'
 
 /**
@@ -10,6 +11,7 @@ import { BT_STRUCTURAL_RULES } from './structural_rules'
  */
 export function backtranslate(sentences) {
 	return pipe(
+		phrasify,
 		rules_applier(BT_STRUCTURAL_RULES),
 		textify,
 		find_replace,
@@ -45,7 +47,7 @@ export function textify(sentences) {
 			return textify_token(token.complex_pairing)
 		} else if (token.pronoun) {
 			return textify_token(token.pronoun)
-		} else if (token.type === TOKEN_TYPE.ADDED) {
+		} else if (token.type === TOKEN_TYPE.ADDED || token.type === TOKEN_TYPE.PHRASE) {
 			return ''
 		} else if (token.token.startsWith('_')) {
 			return ''

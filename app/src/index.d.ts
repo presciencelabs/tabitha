@@ -1,4 +1,4 @@
-type TokenType = 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Clause' |'Added'
+type TokenType = 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Clause' | 'Added' | 'Phrase'
 
 interface MessagedToken {
 	token: string
@@ -19,6 +19,7 @@ interface Token extends MessagedToken {
 type Tag = { [tag: string]: string }
 
 type Clause = Token
+type Phrase = Token
 
 type Sentence = {
 	clause: Clause
@@ -149,6 +150,7 @@ type ArgumentRoleRule = {
 	trigger_rule: TokenRule
 	missing_message: string
 	extra_message: string
+	main_word_tag: Tag
 }
 
 type ArgumentRulesForSense = {

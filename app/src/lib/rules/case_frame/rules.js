@@ -3,6 +3,7 @@ import { create_context_filter, create_token_filter, simple_rule_action } from '
 import { select_sense } from './sense_selection'
 import { check_adjective_case_frames } from './adjectives'
 import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs'
+import { check_adposition_case_frames } from './adpositions'
 
 
 /** @type {BuiltInRule[]} */
@@ -32,7 +33,7 @@ const argument_and_sense_rules = [
 				// A verse reference is another special case that should not interfere with Verb case frames.
 				if (!selected_result.case_frame.valid_arguments.map(arg => arg.role_tag).includes('modified_noun')
 						&& !token_has_tag(token, { 'role': 'verse_ref' })) {
-					add_tag_to_token(token, { 'syntax': 'predicate_adjective' })
+					add_tag_to_token(token, { 'adj_usage': 'predicative' })
 				}
 			}),
 		},
@@ -63,12 +64,30 @@ const argument_and_sense_rules = [
 		},
 	},
 	{
+		name: 'Verb sense selection',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'category': 'Verb' }),
+			context: create_context_filter({}),
+			action: simple_rule_action(select_sense),
+		},
+	},
+	{
+		name: 'Adposition case frames',
+		comment: 'Need to do this after Adjectives and Verbs so that no argument-related adpositions don\'t get checked',
+		rule: {
+			trigger: create_token_filter({ 'category': 'Adposition' }),
+			context: create_context_filter({}),
+			action: simple_rule_action(check_adposition_case_frames),
+		},
+	},
+	{
 		name: 'Other word sense selection',
-		comment: 'Adjective senses have already been selected',
+		comment: 'Adjective and Verb senses have already been selected',
 		rule: {
 			trigger: token => token.lookup_results.length > 0
 					&& is_one_part_of_speech(token)
-					&& !create_token_filter({ 'category': 'Adjective' })(token),
+					&& !create_token_filter({ 'category': 'Adjective|Verb' })(token),
 			context: create_context_filter({}),
 			action: simple_rule_action(select_sense),
 		},

@@ -1,5 +1,5 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
-import { set_message, split_stem_and_sense } from '$lib/parser/token'
+import { add_tag_to_token, set_message, split_stem_and_sense } from '$lib/parser/token'
 import { create_context_filter, create_token_filter } from '../rules_parser'
 
 /** @typedef {[string, any]} PriorityOverrideRules */
@@ -364,5 +364,6 @@ function select_word_sense(token, trigger_context) {
 	// apply the selected result's argument actions
 	for (const valid_argument of selected_result.case_frame.valid_arguments) {
 		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
+		add_tag_to_token(token, valid_argument.rule.main_word_tag)
 	}
 }

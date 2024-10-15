@@ -230,7 +230,7 @@ const transform_rules_json = [
 		'name': '"more" before adjective of adverb and "than" becomes a function word',
 		'trigger': { 'stem': 'more' },
 		'context': {
-			'followedby': [{ 'category': 'Adjective|Adverb' }, { 'tag': { 'syntax': 'comparative_than' } }],
+			'followedby': [{ 'category': 'Adjective|Adverb' }, { 'tag': { 'pre_np_adposition': 'comparative_than' } }],
 		},
 		'transform': { 'function': { 'degree': 'comparative' } },
 		'comment': "eg 'more content than X', etc ",
@@ -242,7 +242,7 @@ const transform_rules_json = [
 			'followedby': [{ 'category': 'Adjective|Adverb' }, { 'stem': 'as' }],
 		},
 		'transform': { 'function': { 'degree': 'equality' } },
-		'context_transform': [{ }, { 'function': { 'syntax': 'comparative_as' } }],
+		'context_transform': [{ }, { 'function': { 'pre_np_adposition': 'comparative_as' } }],
 		'comment': "eg 'as valuable as X', etc ",
 	},
 	{
@@ -262,7 +262,7 @@ const transform_rules_json = [
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
 			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
 		},
-		'transform': { 'function': { 'relation': 'name' } },
+		'transform': { 'function': { 'relation': 'name', 'pre_np_adposition': 'relation' } },
 	},
 	{
 		'name': '\'named\' before a name and before a Verb becomes a function word',
@@ -273,13 +273,13 @@ const transform_rules_json = [
 				{ 'category': 'Verb', 'skip': 'all' },
 			],
 		},
-		'transform': { 'function': { 'relation': 'name' } },
+		'transform': { 'function': { 'relation': 'name', 'pre_np_adposition': 'relation' } },
 	},
 	{
 		'name': '\'of\' after group/crowd becomes a function word',
 		'trigger': { 'token': 'of' },
 		'context': { 'precededby': { 'stem': 'group|crowd' } },
-		'transform': { 'function': { 'relation': 'group' } },
+		'transform': { 'function': { 'relation': 'group' }, 'remove_tag': 'pre_np_adposition' },
 	},
 	{
 		'name': 'certain Noun-Noun combinations are "made_of"',
@@ -290,10 +290,13 @@ const transform_rules_json = [
 	},
 	{
 		'name': 'certain Noun-Noun combinations are "title"',
-		'trigger': { 'category': 'Noun', 'stem': 'king|queen|Christ|Caesar|Lord' },
-		'context': { 'followedby': { 'category': 'Noun' } },
-		'transform': { 'tag': { 'relation': 'title' } },
-		'comment': 'eg. King Herod, Lord Jesus',
+		'trigger': { 'category': 'Noun' },
+		'context': {
+			'precededby': { 'category': 'Noun', 'stem': 'king|queen|Christ|Caesar|Lord' },
+			'notprecededby': { 'tag': 'relation' },
+		},
+		'context_transform': { 'tag': { 'relation': 'title' } },
+		'comment': "eg. King Herod, Lord Jesus, but NOT 'the king's army'",
 	},
 	// Senses of 'be'
 	{
@@ -393,7 +396,7 @@ const transform_rules_json = [
 		'context': {
 			'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 		},
-		'transform': { 'function': { 'syntax': 'agent_of_passive' } },
+		'transform': { 'function': { 'pre_np_adposition': 'agent_of_passive' } },
 	},
 	// Adpositions
 	{
@@ -404,25 +407,6 @@ const transform_rules_json = [
 		},
 		'transform': { 'remove_tag': ['syntax', 'determiner'] },
 		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
-	},
-	{
-		// TODO replace with adposition sense-selection
-		'name': 'Adposition \'so\' followed by \'would\' becomes so-C',
-		'trigger': { 'stem': 'so', 'category': 'Adposition' },
-		'context': {
-			'followedby': { 'tag': { 'modal': 'conditional_would' }, 'skip': 'all' },
-		},
-		'transform': { 'sense': 'C' },
-	},
-	{
-		// TODO make this a case frame/sense selection rule
-		'name': 'Select Adverbial senses of adpositions when first word of a subordinate clause',
-		'trigger': { 'category': 'Adposition' },
-		'context': {
-			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
-		},
-		'transform': { 'usage': 'C' },
-		'comment': 'C means "Always in an Adverbial clause". eg by-A (Adverbial - C) vs by-B (Adjunct - A)',
 	},
 	// Noun Phrase handling
 	{
@@ -444,25 +428,37 @@ const transform_rules_json = [
 		'name': 'handle noun argument for relationship with X',
 		'trigger': { 'stem': 'relationship' },
 		'context': {
-			'followedby': [{ 'token': 'with' }, { 'category': 'Noun', 'skip': 'np_modifiers' }],
+			'followedby': [
+				{ 'token': 'with' },
+				{ 'category': 'Noun', 'skip': 'np_modifiers' },
+			],
 		},
-		'context_transform': [{ 'function': {} }, { 'tag': { 'syntax': 'nested_np' } }],
+		'context_transform': [
+			{ 'function': { 'pre_np_adposition': 'noun_argument' } },
+			{ 'tag': { 'syntax': 'nested_np', 'role': 'noun_argument_np' } },
+		],
 		'comment': "eg 'relationship with X'. X should not be interpreted as an argument of a Verb",
 	},
 	{
 		'name': 'handle noun argument for faith in X',
 		'trigger': { 'stem': 'faith' },
 		'context': {
-			'followedby': [{ 'token': 'in' }, { 'category': 'Noun', 'skip': 'np_modifiers' }],
+			'followedby': [
+				{ 'token': 'in' },
+				{ 'category': 'Noun', 'skip': 'np_modifiers' },
+			],
 		},
-		'context_transform': [{ 'function': {} }, { 'tag': { 'syntax': 'nested_np' } }],
+		'context_transform': [
+			{ 'function': { 'pre_np_adposition': 'noun_argument' } },
+			{ 'tag': { 'syntax': 'nested_np', 'role': 'noun_argument_np' } },
+		],
 		'comment': "eg 'faith in X'. X should not be interpreted as an argument of a Verb",
 	},
 	{
 		'name': 'handle comparative noun arguments',
-		'trigger': { 'tag': { 'syntax': 'comparative_than' } },
+		'trigger': { 'tag': { 'pre_np_adposition': 'comparative_than|comparative_as' } },
 		'context': {
-			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+			'followedby': { 'category': 'Noun', 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
 		},
 		'context_transform': { 'tag': { 'syntax': 'nested_np|comparative_np' } },
 		'comment': "eg 'bigger than X', 'more content than X', 'more food than X', etc ",

@@ -16,6 +16,28 @@ const default_adjective_case_frame_json = {
 	},
 }
 
+/** @type {Map<string, any>} */
+const SENSE_RULE_PRESETS = new Map([
+	['subgroup_with_optional_of', {
+		'modified_noun': [
+			{ 'modified_noun_of_adjective': { } },
+			{
+				'by_relative_context': {
+					'followedby': [
+						{ 'token': 'of' },
+						{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+					],
+					'argument_context_index': 1,
+				},
+				'context_transform': { 'function': { 'relation': 'subgroup' }, 'remove_tag': 'pre_np_adposition' },
+				'main_word_tag': { 'adj_usage': 'attributive', 'adj_type': 'subgroup' },
+				'tag_role': false,
+			},
+		],
+		'comment': "eg 'all X' and 'all of X' are both supported",
+	}],
+])
+
 /** @type {RoleRulePreset[]} */
 // @ts-ignore the map initializer array doesn't like the different object structures
 const ROLE_RULE_PRESETS = [
@@ -28,7 +50,7 @@ const ROLE_RULE_PRESETS = [
 			'argument_context_index': 1,
 		},
 		'transform': { 'tag': { 'role': 'adjective_nominal_argument', 'syntax': 'nested_np' } },
-		'context_transform': { 'function': { 'syntax': 'argument_adposition', 'relation': '' } },	// make the adposition a function word and clear other tag values
+		'context_transform': { 'function': { 'pre_np_adposition': 'adjective_argument', 'relation': '' } },	// make the adposition a function word and clear other tag values
 		'missing_message': `Couldn't find the nominal argument, which in this case should have '${preset_value}' before it.`,
 	})],
 	['by_clause_tag', preset_value => ({
@@ -36,6 +58,7 @@ const ROLE_RULE_PRESETS = [
 			'followedby': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': preset_value, 'role': 'none' } },
 			'comment': 'the clause should immediately follow the adjective',
 		},
+		'transform': { 'tag': { 'role': 'adjective_clausal_argument' } },
 	})],
 	['modified_noun_of_adjective', () => ({ 
 		'by_relative_context': {
@@ -43,24 +66,15 @@ const ROLE_RULE_PRESETS = [
 			'notfollowedby': { 'token': 'of' },
 		},
 		'tag_role': false,
+		'main_word_tag': { 'adj_usage': 'attributive', 'adj_type': 'regular' },
 		'comment': '"of" is a relation that can be part of an NP, but is also used for some nominal arguments and should not be skipped if it immediately follows the Adj (eg. John was afraid of Mary)',
-	})],
-	['subgroup_with_of', () => ({
-		'by_relative_context': {
-			'followedby': [
-				{ 'token': 'of' },
-				{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
-			],
-			'argument_context_index': 1,
-		},
-		'context_transform': { 'function': { 'relation': 'subgroup' } },
-		'tag_role': false,
 	})],
 	['unit_with_measure', preset_value => ({
 		'by_relative_context': {
 			'precededby': { 'category': 'Noun' },
 		},
 		'transform': { 'tag': { 'role': 'adjective_nominal_argument', 'syntax': 'nested_np' } },
+		'main_word_tag': { 'adj_type': 'measure' },
 		'missing_message': `{sense} must be in the format 'N X {stem}' where N is a number/quantity and X is a unit of ${preset_value}.`,
 	})],
 	['by_relative_context', preset_value => ({
@@ -81,20 +95,8 @@ const adjective_case_frames = new Map([
 		['afraid-B', { 'nominal_argument': { 'by_adposition': 'of' } }],
 	]],
 	['all', [
-		['all-A', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'all X' and 'all of X' are both supported",
-		}],
-		['all-B', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'all X' and 'all of X' are both supported",
-		}],
+		['all-A', 'subgroup_with_optional_of'],
+		['all-B', 'subgroup_with_optional_of'],
 	]],
 	['amazed', [
 		['amazed-B', { 'nominal_argument': { 'by_adposition': 'of|by' } }],
@@ -124,13 +126,7 @@ const adjective_case_frames = new Map([
 		['different-B', { 'nominal_argument': { 'by_adposition': 'from' } }],
 	]],
 	['each', [
-		['each-A', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'each X' and 'each of X' are both supported",
-		}],
+		['each-A', 'subgroup_with_optional_of'],
 	]],
 	['faithful', [
 		['faithful-B', { 'nominal_argument': { 'by_adposition': 'to' } }],
@@ -164,25 +160,13 @@ const adjective_case_frames = new Map([
 		['merciful-B', { 'nominal_argument': { 'by_adposition': 'to' } }],
 	]],
 	['much-many', [
-		['much-many-A', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'muhc/many X' and 'much/many of X' are both supported",
-		}],
+		['much-many-A', 'subgroup_with_optional_of'],
 	]],
 	['old', [
 		['old-B', { 'nominal_argument': { 'unit_with_measure': 'time' } }],
 	]],
 	['one', [
-		['one-A', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'one X' and 'one of X' are both supported",
-		}],
+		['one-A', 'subgroup_with_optional_of'],
 	]],
 	['patient', [
 		['patient-B', { 'nominal_argument': { 'by_adposition': 'with' } }],
@@ -201,13 +185,7 @@ const adjective_case_frames = new Map([
 		['sad-B', { 'nominal_argument': { 'by_adposition': 'for' } }],
 	]],
 	['some', [
-		['some-A', {
-			'modified_noun': [
-				{ 'modified_noun_of_adjective': { } },
-				{ 'subgroup_with_of': { } },
-			],
-			'comment': "'some X' and 'some of X' are both supported",
-		}],
+		['some-A', 'subgroup_with_optional_of'],
 	]],
 	['tall', [
 		['tall-A', { 'nominal_argument': { 'unit_with_measure': 'length' } }],
@@ -241,7 +219,7 @@ function create_adjective_argument_rules() {
 	 * @returns {[WordStem, ArgumentRulesForSense[]]}
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
-		const presets = { role_presets: ROLE_RULE_PRESETS }
+		const presets = { sense_presets: SENSE_RULE_PRESETS, role_presets: ROLE_RULE_PRESETS }
 		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_CASE_FRAME_RULES, presets)]
 	}
 }
@@ -261,7 +239,7 @@ export function check_adjective_case_frames(trigger_context) {
 
 	check_case_frames(trigger_context, {
 		rules_by_sense: argument_rules_by_sense,
-		default_rules: DEFAULT_CASE_FRAME_RULES,
+		default_rule_getter: () => DEFAULT_CASE_FRAME_RULES,
 		role_info_getter: get_adjective_usage_info,
 	})
 }

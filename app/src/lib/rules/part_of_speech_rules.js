@@ -472,8 +472,8 @@ const builtin_part_of_speech_rules = [
 			context: create_context_filter({ 'precededby': { 'stem': 'be' } }),
 			action: simple_rule_action(({ trigger_token }) => {
 				if (trigger_token.lookup_results
-						.filter(result => result.part_of_speech === 'Verb')
-						.every(result => result.form === 'participle')
+					.filter(result => result.part_of_speech === 'Verb')
+					.every(result => result.form === 'participle')
 				) {
 					remove_part_of_speech('Noun')(trigger_token)
 				}
