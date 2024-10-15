@@ -75,13 +75,6 @@ const lookup_rules_json = [
 		'combine': 2,
 	},
 	{
-		'name': 'because of becomes because-B',
-		'trigger': { 'token': 'Because|because' },
-		'context': { 'followedby': { 'token': 'of' } },
-		'lookup': 'because-B',
-		'combine': 1,
-	},
-	{
 		'name': 'close to becomes close',
 		'trigger': { 'token': 'close' },
 		'context': { 'followedby': { 'token': 'to' } },

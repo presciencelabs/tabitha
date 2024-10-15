@@ -127,7 +127,7 @@ const part_of_speech_rules_json = [
 	{
 		'name': 'If "so/for" appears anywhere else in the sentence, remove Conjunction',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'token': 'so|for' },
+		'trigger': { 'token': 'so|so-that|for' },
 		'remove': 'Conjunction',
 		'comment': 'This relies on the fact these conjunctions must be the first word and therefore capitalized',
 	},

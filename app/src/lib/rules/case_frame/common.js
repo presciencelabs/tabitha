@@ -45,6 +45,13 @@ function extra_argument_message(role_tag) {
 }
 
 /** @type {[RoleTag, string][]} */
+const ALL_HAVE_MISSING_ARGUMENT_MESSAGES = [
+	// If no Verb sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
+	['agent', 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.'],
+	['opening_subordinate_clause', "Missing '[' bracket before adverbial clause."],
+]
+
+/** @type {[RoleTag, string][]} */
 const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = [
 	['patient_clause_same_participant', 'Unexpected patient clause for {category} \'{stem}\'. This likely should be \'[in-order-to...]\' or \'[so-that...]\' instead.'],
 	['patient_clause_quote_begin', '\'{stem}\' can never be used with direct speech. Consult its usage in the Ontology.'],
@@ -304,11 +311,10 @@ export function* validate_case_frame(trigger_context) {
 	const token = trigger_context.trigger_token
 
 	if (no_matches_and_ambiguous_sense(token)) {
-		if (role_is_missing_for_all('agent', token)) {
-			// If no sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
-			// This will likely be a common occurrence and so can be handled specially.
-			yield { error: 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.' }
-
+		const missing_role = ALL_HAVE_MISSING_ARGUMENT_MESSAGES.find(([role]) => role_is_missing_for_all(role, token))
+		if (missing_role) {
+			const [, message] = missing_role
+			yield { error: message }
 		} else {
 			yield { error: 'No senses match the argument structure found in this sentence. Specify a sense (eg. {token}-A) to get more info about its expected structure.' }
 		}
@@ -325,7 +331,10 @@ export function* validate_case_frame(trigger_context) {
 	const case_frame = selected_result.case_frame
 
 	if (!case_frame.is_valid) {
-		yield { error: 'Invalid argument structure for {sense}. Consult the Ontology for correct usage.' }
+		const message = selected_result.part_of_speech === 'Verb'
+			? 'Invalid argument structure for {sense}. Consult the Ontology for correct usage.'
+			: 'Invalid usage of {sense}. Consult the Ontology.'
+		yield { error: message }
 	}
 
 	// Show errors for missing and unexpected arguments

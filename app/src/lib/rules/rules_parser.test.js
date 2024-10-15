@@ -460,36 +460,6 @@ describe('token transforms', () => {
 		expect(result.lookup_terms).toEqual(token.lookup_terms)
 		expect(result.messages).toEqual(token.messages)
 	})
-	test('sense', () => {
-		const transform_json = { 'sense': 'A' }
-		const transform = create_token_transform(transform_json)
-
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
-		expect(token.specified_sense).toBe('')
-
-		const result = transform(token)
-		expect(result.token).toBe(token.token)
-		expect(result.type).toBe(token.type)
-		expect(result.specified_sense).toBe('A')
-		expect(result.lookup_terms[0]).toBe('token')
-		expect(result.lookup_results.length).toBe(0)
-		expect(result.messages).toEqual(token.messages)
-	})
-	test('sense with existing specified_sense', () => {
-		const transform_json = { 'sense': 'A' }
-		const transform = create_token_transform(transform_json)
-
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token', specified_sense: 'B' })
-		expect(token.specified_sense).toBe('B')
-
-		const result = transform(token)
-		expect(result.token).toBe(token.token)
-		expect(result.type).toBe(token.type)
-		expect(result.specified_sense).toBe('B')
-		expect(result.lookup_terms[0]).toBe('token')
-		expect(result.lookup_results.length).toBe(0)
-		expect(result.messages).toEqual(token.messages)
-	})
 	test('tag with existing tag on token', () => {
 		const transform_json = { 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'key': 'value' } }
 		const transform = create_token_transform(transform_json)

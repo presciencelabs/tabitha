@@ -199,7 +199,7 @@ const verb_case_frames = new Map([
 				{
 					'by_clause_tag': 'adverbial_clause',
 					'context': {
-						'subtokens': { 'token': 'if|whether', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+						'subtokens': { 'token': 'if|whether', 'skip': 'clause_start' },
 					},
 					// TODO make if/whether function words using a subtoken context transform
 				},

@@ -47,7 +47,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': 'all' },
-				'transform': { 'sense': 'A' },
+				'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 			},
 		].map(parse_transform_rule)
 
@@ -68,7 +68,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'other' } },
-				'transform': { 'sense': 'A' },
+				'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 			},
 		].map(parse_transform_rule)
 
@@ -134,36 +134,12 @@ describe('transform rules', () => {
 		expect(results[0].tag).toEqual({ 'key': 'value' })
 	})
 
-	test('sense becomes selected_sense', () => {
-		const transform_rules = [
-			{
-				'trigger': { 'token': 'saw' },
-				'context': { 'followedby': 'all' },
-				'transform': { 'sense': 'C' },
-			},
-		].map(parse_transform_rule)
-
-		const tokens = [
-			create_sentence([
-				create_token('John', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
-				create_token('saw', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'see' }),
-				create_token('the', TOKEN_TYPE.FUNCTION_WORD),
-				create_token('cat', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'cat' }),
-				create_token('.', TOKEN_TYPE.PUNCTUATION),
-			]),
-		]
-
-		const results = apply_rules(tokens, transform_rules).flatMap(flatten_sentence)
-
-		expect(results[1].specified_sense).toBe('C')
-	})
-
 	test('not triggered across sentences', () => {
 		const transform_rules = [
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'other', 'skip': 'all'  } },
-				'transform': { 'sense': 'A' },
+				'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 			},
 		].map(parse_transform_rule)
 

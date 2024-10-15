@@ -38,10 +38,6 @@ export function create_token_filter(filter_json) {
 		return lookup => value_checker(`${lookup.level}`)
 	})
 
-	// only support single character usages right now
-	// TODO remove this and use the case frame/sense selection rules instead
-	add_lookup_filter('usage', filter_value => has_usage(filter_value))
-
 	add_lookup_filter('form', filter_value => {
 		const filter_forms = filter_value.split('|')
 		return lookup => {
@@ -348,36 +344,12 @@ export function create_token_transform(transform_json) {
 		}))
 	}
 
-	const sense = transform_json['sense']
-	if (sense !== undefined) {
-		// Don't let the transform rule overwrite an existing specified sense
-		transforms.push(token => ({ ...token, specified_sense: token.specified_sense || sense }))
-	}
-
-	// TODO remove this and use the case frame/sense selection rules instead
-	const usage = transform_json['usage']
-	if (usage !== undefined) {
-		transforms.push(token => filter_by_usage(token, usage))
-	}
-
 	if (transforms.length === 0) {
 		return token => token
 	} else if (transforms.length === 1) {
 		return transforms[0]
 	} else {
 		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
-	}
-
-	/**
-	 *
-	 * @param {Token} token
-	 * @param {string} char
-	 */
-	function filter_by_usage(token, char) {
-		if (token.lookup_results.some(has_usage(char))) {
-			token.lookup_results = token.lookup_results.filter(may_have_usage(char))
-		}
-		return token
 	}
 
 	/**
@@ -402,24 +374,6 @@ export function create_token_transform(transform_json) {
 		}
 		return Object.fromEntries(Object.entries(old_tag).filter(([k]) => !tags_to_remove.includes(k)))
 	}
-}
-
-/**
- *
- * @param {string} char
- * @returns {LookupFilter}
- */
-function has_usage(char) {
-	return lookup => lookup.categorization.includes(char)
-}
-
-/**
- *
- * @param {string} char
- * @returns {LookupFilter}
- */
-function may_have_usage(char) {
-	return lookup => lookup.categorization.length === 0 || lookup.categorization.includes(char)
 }
 
 /**

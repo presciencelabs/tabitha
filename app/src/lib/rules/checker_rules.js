@@ -214,18 +214,6 @@ const checker_rules_json = [
 		},
 	},
 	{
-		// TODO check this via case frame/usage rules
-		'name': 'Expect a [ before an adverbial clause',
-		'trigger': { 'category': 'Adposition', 'usage': 'C' },
-		'context': {
-			'notprecededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
-		},
-		'require': {
-			'precededby': '[',
-			'message': 'Missing bracket before adverbial clause.',
-		},
-	},
-	{
 		'name': 'Expect a [ before a quote',
 		'trigger': { 'token': ',' },
 		'context': {

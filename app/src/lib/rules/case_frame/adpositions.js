@@ -1,25 +1,29 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from './common'
 
 const default_adposition_usage_json = {
-	'adverbial_clause': {
-		'by_relative_context': {
-			'precededby': { 'token': '[', 'skip': { 'tag': 'coord_clause' } },
-		},
-		'tag_role': false,
-		'main_word_tag': { 'syntax': 'adverbial_clause_adposition' },
-	},
-	'in_noun_phrase': {
-		'by_relative_context': {
-			'followedby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
-		},
-		'tag_role': false,
-		'main_word_tag': { 'pre_np_adposition': 'oblique' },
-	},
+	'opening_subordinate_clause': { 'opening_subordinate_clause': { } },
+	'in_noun_phrase': { 'head_noun': { } },
 }
 
 /** @type {RoleRulePreset[]} */
 // @ts-ignore the map initializer array doesn't like the different object structures
 const ROLE_RULE_PRESETS = [
+	['opening_subordinate_clause', () => ({
+		'by_relative_context': {
+			'precededby': { 'token': '[', 'skip': { 'tag': 'coord_clause' } },
+		},
+		'tag_role': false,
+		'main_word_tag': { 'syntax': 'adverbial_clause_adposition' },
+		'missing_message': "Missing '[' bracket before adverbial clause.",
+	})],
+	['head_noun', () => ({
+		'by_relative_context': {
+			'followedby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+		},
+		'tag_role': false,
+		'main_word_tag': { 'pre_np_adposition': 'oblique' },
+		'missing_message': 'Could not find the Noun associated with this Adposition.',
+	})],
 	['by_relative_context', preset_value => ({
 		'trigger': 'all',
 		'context': preset_value,
@@ -34,8 +38,36 @@ const ROLE_RULE_PRESETS = [
  * @type {Map<WordStem, [WordSense, any][]>}
  */
 const adposition_case_frames = new Map([
+	['because', [
+		['because-B', {
+			'opening_subordinate_clause': { },
+			'other_rules': {
+				'of': {
+					'by_relative_context': {
+						'followedby': { 'token': 'of' },
+					},
+					'transform': { 'tag': { 'pre_np_adposition': 'oblique' }, 'remove_tag': 'relation' },
+					'tag_role': false,
+				},
+			},
+			'other_optional': 'of',
+		}],
+	]],
 	['so', [
+		['so-A', {
+			'in_noun_phrase': { },
+			'other_rules': {
+				'could': {
+					'by_relative_context': {
+						'followedby': { 'tag': { 'modal': 'conditional_could' }, 'skip': 'all' },
+					},
+					'tag_role': false,
+				},
+			},
+			'other_optional': 'could',
+		}],
 		['so-C', {
+			'in_noun_phrase': { },
 			'other_rules': {
 				'would': {
 					'by_relative_context': {
@@ -70,7 +102,7 @@ function create_adposition_argument_rules() {
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
 		const presets = { role_presets: ROLE_RULE_PRESETS }
-		return [stem, parse_sense_rules(sense_rules_json, [], presets)]
+		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_USAGE_RULES, presets)]
 	}
 }
 
@@ -109,7 +141,7 @@ function get_default_usage_rules(lookup) {
 const ADPOSITION_LETTER_TO_ROLE = new Map([
 	['A', 'in_noun_phrase'],
 	['B', 'in_noun_phrase'],
-	['C', 'adverbial_clause'],
+	['C', 'opening_subordinate_clause'],
 ])
 
 /**
@@ -119,18 +151,23 @@ const ADPOSITION_LETTER_TO_ROLE = new Map([
  * @returns {RoleUsageInfo}
  */
 function get_adposition_usage_info(categorization, role_rules) {
-	const roles = convert_usage_info(categorization).concat(role_rules.other_required)
+	const usage_roles = convert_usage_info(categorization)
+
+	const all_roles = usage_roles.concat(role_rules.other_optional).concat(role_rules.other_required)
 	
 	// some categorizations are blank or erroneously all underscores (eg early-A)
 	// treat all arguments as possible and not required
-	if (roles.length === 0) {
+	if (all_roles.length === 0) {
 		return {
 			possible_roles: [...ADPOSITION_LETTER_TO_ROLE.values()],
 			required_roles: [],
 		}
 	}
 
-	return { possible_roles: roles, required_roles: roles }
+	return {
+		possible_roles: all_roles,
+		required_roles: usage_roles.concat(role_rules.other_required),
+	}
 }
 
 /**

@@ -203,7 +203,7 @@ const verb_sense_priority_overrides = [
 
 /**
  * By default, senses with valid case frames are prioritized by letter (eg. -A is selected over -B).
- * These rules allow overriding that priority based on filters applied to the verb arguments.
+ * These rules allow overriding that priority based on filters applied to the adjective arguments.
  * They are ordered by priority, where the first entry in the array has the most priority.
  * Note that not all senses have a rule, only those that are different from the default letter-based priority.
  * 
@@ -248,6 +248,24 @@ const adjective_sense_priority_overrides = [
 ]
 
 /**
+ * By default, senses with valid case frames are prioritized by letter (eg. -A is selected over -B).
+ * These rules allow overriding that priority based on filters applied to the adposition usage.
+ * They are ordered by priority, where the first entry in the array has the most priority.
+ * Note that not all senses have a rule, only those that are different from the default letter-based priority.
+ * 
+ * An empty filter means that sense will always apply as long as its case frame is valid.
+ * 
+ * @type {[WordStem, PriorityOverrideRules[]][]}
+ */
+const adposition_sense_priority_overrides = [
+	['so', [
+		['so-C', { 'would': { } }],
+		['so-A', { 'could': { } }],
+		['so-B', { }],
+	]],
+]
+
+/**
  * @param {PriorityOverrideRules} sense_rules 
  * @returns {[WordSense, ArgumentMatchFilter]}
  */
@@ -277,13 +295,23 @@ function parse_sense_rule([sense, sense_rule_json]) {
 }
 
 /** @type {Map<WordStem, [WordSense, ArgumentMatchFilter][]>} */
-const VERB_SENSE_FILTER_RULES = new Map(verb_sense_priority_overrides.map(([stem, sense_rules]) => [stem, sense_rules.map(parse_sense_rule)]))
-const ADJECTIVE_SENSE_FILTER_RULES = new Map(adjective_sense_priority_overrides.map(([stem, sense_rules]) => [stem, sense_rules.map(parse_sense_rule)]))
+const VERB_SENSE_FILTER_RULES = new Map(verb_sense_priority_overrides.map(parse_sense_override))
+const ADJECTIVE_SENSE_FILTER_RULES = new Map(adjective_sense_priority_overrides.map(parse_sense_override))
+const ADPOSITION_SENSE_FILTER_RULES = new Map(adposition_sense_priority_overrides.map(parse_sense_override))
 
 const SENSE_FILTER_RULES = new Map([
 	['Verb', VERB_SENSE_FILTER_RULES],
 	['Adjective', ADJECTIVE_SENSE_FILTER_RULES],
+	['Adposition', ADPOSITION_SENSE_FILTER_RULES],
 ])
+
+/**
+ * @param {[string, PriorityOverrideRules[]]} param 
+ * @return {[stem, [WordSense, ArgumentMatchFilter][]]}
+ */
+function parse_sense_override([stem, sense_rules]) {
+	return [stem, sense_rules.map(parse_sense_rule)]
+}
 
 /**
  * 

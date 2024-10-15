@@ -1,4 +1,3 @@
-// TODO store these in the database and allow user editing
 /** @type {Map<string, any>} */
 export const FUNCTION_WORDS = new Map([
 	['a', { 'determiner': 'indefinite_article' }],
