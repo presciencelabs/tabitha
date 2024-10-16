@@ -1,6 +1,0 @@
-# https://developers.cloudflare.com/workers/wrangler/configuration
-
-[[d1_databases]]
-binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "Editor.2024-05-20"
-database_id = "8d8aaf92-1cf2-4785-96f6-61546a075a45"

@@ -1,8 +1,51 @@
-# Editor
+# Editor web app
 
-## Loading databases
-> within the `app` dir so these loads remain local to `app` only
+`pnpm i`
 
-`wrangler d1 execute Editor.YYYY-MM-DD --file=../database/Editor.sqlite.sql`
+## Running locally
 
-You may have to run `wrangler d1 execute Editor.YYYY-MM-DD --command="DROP TABLE inflections"` before running the above command.
+```bash
+pnpm dev
+```
+
+## Static analysis
+
+```bash
+pnpm check
+```
+
+## Testing locally
+
+### Unit tests
+
+```bash
+pnpm test:unit
+```
+
+### Coverage
+
+```bash
+pnpm test:unit:coverage
+```
+
+## Building
+
+Creates a production version of the app:
+
+```bash
+pnpm build
+```
+
+## Contributing
+
+Always start your work in a new branch.
+
+Run the following command as a last check before opening a PR
+
+```bash
+pnpm precommit
+```
+
+## Error handling
+
+TODO: will integrate Sentry once https://github.com/getsentry/sentry-javascript/issues/8291 is fixed.

@@ -32,7 +32,7 @@ const structural_rules_json = [
 				if (token_has_tag(trigger_token, { 'clause_type': 'patient_clause_simultaneous' })) {
 					return
 				}
-				
+
 				// Don't add 'that' if the patient clause includes an infinitive 'to'
 				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive' } }))) {
 					return
@@ -43,7 +43,7 @@ const structural_rules_json = [
 
 				function get_index_for_that() {
 					// Put the 'that' after a conjunction, if present. eg 'X knows that Y and that Z.'
-					
+
 					const first_word_index = trigger_token.sub_tokens.findIndex(create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }))
 					if (first_word_index !== -1 && create_token_filter({ 'category': 'Conjunction' })(trigger_token.sub_tokens[first_word_index])) {
 						return first_word_index + 1
@@ -189,12 +189,12 @@ const structural_rules_json = [
 				const inner_phrase_start = find_phrase_start(tokens, of_index)
 				const inner_phrase_end = find_phrase_end(tokens, of_index)
 				const new_inner_phrase = [
-					...(is_literal ? [] : [create_token('<<', TOKEN_TYPE.PUNCTUATION)]),
+					...is_literal ? [] : [create_token('<<', TOKEN_TYPE.PUNCTUATION)],
 					...tokens.slice(inner_phrase_start, of_index),
 					...tokens.slice(of_index + 1, inner_phrase_end),
 					tokens[of_index],
 					tokens[inner_phrase_end],
-					...(is_literal ? [] : [create_token('>>', TOKEN_TYPE.PUNCTUATION)]),
+					...is_literal ? [] : [create_token('>>', TOKEN_TYPE.PUNCTUATION)],
 				]
 
 				// for the outer noun, don't include any adposition or conjunction
@@ -318,9 +318,9 @@ const NUMBER_TOKEN_TEXT_MAP = new Map([
 ])
 
 /**
- * 
- * @param {Token[]} tokens 
- * @param {number} start_index 
+ *
+ * @param {Token[]} tokens
+ * @param {number} start_index
  */
 function find_phrase_start(tokens, start_index) {
 	for (let i = start_index - 1; i >= 0; i--) {
@@ -335,9 +335,9 @@ function find_phrase_start(tokens, start_index) {
 }
 
 /**
- * 
- * @param {Token[]} tokens 
- * @param {number} start_index 
+ *
+ * @param {Token[]} tokens
+ * @param {number} start_index
  */
 function find_phrase_end(tokens, start_index) {
 	for (let i = start_index + 1; i < tokens.length; i++) {
@@ -352,23 +352,23 @@ function find_phrase_end(tokens, start_index) {
 }
 
 /**
- * @param {Token} token 
+ * @param {Token} token
  */
 function is_opening_phrase(token) {
 	return token.token.startsWith('{')
 }
 
 /**
- * @param {Token} token 
+ * @param {Token} token
  */
 function is_closing_phrase(token) {
 	return token.token === '}'
 }
 
 /**
- * 
- * @param {Token[]} tokens 
- * @param {number} start_index 
+ *
+ * @param {Token[]} tokens
+ * @param {number} start_index
  */
 function find_next_word(tokens, start_index) {
 	// Find the next word in the sentence (skip any notes, phrases, or implicit markers)
@@ -380,10 +380,10 @@ function find_next_word(tokens, start_index) {
 }
 
 /**
- * 
- * @param {Token[]} old_tokens 
- * @param {Token[]} new_tokens 
- * @param {boolean} decapitalize 
+ *
+ * @param {Token[]} old_tokens
+ * @param {Token[]} new_tokens
+ * @param {boolean} decapitalize
  */
 function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 	const old_first_word = find_next_word(old_tokens, 0)
@@ -401,8 +401,8 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 	}
 
 	/**
-	 * 
-	 * @param {Token} token 
+	 *
+	 * @param {Token} token
 	 * @returns {string}
 	 */
 	function decapitalize_token(token) {
@@ -411,10 +411,10 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 		}
 		return `${token.token[0].toLowerCase()}${token.token.slice(1)}`
 	}
-	
+
 	/**
-	 * 
-	 * @param {Token} token 
+	 *
+	 * @param {Token} token
 	 * @returns {string}
 	 */
 	function capitalize_token({ token }) {
@@ -423,9 +423,9 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 		}
 		return token
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param {Token} token
 	 */
 	function is_first_word(token) {
