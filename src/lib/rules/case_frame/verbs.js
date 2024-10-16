@@ -117,7 +117,7 @@ const ROLE_RULE_PRESETS = [
 		'by_relative_context': {
 			'followedby': {
 				'category': 'Adjective',
-				'tag': { 'syntax': 'predicate_adjective' },
+				'tag': { 'adj_usage': 'predicative' },
 				'skip': ['adjp_modifiers_predicative', 'advp', { 'tag': 'verb_polarity' }],
 			},
 		},
