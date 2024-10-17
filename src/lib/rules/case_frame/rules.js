@@ -74,10 +74,13 @@ const argument_and_sense_rules = [
 	},
 	{
 		name: 'Adposition case frames',
-		comment: 'Need to do this after Adjectives and Verbs so that no argument-related adpositions don\'t get checked',
+		comment: `Need to do this after Adjectives and Verbs so that no argument-related adpositions don\'t get checked.
+			Also skip relative clauses because there may be a dangling adposition (eg. 'place [that John lived at]'`,
 		rule: {
 			trigger: create_token_filter({ 'category': 'Adposition' }),
-			context: create_context_filter({}),
+			context: create_context_filter({
+				'notprecededby': { 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
+			}),
 			action: simple_rule_action(check_adposition_case_frames),
 		},
 	},
