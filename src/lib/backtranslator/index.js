@@ -47,7 +47,9 @@ export function textify(sentences) {
 			return textify_token(token.complex_pairing)
 		} else if (token.pronoun) {
 			return textify_token(token.pronoun)
-		} else if (token.type === TOKEN_TYPE.ADDED || token.type === TOKEN_TYPE.PHRASE) {
+		} else if (token.type === TOKEN_TYPE.ADDED) {
+			return ''
+		} else if (token.type === TOKEN_TYPE.PHRASE) {
 			return ''
 		} else if (token.token.startsWith('_')) {
 			return ''
@@ -80,7 +82,7 @@ export function find_replace(text) {
 		// remove spaces after a verse-reference colon
 		.replace(/(\d:) (\d)/g, '$1$2')
 		// remove comma before other punctuation
-		.replace(/,([.:?!])/g, '$1')
+		.replace(/,([,.:?!])/g, '$1')
 		// remove spaces after opening quotes
 		.replace(/, " /g, ', "')
 		// remove spaces before closing quotes

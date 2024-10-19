@@ -33,8 +33,8 @@ const structural_rules_json = [
 					return
 				}
 
-				// Don't add 'that' if the patient clause includes an infinitive 'to'
-				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive' } }))) {
+				// Don't add 'that' if the patient clause includes an infinitive 'to' or gerundifier 'from'
+				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive|gerundifier' } }))) {
 					return
 				}
 
@@ -122,6 +122,25 @@ const structural_rules_json = [
 			}),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.token = 'of'
+			}),
+		},
+	},
+	{
+		name: 'Move relative clauses to the end of a Noun Phrase',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'token': '{NP' }),
+			context: create_context_filter({ }),
+			action: simple_rule_action(({ tokens, trigger_index }) => {
+				const is_relative_clause = create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } })
+				const relative_clauses = find_tokens_within_phrase(trigger_index, tokens, is_relative_clause)
+					.reverse()	// need to reverse so that the indexes don't get affected
+					.flatMap(i => tokens.splice(i, 1))
+					.reverse()	// reverse again so they get inserted in the right order
+
+				const phrase_end = find_phrase_end(tokens, trigger_index)
+
+				tokens.splice(phrase_end, 0, ...relative_clauses)
 			}),
 		},
 	},
@@ -377,6 +396,33 @@ function find_next_word(tokens, start_index) {
 		create_token_filter({ 'token': '<<|>>|<|>' }),
 	]
 	return tokens.slice(start_index).find(token => !skip_filters.some(filter => filter(token)))
+}
+
+/**
+ * Finds all the arguments that match one of the given filters, and adds it to the context arguments object according to the provided 
+ * key and value getters. The argument is always at the top level within the phrase or clause located at the provided start_index.
+ * 
+ * @param {number} start_index 
+ * @param {Token[]} tokens 
+ * @param {TokenFilter} filter 
+ * @return {number[]}
+ */
+function find_tokens_within_phrase(start_index, tokens, filter) {
+	const matched_indexes = []
+	for (let i = start_index + 1; i < tokens.length; i++) {
+		const token = tokens[i]
+
+		if (filter(token)) {
+			matched_indexes.push(i)
+		}
+		
+		if (is_opening_phrase(token)) {
+			i = find_phrase_end(tokens, i)
+		} else if (is_closing_phrase(token)) {
+			break
+		}
+	}
+	return matched_indexes
 }
 
 /**

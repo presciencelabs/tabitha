@@ -23,6 +23,19 @@ const transform_rules_json = [
 		'transform': { 'function': { 'syntax': 'infinitive|infinitive_same_subject' } },
 	},
 	{
+		'name': '"from" before a verb gets tagged as gerundifier',
+		'trigger': { 'token': 'from' },
+		'context': {
+			'followedby': {
+				'category': 'Verb',
+				'form': 'stem|participle',
+				'skip': 'vp_modifiers',
+			},
+		},
+		'transform': { 'function': { 'syntax': 'gerundifier' } },
+		'comment': '"prevent [X from Ving]". May be needed for other verbs as well',
+	},
+	{
 		'name': 'tag "in-order-to" and "by" as "same subject"',
 		'trigger': { 'stem': 'in-order-to|by' },
 		'context': {
