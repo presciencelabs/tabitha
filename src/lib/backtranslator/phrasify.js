@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_token } from '$lib/parser/token'
+import { TOKEN_TYPE, create_token } from '$lib/token'
 import { create_token_filter } from '$lib/rules/rules_parser'
 
 /**

@@ -3,6 +3,8 @@ import { apply_token_transforms, create_context_filter, create_token_filter, cre
 /**
  * These are words that may change their underlying data based on the context around them.
  * These can look at the lookup results of the surrounding tokens (ie syntactic category).
+ * 
+ * @type {TransformRuleJson[]}
  */
 const transform_rules_json = [
 	// Verb infinitives and forms
@@ -527,7 +529,7 @@ const transform_rules_json = [
 
 /**
  *
- * @param {any} rule_json
+ * @param {TransformRuleJson} rule_json
  * @returns {TokenRule}
  */
 export function parse_transform_rule(rule_json) {

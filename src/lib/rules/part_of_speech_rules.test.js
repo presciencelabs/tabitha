@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '../parser/token'
+import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '../token'
 import { ERRORS } from '../parser/error_messages'
 import { apply_rules } from './rules_processor'
 import { describe, expect, test } from 'vitest'

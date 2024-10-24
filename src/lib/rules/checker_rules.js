@@ -1,10 +1,13 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { ERRORS } from '$lib/parser/error_messages'
-import { TOKEN_TYPE, create_added_token, format_token_message, get_message_type, is_one_part_of_speech, set_message_plain } from '$lib/parser/token'
+import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_one_part_of_speech, set_message_plain } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, message_set_action } from './rules_parser'
 
+/**
+ * @type {CheckerRuleJson[]}
+ */
 const checker_rules_json = [
 	{
 		'name': 'Check for "it" apart from an agent clause',
@@ -12,7 +15,7 @@ const checker_rules_json = [
 		'context': {
 			'notfollowedby': { 'tag': { 'clause_type': 'agent_clause' }, 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).',
 		},
 	},
@@ -44,7 +47,7 @@ const checker_rules_json = [
 			'followedby': { 'stem': 'other' },
 			'notfollowedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } },
 		},
-		'require': {
+		'error': {
 			'message': 'Reciprocal each-other must be hyphenated.',
 		},
 	},
@@ -69,7 +72,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot have multiple verbs in the same clause ({0:stem} and {stem}). Check for an unbracketed subordinate clause or consider splitting the sentence.',
 		},
 		'comment': 'See section 0.3 of the Phase 1 checklist',
@@ -77,7 +80,7 @@ const checker_rules_json = [
 	{
 		'name': 'Check for an Imperative Verb with no subject at the beginning of a sentence',
 		'trigger': { 'category': 'Verb', 'form': 'stem', 'tag': { 'position': 'first_word' } },
-		'require': {
+		'error': {
 			'precededby': 'You(X) (imp)',
 			'message': 'An imperative clause must have an explicit subject.',
 		},
@@ -88,7 +91,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'category': 'Conjunction', 'tag': { 'position': 'first_word' } },
 		},
-		'require': {
+		'error': {
 			'precededby': 'you(X) (imp)',
 			'message': 'An imperative clause must have an explicit subject.',
 		},
@@ -100,7 +103,7 @@ const checker_rules_json = [
 			'precededby': { 'token': '[', 'skip': 'all' },
 			'notprecededby': { 'token': '"', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot mark complement clauses as imperative.',
 		},
 	},
@@ -110,7 +113,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
 		},
-		'require': {
+		'error': {
 			'message': 'Write \'We(X) {0:stem} _suggestiveLets\' instead. See P1 Checklist section 15.',
 		},
 	},
@@ -120,7 +123,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': [{ 'category': 'Noun' }, { 'category': 'Verb', 'form': 'stem', 'skip': 'vp_modifiers' }],
 		},
-		'require': {
+		'error': {
 			'message': 'For the jussive write \'{0:token} {1:stem} (jussive) ...\' instead of \'Let {0:token} {1:stem}...\'. Or use \'(imp)\' for expressing permission. See P1 Checklist section 15.',
 		},
 	},
@@ -130,7 +133,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Noun' },
 		},
-		'require': {
+		'error': {
 			'message': 'Write \'I(X) pray-hope [{0:token}...]\' instead. See P1 Checklist section 15.',
 		},
 	},
@@ -145,7 +148,7 @@ const checker_rules_json = [
 	{
 		'name': 'Cannot use \'even\'',
 		'trigger': { 'stem': 'even' },
-		'require': {
+		'error': {
 			'message': 'Cannot use \'even\'. Simply omit it or reword the sentence to get the right emphasis. See P1 Checklist section 17.',
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
@@ -153,7 +156,7 @@ const checker_rules_json = [
 	{
 		'name': 'Cannot use \'any\'',
 		'trigger': { 'stem': 'any' },
-		'require': {
+		'error': {
 			'message': 'Cannot use \'any\'. Simply use \'a\' instead. See P1 Checklist section 17.',
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
@@ -161,7 +164,7 @@ const checker_rules_json = [
 	{
 		'name': 'Cannot use \'really\'',
 		'trigger': { 'token': 'really' },
-		'require': {
+		'error': {
 			'message': 'Cannot use \'really\'. Use \'actually\', \'truly\', \'very\', or \'much\' instead.',
 		},
 		'comment': 'See section 1 of the Phase 1 checklist',
@@ -173,7 +176,7 @@ const checker_rules_json = [
 			'precededby': { 'tag': { 'relation': 'genitive_saxon' }, 'skip': { 'token': 'very' } },
 			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot write "{0:token} own {1:token}". Simply omit \'own\' or write "{0:token} _emphasized {1:token}" if desired. See P1 Checklist section 17.',
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
@@ -208,7 +211,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'category': 'Noun' },
 		},
-		'require': {
+		'error': {
 			'precededby': '[',
 			'message': 'Missing bracket before relative or complement clause.',
 		},
@@ -219,7 +222,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': { 'token': '"' },
 		},
-		'require': {
+		'error': {
 			'followedby': '[',
 			'message': 'Missing bracket before an opening quote',
 		},
@@ -230,7 +233,7 @@ const checker_rules_json = [
 		'context': {
 			'notprecededby': { 'token': ',' },
 		},
-		'require': {
+		'error': {
 			'precededby': ',',
 			'message': 'Missing comma before an opening quote',
 		},
@@ -251,7 +254,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'turn', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'around\' must be hyphenated with the Verb (i.e. {0:stem}-around). DO NOT inflect the Verb (e.g. NOT turned-around).',
 		},
 	},
@@ -261,7 +264,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'chase|take|walk', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'away\' must be hyphenated with the Verb (i.e. {0:stem}-away). DO NOT inflect the Verb (e.g. NOT took-away).',
 		},
 	},
@@ -271,7 +274,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'cut|knock|lie|run|sit|walk|write', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'down\' must be hyphenated with the Verb (i.e. {0:stem}-down). DO NOT inflect the Verb (e.g. NOT ran-down).',
 		},
 	},
@@ -281,7 +284,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'cut|pull|take', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'off\' must be hyphenated with the Verb (i.e. {0:stem}-off). DO NOT inflect the Verb (e.g. NOT took-off).',
 		},
 	},
@@ -292,7 +295,7 @@ const checker_rules_json = [
 			'precededby': { 'stem': 'put', 'category': 'Verb' },
 			'followedby': { 'stem': 'clothes|glove|sandal|shirt|shoe' },
 		},
-		'require': {
+		'error': {
 			'message': '\'on\' must be hyphenated with the Verb (i.e. put-on).',
 		},
 		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
@@ -303,7 +306,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'come|cry|pour|pull', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'out\' must be hyphenated with the Verb (i.e. {0:stem}-out). DO NOT inflect the Verb (e.g. NOT cried-out).',
 		},
 	},
@@ -313,14 +316,14 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'go|pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': '\'up\' must be hyphenated with the Verb (i.e. {0:stem}-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
 		},
 	},
 	{
 		'name': 'Some noun plurals aren\'t recognized',
 		'trigger': { 'token': 'troubles|lands' },
-		'require': {
+		'error': {
 			'message': 'TBTA does not use the plural \'{token}\'. Put \'_plural\' after the singular form to indicate plurality.',
 		},
 	},
@@ -331,7 +334,7 @@ const checker_rules_json = [
 			'precededby': { 'token': '[' },
 			'notfollowedby': { 'token': '?', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot use \'what\' as a relativizer. Use \'the thing [that...]\' instead.',
 		},
 		'comment': 'See section 0.41 of the Phase 1 checklist',
@@ -351,7 +354,7 @@ const checker_rules_json = [
 			'precededby': { 'token': '[' },
 			'notfollowedby': { 'token': '?', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot use \'where\' as a relativizer. Use \'the place [that...]\' instead.',
 		},
 		'comment': 'See section 0.8 of the Phase 1 checklist',
@@ -363,7 +366,7 @@ const checker_rules_json = [
 			'precededby': { 'token': 'time' },
 			'subtokens': { 'token': 'when', 'skip': 'clause_start' },
 		},
-		'require': {
+		'error': {
 			'on': 'subtokens:0',
 			'message': 'Cannot use \'when\' as a relativizer. Use \'the time [that...]\' instead. See P1 Checklist 0.8.',
 		},
@@ -372,7 +375,7 @@ const checker_rules_json = [
 	{
 		'name': 'Don\'t allow \'whose\' as a relativizer',
 		'trigger': { 'token': 'whose' },
-		'require': {
+		'error': {
 			'message': 'Cannot use \'whose\'. Use \'X [who had...]\' instead. See P1 Checklist section 6.',
 		},
 		'comment': 'See section 6 of the Phase 1 checklist',
@@ -383,7 +386,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': { 'tag': 'determiner' },
 		},
-		'require': {
+		'error': {
 			'followedby': 'of',
 			'message': 'Use \'all of\', unless the modified Noun is generic. See P1 Checklist 0.17.',
 		},
@@ -395,7 +398,7 @@ const checker_rules_json = [
 		'context': {
 			'notfollowedby': { 'category': 'Verb', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': 'Must use \'{stem}\' with another Verb. See P1 Checklist 0.19.',
 		},
 		'comment': 'See section 0.19 of the Phase 1 checklist.',
@@ -403,7 +406,7 @@ const checker_rules_json = [
 	{
 		'name': 'Must use \'X is able to\' instead of \'X can\'',
 		'trigger': { 'token': 'can' },
-		'require': {
+		'error': {
 			'message': 'Use \'be able [to...]\' instead of \'can\'. See P1 Checklist 2.1.',
 		},
 		'comment': 'See section 2.1 of the Phase 1 checklist.',
@@ -414,7 +417,7 @@ const checker_rules_json = [
 		'context': {
 			'notprecededby': [{ 'token': '[', 'skip': { 'category': 'Conjunction' } }, { 'stem': 'so', 'skip': 'all' }],
 		},
-		'require': {
+		'error': {
 			'message': 'Use \'be able [to...]\' instead of \'could\', unless in a \'so-that\' clause. See P1 Checklist 2.1.',
 		},
 		'comment': 'See section 2.1 of the Phase 1 checklist.',
@@ -425,7 +428,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
-		'require': {
+		'error': {
 			'message': 'Use \'will {1:stem}\' instead of \'going to {1:token}\' to express future tense. See P1 Checklist 0.28.',
 		},
 		'comment': 'See section 0.28 of the Phase 1 checklist.',
@@ -436,7 +439,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
-		'require': {
+		'error': {
 			'message': 'Use \'will\', \'must\', or \'should\' instead of \'{token} to...\' to express a future obligation.',
 		},
 	},
@@ -446,7 +449,7 @@ const checker_rules_json = [
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
-		'require': {
+		'error': {
 			'message': 'Use \'must\' or \'should\' instead of \'{token} to...\' to express an obligation.',
 		},
 	},
@@ -463,7 +466,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'category': 'Conjunction' },
 		},
-		'require': {
+		'error': {
 			'message': 'Cannot use two conjunctions. Pick the one that is most meaningful.',
 		},
 	},
@@ -506,7 +509,7 @@ const checker_rules_json = [
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
 			'subtokens': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'on': 'subtokens:0',
 			'message': 'Cannot use a passive within this patient clause because its subject is required to be the same as the outer Verb. Try making the subject explicit, or reword the sentence. See P1 Checklist 24.',
 		},
@@ -518,7 +521,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'in-order-to', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': "Cannot use a passive within an 'in-order-to' clause because its subject is required to be the same as the outer Verb. Consider using 'so-that' instead. See P1 Checklist 24.",
 		},
 		'comment': 'eg. John went to the market XX[in-order-to be seen by Mary]XX.',
@@ -529,7 +532,7 @@ const checker_rules_json = [
 		'context': {
 			'precededby': { 'stem': 'by', 'skip': 'all' },
 		},
-		'require': {
+		'error': {
 			'message': "Cannot use a passive within a 'by' clause because its subject is required to be the same as the outer Verb. Consider using 'because' instead. See P1 Checklist 24.",
 		},
 		'comment': 'eg. John went to the market XX[by being taken by Mary]XX.',
@@ -719,25 +722,18 @@ const builtin_checker_rules = [
 
 /**
  *
- * @param {any} rule_json
+ * @param {CheckerRuleJson} rule_json
  * @returns {TokenRule}
  */
 export function parse_checker_rule(rule_json) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])
 
-	// TODO #101 use 'error' instead of require, and change 'precededby/followedby' to insert actions
-
-	/** @type {string} */
-	// @ts-ignore there will always be a message tag
-	const message_tag = ['require', 'warning', 'suggest', 'info'].find(tag => tag in rule_json)
-
-	/** @type {MessageLabel} */
-	// @ts-ignore the string will always be a MessageType
-	const message_label = message_tag === 'require' ? 'error' : message_tag
-	const message_type = get_message_type(message_label)
-
-	const action = checker_action(rule_json[message_tag], message_type)
+	/** @type {MessageType} */
+	// @ts-ignore there will always be a message
+	const message_type = Object.values(MESSAGE_TYPE).find(({ label }) => label in rule_json)
+	const checker_action_json = rule_json[message_type.label] ?? { 'message': 'will never be undefined' }
+	const action = checker_action(checker_action_json, message_type)
 
 	return {
 		trigger,
@@ -746,7 +742,7 @@ export function parse_checker_rule(rule_json) {
 	}
 
 	/**
-	 * @param {CheckerAction} action 
+	 * @param {CheckerActionJson} action 
 	 * @param {MessageType} message_type
 	 * @returns {RuleAction}
 	 */
@@ -778,7 +774,7 @@ export function parse_checker_rule(rule_json) {
 
 	/**
 	 * 
-	 * @param {CheckerAction} action 
+	 * @param {CheckerActionJson} action 
 	 * @param {RuleTriggerContext} trigger_context 
 	 */
 	function get_token_to_flag(action, { tokens, trigger_token, context_indexes, subtoken_indexes }) {

@@ -1,8 +1,9 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
-import { add_tag_to_token, set_message, split_stem_and_sense } from '$lib/parser/token'
+import { add_tag_to_token, set_message, split_stem_and_sense } from '$lib/token'
 import { create_context_filter, create_token_filter } from '../rules_parser'
 
 /** @typedef {[string, any]} PriorityOverrideRules */
+/** @typedef {(role_matches: RoleMatchResult[]) => boolean} ArgumentMatchFilter */
 
 /**
  * By default, senses with valid case frames are prioritized by letter (eg. -A is selected over -B).

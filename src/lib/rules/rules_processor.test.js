@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '$lib/parser/token'
+import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '$lib/token'
 import { describe, expect, test } from 'vitest'
 import { apply_rules } from './rules_processor'
 import { LOOKUP_RULES } from './lookup_rules'
@@ -46,7 +46,7 @@ describe('transform rules', () => {
 		const transform_rules = [
 			{
 				'trigger': { 'token': 'token' },
-				'context': { 'followedby': 'all' },
+				'context': { },
 				'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 			},
 		].map(parse_transform_rule)
@@ -162,7 +162,7 @@ describe('transform rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context', 'skip': 'all' } },
-				'transform': { 'concept': 'concept-A' },
+				'transform': { 'type': TOKEN_TYPE.FUNCTION_WORD },
 			},
 		].map(parse_transform_rule)
 
@@ -183,11 +183,11 @@ describe('transform rules', () => {
 
 describe('checker rules', () => {
 	test('trigger does not match', () => {
-		const rules = [
+		const rules = /** @type {CheckerRuleJson[]} */ [
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},
@@ -209,7 +209,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},
@@ -231,7 +231,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},
@@ -258,7 +258,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'precededby': 'add',
 					'message': 'message',
 				},
@@ -285,7 +285,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'precededby': 'add1',
 					'message': 'message1',
 				},
@@ -293,7 +293,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'precededby': 'add2',
 					'message': 'message2',
 				},
@@ -322,7 +322,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': { 'message': 'message' },
+				'error': { 'message': 'message' },
 			},
 		].map(parse_checker_rule)
 
@@ -345,7 +345,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context', 'skip': 'all' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},
@@ -370,7 +370,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context', 'skip': 'all' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},
@@ -396,7 +396,7 @@ describe('checker rules', () => {
 			{
 				'trigger': { 'token': 'token' },
 				'context': { 'followedby': { 'token': 'context' } },
-				'require': {
+				'error': {
 					'followedby': 'add',
 					'message': 'message',
 				},

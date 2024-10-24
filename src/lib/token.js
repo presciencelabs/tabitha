@@ -151,7 +151,7 @@ export function format_token_message({ tokens, trigger_token, context_indexes },
 
 /**
  * 
- * @param {MessagedToken} token 
+ * @param {TokenBase} token 
  * @returns {boolean}
  */
 export function token_has_error(token) {
@@ -160,7 +160,7 @@ export function token_has_error(token) {
 
 /**
  * 
- * @param {MessagedToken} token 
+ * @param {TokenBase} token 
  * @param {MessageLabel?} type_to_check
  * @returns {boolean}
  */
@@ -264,7 +264,7 @@ export function stem_with_sense(result) {
  * @param {number} [other_data.level=-1] 
  * @param {string} [other_data.gloss=''] 
  * @param {string} [other_data.categorization=''] 
- * @param {HowToResult[]} [other_data.how_to=[]] 
+ * @param {HowToEntry[]} [other_data.how_to=[]] 
  * @param {CaseFrameResult?} [other_data.case_frame=null] 
  * @returns {LookupResult}
  */

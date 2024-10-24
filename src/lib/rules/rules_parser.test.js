@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { TOKEN_TYPE, create_token } from '../parser/token'
+import { TOKEN_TYPE, create_token } from '../token'
 import { create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
 
 describe('token filters', () => {
@@ -115,6 +115,7 @@ describe('token filters', () => {
 		expect(results[5]).toBe(true)
 	})
 	test('by multiple tag options', () => {
+		/** @type {TokenFilterJson} */
 		const filter_json = { 'tag': [{ 'key1': 'value1' }, { 'key2': 'value2' }] }
 		const filter = create_token_filter(filter_json)
 
@@ -150,19 +151,6 @@ describe('context filters', () => {
 		const results = tokens.map((_, i) => filter(tokens, i))
 
 		expect(results.every(result => result.success)).toBe(true)
-	})
-	test('invalid filter results in true', () => {
-		const context_json = { 'followedby': 'invalid' }
-		const filter = create_context_filter(context_json)
-
-		const tokens = [
-			create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
-			create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-			create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
-		]
-		const results = tokens.map((_, i) => filter(tokens, i))
-
-		expect(results.some(result => result.success)).toBe(true)
 	})
 	test('empty filter results in true', () => {
 		const context_json = { 'followedby': { } }
@@ -527,13 +515,5 @@ describe('token transforms', () => {
 		expect(result.type).toBe(TOKEN_TYPE.FUNCTION_WORD)
 		expect(result.tag).toEqual({ 'key': 'value' })
 		expect(result.messages).toEqual(token.messages)
-	})
-	test('unrecognized', () => {
-		const transform_json = { 'other': 'other' }
-		const transform = create_token_transform(transform_json)
-
-		const token = create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' })
-		const result = transform(token)
-		expect(result).toEqual(token)
 	})
 })

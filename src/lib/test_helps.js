@@ -1,5 +1,5 @@
 import { expect } from 'vitest'
-import { MESSAGE_TYPE, get_message_type } from './parser/token'
+import { MESSAGE_TYPE, get_message_type } from './token'
 
 /**
  * @param {Token?} token 

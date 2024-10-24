@@ -1,5 +1,5 @@
 import { create_context_filter, message_set_action } from './rules_parser'
-import { TOKEN_TYPE, add_tag_to_token } from '../parser/token'
+import { TOKEN_TYPE, add_tag_to_token } from '../token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
 const SECOND_PERSON = ['you', 'your', 'yourself', 'yourselves']

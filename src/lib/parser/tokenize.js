@@ -1,7 +1,7 @@
 import { CLAUSE_NOTATIONS } from './clause_notations'
 import { FUNCTION_WORDS } from './function_words'
 import { REGEXES } from '$lib/regexes'
-import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from './token'
+import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { ERRORS } from './error_messages'
 
 /**

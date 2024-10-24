@@ -1,24 +1,19 @@
-import { TOKEN_TYPE } from '$lib/parser/token'
-import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from './common'
+import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
+import { by_adposition, by_clause_tag, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective } from './presets'
 
+/** @type {RoleRuleJson<VerbRoleTag>} */
 const default_verb_case_frame_json = {
-	'agent': {
-		'directly_before_verb': { },
-	},
+	'agent': directly_before_verb(),
 	'patient': {
-		'directly_after_verb': { },
+		...directly_after_verb(),
 		'comment': 'one of state or patient will be removed from the defaults depending on the stem (be/have use state instead of patient)',
 	},
 	'state': {
-		'directly_after_verb': { },
+		...directly_after_verb(),
 		'comment': 'one of state or patient will be removed from the defaults depending on the stem (be/have use state instead of patient)',
 	},
-	'source': {
-		'by_adposition': 'from',
-	},
-	'destination': {
-		'by_adposition': 'to',
-	},
+	'source': by_adposition('from'),
+	'destination': by_adposition('to'),
 	'instrument': {
 		'trigger': 'none',
 		// TODO check feature on lexicon word like the Analyzer does. instruments have to be a thing, not a person
@@ -29,117 +24,30 @@ const default_verb_case_frame_json = {
 		// For now only accept proper names. Not a big deal because the beneficiary is rarely required (only provide-A requires it)
 		'trigger': { 'tag': { 'syntax': 'head_np' }, 'level': '4' },	
 		'context': { 'precededby': { 'token': 'for', 'skip': 'np_modifiers' } },
-		'context_transform': { 'function': '' },
+		'context_transform': { 'function': { } },
 		'comment': '"for" could mean other things as well. TODO These should be set in the transform rules',
 	},
-	'agent_clause': {
-		'by_clause_tag': 'agent_clause',
-	},
+	'agent_clause': by_clause_tag('agent_clause'),
 	// These are extra argument types that are not directly detected by the 'categorization' value but
 	// a sense may need a specific type of.
-	'patient_clause_different_participant': {
-		'by_clause_tag': 'patient_clause_different_participant',
-	},
-	'patient_clause_same_participant': {
-		'by_clause_tag': 'patient_clause_same_participant',
-	},
-	'patient_clause_simultaneous': {
-		'by_clause_tag': 'patient_clause_simultaneous',
-	},
-	'patient_clause_quote_begin': {
-		'by_clause_tag': 'patient_clause_quote_begin',
-	},
-	'predicate_adjective': {
-		'predicate_adjective': { },
-	},
+	'patient_clause_different_participant': by_clause_tag('patient_clause_different_participant'),
+	'patient_clause_same_participant': by_clause_tag('patient_clause_same_participant'),
+	'patient_clause_simultaneous': by_clause_tag('patient_clause_simultaneous'),
+	'patient_clause_quote_begin': by_clause_tag('patient_clause_quote_begin'),
+	'predicate_adjective': predicate_adjective(),
 }
-
-/** @type {Map<string, any>} */
-const SENSE_RULE_PRESETS = new Map([
-	['patient_from_subordinate_clause', {
-		'patient': {
-			'by_clause_tag': 'patient_clause_different_participant',
-			'missing_message': "{sense} should be written in the format 'X {stem} [Y to Verb]'.",
-		},
-		'other_rules': {
-			'extra_patient': {
-				'directly_after_verb': { },
-				'extra_message': "{sense} should not be written with the patient. Use the format 'X {stem} [Y to Verb]'.",
-			},
-		},
-		'comment': 'the patient is omitted in the phase 1 and copied from within the subordinate. so treat the clause like the patient',
-	}],
-])
-
-/** @type {RoleRulePreset[]} */
-// @ts-ignore the map initializer array doesn't like the different object structures
-const ROLE_RULE_PRESETS = [
-	['by_adposition', (preset_value, role_tag) => ({
-		'trigger': { 'tag': { 'syntax': 'head_np' } },
-		'context': { 'precededby': { 'token': preset_value, 'skip': 'np_modifiers' } },
-		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
-		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
-	})],
-	['by_clause_tag', preset_value => ({
-		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': preset_value, 'role': 'none' } },
-	})],
-	['directly_before_verb', preset_value => ({
-		// relative to the word whose case frame we're checking
-		'by_relative_context': {
-			'precededby': {
-				'tag': { 'syntax': 'head_np' },
-				'skip': ['np', 'vp_modifiers'], // skip 'np' because there might be a genitive (eg 'man of God')
-				...preset_value,
-			},
-		},
-	})],
-	['directly_after_verb', preset_value => ({
-		'by_relative_context': {
-			'followedby': {
-				'tag': { 'syntax': 'head_np' },
-				'skip': ['vp_modifiers', 'np_modifiers'],
-				...preset_value,
-			},
-		},
-	})],
-	['directly_after_verb_with_adposition', (preset_value, role_tag) => ({
-		'by_relative_context': {
-			'followedby': [
-				{ 'token': preset_value, 'skip': 'vp_modifiers' },
-				{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
-			],
-			'argument_context_index': 1,
-		},
-		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },	// make the adposition a function word
-		'missing_message': `Couldn't find the ${role_tag}, which in this case should have '${preset_value}' before it.`,
-	})],
-	['predicate_adjective', () => ({
-		'by_relative_context': {
-			'followedby': {
-				'category': 'Adjective',
-				'tag': { 'adj_usage': 'predicative' },
-				'skip': ['adjp_modifiers_predicative', 'advp', { 'tag': 'verb_polarity' }],
-			},
-		},
-	})],
-	['by_relative_context', preset_value => ({
-		'trigger': 'all',
-		'context': preset_value,
-		'argument_context_index': preset_value['argument_context_index'] ?? 0,
-	})],
-]
 
 /**
  * These rules allow each verb sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
  * 
- * @type {Map<WordStem, [WordSense, any][]>}
+ * @type {Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]>}
  */
 const verb_case_frames = new Map([
 	['agree', [
-		['agree-A', { 'patient': { 'directly_after_verb_with_adposition': 'with' } }],
+		['agree-A', { 'patient': directly_after_verb_with_adposition('with') }],
 		['agree-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
-		['agree-C', { 'patient': { 'directly_after_verb_with_adposition': 'with' } }],
+		['agree-C', { 'patient': directly_after_verb_with_adposition('with') }],
 	]],
 	['allow', [
 		['allow-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
@@ -150,8 +58,8 @@ const verb_case_frames = new Map([
 	['appear', [
 		['appear-B', {
 			'patient': [
-				{ 'directly_after_verb': { } },
-				{ 'directly_after_verb_with_adposition': 'like' },
+				directly_after_verb(),
+				directly_after_verb_with_adposition('like'),
 			],
 		}],
 	]],
@@ -167,7 +75,7 @@ const verb_case_frames = new Map([
 				'missing_message': "ask-A should be written in the format 'X asked (destination) (patient)' e.g. 'John asked Mary a question'.",
 			},
 			'destination': [
-				{ 'by_adposition': 'to' },
+				by_adposition('to'),
 				{
 					'trigger': { 'category': 'Noun' },
 					'context': {
@@ -181,23 +89,23 @@ const verb_case_frames = new Map([
 			'comment': 'can be "ask Patient" or "ask Destination Patient" or technically "ask Patient to Destination"',
 		}],
 		['ask-B', {
-			'destination': { 'directly_after_verb': { } },
-			'patient': { 'by_adposition': 'for' },
+			'destination': directly_after_verb(),
+			'patient': by_adposition('for'),
 		}],
-		['ask-C', 'patient_from_subordinate_clause'],
+		['ask-C', patient_from_subordinate_clause()],
 		['ask-D', {
-			'destination': { 'directly_after_verb': { } },
-			'patient': { 'by_adposition': 'about' },
+			'destination': directly_after_verb(),
+			'patient': by_adposition('about'),
 		}],
 		['ask-E', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 		['ask-F', {
 			'patient_clause_different_participant': [
 				{
-					'by_clause_tag': 'patient_clause_different_participant',
+					...by_clause_tag('patient_clause_different_participant'),
 					'missing_message': "ask-F should be written in the format 'asked X [(if//whether) ...]' (with or without the if/whether)",
 				},
 				{
-					'by_clause_tag': 'adverbial_clause',
+					...by_clause_tag('adverbial_clause'),
 					'context': {
 						'subtokens': { 'token': 'if|whether', 'skip': 'clause_start' },
 					},
@@ -234,7 +142,7 @@ const verb_case_frames = new Map([
 			},
 		}],
 		['be-G', {
-			'state': { 'directly_after_verb_with_adposition': 'for' },
+			'state': directly_after_verb_with_adposition('for'),
 			'beneficiary': { 'trigger': 'none' },
 		}],
 		['be-H', {
@@ -244,35 +152,35 @@ const verb_case_frames = new Map([
 			},
 		}],
 		['be-I', {
-			'state': { 'directly_after_verb_with_adposition': 'with' },
+			'state': directly_after_verb_with_adposition('with'),
 		}],
 		['be-J', {
 			'agent': {
-				'directly_before_verb': { 'stem': 'date' },
+				...directly_before_verb({ 'stem': 'date' }),
 				'missing_message': 'be-J requires the format \'The date be X\'.',
 			},
 		}],
 		['be-K', {
 			'agent': {
-				'directly_before_verb': { 'stem': 'name' },
+				...directly_before_verb({ 'stem': 'name' }),
 				'missing_message': 'be-K requires the format "X\'s name be Y" or "The name of X be Y".',
 			},
 		}],
 		['be-N', {
 			'agent': {
-				'directly_before_verb': { 'stem': 'time' },
+				...directly_before_verb({ 'stem': 'time' }),
 				'missing_message': 'be-N requires the format \'The time be X\' where X is a temporal noun (eg 4PM//morning).',
 			},
 		}],
 		['be-O', {
 			'agent': {
-				'directly_before_verb': { 'stem': 'weather' },
+				...directly_before_verb({ 'stem': 'weather' }),
 				'missing_message': 'be-O requires the format \'The weather be X\' where X can be a noun (eg rain) or adjective (eg hot).',
 			},
 			'other_optional': 'predicate_adjective',
 		}],
 		['be-P', {
-			'state': { 'directly_after_verb_with_adposition': 'about' },
+			'state': directly_after_verb_with_adposition('about'),
 		}],
 		['be-Q', {
 			'state': {
@@ -283,7 +191,7 @@ const verb_case_frames = new Map([
 		}],
 		['be-R', {
 			'state': {
-				'directly_after_verb_with_adposition': 'part',
+				...directly_after_verb_with_adposition('part'),
 				'missing_message': 'be-R requires the format \'X be part of Y\'',
 			},
 		}],
@@ -297,13 +205,13 @@ const verb_case_frames = new Map([
 			'comment': "clear the 'state' argument so it doesn't get triggered by 'year/month/day' etc. 'old' is the predicate adjective.",
 		}],
 		['be-T', {
-			'state': { 'directly_after_verb_with_adposition': 'from' },
+			'state': directly_after_verb_with_adposition('from'),
 			'source': { 'trigger': 'none' },
 		}],
-		['be-U', { 'state': { 'directly_after_verb_with_adposition': 'like' } }],
+		['be-U', { 'state': directly_after_verb_with_adposition('like') }],
 		['be-V', { 'other_required': 'predicate_adjective' }],
-		['be-W', { 'state': { 'directly_after_verb_with_adposition': 'in' } }],
-		['be-X', { 'state': { 'directly_after_verb': { } } }],
+		['be-W', { 'state': directly_after_verb_with_adposition('in') }],
+		['be-X', { 'state': directly_after_verb() }],
 	]],
 	['become', [
 		['become-A', {
@@ -313,12 +221,12 @@ const verb_case_frames = new Map([
 		}],
 		['become-F', {
 			'agent': {
-				'directly_before_verb': { 'stem': 'weather' },
+				...directly_before_verb({ 'stem': 'weather' }),
 				'missing_message': 'become-F requires the format \'The weather be X\' where X can be a noun (eg rain) or adjective (eg hot).',
 			},
 			'other_optional': 'predicate_adjective',
 		}],
-		['become-G', { 'state': { 'directly_after_verb_with_adposition': 'like' } }],
+		['become-G', { 'state': directly_after_verb_with_adposition('like') }],
 		['become-H', {
 			'state': {
 				'trigger': { 'tag': { 'syntax': 'head_np' } },
@@ -334,13 +242,13 @@ const verb_case_frames = new Map([
 		}],
 		['become-J', {
 			'state': [
-				{ 'directly_after_verb': { } },
-				{ 'directly_after_verb_with_adposition': 'like' },
+				directly_after_verb(),
+				directly_after_verb_with_adposition('like'),
 			],
 		}],
 	]],
 	['believe', [
-		['believe-B', { 'patient': { 'directly_after_verb_with_adposition': 'in' } }],
+		['believe-B', { 'patient': directly_after_verb_with_adposition('in') }],
 	]],
 	['bring', []],
 	['call', [
@@ -362,12 +270,12 @@ const verb_case_frames = new Map([
 	]],
 	['cause', []],
 	['change', [
-		['change-A', { 'patient': { 'directly_after_verb_with_adposition': 'into' } }],
+		['change-A', { 'patient': directly_after_verb_with_adposition('into') }],
 		['change-B', {
-			'patient': { 'by_adposition': 'about' },
+			'patient': by_adposition('about'),
 			'other_rules': {
 				'mind': {
-					'directly_after_verb': { 'stem': 'mind' },
+					...directly_after_verb({ 'stem': 'mind' }),
 					'transform': { 'function': { 'syntax': 'extra_patient' } },
 					'missing_message': "Write 'change X's mind' for change-B",
 				},
@@ -375,26 +283,26 @@ const verb_case_frames = new Map([
 			'other_required': 'mind',
 			'comment': "'mind' ban be included in the phase 1 (eg. Pharoah changed Pharoah's mind) but it is not included in the semantic representation.",
 		}],
-		['change-C', { 'destination': { 'by_adposition': 'to|into' } }],
-		['change-E', { 'destination': { 'by_adposition': 'to|into' } }],
+		['change-C', { 'destination': by_adposition('to|into') }],
+		['change-E', { 'destination': by_adposition('to|into') }],
 	]],
 	['choose', [
-		['choose-B', 'patient_from_subordinate_clause'],
+		['choose-B', patient_from_subordinate_clause()],
 		['choose-C', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
 	['come', []],
 	['cover', [
-		['cover-A', { 'instrument': { 'by_adposition': 'with' } }],
-		['cover-B', { 'instrument': { 'by_adposition': 'with' } }],
+		['cover-A', { 'instrument': by_adposition('with') }],
+		['cover-B', { 'instrument': by_adposition('with') }],
 	]],
 	['die', []],
 	['dream', [
-		['dream-A', { 'patient': { 'by_adposition': 'about' } }],
+		['dream-A', { 'patient': by_adposition('about') }],
 	]],
 	['give', [
 		['give-A', {
 			'patient': {
-				'directly_after_verb': { },
+				...directly_after_verb(),
 				'missing_message': "'give' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
 			},
 		}],
@@ -404,7 +312,7 @@ const verb_case_frames = new Map([
 		['grow-B', {
 			'other_rules': {
 				'up': {
-					'by_relative_context': { 'followedby': { 'token': 'up' } },
+					...by_relative_context({ 'followedby': { 'token': 'up' } }),
 					'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
 					'tag_role': false,
 				},
@@ -414,27 +322,27 @@ const verb_case_frames = new Map([
 		}],
 	]],
 	['have', [
-		['have-J', { 'instrument': { 'by_adposition': 'with' } }],
+		['have-J', { 'instrument': by_adposition('with') }],
 	]],
 	['hear', [
-		['hear-A', { 'instrument': { 'by_adposition': 'with' } }],
-		['hear-B', { 'instrument': { 'by_adposition': 'with' } }],
+		['hear-A', { 'instrument': by_adposition('with') }],
+		['hear-B', { 'instrument': by_adposition('with') }],
 		['hear-C', { 'other_optional': 'patient_clause_simultaneous' }],
-		['hear-D', { 'patient': { 'by_adposition': 'about' } }],
+		['hear-D', { 'patient': by_adposition('about') }],
 	]],
 	['help', [
-		['help-B', 'patient_from_subordinate_clause'],
+		['help-B', patient_from_subordinate_clause()],
 	]],
 	['kill', []],
 	['know', [
-		['know-D', { 'patient': { 'directly_after_verb_with_adposition': 'about' } }],
-		['know-B', { 'instrument': { 'by_adposition': 'with' } }],
+		['know-D', { 'patient': directly_after_verb_with_adposition('about') }],
+		['know-B', { 'instrument': by_adposition('with') }],
 	]],
 	['laugh', [
-		['laugh-B', { 'patient': { 'directly_after_verb_with_adposition': 'at' } }],
+		['laugh-B', { 'patient': directly_after_verb_with_adposition('at') }],
 	]],
 	['learn', [
-		['learn-C', { 'patient': { 'directly_after_verb_with_adposition': 'about' } }],
+		['learn-C', { 'patient': directly_after_verb_with_adposition('about') }],
 	]],
 	['leave', []],
 	['lift', []],
@@ -469,23 +377,24 @@ const verb_case_frames = new Map([
 		['live-C', {
 			'other_rules': {
 				'just_like_clause': {
-					'by_clause_tag': 'adverbial_clause',
+					...by_clause_tag('adverbial_clause'),
 					'context': {
 						'subtokens': { 'stem': 'just-like', 'skip': { 'token': '[' } },
 					},
 					'tag_role': false,
+					'comment': 'this is not an argument, but used for sense selection',
 				},
 			},
 			'other_optional': 'just_like_clause',
 		}],
 	]],
 	['look', [
-		['look-A', { 'patient': { 'directly_after_verb_with_adposition': 'at' } }],
+		['look-A', { 'patient': directly_after_verb_with_adposition('at') }],
 		['look-B', { 'other_required': 'predicate_adjective' }],	// X looked happy/sad/excited
 	]],
 	['make', [
 		['make-A', {
-			'instrument': { 'by_adposition': 'with' },
+			'instrument': { ...by_adposition('with') },
 		}],
 		['make-C', {
 			// Possible accepted formats:
@@ -494,34 +403,34 @@ const verb_case_frames = new Map([
 			// Daniel 12:7 That man made a promise [by God](instrument). (not recognized in Analyzer but valid phase 1)
 			'instrument': [
 				{
-					'by_adposition': 'by',
+					...by_adposition('by'),
 					'trigger': { 'tag': { 'syntax': 'head_np' }, 'stem': 'God|Yahweh' },
 				},
 				{
-					'by_adposition': 'in',
+					...by_adposition('in'),
 					'trigger': { 'tag': { 'syntax': 'head_np' }, 'stem': 'name' },
 				},
 			],
 			'destination': [
-				{ 'by_adposition': 'to' },
+				by_adposition('to'),
 				{
 					'trigger': { 'tag': { 'syntax': 'head_np' } },
 					'context': { 'precededby': [{ 'stem': 'covenant' }, { 'token': 'with', 'skip': 'np_modifiers' }] },
-					'context_transform': [{}, { 'function': {} }],
+					'context_transform': [{}, { 'function': { } }],
 				},
 			],
 		}],
-		['make-E', { 'instrument': { 'by_adposition': 'with' } }],
+		['make-E', { 'instrument': by_adposition('with') }],
 	]],
 	['pray', [
-		['pray-A', { 'patient': { 'by_adposition': 'about' } }],
+		['pray-A', { 'patient': by_adposition('about') }],
 		['pray-C', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
 	['prepare', []],
 	['promise', [
-		['promise-A', { 'instrument': { 'by_adposition': 'with' } }],
+		['promise-A', { 'instrument': by_adposition('with') }],
 		['promise-B', {
-			'instrument': { 'by_adposition': 'with' },
+			'instrument': by_adposition('with'),
 			'patient_clause_type': 'patient_clause_quote_begin',
 		}],
 	]],
@@ -533,8 +442,8 @@ const verb_case_frames = new Map([
 	]],
 	['search', [
 		['search-A', {
-			'patient': { 'directly_after_verb_with_adposition': 'for' },
-			'destination': { 'by_adposition': 'in' },
+			'patient': directly_after_verb_with_adposition('for'),
+			'destination': by_adposition('in'),
 			'comment': 'eg. Genesis 44:12 The servant searched [for the cup(P)] [in the bags(d)].',
 		}],
 	]],
@@ -544,23 +453,23 @@ const verb_case_frames = new Map([
 	['send', [
 		['send-B', {
 			'patient': {
-				'directly_after_verb': { },
+				...directly_after_verb(),
 				'missing_message': "'send' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
 			},
 		}],
 		['send-C', {
 			'patient': {
-				'directly_after_verb': { },
+				...directly_after_verb(),
 				'missing_message': "'send' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
 			},
 		}],
 	]],
 	['speak', [
 		['speak-A', {
-			'patient': { 'by_adposition': 'about' },
+			'patient': by_adposition('about') ,
 			'instrument': {
-				'by_adposition': 'in',	// in a language
-				'context_transform': { 'concept': 'in-K' },
+				...by_adposition('in'),	// in a language
+				// 'context_transform': { 'concept': 'in-K' },
 			},
 			'other_rules': {
 				'extra_patient': {
@@ -573,36 +482,36 @@ const verb_case_frames = new Map([
 	['take', []],
 	['teach', [
 		['teach-A', {
-			'destination': { 'directly_after_verb': { } },
-			'patient': { 'by_adposition': 'about' },
+			'destination': directly_after_verb(),
+			'patient': by_adposition('about'),
 		}],
-		['teach-D', 'patient_from_subordinate_clause'],
+		['teach-D', patient_from_subordinate_clause()],
 	]],
 	['tell', [
 		['tell-A', {
-			'instrument': { 'by_adposition': 'with' },
-			'patient_clause_different_participant': { 'by_clause_tag': 'patient_clause_different_participant|relative_clause_that' },
+			'instrument': by_adposition('with'),
+			'patient_clause_different_participant': by_clause_tag('patient_clause_different_participant|relative_clause_that'),
 			'comment': 'the patient clause may have been interpreted as a relative clause if \'that\' was present',
 		}],
-		['tell-B', 'patient_from_subordinate_clause'],
+		['tell-B', patient_from_subordinate_clause()],
 		['tell-C', {
-			'destination': { 'directly_after_verb': { } },
-			'instrument': { 'by_adposition': 'with' },
-			'patient': { 'by_adposition': 'about' },
+			'destination': directly_after_verb(),
+			'instrument': by_adposition('with'),
+			'patient': by_adposition('about'),
 		}],
-		['tell-D', { 'instrument': { 'by_adposition': 'with' } }],
+		['tell-D', { 'instrument': by_adposition('with') }],
 		['tell-E', {
-			'destination': { 'directly_after_verb': { } },
+			'destination': directly_after_verb(),
 			'patient': { 'trigger': 'none' },		// clear the patient so it doesn't get confused with the destination
 			'patient_clause_type': 'patient_clause_quote_begin',
 		}],
 	]],
 	['think', [
-		['think-A', { 'patient': { 'by_adposition': 'about' } }],
+		['think-A', { 'patient': by_adposition('about') }],
 		['think-B', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 		['think-D', {
 			'patient_clause_same_participant': {
-				'by_clause_tag': 'patient_clause_same_participant',
+				...by_clause_tag('patient_clause_same_participant'),
 				'context': {
 					'precededby': { 'token': 'about' },
 				},
@@ -610,16 +519,16 @@ const verb_case_frames = new Map([
 				'missing_message': "think-D should be written in the format 'think about [Verb-ing]'",
 			},
 			'patient_clause_different_participant': {
-				'by_clause_tag': 'patient_clause_different_participant',
+				...by_clause_tag('patient_clause_different_participant'),
 				'extra_message': "think-D should be written in the format 'think about [Verb-ing]'",
 			},
 			'patient_clause_type': 'patient_clause_same_participant',
 		}],
 	]],
 	['throw', [
-		['throw-A', { 'destination': { 'by_adposition': 'at' } }],
+		['throw-A', { 'destination': by_adposition('at') }],
 		['throw-B', {
-			'destination': { 'by_adposition': 'into' },
+			'destination': by_adposition('into'),
 			'source': {
 				'trigger': { 'tag': { 'syntax': 'head_np' } },
 				'context': {
@@ -634,16 +543,16 @@ const verb_case_frames = new Map([
 				],
 			},
 		}],
-		['throw-E', { 'destination': { 'by_adposition': 'into' } }],
+		['throw-E', { 'destination': by_adposition('into') }],
 	]],
 	['want', [
 		['want-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
 	['work', [
-		['work-A', { 'instrument': { 'by_adposition': 'with' } }],
+		['work-A', { 'instrument': by_adposition('with') }],
 	]],
 	['worry', [
-		['worry-A', { 'patient': { 'directly_after_verb_with_adposition': 'about' } }],
+		['worry-A', { 'patient': directly_after_verb_with_adposition('about') }],
 	]],
 ])
 
@@ -652,7 +561,7 @@ const verb_case_frames = new Map([
  */
 function create_default_argument_rules() {
 	return Object.entries(default_verb_case_frame_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json, ROLE_RULE_PRESETS))
+		.flatMap(rule_json => parse_case_frame_rule(rule_json))
 }
 
 /**
@@ -663,13 +572,12 @@ function create_verb_argument_rules() {
 
 	/**
 	 * 
-	 * @param {[WordStem, [WordSense, any][]]} stem_rules 
+	 * @param {[WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]]} stem_rules 
 	 * @returns {[WordStem, ArgumentRulesForSense[]]}
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
 		const defaults = get_default_rules_for_stem(stem)
-		const presets = { sense_presets: SENSE_RULE_PRESETS, role_presets: ROLE_RULE_PRESETS }
-		return [stem, parse_sense_rules(sense_rules_json, defaults, presets)]
+		return [stem, parse_sense_rules(sense_rules_json, defaults)]
 	}
 }
 
@@ -774,16 +682,16 @@ export function check_verb_case_frames_passive(trigger_context) {
 	// for a passive, the 'patient' goes right before the verb and the 'agent' is detected by the adposition 'by'
 	const passive_rules_json = {
 		'patient': {
-			'directly_before_verb': { },
+			...directly_before_verb(),
 			'missing_message': 'A patient is required, which goes before the Verb in the passive.',
 		},
 		'agent': {
-			'by_adposition': 'by',
+			...by_adposition('by'),
 			'missing_message': 'An agent is required, which for a passive is preceded by \'by\'.',
 		},
 	}
 	const passive_rules = Object.entries(passive_rules_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json, ROLE_RULE_PRESETS))
+		.flatMap(rule_json => parse_case_frame_rule(rule_json))
 
 	check_verb_case_frames(
 		trigger_context,

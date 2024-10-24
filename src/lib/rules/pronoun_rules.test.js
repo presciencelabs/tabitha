@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { PRONOUN_TAGS, PRONOUN_RULES } from './pronoun_rules'
-import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '../parser/token'
+import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '../token'
 import { apply_rules } from './rules_processor'
 import { expect_error_to_match } from '$lib/test_helps'
 

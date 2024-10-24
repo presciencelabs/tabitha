@@ -1,6 +1,6 @@
 import { backtranslate } from '$lib/backtranslator'
 import { parse } from '$lib/parser'
-import { token_has_error } from '$lib/parser/token'
+import { token_has_error } from '$lib/token'
 import { RULES } from '$lib/rules'
 import { apply_rules } from '$lib/rules/rules_processor'
 import { json } from '@sveltejs/kit'

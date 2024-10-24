@@ -1,9 +1,11 @@
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transforms } from '$lib/rules/rules_parser'
-import { TOKEN_TYPE, split_stem_and_sense } from '../parser/token'
+import { create_context_filter, create_token_filter } from '$lib/rules/rules_parser'
+import { TOKEN_TYPE, split_stem_and_sense } from '../token'
 
 /**
  * These words/phrases (and some others) are accepted by the Analyzer as alternates for
  * certain words in the Ontology.
+ * 
+ * @type {LookupRuleJson[]}
  */
 const lookup_rules_json = [
 	{
@@ -116,7 +118,7 @@ const lookup_rules_json = [
 
 /**
  *
- * @param {any} rule_json
+ * @param {LookupRuleJson} rule_json
  * @returns {TokenRule}
  */
 export function parse_lookup_rule(rule_json) {
@@ -125,8 +127,6 @@ export function parse_lookup_rule(rule_json) {
 
 	const lookup_term = rule_json['lookup']
 	const combine = rule_json['combine'] ?? 0
-
-	const context_transforms = create_token_transforms(rule_json['context_transform'])
 
 	return {
 		trigger,
@@ -157,9 +157,6 @@ export function parse_lookup_rule(rule_json) {
 		if (context_indexes.length === 0) {
 			return trigger_index + 1
 		}
-
-		// apply possible context transforms
-		apply_token_transforms(tokens, context_indexes, context_transforms)
 
 		if (combine === 0 || context_indexes[combine-1] !== trigger_index + combine) {
 			return trigger_index + 1

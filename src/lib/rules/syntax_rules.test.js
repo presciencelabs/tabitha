@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, flatten_sentence } from '../parser/token'
+import { TOKEN_TYPE, flatten_sentence } from '../token'
 import { apply_rules } from './rules_processor'
 import { SYNTAX_RULES } from './syntax_rules'
 import { tokenize_input } from '$lib/parser/tokenize'

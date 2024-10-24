@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { CLAUSE_NOTATIONS } from './clause_notations'
 import { ERRORS } from './error_messages'
 import { FUNCTION_WORDS } from './function_words'
-import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from './token'
+import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { tokenize_input } from './tokenize'
 
 /**

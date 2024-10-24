@@ -1,7 +1,6 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
-import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message } from '$lib/parser/token'
+import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message } from '$lib/token'
 import { pipe } from '$lib/pipeline'
-import { create_token_transform } from '../rules_parser'
 import { parse_transform_rule } from '../transform_rules'
 
 /**
@@ -17,7 +16,7 @@ function missing_argument_message(role_tag) {
 		['patient_clause_same_participant', "The patient clause for {sense} should be written like '{stem} [to sing]')."],
 		['patient_clause_simultaneous', "A simultaneous perception clause is required (e.g. 'John {token} [Mary singing]')."],
 	])
-	return messages.get(role_tag) ?? `Couldn't find the ${role_tag} for this {category}.`
+	return messages.get(role_tag) ?? "Couldn't find the {role} for this {category}."
 }
 
 /**
@@ -27,11 +26,11 @@ function missing_argument_message(role_tag) {
 function extra_argument_message(role_tag) {
 	const consult_message = "Consult the {category}'s Theta Grid usage."
 	const messages = new Map([
-		['patient', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
-		['source', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
-		['destination', `Unexpected ${role_tag} for {sense}. ${consult_message}`],
-		['beneficiary', `{sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
-		['instrument', `{sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`],
+		['patient', `Unexpected {role} for {sense}. ${consult_message}`],
+		['source', `Unexpected {role} for {sense}. ${consult_message}`],
+		['destination', `Unexpected {role} for {sense}. ${consult_message}`],
+		['beneficiary', '{sense} does not usually take a {role}. Check to make sure its usage is acceptable.'],
+		['instrument', '{sense} does not usually take a {role}. Check to make sure its usage is acceptable.'],
 		['agent_clause', `{sense} cannot be used with an agent clause. ${consult_message}`],
 		['patient_clause_different_participant', `{sense} cannot be used with a different-participant patient clause. ${consult_message}`],
 		['patient_clause_same_participant', `{sense} cannot be used with a same-participant patient clause. ${consult_message}`],
@@ -40,8 +39,7 @@ function extra_argument_message(role_tag) {
 		['predicate_adjective', `{sense} cannot be used with a predicate Adjective. ${consult_message}`],
 		['modified_noun', `{sense} cannot be used attributively. ${consult_message}`],
 	])
-
-	return messages.get(role_tag) ?? `Unexpected ${role_tag} for {sense}. Consult its usage in the Ontology.`
+	return messages.get(role_tag) ?? 'Unexpected {role} for {sense}. Consult its usage in the Ontology.'
 }
 
 /** @type {[RoleTag, string][]} */
@@ -60,29 +58,13 @@ const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = [
 
 /**
  * 
- * @param {[RoleTag, any]} rule_json 
- * @param {RoleRulePreset[]} [presets=[]] 
+ * @param {[RoleTag, RoleRuleValueJson]} rule_json 
  * @returns {ArgumentRoleRule[]}
  */
-export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
+export function parse_case_frame_rule([role_tag, rule_json]) {
 	if (Array.isArray(rule_json)) {
 		// An argument role may have multiple possible trigger rules, ie different structures that are allowed.
-		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option], presets))
-	}
-
-	rule_json = { ...rule_json }	// create a copy so we can modify it with 'delete'
-	
-	while (presets.some(([key]) => key in rule_json)) {
-		const preset = presets.find(([key]) => key in rule_json)
-		if (preset) {
-			const [preset_tag, preset_rule] = preset
-			const preset_value = rule_json[preset_tag]
-			delete rule_json[preset_tag]
-			rule_json = {
-				...preset_rule(preset_value, role_tag),
-				...rule_json,		// allow a rule to overwrite or add any part of a preset
-			}
-		}
+		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option]))
 	}
 
 	const tag_role = rule_json['tag_role'] ?? true
@@ -90,12 +72,15 @@ export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
 
 	rule_json['transform'] = { ...tag_transform, ...rule_json['transform'] ?? {} }
 
+	const missing_message = rule_json['missing_message'] ?? missing_argument_message(role_tag)
+	const extra_message = rule_json['extra_message'] ?? extra_argument_message(role_tag)
+
 	return [{
 		role_tag,
 		trigger_rule: parse_transform_rule(rule_json),
 		relative_context_index: rule_json['argument_context_index'] ?? -1,
-		missing_message: rule_json['missing_message'] ?? missing_argument_message(role_tag),
-		extra_message: rule_json['extra_message'] ?? '',
+		missing_message: missing_message.replaceAll('{role}', role_tag),
+		extra_message: extra_message.replaceAll('{role}', role_tag),
 		main_word_tag: rule_json['main_word_tag'] ?? {},
 	}]
 }
@@ -103,12 +88,9 @@ export function parse_case_frame_rule([role_tag, rule_json], presets=[]) {
 /**
  * @param {[WordSense, any][]} rule_json
  * @param {ArgumentRoleRule[]} defaults
- * @param {Object} presets
- * @param {Map<string, any>?} [presets.sense_presets]
- * @param {RoleRulePreset[]} [presets.role_presets]
  * @returns {ArgumentRulesForSense[]}
  */
-export function parse_sense_rules(rule_json, defaults, { sense_presets=null, role_presets=[] }) {
+export function parse_sense_rules(rule_json, defaults) {
 	return rule_json.map(parse_sense_rule(defaults))
 
 	/**
@@ -118,14 +100,12 @@ export function parse_sense_rules(rule_json, defaults, { sense_presets=null, rol
 	 */
 	function parse_sense_rule(defaults) {
 		return ([sense, rules_json]) => {
-			rules_json = sense_presets?.get(rules_json) ?? rules_json
-
 			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json
-				? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]], role_presets)
+				? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]])
 				: [rule])
 
 			const other_rules = 'other_rules' in rules_json
-				? Object.entries(rules_json['other_rules']).flatMap(rule => parse_case_frame_rule(rule, role_presets))
+				? Object.entries(rules_json['other_rules']).flatMap(parse_case_frame_rule)
 				: []
 
 			return {
@@ -134,7 +114,6 @@ export function parse_sense_rules(rule_json, defaults, { sense_presets=null, rol
 				other_optional: rules_json['other_optional']?.split('|') ?? [],
 				other_required: rules_json['other_required']?.split('|') ?? [],
 				patient_clause_type: rules_json['patient_clause_type'] ?? '',
-				transform: create_token_transform(rules_json['transform']),
 			}
 		}
 	}
@@ -347,8 +326,7 @@ export function* validate_case_frame(trigger_context) {
 	}
 
 	for (const extra_argument of case_frame.extra_arguments) {
-		const message = extra_argument.rule.extra_message || extra_argument_message(extra_argument.role_tag)
-		yield flag_extra_argument(trigger_context, message)(extra_argument)
+		yield flag_extra_argument(trigger_context, extra_argument.rule.extra_message)(extra_argument)
 	}
 }
 

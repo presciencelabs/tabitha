@@ -1,5 +1,5 @@
 <script>
-	import { token_has_message } from '$lib/parser/token'
+	import { token_has_message } from '$lib/token'
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 

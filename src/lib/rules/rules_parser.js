@@ -1,8 +1,8 @@
-import { TOKEN_TYPE, set_message, token_has_tag } from '$lib/parser/token'
+import { TOKEN_TYPE, set_message, token_has_tag } from '$lib/token'
 
 /**
  *
- * @param {any} filter_json
+ * @param {TokenFilterJson | undefined} filter_json
  * @returns {TokenFilter}
  */
 export function create_token_filter(filter_json) {
@@ -16,8 +16,8 @@ export function create_token_filter(filter_json) {
 	/** @type {TokenFilter[]} */
 	const filters = []
 
-	add_value_filter('token', token => token.token)
-	add_value_filter('type', token => token.type)
+	add_value_filter(filter_json['token'], token => token.token)
+	add_value_filter(filter_json['type'], token => token.type)
 
 	// a token tag can have | separated values
 	const tag_json = filter_json['tag']
@@ -25,20 +25,20 @@ export function create_token_filter(filter_json) {
 		filters.push(token => token_has_tag(token, tag_json))
 	}
 
-	add_lookup_filter('stem', filter_value => {
+	add_lookup_filter(filter_json['stem'], filter_value => {
 		const value_checker = get_value_checker(filter_value)
 		return lookup => value_checker(lookup.stem)
 	})
-	add_lookup_filter('category', filter_value => {
+	add_lookup_filter(filter_json['category'], filter_value => {
 		const value_checker = get_value_checker(filter_value.toLowerCase())
 		return lookup => value_checker(lookup.part_of_speech.toLowerCase())
 	})
-	add_lookup_filter('level', filter_value => {
+	add_lookup_filter(filter_json['level'], filter_value => {
 		const value_checker = get_value_checker(filter_value)
 		return lookup => value_checker(`${lookup.level}`)
 	})
 
-	add_lookup_filter('form', filter_value => {
+	add_lookup_filter(filter_json['form'], filter_value => {
 		const filter_forms = filter_value.split('|')
 		return lookup => {
 			const lookup_forms = lookup.form.split('|')
@@ -50,26 +50,24 @@ export function create_token_filter(filter_json) {
 
 	/**
 	 *
-	 * @param {string} property_name
+	 * @param {string | undefined} property_value
 	 * @param {(token: Token) => string} value_getter
 	 */
-	function add_value_filter(property_name, value_getter) {
-		const property_json = filter_json[property_name]
-		if (property_json !== undefined) {
-			const value_checker = get_value_checker(property_json)
+	function add_value_filter(property_value, value_getter) {
+		if (property_value !== undefined) {
+			const value_checker = get_value_checker(property_value)
 			filters.push(token => value_checker(value_getter(token)))
 		}
 	}
 
 	/**
 	 *
-	 * @param {string} property_name
+	 * @param {string | undefined} property_value
 	 * @param {(json: string) => LookupFilter} lookup_filter_getter
 	 */
-	function add_lookup_filter(property_name, lookup_filter_getter) {
-		const property_json = filter_json[property_name]
-		if (property_json !== undefined) {
-			const lookup_filter = lookup_filter_getter(property_json)
+	function add_lookup_filter(property_value, lookup_filter_getter) {
+		if (property_value !== undefined) {
+			const lookup_filter = lookup_filter_getter(property_value)
 			filters.push(token => token.lookup_results.length > 0 && token.lookup_results.every(lookup_filter))
 		}
 	}
@@ -90,7 +88,7 @@ export function create_token_filter(filter_json) {
 
 /**
  *
- * @param {any} context_json
+ * @param {TokenContextFilterJson | undefined} context_json
  * @returns {TokenContextFilter}
  */
 export function create_context_filter(context_json) {
@@ -164,7 +162,7 @@ export function create_context_filter(context_json) {
 
 	/**
 	 *
-	 * @param {any} subtoken_json
+	 * @param {TokenFilterJsonForContext} subtoken_json
 	 * @returns {TokenContextFilter}
 	 */
 	function create_subtokens_filter(subtoken_json) {
@@ -184,7 +182,7 @@ export function create_context_filter(context_json) {
 
 /**
  *
- * @param {any} context_json
+ * @param {TokenFilterJsonForContext} context_json
  * @param {number} offset
  * @returns {TokenContextFilter}
  */
@@ -230,7 +228,7 @@ function create_directional_context_filter(context_json, offset) {
 
 	/**
 	 *
-	 * @param {any} context_json
+	 * @param {TokenFilterWithSkipJson} context_json
 	 * @param {number} offset
 	 * @returns {TokenContextFilter}
 	 */
@@ -269,17 +267,18 @@ function create_directional_context_filter(context_json, offset) {
 /**
  * Skip can have one token filter or an array of filters which act as OR conditions.
  * Skip can also use preset groups useful for skipping phrases and parts of phrases.
- * @param {any} skip_json 
+ * @param {SkipJson} skip_json 
  * @returns {TokenFilter}
  */
 export function create_skip_filter(skip_json) {
-	if (typeof skip_json === 'string' && SKIP_GROUPS.has(skip_json)) {
-		skip_json = SKIP_GROUPS.get(skip_json) ?? {}
+	if (typeof skip_json === 'string' && !['all', 'none'].includes(skip_json)) {
+		return create_skip_filter(SKIP_GROUPS.get(skip_json) ?? [])
 	}
 	if (Array.isArray(skip_json)) {
 		const filters = skip_json.map(create_skip_filter)
 		return token => filters.some(filter => filter(token))
 	}
+	// @ts-ignore skip_json can only be a TokenFilterJson here
 	return create_token_filter(skip_json)
 }
 
@@ -296,7 +295,7 @@ function context_result(success, { context_indexes=[], subtoken_indexes=[] }={})
 
 /**
  *
- * @param {any} transform_json
+ * @param {TokenTransformJson | TokenTransformJson[] | undefined} transform_json
  * @returns {TokenTransform[]}
  */
 export function create_token_transforms(transform_json) {
@@ -308,7 +307,7 @@ export function create_token_transforms(transform_json) {
 
 /**
  *
- * @param {any} transform_json
+ * @param {TokenTransformJson | undefined} transform_json
  * @returns {TokenTransform}
  */
 export function create_token_transform(transform_json) {
@@ -421,6 +420,7 @@ export function message_set_action(action) {
 	}
 }
 
+/** @type {Map<SkipGroup, SkipJsonSingle[]>} */
 const SKIP_GROUPS = new Map([
 	['clause_start', [
 		{ 'token': '[' },

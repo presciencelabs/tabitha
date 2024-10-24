@@ -1,41 +1,17 @@
-import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from './common'
+import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
+import { by_relative_context, head_noun, opening_subordinate_clause } from './presets'
 
+/** @type {RoleRuleJson<AdpositionRoleTag>} */
 const default_adposition_usage_json = {
-	'opening_subordinate_clause': { 'opening_subordinate_clause': { } },
-	'in_noun_phrase': { 'head_noun': { } },
+	'opening_subordinate_clause': opening_subordinate_clause(),
+	'in_noun_phrase': head_noun(),
 }
-
-/** @type {RoleRulePreset[]} */
-// @ts-ignore the map initializer array doesn't like the different object structures
-const ROLE_RULE_PRESETS = [
-	['opening_subordinate_clause', () => ({
-		'by_relative_context': {
-			'precededby': { 'token': '[', 'skip': { 'tag': 'coord_clause' } },
-		},
-		'tag_role': false,
-		'main_word_tag': { 'syntax': 'adverbial_clause_adposition' },
-		'missing_message': "Missing '[' bracket before adverbial clause.",
-	})],
-	['head_noun', () => ({
-		'by_relative_context': {
-			'followedby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
-		},
-		'tag_role': false,
-		'main_word_tag': { 'pre_np_adposition': 'oblique' },
-		'missing_message': 'Could not find the Noun associated with this Adposition.',
-	})],
-	['by_relative_context', preset_value => ({
-		'trigger': 'all',
-		'context': preset_value,
-		'argument_context_index': preset_value['argument_context_index'] ?? 0,
-	})],
-]
 
 /**
  * These rules allow each adposition sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
  * 
- * @type {Map<WordStem, [WordSense, any][]>}
+ * @type {Map<WordStem, [WordSense, SenseRuleJson<AdpositionRoleTag>][]>}
  */
 const adposition_case_frames = new Map([
 	['because', [
@@ -43,9 +19,9 @@ const adposition_case_frames = new Map([
 			'opening_subordinate_clause': { },
 			'other_rules': {
 				'of': {
-					'by_relative_context': {
+					...by_relative_context({
 						'followedby': { 'token': 'of' },
-					},
+					}),
 					'transform': { 'tag': { 'pre_np_adposition': 'oblique' }, 'remove_tag': 'relation' },
 					'tag_role': false,
 				},
@@ -58,9 +34,9 @@ const adposition_case_frames = new Map([
 			'in_noun_phrase': { },
 			'other_rules': {
 				'could': {
-					'by_relative_context': {
+					...by_relative_context({
 						'followedby': { 'tag': { 'modal': 'conditional_could' }, 'skip': 'all' },
-					},
+					}),
 					'tag_role': false,
 				},
 			},
@@ -70,9 +46,9 @@ const adposition_case_frames = new Map([
 			'in_noun_phrase': { },
 			'other_rules': {
 				'would': {
-					'by_relative_context': {
+					...by_relative_context({
 						'followedby': { 'tag': { 'modal': 'conditional_would' }, 'skip': 'all' },
-					},
+					}),
 					'tag_role': false,
 				},
 			},
@@ -86,7 +62,7 @@ const adposition_case_frames = new Map([
  */
 function create_usage_rules() {
 	return Object.entries(default_adposition_usage_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json, ROLE_RULE_PRESETS))
+		.flatMap(rule_json => parse_case_frame_rule(rule_json))
 }
 
 /**
@@ -97,12 +73,11 @@ function create_adposition_argument_rules() {
 
 	/**
 	 * 
-	 * @param {[WordStem, [WordSense, any][]]} stem_rules 
+	 * @param {[WordStem, [WordSense, SenseRuleJson<AdpositionRoleTag>][]]} stem_rules 
 	 * @returns {[WordStem, ArgumentRulesForSense[]]}
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
-		const presets = { role_presets: ROLE_RULE_PRESETS }
-		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_USAGE_RULES, presets)]
+		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_USAGE_RULES)]
 	}
 }
 

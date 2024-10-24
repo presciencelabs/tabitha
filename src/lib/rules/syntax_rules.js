@@ -1,4 +1,4 @@
-import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/parser/token'
+import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, simple_rule_action } from './rules_parser'

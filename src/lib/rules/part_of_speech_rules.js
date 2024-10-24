@@ -1,6 +1,6 @@
 import { ERRORS } from '$lib/parser/error_messages'
 import { create_context_filter, create_token_filter, message_set_action, simple_rule_action } from './rules_parser'
-import { TOKEN_TYPE, create_lookup_result, is_one_part_of_speech } from '$lib/parser/token'
+import { TOKEN_TYPE, create_lookup_result, is_one_part_of_speech } from '$lib/token'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
 /**
@@ -8,6 +8,8 @@ import { LOOKUP_FILTERS } from '$lib/lookup_filters'
  * E.g. guard(N/V), command(N/V), pleased(V/Adj), well(N/Adj/Adv)
  * The Analyzer has many of these, but this is just a few for now.
  * TODO add more rules
+ * 
+ * @type {PartOfSpeechRuleJson[]}
  */
 const part_of_speech_rules_json = [
 	{
@@ -500,7 +502,7 @@ const builtin_part_of_speech_rules = [
 
 /**
  *
- * @param {any} rule_json
+ * @param {PartOfSpeechRuleJson} rule_json
  * @returns {TokenRule}
  */
 export function parse_part_of_speech_rule(rule_json) {

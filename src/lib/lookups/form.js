@@ -1,6 +1,6 @@
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
-import { create_lookup_result } from '$lib/parser/token'
+import { create_lookup_result } from '$lib/token'
 
 /**
  * @param {Token} lookup_token

@@ -1,9 +1,9 @@
-import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/parser/token'
+import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
 import { create_context_filter, create_token_filter, simple_rule_action } from '../rules_parser'
 import { select_sense } from './sense_selection'
-import { check_adjective_case_frames } from './adjectives'
-import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs'
-import { check_adposition_case_frames } from './adpositions'
+import { check_adjective_case_frames } from './adjectives/case_frames'
+import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs/case_frames'
+import { check_adposition_case_frames } from './adpositions/case_frames'
 
 
 /** @type {BuiltInRule[]} */
@@ -74,7 +74,7 @@ const argument_and_sense_rules = [
 	},
 	{
 		name: 'Adposition case frames',
-		comment: `Need to do this after Adjectives and Verbs so that no argument-related adpositions don\'t get checked.
+		comment: `Need to do this after Adjectives and Verbs so that no argument-related adpositions don't get checked.
 			Also skip relative clauses because there may be a dangling adposition (eg. 'place [that John lived at]'`,
 		rule: {
 			trigger: create_token_filter({ 'category': 'Adposition' }),

@@ -1,6 +1,6 @@
 import { textify } from '.'
 import { describe, expect, test } from 'vitest'
-import { MESSAGE_TYPE, create_added_token } from '$lib/parser/token'
+import { MESSAGE_TYPE, create_added_token } from '$lib/token'
 import { tokenize_input } from '$lib/parser/tokenize'
 import { clausify } from '$lib/parser/clausify'
 

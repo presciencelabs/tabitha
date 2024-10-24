@@ -3,7 +3,7 @@
 	import Added from './Added.svelte'
 	import SingleToken from './SingleToken.svelte'
 	import Clause from './Clause.svelte'
-	import { TOKEN_TYPE } from '$lib/parser/token'
+	import { TOKEN_TYPE } from '$lib/token'
 
 	/** @type {SimpleToken[]} */
 	export let tokens

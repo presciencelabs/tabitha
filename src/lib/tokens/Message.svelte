@@ -3,7 +3,7 @@
 	import Table from './Table.svelte'
 	import { Badge } from '$lib'
 	import Icon from '@iconify/svelte'
-	import { token_has_message, MESSAGE_TYPE } from '$lib/parser/token'
+	import { token_has_message, MESSAGE_TYPE } from '$lib/token'
 
 	/** @type {SimpleToken} */
 	export let token

@@ -1,4 +1,4 @@
-import { TOKEN_TYPE } from '$lib/parser/token'
+import { TOKEN_TYPE } from '$lib/token'
 import { pipe } from '$lib/pipeline'
 import { rules_applier } from '$lib/rules'
 import { phrasify } from './phrasify'

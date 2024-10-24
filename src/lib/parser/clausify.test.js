@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { TOKEN_TYPE, create_clause_token, create_added_token, create_token, MESSAGE_TYPE } from './token'
+import { TOKEN_TYPE, create_clause_token, create_added_token, create_token, MESSAGE_TYPE } from '../token'
 import { ERRORS } from './error_messages'
 import { clausify } from './clausify'
 
