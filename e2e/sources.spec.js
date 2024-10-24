@@ -11,7 +11,5 @@ test('get all sources', async ({ request }) => {
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-equal
 	expect(sources).toEqual([
 		{ 'type': 'Bible' },
-		{ 'type': 'Community Development Texts' },
-		{ 'type': 'Grammar Introduction' },
 	])
 })

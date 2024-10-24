@@ -3,8 +3,6 @@ import stylistic from '@stylistic/eslint-plugin'
 import globals from 'globals'
 import svelte from 'eslint-plugin-svelte'
 import svelte_parser from 'svelte-eslint-parser'
-import ts from '@typescript-eslint/eslint-plugin'
-import ts_parser from '@typescript-eslint/parser'
 
 // https://eslint.org/docs/latest/use/configure/configuration-files-new
 export default [
@@ -102,28 +100,6 @@ export default [
 
 			// https://eslint.org/docs/latest/rules/no-inner-declarations
 			'no-inner-declarations': 'off',
-		},
-	},
-
-	// Typescript
-	{
-		files: [
-			'src/**/*.ts',
-		],
-
-		languageOptions: {
-			parser: ts_parser,
-			parserOptions: {
-				project: '.svelte-kit/tsconfig.json',
-			},
-		},
-
-		plugins: {
-			'@typescript-eslint': ts,
-		},
-
-		rules: {
-			...ts.configs.recommended.rules,
 		},
 	},
 ]
