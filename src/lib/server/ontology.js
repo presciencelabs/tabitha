@@ -143,6 +143,41 @@ export const get_simplification_hints = db => async term => {
 }
 
 /**
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ * @returns {(concept: string, part_of_speech: string, source: string) => Promise<Example[]>} concept is case-sensitive
+ */
+export const get_examples = db => async (concept, part_of_speech, source) => {
+	const sense_match = concept.match(/^(.*)-([A-Z])$/)
+	const stem = sense_match ? sense_match[1] : concept
+	const sense = sense_match ? sense_match[2] : 'A'
+
+	/**
+	 * @type {import('@cloudflare/workers-types').D1Result<DbRowExample>}
+	 */
+	const { results } = await db.prepare(`
+		SELECT *
+		FROM Exhaustive_Examples
+		WHERE concept_stem = ? AND concept_sense = ? AND concept_part_of_speech = ? AND ref_type LIKE ?
+	`).bind(stem, sense, part_of_speech, source.length ? source : '%').all()
+
+	
+	return results.map(normalize_results)
+
+	/** @param {DbRowExample} arg */
+	function normalize_results({ ref_type, ref_id_primary, ref_id_secondary, ref_id_tertiary, context_json }) {
+		return {
+			reference: {
+				type: ref_type,
+				id_primary: ref_id_primary,
+				id_secondary: ref_id_secondary,
+				id_tertiary: ref_id_tertiary,
+			},
+			context: JSON.parse(context_json),
+		}
+	}
+}
+
+/**
  * @typedef {{
  * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
  * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement

@@ -1,4 +1,4 @@
-import { semantic_category, sources, theta_grid, usage_info, example_argument_slots } from './lookups'
+import { semantic_category, sources, theta_grid, usage_info } from '$lib/lookups'
 
 /**
  * @param {DbRowConcept} match_from_db
@@ -8,9 +8,7 @@ import { semantic_category, sources, theta_grid, usage_info, example_argument_sl
 export function transform(match_from_db) {
 	return {
 		...match_from_db,
-
 		categories: transform_categorization(match_from_db),
-		examples: transform_examples(match_from_db),
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		occurrences: transform_occurrences(match_from_db.occurrences),
 	}
@@ -74,64 +72,6 @@ function transform_curated_examples(curated_examples_from_db) {
 					word,
 				}
 			}
-		}
-	}
-}
-
-/**
- * Various encoding formats depending on the part-of-speech.
- * Here's one example for an adjective:
- * '4|41|15|36|N|||wineA||' =>
- * 	{
- * 		reference: {
- *			source: 'Bible'
- *			book: 'Mark'
- *			chapter: 15
- *			verse: 36
- *		},
- *		context_arguments: {
- *			'Degree': 'N'
- *			'Modified Noun': 'wineA'
- *		}
- * 	}
- *
- * @param {DbRowConcept} concept_from_db
- *
- * @returns {Example[]}
- */
-function transform_examples({ examples, part_of_speech }) {
-	const encoded_examples = examples.split('\n').filter(field => !!field)
-
-	return encoded_examples.map(decode)
-
-	/**
-	 * @param {string} encoded_example 4|41|15|36|N|||wineA|| or 4|19|23|6|followA|A or 4|1|20|13|p|A|SarahA|AbrahamA|||||||
-	 *
-	 * @returns {Example}
-	 * */
-	function decode(encoded_example) {
-		const [source, book, chapter, verse, ...argument_slots] = encoded_example.split('|')
-
-		const slot_names = example_argument_slots[part_of_speech] || []
-		const context_arguments = argument_slots.reduce(example_reducer, new Map())
-
-		return {
-			reference: decode_reference([source, book, chapter, verse].join(',')),
-			context_arguments: context_arguments,
-		}
-
-		/**
-		 * Only keep the arguments that are present
-		 *
-		 * @param {Map<string, string>} reduced_slots
-		 * @param {string} slot_value
-		 * @param {number} index
-		 */
-		function example_reducer(reduced_slots, slot_value, index) {
-			if (slot_value !== '') {
-				reduced_slots.set(slot_names[index], slot_value)
-			}
-			return reduced_slots
 		}
 	}
 }
@@ -223,14 +163,14 @@ function transform_adjective_categorization(categories_from_db) {
  * @returns {Reference}
  */
 function decode_reference(encoded_reference) {
-	const [source_key, book_key, chapter, verse] = encoded_reference.split(',').map(Number)
-	const [source, books] = Array.from(sources.entries())[source_key]
+	const [type_key, primary_key, id_secondary, id_tertiary] = encoded_reference.split(',').map(Number)
+	const [type, primary_keys] = Array.from(sources.entries())[type_key]
 
 	return {
-		source,
-		book: books[book_key],
-		chapter,
-		verse,
+		type,
+		id_primary: primary_keys[primary_key],
+		id_secondary: id_secondary + '',
+		id_tertiary: id_tertiary + '',
 	}
 }
 

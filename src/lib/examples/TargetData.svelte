@@ -9,8 +9,8 @@
 	 *
 	 * @returns {Promise<string>}
 	 */
-	async function get_target_data({ book, chapter, verse }) {
-		const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/English/${book}/${chapter}/${verse}`)
+	async function get_target_data({ id_primary, id_secondary, id_tertiary }) {
+		const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/English/${id_primary}/${id_secondary}/${id_tertiary}`)
 
 		return await response.json()
 	}

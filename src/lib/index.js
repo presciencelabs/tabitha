@@ -1,13 +1,13 @@
 import Brand from './Brand.svelte'
+import { DetailedCard, SummaryCard } from './card'
 import Details from './Details.svelte'
 import DisplayPreference from './DisplayPreference.svelte'
-import Examples from './Examples.svelte'
+import { Examples } from './examples'
 import Level from './Level.svelte'
 import Occurrences from './Occurrences.svelte'
 import Search from './Search.svelte'
+import SemanticEncoding from './SemanticEncoding.svelte'
 import Table from './Table.svelte'
-import DetailedCard from './card/DetailedCard.svelte'
-import SummaryCard from './card/SummaryCard.svelte'
 
 export {
 	Brand,
@@ -18,6 +18,7 @@ export {
 	Level,
 	Occurrences,
 	Search,
+	SemanticEncoding,
 	SummaryCard,
 	Table,
 }

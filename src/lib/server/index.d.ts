@@ -22,7 +22,6 @@ type SimplificationHint = {
 
 interface Concept extends DbRowConcept {
 	categories: string[]
-	examples: Example[]
 	curated_examples: CuratedExample[]
 	occurrences: number
 }
@@ -43,16 +42,28 @@ type CuratedExample = {
 	sentence: string
 }
 
-type Example = {
-	reference: Reference
-	context_arguments: Map<string, string>
+type DbRowExample = {
+	ref_type: string
+	ref_id_primary: string
+	ref_id_secondary: string
+	ref_id_tertiary: string
+	context_json: string
 }
 
+type Example = {
+	reference: Reference
+	context: ContextArguments
+}
+
+type ContextArgumentName = string
+type ContextArgumentValue = string
+type ContextArguments = Record<ContextArgumentName, ContextArgumentValue>
+
 type Reference = {
-	source: string //TODO: would like to use `typeof sources[number]` but importing sources breaks other types
-	book: string //TODO: would like to use `typeof books[number]` but importing books breaks other types
-	chapter: number
-	verse: number
+	type: string
+	id_primary: string
+	id_secondary: string
+	id_tertiary: string
 }
 
 type SimplifiedSemanticEncoding = SimplifiedEncodingPhrase[]

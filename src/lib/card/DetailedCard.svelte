@@ -1,10 +1,10 @@
 <script>
 	import Icon from '@iconify/svelte'
 	import { Details, Examples } from '$lib'
-	import Header from './_Header.svelte'
-	import Meaning from './_Meaning.svelte'
-	import SimplificationHints from './_SimplificationHints.svelte'
-	import Category from './categorization/_Category.svelte'
+	import Header from './Header.svelte'
+	import Meaning from './Meaning.svelte'
+	import SimplificationHints from './SimplificationHints.svelte'
+	import { Category } from './categorization'
 	import { onMount } from 'svelte'
 
 	/** @type {Concept} */
@@ -52,9 +52,9 @@
 								<span>
 									{sentence}
 								</span>
-								<cite data-tip="Source: {reference.source}" class="tooltip tooltip-right tooltip-info block w-fit text-start text-xs">
-									({reference.book}
-									{reference.chapter}:{reference.verse})
+								<cite data-tip="Source: {reference.type}" class="tooltip tooltip-right tooltip-info block w-fit text-start text-xs">
+									({reference.id_primary}
+									{reference.id_secondary}:{reference.id_tertiary})
 								</cite>
 
 								<footer class="mt-4 flex justify-around bg-base-100">

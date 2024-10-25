@@ -1,8 +1,8 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import Header from './_Header.svelte'
-	import Meaning from './_Meaning.svelte'
-	import Category from './categorization/_Category.svelte'
+	import Header from './Header.svelte'
+	import Meaning from './Meaning.svelte'
+	import { Category } from './categorization'
 	import { DetailedCard } from '$lib'
 
 	/** @type {Concept} */

@@ -1,10 +1,13 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
+# https://developers.cloudflare.com/workers/configuration/compatibility-dates
+compatibility_date = "2024-10-24"
+
 # https://developers.cloudflare.com/workers/wrangler/configuration/#custom-builds
 [build]
 command = "pnpm build"
 
 [[d1_databases]]
 binding = "DB_Ontology"
-database_name = "Ontology.9489.2024-09-23"
-database_id = "9c76866b-3512-454a-823e-edd886588d07"
+database_name = "Ontology.9489.2024-10-24"
+database_id = "23ef1537-9183-49cd-85ce-935ea0c444bc"

@@ -151,7 +151,7 @@ export const usage_info = {
  *
  * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
  */
-const bible_books = {
+export const bible_books = {
 	1: 'Genesis',
 	2: 'Exodus',
 	3: 'Leviticus',
@@ -218,6 +218,7 @@ const bible_books = {
 	64: '3 John',
 	65: 'Jude',
 	66: 'Revelation',
+	67: 'Revelations', //TODO: this can be removed once TBTA's Bible.mdb.Revelations table name is fixed
 }
 
 /**
@@ -274,56 +275,3 @@ export const sources = new Map([
 	['Grammar Introduction', grammar_introduction_books],
 	['Community Development Texts', community_development_text_books],
 ])
-
-
-/**
- * Argument slots come after the reference part of an example.
- * eg. for a Verb: 4|1|20|13|p|A|SarahA|AbrahamA||||||| -> p|A|SarahA|AbrahamA|||||||
- * eg. for a Noun: 4|19|23|6|followA|A -> followA|A
- *
- * Each slot (separated by '|') is empty or present based on the word's usage in the example.
- * Each part of speech has a unique, fixed number of 'slots'. For example, Nouns are simple with
- * just two slots indicating the Verb the Noun is attached to, and the semantic role it
- * plays in the clause.
- *
- * @type {Record<Concept['part_of_speech'], string[]>}
- */
-export const example_argument_slots = {
-	Noun: [
-		'Verb',
-		'Role',			// semantic role code
-	],
-	Verb: [
-		'Topic NP',
-		'Polarity',
-		'Agent',
-		'Patient',
-		'State',
-		'Source',
-		'Destination',
-		'Instrument',
-		'Beneficiary',
-		'Patient Proposition',
-		'Agent Proposition',
-	],
-	Adjective: [
-		'Degree',
-		'Agent',
-		'Verb',
-		'Modified Noun',
-		'Patient Noun',
-		'Patient Proposition',
-	],
-	Adverb: [
-		'Degree',
-		'Verb',
-		'Noun',
-		'Adjective',
-	],
-	Adposition: [
-		'Verb',
-		'Head Noun',
-		'Noun',
-		'Clause',
-	],
-}
