@@ -12,17 +12,7 @@ Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
 
 ### Running locally
 
-#### 1. Avoiding CORS errors
-
-This app accesses the sources/targets API, therefore `ontology.local.tbta.bible` needs to be added as an additonal alias for the loopback:
-
-```
-`/etc/hosts` file on *nix systems
-
-127.0.0.1	localhost ontology.local.tbta.bible
-```
-
-#### 2. Load the database
+#### 1. Load the database
 
 Dump files can be found under the "Artifacts" section of the workflow runs of the databases repo:  https://github.com/presciencelabs/tabitha-databases/actions/workflows/deploy.yml
 
@@ -30,7 +20,7 @@ Running the following command will load the data locally:
 
 `wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
 
-#### 3. Start the app
+#### 2. Start the app
 
 > `pnpm build` will need to be run the first time only.
 
@@ -38,7 +28,7 @@ Running the following command will load the data locally:
 pnpm dev
 ```
 
-The site should then be available here: [http://ontology.local.tbta.bible:8788](http://ontology.local.tbta.bible:8788)
+The site should then be available here: [http://localhost.tbta.bible:8788](http://localhost.tbta.bible:8788)
 
 ### Static analysis
 
