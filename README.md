@@ -28,7 +28,7 @@ Running the following command will load the data locally:
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost:8788](http://localhost:8788)
+The site should then be available here: [http://localhost.tbta.bible:8788](http://localhost.tbta.bible:8788)
 
 ## Static analysis
 
