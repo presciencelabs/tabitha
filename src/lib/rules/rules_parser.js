@@ -466,7 +466,7 @@ const SKIP_GROUPS = new Map([
 		{ 'category': 'Noun' },
 	]],
 	['vp_modifiers', [
-		{ 'tag': ['verb_polarity|modal|auxiliary', { 'syntax': 'infinitive' }] },
+		{ 'tag': ['verb_polarity|modal|auxiliary', { 'syntax': 'infinitive|gerundifier' }] },
 		'advp',
 	]],
 	['vp', [

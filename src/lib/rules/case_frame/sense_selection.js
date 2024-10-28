@@ -29,6 +29,9 @@ const verb_sense_priority_overrides = [
 	['appear', [
 		['appear-B', { }],
 	]],
+	['argue', [
+		['argue-B', { }],
+	]],
 	['ask', [
 		['ask-B', { }],	
 		['ask-D', { }],	
@@ -75,6 +78,10 @@ const verb_sense_priority_overrides = [
 		['be-D', { }],	// predicative
 		['be-F', { }],	// general locative
 	]],
+	['beat', [
+		['beat-A', { 'instrument': { } }],
+		['beat-B', { 'patient': { 'stem': 'chest' } }],
+	]],
 	['become', [
 		// 'become' is very particular and so each sense is specified to make the priority clear. Not all verbs will need this.
 		['become-G', { }],	// become like
@@ -91,6 +98,10 @@ const verb_sense_priority_overrides = [
 	['believe', [
 		['believe-B', { 'patient': { 'stem': 'Christ|God|Jesus' } }],
 	]],
+	['break', [
+		['break-C', { 'patient': { 'stem': 'law' } }],
+		['break-E', { 'patient': { 'stem': 'promise|agreement' } }],
+	]],
 	['bring', [
 		// TODO use a lexicon feature for bring-B to check for any person.
 		['bring-B', { 'patient': { 'stem': 'baby|brother|child|girl|man|person|son|woman' } }],
@@ -100,8 +111,23 @@ const verb_sense_priority_overrides = [
 		['call-B', { }],
 		['call-C', { }],
 	]],
+	['care', [
+		['care-C', { 'patient': { 'stem': 'thing' } }],
+	]],
+	['carry', [
+		['carry-B', { 'patient': { 'stem': 'disease|germ' } }],
+	]],
+	['catch', [
+		['catch-C', { 'patient': { 'stem': 'fish' } }],
+		['catch-D', { 'patient': { 'stem': 'disease|cold' } }],
+	]],
 	['change', [
 		['change-B', { 'patient': { } }],
+	]],
+	['close', [
+		['close-B', { 'patient': { 'stem': 'book|scroll' } }],
+		['close-C', { 'patient': { 'stem': 'eye' } }],
+		['close-D', { 'patient': { 'stem': 'mouth' } }],
 	]],
 	['cover', [
 		['cover-C', { 'agent': { 'stem': 'cloud' } }],
@@ -109,6 +135,22 @@ const verb_sense_priority_overrides = [
 	['dream', [
 		['dream-A', { 'patient': { } }],	// when dream-A has a patient, prioritize it over dream-B
 		['dream-B', { }],
+	]],
+	['escape', [
+		['escape-C', { 'source': { 'stem': 'fire' } }],
+	]],
+	['fall', [
+		// TODO add an entry for fall-B to use a lexicon feature to check for any person.
+		['fall-D', { 'agent': { 'stem': 'soldier' } }],	// Nahum 2:5 'The soldiers fell in the streets.'  When soldiers fall, it will usually be because they're dead.
+	]],
+	['follow', [
+		['follow-D', { 'patient': { 'stem': 'road|path' } }],
+	]],
+	['forgive', [
+		['forgive-B', { 'patient': { 'stem': 'sin' } }],
+	]],
+	['gather', [
+		['gather-B', { 'patient': { 'stem': 'grain|wheat|wood' } }],
 	]],
 	['give', [
 		['give-B', { 'patient': { 'stem': 'ring|vaccine' } }],
@@ -132,6 +174,9 @@ const verb_sense_priority_overrides = [
 		['have-E', { 'state': { 'stem': 'AIDS|Avian-Influenza|cold|disease|fever|HIV|pain|sore|leprosy' } }],
 		['have-A', { }],
 		['have-I', { }],	// TODO use a lexicon feature to check for the agent being a place
+	]],
+	['hurt', [
+		['hurt-C', { 'be_auxiliary': { } }],
 	]],
 	['know', [
 		['know-C', { 'patient': { 'stem': 'law|meaning|name|secret|thing' } }],

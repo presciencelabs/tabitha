@@ -201,6 +201,18 @@ const part_of_speech_rules_json = [
 		'comment': "Infected Eye 1:1 Melissa's eye is sore(N/Adj).  Infected Eye 1:15 Janet's eyes were still sore(N/Adj).",
 	},
 	{
+		'name': 'If Noun-Adverb preceded by a determiner or possessive, remove Adverb',
+		'category': 'Noun|Adverb',
+		'context': {
+			'precededby': {
+				'tag': ['determiner', { 'relation': 'genitive_saxon' }],
+				'skip': { 'category': 'Adjective' },
+			},
+		},
+		'remove': 'Adverb',
+		'comment': "eg 'John argued with Mary about the well.'",
+	},
+	{
 		'name': 'If Verb-Adjective preceded by an article or possessive, remove Verb',
 		'category': 'Verb|Adjective',
 		'context': {

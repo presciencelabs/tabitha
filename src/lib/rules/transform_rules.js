@@ -25,8 +25,8 @@ const transform_rules_json = [
 		'transform': { 'function': { 'syntax': 'infinitive|infinitive_same_subject' } },
 	},
 	{
-		'name': '"from" before a verb gets tagged as gerundifier',
-		'trigger': { 'token': 'from' },
+		'name': '"from" or "for" before a verb gets tagged as gerundifier',
+		'trigger': { 'token': 'from|for' },
 		'context': {
 			'followedby': {
 				'category': 'Verb',
@@ -35,7 +35,7 @@ const transform_rules_json = [
 			},
 		},
 		'transform': { 'function': { 'syntax': 'gerundifier' } },
-		'comment': '"prevent [X from Ving]". May be needed for other verbs as well',
+		'comment': '"prevent [X from Ving]", "forgive [X for Ving]". May be needed for other verbs as well',
 	},
 	{
 		'name': 'tag "in-order-to" and "by" as "same subject"',
@@ -227,6 +227,11 @@ const transform_rules_json = [
 		'comment': 'this clears the relativizer tag but keeps the determiner tag',
 	},
 	// General function words
+	{
+		'name': 'tag "?" with "question"',
+		'trigger': { 'token': '?' },
+		'transform': { 'tag': { 'syntax': 'question' } },
+	},
 	{
 		'name': '"no" before a noun becomes negative_noun_polarity',
 		'trigger': { 'token': 'no' },

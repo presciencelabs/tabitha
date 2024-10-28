@@ -4,6 +4,7 @@ import { select_sense } from './sense_selection'
 import { check_adjective_case_frames } from './adjectives/case_frames'
 import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs/case_frames'
 import { check_adposition_case_frames } from './adpositions/case_frames'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
 
 /** @type {BuiltInRule[]} */
@@ -44,8 +45,8 @@ const argument_and_sense_rules = [
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
-				'notprecededby': { 'tag': [{ 'syntax': 'relativizer|infinitive_same_subject' }, { 'auxiliary': 'passive' }], 'skip': 'all' },
-				'notfollowedby': { 'token': '?', 'skip': 'all' },
+				'notprecededby': { 'tag': [{ 'syntax': 'relativizer|infinitive_same_subject' }], 'skip': 'all' },
+				'notfollowedby': { 'tag': [{ 'syntax': 'question' }, { 'pre_np_adposition': 'agent_of_passive' }], 'skip': 'all' },
 			}),
 			action: simple_rule_action(check_verb_case_frames),
 		},
@@ -54,7 +55,8 @@ const argument_and_sense_rules = [
 		name: 'Verb case frame, passive',
 		comment: 'For now, only trigger when not within a relative clause or a question since arguments get moved around or are missing',
 		rule: {
-			trigger: create_token_filter({ 'category': 'Verb' }),
+			trigger: token => create_token_filter({ 'category': 'Verb' })(token)
+				&& token.lookup_results.every(LOOKUP_FILTERS.HAS_INVALID_CASE_FRAME),
 			context: create_context_filter({
 				'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 				'notprecededby': { 'tag': { 'syntax': 'relativizer|infinitive_same_subject' }, 'skip': 'all' },

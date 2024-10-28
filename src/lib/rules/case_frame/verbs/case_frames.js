@@ -1,5 +1,5 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_adposition, by_clause_tag, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective } from './presets'
+import { by_adposition, by_clause_tag, by_complementizer, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective, with_be_auxiliary } from './presets'
 
 /** @type {RoleRuleJson<VerbRoleTag>} */
 const default_verb_case_frame_json = {
@@ -44,6 +44,13 @@ const default_verb_case_frame_json = {
  * @type {Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]>}
  */
 const verb_case_frames = new Map([
+	['accept', []],
+	['act', []],
+	['admit', []],
+	['advise', [
+		['advise-B', patient_from_subordinate_clause()],
+	]],
+	['affect', []],
 	['agree', [
 		['agree-A', { 'patient': directly_after_verb_with_adposition('with') }],
 		['agree-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
@@ -62,6 +69,30 @@ const verb_case_frames = new Map([
 				directly_after_verb_with_adposition('like'),
 			],
 		}],
+	]],
+	['approve', [
+		['approve-A', {
+			'patient': [
+				directly_after_verb(),
+				directly_after_verb_with_adposition('of'),
+			],
+		}],
+	]],
+	['argue', [
+		['argue-A', {
+			'patient': by_adposition('with'),
+			'destination': by_adposition('about'),
+		}],
+		['argue-B', {
+			'patient': by_adposition('with'),
+			'patient_clause_different_participant': by_complementizer('about'),
+		}],
+	]],
+	['arrive', [
+		['arrive-A', { 'patient': directly_after_verb_with_adposition('at|in') }],
+	]],
+	['attach', [
+		['attach-A', { 'instrument': by_adposition('with') }],
 	]],
 	['ask', [
 		['ask-A', {
@@ -104,18 +135,13 @@ const verb_case_frames = new Map([
 					...by_clause_tag('patient_clause_different_participant'),
 					'missing_message': "ask-F should be written in the format 'asked X [(if//whether) ...]' (with or without the if/whether)",
 				},
-				{
-					...by_clause_tag('adverbial_clause'),
-					'context': {
-						'subtokens': { 'token': 'if|whether', 'skip': 'clause_start' },
-					},
-					// TODO make if/whether function words using a subtoken context transform
-				},
+				by_complementizer('if|whether'),
 			],
 			'comment': "This can be written as 'asked X [(if//whether) ...]' (with or without the if/whether)",
 		}],
 	]],
 	['attack', []],
+	['avoid', []],
 	['be', [
 		['be-D', {
 			'other_required': 'predicate_adjective',
@@ -213,6 +239,9 @@ const verb_case_frames = new Map([
 		['be-W', { 'state': directly_after_verb_with_adposition('in') }],
 		['be-X', { 'state': directly_after_verb() }],
 	]],
+	['beat', [
+		['beat-A', { 'instrument': by_adposition('with') }],
+	]],
 	['become', [
 		['become-A', {
 			'other_required': 'predicate_adjective',
@@ -250,7 +279,34 @@ const verb_case_frames = new Map([
 	['believe', [
 		['believe-B', { 'patient': directly_after_verb_with_adposition('in') }],
 	]],
+	['belong', []],
+	['birth', [
+		['birth-A', {
+			'patient': [
+				// 'X birthed Y' OR 'X gave birth to Y'
+				directly_after_verb(),
+				directly_after_verb_with_adposition('to'),
+			],
+			'destination': { },	// clear the rule so the 'to' doesn't trigger it
+		}],
+	]],
+	['blow', []],
+	['born', [
+		['born-A', with_be_auxiliary()]
+	]],
+	['break', [
+		['break-A', { 'destination': by_adposition('to|into') }],
+	]],
+	['breathe', [
+		['breathe-B', { 'destination': by_adposition('to|into') }],
+	]],
 	['bring', []],
+	['burn', [
+		['burn-A', { 'instrument': by_adposition('with') }],
+	]],
+	['buy', [
+		['buy-A', { 'instrument': by_adposition('with|for') }],
+	]],
 	['call', [
 		['call-A', { 'state': { 'trigger': 'none' } }],
 		['call-B', {
@@ -268,7 +324,30 @@ const verb_case_frames = new Map([
 			},
 		}],
 	]],
+	['care', [
+		['care-A', { 'patient': directly_after_verb_with_adposition('for|of') }],
+		['care-B', { 'patient': directly_after_verb_with_adposition('about') }],
+		['care-C', { 'patient': directly_after_verb_with_adposition('for|of') }],
+	]],
+	['carry', [
+		['carry-A', {
+			'destination': by_adposition('to|into'),
+			'instrument': by_adposition('with'),
+		}],
+	]],
+	['carry', [
+		['carry-B', { 'instrument': by_adposition('with') }],
+		['carry-C', { 'instrument': by_adposition('with') }],
+		['carry-E', { 'instrument': by_adposition('with') }],
+	]],
 	['cause', []],
+	['celebrate', [
+		['celebrate-A', { 'instrument': by_adposition('with') }],
+		['celebrate-B', {
+			'destination': by_adposition('until'),
+			'instrument': by_adposition('with'),
+		}],
+	]],
 	['change', [
 		['change-A', { 'patient': directly_after_verb_with_adposition('into') }],
 		['change-B', {
@@ -290,14 +369,125 @@ const verb_case_frames = new Map([
 		['choose-B', patient_from_subordinate_clause()],
 		['choose-C', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
+	['close', []],
 	['come', []],
+	['come-out', [
+		['come-out-A', { 'source': by_adposition('from|of') }],
+	]],
+	['command', [
+		['command-A', {
+			...patient_from_subordinate_clause(),
+			'instrument': by_adposition('with'),
+		}],
+		['command-B', { 'patient_clause_type': 'patient_clause_quote_begin' }],
+	]],
+	['complain', [
+		['complain-A', { 'patient': by_adposition('about') }],
+	]],
+	['contain', []],
+	['cost', []],
 	['cover', [
 		['cover-A', { 'instrument': by_adposition('with') }],
 		['cover-B', { 'instrument': by_adposition('with') }],
 	]],
+	['cry-out', [
+		['cry-out-A', { 'patient': by_adposition('about') }],
+		['cry-out-B', { 'patient_clause_type': 'patient_clause_quote_begin' }],
+	]],
+	['decide', [
+		['decide-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['demand', [
+		['demand-B', { 'patient_clause_type': 'patient_clause_quote_begin' }],
+	]],
+	['deserve', [
+		['deserve-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
+		['deserve-C', {
+			'patient_clause_different_participant': [
+				by_clause_tag('patient_clause_different_participant'),
+				by_complementizer('for'),	// 'John didn't deserve [for Jesus to come].'
+			],
+		}],
+	]],
 	['die', []],
+	['discover', []],
+	['divide', [
+		['divide-A', {
+			'destination': by_adposition('into'),	// divided the kingdom into regions
+			'instrument': by_adposition('with'),
+			'beneficiary': by_adposition('among'),	// divided the lang among the tribes
+		}],
+		['divide-B', { 'patient': by_adposition('into') }],
+	]],
 	['dream', [
 		['dream-A', { 'patient': by_adposition('about') }],
+	]],
+	['doubt', []],
+	['drop', [
+		['drop-A', { 'destination': by_adposition('to|on|into') }],
+	]],
+	['eat', [
+		['eat-A', { 'instrument': by_adposition('with') }],
+	]],
+	['encourage', [
+		['encourage-B', patient_from_subordinate_clause()],
+	]],
+	['end', [
+		['end-B', { 'destination': by_adposition('at') }],
+	]],
+	['enjoy', [
+		['enjoy-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['escape', []],
+	['expect', [
+		['expect-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['explain', []],
+	['explain-how', []],
+	['fail', [
+		['fail-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['fall', [
+		['fall-A', { 'destination': by_adposition('to|on|into') }],
+		['fall-B', { 'destination': by_adposition('to|on|into') }],
+		['fall-D', { 'destination': by_adposition('to|on|into') }],
+		['fall-E', { 'destination': by_adposition('to|on|into') }],
+	]],
+	['fight', [
+		['fight-A', {
+			'patient': [
+				directly_after_verb(),
+				by_adposition('against|with'),
+			],
+			'instrument': {
+				...by_adposition('with'),
+				'trigger': { 'tag': { 'syntax': 'head_np' }, 'level': '0|1|2|3' },	// the instrument can't be a level 4 word (proper name)
+			},
+		}],
+		['fight-B', { 'instrument': by_adposition('with') }],
+	]],
+	['find-out', [
+		['find-out-B', {
+			'patient': [
+				directly_after_verb(),
+				by_adposition('about'),
+			],
+		}],
+	]],
+	['follow', []],
+	['forget', [
+		['forget-A', { 'patient': by_adposition('about') }],
+		['forget-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['forgive', [
+		['forgive-C', {
+			'destination': by_adposition('for'),
+			'beneficiary': { },
+		}],
+		['forgive-D', patient_from_subordinate_clause()],
+	]],
+	['gather', [
+		['gather-B', { 'instrument': by_adposition('with') }],
 	]],
 	['give', [
 		['give-A', {
@@ -332,6 +522,9 @@ const verb_case_frames = new Map([
 	]],
 	['help', [
 		['help-B', patient_from_subordinate_clause()],
+	]],
+	['hurt', [
+		['hurt-C', with_be_auxiliary()],
 	]],
 	['kill', []],
 	['know', [
@@ -388,6 +581,9 @@ const verb_case_frames = new Map([
 			'other_optional': 'just_like_clause',
 		}],
 	]],
+	['lock', [
+		['lock-B', with_be_auxiliary()],
+	]],
 	['look', [
 		['look-A', { 'patient': directly_after_verb_with_adposition('at') }],
 		['look-B', { 'other_required': 'predicate_adjective' }],	// X looked happy/sad/excited
@@ -421,6 +617,9 @@ const verb_case_frames = new Map([
 			],
 		}],
 		['make-E', { 'instrument': by_adposition('with') }],
+	]],
+	['marry', [
+		['marry-B', with_be_auxiliary()],
 	]],
 	['pray', [
 		['pray-A', { 'patient': by_adposition('about') }],
@@ -467,13 +666,10 @@ const verb_case_frames = new Map([
 	['speak', [
 		['speak-A', {
 			'patient': by_adposition('about') ,
-			'instrument': {
-				...by_adposition('in'),	// in a language
-				// 'context_transform': { 'concept': 'in-K' },
-			},
+			'instrument': by_adposition('in'),	// in a language
 			'other_rules': {
 				'extra_patient': {
-					'directly_after_verb': {},
+					'directly_after_verb': { },
 					'extra_message': 'speak-A cannot be used with a regular object. The patient is expressed as \'speak about X\'',
 				},
 			},
@@ -545,6 +741,23 @@ const verb_case_frames = new Map([
 		}],
 		['throw-E', { 'destination': by_adposition('into') }],
 	]],
+	['tie', [
+		['tie-A', { 'instrument': by_adposition('with') }],
+		['tie-B', {
+			...with_be_auxiliary(),
+			'instrument': by_adposition('with'),
+		}],
+		['tie-C', { 'instrument': by_adposition('with') }],
+	]],
+	['unite', [
+		['unite-A', { 'destination': by_adposition('to|with') }],
+		['unite-B', { 'destination': by_adposition('to|with') }],
+		['unite-C', {
+			...with_be_auxiliary(),
+			'patient': by_adposition('to|with'),
+			'destination': { },
+		}],
+	]],
 	['want', [
 		['want-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
@@ -552,7 +765,11 @@ const verb_case_frames = new Map([
 		['work-A', { 'instrument': by_adposition('with') }],
 	]],
 	['worry', [
-		['worry-A', { 'patient': directly_after_verb_with_adposition('about') }],
+		['worry-A', {
+			...with_be_auxiliary(),
+			'patient': directly_after_verb_with_adposition('about'),
+		}],
+		['worry-B', with_be_auxiliary()],
 	]],
 ])
 

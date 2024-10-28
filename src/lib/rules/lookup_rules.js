@@ -91,6 +91,13 @@ const lookup_rules_json = [
 		'combine': 1,
 	},
 	{
+		'name': 'take care',
+		'trigger': { 'stem': 'take' },
+		'context': { 'followedby': { 'token': 'care' } },
+		'lookup': 'care',
+		'combine': 1,
+	},
+	{
 		'name': 'look for -> search',
 		'trigger': { 'stem': 'look' },
 		'context': { 'followedby': { 'token': 'for' } },

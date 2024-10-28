@@ -22,6 +22,26 @@ export function patient_from_subordinate_clause() {
 
 /**
  * 
+ * @returns {SenseRuleJson<VerbRoleTag>}
+ */
+export function with_be_auxiliary() {
+	return {
+		'other_rules': {
+			'be_auxiliary': {
+				...by_relative_context({
+					'precededby': { 'tag': { 'auxiliary': 'passive|generic' }, 'skip': 'all' },
+				}),
+				'context_transform': { 'tag': { 'auxiliary': 'generic' } },
+				'tag_role': false,
+			},
+		},
+		'other_optional': 'be_auxiliary',
+		'comment': "some verbs look like passives but aren't eg. 'John's hand was hurt', 'John was married to Mary', etc. Leave as optional in case of 'John's hand hurt-C'",
+	}
+}
+
+/**
+ * 
  * @param {string} adposition 
  * @returns {CaseFrameRuleJson}
  */
@@ -42,6 +62,22 @@ export function by_adposition(adposition) {
 export function by_clause_tag(clause_type) {
 	return {
 		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': clause_type, 'role': 'none' } },
+	}
+}
+
+/**
+ * 
+ * @param {string} complementizer 
+ * @returns {CaseFrameRuleJson}
+ */
+export function by_complementizer(complementizer) {
+	return {
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause' } },
+		'context': {
+			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
+		},
+		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant', 'role': 'patient_clause_different_participant' } },
+		'subtoken_transform': { 'function': { 'syntax': 'complementizer' } },
 	}
 }
 

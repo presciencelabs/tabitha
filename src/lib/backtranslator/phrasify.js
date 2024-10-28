@@ -194,7 +194,7 @@ const ORDERED_PHRASE_PRE_FILTERS = [
 			// did(auxiliary) not(polarity) start(auxiliary) to(infinitive) go
 			// to(infinitive) not(polarity) go
 			{ 'tag': 'verb_polarity' },
-			{ 'tag': { 'syntax': 'infinitive' } },
+			{ 'tag': { 'syntax': 'infinitive|gerundifier' } },
 			{ 'tag': 'auxiliary' },
 			{ 'tag': 'verb_polarity' },
 			{ 'tag': 'auxiliary' },
