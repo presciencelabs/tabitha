@@ -30,6 +30,21 @@ export function head_noun() {
 
 /**
  * 
+ * @returns {CaseFrameRuleJson}
+ */
+export function head_noun_post() {
+	return {
+		...by_relative_context({
+			'precededby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+		}),
+		'tag_role': false,
+		'main_word_tag': { 'post_np_adposition': 'oblique' },
+		'missing_message': 'Could not find the Noun associated with this Adposition.',
+	}
+}
+
+/**
+ * 
  * @param {TokenContextFilterJson} relative_context 
  * @returns {CaseFrameRuleJson}
  */
@@ -37,5 +52,6 @@ export function by_relative_context(relative_context) {
 	return {
 		'trigger': 'all',
 		'context': relative_context,
+		'argument_context_index': 0,
 	}
 }

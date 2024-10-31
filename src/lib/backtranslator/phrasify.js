@@ -265,6 +265,7 @@ const ORDERED_PHRASE_POST_FILTERS = [
 			{ 'type': TOKEN_TYPE.FUNCTION_WORD, 'tag': { 'relation': 'group' } },
 			{ 'tag': { 'phrase_type': 'NP', 'role': 'noun_argument_np' } },
 			{ 'tag': { 'clause_type': 'relative_clause' } },
+			{ 'tag': 'post_np_adposition' },	// ((X) years ago)
 		],
 	],
 	[

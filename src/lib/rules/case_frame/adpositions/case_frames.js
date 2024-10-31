@@ -1,5 +1,5 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_relative_context, head_noun, opening_subordinate_clause } from './presets'
+import { by_relative_context, head_noun, head_noun_post, opening_subordinate_clause } from './presets'
 
 /** @type {RoleRuleJson<AdpositionRoleTag>} */
 const default_adposition_usage_json = {
@@ -14,6 +14,11 @@ const default_adposition_usage_json = {
  * @type {Map<WordStem, [WordSense, SenseRuleJson<AdpositionRoleTag>][]>}
  */
 const adposition_case_frames = new Map([
+	['ago', [
+		['ago-A', {
+			'in_noun_phrase': head_noun_post(),
+		}],
+	]],
 	['because', [
 		['because-B', {
 			'opening_subordinate_clause': { },

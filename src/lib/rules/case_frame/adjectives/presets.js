@@ -101,5 +101,6 @@ function by_relative_context(relative_context) {
 	return {
 		'trigger': 'all',
 		'context': relative_context,
+		'argument_context_index': 0,
 	}
 }
