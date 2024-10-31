@@ -41,7 +41,7 @@ export function clausify(tokens) {
 		}
 	}
 
-	if (!sentence_is_ending && !is_only_underscore_notes()) {
+	if (!sentence_is_ending && !is_only_notes()) {
 		// add a 'missing period' error
 		add_token_to_clause(create_added_token('.', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_PERIOD }))
 	}
@@ -110,8 +110,8 @@ export function clausify(tokens) {
 		return token.type === TOKEN_TYPE.PUNCTUATION && REGEXES.CLAUSE_ENDING_PUNCTUATION.test(token.token)
 	}
 
-	function is_only_underscore_notes() {
-		return clause_tokens.length <= 1 && clause_tokens[0].every(({ token }) => token.startsWith('_'))
+	function is_only_notes() {
+		return clause_tokens.length <= 1 && clause_tokens[0].every(({ type }) => type === TOKEN_TYPE.NOTE)
 	}
 }
 

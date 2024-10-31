@@ -327,6 +327,10 @@ const structural_rules_json = [
 
 const TOKEN_TEXT_MAP = new Map([
 	['_paragraph', '(paragraph)'],
+	['(comment-begin)', '('],
+	['(begin-comment)', '('],
+	['(comment-end)', ')'],
+	['(end-comment)', ')'],
 ])
 
 const NUMBER_TOKEN_TEXT_MAP = new Map([
