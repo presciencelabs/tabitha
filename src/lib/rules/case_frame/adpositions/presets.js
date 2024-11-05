@@ -5,7 +5,7 @@
 export function opening_subordinate_clause() {
 	return {
 		...by_relative_context({
-			'precededby': { 'token': '[', 'skip': { 'tag': 'coord_clause' } },
+			'precededby': { 'token': '[', 'skip': { 'tag': { 'syntax': 'coord_clause' } } },
 		}),
 		'tag_role': false,
 		'main_word_tag': { 'syntax': 'adverbial_clause_adposition' },

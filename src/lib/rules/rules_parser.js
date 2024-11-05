@@ -424,7 +424,7 @@ export function message_set_action(action) {
 const SKIP_GROUPS = new Map([
 	['clause_start', [
 		{ 'token': '[' },
-		{ 'category': 'Conjunction' },
+		{ 'tag': { 'syntax': 'coord_clause' } },
 	]],
 	['adjp_modifiers_predicative', [
 		{
