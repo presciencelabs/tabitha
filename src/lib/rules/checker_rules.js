@@ -647,10 +647,34 @@ const builtin_checker_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
 			context: create_context_filter({}),
 			action: message_set_action(function* ({ trigger_token: token }) {
-				yield* check_lookup_results(token)
+				yield* check_ontology_status(token)
 
 				if (token.complex_pairing) {
-					yield* check_lookup_results(token.complex_pairing)
+					yield* check_ontology_status(token.complex_pairing)
+				}
+			}),
+		},
+	},
+	{
+		name: 'Check for words with DELETE in the gloss',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			context: create_context_filter({}),
+			action: message_set_action(function* ({ trigger_token: token }) {
+				yield* check_gloss(token)
+
+				if (token.complex_pairing) {
+					yield* check_gloss(token.complex_pairing)
+				}
+
+				/**
+				 * @param {Token} token 
+				 */
+				function* check_gloss(token) {
+					if (token.lookup_results.at(0)?.gloss.includes('DELETE')) {
+						yield { token_to_flag: token, warning: 'The {category} {sense} is set to be removed from the Ontology. Consider using a different word.' }
+					}
 				}
 			}),
 		},
@@ -820,7 +844,7 @@ function check_ambiguous_level(level_check) {
  * 
  * @param {Token} token 
  */
-function* check_lookup_results(token) {
+function* check_ontology_status(token) {
 	if (token.lookup_results.some(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 		return {}
 	}
