@@ -673,7 +673,7 @@ const builtin_checker_rules = [
 				 */
 				function* check_gloss(token) {
 					if (token.lookup_results.at(0)?.gloss.includes('DELETE')) {
-						yield { token_to_flag: token, warning: 'The {category} {sense} is set to be removed from the Ontology. Consider using a different word.' }
+						yield { token_to_flag: token, warning: 'The {category} {sense} is set to be removed from the Ontology. Hover over the word for possible alternatives.' }
 					}
 				}
 			}),
