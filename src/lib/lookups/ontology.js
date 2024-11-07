@@ -22,10 +22,12 @@ export async function check_ontology(lookup_token) {
 
 		if (existing_result) {
 			// The stem was found in the form lookup
+			// Note: how_to_entries must be specified, otherwise the copied existing result will share the how_to_entries array
 			transformed_results.push({
 				...existing_result,
 				...ontology_result,
 				ontology_id: parseInt(ontology_result.id),
+				how_to_entries: [],
 			})
 
 		} else if (ontology_result.stem.toLowerCase() !== lookup_token.lookup_terms[0].toLowerCase()) {
