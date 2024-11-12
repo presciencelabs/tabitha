@@ -282,6 +282,7 @@ const adjective_sense_priority_overrides = [
 	['old', [['old-B', { }]]],
 	['patient', [['patient-B', { }]]],
 	['proud', [['proud-B', { }]]],
+	['ready', [['ready-C', { }]]],
 	['sad', [
 		// Only when sad-B has a nominal argument should it be prioritized over sad-A
 		['sad-B', { 'nominal_argument': { } }],

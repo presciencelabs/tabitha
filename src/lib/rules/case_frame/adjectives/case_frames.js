@@ -1,5 +1,5 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_adposition, by_clause_tag, modified_noun_of_adjective, subgroup_with_optional_of, unit_with_measure } from './presets'
+import { by_adposition, by_clause_tag, by_complementizer, modified_noun_of_adjective, subgroup_with_optional_of, unit_with_measure } from './presets'
 
 /** @type {RoleRuleJson<AdjectiveRoleTag>} */
 const default_adjective_case_frame_json = {
@@ -101,6 +101,14 @@ const adjective_case_frames = new Map([
 	]],
 	['proud', [
 		['proud-B', { 'nominal_argument': by_adposition('of') }],
+	]],
+	['ready', [
+		['ready-C', {
+			'patient_clause_different_participant': [
+				by_clause_tag('patient_clause_different_participant'),
+				by_complementizer('for'),
+			],
+		}],
 	]],
 	['responsible', [
 		['responsible-A', { 'nominal_argument': by_adposition('for') }],

@@ -62,6 +62,22 @@ export function by_clause_tag(clause_type) {
 
 /**
  * 
+ * @param {string} complementizer 
+ * @returns {CaseFrameRuleJson}
+ */
+export function by_complementizer(complementizer) {
+	return {
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause' } },
+		'context': {
+			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
+		},
+		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant', 'role': 'adjective_clausal_argument' } },
+		'subtoken_transform': { 'function': { 'syntax': 'complementizer' } },
+	}
+}
+
+/**
+ * 
  * @returns {CaseFrameRuleJson}
  */
 export function modified_noun_of_adjective() { 
