@@ -17,7 +17,7 @@
 </script>
 
 {#await get_target_data(reference)}
-	<span class="loading loading-spinner text-warning" />
+	<span class="loading loading-spinner text-warning"></span>
 	getting the target data...
 {:then text}
 	{text || '–'}

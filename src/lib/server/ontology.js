@@ -91,6 +91,10 @@ export async function get_version(db) {
  * @returns {(term: string) => Promise<SimplificationHint[]>} term is case-insensitive
  */
 export const get_simplification_hints = db => async term => {
+	if (! term) {
+		return []
+	}
+
 	const sql = `
 		SELECT *
 		FROM Complex_Terms
@@ -160,7 +164,7 @@ export const get_examples = db => async (concept, part_of_speech, source) => {
 		WHERE concept_stem = ? AND concept_sense = ? AND concept_part_of_speech = ? AND ref_type LIKE ?
 	`).bind(stem, sense, part_of_speech, source.length ? source : '%').all()
 
-	
+
 	return results.map(normalize_results)
 
 	/** @param {DbRowExample} arg */
@@ -182,8 +186,8 @@ export const get_examples = db => async (concept, part_of_speech, source) => {
  * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
  * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
  * }} ConceptQueryBuilder
- * 
- * @param {import('@cloudflare/workers-types').D1Database} db 
+ *
+ * @param {import('@cloudflare/workers-types').D1Database} db
  * @returns { ConceptQueryBuilder }
  */
 function build_concept_query(db) {

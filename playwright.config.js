@@ -17,9 +17,9 @@ export default defineConfig({
 
 	webServer: {
 		command: 'pnpm dev',
-		url: 'http://localhost:8788',
+		url: 'http://localhost.tbta.bible:5173',
 	},
 	use: {
-		baseURL: 'http://localhost:8788',
+		baseURL: 'http://localhost.tbta.bible:5173',
 	},
 })

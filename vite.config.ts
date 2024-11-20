@@ -5,4 +5,8 @@ export default defineConfig({
 	plugins: [
 		sveltekit(),
 	],
+
+	server: {
+		host: 'localhost.tbta.bible',
+	},
 })

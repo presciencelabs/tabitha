@@ -5,5 +5,5 @@
 
 <pre data-tip="TBD: still needs to be decoded" class="indicator tooltip tooltip-right inline whitespace-normal">
 	{categories.length ? categories : '–'}
-	<span class="badge indicator-item badge-warning badge-xs" />
+	<span class="badge indicator-item badge-warning badge-xs"></span>
 </pre>

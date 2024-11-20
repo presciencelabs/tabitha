@@ -1,7 +1,7 @@
 <script>
-	import Icon from '@iconify/svelte'
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 	import { SemanticEncoding } from '$lib'
+	import Icon from '@iconify/svelte'
 
 	/** @type {Reference} */
 	export let reference
@@ -28,7 +28,7 @@
 </script>
 
 {#await get_source_data(reference)}
-	<span class="loading loading-spinner text-warning" />
+	<span class="loading loading-spinner text-warning"></span>
 	getting the source data...
 {:then source}
 	<h4 class="flex justify-between">

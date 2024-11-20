@@ -1,7 +1,7 @@
 import js from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
-import globals from 'globals'
 import svelte from 'eslint-plugin-svelte'
+import globals from 'globals'
 import svelte_parser from 'svelte-eslint-parser'
 
 // https://eslint.org/docs/latest/use/configure/configuration-files-new

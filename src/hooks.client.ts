@@ -5,7 +5,6 @@ initialize_theme()
 
 initialize_detection()
 
-/** @type {import('@sveltejs/kit').HandleClientError} */
 export async function handleError({ error, event }) {
 	console.error('hooks.client.handleError: ', { error, event })
 }

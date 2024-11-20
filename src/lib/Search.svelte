@@ -62,7 +62,7 @@
 	</form>
 
 	<!-- chose visibility here to keep results from jumping up and down -->
-	<progress class="progress progress-warning invisible" class:visible={$navigating} />
+	<progress class="progress progress-warning invisible" class:visible={$navigating}></progress>
 </search>
 
 <style>

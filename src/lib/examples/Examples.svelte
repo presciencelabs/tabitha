@@ -1,6 +1,6 @@
 <script>
-	import Icon from '@iconify/svelte'
 	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
+	import Icon from '@iconify/svelte'
 	import { fade } from 'svelte/transition'
 
 	/** @type { Concept } */
@@ -46,7 +46,7 @@
 	<h3>Bible</h3>
 
 	{#await load_examples(concept)}
-		<span class="loading loading-spinner text-warning" />
+		<span class="loading loading-spinner text-warning"></span>
 		loading the examples...
 	{:then}
 		<Filters {concept} examples={all_examples} on:data-filtered={({ detail }) => filtered_examples = detail} />

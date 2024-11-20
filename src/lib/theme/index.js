@@ -1,5 +1,5 @@
-import Selector from './Selector.svelte'
 import { writable } from 'svelte/store'
+import Selector from './Selector.svelte'
 
 function initialize_theme() {
 	const saved_theme = localStorage.getItem('theme')
