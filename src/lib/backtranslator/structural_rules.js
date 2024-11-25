@@ -26,15 +26,21 @@ const structural_rules_json = [
 		comment: '',
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_different_participant' } }),
-			context: create_context_filter({ }),
+			context: create_context_filter({
+				// Some specific verbs (eg. let-A) do not take 'that', and cannot be determined with the filters below
+				'notprecededby': { 'stem': 'let', 'category': 'Verb' },
+			}),
 			action: simple_rule_action(({ trigger_token }) => {
 				// Don't add 'that' if the patient clause is like 'John heard [Mary speaking].'
 				if (token_has_tag(trigger_token, { 'clause_type': 'patient_clause_simultaneous' })) {
 					return
 				}
 
-				// Don't add 'that' if the patient clause includes an infinitive 'to' or gerundifier 'from'
-				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive|gerundifier' } }))) {
+				// Don't add 'that' if the patient clause includes:
+				//   an infinitive 'to' (eg. ask-C)
+				//   a complementizer (eg. 'about' for argue-B, 'if' for ask-F)
+				//   a gerundifier (eg. 'from' for prevent-A, 'for' for forgive-D)
+				if (trigger_token.sub_tokens.some(create_token_filter({ 'tag': { 'syntax': 'infinitive|gerundifier|complementizer' } }))) {
 					return
 				}
 
