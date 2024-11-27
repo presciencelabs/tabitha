@@ -1,21 +1,31 @@
-<script>
+<script lang="ts">
 	import '$lib/app.postcss'
 	import { Brand, Search } from '$lib'
 	import { Selector } from '$lib/theme'
+	import { signIn, signOut } from '@auth/sveltekit/client'
+	import Icon from '@iconify/svelte'
 
-	export let data
+	let { data, children } = $props()
+
+	let user = $derived(data.user)
+	let version = $derived(data.version)
+
+	async function sign_out() {
+		// https://next-auth.js.org/getting-started/client#signout
+		await signOut({ callbackUrl: '/' })
+	}
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
 
 <header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
-	<Brand />
+	<Brand {version} />
 
 	<Search autofocus />
 </header>
 
 <main class="mx-8 mt-8">
-	<slot />
+	{@render children?.()}
 </main>
 
 <!-- https://daisyui.com/components/footer -->
@@ -27,11 +37,24 @@
 	</nav>
 
 	<nav class="place-self-start md:justify-self-end">
-		<header class="footer-title">Administer</header>
+		{#if user}
+			<section class="flex items-center gap-2">
+				<div>
+					<div class="font-serif text-lg tracking-widest">{user.name}</div>
 
-		<!-- https://daisyui.com/components/link -->
-		<a href="//alltheword.org/downloads-software-bible" target="_blank" class="font-mono link link-hover">
-			{data.version}
-		</a>
+					<span class="text-sm italic">
+						{user.email}
+					</span>
+				</div>
+				
+				<button onclick={sign_out} class="btn btn-sm btn-outline btn-error">
+					<Icon icon="material-symbols:logout-rounded" class="h-5 w-5" />
+				</button>
+			</section>
+		{:else}
+			<button onclick={() => signIn('google')} class="btn btn-sm btn-outline btn-success">
+				Sign in to see additional features
+			</button>
+		{/if}
 	</nav>
 </footer>

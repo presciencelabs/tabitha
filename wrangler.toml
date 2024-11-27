@@ -1,9 +1,17 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
+# https://developers.cloudflare.com/workers/runtime-apis/nodejs
+compatibility_flags = [ "nodejs_compat" ]
+
 # https://developers.cloudflare.com/workers/configuration/compatibility-dates
 compatibility_date = "2024-10-30"
 
 [[d1_databases]]
 binding = "DB_Ontology"
 database_name = "Ontology.9489.2024-10-24"
-database_id = "dummy_id"
+database_id = "dummy_id_1"
+
+[[d1_databases]]
+binding = "DB_Auth"
+database_name = "Auth"
+database_id = "dummy_id_2"

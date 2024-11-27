@@ -16,13 +16,17 @@ Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
 
 #### 1. Load the database
 
-Dump files can be found under the "Artifacts" section of the workflow runs of the databases repo:  https://github.com/presciencelabs/tabitha-databases/actions/workflows/deploy.yml
-
 Running the following command will load the data locally:
 
 `wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
 
-#### 2. Start the app
+> dump files can be found in https://github.com/presciencelabs/tabitha-databases/tree/main/databases
+
+#### 2. Configure local auth
+
+Grab relevant OAuth keys from a teammate's `.env.local` file and add them to your local `.env.local` file.
+
+#### 3. Start the app
 
 > `pnpm build` will need to be run the first time only.
 
