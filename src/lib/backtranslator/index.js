@@ -55,10 +55,12 @@ export function textify(sentences) {
 			return ''
 		} else if (['[', ']'].includes(token.token)) {
 			return ''
-		} else if (token.specified_sense) {
-			// remove the sense from the token
-			return token.token.replace(/-[A-Z]$/, '')
+		} else if (token.type === TOKEN_TYPE.LOOKUP_WORD) {
+			// Remove the sense from the token and any remaining hyphens
+			// We want to keep the hyphen in notes like (poetry-begin) so this is specific to lookup words
+			return token.token.replace(/-[A-Z]$/, '').replace(/(\w)-(\w)/g, '$1 $2')
 		} else {
+			// Any remaining function words, punctuation, and notes
 			return token.token
 		}
 	}
@@ -71,8 +73,6 @@ export function textify(sentences) {
  */
 export function find_replace(text) {
 	return text
-		// remove all hyphens within words
-		.replace(/(\w)-(\w)/g, '$1 $2')
 		// remove both spaces around hyphen (found in verse references)
 		.replace(/ - /g, '-')
 		// always remove spaces before certain punctuation

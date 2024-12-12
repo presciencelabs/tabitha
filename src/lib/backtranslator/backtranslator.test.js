@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { MESSAGE_TYPE, create_added_token } from '$lib/token'
 import { tokenize_input } from '$lib/parser/tokenize'
 import { clausify } from '$lib/parser/clausify'
+import { RULES, rules_applier } from '$lib/rules'
 
 /**
  * textify simply produces the plain text equivalent for each token, joined by a space.
@@ -31,6 +32,15 @@ describe('textify', () => {
 		const expected = 'This is a test .'
 
 		const result = textify(clausify(test_tokens))
+		expect(result).toBe(expected)
+	})
+
+	test('(poetry-begin) John will take-away those things from Mary-Jane. (poetry-end)', () => {
+		const test_tokens = tokenize_input('(poetry-begin) John will take-away those things from Mary-Jane. (poetry-end) Book 5:2-3.')
+		const expected = '(poetry-begin) John will take away those things from Mary Jane . (poetry-end) Book 5 : 2 - 3 .'
+
+		// apply the syntax rules so the verse reference gets handled correctly
+		const result = textify(rules_applier(RULES.SYNTAX)(clausify(test_tokens)))
 		expect(result).toBe(expected)
 	})
 
