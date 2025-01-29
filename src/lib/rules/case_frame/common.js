@@ -45,7 +45,7 @@ function extra_argument_message(role_tag) {
 /** @type {[RoleTag, string][]} */
 const ALL_HAVE_MISSING_ARGUMENT_MESSAGES = [
 	// If no Verb sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
-	['agent', 'No agent could be found for this verb. Make sure to add explicit agents for imperatives and passives, and make sure your brackets are correct.'],
+	['agent', 'Could not find the agent of this verb. Check other errors and warnings for more help.'],
 	['opening_subordinate_clause', "Missing '[' bracket before adverbial clause."],
 ]
 
@@ -295,7 +295,8 @@ export function* validate_case_frame(trigger_context) {
 			const [, message] = missing_role
 			yield { error: message }
 		} else {
-			yield { error: 'No senses match the argument structure found in this sentence. Specify a sense (eg. {token}-A) to get more info about its expected structure.' }
+			yield { error: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
+			yield { info: 'For more detailed error messages, specify a sense (eg. {token}-A) and recheck.' }
 		}
 
 		// Some extra arguments are common mistakes and can be flagged even when no sense is specified
@@ -310,10 +311,7 @@ export function* validate_case_frame(trigger_context) {
 	const case_frame = selected_result.case_frame
 
 	if (!case_frame.is_valid) {
-		const message = selected_result.part_of_speech === 'Verb'
-			? 'Invalid argument structure for {sense}. Consult the Ontology for correct usage.'
-			: 'Invalid usage of {sense}. Consult the Ontology.'
-		yield { error: message }
+		yield { error: 'Incorrect usage of {sense}. Check other errors and warnings for more information, and consult the Ontology.' }
 	}
 
 	// Show errors for missing and unexpected arguments

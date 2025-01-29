@@ -1,12 +1,12 @@
 const MISSING_OPENING_PAREN = 'Missing an opening parenthesis.'
 const MISSING_CLOSING_PAREN = 'Missing a closing parenthesis.'
 
-const MISSING_OPENING_BRACKET = 'Missing an opening bracket in the following sentence.'
-const MISSING_CLOSING_BRACKET = 'Missing a closing bracket in the previous sentence.'
+const MISSING_OPENING_BRACKET = 'Missing an opening bracket somewhere in the following sentence.'
+const MISSING_CLOSING_BRACKET = 'Missing a closing bracket somewhere in the previous sentence.'
 const NO_SPACE_BEFORE_OPENING_BRACKET = 'Missing a space before [.'
 
 const INVALID_PAIRING_SYNTAX = 'Pairings should have the form simple/complex, e.g., follower/disciple.'
-const UNRECOGNIZED_CLAUSE_NOTATION = 'This clause notation is not recognized.'
+const UNRECOGNIZED_CLAUSE_NOTATION = 'This clause notation is not recognized.' // TODO show what IS recognized
 const NO_SPACE_BEFORE_UNDERSCORE = 'Notes notation should have a space before the underscore, e.g., ⎕_implicit.'
 const UNRECOGNIZED_CHAR = 'Unrecognized character.'
 

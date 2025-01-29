@@ -38,8 +38,8 @@ const transform_rules_json = [
 		'comment': '"prevent [X from Ving]", "forgive [X for Ving]". May be needed for other verbs as well',
 	},
 	{
-		'name': 'tag "in-order-to" and "by" as "same subject"',
-		'trigger': { 'stem': 'in-order-to|by' },
+		'name': 'tag "in-order-to/by/without" as "same subject"',
+		'trigger': { 'stem': 'in-order-to|by|without' },
 		'context': {
 			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
 		},

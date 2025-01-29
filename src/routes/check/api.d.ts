@@ -1,8 +1,10 @@
 type CheckResponse = {
-	has_error: boolean
+	status: CheckStatus
 	tokens: SimpleToken[]
 	back_translation: string
 }
+
+type CheckStatus = 'ok' | 'error' | 'warning'
 
 type SimpleToken = TokenBase & {
 	lookup_results: SimpleLookupResult[]

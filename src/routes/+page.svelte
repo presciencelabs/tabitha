@@ -6,7 +6,7 @@
 
 	let entered_text = $saved
 	$: checking = false
-	$: check_response = { has_error: false, tokens: [], back_translation: '' }
+	$: check_response = { status: 'ok', tokens: [], back_translation: '' }
 
 	async function check_text() {
 		checking = true
@@ -54,16 +54,23 @@
 		<Icon icon="line-md:loading-twotone-loop" class="h-16 w-16 text-warning" />
 	</div>
 {:else}
-	{@const { has_error, tokens, back_translation } = check_response}
-	{@const success = tokens.length > 0 && !has_error}
+	{@const { status, tokens, back_translation } = check_response}
 
-	<div class="divider my-12" class:divider-success={success} class:divider-error={has_error}>
-		{#if success}
+	{#if tokens.length === 0}
+		<div class="divider my-12"></div>
+	{:else if status === 'ok'}
+		<div class="divider divider-success my-12">
 			<Icon icon="mdi:check-circle" class="h-16 w-16 text-success" />
-		{:else if has_error}
+		</div>
+	{:else if status === 'error'}
+		<div class="divider divider-error my-12">
 			<Icon icon="mdi:close-circle" class="h-16 w-16 text-error" />
-		{/if}
-	</div>
+		</div>
+	{:else if status === 'warning'}
+		<div class="divider divider-warning my-12">
+			<Icon icon="mdi:alert-circle" class="h-16 w-16 text-warning" />
+		</div>
+	{/if}
 
 	<section class="prose flex max-w-none flex-wrap items-center justify-center gap-x-4 gap-y-8">
 		<Tokens {tokens} />

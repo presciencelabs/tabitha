@@ -19,7 +19,6 @@ const checker_rules_json = [
 			'message': 'Third person pronouns should be replaced with the Noun they represent, e.g., Paul (instead of him).',
 		},
 	},
-	// TODO make an error again when certain passive-like verbs are dealt with better (eg. united-C with, married with, locked, etc, see #105)
 	{
 		'name': 'Expect an agent of a passive',
 		'trigger': { 'category': 'Verb' },
@@ -27,11 +26,11 @@ const checker_rules_json = [
 			'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 			'notfollowedby': { 'tag': [{ 'role': 'agent' }, { 'pre_np_adposition': 'agent_of_passive' }], 'skip': 'all' },
 		},
-		'suggest': {
+		'error': {
 			'followedby': 'by X',
-			'message': 'If this is a passive Verb, make sure to include an explicit agent. Use _implicitActiveAgent if necessary.',
+			'message': 'A passive verb must have an explicit agent. Use _implicitActiveAgent if necessary.',
 		},
-		'comment': 'A passive verb requires a "by X" agent. Some verbs that look like passives aren\'t actually passives, so make this a suggestion instead of error.',
+		'comment': 'A passive verb requires a "by X" agent.',
 	},
 	{
 		'name': 'Suggest avoiding the Perfect aspect',
@@ -52,18 +51,18 @@ const checker_rules_json = [
 		},
 	},
 	{
-		'name': 'Suggest expanding \'there\' to \'at that place\' for clarity',
+		'name': "Suggest expanding 'there' to 'at that place' for clarity",
 		'trigger': { 'token': 'There|there' },
 		'context': { 'notfollowedby': { 'stem': 'be', 'skip': 'vp_modifiers' } },	// TODO trigger on 'not tag existential' instead
 		'suggest': {
-			'message': 'Consider using \'at that place\' instead of \'there\', especially if a preposition other than \'at\' is wanted.',
+			'message': "Consider using 'at that place' instead of 'there', especially if a preposition other than 'at' is wanted.",
 		},
 	},
 	{
-		'name': 'Suggest expanding \'here\' to \'at this place\' for clarity',
+		'name': "Suggest expanding 'here' to 'at this place' for clarity",
 		'trigger': { 'token': 'Here|here' },
 		'suggest': {
-			'message': 'Consider using \'at this place\' instead of \'here\', especially if a preposition other than \'at\' is wanted.',
+			'message': "Consider using 'at this place' instead of 'here', especially if a preposition other than 'at' is wanted.",
 		},
 	},
 	{
@@ -118,13 +117,13 @@ const checker_rules_json = [
 		},
 	},
 	{
-		'name': 'Check for \'Let X...\'',
+		'name': "Check for 'Let X...'",
 		'trigger': { 'token': 'Let' },
 		'context': {
 			'followedby': [{ 'category': 'Noun' }, { 'category': 'Verb', 'form': 'stem', 'skip': 'vp_modifiers' }],
 		},
 		'error': {
-			'message': 'For the jussive write \'{0:token} {1:stem} (jussive) ...\' instead of \'Let {0:token} {1:stem}...\'. Or use \'(imp)\' for expressing permission. See P1 Checklist section 15.',
+			'message': "For the jussive write '{0:token} {1:stem} (jussive) ...' instead of 'Let {0:token} {1:stem}...'. Or use '(imp)' for expressing permission. See P1 Checklist section 15.",
 		},
 	},
 	{
@@ -154,18 +153,18 @@ const checker_rules_json = [
 		'comment': 'See section 17 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Cannot use \'any\'',
+		'name': "Cannot use 'any'",
 		'trigger': { 'stem': 'any' },
 		'error': {
-			'message': 'Cannot use \'any\'. Simply use \'a\' instead. See P1 Checklist section 17.',
+			'message': "Cannot use 'any'. Simply use 'a' instead. See P1 Checklist section 17.",
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Cannot use \'really\'',
+		'name': "Cannot use 'really'",
 		'trigger': { 'token': 'really' },
 		'error': {
-			'message': 'Cannot use \'really\'. Use \'actually\', \'truly\', \'very\', or \'much\' instead.',
+			'message': "Cannot use 'really'. Use 'actually', 'truly', 'very', or 'much' instead.",
 		},
 		'comment': 'See section 1 of the Phase 1 checklist',
 	},
@@ -181,17 +180,18 @@ const checker_rules_json = [
 		},
 		'comment': 'See section 17 of the Phase 1 checklist',
 	},
-	{
-		'name': 'Avoid vague units of time',
-		'trigger': { 'stem': 'short|long|some' },
-		'context': {
-			'precededby': { 'token': 'For|for', 'skip': { 'token': 'a' } },
-			'followedby': { 'stem': 'time' },
-		},
-		'suggest': {
-			'message': 'Try using more specific units of time (eg. \'for many years\') or express it in a different way (eg. \'for much time\').',
-		},
-	},
+	// TODO redo with the new time-long-hours etc concepts in the Ontology
+	// {
+	// 	'name': 'Avoid vague units of time',
+	// 	'trigger': { 'stem': 'short|long|some' },
+	// 	'context': {
+	// 		'precededby': { 'token': 'For|for', 'skip': { 'token': 'a' } },
+	// 		'followedby': { 'stem': 'time' },
+	// 	},
+	// 	'suggest': {
+	// 		'message': "Try using more specific units of time (eg. 'for many years') or express it in a different way (eg. 'for much time').",
+	// 	},
+	// },
 	{
 		'name': 'Suggest a comma after "One day..."',
 		'trigger': { 'stem': 'day' },
@@ -201,7 +201,7 @@ const checker_rules_json = [
 		},
 		'suggest': {
 			'followedby': ',',
-			'message': 'Add a comma after \'One day\' so the \'that\' doesn\'t confuse the Analyzer.',
+			'message': "Add a comma after 'One day' so the 'that' doesn't confuse the Analyzer.",
 		},
 		'comment': 'The Analyzer messes up "One day that man...", but it works fine with a comma. TODO handle other phrases too?',
 	},
@@ -239,128 +239,128 @@ const checker_rules_json = [
 		},
 	},
 	{
-		'name': '\'so\' in an Adverbial clause should be followed by \'that\'',
+		'name': "'so' in an Adverbial clause should be followed by 'that'",
 		'trigger': { 'token': 'so', 'category': 'Adposition' },
 		'context': {
 			'notfollowedby': { 'token': 'that' },
 		},
 		'suggest': {
-			'message': 'Use \'so-that\' so-that it doesn\'t get mistaken for the Conjunction.',
+			'message': "Use 'so-that' so-that it doesn't get mistaken for the Conjunction.",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'around\'',
+		'name': "Check for unhyphenated Verbs with 'around'",
 		'trigger': { 'token': 'around' },
 		'context': {
 			'precededby': { 'stem': 'turn', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'around\' must be hyphenated with the Verb (i.e. {0:stem}-around). DO NOT inflect the Verb (e.g. NOT turned-around).',
+			'message': "'around' must be hyphenated with the Verb (i.e. {0:stem}-around). DO NOT inflect the Verb (e.g. NOT turned-around).",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'away\'',
+		'name': "Check for unhyphenated Verbs with 'away'",
 		'trigger': { 'token': 'away' },
 		'context': {
 			'precededby': { 'stem': 'chase|take|walk', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'away\' must be hyphenated with the Verb (i.e. {0:stem}-away). DO NOT inflect the Verb (e.g. NOT took-away).',
+			'message': "'away' must be hyphenated with the Verb (i.e. {0:stem}-away). DO NOT inflect the Verb (e.g. NOT took-away).",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'down\'',
+		'name': "Check for unhyphenated Verbs with 'down'",
 		'trigger': { 'token': 'down' },
 		'context': {
 			'precededby': { 'stem': 'cut|knock|lie|run|sit|walk|write', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'down\' must be hyphenated with the Verb (i.e. {0:stem}-down). DO NOT inflect the Verb (e.g. NOT ran-down).',
+			'message': "'down' must be hyphenated with the Verb (i.e. {0:stem}-down). DO NOT inflect the Verb (e.g. NOT ran-down).",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'off\'',
+		'name': "Check for unhyphenated Verbs with 'off'",
 		'trigger': { 'token': 'off' },
 		'context': {
 			'precededby': { 'stem': 'cut|pull|take', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'off\' must be hyphenated with the Verb (i.e. {0:stem}-off). DO NOT inflect the Verb (e.g. NOT took-off).',
+			'message': "'off' must be hyphenated with the Verb (i.e. {0:stem}-off). DO NOT inflect the Verb (e.g. NOT took-off).",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated \'put on\' (clothes)',
+		'name': "Check for unhyphenated 'put on' (clothes)",
 		'trigger': { 'stem': 'on' },
 		'context': {
 			'precededby': { 'stem': 'put', 'category': 'Verb' },
 			'followedby': { 'stem': 'clothes|glove|sandal|shirt|shoe' },
 		},
 		'error': {
-			'message': '\'on\' must be hyphenated with the Verb (i.e. put-on).',
+			'message': "'on' must be hyphenated with the Verb (i.e. put-on).",
 		},
-		'comment': 'The clothing-related nouns must be present because we don\'t want this rule applying to \'put on\' in general',
+		'comment': "The clothing-related nouns must be present because we don't want this rule applying to 'put on' in general",
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'out\'',
+		'name': "Check for unhyphenated Verbs with 'out'",
 		'trigger': { 'token': 'out' },
 		'context': {
 			'precededby': { 'stem': 'come|cry|pour|pull', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'out\' must be hyphenated with the Verb (i.e. {0:stem}-out). DO NOT inflect the Verb (e.g. NOT cried-out).',
+			'message': "'out' must be hyphenated with the Verb (i.e. {0:stem}-out). DO NOT inflect the Verb (e.g. NOT cried-out).",
 		},
 	},
 	{
-		'name': 'Check for unhyphenated Verbs with \'up\'',
+		'name': "Check for unhyphenated Verbs with 'up'",
 		'trigger': { 'token': 'up' },
 		'context': {
 			'precededby': { 'stem': 'go|pick|run|sit|stand|wake|walk', 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': '\'up\' must be hyphenated with the Verb (i.e. {0:stem}-up). DO NOT inflect the Verb (e.g. NOT picked-up).',
+			'message': "'up' must be hyphenated with the Verb (i.e. {0:stem}-up). DO NOT inflect the Verb (e.g. NOT picked-up).",
 		},
 	},
 	{
 		'name': 'Some noun plurals aren\'t recognized',
 		'trigger': { 'token': 'troubles|lands' },
 		'error': {
-			'message': 'TBTA does not use the plural \'{token}\'. Put \'_plural\' after the singular form to indicate plurality.',
+			'message': "TBTA does not use the plural '{token}'. Put '_plural' after the singular form to indicate plurality.",
 		},
 	},
 	{
-		'name': 'Don\'t allow \'what\' as a relativizer',
+		'name': "Don't allow 'what' as a relativizer",
 		'trigger': { 'token': 'what' },
 		'context': {
 			'precededby': { 'token': '[' },
 			'notfollowedby': { 'token': '?', 'skip': 'all' },
 		},
 		'error': {
-			'message': 'Cannot use \'what\' as a relativizer. Use \'the thing [that...]\' instead.',
+			'message': "Cannot use 'what' as a relativizer. Use 'the thing [that...]' instead.",
 		},
 		'comment': 'See section 0.41 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Warn about using \'what\' instead of \'which thing\'',
+		'name': "Warn about using 'what' instead of 'which thing'",
 		'trigger': { 'token': 'What|what' },
 		'warning': {
-			'message': '\'what\' always becomes \'which thing-A\'. Consider writing \'which X\' if you want something different.',
+			'message': "'what' always becomes 'which thing-A'. Consider writing 'which X' if you want something different.",
 		},
 		'comment': 'See section 0.41 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Don\'t allow \'where\' as a relativizer',
+		'name': "Don\'t allow 'where' as a relativizer",
 		'trigger': { 'token': 'where' },
 		'context': {
 			'precededby': { 'token': '[' },
 			'notfollowedby': { 'token': '?', 'skip': 'all' },
 		},
 		'error': {
-			'message': 'Cannot use \'where\' as a relativizer. Use \'the place [that...]\' instead.',
+			'message': "Cannot use 'where' as a relativizer. Use 'the place [that...]' instead.",
 		},
 		'comment': 'See section 0.8 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Don\'t allow \'when\' as a relativizer',
+		'name': "Don\'t allow 'when' as a relativizer",
 		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
 		'context': {
 			'precededby': { 'token': 'time' },
@@ -368,27 +368,27 @@ const checker_rules_json = [
 		},
 		'error': {
 			'on': 'subtokens:0',
-			'message': 'Cannot use \'when\' as a relativizer. Use \'the time [that...]\' instead. See P1 Checklist 0.8.',
+			'message': "Cannot use 'when' as a relativizer. Use 'the time [that...]' instead. See P1 Checklist 0.8.",
 		},
 		'comment': 'See section 0.8 of the Phase 1 checklist.',
 	},
 	{
-		'name': 'Don\'t allow \'whose\' as a relativizer',
+		'name': "Don't allow 'whose' as a relativizer",
 		'trigger': { 'token': 'whose' },
 		'error': {
-			'message': 'Cannot use \'whose\'. Use \'X [who had...]\' instead. See P1 Checklist section 6.',
+			'message': "Cannot use 'whose'. Use 'X [who had...]' instead. See P1 Checklist section 6.",
 		},
 		'comment': 'See section 6 of the Phase 1 checklist',
 	},
 	{
-		'name': 'Use \'all of\' rather than \'all\' for non-generic Nouns',
+		'name': "Use 'all of' rather than 'all' for non-generic Nouns",
 		'trigger': { 'stem': 'all' },
 		'context': {
 			'followedby': { 'tag': 'determiner' },
 		},
 		'error': {
 			'followedby': 'of',
-			'message': 'Use \'all of\', unless the modified Noun is generic. See P1 Checklist 0.17.',
+			'message': "Use 'all of', unless the modified Noun is generic. See P1 Checklist 0.17.",
 		},
 		'comment': 'Catches "all the|these|those people" but allows "all people"',
 	},
@@ -399,65 +399,65 @@ const checker_rules_json = [
 			'notfollowedby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'error': {
-			'message': 'Must use \'{stem}\' with another Verb. See P1 Checklist 0.19.',
+			'message': "Must use '{stem}' with another Verb. See P1 Checklist 0.19.",
 		},
 		'comment': 'See section 0.19 of the Phase 1 checklist.',
 	},
 	{
-		'name': 'Must use \'X is able to\' instead of \'X can\'',
+		'name': "Must use 'X is able to' instead of 'X can'",
 		'trigger': { 'token': 'can' },
 		'error': {
-			'message': 'Use \'be able [to...]\' instead of \'can\'. See P1 Checklist 2.1.',
+			'message': "Use 'be able [to...]' instead of 'can'. See P1 Checklist 2.1.",
 		},
 		'comment': 'See section 2.1 of the Phase 1 checklist.',
 	},
 	{
-		'name': 'Cannot use \'could\' unless in a \'so\' adverbial clause',
+		'name': "Cannot use 'could' unless in a 'so' adverbial clause",
 		'trigger': { 'token': 'could' },
 		'context': {
 			'notprecededby': [{ 'token': '[', 'skip': { 'category': 'Conjunction' } }, { 'stem': 'so', 'skip': 'all' }],
 		},
 		'error': {
-			'message': 'Use \'be able [to...]\' instead of \'could\', unless in a \'so-that\' clause. See P1 Checklist 2.1.',
+			'message': "Use 'be able [to...]' instead of 'could', unless in a 'so-that' clause. See P1 Checklist 2.1.",
 		},
 		'comment': 'See section 2.1 of the Phase 1 checklist.',
 	},
 	{
-		'name': 'Cannot use \'is going to\' as a future marker',
+		'name': "Cannot use 'is going to' as a future marker",
 		'trigger': { 'token': 'going' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'error': {
-			'message': 'Use \'will {1:stem}\' instead of \'going to {1:token}\' to express future tense. See P1 Checklist 0.28.',
+			'message': "Use 'will {1:stem}' instead of 'going to {1:token}' to express future tense. See P1 Checklist 0.28.",
 		},
 		'comment': 'See section 0.28 of the Phase 1 checklist.',
 	},
 	{
-		'name': 'Cannot use \'is to {Verb}\' as an obligation',
+		'name': "Cannot use 'is to {Verb}' as an obligation",
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'error': {
-			'message': 'Use \'will\', \'must\', or \'should\' instead of \'{token} to...\' to express a future obligation.',
+			'message': "Use 'will', 'must', or 'should' instead of '{token} to...' to express a future obligation.",
 		},
 	},
 	{
-		'name': 'Cannot use \'have to {Verb}\' as an obligation',
+		'name': "Cannot use 'have to {Verb}' as an obligation",
 		'trigger': { 'stem': 'have' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'error': {
-			'message': 'Use \'must\' or \'should\' instead of \'{token} to...\' to express an obligation.',
+			'message': "Use 'must' or 'should' instead of '{token} to...' to express an obligation.",
 		},
 	},
 	{
-		'name': 'Warn that \'come\' cannot be used for events, only things that move',
+		'name': "Warn that 'come' cannot be used for events, only things that move",
 		'trigger': { 'stem': 'come' },
 		'warning': {
-			'message': 'Note that \'come\' can only be used for things that move, NOT for events.',
+			'message': "Note that 'come' can only be used for things that move, NOT for events.",
 		},
 	},
 	{
@@ -487,23 +487,23 @@ const checker_rules_json = [
 			],
 		},
 		'suggest': {
-			'message': 'Consider writing \'{stem} X\' instead of \'X [{0:token} be {stem}]\'. The attributive adjective is generally preferred over a relative clause.',
+			'message': "Consider writing '{stem} X' instead of 'X [{0:token} be {stem}]'. The attributive adjective is generally preferred over a relative clause.",
 		},
 	},
 	{
-		'name': 'Check for an errant \'that\' in a complement clause',
+		'name': "Check for an errant 'that' in a complement clause",
 		'trigger': { 'tag': { 'clause_type': 'patient_clause_different_participant|agent_clause' } },
 		'context': {
 			'subtokens': { 'token': 'that', 'skip': 'clause_start' },
 		},
 		'suggest': {
 			'on': 'subtokens:0',
-			'message': 'Unless this \'that\' is supposed to be a demonstrative, consider removing it. Avoid using \'that\' as a complementizer in general.',
+			'message': "Unless this 'that' is supposed to be a demonstrative, consider removing it. Avoid using 'that' as a complementizer in general.",
 		},
 		'comment': 'While TBTA sometimes accepts it, using "that" as a complementizer is too inconsistent and so is not allowed in P1',
 	},
 	{
-		'name': 'Don\'t allow passives in \'same subject\' patient clauses',
+		'name': "Don't allow passives in 'same subject' patient clauses",
 		'trigger': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'context': {
 			'precededby': { 'category': 'Verb', 'skip': 'all' },
@@ -516,7 +516,7 @@ const checker_rules_json = [
 		'comment': 'eg. John wanted XX[to be seen by Mary]XX.',
 	},
 	{
-		'name': 'Don\'t allow passives in \'in-order-to\' adverbial clauses',
+		'name': "Don't allow passives in 'in-order-to' adverbial clauses",
 		'trigger': { 'tag': { 'auxiliary': 'passive' } },
 		'context': {
 			'precededby': { 'stem': 'in-order-to', 'skip': 'all' },
@@ -687,7 +687,7 @@ const builtin_checker_rules = [
 			context: create_context_filter({}),
 			action: message_set_action(function* () {
 				yield { warning: 'The editor cannot determine which part of speech this word is, so some errors and warnings within the same clause may not be accurate.' }
-				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after '{token}' if you want the editor to check the syntax more accurately." }
+				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after '{token}' so the editor can check the syntax more accurately." }
 			}),
 		},
 	},
@@ -850,18 +850,18 @@ function* check_ontology_status(token) {
 	}
 
 	if (token.lookup_results.length === 0) {
-		yield { token_to_flag: token, warning: '\'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
+		yield { token_to_flag: token, warning: '\'{token}\' is not recognized. Consult the How-To document or consider using a different word.' }
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
-		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word if you want the editor to check the syntax more accurately." }
+		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word so the editor can check the syntax more accurately." }
 
 	} else if (token.lookup_results.some(result => result.sense)) {
-		yield { token_to_flag: token, info: 'The {category} \'{stem}\' is not yet in the Ontology, but should be soon. Consult the How-To document for more info.' }
+		yield { token_to_flag: token, info: 'The {category} \'{stem}\' will be added to the Ontology in a future update. Consult the How-To document for more info.' }
 
 	} else if (token.lookup_results.some(result => result.how_to_entries.length > 0)) {
 		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 		
 	} else {
 		// a dummy result for an unknown word
-		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not in the Ontology, or its form is not recognized. Consult the How-To document or consider using a different word.' }
+		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not recognized. Consult the How-To document or consider using a different word.' }
 	}
 }

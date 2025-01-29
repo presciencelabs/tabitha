@@ -1,10 +1,8 @@
 import { backtranslate } from '$lib/backtranslator'
 import { parse } from '$lib/parser'
-import { token_has_error } from '$lib/token'
 import { RULES } from '$lib/rules'
 import { apply_rules } from '$lib/rules/rules_processor'
 import { json } from '@sveltejs/kit'
-
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url: { searchParams } }) {
@@ -17,7 +15,7 @@ export async function GET({ url: { searchParams } }) {
 
 	const back_translation = backtranslate(sentences)
 
-	return response({ has_error: has_error(tokens), tokens, back_translation })
+	return response({ status: get_status(tokens), tokens, back_translation })
 
 	/** @param {CheckResponse} result  */
 	function response(result) {
@@ -28,13 +26,20 @@ export async function GET({ url: { searchParams } }) {
 /**
  * 
  * @param {SimpleToken[]} tokens 
- * @returns {boolean}
+ * @returns {CheckStatus}
  */
-function has_error(tokens) {
-	return tokens.some(token => token_has_error(token)
-		|| token.complex_pairing && token_has_error(token.complex_pairing)
-		|| token.pronoun && token_has_error(token.pronoun)
-		|| has_error(token.sub_tokens))
+function get_status(tokens) {
+	const all_messages = tokens.flatMap(token => [token, token.complex_pairing, token.pronoun, ...token.sub_tokens].flatMap(token => token?.messages ?? []))
+	const has_error = all_messages.some(msg => msg.label === 'error')
+	const has_warning = all_messages.some(msg => msg.label === 'warning')
+
+	if (has_error) {
+		return 'error'
+	} else if (has_warning) {
+		return 'warning'
+	}
+
+	return 'ok'
 }
 
 /**

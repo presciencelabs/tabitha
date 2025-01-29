@@ -192,6 +192,16 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 3:4 The one official(N/Adj) shouted ...',
 	},
 	{
+		'name': 'If Noun-Adjective preceded and followed by "as", remove Noun',
+		'category': 'Noun|Adjective',
+		'context': {
+			'precededby': { 'stem': 'as' },
+			'followedby': { 'stem': 'as' },
+		},
+		'remove': 'Noun',
+		'comment': '...as good as...',
+	},
+	{
 		'name': 'If Noun-Adjective preceded by \'be\' or \'feel\', remove Noun',
 		'category': 'Noun|Adjective',
 		'context': {

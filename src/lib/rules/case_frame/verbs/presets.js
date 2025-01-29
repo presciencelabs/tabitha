@@ -139,7 +139,7 @@ export function predicate_adjective() {
 		'followedby': {
 			'category': 'Adjective',
 			'tag': { 'adj_usage': 'predicative' },
-			'skip': ['adjp_modifiers_predicative', 'advp', { 'tag': 'verb_polarity' }],
+			'skip': 'all',
 		},
 	})
 }
