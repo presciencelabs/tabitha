@@ -148,15 +148,10 @@ export function parse_lookup_rule(rule_json) {
 	 */
 	function lookup_rule_action({ tokens, trigger_index, trigger_token, context_indexes }) {
 		const lookup_terms = lookup_term.split('|')
-
-		// specify the sense if given in the lookup value
-		const { stem, sense } = split_stem_and_sense(lookup_terms[0])
-		lookup_terms[0] = stem
 		
 		tokens[trigger_index] = {
 			...trigger_token,
 			type: TOKEN_TYPE.LOOKUP_WORD,
-			specified_sense: sense || trigger_token.specified_sense,
 			lookup_terms,
 			lookup_results: trigger_token.lookup_results.filter(result => lookup_terms.includes(result.stem)),
 		}

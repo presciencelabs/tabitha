@@ -32,7 +32,8 @@ const argument_and_sense_rules = [
 
 				// An adjective being used predicatively should be tagged as such so the verb case frame rules can check it.
 				// A verse reference is another special case that should not interfere with Verb case frames.
-				if (!selected_result.case_frame.valid_arguments.map(arg => arg.role_tag).includes('modified_noun')
+				const present_arguments = selected_result.case_frame.valid_arguments.map(arg => arg.role_tag)
+				if (!(present_arguments.includes('modified_noun') || present_arguments.includes('modified_noun_with_subgroup'))
 						&& !token_has_tag(token, { 'role': 'verse_ref' })) {
 					add_tag_to_token(token, { 'adj_usage': 'predicative' })
 				}

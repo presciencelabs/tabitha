@@ -1,5 +1,5 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_adposition, by_clause_tag, by_complementizer, modified_noun_of_adjective, subgroup_with_optional_of, unit_with_measure } from './presets'
+import { by_adposition, by_clause_tag, by_complementizer, modified_noun_of_adjective, modified_noun_with_subgroup, unit_with_measure } from './presets'
 
 /** @type {RoleRuleJson<AdjectiveRoleTag>} */
 const default_adjective_case_frame_json = {
@@ -7,6 +7,7 @@ const default_adjective_case_frame_json = {
 	'nominal_argument': { 'trigger': 'none' },
 	'patient_clause_different_participant': by_clause_tag('patient_clause_different_participant'),
 	'patient_clause_same_participant': by_clause_tag('patient_clause_same_participant'),
+	'modified_noun_with_subgroup': modified_noun_with_subgroup(),
 }
 
 /**
@@ -18,10 +19,6 @@ const default_adjective_case_frame_json = {
 const adjective_case_frames = new Map([
 	['afraid', [
 		['afraid-B', { 'nominal_argument': by_adposition('of') }],
-	]],
-	['all', [
-		['all-A', subgroup_with_optional_of()],
-		['all-B', subgroup_with_optional_of()],
 	]],
 	['amazed', [
 		['amazed-B', { 'nominal_argument': by_adposition('of|by') }],
@@ -51,7 +48,7 @@ const adjective_case_frames = new Map([
 		['different-B', { 'nominal_argument': by_adposition('from') }],
 	]],
 	['each', [
-		['each-A', subgroup_with_optional_of()],
+		['each-A', { 'other_optional': 'modified_noun_with_subgroup' }],
 	]],
 	['faithful', [
 		['faithful-B', { 'nominal_argument': by_adposition('to') }],
@@ -84,14 +81,11 @@ const adjective_case_frames = new Map([
 	['merciful', [
 		['merciful-B', { 'nominal_argument': by_adposition('to') }],
 	]],
-	['much-many', [
-		['much-many-A', subgroup_with_optional_of()],
-	]],
 	['old', [
 		['old-B', { 'nominal_argument': unit_with_measure('time') }],
 	]],
 	['one', [
-		['one-A', subgroup_with_optional_of()],
+		['one-A', { 'other_optional': 'modified_noun_with_subgroup' }],
 	]],
 	['patient', [
 		['patient-B', { 'nominal_argument': by_adposition('with') }],
@@ -116,9 +110,6 @@ const adjective_case_frames = new Map([
 	['sad', [
 		['sad-A', { 'nominal_argument': by_adposition('about') }],
 		['sad-B', { 'nominal_argument': by_adposition('for') }],
-	]],
-	['some', [
-		['some-A', subgroup_with_optional_of()],
 	]],
 	['tall', [
 		['tall-A', { 'nominal_argument': unit_with_measure('length') }],
@@ -191,7 +182,8 @@ const ADJECTIVE_LETTER_TO_ROLE = new Map([
  * @returns {RoleUsageInfo}
  */
 function get_adjective_usage_info(categorization, role_rules) {
-	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc) and not used for usage
+	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc)
+	const category = categorization[0]
 	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
 	
 	// some categorizations are blank or erroneously all underscores (eg early-A)
@@ -207,6 +199,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 	// @ts-ignore
 	const possible_roles = role_letters
 		.map(c => ADJECTIVE_LETTER_TO_ROLE.get(c.toUpperCase()))
+		.concat(['Q', 'C', 'F'].includes(category) ? ['modified_noun_with_subgroup'] : [])
 		.concat([...role_rules.other_optional, ...role_rules.other_required])
 		.filter(role => role)
 

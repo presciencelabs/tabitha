@@ -52,7 +52,7 @@ type RoleRuleValueJson = CaseFrameRuleJson | CaseFrameRuleJson[]
 
 type VerbRoleTag = 'agent' | 'patient' | 'state' | 'source' | 'destination' | 'instrument' | 'beneficiary' | 'predicate_adjective'
 	| 'agent_clause' | 'patient_clause_different_participant' | 'patient_clause_same_participant' | 'patient_clause_simultaneous' | 'patient_clause_quote_begin'
-type AdjectiveRoleTag = 'modified_noun' | 'nominal_argument' | 'patient_clause_different_participant' | 'patient_clause_same_participant'
+type AdjectiveRoleTag = 'modified_noun' | 'modified_noun_with_subgroup' | 'nominal_argument' | 'patient_clause_different_participant' | 'patient_clause_same_participant'
 type AdpositionRoleTag = 'opening_subordinate_clause' | 'in_noun_phrase'
 type OtherRoleTag = RoleTag
 

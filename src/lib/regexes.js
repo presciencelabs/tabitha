@@ -31,7 +31,7 @@ const CLAUSE_ENDING_PUNCTUATION = /[\]"]/
 const TOKEN_END_BOUNDARY = /[\s.,!?:"\]]/
 const WORD_START_CHAR = /[a-zA-Z0-9-]/
 const WORD_CHAR = /[a-zA-Z0-9-']/
-const STARTS_LOWERCASE = /^[a-z]/
+const STARTS_LOWERCASE = /^[a-z.]/	// include '.' for cases like 'half'->'.5'
 
 /**
  * @param {RegExp} regex1

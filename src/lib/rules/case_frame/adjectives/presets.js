@@ -2,25 +2,20 @@ import { TOKEN_TYPE } from '$lib/token'
 
 /**
  * 
- * @returns {SenseRuleJson<AdjectiveRoleTag>}
+ * @returns {CaseFrameRuleJson}
  */
-export function subgroup_with_optional_of() {
+export function modified_noun_with_subgroup() {
 	return {
-		'modified_noun': [
-			modified_noun_of_adjective(),
-			{
-				...by_relative_context({
-					'followedby': [
-						{ 'token': 'of' },
-						{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
-					],
-				}),
-				'argument_context_index': 1,
-				'context_transform': { 'function': { 'relation': 'subgroup' }, 'remove_tag': 'pre_np_adposition' },
-				'main_word_tag': { 'adj_usage': 'attributive', 'adj_type': 'subgroup' },
-				'tag_role': false,
-			},
-		],
+		...by_relative_context({
+			'followedby': [
+				{ 'token': 'of' },
+				{ 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+			],
+		}),
+		'argument_context_index': 1,
+		'context_transform': { 'function': { 'relation': 'subgroup' }, 'remove_tag': 'pre_np_adposition' },
+		'main_word_tag': { 'adj_usage': 'attributive', 'adj_type': 'subgroup' },
+		'tag_role': false,
 		'comment': "eg 'all X' and 'all of X' are both supported",
 	}
 }
