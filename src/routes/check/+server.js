@@ -29,7 +29,7 @@ export async function GET({ url: { searchParams } }) {
  * @returns {CheckStatus}
  */
 function get_status(tokens) {
-	const all_messages = tokens.flatMap(token => [token, token.complex_pairing, token.pronoun, ...token.sub_tokens].flatMap(token => token?.messages ?? []))
+	const all_messages = tokens.flatMap(expand_token).flatMap(token => token.messages)
 	const has_error = all_messages.some(msg => msg.label === 'error')
 	const has_warning = all_messages.some(msg => msg.label === 'warning')
 
@@ -40,6 +40,23 @@ function get_status(tokens) {
 	}
 
 	return 'ok'
+}
+
+/**
+ * 
+ * @param {SimpleToken} token 
+ * @returns {SimpleToken[]}
+ */
+function expand_token(token) {
+	if (token.complex_pairing) {
+		return [token, token.complex_pairing]
+	} else if (token.pronoun) {
+		return [token, token.pronoun]
+	} else if (token.sub_tokens.length) {
+		return [token, ...token.sub_tokens.flatMap(expand_token)]
+	} else {
+		return [token]
+	}
 }
 
 /**

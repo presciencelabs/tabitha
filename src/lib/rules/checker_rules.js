@@ -578,25 +578,45 @@ const builtin_checker_rules = [
 		},
 	},
 	{
-		name: 'Check that level 3 words are within a (complex) alternate',
+		name: 'Check that level 2/3 words are within a (complex) alternate',
 		comment: 'The complex word may be in a nested clause within the clause that has the (complex) tag',
 		rule: {
-			trigger: create_token_filter({ 'level': '3' }),
-			context: create_context_filter({ 'notprecededby': { 'token': '(complex)', 'skip': 'all' } }),
-			action: message_set_action(() => {
-				return {}
-				// TODO Re-enable when we support looking out from nested clauses.
-				// return { error: ERRORS.WORD_LEVEL_TOO_HIGH }
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause' } }),
+			context: create_context_filter({ }),
+			action: message_set_action(({ trigger_token }) => {
+				const complex_alternate_filter = create_token_filter({ 'token': '(complex)' })
+				const complex_word_filter = create_token_filter({ 'level': '2|3' })
+				
+				// the stack makes it easy to track state as we go up and down clause nesting levels
+				let is_complex_alternate_stack = [false]
+
+				/** @type {MessageInfo[]} */
+				const messages = []
+
+				/**
+				 * @param {Token[]} clause_tokens 
+				 */
+				function search_clause_tokens(clause_tokens) {
+					for (let i = 0; i < clause_tokens.length; i++) {
+						const token = clause_tokens[i]
+						if (complex_alternate_filter(token)) {
+							is_complex_alternate_stack = is_complex_alternate_stack.with(-1, true)
+
+						} else if (complex_word_filter(token) && !is_complex_alternate_stack.at(-1)) {
+							messages.push({ token_to_flag: token, error: ERRORS.WORD_LEVEL_TOO_HIGH })
+
+						} else if (token.sub_tokens.length) {
+							is_complex_alternate_stack.push(is_complex_alternate_stack.at(-1) ?? false)
+							search_clause_tokens(token.sub_tokens)
+							is_complex_alternate_stack.pop()
+						}
+					}
+				}
+
+				search_clause_tokens(trigger_token.sub_tokens)
+
+				return messages
 			}),
-		},
-	},
-	{
-		name: 'Check that level 2 words are not on their own',
-		comment: '',
-		rule: {
-			trigger: check_token_level(LOOKUP_FILTERS.IS_LEVEL(2)),
-			context: create_context_filter({}),
-			action: message_set_action(() => ({ error: ERRORS.WORD_LEVEL_TOO_HIGH })),
 		},
 	},
 	{
