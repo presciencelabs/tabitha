@@ -420,13 +420,22 @@ const transform_rules_json = [
 	},
 	// Adpositions
 	{
-		'name': '\'that\' followed by the Adposition \'so\' does not have any function',
+		'name': "'that' preceded by the Adposition 'so' does not have any function",
 		'trigger': { 'token': 'that' },
 		'context': {
 			'precededby': { 'stem': 'so', 'category': 'Adposition' },
 		},
 		'transform': { 'remove_tag': ['syntax', 'determiner'] },
 		'comment': 'both "so that" and "so-that" are supported and map to the Adposition "so"',
+	},
+	{
+		'name': "'from' becomes a function word when not followed by a time word",
+		'trigger': { 'token': 'from' },
+		'context': {
+			'notfollowedby': { 'stem': 'time|day|evening|morning|beginning', 'skip': 'np_modifiers' },
+		},
+		'transform': { 'function': { } },
+		'comment': '"from" followed by a time word does not indicate a source argument, but remains an Adposition',
 	},
 	// Noun Phrase handling
 	{

@@ -6,7 +6,6 @@ export const FUNCTION_WORDS = new Map([
 	['could', { 'modal': 'conditional_could' }],
 	['definitely', { 'modal': 'definite_mood' }],
 	['extremely', { 'degree': 'extremely_intensified' }],
-	['from', {}],
 	['here', { 'expansion': 'at_this_place' }],
 	['it', { 'syntax': 'agent_proposition_subject' }],
 	['least', { 'degree': 'least' }],

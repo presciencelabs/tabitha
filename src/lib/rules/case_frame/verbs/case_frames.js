@@ -1,3 +1,4 @@
+import { TOKEN_TYPE } from '$lib/token'
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
 import { by_adposition, by_clause_tag, by_complementizer, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective, with_be_auxiliary } from './presets'
 
@@ -12,7 +13,13 @@ const default_verb_case_frame_json = {
 		...directly_after_verb(),
 		'comment': 'one of state or patient will be removed from the defaults depending on the stem (be/have use state instead of patient)',
 	},
-	'source': by_adposition('from'),
+	'source': {
+		'trigger': { 'tag': { 'syntax': 'head_np' } },
+		'context': { 'precededby': { 'token': 'from', 'type': TOKEN_TYPE.FUNCTION_WORD, 'skip': 'np_modifiers' } },
+		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
+		'missing_message': `Couldn't find the source, which in this case should have 'from' before it.`,
+		'comment': "Can't use by_adposition() because we also need to specify that 'from' has to be a function word. It's the same otherwise",
+	},
 	'destination': by_adposition('to'),
 	'instrument': {
 		'trigger': 'none',

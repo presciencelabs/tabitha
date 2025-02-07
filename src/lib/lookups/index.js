@@ -92,7 +92,7 @@ const result_filter_rules = [
 		name: 'Remove lookup results for certain functional Adpositions (up, down, etc)',
 		comment: 'While these have an entry in the Ontology, they are only used in the Analyzer with specific Verbs. They should not be recognized as words on their own.',
 		rule: {
-			trigger: create_token_filter({ 'token': 'to|from|down|off|out|up' }),
+			trigger: create_token_filter({ 'token': 'to|down|off|out|up' }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.lookup_results = []
