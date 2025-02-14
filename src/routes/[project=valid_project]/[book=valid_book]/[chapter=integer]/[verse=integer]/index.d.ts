@@ -1,3 +1,4 @@
 type TextResult = {
-	text: number
+	text: string
+	audience: string
 }
