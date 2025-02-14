@@ -59,14 +59,9 @@
 
 				<section class="collapse-content">
 					{#if retrieval_queue.includes(i)}
-						<SourceData {reference} />
+						<TargetData {reference} />
 
-						<h4>
-							Generated English text
-						</h4>
-						<p>
-							<TargetData {reference} />
-						</p>
+						<SourceData {reference} />
 					{/if}
 				</section>
 			</details>

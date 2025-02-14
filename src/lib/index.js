@@ -6,7 +6,6 @@ import { Examples } from './examples'
 import Level from './Level.svelte'
 import Occurrences from './Occurrences.svelte'
 import Search from './Search.svelte'
-import SemanticEncoding from './SemanticEncoding.svelte'
 import Table from './Table.svelte'
 
 export {
@@ -18,7 +17,6 @@ export {
 	Level,
 	Occurrences,
 	Search,
-	SemanticEncoding,
 	SummaryCard,
 	Table,
 }

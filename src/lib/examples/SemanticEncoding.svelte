@@ -113,10 +113,5 @@
 
 </script>
 
-<h4 class="flex justify-between">
-	Semantic encoding (Phase 2)
-</h4>
-<p>
-	<!--TODO display clause/phrase boundaries differently, and show (some?) features on hover -->
-	{simple_encoding}
-</p>
+<!--TODO display clause/phrase boundaries differently, and show (some?) features on hover -->
+{simple_encoding}

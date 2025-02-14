@@ -1,6 +1,6 @@
 <script>
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import { SemanticEncoding } from '$lib'
+	import { SemanticEncoding } from '$lib/examples'
 	import Icon from '@iconify/svelte'
 
 	/** @type {Reference} */
@@ -28,11 +28,20 @@
 </script>
 
 {#await get_source_data(reference)}
-	<span class="loading loading-spinner text-warning"></span>
-	getting the source data...
+	<p>
+		<span class="loading loading-spinner text-warning"></span>
+		getting the source data...
+	</p>
 {:then source}
 	<h4 class="flex justify-between">
-		Phase 1 encoding
+		Phase 1 encoding (may be out of date)
+	</h4>
+	<p>
+		{source.phase_1_encoding}
+	</p>
+
+	<h4 class="flex justify-between">
+		Semantic encoding (Phase 2)
 
 		<a href={get_sources_url(reference)} target="_blank" class="link link-accent link-hover text-sm flex items-end">
 			all source details
@@ -40,8 +49,6 @@
 		</a>
 	</h4>
 	<p>
-		{source.phase_1_encoding}
+		<SemanticEncoding semantic_encoding={source.semantic_encoding} />
 	</p>
-
-	<SemanticEncoding semantic_encoding={source.semantic_encoding} />
 {/await}
