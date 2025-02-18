@@ -7,7 +7,6 @@ const default_adjective_case_frame_json = {
 	'nominal_argument': { 'trigger': 'none' },
 	'patient_clause_different_participant': by_clause_tag('patient_clause_different_participant'),
 	'patient_clause_same_participant': by_clause_tag('patient_clause_same_participant'),
-	'modified_noun_with_subgroup': modified_noun_with_subgroup(),
 }
 
 /**
@@ -48,7 +47,10 @@ const adjective_case_frames = new Map([
 		['different-B', { 'nominal_argument': by_adposition('from') }],
 	]],
 	['each', [
-		['each-A', { 'other_optional': 'modified_noun_with_subgroup' }],
+		['each-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+		}],
 	]],
 	['faithful', [
 		['faithful-B', { 'nominal_argument': by_adposition('to') }],
@@ -85,7 +87,10 @@ const adjective_case_frames = new Map([
 		['old-B', { 'nominal_argument': unit_with_measure('time') }],
 	]],
 	['one', [
-		['one-A', { 'other_optional': 'modified_noun_with_subgroup' }],
+		['one-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+		}],
 	]],
 	['patient', [
 		['patient-B', { 'nominal_argument': by_adposition('with') }],
@@ -149,6 +154,7 @@ function create_adjective_argument_rules() {
 
 const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()
 const ADJECTIVE_CASE_FRAME_RULES = create_adjective_argument_rules()
+const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule(['modified_noun_with_subgroup', modified_noun_with_subgroup()])
 
 /**
  * 
@@ -162,7 +168,7 @@ export function check_adjective_case_frames(trigger_context) {
 
 	check_case_frames(trigger_context, {
 		rules_by_sense: argument_rules_by_sense,
-		default_rule_getter: () => DEFAULT_CASE_FRAME_RULES,
+		default_rule_getter: get_adjective_default_rules,
 		role_info_getter: get_adjective_usage_info,
 	})
 }
@@ -176,6 +182,27 @@ const ADJECTIVE_LETTER_TO_ROLE = new Map([
 ])
 
 /**
+ * @param {string} categorization 
+ */
+function is_subgroupable_category(categorization) {
+	const category = categorization[0]
+	// Quantity (all), Cardinal Number (7), Fractional Number (.5)
+	return ['Q', 'C', 'F'].includes(category)
+}
+
+/**
+ * @param {LookupResult} lookup 
+ * @returns {ArgumentRoleRule[]}
+ */
+function get_adjective_default_rules(lookup) {
+	if (is_subgroupable_category(lookup.categorization)) {
+		return [...DEFAULT_CASE_FRAME_RULES, ...SUBGROUPABLE_CASE_FRAME_RULE]
+	}
+	
+	return DEFAULT_CASE_FRAME_RULES
+}
+
+/**
  * 
  * @param {string} categorization 
  * @param {ArgumentRulesForSense} role_rules
@@ -183,7 +210,6 @@ const ADJECTIVE_LETTER_TO_ROLE = new Map([
  */
 function get_adjective_usage_info(categorization, role_rules) {
 	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc)
-	const category = categorization[0]
 	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
 	
 	// some categorizations are blank or erroneously all underscores (eg early-A)
@@ -199,7 +225,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 	// @ts-ignore
 	const possible_roles = role_letters
 		.map(c => ADJECTIVE_LETTER_TO_ROLE.get(c.toUpperCase()))
-		.concat(['Q', 'C', 'F'].includes(category) ? ['modified_noun_with_subgroup'] : [])
+		.concat(is_subgroupable_category(categorization) ? ['modified_noun_with_subgroup'] : [])
 		.concat([...role_rules.other_optional, ...role_rules.other_required])
 		.filter(role => role)
 
