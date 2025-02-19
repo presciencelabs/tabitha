@@ -596,9 +596,7 @@ const verb_case_frames = new Map([
 		['look-B', { 'other_required': 'predicate_adjective' }],	// X looked happy/sad/excited
 	]],
 	['make', [
-		['make-A', {
-			'instrument': { ...by_adposition('with') },
-		}],
+		['make-A', { 'instrument': by_adposition('with') }],
 		['make-C', {
 			// Possible accepted formats:
 			// Gen 22:16 make a promise [in my name](instrument).
@@ -642,7 +640,15 @@ const verb_case_frames = new Map([
 	]],
 	['return', []],
 	['say', [
-		['say-A', { 'patient_clause_type': 'patient_clause_quote_begin' }],
+		['say-A', {
+			'patient': by_adposition('to'),
+			'destination': { },
+			'patient_clause_type': 'patient_clause_quote_begin',
+		}],
+		['say-C', {
+			'patient': by_adposition('to'),
+			'destination': { },
+		}],
 		['say-E', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 		['say-F', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
