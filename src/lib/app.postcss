@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* https://tailwindcss.com/docs/container */
+body {
+	/* stacked layout with sticky footer */
+	@apply grid h-screen grid-rows-[auto_1fr_auto];
+}
+
+/* TODO: third copy of these, time to DRY them out.  Also used in Ontology and Editor apps.
+
+	complexity level colors in TBTA are as follows:
+	0 => blue
+	1 => creme
+	2 => magenta
+	3 => green
+	4 => brown
+*/
+.L0 {
+	color: whitesmoke;
+	background-color: #0b66ff;
+}
+.L1 {
+	color: darkblue;
+	background-color: #fcffc5;
+	filter: saturate(200%);
+}
+.L2 {
+	color: yellow;
+	background-color: #fb00ff;
+}
+.L3 {
+	color: whitesmoke;
+	background-color: #0f7000;
+}
+.L4 {
+	color: whitesmoke;
+	background-color: #6b2f30;
+}
+.L0-text {
+	color: whitesmoke;
+}
+.L1-text {
+	color: darkblue;
+}
+.L2-text {
+	color: yellow;
+}
+.L3-text {
+	color: whitesmoke;
+}
+.L4-text {
+	color: whitesmoke;
+}

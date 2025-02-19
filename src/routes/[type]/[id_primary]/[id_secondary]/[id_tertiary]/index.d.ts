@@ -6,6 +6,7 @@ type Source = {
 	id_tertiary: string
 	phase_1_encoding: string
 	semantic_encoding: string
+	parsed_semantic_encoding: SourceEntity[]
 	comments: string
 	notes: string
 }
