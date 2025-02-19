@@ -366,6 +366,15 @@ const part_of_speech_rules_json = [
 		'comment': 'Daniel 1:1 when(Adv/Adp) Jehoiakim ... 3:5 when(Adv/Adp) the people hear ...',
 	},
 	{
+		'name': 'If Adverb-Adposition followed by a Verb, delete the Adposition',
+		'category': 'Adverb|Adposition',
+		'context': {
+			'followedby': { 'category': 'Verb', 'skip': 'vp_modifiers' },
+		},
+		'remove': 'Adposition',
+		'comment': 'People later(Adv/Adp) called Zion the city of David.',
+	},
+	{
 		'name': "If 'close' is followed by 'to', remove the Verb",
 		'category': 'Verb|Adposition',
 		'trigger': { 'token': 'close to' },
