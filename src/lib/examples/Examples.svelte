@@ -52,7 +52,7 @@
 		<Filters {concept} examples={all_examples} on:data-filtered={({ detail }) => filtered_examples = detail} />
 
 		{#each filtered_examples.sort(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED) as { reference, context }, i}
-			<details on:toggle={event => handle_queue(event, i)} transition:fade={FADE_CHARACTERISTICS} class="collapse collapse-arrow bg-base-100">
+			<details on:toggle={event => handle_queue(event, i)} transition:fade={FADE_CHARACTERISTICS} class="collapse collapse-arrow bg-base-100 overflow-visible">
 				<summary class="collapse-title border border-base-200">
 					<ExampleSummary {reference} {context} />
 				</summary>
@@ -61,7 +61,7 @@
 					{#if retrieval_queue.includes(i)}
 						<TargetData {reference} />
 
-						<SourceData {reference} />
+						<SourceData {reference} selected_concept={concept} />
 					{/if}
 				</section>
 			</details>

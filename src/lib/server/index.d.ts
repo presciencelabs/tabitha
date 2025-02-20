@@ -65,30 +65,3 @@ type Reference = {
 	id_secondary: string
 	id_tertiary: string
 }
-
-type SimplifiedSemanticEncoding = SimplifiedEncodingPhrase[]
-
-type SimplifiedEncodingPhrase = {
-	part_of_speech: string
-	role: string
-	word: string
-}
-
-type SourceData = {
-	type: string
-	id_primary: string
-	id_secondary: string
-	id_tertiary: string
-	phase_1_encoding: string
-	semantic_encoding: string
-	notes: string
-}
-
-type SourceEntity = {
-	label: string
-	features: string
-	sense: string
-	entity: string
-}
-
-type SemanticEncoding = SourceEntity[]

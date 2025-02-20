@@ -1,10 +1,13 @@
 <script>
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import { SemanticEncoding } from '$lib/examples'
+	import { SourceEntities } from '$lib/examples'
 	import Icon from '@iconify/svelte'
 
 	/** @type {Reference} */
 	export let reference
+
+	/** @type {SourceConcept}*/
+	export let selected_concept
 
 	/**
 	 * @param {Reference} reference
@@ -49,6 +52,6 @@
 		</a>
 	</h4>
 	<p>
-		<SemanticEncoding semantic_encoding={source.semantic_encoding} />
+		<SourceEntities source_entities={source.parsed_semantic_encoding} {selected_concept} />
 	</p>
 {/await}
