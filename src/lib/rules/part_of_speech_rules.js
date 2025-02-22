@@ -143,6 +143,26 @@ const part_of_speech_rules_json = [
 		'comment': 'Dan. 1:12 Please give only(Adj/Adv) vegetables ...  Paul like most(Adj/Adv) books.',
 	},
 	{
+		'name': 'If Adverb-Adjective "hard" is preceded by "be/become", remove Adverb',
+		'category': 'Adverb|Adjective',
+		'trigger': { 'stem': 'hard' },
+		'context': {
+			'precededby': { 'stem': 'be|become', 'skip': 'adjp_modifiers_attributive' },
+		},
+		'remove': 'Adverb',
+		'comment': 'Those things are hard(Adv/Adj) for John.',
+	},
+	{
+		'name': 'If Adverb-Adjective "hard" is directly preceded by any other verb, remove Adjective',
+		'category': 'Adverb|Adjective',
+		'trigger': { 'stem': 'hard' },
+		'context': {
+			'precededby': { 'category': 'Verb' },
+		},
+		'remove': 'Adjective',
+		'comment': 'John worked hard(Adv/Adj).',
+	},
+	{
 		'name': 'If Adverb-Adjective followed by a Verb or Adposition, remove Adjective',
 		'category': 'Adverb|Adjective',
 		'context': {
@@ -150,6 +170,15 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Adjective',
 		'comment': 'John only(Adv/Adj) saw a book.  Believe more(Adv/Adj) in Jesus.',
+	},
+	{
+		'name': 'If Adverb-Adjective followed by "of", remove Adverb',
+		'category': 'Adverb|Adjective',
+		'context': {
+			'followedby': { 'token': 'of' },
+		},
+		'remove': 'Adverb',
+		'comment': 'John saw most(Adj/Adv) of those people.',
 	},
 	{
 		'name': 'If Noun-Adjective followed by Noun, remove Noun',
@@ -277,12 +306,12 @@ const part_of_speech_rules_json = [
 		'comment': 'The man left the house.',
 	},
 	{
-		'name': '\'pleased\' followed by \'with\' is the Adjective',
+		'name': "'pleased/satisfied' followed by 'with' is the Adjective",
 		'category': 'Verb|Adjective',
-		'trigger': { 'token': 'pleased' },
+		'trigger': { 'token': 'pleased|satisfied' },
 		'context': { 'followedby': { 'token': 'with' } },
 		'remove': 'Verb',
-		'comment': 'Luke 3:22 I am pleased(V/Adj) with you.',
+		'comment': 'Luke 3:22 I am pleased(V/Adj) with you. Proverbs 30:16 ..never satisfied(V/Adj) with water.',
 	},
 	{
 		'name': 'If amazed/surprised NOT followed by any Noun, remove the Verb',

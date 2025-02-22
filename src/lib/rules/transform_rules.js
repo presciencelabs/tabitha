@@ -217,7 +217,7 @@ const transform_rules_json = [
 		'comment': 'Setting up for the case frame rules',
 	},
 	{
-		'name': 'tag \'that\' at the beginning of a main clause as remove_demonstrative when followed by a noun',
+		'name': 'tag \'that\' at the beginning of a main clause as a determiner when followed by a noun',
 		'trigger': { 'token': 'That|that' },
 		'context': {
 			'notprecededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },

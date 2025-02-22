@@ -35,7 +35,7 @@ export function by_adposition(adposition) {
 		}),
 		'argument_context_index': 1,
 		'transform': { 'tag': { 'role': 'adjective_nominal_argument', 'syntax': 'nested_np' } },
-		'context_transform': { 'function': { 'pre_np_adposition': 'adjective_argument', 'relation': '' } },	// make the adposition a function word and clear other tag values
+		'context_transform': { 'function': { 'pre_np_adposition': 'adjective_argument' }, 'remove_tag': 'relation' },	// make the adposition a function word and clear other tag values
 		'missing_message': `{sense} expects a nominal argument, i.e. '{stem} ${adposition} N'.`,
 	}
 }
@@ -68,6 +68,24 @@ export function by_complementizer(complementizer) {
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant', 'role': 'adjective_clausal_argument' } },
 		'subtoken_transform': { 'function': { 'syntax': 'complementizer' } },
+	}
+}
+
+/**
+ * 
+ * @param {string} complementizer 
+ * @returns {CaseFrameRuleJson}
+ */
+export function by_same_participant_complementizer(complementizer) {
+	return {
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause|patient_clause_different_participant' } },
+		'context': {
+			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
+		},
+		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant', 'role': 'adjective_clausal_argument' } },
+		'subtoken_transform': { 'function': { 'syntax': 'infinitive_same_subject' } },
+		'missing_message': "The patient clause for {sense} should be written like '{stem} [in singing]').",
+		'comment': "need to set to 'infinitive_same_subject' so that the clause is skipped for verb case frame checking"
 	}
 }
 

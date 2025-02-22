@@ -1,5 +1,5 @@
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_adposition, by_clause_tag, by_complementizer, modified_noun_of_adjective, modified_noun_with_subgroup, unit_with_measure } from './presets'
+import { by_adposition, by_clause_tag, by_complementizer, by_same_participant_complementizer, modified_noun_of_adjective, modified_noun_with_subgroup, unit_with_measure } from './presets'
 
 /** @type {RoleRuleJson<AdjectiveRoleTag>} */
 const default_adjective_case_frame_json = {
@@ -7,6 +7,7 @@ const default_adjective_case_frame_json = {
 	'nominal_argument': { 'trigger': 'none' },
 	'patient_clause_different_participant': by_clause_tag('patient_clause_different_participant'),
 	'patient_clause_same_participant': by_clause_tag('patient_clause_same_participant'),
+	'modified_noun_with_subgroup': { 'trigger': 'none' },
 }
 
 /**
@@ -52,6 +53,16 @@ const adjective_case_frames = new Map([
 			'other_optional': 'modified_noun_with_subgroup',
 		}],
 	]],
+	['equal', [
+		['equal-A', { 'nominal_argument': by_adposition('to') }],
+	]],
+	['fair', [
+		['fair-A', {
+			'nominal_argument': by_adposition('to'),
+			'other_optional': 'nominal_argument',
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+		}],
+	]],
 	['faithful', [
 		['faithful-B', { 'nominal_argument': by_adposition('to') }],
 		['faithful-C', { 'nominal_argument': by_adposition('with') }],
@@ -59,8 +70,29 @@ const adjective_case_frames = new Map([
 	['far', [
 		['far-A', { 'nominal_argument': by_adposition('from') }],
 	]],
+	['few', [
+		['few-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+			'comment': 'TODO remove when few is marked as a Quantity',
+		}],
+	]],
+	['full', [
+		['full-B', { 'nominal_argument': by_adposition('of') }],
+	]],
 	['gentle', [
 		['gentle-B', { 'nominal_argument': by_adposition('with|to') }],
+	]],
+	['guilty', [
+		['guilty-A', {
+			'nominal_argument': by_adposition('of'),
+			'other_optional': 'nominal_argument',
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+		}],
+		['guilty-B', {
+			'patient_clause_same_participant': by_same_participant_complementizer('of'),
+			'patient_clause_different_participant': { 'trigger': 'none' },
+		}],
 	]],
 	['happy', [
 		['happy-A', { 'nominal_argument': by_adposition('with') }],
@@ -68,8 +100,24 @@ const adjective_case_frames = new Map([
 	['honest', [
 		['honest-A', { 'nominal_argument': by_adposition('with') }],
 	]],
+	['hundreds', [
+		['hundreds-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+			'comment': 'TODO remove when hundreds is marked as a Quantity',
+		}],
+	]],
 	['important', [
 		['important-A', { 'nominal_argument': by_adposition('to') }],
+	]],
+	['interested', [
+		['interested-A', {
+			'patient_clause_same_participant': [
+				by_clause_tag('patient_clause_same_participant'),
+				by_same_participant_complementizer('in'),
+			],
+			'patient_clause_different_participant': { 'trigger': 'none' },
+		}],
 	]],
 	['jealous', [
 		['jealous-A', { 'nominal_argument': by_adposition('of|by') }],
@@ -80,14 +128,43 @@ const adjective_case_frames = new Map([
 	['long', [
 		['long-C', { 'nominal_argument': unit_with_measure('length') }],
 	]],
+	['loyal', [
+		['loyal-B', { 'nominal_argument': by_adposition('to') }],
+	]],
 	['merciful', [
 		['merciful-B', { 'nominal_argument': by_adposition('to') }],
+	]],
+	['millions', [
+		['millions-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+			'comment': 'TODO remove when millions is marked as a Quantity',
+		}],
+	]],
+	['more', [
+		['more-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+		}],
+	]],
+	['most', [
+		['most-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+			'comment': 'TODO remove when most is marked as a Quantity',
+		}],
 	]],
 	['old', [
 		['old-B', { 'nominal_argument': unit_with_measure('time') }],
 	]],
 	['one', [
 		['one-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+		}],
+	]],
+	['other', [
+		['other-A', {
 			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
 			'other_optional': 'modified_noun_with_subgroup',
 		}],
@@ -116,7 +193,47 @@ const adjective_case_frames = new Map([
 		['sad-A', { 'nominal_argument': by_adposition('about') }],
 		['sad-B', { 'nominal_argument': by_adposition('for') }],
 	]],
+	['satisfied', [
+		['satisfied-A', {
+			'nominal_argument': by_adposition('with'),
+			'other_optional': 'nominal_argument',
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+		}],
+	]],
+	['several', [
+		['several-A', {
+			'modified_noun_with_subgroup': modified_noun_with_subgroup(),
+			'other_optional': 'modified_noun_with_subgroup',
+			'comment': 'TODO remove when several is marked as a Quantity',
+		}],
+	]],
+	['similar', [
+		['similar-A', {
+			'nominal_argument': by_adposition('to'),
+			'other_optional': 'nominal_argument',
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+		}],
+	]],
+	['sorry', [
+		['sorry-A', {
+			'patient_clause_same_participant': [
+				by_same_participant_complementizer('for'),
+				by_clause_tag('patient_clause_same_participant|patient_clause_different_participant'),
+			],
+			'patient_clause_different_participant': { 'trigger': 'none' },
+			'other_optional': 'patient_clause_same_participant',
+			'comment': "support 'sorry [for doing X]', 'sorry [that they did X]', and 'sorry [to do X]'. TODO remove the 'other_optional' when the Ontology gets updated",
+		}],
+	]],
+	['surprised', [
+		['surprised-C', {
+			'nominal_argument': by_adposition('by'),
+			'other_optional': 'nominal_argument',
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+		}],
+	]],
 	['tall', [
+		// TODO change to tall-B when added to the Ontology
 		['tall-A', { 'nominal_argument': unit_with_measure('length') }],
 	]],
 	['upset', [
@@ -124,7 +241,10 @@ const adjective_case_frames = new Map([
 		['upset-C', { 'nominal_argument': by_adposition('about') }],
 	]],
 	['wide', [
-		['wide-C', { 'nominal_argument': unit_with_measure('length') }],
+		['wide-B', { 'nominal_argument': unit_with_measure('length') }],
+	]],
+	['zealous', [
+		['zealous-A', { 'nominal_argument': by_adposition('for') }],
 	]],
 ])
 
@@ -196,7 +316,8 @@ function is_subgroupable_category(categorization) {
  */
 function get_adjective_default_rules(lookup) {
 	if (is_subgroupable_category(lookup.categorization)) {
-		return [...DEFAULT_CASE_FRAME_RULES, ...SUBGROUPABLE_CASE_FRAME_RULE]
+		const subgroup_index = DEFAULT_CASE_FRAME_RULES.findIndex(({ role_tag }) => role_tag === 'modified_noun_with_subgroup')
+		return DEFAULT_CASE_FRAME_RULES.with(subgroup_index, SUBGROUPABLE_CASE_FRAME_RULE[0])
 	}
 	
 	return DEFAULT_CASE_FRAME_RULES
@@ -216,7 +337,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 	// treat all arguments as possible and not required
 	if (role_letters.length === 0) {
 		return {
-			possible_roles: [...ADJECTIVE_LETTER_TO_ROLE.values()],
+			possible_roles: DEFAULT_CASE_FRAME_RULES.map(({ role_tag }) => role_tag),
 			required_roles: [],
 		}
 	}
