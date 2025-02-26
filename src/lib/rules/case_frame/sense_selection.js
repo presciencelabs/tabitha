@@ -311,6 +311,10 @@ const adjective_sense_priority_overrides = [
  * @type {[WordStem, PriorityOverrideRules[]][]}
  */
 const adposition_sense_priority_overrides = [
+	['if', [
+		['if-B', { 'were': { } }],
+		['if-C', { 'had': { } }],
+	]],
 	['so', [
 		['so-C', { 'would': { } }],
 		['so-A', { 'could': { } }],

@@ -435,7 +435,7 @@ const checker_rules_json = [
 	},
 	{
 		'name': "Cannot use 'is to {Verb}' as an obligation, unless in an 'if' clause",
-		'trigger': { 'stem': 'be' },
+		'trigger': { 'token': 'be|is|am|are|were' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 			'notprecededby': { 'stem': 'if', 'skip': 'all' },
@@ -443,17 +443,18 @@ const checker_rules_json = [
 		'error': {
 			'message': "Use 'will', 'must', or 'should' instead of '{token} to...' to express a future obligation.",
 		},
-		'comment': 'Allow eg. "[If-B you(followers) were to belong to the world]..."',
+		'comment': "The 'be' verb is already a function token, and so we can't use 'stem'",
 	},
 	{
 		'name': "Cannot use 'have to {Verb}' as an obligation",
-		'trigger': { 'stem': 'have' },
+		'trigger': { 'token': 'have|had|has' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
 		},
 		'error': {
 			'message': "Use 'must' or 'should' instead of '{token} to...' to express an obligation.",
 		},
+		'comment': "The 'have' verb is already a function token, and so we can't use 'stem'",
 	},
 	{
 		'name': "Warn that 'come' cannot be used for events, only things that move",

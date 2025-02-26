@@ -34,6 +34,38 @@ const adposition_case_frames = new Map([
 			'other_optional': 'of',
 		}],
 	]],
+	['if', [
+		['if-B', {
+			'in_noun_phrase': { },
+			'other_rules': {
+				'were': {
+					'trigger': { 'token': 'were' },
+					'context': { 
+						'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
+					},
+					'transform': { 'tag': { 'auxiliary': 'if-B' } },
+					'tag_role': false,
+				},
+			},
+			'other_optional': 'were',
+			'comment': 'eg. If John were to leave...',
+		}],
+		['if-C', {
+			'in_noun_phrase': { },
+			'other_rules': {
+				'had': {
+					'trigger': { 'token': 'had' },
+					'context': { 
+						'followedby': { 'category': 'Verb' },
+					},
+					'transform': { 'tag': { 'auxiliary': 'if-C' } },
+					'tag_role': false,
+				},
+			},
+			'other_optional': 'had',
+			'comment': 'eg. If John had left...',
+		}],
+	]],
 	['so', [
 		['so-A', {
 			'in_noun_phrase': { },

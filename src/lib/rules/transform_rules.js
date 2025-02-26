@@ -369,10 +369,9 @@ const transform_rules_json = [
 		'trigger': { 'stem': 'have' },
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
-			'notfollowedby': { 'tag': { 'syntax': 'infinitive' }, 'skip': 'all' },
 		},
 		'transform': { 'function': { 'auxiliary': 'flashback', 'time': 'past' } },
-		'comment': 'don\'t check for the perfect form because of cases like "have cry-out". But ignore "have to cry-out" which is incorrect. The perfect is always indicative of the past in TBTA',
+		'comment': 'don\'t check for the perfect form because of cases like "have cry-out". The perfect is always indicative of the past in TBTA',
 	},
 	{
 		'name': 'be before a participle Verb indicates imperfective',
@@ -405,10 +404,9 @@ const transform_rules_json = [
 		'trigger': { 'category': 'Verb', 'stem': 'be' },
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
-			'notfollowedby': { 'tag': { 'syntax': 'infinitive' }, 'skip': 'all' },
 		},
 		'transform': { 'function': { 'auxiliary': 'generic' } },
-		'comment': 'the more precise function may be ambiguous e.g. "was cry-out". But ignore "be to cry-out" which is incorrect',
+		'comment': 'the more precise function may be ambiguous e.g. "was cry-out".',
 	},
 	{
 		'name': 'by preceded by a passive be indicates the agent',
