@@ -239,6 +239,9 @@ const verb_sense_priority_overrides = [
 		['throw-D', { 'destination': { 'stem': 'ground|floor' } }],
 		['throw-E', { 'destination': { 'stem': 'air' } }],
 	]],
+	['unite', [
+		['unite-B', { }],
+	]],
 	['want', [
 		['want-D', { 'patient': { 'stem': 'peace|health|life' } }],
 	]],

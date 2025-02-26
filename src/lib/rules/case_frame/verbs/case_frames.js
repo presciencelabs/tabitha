@@ -763,10 +763,8 @@ const verb_case_frames = new Map([
 		['tie-C', { 'instrument': by_adposition('with') }],
 	]],
 	['unite', [
-		['unite-A', { 'destination': by_adposition('to|with') }],
 		['unite-B', { 'destination': by_adposition('to|with') }],
 		['unite-C', {
-			...with_be_auxiliary(),
 			'patient': by_adposition('to|with'),
 			'destination': { },
 		}],
