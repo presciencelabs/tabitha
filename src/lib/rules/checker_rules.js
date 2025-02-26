@@ -434,14 +434,16 @@ const checker_rules_json = [
 		'comment': 'See section 0.28 of the Phase 1 checklist.',
 	},
 	{
-		'name': "Cannot use 'is to {Verb}' as an obligation",
+		'name': "Cannot use 'is to {Verb}' as an obligation, unless in an 'if' clause",
 		'trigger': { 'stem': 'be' },
 		'context': {
 			'followedby': [{ 'token': 'to' }, { 'category': 'Verb' }],
+			'notprecededby': { 'stem': 'if', 'skip': 'all' },
 		},
 		'error': {
 			'message': "Use 'will', 'must', or 'should' instead of '{token} to...' to express a future obligation.",
 		},
+		'comment': 'Allow eg. "[If-B you(followers) were to belong to the world]..."',
 	},
 	{
 		'name': "Cannot use 'have to {Verb}' as an obligation",
