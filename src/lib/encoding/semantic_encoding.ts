@@ -90,7 +90,7 @@ export async function transform_semantic_encoding(semantic_encoding: string, db:
 }
 
 async function load_features(db: D1Database): Promise<Map<string, DbFeature[]>> {
-	const sql = `SELECT * FROM Features`
+	const sql = 'SELECT * FROM Features'
 	const { results } = await db.prepare(sql).all<DbFeature>()
 	return Map.groupBy(results, ({ category, position }) => `${category}:${position}`)
 }
@@ -117,7 +117,7 @@ function transform_features(feature_codes: string, category_code: string, all_fe
 	const is_noun = category === 'Noun'
 
 	const features = [...feature_codes].map((feature_code, index) => get_feature_value(category, is_noun ? index - 1 : index, feature_code, all_features))
-	
+
 	if (is_noun) {
 		// at this point, entity_features[0] is an empty value
 		features[0] = { name: 'Noun List Index', value: feature_codes[0] }

@@ -54,7 +54,3 @@ Run the following command as a last check before opening a PR
 ```bash
 pnpm precommit
 ```
-
-## Error handling
-
-TODO: will integrate Sentry once https://github.com/getsentry/sentry-javascript/issues/8291 is fixed.

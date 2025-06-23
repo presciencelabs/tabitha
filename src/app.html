@@ -5,7 +5,9 @@
 		<meta name="viewport" content="width=device-width" />
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+
+	<!-- https://tailwindcss.com/docs/container -->
+	<body data-sveltekit-preload-data="hover" class="grid h-screen grid-rows-[auto_1fr_auto]">
 		<!-- why this extra div is advised: https://kit.svelte.dev/docs/project-structure#project-files-src -->
 		<div style="display: contents">%sveltekit.body%</div>
 

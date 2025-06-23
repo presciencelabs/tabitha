@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@sveltejs/kit'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+  - workerd

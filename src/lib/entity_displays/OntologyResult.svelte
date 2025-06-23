@@ -42,8 +42,8 @@
 			</a>
 		</span>
 	</div>
-{:then ontology_data} 
-	{@const {stem, sense, level, gloss} = ontology_data}
+{:then ontology_data}
+	{@const { stem, sense, level, gloss } = ontology_data}
 	<div class="dropdown dropdown-hover dropdown-bottom">
 		<div class="overflow-x-auto dropdown-content z-[1] text-sm p-2 shadow-xl rounded-box w-96 bg-base-200 tracking-normal">
 			{gloss}

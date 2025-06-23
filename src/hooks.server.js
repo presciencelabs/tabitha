@@ -24,7 +24,7 @@ export async function handle({ event, resolve }) {
 		}
 
 		// putting it on `locals` to clean up usage in routes
-		// @ts-ignore until the TODO above is resolved
+		// @ts-expect-error until the TODO above is resolved
 		event.locals.db = event.platform?.env.DB_Sources
 	}
 

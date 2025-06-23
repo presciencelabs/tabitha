@@ -1,12 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* https://tailwindcss.com/docs/container */
-body {
-	/* stacked layout with sticky footer */
-	@apply grid h-screen grid-rows-[auto_1fr_auto];
-}
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui';
 
 /* TODO: third copy of these, time to DRY them out.  Also used in Ontology and Editor apps.
 

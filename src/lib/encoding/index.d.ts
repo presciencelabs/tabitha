@@ -28,7 +28,7 @@ type FeatureValue = string
 
 type DbFeature = {
 	category: CategoryName
-	position: Number
+	position: number
 	code: string
 	feature: FeatureName
 	value: FeatureValue

@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
-	testDir: './e2e',
+	testDir: 'e2e',
 	fullyParallel: true, // https://playwright.dev/docs/test-parallel
 	reporter: 'list', // https://playwright.dev/docs/test-reporters
 
@@ -16,10 +16,7 @@ export default defineConfig({
 	],
 
 	webServer: {
-		command: 'pnpm dev',
-		url: 'http://localhost:8789',
-	},
-	use: {
-		baseURL: 'http://localhost:8789',
+		command: 'pnpm build && pnpm dev',
+		port: 8789,
 	},
 })

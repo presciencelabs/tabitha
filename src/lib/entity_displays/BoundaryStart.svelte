@@ -5,7 +5,7 @@
 	/** @type {SourceEntity} */
 	export let source_entity
 
-	// TODO change character and size based on boundary type
+		// TODO change character and size based on boundary type
 </script>
 
 <span class="inline-flex border-solid border-base-content pe-1 py-2 text-lg tracking-widest">

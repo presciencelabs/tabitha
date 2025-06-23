@@ -1,5 +1,6 @@
 <script>
-	import '$lib/app.postcss'
+	import '$lib/app.css'
+
 	import { Brand } from '$lib'
 </script>
 
