@@ -10,9 +10,16 @@
 
 	async function check_text() {
 		checking = true
-		const response = await fetch(`/check?text=${entered_text}`)
+		const response = await fetch(`/check?text=${sanitize_input(entered_text)}`)
 		check_response = await response.json()
 		checking = false
+	}
+
+	/**
+	 * @param {string} text 
+	 */
+	function sanitize_input(text) {
+		return text.replaceAll('\n', ' ')
 	}
 
 	function clear() {

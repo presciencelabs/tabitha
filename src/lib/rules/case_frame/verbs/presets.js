@@ -8,7 +8,7 @@ export function patient_from_subordinate_clause() {
 	return {
 		'patient': {
 			...by_clause_tag('patient_clause_different_participant'),
-			'missing_message': "{sense} should be written in the format 'X {stem} [Y to Verb]'.",
+			'missing_message': "write 'X {stem} [Y to Verb]'",
 		},
 		'other_rules': {
 			'extra_patient': {
@@ -42,6 +42,22 @@ export function with_be_auxiliary() {
 
 /**
  * 
+ * @returns {SenseRuleJson<VerbRoleTag>}
+ */
+export function with_no_double_patient() {
+	return {
+		'other_rules': {
+			'double_patient': {
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
+				'context': { 'precededby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' } },
+				'extra_message': "'{stem}' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
+			},
+		},
+	}
+}
+
+/**
+ * 
  * @param {string} adposition 
  * @returns {CaseFrameRuleJson}
  */
@@ -50,7 +66,7 @@ export function by_adposition(adposition) {
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': { 'precededby': { 'token': adposition, 'skip': 'np_modifiers' } },
 		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
-		'missing_message': `Couldn't find the {role}, which in this case should have '${adposition}' before it.`,
+		'missing_message': `'${adposition} X'`,
 	}
 }
 
@@ -78,6 +94,7 @@ export function by_complementizer(complementizer) {
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_different_participant', 'role': 'patient_clause_different_participant' } },
 		'subtoken_transform': { 'function': { 'syntax': 'complementizer' } },
+		'missing_message': `'[${complementizer} ...]'`,
 	}
 }
 
@@ -126,7 +143,7 @@ export function directly_after_verb_with_adposition(adposition) {
 		}),
 		'argument_context_index': 1,
 		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },	// make the adposition a function word
-		'missing_message': `Couldn't find the {role}, which for {sense} should have '${adposition}' before it.`,
+		'missing_message': `'${adposition} X'`,
 	}
 }
 

@@ -1,5 +1,5 @@
 import { create_context_filter, create_token_filter } from '$lib/rules/rules_parser'
-import { TOKEN_TYPE, split_stem_and_sense } from '../token'
+import { TOKEN_TYPE } from '../token'
 
 /**
  * These words/phrases (and some others) are accepted by the Analyzer as alternates for

@@ -8,15 +8,34 @@ import { parse_transform_rule } from '../transform_rules'
  * @param {RoleTag} role_tag 
  * @returns {string}
  */
+function readable_role_tag(role_tag) {
+	const readables = new Map([
+		// verb arguments
+		['patient_clause_quote_begin', 'open-quote patient clause'],
+		['patient_clause_simultaneous', '"-ing" patient clause'],
+		// verb/adjective arguments
+		['patient_clause_same_participant', 'same-participant patient clause'],
+		['patient_clause_different_participant', 'different-participant patient clause'],
+		// adposition arguments
+		['opening_subordinate_clause', "opening '[' bracket"],
+		['in_noun_phrase', 'head noun'],
+	])
+	return readables.get(role_tag) ?? role_tag.replace('_', ' ')
+}
+
+/**
+ * 
+ * @param {RoleTag} role_tag 
+ * @returns {string}
+ */
 function missing_argument_message(role_tag) {
 	const messages = new Map([
-		['agent_clause', "Couldn't find an agent clause (e.g. 'It {stem} [X...]' or '[X...] {stem}...')."],
-		['patient_clause_quote_begin', 'A direct-speech patient clause is required.'],
-		['patient_clause_different_participant', 'The patient clause for {sense} must have an explicit subject.'],
-		['patient_clause_same_participant', "The patient clause for {sense} should be written like '{stem} [to sing]')."],
-		['patient_clause_simultaneous', "A simultaneous perception clause is required (e.g. 'John {token} [Mary singing]')."],
+		['agent_clause', "'It {stem} [X...]' or '[X...] {stem}...'"],
+		['patient_clause_different_participant', 'explicit subject'],
+		['patient_clause_same_participant', "'[to Verb]'"],
+		['patient_clause_simultaneous', "'{token} [X Verb-ing]'"],
 	])
-	return messages.get(role_tag) ?? "Couldn't find the {role} for this {category}."
+	return messages.get(role_tag) ?? ''
 }
 
 /**
@@ -43,15 +62,8 @@ function extra_argument_message(role_tag) {
 }
 
 /** @type {[RoleTag, string][]} */
-const ALL_HAVE_MISSING_ARGUMENT_MESSAGES = [
-	// If no Verb sense could find an agent (or agent_clause), there's probably a bracketing issue. Make the message more clear.
-	['agent', 'Could not find the agent of this verb. Check other errors and warnings for more help.'],
-	['opening_subordinate_clause', "Missing '[' bracket before adverbial clause."],
-]
-
-/** @type {[RoleTag, string][]} */
 const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = [
-	['patient_clause_same_participant', 'Unexpected patient clause for {category} \'{stem}\'. This likely should be \'[in-order-to...]\' or \'[so-that...]\' instead.'],
+	['patient_clause_same_participant', '\'{stem}\' cannot be used with a same-participant patient clause. This likely should be \'[in-order-to...]\' or \'[so-that...]\' instead.'],
 	['patient_clause_quote_begin', '\'{stem}\' can never be used with direct speech. Consult its usage in the Ontology.'],
 	['predicate_adjective', '\'{stem}\' can never be used with a predicate adjective. Consider using something like \'cause [X to be...]\'. Consult its usage in the Ontology.'],
 ]
@@ -290,18 +302,20 @@ export function* validate_case_frame(trigger_context) {
 	const token = trigger_context.trigger_token
 
 	if (no_matches_and_ambiguous_sense(token)) {
-		const missing_role = ALL_HAVE_MISSING_ARGUMENT_MESSAGES.find(([role]) => role_is_missing_for_all(role, token))
-		if (missing_role) {
-			const [, message] = missing_role
-			yield { error: message }
-		} else {
-			yield { error: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
-			yield { info: 'For more detailed error messages, specify a sense (eg. {token}-A) and recheck.' }
+		yield { error: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
+
+		// flag any extra roles common to all lookup results
+		const extra_roles_for_all = token.lookup_results[0].case_frame.extra_arguments.filter(({ role_tag }) => role_is_extra_for_all(role_tag, token))
+		for (const extra_argument of extra_roles_for_all) {
+			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.find(([role]) => role === extra_argument.role_tag)?.[1] || extra_argument.rule.extra_message
+			// put the error message on both the trigger token AND the argument token
+			yield { error: extra_message }
+			yield flag_extra_argument(trigger_context, extra_message)(extra_argument)
 		}
 
-		// Some extra arguments are common mistakes and can be flagged even when no sense is specified
-		for (const [extra_role_tag, extra_message] of ALL_HAVE_EXTRA_ARGUMENT_MESSAGES) {
-			yield flag_extra_argument_for_all(extra_role_tag, extra_message)(trigger_context)
+		// show the invalid arguments for each lookup result
+		for (const result of token.lookup_results) {
+			yield show_invalid_roles(result)
 		}
 
 		return
@@ -312,20 +326,37 @@ export function* validate_case_frame(trigger_context) {
 
 	if (!case_frame.is_valid) {
 		yield { error: 'Incorrect usage of {sense}. Check other errors and warnings for more information, and consult the Ontology.' }
-	}
-
-	// Show errors for missing and unexpected arguments
-	if (case_frame.missing_arguments.length) {
-		// TODO add appropriate error tokens instead of putting all the messages on the verb
-		const missing_messages = case_frame.missing_arguments.map(rule => rule.missing_message)
-		for (const message of missing_messages) {
-			yield { error: message }
+		yield show_invalid_roles(selected_result)
+		
+		for (const extra_argument of case_frame.extra_arguments) {
+			yield flag_extra_argument(trigger_context, extra_argument.rule.extra_message)(extra_argument)
 		}
 	}
+}
 
-	for (const extra_argument of case_frame.extra_arguments) {
-		yield flag_extra_argument(trigger_context, extra_argument.rule.extra_message)(extra_argument)
+/**
+ * @param {LookupResult} lookup 
+ * @returns {MessageInfo}
+ */
+function show_invalid_roles(lookup) {
+	/**
+	 * @param {ArgumentRoleRule} missing_role_rule 
+	 */
+	function get_missing_messages({ role_tag, missing_message }) {
+		if (missing_message.length) {
+			return `${readable_role_tag(role_tag)} (${missing_message})`
+		}
+		return readable_role_tag(role_tag)
 	}
+	const missing_roles = lookup.case_frame.missing_arguments.map(get_missing_messages)
+	const missing_message = missing_roles.length ? `missing ${missing_roles.join(', ')}` : ''
+
+	const extra_roles = lookup.case_frame.extra_arguments.map(({ role_tag }) => readable_role_tag(role_tag))
+	const extra_message = extra_roles.length ? `unexpected ${extra_roles.join(', ')}` : ''
+
+	const joiner = missing_message.length && extra_message.length ? '; ' : ''
+	
+	return { info: `${lookup.stem}-${lookup.sense}: ${missing_message}${joiner}${extra_message}` }
 }
 
 /**
@@ -343,35 +374,8 @@ function no_matches_and_ambiguous_sense(token) {
  * @param {Token} token 
  * @returns {boolean}
  */
-function role_is_missing_for_all(role_tag, token) {
-	return token.lookup_results.every(LOOKUP_FILTERS.HAS_MISSING_ARGUMENT(role_tag))
-}
-
-/**
- * 
- * @param {RoleTag} role_tag 
- * @param {Token} token 
- * @returns {boolean}
- */
 function role_is_extra_for_all(role_tag, token) {
 	return token.lookup_results.every(LOOKUP_FILTERS.HAS_EXTRA_ARGUMENT(role_tag))
-}
-
-/**
- * 
- * @param {RoleTag} role_tag 
- * @param {string} message 
- * @returns {(trigger_context: RuleTriggerContext) => MessageInfo}
- */
-function flag_extra_argument_for_all(role_tag, message) {
-	return trigger_context => {
-		const token = trigger_context.trigger_token
-		const extra_argument = token.lookup_results[0].case_frame.extra_arguments.find(match => match.role_tag === role_tag)
-		if (extra_argument && role_is_extra_for_all(role_tag, token)) {
-			return flag_extra_argument(trigger_context, message)(extra_argument)
-		}
-		return {}
-	}
 }
 
 /**

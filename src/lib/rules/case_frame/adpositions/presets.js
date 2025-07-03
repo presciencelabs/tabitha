@@ -9,7 +9,6 @@ export function opening_subordinate_clause() {
 		}),
 		'tag_role': false,
 		'main_word_tag': { 'syntax': 'adverbial_clause_adposition' },
-		'missing_message': "Missing '[' bracket before adverbial clause.",
 	}
 }
 
@@ -24,7 +23,6 @@ export function head_noun() {
 		}),
 		'tag_role': false,
 		'main_word_tag': { 'pre_np_adposition': 'oblique' },
-		'missing_message': 'Could not find the Noun associated with this Adposition.',
 	}
 }
 
@@ -39,7 +37,7 @@ export function head_noun_post() {
 		}),
 		'tag_role': false,
 		'main_word_tag': { 'post_np_adposition': 'oblique' },
-		'missing_message': 'Could not find the Noun associated with this Adposition.',
+		'missing_message': "'X {stem}'",
 	}
 }
 

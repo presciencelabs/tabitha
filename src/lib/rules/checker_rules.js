@@ -348,7 +348,7 @@ const checker_rules_json = [
 		'comment': 'See section 0.41 of the Phase 1 checklist',
 	},
 	{
-		'name': "Don\'t allow 'where' as a relativizer",
+		'name': "Don't allow 'where' as a relativizer",
 		'trigger': { 'token': 'where' },
 		'context': {
 			'precededby': { 'token': '[' },
@@ -360,7 +360,7 @@ const checker_rules_json = [
 		'comment': 'See section 0.8 of the Phase 1 checklist',
 	},
 	{
-		'name': "Don\'t allow 'when' as a relativizer",
+		'name': "Don't allow 'when' as a relativizer",
 		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
 		'context': {
 			'precededby': { 'token': 'time' },
@@ -457,13 +457,6 @@ const checker_rules_json = [
 		'comment': "The 'have' verb is already a function token, and so we can't use 'stem'",
 	},
 	{
-		'name': "Warn that 'come' cannot be used for events, only things that move",
-		'trigger': { 'stem': 'come' },
-		'warning': {
-			'message': "Note that 'come' can only be used for things that move, NOT for events.",
-		},
-	},
-	{
 		'name': 'Cannot have two conjunctions to begin a sentence',
 		'trigger': { 'category': 'Conjunction' },
 		'context': {
@@ -552,6 +545,29 @@ const checker_rules_json = [
 			'message': "Avoid using a negative verb outside a clause expressing cause or purpose, as the scope of the 'not' is ambiguous. See P1 Checklist 27 for suggestions.",
 		},
 		'comment': "See Phase 1 Checklist section 27. eg 'John did not go [in-order-to buy food].' - does this mean he didn't go at all or he went for a different reason?",
+	},
+	{
+		'name': "Check for if 'of' is in the wrong place before a _literalExpansion/_dynamicExpansion token",
+		'trigger': { 'token': '_literalExpansion|_dynamicExpansion' },
+		'context': {
+			'precededby': { 'token': 'of' },
+		},
+		'error': {
+			'on': 'context:0',
+			'message': "For literal/dynamic expansions, write 'X of Y {token}' instead of 'X Y of {token}'.",
+		},
+	},
+	{
+		'name': 'Check for negation on Adjectives',
+		'trigger': { 'tag': { 'verb_polarity': 'negative' } },
+		'context': {
+			'followedby': { 'category': 'Adjective', 'skip': 'adjp_modifiers_attributive' },
+			'notprecededby': { 'stem': 'be', 'skip': 'all' },
+		},
+		'error': {
+			'message': 'Adjectives cannot be negated. Negate the Verb instead or find another way to word it.',
+		},
+		'comment': 'eg. "Not all of the people of Israel are true people of God." But something like "John is not happy" is still valid.',
 	},
 ]
 

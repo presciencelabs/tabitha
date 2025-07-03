@@ -1,6 +1,6 @@
 import { TOKEN_TYPE } from '$lib/token'
 import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
-import { by_adposition, by_clause_tag, by_complementizer, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective, with_be_auxiliary } from './presets'
+import { by_adposition, by_clause_tag, by_complementizer, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective, with_be_auxiliary, with_no_double_patient } from './presets'
 
 /** @type {RoleRuleJson<VerbRoleTag>} */
 const default_verb_case_frame_json = {
@@ -17,7 +17,7 @@ const default_verb_case_frame_json = {
 		'trigger': { 'tag': { 'syntax': 'head_np' } },
 		'context': { 'precededby': { 'token': 'from', 'type': TOKEN_TYPE.FUNCTION_WORD, 'skip': 'np_modifiers' } },
 		'context_transform': { 'function': { 'pre_np_adposition': 'verb_argument' } },
-		'missing_message': `Couldn't find the source, which in this case should have 'from' before it.`,
+		'missing_message': "'from X'",
 		'comment': "Can't use by_adposition() because we also need to specify that 'from' has to be a function word. It's the same otherwise",
 	},
 	'destination': by_adposition('to'),
@@ -110,7 +110,6 @@ const verb_case_frames = new Map([
 					'notfollowedby': { 'category': 'Noun', 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
 				},
 				'transform': { 'tag': { 'role': 'patient' } },
-				'missing_message': "ask-A should be written in the format 'X asked (destination) (patient)' e.g. 'John asked Mary a question'.",
 			},
 			'destination': [
 				by_adposition('to'),
@@ -140,11 +139,11 @@ const verb_case_frames = new Map([
 			'patient_clause_different_participant': [
 				{
 					...by_clause_tag('patient_clause_different_participant'),
-					'missing_message': "ask-F should be written in the format 'asked X [(if//whether) ...]' (with or without the if/whether)",
+					'missing_message': "'[(if//whether) ...]', with or without the if/whether",
 				},
 				by_complementizer('if|whether'),
 			],
-			'comment': "This can be written as 'asked X [(if//whether) ...]' (with or without the if/whether)",
+			'comment': "This can be written as 'asked X [(if//whether) ...]', with or without the if/whether",
 		}],
 	]],
 	['attack', []],
@@ -164,7 +163,7 @@ const verb_case_frames = new Map([
 						{ 'category': 'Verb', 'skip': ['vp_modifiers', 'np_modifiers'] },
 					],
 				},
-				'missing_message': 'be-E requires the format \'there be X\'.',
+				'missing_message': "'there be X'",
 			},
 			'state': { 'trigger': 'none' },
 		}],
@@ -190,25 +189,25 @@ const verb_case_frames = new Map([
 		['be-J', {
 			'agent': {
 				...directly_before_verb({ 'stem': 'date' }),
-				'missing_message': 'be-J requires the format \'The date be X\'.',
+				'missing_message': "write 'The date be X'",
 			},
 		}],
 		['be-K', {
 			'agent': {
 				...directly_before_verb({ 'stem': 'name' }),
-				'missing_message': 'be-K requires the format "X\'s name be Y" or "The name of X be Y".',
+				'missing_message': "write 'X's name be Y' or 'The name of X be Y'",
 			},
 		}],
 		['be-N', {
 			'agent': {
 				...directly_before_verb({ 'stem': 'time' }),
-				'missing_message': 'be-N requires the format \'The time be X\' where X is a temporal noun (eg 4PM//morning).',
+				'missing_message': "write 'The time be X' where X is a temporal noun like 4PM or morning",
 			},
 		}],
 		['be-O', {
 			'agent': {
 				...directly_before_verb({ 'stem': 'weather' }),
-				'missing_message': 'be-O requires the format \'The weather be X\' where X can be a noun (eg rain) or adjective (eg hot).',
+				'missing_message': "write 'The weather be X' where X can be a noun (eg rain) or adjective (eg hot)",
 			},
 			'other_optional': 'predicate_adjective',
 		}],
@@ -225,14 +224,14 @@ const verb_case_frames = new Map([
 		['be-R', {
 			'state': {
 				...directly_after_verb_with_adposition('part'),
-				'missing_message': 'be-R requires the format \'X be part of Y\'',
+				'missing_message': "'X be part of Y'",
 			},
 		}],
 		['be-S', {
 			'predicate_adjective': {
 				'trigger': { 'stem': 'old' },
 				'context': { 'precededby': [{ 'category': 'Adjective' }, { 'stem': 'year|month|day' }] },
-				'missing_message': 'be-S requires the format \'be X years//months//etc old(-B)\'.',
+				'missing_message': "'be X years//months//etc old(-B)'",
 			},
 			'other_required': 'predicate_adjective',
 			'comment': "clear the 'state' argument so it doesn't get triggered by 'year/month/day' etc. 'old' is the predicate adjective.",
@@ -258,7 +257,7 @@ const verb_case_frames = new Map([
 		['become-F', {
 			'agent': {
 				...directly_before_verb({ 'stem': 'weather' }),
-				'missing_message': 'become-F requires the format \'The weather be X\' where X can be a noun (eg rain) or adjective (eg hot).',
+				'missing_message': "write 'The weather be X' where X can be a noun (eg rain) or adjective (eg hot)",
 			},
 			'other_optional': 'predicate_adjective',
 		}],
@@ -299,7 +298,7 @@ const verb_case_frames = new Map([
 	]],
 	['blow', []],
 	['born', [
-		['born-A', with_be_auxiliary()]
+		['born-A', with_be_auxiliary()],
 	]],
 	['break', [
 		['break-A', { 'destination': by_adposition('to|into') }],
@@ -363,11 +362,11 @@ const verb_case_frames = new Map([
 				'mind': {
 					...directly_after_verb({ 'stem': 'mind' }),
 					'transform': { 'function': { 'syntax': 'extra_patient' } },
-					'missing_message': "Write 'change X's mind' for change-B",
+					'missing_message': "write 'change X's mind'",
 				},
 			},
 			'other_required': 'mind',
-			'comment': "'mind' ban be included in the phase 1 (eg. Pharoah changed Pharoah's mind) but it is not included in the semantic representation.",
+			'comment': "'mind' can be included in the phase 1 (eg. Pharoah changed Pharoah's mind) but it is not included in the semantic representation.",
 		}],
 		['change-C', { 'destination': by_adposition('to|into') }],
 		['change-E', { 'destination': by_adposition('to|into') }],
@@ -497,12 +496,9 @@ const verb_case_frames = new Map([
 		['gather-B', { 'instrument': by_adposition('with') }],
 	]],
 	['give', [
-		['give-A', {
-			'patient': {
-				...directly_after_verb(),
-				'missing_message': "'give' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
-			},
-		}],
+		['give-A', with_no_double_patient()],
+		['give-B', with_no_double_patient()],
+		['give-C', with_no_double_patient()],
 	]],
 	['go', []],
 	['grow', [
@@ -663,26 +659,17 @@ const verb_case_frames = new Map([
 		['see-B', { 'other_optional': 'patient_clause_simultaneous' }],
 	]],
 	['send', [
-		['send-B', {
-			'patient': {
-				...directly_after_verb(),
-				'missing_message': "'send' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
-			},
-		}],
-		['send-C', {
-			'patient': {
-				...directly_after_verb(),
-				'missing_message': "'send' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
-			},
-		}],
+		['send-A', with_no_double_patient()],
+		['send-B', with_no_double_patient()],
+		['send-C', with_no_double_patient()],
 	]],
 	['speak', [
 		['speak-A', {
-			'patient': by_adposition('about') ,
+			'patient': by_adposition('about'),
 			'instrument': by_adposition('in'),	// in a language
 			'other_rules': {
 				'extra_patient': {
-					'directly_after_verb': { },
+					...directly_after_verb(),
 					'extra_message': 'speak-A cannot be used with a regular object. The patient is expressed as \'speak about X\'',
 				},
 			},
@@ -725,7 +712,7 @@ const verb_case_frames = new Map([
 					'precededby': { 'token': 'about' },
 				},
 				'context_transform': { 'function': {} },
-				'missing_message': "think-D should be written in the format 'think about [Verb-ing]'",
+				'missing_message': "write 'think about [Verb-ing]'",
 			},
 			'patient_clause_different_participant': {
 				...by_clause_tag('patient_clause_different_participant'),
@@ -896,6 +883,7 @@ function get_verb_usage_info(categorization, role_rules) {
 	const required_roles = role_letters
 		.map(c => VERB_LETTER_TO_ROLE.get(c))
 		.map(role => role === 'patient_clause' ? patient_clause_type : role)
+		.filter(role => role !== 'beneficiary')	// beneficiaries are never required
 		.concat(role_rules.other_required)
 		.filter(role => role)
 
@@ -911,11 +899,9 @@ export function check_verb_case_frames_passive(trigger_context) {
 	const passive_rules_json = {
 		'patient': {
 			...directly_before_verb(),
-			'missing_message': 'A patient is required, which goes before the Verb in the passive.',
 		},
 		'agent': {
 			...by_adposition('by'),
-			'missing_message': 'An agent is required, which for a passive is preceded by \'by\'.',
 		},
 	}
 	const passive_rules = Object.entries(passive_rules_json)

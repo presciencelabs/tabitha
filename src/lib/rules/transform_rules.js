@@ -357,12 +357,13 @@ const transform_rules_json = [
 		'transform': { 'function': { 'auxiliary': 'negation' } },
 	},
 	{
-		'name': 'do in a question becomes an auxiliary',
+		'name': 'do followed by another verb is an interrogative auxiliary',
 		'trigger': { 'stem': 'do' },
 		'context': {
-			'followedby': [{ 'category': 'Verb', 'skip': 'all' }, { 'token': '?', 'skip': 'all' }],
+			'followedby': { 'category': 'Verb', 'skip': 'all' },
 		},
 		'transform': { 'function': { 'auxiliary': 'yes_no_interrogative' } },
+		'comment': 'removed the question mark from the context, because the punctuation may be outside the closing clause bracket',
 	},
 	{
 		'name': 'have before a Verb indicates flashback/perfect',

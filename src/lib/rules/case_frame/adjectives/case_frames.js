@@ -60,7 +60,7 @@ const adjective_case_frames = new Map([
 		['fair-A', {
 			'nominal_argument': by_adposition('to'),
 			'other_optional': 'nominal_argument',
-			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated',
 		}],
 	]],
 	['faithful', [
@@ -87,7 +87,7 @@ const adjective_case_frames = new Map([
 		['guilty-A', {
 			'nominal_argument': by_adposition('of'),
 			'other_optional': 'nominal_argument',
-			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated',
 		}],
 		['guilty-B', {
 			'patient_clause_same_participant': by_same_participant_complementizer('of'),
@@ -113,8 +113,8 @@ const adjective_case_frames = new Map([
 	['interested', [
 		['interested-A', {
 			'patient_clause_same_participant': [
-				by_clause_tag('patient_clause_same_participant'),
 				by_same_participant_complementizer('in'),
+				by_clause_tag('patient_clause_same_participant'),
 			],
 			'patient_clause_different_participant': { 'trigger': 'none' },
 		}],
@@ -197,7 +197,7 @@ const adjective_case_frames = new Map([
 		['satisfied-A', {
 			'nominal_argument': by_adposition('with'),
 			'other_optional': 'nominal_argument',
-			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated',
 		}],
 	]],
 	['several', [
@@ -211,7 +211,7 @@ const adjective_case_frames = new Map([
 		['similar-A', {
 			'nominal_argument': by_adposition('to'),
 			'other_optional': 'nominal_argument',
-			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated',
 		}],
 	]],
 	['sorry', [
@@ -229,7 +229,7 @@ const adjective_case_frames = new Map([
 		['surprised-C', {
 			'nominal_argument': by_adposition('by'),
 			'other_optional': 'nominal_argument',
-			'comment': 'TODO remove the "other_optional" when the Ontology gets updated'
+			'comment': 'TODO remove the "other_optional" when the Ontology gets updated',
 		}],
 	]],
 	['tall', [

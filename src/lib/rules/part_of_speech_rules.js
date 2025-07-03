@@ -120,18 +120,26 @@ const part_of_speech_rules_json = [
 		'comment': 'Preceded by a Verb: Daniel 3:2 people that collect tax(N/V)... Sometimes wrongly selects Noun when preceded by "be": You(people) should be teaching(N/V) other people about those things. (handled in a hard-coded rule)',
 	},
 	{
-		'name': 'If Adposition-Conjunction is the first word of a sentence, remove Adposition',
+		'name': 'If Adposition-Conjunction "so/instead" is the first word of a sentence, remove Adposition',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'tag': { 'position': 'first_word' }, 'stem': 'so' },
+		'trigger': { 'tag': { 'position': 'first_word' }, 'stem': 'so|instead' },
 		'remove': 'Adposition',
 		'comment': 'only for \'so\'. \'for\' might be the \'for each...\' sense',
 	},
 	{
-		'name': 'If "so/for" appears anywhere else in the sentence, remove Conjunction',
+		'name': 'If Adposition-Conjunction is the first word of a (non-quote) subordinate clause, remove Conjunction',
 		'category': 'Adposition|Conjunction',
-		'trigger': { 'token': 'so|so-that|for' },
+		'context': {
+			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
+		},
 		'remove': 'Conjunction',
-		'comment': 'This relies on the fact these conjunctions must be the first word and therefore capitalized',
+	},
+	{
+		'name': 'If Adposition-Conjunction "for" appears anywhere else in the sentence, remove Conjunction',
+		'category': 'Adposition|Conjunction',
+		'trigger': { 'token': 'for' },
+		'remove': 'Conjunction',
+		'comment': 'This relies on the fact the conjunction must be the first word and therefore capitalized',
 	},
 	{
 		'name': 'If Adverb-Adjective followed by Noun, remove Adverb',
@@ -427,6 +435,23 @@ const part_of_speech_rules_json = [
 		},
 		'remove': 'Verb',
 		'comment': 'Daniel 2:40  The fourth kingom will be strong [like(V/Adp) iron is strong].',
+	},
+	{
+		'name': 'If Noun-Adposition "On" is followed by a Noun, remove Noun',
+		'category': 'Noun|Adposition',
+		'trigger': { 'token': 'On' },
+		'context': {
+			'followedby': { 'category': 'Noun', 'skip': 'np_modifiers' },
+		},
+		'remove': 'Noun',
+		'comment': 'eg. On that day...',
+	},
+	{
+		'name': 'If Noun-Adposition "On" is followed by anything else, remove Adposition',
+		'category': 'Noun|Adposition',
+		'trigger': { 'token': 'On' },
+		'remove': 'Adposition',
+		'comment': 'eg. On saw a lion.',
 	},
 ]
 

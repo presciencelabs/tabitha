@@ -61,6 +61,31 @@ const structural_rules_json = [
 		},
 	},
 	{
+		name: 'insert "that" into some agent clauses',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'agent_clause' } }),
+			context: create_context_filter({
+				// only agent clauses preceded by the agentive 'it' (eg. It is true [John saw Mary])
+				'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': 'all' },
+			}),
+			action: simple_rule_action(({ trigger_token }) => {
+				const that_index = get_index_for_that()
+				trigger_token.sub_tokens.splice(that_index, 0, create_token('that', TOKEN_TYPE.FUNCTION_WORD))
+
+				function get_index_for_that() {
+					// Put the 'that' after a conjunction, if present. eg 'It is true that Y and that Z.'
+					const first_word_index = trigger_token.sub_tokens.findIndex(create_token_filter({ 'type': TOKEN_TYPE.LOOKUP_WORD }))
+					if (first_word_index !== -1 && create_token_filter({ 'category': 'Conjunction' })(trigger_token.sub_tokens[first_word_index])) {
+						return first_word_index + 1
+					} else {
+						return 1
+					}
+				}
+			}),
+		},
+	},
+	{
 		name: 'Add commas around descriptive relative clauses, headed by level 4 words',
 		comment: '',
 		rule: {
@@ -213,6 +238,12 @@ const structural_rules_json = [
 				// move 'of' to the end of the inner phrase and add the implicit markers
 				const inner_phrase_start = find_phrase_start(tokens, of_index)
 				const inner_phrase_end = find_phrase_end(tokens, of_index)
+
+				if (inner_phrase_start === -1 || inner_phrase_end === -1) {
+					// the 'of' was found outside an NP, and continuing may cause errors
+					return trigger_index + 1
+				}
+
 				const new_inner_phrase = [
 					...is_literal ? [] : [create_token('<<', TOKEN_TYPE.PUNCTUATION)],
 					...tokens.slice(inner_phrase_start, of_index),
@@ -458,6 +489,9 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 	const new_first_word = find_next_word(new_tokens, 0)
 	if (new_first_word) {
 		new_first_word.token = capitalize_token(new_first_word)
+		if (new_first_word.complex_pairing) {
+			new_first_word.complex_pairing.token = capitalize_token(new_first_word.complex_pairing)
+		}
 	}
 
 	/**
