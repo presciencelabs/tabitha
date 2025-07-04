@@ -6,13 +6,14 @@ import { test, expect } from '@playwright/test'
 test('get all generated text from in 1 Samuel 21:1 (English project)', async ({ request }) => {
 	const response = await request.get('/English/1 Samuel/21/1')
 
-	const text = await response.json()
+	const texts_by_audience = await response.json()
+	const serialized_texts = JSON.stringify(texts_by_audience, null, 2)
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-be-truthy
-	expect(text).toBeTruthy()
+	expect(serialized_texts).toBeTruthy()
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-contain-1
-	expect(text).toContain('David')
+	expect(serialized_texts).toContain('David')
 })
 
 test('Ensure verse parameter is valid', async ({ request }) => {
