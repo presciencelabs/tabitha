@@ -338,7 +338,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 	if (role_letters.length === 0) {
 		return {
 			possible_roles: DEFAULT_CASE_FRAME_RULES.map(({ role_tag }) => role_tag),
-			required_roles: [],
+			required_roles: role_rules.other_required,
 		}
 	}
 

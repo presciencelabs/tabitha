@@ -860,10 +860,11 @@ function get_verb_usage_info(categorization, role_rules) {
 	
 	// some categorizations are blank (eg become-J)
 	// treat all arguments as possible and not required
+	// also accept any values specified in a role rule
 	if (role_letters.length === 0) {
 		return {
-			possible_roles: [...VERB_LETTER_TO_ROLE.values()],
-			required_roles: [],
+			possible_roles: [...VERB_LETTER_TO_ROLE.values(), role_rules.patient_clause_type],
+			required_roles: role_rules.other_required,
 		}
 	}
 
