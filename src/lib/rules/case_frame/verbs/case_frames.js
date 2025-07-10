@@ -863,7 +863,7 @@ export function get_passive_verb_case_frame_rules(token) {
 			.map(rules_for_sense => ({ ...rules_for_sense, rules: replace_passive_rules(rules_for_sense.role_rules) })),
 		default_rule_getter: lookup => replace_passive_rules(active_rules.default_rule_getter(lookup)),
 		role_info_getter: active_rules.role_info_getter,
-		should_check: true,
+		should_check: active_rules.should_check,
 	}
 
 	/**
