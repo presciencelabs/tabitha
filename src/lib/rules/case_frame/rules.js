@@ -1,21 +1,43 @@
 import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
 import { create_context_filter, create_token_filter, simple_rule_action } from '../rules_parser'
-import { select_sense } from './sense_selection'
-import { check_adjective_case_frames } from './adjectives/case_frames'
-import { check_verb_case_frames, check_verb_case_frames_passive } from './verbs/case_frames'
-import { check_adposition_case_frames } from './adpositions/case_frames'
+import { select_pairing_sense, select_sense } from './sense_selection'
+import { get_adjective_case_frame_rules } from './adjectives/case_frames'
+import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './verbs/case_frames'
+import { get_adposition_case_frame_rules } from './adpositions/case_frames'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
+import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
 
 
 /** @type {BuiltInRule[]} */
 const argument_and_sense_rules = [
+	{
+		name: 'Initialize case frame rules and usage',
+		comment: '',
+		rule: {
+			trigger: token => token.lookup_results.length > 0 && is_one_part_of_speech(token),
+			context: create_context_filter({}),
+			action: simple_rule_action(trigger_context => {
+				const CASE_FRAME_RULE_GETTERS = new Map([
+					['Verb', get_verb_case_frame_rules],
+					['Adjective', get_adjective_case_frame_rules],
+					['Adposition', get_adposition_case_frame_rules],
+				])
+
+				const part_of_speech = trigger_context.trigger_token.lookup_results[0].part_of_speech
+				const case_frame_rule_getter = CASE_FRAME_RULE_GETTERS.get(part_of_speech)
+				if (case_frame_rule_getter) {
+					initialize_case_frame_rules(trigger_context, case_frame_rule_getter)
+				}
+			}),
+		},
+	},
 	{
 		name: 'Adjective case frames',
 		comment: '',
 		rule: {
 			trigger: create_token_filter({ 'category': 'Adjective' }),
 			context: create_context_filter({}),
-			action: simple_rule_action(check_adjective_case_frames),
+			action: simple_rule_action(check_case_frames),
 		},
 	},
 	{
@@ -32,7 +54,7 @@ const argument_and_sense_rules = [
 
 				// An adjective being used predicatively should be tagged as such so the verb case frame rules can check it.
 				// A verse reference is another special case that should not interfere with Verb case frames.
-				const present_arguments = selected_result.case_frame.valid_arguments.map(arg => arg.role_tag)
+				const present_arguments = selected_result.case_frame.result.valid_arguments.map(arg => arg.role_tag)
 				if (!(present_arguments.includes('modified_noun') || present_arguments.includes('modified_noun_with_subgroup'))
 						&& !token_has_tag(token, { 'role': 'verse_ref' })) {
 					add_tag_to_token(token, { 'adj_usage': 'predicative' })
@@ -49,7 +71,7 @@ const argument_and_sense_rules = [
 				'notprecededby': { 'tag': [{ 'syntax': 'relativizer|infinitive_same_subject' }], 'skip': 'all' },
 				'notfollowedby': { 'tag': [{ 'syntax': 'question' }, { 'pre_np_adposition': 'agent_of_passive' }], 'skip': 'all' },
 			}),
-			action: simple_rule_action(check_verb_case_frames),
+			action: simple_rule_action(check_case_frames),
 		},
 	},
 	{
@@ -63,7 +85,10 @@ const argument_and_sense_rules = [
 				'notprecededby': { 'tag': { 'syntax': 'relativizer|infinitive_same_subject' }, 'skip': 'all' },
 				'notfollowedby': { 'token': '?', 'skip': 'all' },
 			}),
-			action: simple_rule_action(check_verb_case_frames_passive),
+			action: simple_rule_action(trigger_context => {
+				initialize_case_frame_rules(trigger_context, get_passive_verb_case_frame_rules)
+				check_case_frames(trigger_context)
+			}),
 		},
 	},
 	{
@@ -84,7 +109,7 @@ const argument_and_sense_rules = [
 			context: create_context_filter({
 				'notprecededby': { 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
 			}),
-			action: simple_rule_action(check_adposition_case_frames),
+			action: simple_rule_action(check_case_frames),
 		},
 	},
 	{
@@ -96,6 +121,20 @@ const argument_and_sense_rules = [
 					&& !create_token_filter({ 'category': 'Adjective|Verb' })(token),
 			context: create_context_filter({}),
 			action: simple_rule_action(select_sense),
+		},
+	},
+	{
+		name: 'Complex Pairing compatibility and sense selection',
+		comment: '',
+		rule: {
+			trigger: token => token.complex_pairing !== null,
+			context: create_context_filter({}),
+			action: simple_rule_action(trigger_context => {
+				if (trigger_context.trigger_token.lookup_results.at(0)?.case_frame.result.is_valid) {
+					check_pairing_case_frames(trigger_context)
+				}
+				select_pairing_sense(trigger_context)
+			}),
 		},
 	},
 ]

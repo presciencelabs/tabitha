@@ -1,4 +1,4 @@
-import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
+import { parse_case_frame_rule, parse_sense_rules } from '../common'
 import { by_relative_context, head_noun, head_noun_post, opening_subordinate_clause } from './presets'
 
 /** @type {RoleRuleJson<AdpositionRoleTag>} */
@@ -123,19 +123,17 @@ const ADPOSITION_USAGE_RULES = create_adposition_argument_rules()
 
 /**
  * 
- * @param {RuleTriggerContext} trigger_context
+ * @param {Token} token
+ * @returns {CaseFrameRuleInfo}
  */
-export function check_adposition_case_frames(trigger_context) {
-	const adposition_token = trigger_context.trigger_token
-
-	const stem = adposition_token.lookup_results[0].stem
-	const argument_rules_by_sense = ADPOSITION_USAGE_RULES.get(stem) ?? []
-
-	check_case_frames(trigger_context, {
-		rules_by_sense: argument_rules_by_sense,
+export function get_adposition_case_frame_rules(token) {
+	const stem = token.lookup_results[0].stem
+	return {
+		rules_by_sense: ADPOSITION_USAGE_RULES.get(stem) ?? [],
 		default_rule_getter: get_default_usage_rules,
 		role_info_getter: get_adposition_usage_info,
-	})
+		should_check: true,
+	}
 }
 
 /**

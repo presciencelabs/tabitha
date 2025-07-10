@@ -1,5 +1,5 @@
 import { TOKEN_TYPE } from '$lib/token'
-import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
+import { parse_case_frame_rule, parse_sense_rules } from '../common'
 import { by_adposition, by_clause_tag, by_complementizer, by_relative_context, directly_after_verb, directly_after_verb_with_adposition, directly_before_verb, patient_from_subordinate_clause, predicate_adjective, with_be_auxiliary, with_no_double_patient } from './presets'
 
 /** @type {RoleRuleJson<VerbRoleTag>} */
@@ -65,6 +65,9 @@ const verb_case_frames = new Map([
 	]],
 	['allow', [
 		['allow-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
+	]],
+	['announce', [
+		['announce-A', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
 	['answer', [
 		['answer-A', { 'patient_clause_type': 'patient_clause_quote_begin' }],
@@ -635,6 +638,7 @@ const verb_case_frames = new Map([
 		}],
 	]],
 	['return', []],
+	['save', []],
 	['say', [
 		['say-A', {
 			'patient': by_adposition('to'),
@@ -815,26 +819,61 @@ const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()
 const VERB_CASE_FRAME_RULES = create_verb_argument_rules()
 
 /**
- * 
- * @param {RuleTriggerContext} trigger_context
- * @param {((rules: ArgumentRoleRule[]) => ArgumentRoleRule[])} rules_modifier
+ * @param {Token} token 
+ * @returns {CaseFrameRuleInfo}
  */
-export function check_verb_case_frames(trigger_context, rules_modifier=rules => rules) {
-	const verb_token = trigger_context.trigger_token
-
-	const stem = verb_token.lookup_results[0].stem
+export function get_verb_case_frame_rules(token) {
+	const stem = token.lookup_results[0].stem
 	const argument_rules_by_sense = VERB_CASE_FRAME_RULES.get(stem)
-
-	// TODO remove this at some point and default to empty map instead
+	
+	// TODO use the default rules instead once more verb rules are added.
 	if (!argument_rules_by_sense) {
-		return
+		return {
+			rules_by_sense: [],
+			default_rule_getter: () => [],
+			role_info_getter: () => ({ possible_roles: [], required_roles: [] }),
+			should_check: false,
+		}
 	}
 
-	check_case_frames(trigger_context, {
-		rules_by_sense: argument_rules_by_sense.map(rules_for_sense => ({ ...rules_for_sense, rules: rules_modifier(rules_for_sense.rules) })),
-		default_rule_getter: () => rules_modifier(get_default_rules_for_stem(stem)),
+	return {
+		rules_by_sense: argument_rules_by_sense,
+		default_rule_getter: () => get_default_rules_for_stem(stem),
 		role_info_getter: get_verb_usage_info,
-	})
+		should_check: true,
+	}
+}
+
+/**
+ * @param {Token} token 
+ * @returns {CaseFrameRuleInfo}
+ */
+export function get_passive_verb_case_frame_rules(token) {
+	// for a passive, the 'patient' goes right before the verb and the 'agent' is detected by the adposition 'by'
+	const passive_rules_json = {
+		'patient': directly_before_verb(),
+		'agent': by_adposition('by'),
+	}
+	const passive_rules = Object.entries(passive_rules_json)
+		.flatMap(rule_json => parse_case_frame_rule(rule_json))
+
+	const active_rules = get_verb_case_frame_rules(token)
+	return {
+		rules_by_sense: active_rules.rules_by_sense
+			.map(rules_for_sense => ({ ...rules_for_sense, rules: replace_passive_rules(rules_for_sense.role_rules) })),
+		default_rule_getter: lookup => replace_passive_rules(active_rules.default_rule_getter(lookup)),
+		role_info_getter: active_rules.role_info_getter,
+		should_check: true,
+	}
+
+	/**
+	 * 
+	 * @param {ArgumentRoleRule[]} role_rules 
+	 * @returns {ArgumentRoleRule[]}
+	 */
+	function replace_passive_rules(role_rules) {
+		return role_rules.filter(rule => !['patient', 'agent'].includes(rule.role_tag)).concat(passive_rules)
+	}
 }
 
 const VERB_LETTER_TO_ROLE = new Map([
@@ -852,10 +891,10 @@ const VERB_LETTER_TO_ROLE = new Map([
 /**
  * 
  * @param {string} categorization 
- * @param {ArgumentRulesForSense} role_rules
+ * @param {ArgumentRulesForSense} sense_rules
  * @returns {RoleUsageInfo}
  */
-function get_verb_usage_info(categorization, role_rules) {
+function get_verb_usage_info(categorization, { other_optional, other_required, patient_clause_type }) {
 	const role_letters = [...categorization].filter(c => c !== '_')
 	
 	// some categorizations are blank (eg become-J)
@@ -863,20 +902,20 @@ function get_verb_usage_info(categorization, role_rules) {
 	// also accept any values specified in a role rule
 	if (role_letters.length === 0) {
 		return {
-			possible_roles: [...VERB_LETTER_TO_ROLE.values(), role_rules.patient_clause_type],
-			required_roles: role_rules.other_required,
+			possible_roles: [...Object.keys(default_verb_case_frame_json)],
+			required_roles: other_required,
 		}
 	}
 
 	// Replace 'patient_clause' with the appropriate clause type
-	const patient_clause_type = role_rules.patient_clause_type || 'patient_clause_different_participant'
+	patient_clause_type = patient_clause_type || 'patient_clause_different_participant'
 
 	/** @type {string[]} */
 	// @ts-ignore
 	const possible_roles = role_letters
 		.map(c => VERB_LETTER_TO_ROLE.get(c.toUpperCase()))
 		.map(role => role === 'patient_clause' ? patient_clause_type : role)
-		.concat([...role_rules.other_optional, ...role_rules.other_required])
+		.concat([...other_optional, ...other_required])
 		.filter(role => role)
 
 	/** @type {string[]} */
@@ -885,33 +924,10 @@ function get_verb_usage_info(categorization, role_rules) {
 		.map(c => VERB_LETTER_TO_ROLE.get(c))
 		.map(role => role === 'patient_clause' ? patient_clause_type : role)
 		.filter(role => role !== 'beneficiary')	// beneficiaries are never required
-		.concat(role_rules.other_required)
+		.concat(other_required)
 		.filter(role => role)
 
 	return { possible_roles, required_roles }
-}
-
-/**
- * 
- * @param {RuleTriggerContext} trigger_context
- */
-export function check_verb_case_frames_passive(trigger_context) {
-	// for a passive, the 'patient' goes right before the verb and the 'agent' is detected by the adposition 'by'
-	const passive_rules_json = {
-		'patient': {
-			...directly_before_verb(),
-		},
-		'agent': {
-			...by_adposition('by'),
-		},
-	}
-	const passive_rules = Object.entries(passive_rules_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json))
-
-	check_verb_case_frames(
-		trigger_context,
-		role_rules => role_rules.filter(rule => !['patient', 'agent'].includes(rule.role_tag)).concat(passive_rules),
-	)
 }
 
 // TODO add check for questions and relative clauses

@@ -381,9 +381,22 @@ export function select_sense(trigger_context) {
 	const token = trigger_context.trigger_token
 	select_word_sense(token, trigger_context)
 
-	if (token.complex_pairing) {
-		select_word_sense(token.complex_pairing, trigger_context)
+	// apply the selected result's argument actions
+	for (const valid_argument of token.lookup_results[0].case_frame.result.valid_arguments) {
+		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
+		add_tag_to_token(token, valid_argument.rule.main_word_tag)
 	}
+}
+
+/**
+ * 
+ * @param {RuleTriggerContext} trigger_context 
+ */
+export function select_pairing_sense(trigger_context) {
+	if (!trigger_context.trigger_token.complex_pairing) {
+		return
+	}
+	select_word_sense(trigger_context.trigger_token.complex_pairing, trigger_context)
 }
 
 /**
@@ -392,7 +405,7 @@ export function select_sense(trigger_context) {
  * @returns {string | undefined} the sense letter or undefined
  */
 function find_matching_sense(token) {
-	if (!token.lookup_results.some(result => result.case_frame.is_checked)) {
+	if (!token.lookup_results.some(result => result.case_frame.result.is_checked)) {
 		return undefined
 	}
 	
@@ -408,12 +421,13 @@ function find_matching_sense(token) {
 	 * @returns {boolean}
 	 */
 	function sense_matches([sense, match_filter]) {
-		const result = token.lookup_results.find(LOOKUP_FILTERS.MATCHES_SENSE(split_stem_and_sense(sense)))
-		if (!result) {
+		const lookup = token.lookup_results.find(LOOKUP_FILTERS.MATCHES_SENSE(split_stem_and_sense(sense)))
+		if (!lookup) {
 			return false
 		}
+		const case_frame = lookup.case_frame
 
-		return result.case_frame.is_valid && match_filter(result.case_frame.valid_arguments)
+		return case_frame.result.is_valid && match_filter(case_frame.result.valid_arguments)
 	}
 }
 
@@ -430,8 +444,8 @@ function select_word_sense(token, trigger_context) {
 	const stem = token.lookup_results[0].stem
 
 	// Move the valid lookups to the top
-	const valid_lookups = token.lookup_results.filter(result => result.case_frame.is_valid)
-	const invalid_lookups = token.lookup_results.filter(result => !result.case_frame.is_valid)
+	const valid_lookups = token.lookup_results.filter(({ case_frame }) => case_frame.result.is_valid)
+	const invalid_lookups = token.lookup_results.filter(({ case_frame }) => !case_frame.result.is_valid)
 	token.lookup_results = [...valid_lookups, ...invalid_lookups]
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.
@@ -448,10 +462,4 @@ function select_word_sense(token, trigger_context) {
 	const selected_index = token.lookup_results.findIndex(LOOKUP_FILTERS.MATCHES_SENSE({ stem, sense: sense_to_select }))
 	const selected_result = token.lookup_results.splice(selected_index, 1)[0]
 	token.lookup_results = [selected_result, ...token.lookup_results]
-
-	// apply the selected result's argument actions
-	for (const valid_argument of selected_result.case_frame.valid_arguments) {
-		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
-		add_tag_to_token(token, valid_argument.rule.main_word_tag)
-	}
 }

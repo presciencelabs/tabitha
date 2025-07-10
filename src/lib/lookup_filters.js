@@ -67,27 +67,27 @@ function MATCHES_SENSE({ stem, sense }) {
 /**
  * 
  * @param {string} argument 
- * @returns {(lookup: { case_frame: CaseFrameResult }) => boolean}
+ * @returns {(lookup: { case_frame: CaseFrame }) => boolean}
  */
 function HAS_MISSING_ARGUMENT(argument) {
-	return lookup => lookup.case_frame.missing_arguments.some(({ role_tag }) => role_tag.includes(argument))
+	return lookup => lookup.case_frame.result.missing_arguments.some(role_tag => role_tag.includes(argument))
 }
 
 /**
  * 
  * @param {string} argument 
- * @returns {(lookup: { case_frame: CaseFrameResult }) => boolean}
+ * @returns {(lookup: { case_frame: CaseFrame }) => boolean}
  */
 function HAS_EXTRA_ARGUMENT(argument) {
-	return lookup => lookup.case_frame.extra_arguments.some(({ role_tag }) => role_tag.includes(argument))
+	return lookup => lookup.case_frame.result.extra_arguments.some(({ role_tag }) => role_tag.includes(argument))
 }
 
 /**
  * 
- * @returns {(lookup: { case_frame: CaseFrameResult }) => boolean}
+ * @returns {(lookup: { case_frame: CaseFrame }) => boolean}
  */
 function HAS_INVALID_CASE_FRAME() {
-	return ({ case_frame }) => !case_frame.is_checked || !case_frame.is_valid
+	return ({ case_frame: { result } }) => !result.is_checked || !result.is_valid
 }
 
 export const LOOKUP_FILTERS = {

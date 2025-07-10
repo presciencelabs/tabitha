@@ -1,4 +1,4 @@
-import { check_case_frames, parse_case_frame_rule, parse_sense_rules } from '../common'
+import { parse_case_frame_rule, parse_sense_rules } from '../common'
 import { by_adposition, by_clause_tag, by_complementizer, by_same_participant_complementizer, modified_noun_of_adjective, modified_noun_with_subgroup, unit_with_measure } from './presets'
 
 /** @type {RoleRuleJson<AdjectiveRoleTag>} */
@@ -277,20 +277,17 @@ const ADJECTIVE_CASE_FRAME_RULES = create_adjective_argument_rules()
 const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule(['modified_noun_with_subgroup', modified_noun_with_subgroup()])
 
 /**
- * 
- * @param {RuleTriggerContext} trigger_context
+ * @param {Token} token
+ * @returns {CaseFrameRuleInfo}
  */
-export function check_adjective_case_frames(trigger_context) {
-	const adjective_token = trigger_context.trigger_token
-
-	const stem = adjective_token.lookup_results[0].stem
-	const argument_rules_by_sense = ADJECTIVE_CASE_FRAME_RULES.get(stem) ?? []
-
-	check_case_frames(trigger_context, {
-		rules_by_sense: argument_rules_by_sense,
+export function get_adjective_case_frame_rules(token) {
+	const stem = token.lookup_results[0].stem
+	return {
+		rules_by_sense: ADJECTIVE_CASE_FRAME_RULES.get(stem) ?? [],
 		default_rule_getter: get_adjective_default_rules,
 		role_info_getter: get_adjective_usage_info,
-	})
+		should_check: true,
+	}
 }
 
 const ADJECTIVE_LETTER_TO_ROLE = new Map([

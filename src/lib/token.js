@@ -283,7 +283,14 @@ export function create_lookup_result(
 		gloss,
 		categorization,
 		how_to_entries: how_to,
-		case_frame: case_frame ?? create_case_frame({ is_valid: true, is_checked: false }),
+		case_frame: {
+			rules: [],
+			usage: {
+				possible_roles: [],
+				required_roles: [],
+			},
+			result: case_frame ?? create_case_frame({ is_valid: true, is_checked: false }),
+		},
 	}
 }
 
@@ -294,7 +301,7 @@ export function create_lookup_result(
  * @param {boolean} [data.is_checked=false] 
  * @param {RoleMatchResult[]} [data.valid_arguments=[]] 
  * @param {RoleMatchResult[]} [data.extra_arguments=[]] 
- * @param {ArgumentRoleRule[]} [data.missing_arguments=[]] 
+ * @param {RoleTag[]} [data.missing_arguments=[]] 
  * @returns {CaseFrameResult}
  */
 export function create_case_frame({ is_valid=false, is_checked=false, valid_arguments=[], extra_arguments=[], missing_arguments=[] }={}) {

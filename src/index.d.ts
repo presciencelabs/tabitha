@@ -63,7 +63,7 @@ type LookupResult = LookupWord & {
 	gloss: string
 	categorization: string
 	how_to_entries: HowToEntry[]
-	case_frame: CaseFrameResult
+	case_frame: CaseFrame
 }
 
 type HowToEntry = {

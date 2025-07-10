@@ -14,10 +14,24 @@ type ArgumentRoleRule = {
 
 type ArgumentRulesForSense = {
 	sense: WordSense
-	rules: ArgumentRoleRule[]
+	role_rules: ArgumentRoleRule[]
 	other_required: RoleTag[]
 	other_optional: RoleTag[]
 	patient_clause_type: RoleTag
+}
+type DefaultRuleGetter = (lookup: LookupResult) => ArgumentRoleRule[]
+type RoleInfoGetter = (categorization: string, role_rules: ArgumentRulesForSense) => RoleUsageInfo
+type CaseFrameRuleInfo = {
+	rules_by_sense: ArgumentRulesForSense[]
+	default_rule_getter: DefaultRuleGetter
+	role_info_getter: RoleInfoGetter
+	should_check: boolean
+}
+
+type CaseFrame = {
+	rules: ArgumentRoleRule[]
+	usage: RoleUsageInfo
+	result: CaseFrameResult
 }
 
 type RoleUsageInfo = {
@@ -37,7 +51,7 @@ type CaseFrameResult = {
 	is_checked: boolean
 	valid_arguments: RoleMatchResult[]
 	extra_arguments: RoleMatchResult[]
-	missing_arguments: ArgumentRoleRule[]
+	missing_arguments: RoleTag[]
 }
 
 type CaseFrameRuleJson = TransformRuleJson & {

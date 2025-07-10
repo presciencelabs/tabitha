@@ -740,11 +740,11 @@ const builtin_checker_rules = [
 			}),
 			action: message_set_action(({ tokens, trigger_token, context_indexes }) => {
 				const verb_token = tokens[context_indexes[0]]
-				const case_frames = verb_token.lookup_results.map(result => result.case_frame)
+				const case_frames = verb_token.lookup_results.map(result => result.case_frame.result)
 				if (case_frames.length === 0 || case_frames[0].is_valid) {
 					return
 				}
-				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments.map(rule => rule.role_tag)))
+				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments))
 
 				// Only show the message if all senses are invalid, but some are missing a patient clause
 				if (['agent_clause', 'patient_clause_different_participant'].some(role => missing_arguments.has(role))) {

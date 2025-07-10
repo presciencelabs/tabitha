@@ -23,15 +23,17 @@ type SimpleLookupResult = LookupWord & {
 	gloss: string
 	categorization: string
 	how_to_entries: HowToEntry[]
-	case_frame: SimpleCaseFrameResult
+	case_frame: SimpleCaseFrame
 }
 
-type SimpleCaseFrameResult = {
+type SimpleCaseFrame = {
 	is_valid: boolean
 	is_checked: boolean
 	valid_arguments: SimpleRoleArgResult
 	extra_arguments: SimpleRoleArgResult
 	missing_arguments: RoleTag[]
+	possible_roles: RoleTag[]
+	required_roles: RoleTag[]
 }
 
 type SimpleRoleArgResult = {
