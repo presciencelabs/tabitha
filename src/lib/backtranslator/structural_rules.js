@@ -339,6 +339,21 @@ const structural_rules_json = [
 		},
 	},
 	{
+		name: 'Capitalize the pairing if it is the first word in a sentence.',
+		comment: '',
+		rule: {
+			trigger: token => is_first_word(token) && !!token.complex_pairing,
+			context: create_context_filter({ }),
+			action: simple_rule_action(({ trigger_token }) => {
+				if (!trigger_token.complex_pairing) {
+					// makes the compiler happy, but this should never happen
+					return
+				}
+				trigger_token.complex_pairing.token = capitalize_token(trigger_token.complex_pairing)
+			}),
+		},
+	},
+	{
 		name: 'Simple text mappings',
 		comment: '',
 		rule: {
@@ -505,26 +520,26 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 		}
 		return `${token.token[0].toLowerCase()}${token.token.slice(1)}`
 	}
+}
 
-	/**
-	 *
-	 * @param {Token} token
-	 * @returns {string}
-	 */
-	function capitalize_token({ token }) {
-		if (REGEXES.STARTS_LOWERCASE.test(token)) {
-			return `${token[0].toUpperCase()}${token.slice(1)}`
-		}
-		return token
+/**
+ *
+ * @param {Token} token
+ * @returns {string}
+ */
+function capitalize_token({ token }) {
+	if (REGEXES.STARTS_LOWERCASE.test(token)) {
+		return `${token[0].toUpperCase()}${token.slice(1)}`
 	}
+	return token
+}
 
-	/**
-	 *
-	 * @param {Token} token
-	 */
-	function is_first_word(token) {
-		return create_token_filter({ 'tag': { 'position': 'first_word' } })(token)
-	}
+/**
+ *
+ * @param {Token} token
+ */
+function is_first_word(token) {
+	return create_token_filter({ 'tag': { 'position': 'first_word' } })(token)
 }
 
 

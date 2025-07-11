@@ -144,6 +144,9 @@ export function initialize_case_frame_rules({ trigger_token }, rule_info_getter)
 	 * @param {Token} token 
 	 */
 	function initialize_rules(token) {
+		if (token.lookup_results.length === 0) {
+			return
+		}
 		const { rules_by_sense, default_rule_getter, role_info_getter, should_check } = rule_info_getter(token)
 		if (!should_check) {
 			return
@@ -367,8 +370,8 @@ export function* validate_case_frame(trigger_context) {
 
 	// Flag a complex pairing that is invalid
 	// If the simple word is invalid, there's no point checking the pairing
-	if (case_frame.is_valid && token.complex_pairing && token.lookup_results.some(LOOKUP_FILTERS.HAS_INVALID_CASE_FRAME)) {
-		const complex_token = token.complex_pairing
+	const complex_token = token.complex_pairing
+	if (case_frame.is_valid && complex_token && complex_token.lookup_results.some(LOOKUP_FILTERS.HAS_INVALID_CASE_FRAME)) {
 		const selected_complex_result = complex_token.lookup_results[0]
 		const simple_sense = stem_with_sense(selected_result)
 		if (no_matches_and_ambiguous_sense(complex_token)) {
