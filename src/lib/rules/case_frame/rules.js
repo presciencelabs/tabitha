@@ -1,10 +1,10 @@
 import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
-import { create_context_filter, create_token_filter, simple_rule_action } from '../rules_parser'
+import { create_context_filter, create_token_filter, simple_rule_action } from '$lib/rules/rules_parser'
+import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { select_pairing_sense, select_sense } from './sense_selection'
 import { get_adjective_case_frame_rules } from './adjectives/case_frames'
 import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './verbs/case_frames'
 import { get_adposition_case_frame_rules } from './adpositions/case_frames'
-import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
 
 

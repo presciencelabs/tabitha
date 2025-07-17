@@ -98,6 +98,9 @@ const verb_sense_priority_overrides = [
 	['believe', [
 		['believe-B', { 'patient': { 'stem': 'Christ|God|Jesus' } }],
 	]],
+	['blame', [
+		['blame-C', { 'patient_clause_different_participant': { } }],
+	]],
 	['break', [
 		['break-C', { 'patient': { 'stem': 'law' } }],
 		['break-E', { 'patient': { 'stem': 'promise|agreement' } }],
@@ -178,6 +181,10 @@ const verb_sense_priority_overrides = [
 	['hurt', [
 		['hurt-C', { 'be_auxiliary': { } }],
 	]],
+	['increase', [
+		['increase-B', { 'patient': { } }],
+		// increase-A is wrongly flagged as allowing a patient, so this correctly prioritizes increase-B
+	]],
 	['know', [
 		['know-C', { 'patient': { 'stem': 'law|meaning|name|secret|thing' } }],
 	]],
@@ -195,6 +202,18 @@ const verb_sense_priority_overrides = [
 		['make-C', { 'patient': { 'stem': 'command|fire|god|peace|promise|wave|covenant' } }],
 		['make-E', { 'patient': { 'stem': 'bread|food' } }],
 	]],
+	['move', [
+		['move-C', { 'patient': { 'stem': 'foot|hand|leg' } }],
+	]],
+	['open', [
+		['open-B', { 'patient': { 'stem': 'door|gate|window' } }],
+		['open-C', { 'patient': { 'stem': 'book' } }],
+		['open-D', { 'patient': { 'stem': 'eye' } }],
+		['open-E', { 'patient': { 'stem': 'mouth' } }],
+	]],
+	['pay', [
+		['pay-C', { 'patient': { 'stem': 'tax' } }],
+	]],
 	['pray', [
 		['pray-D', { }],
 	]],
@@ -202,11 +221,26 @@ const verb_sense_priority_overrides = [
 		['prepare-B', { 'patient': { 'stem': 'feast|food|meal' } }],
 		['prepare-C', { }],
 	]],
+	['pull', [
+		['pull-B', { 'patient': { 'stem': 'net' }, 'destination': { 'stem': 'boat|ship' } }],
+	]],
 	['return', [
 		['return-D', { 'destination': { 'stem': 'king|person' } }],
 	]],
+	['remember', [
+		['remember-B', { 'patient': { 'stem': 'day|event|holiday' } }],
+		['remember-C', { 'patient': { 'level': '4' } }],	// TODO use a lexicon feature to check for any person.
+		['remember-D', { 'patient': { } }],
+	]],
+	['run', [
+		['run-B', { 'patient': { 'stem': 'army|God|king' } }],
+		['run-D', { 'agent': { 'stem': 'nose' } }],
+	]],
 	['say', [
 		['say-D', { 'agent': { 'stem': 'law' } }],
+	]],
+	['save', [
+		['save-B', { 'patient': { 'stem': 'money' } }],
 	]],
 	['see', [
 		['see-D', { 'patient': { 'stem': 'dream|vision' } }],
@@ -214,6 +248,12 @@ const verb_sense_priority_overrides = [
 	]],
 	['send', [
 		['send-B', { 'patient': { 'stem': 'letter|message' } }],
+	]],
+	['shout', [
+		['shout-C', { 'agent': { 'stem': 'lion|dog|sheep|cow' } }],
+	]],
+	['show', [
+		['show-C', { 'patient': { 'stem': 'dream|vision|event|power' } }],
 	]],
 	['speak', [
 		['speak-B', { }],
@@ -224,6 +264,15 @@ const verb_sense_priority_overrides = [
 		['take-C', { 'patient': { 'stem': 'rooster|sheep|horse' } }],
 		['take-D', { 'source': { 'stem': 'person|man|woman|child|son|daughter' } }], // TODO use a lexicon feature to check for any person.
 		['take-E', { 'destination': { 'stem': 'person|man|woman|child|son|daughter' } }], // TODO use a lexicon feature to check for any person.
+	]],
+	['take-away', [
+		['take-away-A', { 'source': { 'level': '4' } }], // TODO use a lexicon feature to check for any person.
+		['take-away-A', { 'source': { 'stem': 'person|man|woman|child|son|daughter' } }],
+		['take-away-B', { 'patient': { 'stem': 'honor|power' } }],
+		['take-away-C', { }],	// this is the default sense of take-away
+	]],
+	['talk', [
+		['talk-B', { }],
 	]],
 	['teach', [
 		['teach-A', { 'patient': { } }],	// when teach-A has a patient, prioritize it over teach-B
@@ -239,14 +288,28 @@ const verb_sense_priority_overrides = [
 		['throw-D', { 'destination': { 'stem': 'ground|floor' } }],
 		['throw-E', { 'destination': { 'stem': 'air' } }],
 	]],
+	['understand', [
+		['understand-C', { }],
+	]],
 	['unite', [
 		['unite-B', { }],
+	]],
+	['wait', [
+		['wait-C', { 'patient': { } }],
 	]],
 	['want', [
 		['want-D', { 'patient': { 'stem': 'peace|health|life' } }],
 	]],
+	['weigh', [
+		['weigh-A', { 'patient': { 'stem': 'gram|kilogram|amount' } }],
+		['weigh-B', { }],
+	]],
 	['worry', [
 		['worry-B', { }],
+	]],
+	['write', [
+		['write-F', { 'patient': { 'stem': 'law|command|commandment' } }],
+		['write-G', { 'patient': { 'stem': 'name' } }],
 	]],
 ]
 

@@ -71,6 +71,44 @@ export function by_adposition(adposition) {
 }
 
 /**
+ * Different from by_adposition() in that the adposition remains a lexical concept as opposed to becoming a function word.
+ * @param {string} adposition
+ * @returns {RoleRuleValueJson}
+ */
+export function by_adposition_concept(adposition='') {
+	if (adposition) {
+		// If specific adpositions are provided, filter by those only.
+		return {
+			'trigger': { 'tag': { 'syntax': 'head_np' } },
+			'context': {
+				'precededby': [
+					{ 'category': 'Verb', 'skip': 'all' },
+					{ 'token': adposition, 'skip': 'np_modifiers' },
+				],
+			},
+			'context_transform': [{}, { 'tag': { 'pre_np_adposition': 'verb_argument' } }],
+		}
+	} else {
+		// Filter for any 'Adposition', and allow the possibility of 'to'
+		return [
+			by_adposition('to'), // 'to' is also valid, but does not have a concept associated with it
+			{
+				'trigger': { 'tag': { 'syntax': 'head_np' } },
+				'context': {
+					'precededby': [
+						{ 'category': 'Verb', 'skip': 'all' },
+						{ 'category': 'Adposition', 'skip': 'np_modifiers' },
+					],
+					'notprecededby' : { 'token': 'with|for', 'skip': 'np_modifiers' },
+				},
+				'context_transform': [{}, { 'tag': { 'pre_np_adposition': 'verb_argument' } }],
+				'comment': 'Could have any adposition except with/for (eg "in Egypt", "along the Nile", "by the river", etc)',
+			},
+		]
+	}
+}
+
+/**
  * 
  * @param {string} clause_type 
  * @returns {CaseFrameRuleJson}

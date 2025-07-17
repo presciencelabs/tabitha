@@ -597,6 +597,36 @@ const builtin_checker_rules = [
 		},
 	},
 	{
+		name: 'Check if a Verb has no theta grid information',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'category': 'Verb' }),
+			context: create_context_filter({ }),
+			action: message_set_action(function* ({ trigger_token }) {
+				yield check_for_empty_theta_grid(trigger_token)
+				if (trigger_token.complex_pairing) {
+					yield check_for_empty_theta_grid(trigger_token.complex_pairing)
+				}
+
+				/**
+				 * @param {Token} token 
+				 * @return {MessageInfo}
+				 */
+				function check_for_empty_theta_grid(token) {
+					if (token.lookup_results.length === 0) {
+						return {}
+					}
+					if (token.lookup_results.every(lookup => lookup.categorization.length === 0)) {
+						return { token_to_flag: token, warning: "'{stem}' has no theta grid information to check with. Double check the expected arguments with a colleague." }
+					} else if (token.lookup_results[0].categorization.length === 0) {
+						return { token_to_flag: token, warning: "'{sense}' has no theta grid information to check with. Double check the expected arguments with a colleague." }
+					}
+					return {}
+				}
+			}),
+		},
+	},
+	{
 		name: 'Check that level 2/3 words are within a (complex) alternate',
 		comment: 'The complex word may be in a nested clause within the clause that has the (complex) tag',
 		rule: {

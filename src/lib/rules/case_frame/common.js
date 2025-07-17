@@ -340,6 +340,7 @@ export function* validate_case_frame(trigger_context) {
 	}
 	
 	const selected_result = token.lookup_results[0]
+	const sense = stem_with_sense(selected_result)
 	const case_frame = selected_result.case_frame.result
 
 	if (no_matches_and_ambiguous_sense(token)) {
@@ -348,10 +349,11 @@ export function* validate_case_frame(trigger_context) {
 		// flag any extra roles common to all lookup results
 		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }) => role_is_extra_for_all(role_tag, token))
 		for (const extra_argument of extra_roles_for_all) {
-			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.get(extra_argument.role_tag) || extra_argument.rule.extra_message
+			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.get(extra_argument.role_tag)
+				|| extra_argument.rule.extra_message.replaceAll('{sense}', "'{stem}'")
 			// put the error message on both the trigger token AND the argument token
 			yield { error: extra_message }
-			yield flag_extra_argument(trigger_context, extra_message)(extra_argument)
+			yield flag_extra_argument(trigger_context, extra_argument, extra_message)
 		}
 
 		// show the invalid arguments for each lookup result
@@ -364,7 +366,24 @@ export function* validate_case_frame(trigger_context) {
 		yield show_invalid_roles(selected_result)
 		
 		for (const extra_argument of case_frame.extra_arguments) {
-			yield flag_extra_argument(trigger_context, extra_argument.rule.extra_message)(extra_argument)
+			yield flag_extra_argument(trigger_context, extra_argument, extra_argument.rule.extra_message)
+		}
+	}
+
+	// Warn if a beneficiary or instrument is present, but not included in the theta grid
+	// This is not necessarily an error, as many verbs could technically take them.
+	// Sometimes they just haven't occurred yet for a sense and so don't appear in the Verb categorization.
+	const roles_to_check = [
+		['instrument', 'F'],
+		['beneficiary', 'G'],
+	]
+	for (const [role_tag, categorization_letter] of roles_to_check) {
+		const role_argument = case_frame.valid_arguments.find(({ role_tag: tag }) => tag === role_tag)
+		if (role_argument && !selected_result.categorization.toUpperCase().includes(categorization_letter)) {
+			yield {
+				token_to_flag: role_argument.trigger_context.trigger_token,
+				warning: `${sense} does not usually take a ${role_tag}. Check to make sure its usage is acceptable.`,
+			}
 		}
 	}
 
@@ -443,24 +462,15 @@ function role_is_extra_for_all(role_tag, token) {
 /**
  * 
  * @param {RuleTriggerContext} trigger_context 
+ * @param {RoleMatchResult} extra_argument 
  * @param {string} message
- * @returns {(extra_argument: RoleMatchResult) => MessageInfo}
+ * @returns {MessageInfo}
  */
-function flag_extra_argument(trigger_context, message) {
+function flag_extra_argument(trigger_context, extra_argument, message) {
 	// The message is formatted based on the verb trigger token, not the argument token
 	const formatted_message = format_token_message(trigger_context, message)
 
-	return extra_argument => {
-		const argument_token = extra_argument.trigger_context.trigger_token
-		const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
-	
-		if (['beneficiary', 'instrument'].includes(extra_argument.role_tag)) {
-			// These arguments are not necessarily an error, as many verbs could technically take them.
-			// Sometimes they just haven't occurred yet for a sense and so don't appear in the Verb categorization.
-			// So show a warning instead of an error.
-			return { token_to_flag, warning: formatted_message, plain: true }
-		} else {
-			return { token_to_flag, error: formatted_message, plain: true }
-		}
-	}
+	const argument_token = extra_argument.trigger_context.trigger_token
+	const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
+	return { token_to_flag, error: formatted_message, plain: true }
 }
