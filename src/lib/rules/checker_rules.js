@@ -569,6 +569,30 @@ const checker_rules_json = [
 		},
 		'comment': 'eg. "Not all of the people of Israel are true people of God." But something like "John is not happy" is still valid.',
 	},
+	{
+		'name': 'Check for nested independent clauses with "and" or "but", when not preceded by a clause',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
+		'context': {
+			'subtokens': [{ 'token': '[' }, { 'token': 'and|but' }],
+			'notprecededby': { 'type': TOKEN_TYPE.CLAUSE },
+		},
+		'error': {
+			'on': 'subtokens:0',
+			'message': "Cannot have a nested independent clause. Instead, split the sentence into two.",
+		},
+	},
+	{
+		'name': 'Check for nested independent clauses with "and" or "but", when preceded by a relative clause',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'patient_clause_different_participant' } },
+		'context': {
+			'subtokens': [{ 'token': '[' }, { 'token': 'and|but' }],
+			'precededby': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'relative_clause' } },
+		},
+		'error': {
+			'on': 'subtokens:0',
+			'message': "Cannot have a nested independent clause. Instead, split the sentence into two.",
+		},
+	},
 ]
 
 /** @type {BuiltInRule[]} */
@@ -588,10 +612,21 @@ const builtin_checker_rules = [
 		},
 	},
 	{
+		name: 'Check Verb argument structure/case frame',
+		comment: "Don't validate Verbs that are in the same clause as another Verb, since there is already an error that will show for that",
+		rule: {
+			trigger: create_token_filter({ 'category': 'Verb' }),
+			context: create_context_filter({
+				'notprecededby': { 'category': 'Verb', 'skip': 'all' },
+			}),
+			action: message_set_action(validate_case_frame),
+		},
+	},
+	{
 		name: 'Check argument structure/case frame',
 		comment: 'case frame rules can eventually be used for verbs, adjectives, adverbs, adpositions, and even conjunctions',
 		rule: {
-			trigger: token => token.lookup_results.length > 0,
+			trigger: create_token_filter({ 'category': 'Adjective|Adposition' }),
 			context: create_context_filter({ }),
 			action: message_set_action(validate_case_frame),
 		},
