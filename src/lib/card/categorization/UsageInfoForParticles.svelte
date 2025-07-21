@@ -16,7 +16,7 @@
 	{#if grouped_usages.length}
 		<dl class="mt-0">
 			{#if always_usages.length}
-				<dt>Always...</dt>
+				<dt class="mt-0 italic">Always...</dt>
 
 				{#each always_usages as usage}
 					<dd>{usage.replace('always ', '')}</dd>
@@ -24,7 +24,7 @@
 			{/if}
 
 			{#if sometimes_usages.length}
-				<dt>Sometimes...</dt>
+				<dt class="mt-0 italic">Sometimes...</dt>
 
 				{#each sometimes_usages as usage}
 					<dd>{usage.replace('sometimes ', '')}</dd>
@@ -38,9 +38,3 @@
 		</p>
 	{/if}
 </fieldset>
-
-<style lang="postcss">
-	dt {
-		@apply mt-0 italic;
-	}
-</style>

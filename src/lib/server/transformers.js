@@ -151,8 +151,7 @@ function transform_adjective_categorization(categories_from_db) {
 
 	return [
 		semantic_category.Adjective[encoded_semantic_category],
-		// TODO: look into a fix for this type mismatch warning
-		// @ts-ignore
+		// @ts-expect-error TODO: look into a fix for this type mismatch warning
 		...transform_particle_categorization('Adjective')(encoded_usage),
 	]
 }

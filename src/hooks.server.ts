@@ -46,7 +46,7 @@ async function initialize_config(event: RequestEvent) {
 	}
 }
 
-const authz_handle: Handle = async ({event, resolve}) => {
+const authz_handle: Handle = async ({ event, resolve }) => {
 	await authz(event)
 
 	return resolve(event)

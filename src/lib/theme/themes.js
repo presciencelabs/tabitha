@@ -1,8 +1,6 @@
-// made this for a few reasons:
-// 1. excludes 'dracula'
-// 2. provides names for Selector.svelte
-// 3. allows for renaming themes, e.g., halloween to reformation
-// https://daisyui.com/docs/themes
+// This was made for Selector.svelte
+// The names need to stay in sync with the themes in $lib/app.css
+//    unless another technique is discovered to dynamically load them.
 export default [
 	'light',
 	'dark',

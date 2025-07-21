@@ -22,7 +22,7 @@ sw.addEventListener('fetch', event => {
 	// ignore POST requests etc
 	if (event.request.method !== 'GET') return
 
-	// @ts-ignore
+	// @ts-expect-error – this is a valid ServiceWorkerGlobalScope
 	event.respondWith(respond(event.request))
 })
 

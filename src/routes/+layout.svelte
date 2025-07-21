@@ -1,5 +1,6 @@
 <script lang="ts">
-	import '$lib/app.postcss'
+	import '$lib/app.css'
+
 	import { Brand, Search } from '$lib'
 	import { Selector } from '$lib/theme'
 	import { signIn, signOut } from '@auth/sveltekit/client'
@@ -46,7 +47,7 @@
 						{user.email}
 					</span>
 				</div>
-				
+
 				<button onclick={sign_out} class="btn btn-sm btn-outline btn-error">
 					<Icon icon="material-symbols:logout-rounded" class="h-5 w-5" />
 				</button>
