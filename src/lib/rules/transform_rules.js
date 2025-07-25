@@ -1,4 +1,5 @@
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform, create_token_transforms } from './rules_parser'
+import { add_tag_to_token, TOKEN_TYPE } from '$lib/token'
+import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform, create_token_transforms, simple_rule_action } from './rules_parser'
 
 /**
  * These are words that may change their underlying data based on the context around them.
@@ -17,14 +18,6 @@ const transform_rules_json = [
 		'transform': { 'function': { 'syntax': 'infinitive' } },
 	},
 	{
-		'name': 'infinitive "to" as the first word of a subordinate should be tagged as "same subject"',
-		'trigger': { 'tag': { 'syntax': 'infinitive' } },
-		'context': {
-			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
-		},
-		'transform': { 'function': { 'syntax': 'infinitive|infinitive_same_subject' } },
-	},
-	{
 		'name': '"from" or "for" before a verb gets tagged as gerundifier',
 		'trigger': { 'token': 'from|for' },
 		'context': {
@@ -36,14 +29,6 @@ const transform_rules_json = [
 		},
 		'transform': { 'function': { 'syntax': 'gerundifier' } },
 		'comment': '"prevent [X from Ving]", "forgive [X for Ving]". May be needed for other verbs as well',
-	},
-	{
-		'name': 'tag "in-order-to/by/without" as "same subject"',
-		'trigger': { 'stem': 'in-order-to|by|without' },
-		'context': {
-			'precededby': { 'token': '[', 'skip': { 'category': 'Conjunction' } },
-		},
-		'transform': { 'tag': { 'syntax': 'infinitive_same_subject' } },
 	},
 	{
 		'name': 'Mark a Verb with the present form as present',
@@ -147,6 +132,14 @@ const transform_rules_json = [
 		'transform': { 'tag': { 'clause_type': 'adverbial_clause' } },
 	},
 	{
+		'name': 'tag "in-order-to/by/without" clauses as "same subject" adverbial',
+		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },
+		'context': {
+			'subtokens': { 'stem': 'in-order-to|by|without', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+		},
+		'transform': { 'tag': { 'clause_type': 'adverbial_clause|adverbial_clause_same_subject' } },
+	},
+	{
 		'name': 'tag subordinate clauses along with \'it\' as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': 'all' } },
@@ -173,7 +166,7 @@ const transform_rules_json = [
 		'name': "tag subordinate clauses starting with the infinitive 'to' as 'same_participant'",
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 
-			'subtokens': { 'token': 'to', 'tag': { 'syntax': 'infinitive_same_subject' }, 'skip': 'all' },
+			'subtokens': { 'tag': { 'syntax': 'infinitive' }, 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John wanted [to sing]',
@@ -362,7 +355,7 @@ const transform_rules_json = [
 		'context': {
 			'followedby': { 'category': 'Verb', 'skip': 'all' },
 		},
-		'transform': { 'function': { 'auxiliary': 'yes_no_interrogative' } },
+		'transform': { 'function': { 'auxiliary': 'interrogative' } },
 		'comment': 'removed the question mark from the context, because the punctuation may be outside the closing clause bracket',
 	},
 	{
@@ -574,4 +567,58 @@ export function parse_transform_rule(rule_json) {
 	}
 }
 
+/** @type {BuiltInRule[]} */
+const builtin_transform_rules = [
+	{
+		name: "All clauses within a relative clause are tagged as 'in_relative_clause'",
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token }) => {
+				tag_nested_clauses(trigger_token, { 'in_relative_clause': 'true' })
+			}),
+		},
+	},
+	{
+		name: "All clauses within a question are tagged as 'in_interrogative'",
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE }),
+			context: create_context_filter({
+				'subtokens': { 'token': '?', 'skip': 'all' },
+			}),
+			action: simple_rule_action(({ trigger_token }) => {
+				tag_nested_clauses(trigger_token, { 'in_interrogative': 'true' })
+			}),
+		},
+	},
+]
+
+/**
+ * @param {Token} clause_token 
+ * @param {Tag} tag_to_set 
+ */
+function tag_nested_clauses(clause_token, tag_to_set) {
+	const quote_begin_filter = create_token_filter({ 'tag': { 'clause_type': 'patient_clause_quote_begin' } })
+
+	/**
+	 * @param {Token[]} clause_tokens 
+	 */
+	function tag_clause_tokens(clause_tokens) {
+		// the first token is always the opening bracket. this is what we want to tag
+		add_tag_to_token(clause_tokens[0], tag_to_set)
+
+		for (let i = 0; i < clause_tokens.length; i++) {
+			const token = clause_tokens[i]
+			if (token.sub_tokens.length > 0 && !quote_begin_filter(token)) {
+				tag_clause_tokens(token.sub_tokens)
+			}
+		}
+	}
+
+	tag_clause_tokens(clause_token.sub_tokens)
+}
+
 export const TRANSFORM_RULES = transform_rules_json.map(parse_transform_rule)
+	.concat(builtin_transform_rules.map(({ rule }) => rule))

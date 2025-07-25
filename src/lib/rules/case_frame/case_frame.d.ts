@@ -46,9 +46,10 @@ type RoleMatchResult = {
 	rule: ArgumentRoleRule
 }
 
+type CaseFrameStatus = 'unchecked' | 'valid' | 'invalid'
+
 type CaseFrameResult = {
-	is_valid: boolean
-	is_checked: boolean
+	status: CaseFrameStatus
 	valid_arguments: RoleMatchResult[]
 	extra_arguments: RoleMatchResult[]
 	missing_arguments: RoleTag[]

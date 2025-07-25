@@ -468,7 +468,7 @@ export function select_pairing_sense(trigger_context) {
  * @returns {string | undefined} the sense letter or undefined
  */
 function find_matching_sense(token) {
-	if (!token.lookup_results.some(result => result.case_frame.result.is_checked)) {
+	if (token.lookup_results.every(result => result.case_frame.result.status === 'unchecked')) {
 		return undefined
 	}
 	
@@ -490,7 +490,7 @@ function find_matching_sense(token) {
 		}
 		const case_frame = lookup.case_frame
 
-		return case_frame.result.is_valid && match_filter(case_frame.result.valid_arguments)
+		return case_frame.result.status === 'valid' && match_filter(case_frame.result.valid_arguments)
 	}
 }
 
@@ -507,8 +507,8 @@ function select_word_sense(token, trigger_context) {
 	const stem = token.lookup_results[0].stem
 
 	// Move the valid lookups to the top
-	const valid_lookups = token.lookup_results.filter(({ case_frame }) => case_frame.result.is_valid)
-	const invalid_lookups = token.lookup_results.filter(({ case_frame }) => !case_frame.result.is_valid)
+	const valid_lookups = token.lookup_results.filter(({ case_frame }) => ['valid', 'unchecked'].includes(case_frame.result.status))
+	const invalid_lookups = token.lookup_results.filter(({ case_frame }) => case_frame.result.status === 'invalid')
 	token.lookup_results = [...valid_lookups, ...invalid_lookups]
 	
 	// Use the matching valid sense, or else the first valid sense, or else sense A.

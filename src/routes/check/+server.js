@@ -111,10 +111,9 @@ function simplify_tokens(sentences) {
 	 * @param {CaseFrame} case_frame 
 	 * @returns {SimpleCaseFrame}
 	 */
-	function simplify_case_frame({ usage: { possible_roles, required_roles }, result: { is_valid, is_checked, valid_arguments, extra_arguments, missing_arguments } }) {
+	function simplify_case_frame({ usage: { possible_roles, required_roles }, result: { status, valid_arguments, extra_arguments, missing_arguments } }) {
 		return {
-			is_valid,
-			is_checked,
+			status,
 			valid_arguments: valid_arguments.reduce(simplify_argument_result, {}),
 			extra_arguments: extra_arguments.reduce(simplify_argument_result, {}),
 			missing_arguments,

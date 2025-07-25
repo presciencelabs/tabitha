@@ -82,14 +82,6 @@ function HAS_EXTRA_ARGUMENT(argument) {
 	return lookup => lookup.case_frame.result.extra_arguments.some(({ role_tag }) => role_tag.includes(argument))
 }
 
-/**
- * 
- * @returns {(lookup: { case_frame: CaseFrame }) => boolean}
- */
-function HAS_INVALID_CASE_FRAME() {
-	return ({ case_frame: { result } }) => !result.is_checked || !result.is_valid
-}
-
 export const LOOKUP_FILTERS = {
 	IS_IN_ONTOLOGY,
 	IS_OR_WILL_BE_IN_ONTOLOGY,
@@ -101,5 +93,4 @@ export const LOOKUP_FILTERS = {
 	MATCHES_SENSE,
 	HAS_MISSING_ARGUMENT,
 	HAS_EXTRA_ARGUMENT,
-	HAS_INVALID_CASE_FRAME,
 }

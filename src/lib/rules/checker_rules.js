@@ -806,7 +806,7 @@ const builtin_checker_rules = [
 			action: message_set_action(({ tokens, trigger_token, context_indexes }) => {
 				const verb_token = tokens[context_indexes[0]]
 				const case_frames = verb_token.lookup_results.map(result => result.case_frame.result)
-				if (case_frames.length === 0 || case_frames[0].is_valid) {
+				if (case_frames.length === 0 || case_frames[0].status !== 'invalid') {
 					return
 				}
 				const missing_arguments = new Set(case_frames.flatMap(case_frame => case_frame.missing_arguments))

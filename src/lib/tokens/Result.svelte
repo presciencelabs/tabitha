@@ -28,9 +28,9 @@
 							<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank">
 								{concept}
 							</a>
-							{#if entry.case_frame.is_checked && entry.case_frame.is_valid}
+							{#if entry.case_frame.status === 'valid'}
 								<Icon icon="mdi:check-bold" class="h-4 w-4 text-success" />
-							{:else if entry.case_frame.is_checked}
+							{:else if entry.case_frame.status === 'invalid'}
 								<Icon icon="mdi:close-thick" class="h-4 w-4 text-error" />
 							{/if}
 						</span>

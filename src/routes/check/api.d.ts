@@ -27,8 +27,7 @@ type SimpleLookupResult = LookupWord & {
 }
 
 type SimpleCaseFrame = {
-	is_valid: boolean
-	is_checked: boolean
+	status: CaseFrameStatus
 	valid_arguments: SimpleRoleArgResult
 	extra_arguments: SimpleRoleArgResult
 	missing_arguments: RoleTag[]

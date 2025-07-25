@@ -83,9 +83,8 @@ export function by_same_participant_complementizer(complementizer) {
 			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant', 'role': 'adjective_clausal_argument' } },
-		'subtoken_transform': { 'function': { 'syntax': 'infinitive_same_subject' } },
+		'subtoken_transform': { 'function': { 'syntax': 'complementizer' } },
 		'missing_message': `'[${complementizer} Verb-ing]'`,
-		'comment': "need to set to 'infinitive_same_subject' so that the clause is skipped for verb case frame checking",
 	}
 }
 

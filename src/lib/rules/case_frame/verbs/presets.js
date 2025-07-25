@@ -126,7 +126,7 @@ export function by_clause_tag(clause_type) {
  */
 export function by_complementizer(complementizer) {
 	return {
-		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause' } },
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause|patient_clause_different_participant' } },
 		'context': {
 			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
 		},

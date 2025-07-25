@@ -307,7 +307,7 @@ function create_role_match_result(rule, success, argument_context=null) {
  */
 function check_usage(lookup, role_matches) {
 	if (lookup.ontology_id === 0) {
-		return create_case_frame({ is_valid: false, is_checked: false })
+		return create_case_frame()
 	}
 
 	const { possible_roles, required_roles } = lookup.case_frame.usage
@@ -319,8 +319,7 @@ function check_usage(lookup, role_matches) {
 	const is_valid = extra_arguments.length === 0 && missing_arguments.length === 0
 
 	return create_case_frame({
-		is_valid,
-		is_checked: true,
+		status: is_valid ? 'valid' : 'invalid',
 		valid_arguments,
 		missing_arguments,
 		extra_arguments,
@@ -335,7 +334,7 @@ export function* validate_case_frame(trigger_context) {
 	const token = trigger_context.trigger_token
 
 	// If nothing was checked, nothing to validate
-	if (token.lookup_results.every(lookup => !lookup.case_frame.result.is_checked)) {
+	if (token.lookup_results.every(lookup => lookup.case_frame.result.status === 'unchecked')) {
 		return
 	}
 	
@@ -361,7 +360,7 @@ export function* validate_case_frame(trigger_context) {
 			yield show_invalid_roles(result)
 		}
 
-	} else if (!case_frame.is_valid) {
+	} else if (case_frame.status === 'invalid') {
 		yield { error: 'Incorrect usage of {sense}. Check other errors and warnings for more information, and consult the Ontology.' }
 		yield show_invalid_roles(selected_result)
 		
@@ -390,7 +389,7 @@ export function* validate_case_frame(trigger_context) {
 	// Flag a complex pairing that is invalid
 	// If the simple word is invalid, there's no point checking the pairing
 	const complex_token = token.complex_pairing
-	if (case_frame.is_valid && complex_token && complex_token.lookup_results.some(LOOKUP_FILTERS.HAS_INVALID_CASE_FRAME)) {
+	if (case_frame.status === 'valid' && complex_token && complex_token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid')) {
 		const selected_complex_result = complex_token.lookup_results[0]
 		const simple_sense = stem_with_sense(selected_result)
 		if (no_matches_and_ambiguous_sense(complex_token)) {
@@ -404,7 +403,7 @@ export function* validate_case_frame(trigger_context) {
 				yield { token_to_flag: complex_token, ...show_invalid_roles(result) }
 			}
 
-		} else if (!selected_complex_result.case_frame.result.is_valid) {
+		} else if (selected_complex_result.case_frame.result.status === 'invalid') {
 			yield {
 				token_to_flag: complex_token,
 				error: `{sense} may not be compatible with this usage of ${simple_sense}.`,
@@ -446,7 +445,7 @@ function show_invalid_roles(lookup) {
  * @returns {boolean}
  */
 function no_matches_and_ambiguous_sense(token) {
-	return !token.lookup_results.some(lookup => lookup.case_frame.result.is_valid) && token.lookup_results.length > 1 && !token.specified_sense
+	return token.lookup_results.every(({ case_frame }) => case_frame.result.status === 'invalid') && token.lookup_results.length > 1 && !token.specified_sense
 }
 
 /**
