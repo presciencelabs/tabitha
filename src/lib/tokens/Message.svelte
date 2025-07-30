@@ -18,16 +18,20 @@
 
 {#if token_has_message(token)}
 	{@const top_ui = message_ui[token.messages[0].label]}
+
 	<PopupMenu color_classes="bg-base-200 text-base-content">
-		<Badge classes="badge-outline px-2 py-5 gap-2 join-item {top_ui.text_class}" slot="button_content">
+		<Badge classes="badge-outline px-2 py-5 join-item {top_ui.text_class}" slot="button_content">
 			<Icon icon="mdi:{top_ui.icon}" class="h-6 w-6" />
 			<slot />
 		</Badge>
 
-		<Table slot="popup_content" entries={token.messages} classes="my-2">
+		<Table slot="popup_content" entries={token.messages}>
 			<tr slot="entry_row" let:entry>
 				{@const { text_class, icon } = message_ui[entry.label]}
-				<td><Icon icon="mdi:{icon}" class="h-6 w-6 {text_class}" /></td>
+
+				<td class="align-middle">
+					<Icon icon="mdi:{icon}" class="h-6 w-6 {text_class}" />
+				</td>
 				<td>{entry.message}</td>
 			</tr>
 		</Table>

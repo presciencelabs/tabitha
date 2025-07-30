@@ -8,7 +8,7 @@ import { LOOKUP_FILTERS } from '$lib/lookup_filters'
  * E.g. guard(N/V), command(N/V), pleased(V/Adj), well(N/Adj/Adv)
  * The Analyzer has many of these, but this is just a few for now.
  * TODO add more rules
- * 
+ *
  * @type {PartOfSpeechRuleJson[]}
  */
 const part_of_speech_rules_json = [
@@ -483,7 +483,7 @@ const builtin_part_of_speech_rules = [
 			context: create_context_filter({}),
 			action: message_set_action(({ trigger_token: token }) => {
 				/** @type {Token[]} */
-				// @ts-ignore there will always be a pairing at this point
+				// @ts-expect-error there will always be a pairing at this point
 				const [left, right] = [token, token.complex_pairing]
 
 				// filter lookup results based on the overlap of the two concepts
@@ -592,7 +592,7 @@ const builtin_part_of_speech_rules = [
  */
 export function parse_part_of_speech_rule(rule_json) {
 	const category = category_filter(rule_json['category'])
-	const trigger = create_token_filter(rule_json['trigger'] ?? 'all') 
+	const trigger = create_token_filter(rule_json['trigger'] ?? 'all')
 	const context = create_context_filter(rule_json['context'])
 	const action = create_remove_action(rule_json['remove'])
 
@@ -603,8 +603,8 @@ export function parse_part_of_speech_rule(rule_json) {
 	}
 
 	/**
-	 * 
-	 * @param {string} categories_json 
+	 *
+	 * @param {string} categories_json
 	 * @returns {TokenFilter}
 	 */
 	function category_filter(categories_json) {
@@ -614,7 +614,7 @@ export function parse_part_of_speech_rule(rule_json) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {string} remove_json
 	 * @returns {RuleAction}
 	 */
@@ -635,17 +635,17 @@ export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(({ rule }) 
 	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
 
 /**
- * 
+ *
  * @param {Token} token
- * @param {string} part_of_speech 
+ * @param {string} part_of_speech
  */
 function has_part_of_speech(token, part_of_speech) {
 	return token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech))
 }
 
 /**
- * 
- * @param {Set<string>} parts_of_speech 
+ *
+ * @param {Set<string>} parts_of_speech
  * @returns {(token: Token) => void}
  */
 function keep_parts_of_speech(parts_of_speech) {
@@ -653,7 +653,7 @@ function keep_parts_of_speech(parts_of_speech) {
 }
 
 /**
- * 
+ *
  * @param {string} part_of_speech
  * @returns {(token: Token) => void}
  */

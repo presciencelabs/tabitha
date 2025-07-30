@@ -6,7 +6,7 @@
 	let temperature = 0.0
 	let frequency_penalty = 0.0
 	let presence_penalty = 2.0
-	
+
 	let phase1_text = ''
 	let finish_reason = ''
 
@@ -40,7 +40,7 @@
 
 <form class="grid justify-items-center">
 	<!-- svelte-ignore a11y-autofocus -->
-	<textarea bind:value={entered_text} rows="6" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
+	<textarea bind:value={entered_text} rows="6" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 	<div class="w-4/5 mt-8">
 		<label>
@@ -61,15 +61,15 @@
 		<div class="flex flex-row flex-wrap col-span-2">
 			<button on:click={ clear } class="btn btn-secondary">
 				Clear
-	
+
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
 			</button>
 		</div>
-		
+
 		<div class="justify-self-end">
 			<button on:click={ generate_phase1 } class="btn btn-primary" type="submit" disabled={generating}>
 				Generate
-	
+
 				<Icon icon="mdi:robot" class="h-6 w-6" />
 			</button>
 		</div>
@@ -95,7 +95,7 @@
 			<h2>AI-generated Phase 1</h2>
 		</div>
 
-		<textarea bind:value={phase1_text} rows="6" class="textarea textarea-bordered textarea-lg w-4/5"/> 
+		<textarea bind:value={phase1_text} rows="6" class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 		<CopyButton content={phase1_text} classes="mt-8 gap-4 self-center">
 			Copy Phase 1
@@ -104,6 +104,8 @@
 {/if}
 
 <style lang="postcss">
+	@reference '$lib/app.css';
+
 	/* had to override daisyui's sizing so I could make the line bigger */
 	.divider::before,
 	.divider::after {

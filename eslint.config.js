@@ -3,17 +3,17 @@ import stylistic from '@stylistic/eslint-plugin'
 import globals from 'globals'
 import svelte from 'eslint-plugin-svelte'
 import svelte_parser from 'svelte-eslint-parser'
+import ts from 'typescript-eslint'
+import { fileURLToPath } from 'node:url'
+import { includeIgnoreFile } from '@eslint/compat'
 
 // https://eslint.org/docs/latest/use/configure/configuration-files-new
 export default [
-	{
-		ignores: [
-			'.svelte-kit',
-		],
-	},
+	includeIgnoreFile(fileURLToPath(new URL('./.gitignore', import.meta.url))),
 
 	// node_modules/@eslint/js/src/configs/eslint-recommended.js
 	js.configs.recommended,
+	...ts.configs.recommended,
 
 	// Javascript (eslint's default)
 	{
@@ -22,6 +22,7 @@ export default [
 			globals: {
 				// https://github.com/sindresorhus/globals
 				...globals.browser,
+				...globals.node,
 			},
 		},
 
@@ -74,6 +75,10 @@ export default [
 
 			// https://eslint.style/rules/default/object-curly-spacing
 			'@stylistic/object-curly-spacing': ['error', 'always'],
+
+			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
+			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
+			'no-undef': 'off',
 		},
 	},
 
@@ -86,7 +91,9 @@ export default [
 		languageOptions: {
 			parser: svelte_parser,
 			parserOptions: {
-				project: '.svelte-kit/tsconfig.json',
+				parser: ts.parser,
+				extraFileExtensions: ['.svelte'],
+				projectService: true,
 			},
 		},
 

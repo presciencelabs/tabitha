@@ -13,7 +13,7 @@ const default_adjective_case_frame_json = {
 /**
  * These rules allow each adjective sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
- * 
+ *
  * @type {Map<WordStem, [WordSense, SenseRuleJson<AdjectiveRoleTag>][]>}
  */
 const adjective_case_frames = new Map([
@@ -263,8 +263,8 @@ function create_adjective_argument_rules() {
 	return new Map([...adjective_case_frames.entries()].map(create_rules_for_stem))
 
 	/**
-	 * 
-	 * @param {[WordStem, [WordSense, SenseRuleJson<AdjectiveRoleTag>][]]} stem_rules 
+	 *
+	 * @param {[WordStem, [WordSense, SenseRuleJson<AdjectiveRoleTag>][]]} stem_rules
 	 * @returns {[WordStem, ArgumentRulesForSense[]]}
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
@@ -299,7 +299,7 @@ const ADJECTIVE_LETTER_TO_ROLE = new Map([
 ])
 
 /**
- * @param {string} categorization 
+ * @param {string} categorization
  */
 function is_subgroupable_category(categorization) {
 	const category = categorization[0]
@@ -308,7 +308,7 @@ function is_subgroupable_category(categorization) {
 }
 
 /**
- * @param {LookupResult} lookup 
+ * @param {LookupResult} lookup
  * @returns {ArgumentRoleRule[]}
  */
 function get_adjective_default_rules(lookup) {
@@ -316,20 +316,19 @@ function get_adjective_default_rules(lookup) {
 		const subgroup_index = DEFAULT_CASE_FRAME_RULES.findIndex(({ role_tag }) => role_tag === 'modified_noun_with_subgroup')
 		return DEFAULT_CASE_FRAME_RULES.with(subgroup_index, SUBGROUPABLE_CASE_FRAME_RULE[0])
 	}
-	
+
 	return DEFAULT_CASE_FRAME_RULES
 }
 
 /**
- * 
- * @param {string} categorization 
+ * @param {string} categorization
  * @param {ArgumentRulesForSense} role_rules
  * @returns {RoleUsageInfo}
  */
 function get_adjective_usage_info(categorization, role_rules) {
 	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc)
 	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
-	
+
 	// some categorizations are blank or erroneously all underscores (eg early-A)
 	// treat all arguments as possible and not required
 	if (role_letters.length === 0) {
@@ -340,7 +339,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 	}
 
 	/** @type {string[]} */
-	// @ts-ignore
+	// @ts-expect-error this will never be undefined
 	const possible_roles = role_letters
 		.map(c => ADJECTIVE_LETTER_TO_ROLE.get(c.toUpperCase()))
 		.concat(is_subgroupable_category(categorization) ? ['modified_noun_with_subgroup'] : [])
@@ -348,7 +347,7 @@ function get_adjective_usage_info(categorization, role_rules) {
 		.filter(role => role)
 
 	/** @type {string[]} */
-	// @ts-ignore
+	// @ts-expect-error this will never be undefined
 	const required_roles = role_letters
 		.map(c => ADJECTIVE_LETTER_TO_ROLE.get(c))
 		.concat(role_rules.other_required)

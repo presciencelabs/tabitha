@@ -267,7 +267,7 @@ function create_directional_context_filter(context_json, offset) {
 /**
  * Skip can have one token filter or an array of filters which act as OR conditions.
  * Skip can also use preset groups useful for skipping phrases and parts of phrases.
- * @param {SkipJson} skip_json 
+ * @param {SkipJson} skip_json
  * @returns {TokenFilter}
  */
 export function create_skip_filter(skip_json) {
@@ -278,7 +278,7 @@ export function create_skip_filter(skip_json) {
 		const filters = skip_json.map(create_skip_filter)
 		return token => filters.some(filter => filter(token))
 	}
-	// @ts-ignore skip_json can only be a TokenFilterJson here
+	// @ts-expect-error skip_json can only be a TokenFilterJson here
 	return create_token_filter(skip_json)
 }
 
@@ -352,9 +352,9 @@ export function create_token_transform(transform_json) {
 	}
 
 	/**
-	 * 
-	 * @param {Tag} old_tag 
-	 * @param {Tag} new_values 
+	 *
+	 * @param {Tag} old_tag
+	 * @param {Tag} new_values
 	 * @returns {Tag}
 	 */
 	function add_value_to_tag(old_tag, new_values) {
@@ -362,9 +362,9 @@ export function create_token_transform(transform_json) {
 	}
 
 	/**
-	 * 
-	 * @param {Tag} old_tag 
-	 * @param {string|string[]} tags_to_remove 
+	 *
+	 * @param {Tag} old_tag
+	 * @param {string|string[]} tags_to_remove
 	 * @returns {Tag}
 	 */
 	function remove_tag_labels(old_tag, tags_to_remove) {
@@ -431,7 +431,7 @@ const SKIP_GROUPS = new Map([
 			'tag': [
 				'degree',
 				{ 'clause_type': 'patient_clause_same_participant|patient_clause_different_participant' }, 	// some adjectives can take a patient argument
-			], 
+			],
 		},
 		{ 'category': 'Adverb' },
 	]],

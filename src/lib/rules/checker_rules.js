@@ -578,7 +578,7 @@ const checker_rules_json = [
 		},
 		'error': {
 			'on': 'subtokens:0',
-			'message': "Cannot have a nested independent clause. Instead, split the sentence into two.",
+			'message': 'Cannot have a nested independent clause. Instead, split the sentence into two.',
 		},
 	},
 	{
@@ -590,7 +590,7 @@ const checker_rules_json = [
 		},
 		'error': {
 			'on': 'subtokens:0',
-			'message': "Cannot have a nested independent clause. Instead, split the sentence into two.",
+			'message': 'Cannot have a nested independent clause. Instead, split the sentence into two.',
 		},
 	},
 ]
@@ -644,7 +644,7 @@ const builtin_checker_rules = [
 				}
 
 				/**
-				 * @param {Token} token 
+				 * @param {Token} token
 				 * @return {MessageInfo}
 				 */
 				function check_for_empty_theta_grid(token) {
@@ -670,7 +670,7 @@ const builtin_checker_rules = [
 			action: message_set_action(({ trigger_token }) => {
 				const complex_alternate_filter = create_token_filter({ 'token': '(complex)' })
 				const complex_word_filter = create_token_filter({ 'level': '2|3' })
-				
+
 				// the stack makes it easy to track state as we go up and down clause nesting levels
 				let is_complex_alternate_stack = [false]
 
@@ -678,7 +678,7 @@ const builtin_checker_rules = [
 				const messages = []
 
 				/**
-				 * @param {Token[]} clause_tokens 
+				 * @param {Token[]} clause_tokens
 				 */
 				function search_clause_tokens(clause_tokens) {
 					for (let i = 0; i < clause_tokens.length; i++) {
@@ -773,7 +773,7 @@ const builtin_checker_rules = [
 				}
 
 				/**
-				 * @param {Token} token 
+				 * @param {Token} token
 				 */
 				function* check_gloss(token) {
 					if (token.lookup_results.at(0)?.gloss.includes('DELETE')) {
@@ -858,7 +858,7 @@ export function parse_checker_rule(rule_json) {
 	const context = create_context_filter(rule_json['context'])
 
 	/** @type {MessageType} */
-	// @ts-ignore there will always be a message
+	// @ts-expect-error there will always be a message
 	const message_type = Object.values(MESSAGE_TYPE).find(({ label }) => label in rule_json)
 	const checker_action_json = rule_json[message_type.label] ?? { 'message': 'will never be undefined' }
 	const action = checker_action(checker_action_json, message_type)
@@ -870,7 +870,7 @@ export function parse_checker_rule(rule_json) {
 	}
 
 	/**
-	 * @param {CheckerActionJson} action 
+	 * @param {CheckerActionJson} action
 	 * @param {MessageType} message_type
 	 * @returns {RuleAction}
 	 */
@@ -901,9 +901,9 @@ export function parse_checker_rule(rule_json) {
 	}
 
 	/**
-	 * 
-	 * @param {CheckerActionJson} action 
-	 * @param {RuleTriggerContext} trigger_context 
+	 *
+	 * @param {CheckerActionJson} action
+	 * @param {RuleTriggerContext} trigger_context
 	 */
 	function get_token_to_flag(action, { tokens, trigger_token, context_indexes, subtoken_indexes }) {
 		if (!action.on) {
@@ -919,8 +919,8 @@ export function parse_checker_rule(rule_json) {
 export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).concat(checker_rules_json.map(parse_checker_rule))
 
 /**
- * 
- * @param {LookupFilter} level_check 
+ *
+ * @param {LookupFilter} level_check
  * @returns {TokenFilter}
  */
 function check_token_level(level_check) {
@@ -931,8 +931,8 @@ function check_token_level(level_check) {
 	}
 }
 /**
- * 
- * @param {LookupFilter} level_check 
+ *
+ * @param {LookupFilter} level_check
  * @returns {TokenFilter}
  */
 function check_ambiguous_level(level_check) {
@@ -945,8 +945,8 @@ function check_ambiguous_level(level_check) {
 }
 
 /**
- * 
- * @param {Token} token 
+ *
+ * @param {Token} token
  */
 function* check_ontology_status(token) {
 	if (token.lookup_results.some(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
@@ -963,7 +963,7 @@ function* check_ontology_status(token) {
 
 	} else if (token.lookup_results.some(result => result.how_to_entries.length > 0)) {
 		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
-		
+
 	} else {
 		// a dummy result for an unknown word
 		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not recognized. Consult the How-To document or consider using a different word.' }

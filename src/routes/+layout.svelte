@@ -1,15 +1,16 @@
 <script>
-	import '$lib/app.postcss'
+	import '$lib/app.css'
+
 	import { Brand } from '$lib'
 	import { Selector } from '$lib/theme'
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
-<header>
+<header class="mx-8 mt-8">
 	<Brand />
 </header>
 
-<main>
+<main class="mx-8 mt-8">
 	<slot />
 </main>
 
@@ -21,10 +22,3 @@
 		<Selector colors="bg-accent text-accent-content" />
 	</nav>
 </footer>
-
-<style lang="postcss">
-	header,
-	main {
-		@apply mx-8 mt-8;
-	}
-</style>

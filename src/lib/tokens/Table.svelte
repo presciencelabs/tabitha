@@ -1,9 +1,8 @@
 <script lang="ts" generics="T">
 	export let entries: T[]
-	export let classes: string = ''
 </script>
 
-<table class="table table-xs {classes}">
+<table class="table table-xs not-prose">
 	<thead>
 		<slot name="header_row" />
 	</thead>

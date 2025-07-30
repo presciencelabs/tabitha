@@ -16,7 +16,7 @@
 	}
 
 	/**
-	 * @param {string} text 
+	 * @param {string} text
 	 */
 	function sanitize_input(text) {
 		return text.replaceAll('\n', ' ')
@@ -29,27 +29,27 @@
 
 <form class="grid justify-items-center">
 	<!-- svelte-ignore a11y-autofocus -->
-	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5" />
+	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 	<div class="w-4/5 mt-8 grid grid-cols-3">
 		<div class="flex flex-row flex-wrap col-span-2">
 			<button on:click={ clear } class="btn btn-secondary">
 				Clear
-	
+
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
 			</button>
-	
+
 			<CopyButton content={entered_text} classes="ms-4">
 				Copy Phase 1
 			</CopyButton>
-	
+
 			<SaveButton content={entered_text} classes="ms-4" />
 		</div>
-		
+
 		<div class="justify-self-end">
 			<button on:click={ check_text } class="btn btn-primary" type="submit" disabled={checking}>
 				Check
-	
+
 				<Icon icon="mdi:format-list-checks" class="h-6 w-6" />
 			</button>
 		</div>
@@ -101,6 +101,8 @@
 {/if}
 
 <style lang="postcss">
+	@reference '$lib/app.css';
+
 	/* had to override daisyui's sizing so I could make the line bigger */
 	.divider::before,
 	.divider::after {

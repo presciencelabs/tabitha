@@ -7,7 +7,7 @@
 	export let token
 
 	/** @type {SimpleToken} */
-	// @ts-ignore the pronoun will always be non-null at this point
+	// @ts-expect-error the pronoun will always be non-null at this point
 	const pronoun = token.pronoun
 </script>
 

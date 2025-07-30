@@ -31,7 +31,7 @@ export function clausify(tokens) {
 		}
 
 		add_token_to_clause(token)
-		
+
 		if (token.token === ']') {
 			end_clause()
 		}
@@ -51,8 +51,8 @@ export function clausify(tokens) {
 	return sentences
 
 	/**
-	 * 
-	 * @param {Token} token 
+	 *
+	 * @param {Token} token
 	 */
 	function add_token_to_clause(token) {
 		clause_tokens[clause_tokens.length-1].push(token)
@@ -73,7 +73,7 @@ export function clausify(tokens) {
 	}
 
 	function start_clause() {
-		// TODO if nesting depth is more than 3, suggest to rework the sentence
+		// TODO: if nesting depth is more than 3, suggest to rework the sentence
 		clause_tokens.push([])
 	}
 
@@ -87,12 +87,11 @@ export function clausify(tokens) {
 	}
 
 	/**
-	 * 
-	 * @param {string} tag 
+	 * @param {string} tag
 	 * @returns {Clause}
 	 */
 	function create_clause(tag) {
-		// @ts-ignore
+		// @ts-expect-error will not be undefined
 		return create_clause_token(clause_tokens.pop(), { 'clause_type': tag })
 	}
 
@@ -116,8 +115,7 @@ export function clausify(tokens) {
 }
 
 /**
- * 
- * @param {Sentence[]} sentences 
+ * @param {Sentence[]} sentences
  * @returns {Token[]}
  */
 export function flatten_sentences(sentences) {

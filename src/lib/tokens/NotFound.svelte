@@ -20,7 +20,7 @@
 			{token.token}
 		</TokenDisplay>
 
-		<Table slot="popup_content" entries={how_to_entries} classes="my-2">
+		<Table slot="popup_content" entries={how_to_entries}>
 			<tr slot="header_row">
 				<th></th>
 				<th></th>
@@ -39,7 +39,7 @@
 		</Table>
 	</PopupMenu>
 {:else}
-<TokenDisplay {classes}>
-	{token.token}
-</TokenDisplay>
+	<TokenDisplay {classes}>
+		{token.token}
+	</TokenDisplay>
 {/if}

@@ -1,0 +1,10 @@
+# https://developers.cloudflare.com/workers/wrangler/configuration
+
+name = "editor"
+compatibility_date = "2025-06-17"
+
+compatibility_flags = [
+	"nodejs_compat"
+]
+
+pages_build_output_dir = ".svelte-kit/cloudflare"

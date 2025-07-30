@@ -5,8 +5,8 @@ import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { ERRORS } from './error_messages'
 
 /**
- * 
- * @param {string} text 
+ *
+ * @param {string} text
  * @returns {string}
  */
 function normalize_input(text) {
@@ -183,7 +183,7 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
-	 * @param {string} token 
+	 * @param {string} token
 	 * @returns {Token}
 	 */
 	function word_token(token) {
@@ -191,8 +191,8 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
-	 * 
-	 * @param {string} token 
+	 *
+	 * @param {string} token
 	 * @returns {Token|null}
 	 */
 	function get_function_word(token) {
@@ -208,14 +208,13 @@ export function tokenize_input(text = '') {
 		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)
 
 		// combine stem and sense
-		// @ts-ignore the stem will always be there
 		const stem = lookup_match?.[1]
 		const sense = lookup_match?.[2] ?? ''
 		return create_token(text, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: stem, specified_sense: sense })
 	}
 
 	/**
-	 * @param {string} token 
+	 * @param {string} token
 	 * @returns {Token}
 	 */
 	function pairing_token(token) {
@@ -225,12 +224,12 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
-	 * @param {string} token 
+	 * @param {string} token
 	 * @returns {Token}
 	 */
 	function pronoun_referent_token(token) {
 		/** @type {RegExpMatchArray} */
-		// @ts-ignore the match will always succeed here
+		// @ts-expect-error the match will always succeed here
 		const referent_match = token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)
 
 		const [pronoun_text, referent_text] = [referent_match[1], referent_match[2]]

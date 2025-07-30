@@ -13,7 +13,7 @@
 	 */
 
 	/** @type {SimpleToken} */
-	// @ts-ignore the pairing will always be non-null at this point
+	// @ts-expect-error the pairing will always be non-null at this point
 	$: pairing_token = token.complex_pairing
 </script>
 

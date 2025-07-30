@@ -1,22 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* https://tailwindcss.com/docs/container */
-body {
-	/* stacked layout with sticky footer */
-	@apply grid h-screen grid-rows-[auto_1fr_auto];
-}
-
-/*
-	added an xl to Daisy's badge size since lg isn't always big enough (https://daisyui.com/components/badge)
-*/
-.badge-xl {
-	height: 1.75rem;
-	font-size: 1.125rem;
-	line-height: 1.75rem;
-	padding-left: 0.813rem;
-	padding-right: 0.813rem;
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui' {
+	themes:
+		light --default,
+		dark --prefersdark,
+		abyss,
+		acid,
+		aqua,
+		autumn,
+		black,
+		bumblebee,
+		business,
+		caramellatte,
+		cmyk,
+		coffee,
+		corporate,
+		cupcake,
+		cyberpunk,
+		dim,
+		emerald,
+		fantasy,
+		forest,
+		garden,
+		lemonade,
+		lofi,
+		luxury,
+		night,
+		nord,
+		pastel,
+		retro,
+		silk,
+		sunset,
+		synthwave,
+		valentine,
+		winter,
+		wireframe;
 }
 
 /* TODO: second copy of these, time to DRY them out.  Also used in Ontology app.

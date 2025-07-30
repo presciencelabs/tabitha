@@ -52,7 +52,7 @@ const default_verb_case_frame_json = {
 /**
  * These rules allow each verb sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
- * 
+ *
  * @type {Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]>}
  */
 const verb_case_frames = new Map([
@@ -954,7 +954,7 @@ const verb_case_frames = new Map([
 		['tell-D', { 'instrument': by_adposition('with') }],
 		['tell-E', {
 			'destination': directly_after_verb(),
-			'patient': { 'trigger': 'none' },		
+			'patient': { 'trigger': 'none' },
 			'patient_clause_type': 'patient_clause_quote_begin',
 			'comment': "clear the patient so it doesn't get confused with the destination",
 		}],
@@ -1129,8 +1129,8 @@ function create_verb_argument_rules() {
 	return new Map([...verb_case_frames.entries()].map(create_rules_for_stem))
 
 	/**
-	 * 
-	 * @param {[WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]]} stem_rules 
+	 *
+	 * @param {[WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]]} stem_rules
 	 * @returns {[WordStem, ArgumentRulesForSense[]]}
 	 */
 	function create_rules_for_stem([stem, sense_rules_json]) {
@@ -1140,8 +1140,8 @@ function create_verb_argument_rules() {
 }
 
 /**
- * 
- * @param {WordStem} stem 
+ *
+ * @param {WordStem} stem
  * @returns {ArgumentRoleRule[]}
  */
 function get_default_rules_for_stem(stem) {
@@ -1158,13 +1158,13 @@ const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()
 const VERB_CASE_FRAME_RULES = create_verb_argument_rules()
 
 /**
- * @param {Token} token 
+ * @param {Token} token
  * @returns {CaseFrameRuleInfo}
  */
 export function get_verb_case_frame_rules(token) {
 	const stem = token.lookup_results[0].stem
 	const argument_rules_by_sense = VERB_CASE_FRAME_RULES.get(stem)
-	
+
 	// TODO use the default rules instead once more verb rules are added.
 	if (!argument_rules_by_sense) {
 		return {
@@ -1184,7 +1184,7 @@ export function get_verb_case_frame_rules(token) {
 }
 
 /**
- * @param {Token} token 
+ * @param {Token} token
  * @returns {CaseFrameRuleInfo}
  */
 export function get_passive_verb_case_frame_rules(token) {
@@ -1205,8 +1205,8 @@ export function get_passive_verb_case_frame_rules(token) {
 	}
 
 	/**
-	 * 
-	 * @param {ArgumentRoleRule[]} role_rules 
+	 *
+	 * @param {ArgumentRoleRule[]} role_rules
 	 * @returns {ArgumentRoleRule[]}
 	 */
 	function replace_passive_rules(role_rules) {
@@ -1253,14 +1253,14 @@ const VERB_LETTER_TO_ROLE = new Map([
 ])
 
 /**
- * 
- * @param {string} categorization 
+ *
+ * @param {string} categorization
  * @param {ArgumentRulesForSense} sense_rules
  * @returns {RoleUsageInfo}
  */
 function get_verb_usage_info(categorization, { other_optional, other_required, patient_clause_type }) {
 	const role_letters = [...categorization].filter(c => c !== '_')
-	
+
 	// some categorizations are blank (eg become-J)
 	// treat all arguments as possible and not required
 	// also accept any values specified in a role rule
@@ -1275,7 +1275,7 @@ function get_verb_usage_info(categorization, { other_optional, other_required, p
 	patient_clause_type = patient_clause_type || 'patient_clause_different_participant'
 
 	/** @type {string[]} */
-	// @ts-ignore
+	// @ts-expect-error this will never be undefined
 	const possible_roles = role_letters
 		.map(c => VERB_LETTER_TO_ROLE.get(c.toUpperCase()))
 		.map(role => role === 'patient_clause' ? patient_clause_type : role)
@@ -1283,7 +1283,7 @@ function get_verb_usage_info(categorization, { other_optional, other_required, p
 		.filter(role => role)
 
 	/** @type {string[]} */
-	// @ts-ignore
+	// @ts-expect-error this will never be undefined
 	const required_roles = role_letters
 		.map(c => VERB_LETTER_TO_ROLE.get(c))
 		.map(role => role === 'patient_clause' ? patient_clause_type : role)

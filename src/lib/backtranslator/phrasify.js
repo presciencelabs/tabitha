@@ -2,8 +2,8 @@ import { TOKEN_TYPE, create_token } from '$lib/token'
 import { create_token_filter } from '$lib/rules/rules_parser'
 
 /**
- * 
- * @param {Sentence[]} sentences 
+ *
+ * @param {Sentence[]} sentences
  * @returns {Sentence[]}
  */
 export function phrasify(sentences) {
@@ -106,8 +106,8 @@ function phrasify_tokens(tokens) {
 	 * Create a phrase based on the part-of-speech of the given token, and copy the tags
 	 * from the head onto the phrase itself. This will make it easier to check the function
 	 * of the phrase.
-	 * 
-	 * @param {Token} head_token 
+	 *
+	 * @param {Token} head_token
 	 * @returns {Phrase}
 	 */
 	function create_phrase(head_token) {
@@ -119,7 +119,7 @@ function phrasify_tokens(tokens) {
 	}
 
 	/**
-	 * @param {Token} head_token 
+	 * @param {Token} head_token
 	 * @returns {string}
 	 */
 	function get_phrase_type(head_token) {
@@ -135,8 +135,8 @@ function phrasify_tokens(tokens) {
 	 * Using subtokens was helpful for creating the phrases. But for the sake of the structural rules,
 	 * it's easier if phrases don't have subtokens and instead are simple opening and closing tokens
 	 * surrounding its words, just like in the semantic representation.
-	 * 
-	 * @param {Token} token 
+	 *
+	 * @param {Token} token
 	 * @returns {Token[]}
 	 */
 	function flatten_phrases(token) {
@@ -237,7 +237,7 @@ const ORDERED_PHRASE_PRE_FILTERS = [
 			{ 'tag': { 'syntax': 'coord_noun' } },
 		],
 	],
-// @ts-ignore the array initializer doesn't like the different object structures
+// @ts-expect-error the array initializer doesn't like the different object structures
 ].map(parse_phrase_filter)
 
 // Filters for tokens that come after the head word of the phrase
@@ -275,12 +275,11 @@ const ORDERED_PHRASE_POST_FILTERS = [
 			{ 'tag': 'verb_polarity' },
 		],
 	],
-// @ts-ignore the array initializer doesn't like the different object structures
+// @ts-expect-error the array initializer doesn't like the different object structures
 ].map(parse_phrase_filter)
 
 /**
- * 
- * @param {[phrase_filter_json: any, token_filters_json: any[]]} filter_json 
+ * @param {[phrase_filter_json: any, token_filters_json: any[]]} filter_json
  * @returns {[phrase_filter: TokenFilter, token_filters: TokenFilter[]]}
  */
 function parse_phrase_filter([phrase_filter_json, token_filters_json]) {
