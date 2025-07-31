@@ -639,8 +639,8 @@ const builtin_checker_rules = [
 			context: create_context_filter({ }),
 			action: message_set_action(function* ({ trigger_token }) {
 				yield check_for_empty_theta_grid(trigger_token)
-				if (trigger_token.complex_pairing) {
-					yield check_for_empty_theta_grid(trigger_token.complex_pairing)
+				if (trigger_token.pairing) {
+					yield check_for_empty_theta_grid(trigger_token.pairing)
 				}
 
 				/**
@@ -686,13 +686,19 @@ const builtin_checker_rules = [
 						if (complex_alternate_filter(token)) {
 							is_complex_alternate_stack = is_complex_alternate_stack.with(-1, true)
 
-						} else if (complex_word_filter(token) && !is_complex_alternate_stack.at(-1)) {
-							messages.push({ token_to_flag: token, error: ERRORS.WORD_LEVEL_TOO_HIGH })
-
 						} else if (token.sub_tokens.length) {
 							is_complex_alternate_stack.push(is_complex_alternate_stack.at(-1) ?? false)
 							search_clause_tokens(token.sub_tokens)
 							is_complex_alternate_stack.pop()
+
+						} else if (!is_complex_alternate_stack.at(-1)) {
+							if (complex_word_filter(token)) {
+								messages.push({ token_to_flag: token, error: ERRORS.WORD_LEVEL_TOO_HIGH })
+							}
+							// A literal pairing has the same restrictions as a normal word
+							if (token.pairing && token.pairing_type === 'literal' && complex_word_filter(token.pairing)) {
+								messages.push({ token_to_flag: token.pairing, error: ERRORS.WORD_LEVEL_TOO_HIGH })
+							}
 						}
 					}
 				}
@@ -704,20 +710,15 @@ const builtin_checker_rules = [
 		},
 	},
 	{
-		name: 'Check word complexity level of pairings',
+		name: 'Check word complexity level of complex pairings',
 		comment: '',
 		rule: {
-			trigger: token => token.complex_pairing !== null,
+			trigger: token => token.pairing_type === 'complex',
 			context: create_context_filter({}),
 			action: message_set_action(function* ({ trigger_token: token }) {
-				// the simple word should never be level 2 or 3
-				if (check_token_level(LOOKUP_FILTERS.IS_LEVEL_COMPLEX)(token)) {
-					yield { error: ERRORS.WORD_LEVEL_TOO_HIGH }
-				}
-
-				// the complex word should never be level 0 or 1
-				if (token.complex_pairing && check_token_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.complex_pairing)) {
-					yield { token_to_flag: token.complex_pairing, error: ERRORS.WORD_LEVEL_TOO_LOW }
+				// a complex pairing word should never be level 0 or 1
+				if (token.pairing && check_token_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.pairing)) {
+					yield { token_to_flag: token.pairing, error: ERRORS.WORD_LEVEL_TOO_LOW }
 				}
 			}),
 		},
@@ -735,11 +736,16 @@ const builtin_checker_rules = [
 				if (check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(2))(token) || check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(3))(token)) {
 					yield { warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
+				// A literal pairing has the same restrictions as normal words
+				if (token.pairing && token.pairing_type === 'literal'
+						&& (check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(2))(token.pairing) || check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(3))(token.pairing))) {
+					yield { token_to_flag: token.pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
+				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
-				if (token.complex_pairing && check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.complex_pairing)) {
-					yield { token_to_flag: token.complex_pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
+				if (token.pairing && token.pairing_type === 'complex' && check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.pairing)) {
+					yield { token_to_flag: token.pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 			}),
 		},
@@ -753,8 +759,8 @@ const builtin_checker_rules = [
 			action: message_set_action(function* ({ trigger_token: token }) {
 				yield* check_ontology_status(token)
 
-				if (token.complex_pairing) {
-					yield* check_ontology_status(token.complex_pairing)
+				if (token.pairing) {
+					yield* check_ontology_status(token.pairing)
 				}
 			}),
 		},
@@ -768,8 +774,8 @@ const builtin_checker_rules = [
 			action: message_set_action(function* ({ trigger_token: token }) {
 				yield* check_gloss(token)
 
-				if (token.complex_pairing) {
-					yield* check_gloss(token.complex_pairing)
+				if (token.pairing) {
+					yield* check_gloss(token.pairing)
 				}
 
 				/**
@@ -954,7 +960,7 @@ function* check_ontology_status(token) {
 	}
 
 	if (token.lookup_results.length === 0) {
-		yield { token_to_flag: token, warning: '\'{token}\' is not recognized. Consult the How-To document or consider using a different word.' }
+		yield { token_to_flag: token, warning: "'{token}' is not recognized. Consult the How-To document or consider using a different word." }
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
 		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word so the editor can check the syntax more accurately." }
 

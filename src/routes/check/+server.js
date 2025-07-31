@@ -48,8 +48,8 @@ function get_status(tokens) {
  * @returns {SimpleToken[]}
  */
 function expand_token(token) {
-	if (token.complex_pairing) {
-		return [token, token.complex_pairing]
+	if (token.pairing) {
+		return [token, token.pairing]
 	} else if (token.pronoun) {
 		return [token, token.pronoun]
 	} else if (token.sub_tokens.length) {
@@ -72,14 +72,15 @@ function simplify_tokens(sentences) {
 	 * @param {Token} token 
 	 * @returns {SimpleToken}
 	 */
-	function simplify_token({ token, type, tag, messages, lookup_results, complex_pairing, pronoun, sub_tokens }) {
+	function simplify_token({ token, type, tag, messages, lookup_results, pairing, pairing_type, pronoun, sub_tokens }) {
 		return {
 			token,
 			type,
 			tag,
 			messages: messages.toSorted((a, b) => a.severity - b.severity),
 			lookup_results: lookup_results.map(simplify_lookup),
-			complex_pairing: complex_pairing ? simplify_token(complex_pairing) : null,
+			pairing: pairing ? simplify_token(pairing) : null,
+			pairing_type,
 			pronoun: pronoun ? simplify_token(pronoun) : null,
 			sub_tokens: sub_tokens.map(simplify_token),
 		}

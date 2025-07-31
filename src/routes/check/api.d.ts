@@ -8,7 +8,8 @@ type CheckStatus = 'ok' | 'error' | 'warning'
 
 type SimpleToken = TokenBase & {
 	lookup_results: SimpleLookupResult[]
-	complex_pairing: SimpleToken | null
+	pairing: SimpleToken | null
+	pairing_type: PairingType
 	pronoun: SimpleToken | null
 	sub_tokens: SimpleToken[]
 }

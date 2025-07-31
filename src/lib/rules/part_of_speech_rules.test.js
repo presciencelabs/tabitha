@@ -7,19 +7,21 @@ import { expect_error } from '$lib/test_helps'
 
 /**
  * 
- * @param {Token} left 
- * @param {Token} right 
+ * @param {Token} left
+ * @param {Token} right
+ * @param {PairingType} pairing_type
  * @returns {Token}
  */
-function create_pairing_token(left, right) {
-	left.complex_pairing = right
+function create_pairing_token(left, right, pairing_type='complex') {
+	left.pairing = right
+	left.pairing_type = pairing_type
 	return left
 }
 
 /**
  * 
- * @param {string} token 
- * @param {Object} [data={}] 
+ * @param {string} token
+ * @param {Object} [data={}]
  * @param {LookupResult[]} [data.lookup_results=[]] 
  * @returns {Token}
  */
@@ -29,7 +31,7 @@ function create_lookup_token(token, { lookup_results=[] }={}) {
 
 /**
  * 
- * @param {Token[]} tokens 
+ * @param {Token[]} tokens
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
@@ -39,11 +41,11 @@ function create_sentence(tokens) {
 /**
  * 
  * @param {string} stem
- * @param {Object} [data={}] 
- * @param {string} [data.sense='A'] 
- * @param {string} [data.part_of_speech='Noun'] 
- * @param {number} [data.level=1] 
- * @param {number} [data.ontology_id=1] 
+ * @param {Object} [data={}]
+ * @param {string} [data.sense='A']
+ * @param {string} [data.part_of_speech='Noun']
+ * @param {number} [data.level=1]
+ * @param {number} [data.ontology_id=1]
  * @returns {LookupResult}
  */
 function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_id=1 }={}) {
@@ -87,9 +89,9 @@ describe('pairing part_of_speech disambiguation', () => {
 		expect(checked_tokens[1].lookup_results.length).toBe(1)
 		expect(checked_tokens[1].lookup_results[0].part_of_speech).toBe('Verb')
 
-		expect(checked_tokens[1].complex_pairing?.messages.length).toBe(0)
-		expect(checked_tokens[1].complex_pairing?.lookup_results.length).toBe(1)
-		expect(checked_tokens[1].complex_pairing?.lookup_results[0].part_of_speech).toBe('Verb')
+		expect(checked_tokens[1].pairing?.messages.length).toBe(0)
+		expect(checked_tokens[1].pairing?.lookup_results.length).toBe(1)
+		expect(checked_tokens[1].pairing?.lookup_results[0].part_of_speech).toBe('Verb')
 	})
 	test('overlap with two part_of_speech', () => {
 		const test_tokens = [create_sentence([
@@ -132,8 +134,8 @@ describe('pairing part_of_speech disambiguation', () => {
 		expect_error(checked_tokens[1], ERRORS.PAIRING_DIFFERENT_PARTS_OF_SPEECH)
 		expect(checked_tokens[1].lookup_results.length).toBe(2)
 
-		expect(checked_tokens[1].complex_pairing?.messages.length).toBe(0)
-		expect(checked_tokens[1].complex_pairing?.lookup_results.length).toBe(2)
+		expect(checked_tokens[1].pairing?.messages.length).toBe(0)
+		expect(checked_tokens[1].pairing?.lookup_results.length).toBe(2)
 	})
 })
 

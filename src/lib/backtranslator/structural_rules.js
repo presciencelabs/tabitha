@@ -342,14 +342,14 @@ const structural_rules_json = [
 		name: 'Capitalize the pairing if it is the first word in a sentence.',
 		comment: '',
 		rule: {
-			trigger: token => is_first_word(token) && !!token.complex_pairing,
+			trigger: token => is_first_word(token) && token.pairing_type === 'complex',
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
-				if (!trigger_token.complex_pairing) {
+				if (!trigger_token.pairing) {
 					// makes the compiler happy, but this should never happen
 					return
 				}
-				trigger_token.complex_pairing.token = capitalize_token(trigger_token.complex_pairing)
+				trigger_token.pairing.token = capitalize_token(trigger_token.pairing)
 			}),
 		},
 	},
@@ -504,8 +504,8 @@ function fix_capitalization(old_tokens, new_tokens, decapitalize=false) {
 	const new_first_word = find_next_word(new_tokens, 0)
 	if (new_first_word) {
 		new_first_word.token = capitalize_token(new_first_word)
-		if (new_first_word.complex_pairing) {
-			new_first_word.complex_pairing.token = capitalize_token(new_first_word.complex_pairing)
+		if (new_first_word.pairing) {
+			new_first_word.pairing.token = capitalize_token(new_first_word.pairing)
 		}
 	}
 

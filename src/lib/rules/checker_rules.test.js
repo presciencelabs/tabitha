@@ -7,21 +7,23 @@ import { expect_error, expect_message_to_match, expect_no_message } from '$lib/t
 
 /**
  * 
- * @param {Token} left 
- * @param {Token} right 
+ * @param {Token} left
+ * @param {Token} right
+ * @param {PairingType} pairing_type
  * @returns {Token}
  */
-function create_pairing_token(left, right) {
-	left.complex_pairing = right
+function create_pairing_token(left, right, pairing_type='complex') {
+	left.pairing = right
+	left.pairing_type = pairing_type
 	return left
 }
 
 /**
  * 
- * @param {string} token 
- * @param {Object} [data={}] 
- * @param {LookupResult[]} [data.lookup_results=[]] 
- * @param {Tag} [data.tag={}] 
+ * @param {string} token
+ * @param {Object} [data={}]
+ * @param {LookupResult[]} [data.lookup_results=[]]
+ * @param {Tag} [data.tag={}]
  * @returns {Token}
  */
 function create_lookup_token(token, { lookup_results=[], tag={} }={}) {
@@ -30,7 +32,7 @@ function create_lookup_token(token, { lookup_results=[], tag={} }={}) {
 
 /**
  * 
- * @param {Token[]} tokens 
+ * @param {Token[]} tokens
  * @returns {Sentence}
  */
 function create_sentence(tokens) {
@@ -40,11 +42,11 @@ function create_sentence(tokens) {
 /**
  * 
  * @param {string} stem
- * @param {Object} [data={}] 
- * @param {string} [data.sense='A'] 
- * @param {string} [data.part_of_speech='Noun'] 
- * @param {number} [data.level=1] 
- * @param {number} [data.ontology_id=1] 
+ * @param {Object} [data={}]
+ * @param {string} [data.sense='A']
+ * @param {string} [data.part_of_speech='Noun']
+ * @param {number} [data.level=1]
+ * @param {number} [data.ontology_id=1]
  * @returns {LookupResult}
  */
 function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_id=1 }={}) {
@@ -92,7 +94,7 @@ describe('built-in checker rules', () => {
 	})
 
 	describe('complexity level check', () => {
-		const LEVEL_CHECK_RULES = CHECKER_RULES.slice(2, 5)
+		const LEVEL_CHECK_RULES = CHECKER_RULES.slice(4, 6)
 
 		test('different levels', () => {
 			const test_tokens = [create_sentence([
@@ -108,7 +110,7 @@ describe('built-in checker rules', () => {
 			expect_no_message(checked_tokens[0])
 			expect_no_message(checked_tokens[1])
 			expect_error(checked_tokens[2], ERRORS.WORD_LEVEL_TOO_HIGH)
-			//_error expect(checked_tokens[3], ERRORS.WORD_LEVEL_TOO_HIGH)	// TODO renable when the rule is fixed
+			expect_error(checked_tokens[3], ERRORS.WORD_LEVEL_TOO_HIGH)
 			expect_no_message(checked_tokens[4])
 		})
 		test('pairing: both words right level', () => {
@@ -116,10 +118,17 @@ describe('built-in checker rules', () => {
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 0 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
+					'complex',
 				),
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 3 })] }),
+					'complex',
+				),
+				create_pairing_token(
+					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
+					'literal',
 				),
 			])]
 	
@@ -149,14 +158,21 @@ describe('built-in checker rules', () => {
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 3 })] }),
 				),
+				create_pairing_token(
+					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
+					'literal',
+				),
 			])]
 	
 			const checked_tokens = apply_rules(test_tokens, LEVEL_CHECK_RULES).flatMap(flatten_sentence)
 	
 			expect_error(checked_tokens[0], ERRORS.WORD_LEVEL_TOO_HIGH)
-			expect_no_message(checked_tokens[0].complex_pairing)
+			expect_no_message(checked_tokens[0].pairing)
 			expect_error(checked_tokens[1], ERRORS.WORD_LEVEL_TOO_HIGH)
-			expect_no_message(checked_tokens[1].complex_pairing)
+			expect_no_message(checked_tokens[1].pairing)
+			expect_error(checked_tokens[2], ERRORS.WORD_LEVEL_TOO_HIGH)
+			expect_no_message(checked_tokens[2].pairing)
 		})
 		test('pairing: second word wrong level', () => {
 			const test_tokens = [create_sentence([
@@ -168,14 +184,21 @@ describe('built-in checker rules', () => {
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
 				),
+				create_pairing_token(
+					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
+					'literal',
+				),
 			])]
 	
 			const checked_tokens = apply_rules(test_tokens, LEVEL_CHECK_RULES).flatMap(flatten_sentence)
 	
 			expect_no_message(checked_tokens[0])
-			expect_error(checked_tokens[0].complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_error(checked_tokens[0].pairing, ERRORS.WORD_LEVEL_TOO_LOW)
 			expect_no_message(checked_tokens[1])
-			expect_error(checked_tokens[1].complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_error(checked_tokens[1].pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_no_message(checked_tokens[2])
+			expect_error(checked_tokens[2].pairing, ERRORS.WORD_LEVEL_TOO_HIGH)
 		})
 		test('pairing: both words wrong level', () => {
 			const test_tokens = [create_sentence([
@@ -187,19 +210,26 @@ describe('built-in checker rules', () => {
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
 				),
+				create_pairing_token(
+					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
+					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
+					'literal',
+				),
 			])]
 	
 			const checked_tokens = apply_rules(test_tokens, LEVEL_CHECK_RULES).flatMap(flatten_sentence)
 	
 			expect_error(checked_tokens[0], ERRORS.WORD_LEVEL_TOO_HIGH)
-			expect_error(checked_tokens[0].complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_error(checked_tokens[0].pairing, ERRORS.WORD_LEVEL_TOO_LOW)
 			expect_error(checked_tokens[1], ERRORS.WORD_LEVEL_TOO_HIGH)
-			expect_error(checked_tokens[1].complex_pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_error(checked_tokens[1].pairing, ERRORS.WORD_LEVEL_TOO_LOW)
+			expect_error(checked_tokens[2], ERRORS.WORD_LEVEL_TOO_HIGH)
+			expect_error(checked_tokens[2].pairing, ERRORS.WORD_LEVEL_TOO_HIGH)
 		})
 	})
 	
 	describe('ambiguous level check', () => {
-		const AMBIGUOUS_LEVEL_CHECK = [CHECKER_RULES[5]]
+		const AMBIGUOUS_LEVEL_CHECK = CHECKER_RULES.slice(6, 7)
 
 		test('main token level check', () => {
 			const test_tokens = [create_sentence([
@@ -259,12 +289,12 @@ describe('built-in checker rules', () => {
 			expect_no_message(checked_tokens[0])
 			expect_no_message(checked_tokens[1])
 			expect_no_message(checked_tokens[2])
-			expect_message_to_match(checked_tokens[3].complex_pairing, 'warning', /^This word has multiple senses/)
+			expect_message_to_match(checked_tokens[3].pairing, 'warning', /^This word has multiple senses/)
 		})
 	})
 	
 	describe('no lookup check', () => {
-		const NO_LOOKUP_CHECK = CHECKER_RULES.slice(6, 7)
+		const NO_LOOKUP_CHECK = CHECKER_RULES.slice(7, 8)
 
 		test('no results, lookup error', () => {
 			const test_tokens = [create_sentence([
@@ -277,9 +307,9 @@ describe('built-in checker rules', () => {
 	
 			const checked_tokens = apply_rules(test_tokens, NO_LOOKUP_CHECK).flatMap(flatten_sentence)
 
-			expect_message_to_match(checked_tokens[0], 'warning', /^'token' is not in the Ontology/)
-			expect_message_to_match(checked_tokens[1], 'warning', /^'first' is not in the Ontology/)
-			expect_message_to_match(checked_tokens[1].complex_pairing, 'warning', /^'second' is not in the Ontology/)
+			expect_message_to_match(checked_tokens[0], 'warning', /^'token' is not recognized/)
+			expect_message_to_match(checked_tokens[1], 'warning', /^'first' is not recognized/)
+			expect_message_to_match(checked_tokens[1].pairing, 'warning', /^'second' is not recognized/)
 		})
 	})
 })

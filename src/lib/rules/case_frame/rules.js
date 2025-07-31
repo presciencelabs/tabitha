@@ -145,10 +145,10 @@ const argument_and_sense_rules = [
 		},
 	},
 	{
-		name: 'Complex Pairing compatibility and sense selection',
+		name: 'Pairing compatibility and sense selection',
 		comment: '',
 		rule: {
-			trigger: token => token.complex_pairing !== null,
+			trigger: token => token.pairing !== null,
 			context: create_context_filter({}),
 			action: simple_rule_action(trigger_context => {
 				if (trigger_context.trigger_token.lookup_results.at(0)?.case_frame.result.status === 'valid') {

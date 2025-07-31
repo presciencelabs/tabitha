@@ -479,12 +479,12 @@ const builtin_part_of_speech_rules = [
 		name: 'Filter lookup results for pairings based on part of speech',
 		comment: '',
 		rule: {
-			trigger: token => !!(token.lookup_results.length && token.complex_pairing?.lookup_results.length),
+			trigger: token => !!(token.lookup_results.length && token.pairing?.lookup_results.length),
 			context: create_context_filter({}),
 			action: message_set_action(({ trigger_token: token }) => {
 				/** @type {Token[]} */
 				// @ts-expect-error there will always be a pairing at this point
-				const [left, right] = [token, token.complex_pairing]
+				const [left, right] = [token, token.pairing]
 
 				// filter lookup results based on the overlap of the two concepts
 				const left_categories = new Set(left.lookup_results.map(result => result.part_of_speech))
@@ -624,8 +624,8 @@ export function parse_part_of_speech_rule(rule_json) {
 		return simple_rule_action(({ trigger_token }) => {
 			remove_action(trigger_token)
 
-			if (trigger_token.complex_pairing) {
-				remove_action(trigger_token.complex_pairing)
+			if (trigger_token.pairing) {
+				remove_action(trigger_token.pairing)
 			}
 		})
 	}

@@ -52,7 +52,10 @@ export function tokenize_input(text = '') {
 			return pronoun_referent()
 
 		} else if (match(REGEXES.FORWARD_SLASH)) {
-			return pairing()
+			return pairing('complex')
+
+		} else if (match(REGEXES.BACK_SLASH)) {
+			return pairing('literal')
 
 		} else if (match_two(/\.\d/)) {
 			// may be a decimal number like 2.5
@@ -72,15 +75,18 @@ export function tokenize_input(text = '') {
 		return check_boundary_for_token(pronoun_referent_token)
 	}
 
-	function pairing() {
+	/**
+	 * @param {PairingType} pairing_type
+	 */
+	function pairing(pairing_type) {
 		if (!match(REGEXES.WORD_START_CHAR)) {
-			// simple/
+			// simple/ or dynamic\
 			eat_until(REGEXES.TOKEN_END_BOUNDARY)
-			return error_token(ERRORS.INVALID_PAIRING_SYNTAX)
+			return error_token(pairing_type === 'complex' ? ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX : ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
 		}
-		// simple/complex
+		// simple/complex or dynamic\literal
 		eat(REGEXES.WORD_CHAR)
-		return check_boundary_for_token(pairing_token)
+		return check_boundary_for_token(pairing_token(pairing_type))
 	}
 
 	function decimal_number() {
@@ -149,7 +155,8 @@ export function tokenize_input(text = '') {
 
 		const messages = new Map([
 			[')', ERRORS.MISSING_OPENING_PAREN],
-			['/', ERRORS.INVALID_PAIRING_SYNTAX],
+			['/', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX],
+			['\\', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX],
 		])
 
 		return error_token(messages.get(char) || ERRORS.UNRECOGNIZED_CHAR)
@@ -214,13 +221,17 @@ export function tokenize_input(text = '') {
 	}
 
 	/**
-	 * @param {string} token
-	 * @returns {Token}
+	 * @param {PairingType} pairing_type
+	 * @returns {(token: string) => Token}
 	 */
-	function pairing_token(token) {
-		const [left, right] = token.split('/').map(lookup_token)
-		left.complex_pairing = right
-		return left
+	function pairing_token(pairing_type) {
+		const pairing_regex = pairing_type === 'complex' ? REGEXES.FORWARD_SLASH : REGEXES.BACK_SLASH
+		return token => {
+			const [left, right] = token.split(pairing_regex).map(lookup_token)
+			left.pairing = right
+			left.pairing_type = pairing_type
+			return left
+		}
 	}
 
 	/**

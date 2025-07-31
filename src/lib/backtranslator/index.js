@@ -43,8 +43,12 @@ export function textify(sentences) {
 	function textify_token(token) {
 		if (token.sub_tokens.length) {
 			return textify_tokens(token.sub_tokens)
-		} else if (token.complex_pairing) {
-			return textify_token(token.complex_pairing)
+		} else if (token.pairing && token.pairing_type === 'complex') {
+			// Only show the complex word
+			return textify_lookup_word(token.pairing)
+		} else if (token.pairing && token.pairing_type === 'literal') {
+			// We want to show both the dynamic and literal words for now
+			return `${textify_lookup_word(token)}\\${textify_lookup_word(token.pairing)}`
 		} else if (token.pronoun) {
 			return textify_token(token.pronoun)
 		} else if (token.type === TOKEN_TYPE.ADDED) {
@@ -56,13 +60,21 @@ export function textify(sentences) {
 		} else if (['[', ']'].includes(token.token)) {
 			return ''
 		} else if (token.type === TOKEN_TYPE.LOOKUP_WORD) {
-			// Remove the sense from the token and any remaining hyphens
-			// We want to keep the hyphen in notes like (poetry-begin) so this is specific to lookup words
-			return token.token.replace(/-[A-Z]$/, '').replace(/(\w)-(\w)/g, '$1 $2')
+			return textify_lookup_word(token)
 		} else {
 			// Any remaining function words, punctuation, and notes
 			return token.token
 		}
+	}
+
+	/**
+	 * @param {Token} token
+	 * @returns {string}
+	 */
+	function textify_lookup_word(token) {
+		// Remove the sense from the token and any remaining hyphens
+		// We want to keep the hyphen in notes like (poetry-begin) so this is specific to lookup words
+		return token.token.replace(/-[A-Z]$/, '').replace(/(\w)-(\w)/g, '$1 $2')
 	}
 }
 

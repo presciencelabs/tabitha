@@ -456,10 +456,10 @@ export function select_sense(trigger_context) {
  * @param {RuleTriggerContext} trigger_context 
  */
 export function select_pairing_sense(trigger_context) {
-	if (!trigger_context.trigger_token.complex_pairing) {
+	if (!trigger_context.trigger_token.pairing) {
 		return
 	}
-	select_word_sense(trigger_context.trigger_token.complex_pairing, trigger_context)
+	select_word_sense(trigger_context.trigger_token.pairing, trigger_context)
 }
 
 /**

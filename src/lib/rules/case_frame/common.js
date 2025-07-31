@@ -136,8 +136,8 @@ export function parse_sense_rules(rule_json, defaults) {
  */
 export function initialize_case_frame_rules({ trigger_token }, rule_info_getter) {
 	initialize_rules(trigger_token)
-	if (trigger_token.complex_pairing) {
-		initialize_rules(trigger_token.complex_pairing)
+	if (trigger_token.pairing) {
+		initialize_rules(trigger_token.pairing)
 	}
 
 	/**
@@ -182,7 +182,7 @@ export function check_case_frames(trigger_context) {
 export function check_pairing_case_frames({ trigger_token }) {
 	// check the usage of the complex pairing against the matched arguments of the selected result
 	const selected_result = trigger_token.lookup_results[0]
-	const lookups_to_check = trigger_token.complex_pairing?.lookup_results
+	const lookups_to_check = trigger_token.pairing?.lookup_results
 		.filter(LOOKUP_FILTERS.IS_IN_ONTOLOGY)
 		.filter(lookup => lookup.case_frame?.rules.length > 0)
 		?? []
@@ -386,29 +386,29 @@ export function* validate_case_frame(trigger_context) {
 		}
 	}
 
-	// Flag a complex pairing that is invalid
-	// If the simple word is invalid, there's no point checking the pairing
-	const complex_token = token.complex_pairing
-	if (case_frame.status === 'valid' && complex_token && complex_token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid')) {
-		const selected_complex_result = complex_token.lookup_results[0]
+	// Flag a pairing that is invalid
+	// If the base word is invalid, there's no point checking the pairing
+	const pairing_token = token.pairing
+	if (case_frame.status === 'valid' && pairing_token && pairing_token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid')) {
+		const selected_pairing_result = pairing_token.lookup_results[0]
 		const simple_sense = stem_with_sense(selected_result)
-		if (no_matches_and_ambiguous_sense(complex_token)) {
+		if (no_matches_and_ambiguous_sense(pairing_token)) {
 			yield {
-				token_to_flag: complex_token,
+				token_to_flag: pairing_token,
 				error: `'{stem}' may not be compatible with this usage of ${simple_sense}.`,
 			}
 
 			// show the invalid arguments for each lookup result
-			for (const result of complex_token.lookup_results) {
-				yield { token_to_flag: complex_token, ...show_invalid_roles(result) }
+			for (const result of pairing_token.lookup_results) {
+				yield { token_to_flag: pairing_token, ...show_invalid_roles(result) }
 			}
 
-		} else if (selected_complex_result.case_frame.result.status === 'invalid') {
+		} else if (selected_pairing_result.case_frame.result.status === 'invalid') {
 			yield {
-				token_to_flag: complex_token,
+				token_to_flag: pairing_token,
 				error: `{sense} may not be compatible with this usage of ${simple_sense}.`,
 			}
-			yield { token_to_flag: complex_token, ...show_invalid_roles(selected_complex_result) }
+			yield { token_to_flag: pairing_token, ...show_invalid_roles(selected_pairing_result) }
 		}
 	}
 }

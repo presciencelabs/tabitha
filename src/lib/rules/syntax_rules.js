@@ -33,8 +33,8 @@ const builtin_syntax_rules = [
 				}
 
 				add_tag_to_token(word_token, { 'position': 'first_word' })
-				if (word_token.complex_pairing) {
-					add_tag_to_token(word_token.complex_pairing, { 'position': 'first_word' })
+				if (word_token.pairing) {
+					add_tag_to_token(word_token.pairing, { 'position': 'first_word' })
 				}
 			}),
 		},

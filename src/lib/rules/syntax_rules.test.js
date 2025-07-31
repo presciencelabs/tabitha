@@ -102,7 +102,7 @@ describe('sentence syntax: first_word detection', () => {
 		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
-		expect(result_tokens[0].complex_pairing?.tag).not.toHaveProperty('position', 'first_word')
+		expect(result_tokens[0].pairing?.tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
 		expect(result_tokens[2].tag).not.toHaveProperty('position', 'first_word')
 	})

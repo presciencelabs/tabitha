@@ -7,7 +7,7 @@
 	export let token
 </script>
 
-{#if token.complex_pairing}
+{#if token.pairing}
 	<Pairing {token} />
 {:else if token.pronoun}
 	<PronounReferent {token} />

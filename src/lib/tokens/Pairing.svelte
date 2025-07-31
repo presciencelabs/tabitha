@@ -14,14 +14,14 @@
 
 	/** @type {SimpleToken} */
 	// @ts-expect-error the pairing will always be non-null at this point
-	$: pairing_token = token.complex_pairing
+	$: pairing_token = token.pairing
 </script>
 
 <div class="join">
 	<Message {token} />
 	<Word {token} classes="join-item" />
 
-	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">/</TokenDisplay>
+	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">{token.pairing_type === 'complex' ? '/' : '\\'}</TokenDisplay>
 
 	<Message token={pairing_token} />
 	<Word token={pairing_token} classes="join-item" />

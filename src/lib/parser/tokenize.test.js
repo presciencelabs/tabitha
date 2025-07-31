@@ -19,10 +19,12 @@ function create_word_token(token, { lookup_term=null, sense='' }={}) {
 /**
  * @param {Token} left_token
  * @param {Token} right_token
+ * @param {PairingType} pairing_type
  * @returns {Token}
  */
-function create_pairing(left_token, right_token) {
-	left_token.complex_pairing = right_token
+function create_pairing(left_token, right_token, pairing_type) {
+	left_token.pairing = right_token
+	left_token.pairing_type = pairing_type
 	return left_token
 }
 
@@ -365,7 +367,7 @@ describe('tokenize_input', () => {
 		const EXPECTED_OUTPUT = [
 			create_error_token('(', ERRORS.MISSING_CLOSING_PAREN),
 			create_error_token(')', ERRORS.MISSING_OPENING_PAREN),
-			create_error_token('/', ERRORS.INVALID_PAIRING_SYNTAX),
+			create_error_token('/', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
 			create_error_token('*', ERRORS.UNRECOGNIZED_CHAR),
 			create_error_token('+', ERRORS.UNRECOGNIZED_CHAR),
 			create_error_token(';', ERRORS.UNRECOGNIZED_CHAR),
@@ -374,48 +376,103 @@ describe('tokenize_input', () => {
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
-	test('valid pairing', () => {
+	test('valid complex pairing', () => {
 		const INPUT = "simple/complex simple's/complex's simples'/complexs' simples'-A/complexs' simple-A/complex-B. [simple/complex]"
 
 		const EXPECTED_OUTPUT = [
-			create_pairing(create_word_token('simple'), create_word_token('complex')),
+			create_pairing(create_word_token('simple'), create_word_token('complex'), 'complex'),
 			create_pairing(
 				create_word_token("simple's", { lookup_term: 'simple' }),
 				create_word_token("complex's", { lookup_term: 'complex' }),
+				'complex',
 			),
 			create_pairing(
 				create_word_token("simples'", { lookup_term: 'simples' }),
 				create_word_token("complexs'", { lookup_term: 'complexs' }),
+				'complex',
 			),
 			create_pairing(
 				create_word_token("simples'-A", { lookup_term: 'simples', sense: 'A' }),
 				create_word_token("complexs'", { lookup_term: 'complexs' }),
+				'complex',
 			),
 			create_pairing(
 				create_word_token('simple-A', { lookup_term: 'simple', sense: 'A' }),
 				create_word_token('complex-B', { lookup_term: 'complex', sense: 'B' }),
+				'complex',
 			),
 			create_token('.', TOKEN_TYPE.PUNCTUATION),
 			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_pairing(create_word_token('simple'), create_word_token('complex')),
+			create_pairing(create_word_token('simple'), create_word_token('complex'), 'complex'),
 			create_token(']', TOKEN_TYPE.PUNCTUATION),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
-	test('invalid pairing', () => {
+	test('invalid complex pairing', () => {
 		const INPUT = '/complex simple/ / simple//complex simple/.complex simple./complex'
 
 		const EXPECTED_OUTPUT = [
-			create_error_token('/complex', ERRORS.INVALID_PAIRING_SYNTAX),
-			create_error_token('simple/', ERRORS.INVALID_PAIRING_SYNTAX),
-			create_error_token('/', ERRORS.INVALID_PAIRING_SYNTAX),
-			create_error_token('simple//complex', ERRORS.INVALID_PAIRING_SYNTAX),
-			create_error_token('simple/', ERRORS.INVALID_PAIRING_SYNTAX),
+			create_error_token('/complex', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
+			create_error_token('simple/', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
+			create_error_token('/', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
+			create_error_token('simple//complex', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
+			create_error_token('simple/', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
 			create_error_token('.complex', ERRORS.INVALID_TOKEN_END('.')),
 			create_word_token('simple'),
 			create_error_token('./complex', ERRORS.INVALID_TOKEN_END('.')),
+		]
+
+		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
+	test('valid literal pairing', () => {
+		const INPUT = "dynamic\\literal dynamic's\\literal's dynamics'\\literals' dynamics'-A\\literals' dynamic-A\\literal-B. [dynamic\\literal]"
+
+		const EXPECTED_OUTPUT = [
+			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'literal'),
+			create_pairing(
+				create_word_token("dynamic's", { lookup_term: 'dynamic' }),
+				create_word_token("literal's", { lookup_term: 'literal' }),
+				'literal',
+			),
+			create_pairing(
+				create_word_token("dynamics'", { lookup_term: 'dynamics' }),
+				create_word_token("literals'", { lookup_term: 'literals' }),
+				'literal',
+			),
+			create_pairing(
+				create_word_token("dynamics'-A", { lookup_term: 'dynamics', sense: 'A' }),
+				create_word_token("literals'", { lookup_term: 'literals' }),
+				'literal',
+			),
+			create_pairing(
+				create_word_token('dynamic-A', { lookup_term: 'dynamic', sense: 'A' }),
+				create_word_token('literal-B', { lookup_term: 'literal', sense: 'B' }),
+				'literal',
+			),
+			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'literal'),
+			create_token(']', TOKEN_TYPE.PUNCTUATION),
+		]
+
+		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
+	test('invalid literal pairing', () => {
+		const INPUT = '\\literal dynamic\\ \\ dynamic\\\\literal dynamic\\.literal dynamic.\\literal'
+
+		const EXPECTED_OUTPUT = [
+			create_error_token('\\literal', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX),
+			create_error_token('dynamic\\', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX),
+			create_error_token('\\', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX),
+			create_error_token('dynamic\\\\literal', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX),
+			create_error_token('dynamic\\', ERRORS.INVALID_LITERAL_PAIRING_SYNTAX),
+			create_error_token('.literal', ERRORS.INVALID_TOKEN_END('.')),
+			create_word_token('dynamic'),
+			create_error_token('.\\literal', ERRORS.INVALID_TOKEN_END('.')),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)

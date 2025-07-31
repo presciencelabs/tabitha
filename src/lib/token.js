@@ -31,10 +31,11 @@ export const MESSAGE_TYPE = {
  * @param {LookupResult[]} [other_data.lookup_results=[]]
  * @param {Token[]} [other_data.sub_tokens=[]]
  * @param {Token?} [other_data.pairing=null]
+ * @param {PairingType} [other_data.pairing_type='none']
  * @param {Token?} [other_data.pronoun=null]
  * @return {Token}
  */
-export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', lookup_results=[], sub_tokens=[], pairing=null, pronoun=null }={}) {
+export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', lookup_results=[], sub_tokens=[], pairing=null, pairing_type='none', pronoun=null }={}) {
 	return {
 		token,
 		type,
@@ -44,7 +45,8 @@ export function create_token(token, type, { message=null, tag={}, specified_sens
 		lookup_terms: lookup_term ? [lookup_term] : [],
 		lookup_results,
 		sub_tokens,
-		complex_pairing: pairing,
+		pairing,
+		pairing_type,
 		pronoun,
 	}
 }

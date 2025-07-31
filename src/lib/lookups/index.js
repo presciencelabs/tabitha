@@ -51,8 +51,8 @@ function flatten_for_lookup(sentence) {
 	function flatten_tokens(token) {
 		if (token.type === TOKEN_TYPE.CLAUSE) {
 			return token.sub_tokens.flatMap(flatten_tokens)
-		} else if (token.complex_pairing) {
-			return [token, token.complex_pairing]
+		} else if (token.pairing) {
+			return [token, token.pairing]
 		}
 		return [token]
 	}
@@ -82,8 +82,8 @@ const result_filter_rules = [
 					filter_results_by_capitalization(token)
 				}
 
-				if (token.complex_pairing) {
-					filter_results_by_capitalization(token.complex_pairing)
+				if (token.pairing) {
+					filter_results_by_capitalization(token.pairing)
 				}
 			}),
 		},

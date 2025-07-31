@@ -11,10 +11,13 @@ type Token = TokenBase & {
 	specified_sense: string
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
-	complex_pairing: Token | null
+	pairing: Token | null
+	pairing_type: PairingType
 	pronoun: Token | null
 	sub_tokens: Token[]
 }
+
+type PairingType = 'none' | 'complex' | 'literal'
 
 type Tag = { [tag: string]: string }
 

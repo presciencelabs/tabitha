@@ -122,7 +122,7 @@ describe('parse', () => {
 			expect_no_message(results[2])
 			expect(results[3].token).toBe('stupid')
 			expect(results[3].type).toBe(TOKEN_TYPE.LOOKUP_WORD)
-			expect(results[3].complex_pairing?.token).toBe('foolish')
+			expect(results[3].pairing?.token).toBe('foolish')
 			expect(results[3].messages.length).toBe(0)
 			expect(results[4].token).toBe('.')
 			expect(results[4].type).toBe(TOKEN_TYPE.PUNCTUATION)
