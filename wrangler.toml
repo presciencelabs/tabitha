@@ -11,8 +11,8 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Ontology"
-database_name = "Ontology.9492.2025-05-22"
-database_id = "de709c1a-a923-4a6f-a58b-930c3e28ac3c"
+database_name = "Ontology.9492.2025-07-25"
+database_id = "6554f55d-da7a-4e3b-9af2-40a749f99095"
 
 [[d1_databases]]
 binding = "DB_Auth"
