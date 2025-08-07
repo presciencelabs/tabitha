@@ -1,15 +1,9 @@
 // https://kit.svelte.dev/docs/routing#server
+import { get_types } from '$lib/data/read'
 import { json } from '@sveltejs/kit'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ locals: { db } }) {
-	const sql = `
-		SELECT DISTINCT type
-		FROM Sources
-	`
-
-	/** @type {import('@cloudflare/workers-types').D1Result<SourceType>} https://developers.cloudflare.com/d1/platform/client-api/#return-object */
-	const { results } = await db.prepare(sql).all()
-
+	const results = await get_types(db)
 	return json(results)
 }

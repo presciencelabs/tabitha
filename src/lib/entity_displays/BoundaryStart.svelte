@@ -10,5 +10,5 @@
 
 <span class="inline-flex border-solid border-base-content pe-1 py-2 text-lg tracking-widest">
 	<Punctuation {source_entity} />
-	<Features {source_entity} classes={'self-center'} />
+	<Features {source_entity} classes={'self-center -ms-1'} />
 </span>

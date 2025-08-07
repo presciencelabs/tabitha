@@ -3,6 +3,7 @@
 
 	/** @type {SourceConcept} */
 	export let data
+	export let classes=''
 
 	/**
 	 * @param {SourceConcept} concept
@@ -35,13 +36,11 @@
 </script>
 
 {#await fetch_ontology_data(data)}
-	<div role="button">
-		<span class="badge badge-lg border-base-content badge-outline px-4 py-5 text-lg">
-			<a class="link no-underline not-prose" href={get_ontology_url_for_link(data)} target="_blank">
-				{`${data.stem}-${data.sense}`}
-			</a>
-		</span>
-	</div>
+	<span class="badge badge-lg border-base-content badge-outline px-2 py-4 text-md {classes}">
+		<a class="link no-underline not-prose" href={get_ontology_url_for_link(data)} target="_blank">
+			{`${data.stem}-${data.sense}`}
+		</a>
+	</span>
 {:then ontology_data}
 	{@const { stem, sense, level, gloss } = ontology_data}
 	<div class="dropdown dropdown-hover dropdown-bottom">
@@ -49,11 +48,14 @@
 			{gloss}
 		</div>
 		<div role="button">
-			<span class="badge badge-lg border-base-content badge-outline px-4 py-5 text-lg {`L${level}`}">
+			<span class="badge badge-lg border-base-content badge-outline px-2 py-4 text-md {`L${level}`} {classes}">
 				<a class="link no-underline not-prose" href={get_ontology_url_for_link(ontology_data)} target="_blank">
 					{`${stem}-${sense}`}
 				</a>
 			</span>
 		</div>
+
+		<!--This empty div makes join-item, if present, behave as desired-->
+		<div class="join-item"></div>
 	</div>
 {/await}

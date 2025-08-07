@@ -14,11 +14,11 @@ Available at [https://sources.tbta.bible](https://sources.tbta.bible)
 
 #### 1. Load the database
 
-Dump files can be found under the "Artifacts" section of the workflow runs of the databases repo:  https://github.com/presciencelabs/tabitha-databases/actions/workflows/deploy.yml
+Dump files can be found under the 'databases' folder within the databases repo:  https://github.com/presciencelabs/tabitha-databases/databases
 
 Running the following command will load the data locally:
 
-`wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
+`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file <DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
 
 #### 2. Start the app
 

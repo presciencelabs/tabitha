@@ -11,12 +11,16 @@
 		<tbody>
 			<tr>
 				<td>
-					<OntologyResult data={concept} />
+					{#if source_entity.pairing_concept === null}
+						<OntologyResult data={concept} />
+					{:else}
+						<div class="join">
+							<OntologyResult data={concept} classes={'join-item'} />
+							<span class="badge border-base-content py-4 px-1.5 text-lg join-item">/</span>
+							<OntologyResult data={source_entity.pairing_concept} classes={'join-item'}/>
+						</div>
+					{/if}
 				</td>
-				{#if source_entity.pairing_concept !== null}
-					<td>/</td>
-					<td><OntologyResult data={source_entity.pairing_concept} /></td>
-				{/if}
 			</tr>
 			<tr>
 				<td>

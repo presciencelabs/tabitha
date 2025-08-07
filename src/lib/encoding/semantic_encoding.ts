@@ -60,7 +60,7 @@ const WORD_ENTITY_CATEGORIES = new Set(['Noun', 'Verb', 'Adjective', 'Adverb', '
  * ~\wd ~\tg .-~\lu .           => { type: '.', label: 'period', features: '', value: '.' }
  * ~\\wd ~\\tg R-~\\lu |        => { type: 'R', label: 'Paragraph', features: '', value: '|' }
  */
-export async function transform_semantic_encoding(semantic_encoding: string, db: D1Database): Promise<SourceEntity[]> {
+export async function transform_semantic_encoding(db: D1Database, semantic_encoding: string): Promise<SourceEntity[]> {
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg (?:([\w.])-([^~]*))?~\\lu ([^~]+)/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
