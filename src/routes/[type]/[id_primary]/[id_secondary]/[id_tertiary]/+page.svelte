@@ -3,7 +3,7 @@
 
 	/** @type {PageData} */
 	export let data
-	const { source, parsed_encoding, nav_data } = data
+	const { source, nav_data } = data
 	
 	/**
 	 * @param {Reference} reference
@@ -39,8 +39,8 @@
 	{/if}
 </div>
 
-{#if parsed_encoding.length > 0}
-	<SourceEntities source_entities={parsed_encoding} />
+{#if source.parsed_semantic_encoding.length > 0}
+	<SourceEntities source_entities={source.parsed_semantic_encoding} />
 {:else}
 	<div class="flex justify-center prose max-w-full">
 		<p>No source data yet for this verse.</p>

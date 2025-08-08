@@ -13,13 +13,12 @@ export async function load({ locals: { db }, params: { type, id_primary, id_seco
 	}
 	reference.id_primary = source.id_primary	// get the proper capitalization
 
-	const parsed_encoding = await transform_semantic_encoding(db, source.semantic_encoding)
+	source.parsed_semantic_encoding = await transform_semantic_encoding(db, source.semantic_encoding)
 	const previous = await get_previous_reference(db, reference)
 	const next = await get_next_reference(db, reference)
 
 	return {
 		source,
-		parsed_encoding,
 		nav_data: {
 			previous,
 			next,

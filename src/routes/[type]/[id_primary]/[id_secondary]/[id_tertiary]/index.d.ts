@@ -6,6 +6,7 @@ type Source = {
 	id_tertiary: string
 	phase_1_encoding: string
 	semantic_encoding: string
+	parsed_semantic_encoding: SourceEntity[]
 	comments: string
 	notes: string
 }
@@ -17,6 +18,5 @@ type NavData = {
 
 type PageData = {
 	source: Source
-	parsed_encoding: SourceEntity[]
 	nav_data: NavData
 }
