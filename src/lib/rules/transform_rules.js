@@ -521,14 +521,14 @@ const transform_rules_json = [
 		'transform': { 'tag': { 'syntax': 'coord_adv' } },
 	},
 	{
-		'name': 'tag "and/or" at start of subordinate clauses',
-		'trigger': { 'stem': 'and|or' },
+		'name': 'tag "and/or/but" at start of subordinate clauses',
+		'trigger': { 'stem': 'and|or|but' },
 		'context': { 'precededby': { 'token': '[' } },
 		'transform': { 'tag': { 'syntax': 'coord_clause' } },
 	},
 	{
-		'name': 'tag "and/or" at start of sentences',
-		'trigger': { 'stem': 'and|or', 'tag': { 'position': 'first_word' } },
+		'name': 'tag "and/or/but" at start of sentences',
+		'trigger': { 'stem': 'and|or|but', 'tag': { 'position': 'first_word' } },
 		'transform': { 'tag': { 'syntax': 'coord_clause' } },
 	},
 ]
