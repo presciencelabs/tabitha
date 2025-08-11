@@ -18,7 +18,7 @@
 
 {#if features.length}
 	<div class="dropdown dropdown-hover dropdown-bottom {classes}">
-		<div class="dropdown-content z-[1] text-sm text-nowrap shadow-xl rounded-box bg-info text-info-content tracking-normal">
+		<div class="dropdown-content text-sm text-nowrap shadow-xl rounded-box bg-info text-info-content tracking-normal">
 			<ul class='list-none not-prose p-2'>
 				<li class='font-semibold'>{category}</li>
 				{#each features_to_display as feature}

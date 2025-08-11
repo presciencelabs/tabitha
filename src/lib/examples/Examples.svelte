@@ -82,3 +82,10 @@
 		{/if}
 	{/await}
 </article>
+
+<style>
+	/* this corrects a problem where the features popup was getting hidden behind the next details element below it */
+	details[open] {
+		z-index: 999;
+	}
+</style>
