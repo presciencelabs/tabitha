@@ -3,16 +3,16 @@ import { bible_books } from '$lib/lookups'
 /** @type { ContextArgumentMap } */
 export const context_argument_map = new Map([
 	['Noun', [
-		'Verb',
+		'Pairing',
 		'Role',
+		'Verb',
 		'Adposition',
 		'Outer Noun',
 		'Outer Adjective',
 		'Outer Adverb',
 	]],
 	['Verb', [
-		'Topic NP',
-		'Polarity',
+		'Pairing',
 		'Agent',
 		'Patient',
 		'State',
@@ -23,22 +23,26 @@ export const context_argument_map = new Map([
 		'Predicate Adjective',
 		'Propositional Agent',
 		'Propositional Patient',
+		'Topic NP',
+		'Polarity',
 	]],
 	['Adjective', [
+		'Pairing',
 		'Usage',
-		'Degree',
 		'Agent',
 		'Verb',
 		'Modified Noun',
 		'Modified Adjective',
 		'Patient Noun',
 		'Patient Clause',
+		'Degree',
 	]],
 	['Adverb', [
-		'Degree',
+		'Pairing',
 		'Verb',
 		'Modified Noun',
 		'Modified Adjective',
+		'Degree',
 	]],
 	['Adposition', [
 		'Noun',

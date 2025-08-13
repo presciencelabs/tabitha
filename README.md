@@ -18,7 +18,7 @@ Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
 
 Running the following command will load the data locally:
 
-`wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
+`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
 
 > dump files can be found in https://github.com/presciencelabs/tabitha-databases/tree/main/databases
 
