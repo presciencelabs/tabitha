@@ -10,7 +10,7 @@
 	let display_preference = 'grid'
 
 	$: searched = !!$page.url.search
-	$: matches = data.matches
+	$: matches = data.results
 	$: found = !!matches.length
 	$: icon = `material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`
 

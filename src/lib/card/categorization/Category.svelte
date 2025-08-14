@@ -24,4 +24,6 @@
 	$: component = lookup[concept.part_of_speech] || TBD
 </script>
 
-<svelte:component this={component} {categories} />
+{#if concept.status !== 'absent'}
+	<svelte:component this={component} {categories} />
+{/if}

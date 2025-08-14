@@ -3,9 +3,15 @@ import { get_concepts } from '$lib/server/ontology'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
-	const search_criteria = Object.fromEntries(searchParams)
+	/** @type {ConceptSearchFilter} */
+	const search_filter = {
+		q: '',
+		scope: 'stems',
+		category: '',
+		...Object.fromEntries(searchParams),
+	}
 
-	const matches = await get_concepts(db_ontology)(search_criteria)
+	const matches = await get_concepts(db_ontology)(search_filter)
 
 	const lite_matches = matches.map(make_lite)
 

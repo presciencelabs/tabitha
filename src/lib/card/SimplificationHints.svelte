@@ -7,7 +7,8 @@
 	 * @returns {Promise<SimplificationHint[]>}
 	 */
 	async function get_hints(concept) {
-		const response = await fetch(`/simplification_hints?complex_term=${concept.stem}-${concept.sense}`)
+		const search_term = concept.status === 'absent' ? concept.stem : `${concept.stem}-${concept.sense}`
+		const response = await fetch(`/simplification_hints?complex_term=${search_term}`)
 
 		/** @type {SimplificationHint[]}*/
 		const results = await response.json()

@@ -18,17 +18,17 @@ type SimplificationHint = {
 	structure: string
 	pairing: string
 	explication: string
+	ontology_status: string
 }
 
 interface Concept extends DbRowConcept {
 	categories: string[]
 	curated_examples: CuratedExample[]
 	occurrences: number
+	status: OntologyStatus
 }
 
-type SearchFilter = {
-	[key: string]: string
-}
+type OntologyStatus = 'present' | 'pending' | 'absent'
 
 type ConceptSearchFilter = {
 	q: string
@@ -65,3 +65,11 @@ type Reference = {
 	id_secondary: string
 	id_tertiary: string
 }
+
+type SimplifiedEncodingPhrase = {
+	part_of_speech: string
+	role: string
+	word: string
+}
+
+type SimplifiedSemanticEncoding =  SimplifiedEncodingPhrase[]

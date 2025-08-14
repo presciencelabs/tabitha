@@ -10,18 +10,10 @@ import { transform } from './transformers'
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
  *
- * @returns {(filter: SearchFilter) => Promise<Concept[]>}
+ * @returns {(concept_filter: ConceptSearchFilter) => Promise<Concept[]>}
  */
-export const get_concepts = db => async filter => {
-	/** @type {ConceptSearchFilter} */
-	const concept_filter = {
-		q: '',
-		scope: 'stems',
-		category: '',
-		...filter,
-	}
-
-	const query_builder = build_concept_query(db)
+export const get_concepts = db => async concept_filter => {
+	const query_builder = build_concept_query(db, 'Concepts')
 
 	if (concept_filter.category && concept_filter.category !== 'all') {
 		query_builder.add_filter('part_of_speech = ?', [concept_filter.category])
@@ -56,14 +48,6 @@ export const get_concepts = db => async filter => {
 	return normalize(results)
 
 	/**
-	 * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
-	 * @returns {string} SQL-ready string, i.e., `%` for wildcards
-	 */
-	function normalize_wildcards(possible_wildard) {
-		return possible_wildard.replace(/[*#]/g, '%')
-	}
-
-	/**
 	 * @param {DbRowConcept[]} matches_from_db
 	 * @returns {Concept[]}
 	 */
@@ -87,6 +71,53 @@ export async function get_version(db) {
 }
 
 /**
+ * case-insensitive match, will accept % as a wildcard as well as sense-specific search, e.g., love-A
+ *
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ *
+ * @returns {(filter: ConceptSearchFilter) => Promise<SimplificationHint[]>}
+ */
+export const get_filtered_simplification_hints = db => async filter => {
+	const query_builder = build_concept_query(db, 'Complex_Terms')
+
+	if (filter.category && filter.category !== 'all') {
+		query_builder.add_filter('part_of_speech = ?', [filter.category])
+	}
+
+	const normalized_q = normalize_wildcards(filter.q)
+	if (ends_in_a_sense(filter.q)) {
+		query_builder.add_filter('term LIKE ?', [filter.q])
+
+	} else if (normalized_q === '%') {
+		// if the query is just a wildcard, just return hints for existing concepts (ones with a sense),
+		// as the user only wants to see what's actually in the ontology
+		query_builder.add_filter('term LIKE ?', [`${normalized_q}-_`])
+
+	} else {
+		/**
+		 * @typedef {[filter: string, params: string[]]} FilterArgs
+		 * @type {{ [k: string]: FilterArgs }}
+		 */
+		const scope_filters = {
+			stems: ['(term LIKE ? OR term LIKE ?)', [normalized_q, `${normalized_q}-_`]],
+			glosses: ['explication LIKE ?', [`%${normalized_q}%`]],
+			all: ['term LIKE ? OR explication LIKE ?', [normalized_q, `%${normalized_q}%`]],
+		}
+		query_builder.add_filter(...scope_filters[filter.scope])
+	}
+
+	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
+	const { results } = await query_builder.prepare().all()
+
+	return results.map(normalize_results)
+
+	/** @param {SimplificationHint} arg */
+	function normalize_results({ term, part_of_speech, structure, pairing, explication, ontology_status }) {
+		return { term, part_of_speech, structure, pairing, explication, ontology_status }
+	}
+}
+
+/**
  * @param {import('@cloudflare/workers-types').D1Database} db
  * @returns {(term: string) => Promise<SimplificationHint[]>} term is case-insensitive
  */
@@ -100,6 +131,10 @@ export const get_simplification_hints = db => async term => {
 		FROM Complex_Terms
 		WHERE term LIKE ?
 	`
+
+	// normalize wildcards
+	const normalized_term = normalize_wildcards(term)
+
 	/**
 	 * LIKE creates case-insensitivity, also supports % as a wildcard if explicitly requested
 	 *
@@ -114,7 +149,7 @@ export const get_simplification_hints = db => async term => {
 	 *
 	 * @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>}
 	 */
-	let { results } = await db.prepare(sql).bind(term).all()
+	let { results } = await db.prepare(sql).bind(normalized_term).all()
 
 	if (results.length) {
 		return results.map(normalize_results)
@@ -123,12 +158,11 @@ export const get_simplification_hints = db => async term => {
 	/**
 	 * if the term had a sense and there were no matches, no need to try anything else, e.g., love-A
 	 */
-	const ENDS_IN_A_SENSE = /-[A-Z]$/
-	if (ENDS_IN_A_SENSE.test(term)) {
+	if (ends_in_a_sense(term)) {
 		return []
 	}
 
-	const term_w_any_sense = `${term}-_` // _ here means a single character wildcard:  https://sqlite.org/lang_expr.html#like
+	const term_w_any_sense = `${normalized_term}-_` // _ here means a single character wildcard:  https://sqlite.org/lang_expr.html#like
 	/**
 	 * handles the following cases:
 	 *		- complex_term=flourish
@@ -141,8 +175,8 @@ export const get_simplification_hints = db => async term => {
 	return results_second_try.map(normalize_results)
 
 	/** @param {SimplificationHint} arg */
-	function normalize_results({ term, part_of_speech, structure, pairing, explication }) {
-		return { term, part_of_speech, structure, pairing, explication }
+	function normalize_results({ term, part_of_speech, structure, pairing, explication, ontology_status }) {
+		return { term, part_of_speech, structure, pairing, explication, ontology_status }
 	}
 }
 
@@ -182,15 +216,33 @@ export const get_examples = db => async (concept, part_of_speech, source) => {
 }
 
 /**
+ * @param {string} term
+ * @returns {boolean}
+ */
+function ends_in_a_sense(term) {
+	const ENDS_IN_A_SENSE = /-[A-Z]$/
+	return ENDS_IN_A_SENSE.test(term)
+}
+
+/**
+ * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
+ * @returns {string} SQL-ready string, i.e., `%` for wildcards
+ */
+function normalize_wildcards(possible_wildard) {
+	return possible_wildard.replace(/[*#]/g, '%')
+}
+
+/**
  * @typedef {{
  * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
  * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
  * }} ConceptQueryBuilder
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
+ * @param {string} table
  * @returns { ConceptQueryBuilder }
  */
-function build_concept_query(db) {
+function build_concept_query(db, table) {
 	/** @type {string[]} */
 	const all_filters = []
 
@@ -215,7 +267,7 @@ function build_concept_query(db) {
 		const joined_filters = all_filters.map(filter => `(${filter})`).join(' AND ')
 		return db.prepare(`
 			SELECT *
-			FROM Concepts
+			FROM ${table}
 			WHERE ${joined_filters}`).bind(...all_params)
 	}
 

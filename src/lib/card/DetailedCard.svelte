@@ -41,53 +41,57 @@
 					<Category {concept} />
 				</section>
 
-				<section class="prose mt-4 max-w-none">
-					<Details colors="bg-base-200">
-						<span slot="summary">
-							Curated examples ({curated_examples.length})
-						</span>
-
-						{#each curated_examples as { sentence, reference, encoding }}
-							<blockquote class="mb-0">
-								<span>
-									{sentence}
-								</span>
-								<cite data-tip="Source: {reference.type}" class="tooltip tooltip-right tooltip-info block w-fit text-start text-xs">
-									({reference.id_primary}
-									{reference.id_secondary}:{reference.id_tertiary})
-								</cite>
-
-								<footer class="mt-4 flex justify-around bg-base-100">
-									{#each encoding as { part_of_speech, role, word }}
-										<span class="flex flex-col items-center py-2">
-											<span class="mb-1 not-italic tracking-widest text-base-content">
-												{word}
-											</span>
-											<small class="font-mono text-xs text-base-content">
-												{part_of_speech}
-												{role ? `[${role}]` : ''}
-											</small>
-										</span>
-									{/each}
-								</footer>
-							</blockquote>
-						{:else}
-							–
-						{/each}
-					</Details>
-				</section>
-
-				{#if Number(concept.level) > 1}
+				{#if concept.status === 'present'}
 					<section class="prose mt-4 max-w-none">
-						<h3>Simplification hints</h3>
+						<Details colors="bg-base-200">
+							<span slot="summary">
+								Curated examples ({curated_examples.length})
+							</span>
+
+							{#each curated_examples as { sentence, reference, encoding }}
+								<blockquote class="mb-0">
+									<span>
+										{sentence}
+									</span>
+									<cite data-tip="Source: {reference.type}" class="tooltip tooltip-right tooltip-info block w-fit text-start text-xs">
+										({reference.id_primary}
+										{reference.id_secondary}:{reference.id_tertiary})
+									</cite>
+
+									<footer class="mt-4 flex justify-around bg-base-100">
+										{#each encoding as { part_of_speech, role, word }}
+											<span class="flex flex-col items-center py-2">
+												<span class="mb-1 not-italic tracking-widest text-base-content">
+													{word}
+												</span>
+												<small class="font-mono text-xs text-base-content">
+													{part_of_speech}
+													{role ? `[${role}]` : ''}
+												</small>
+											</span>
+										{/each}
+									</footer>
+								</blockquote>
+							{:else}
+								–
+							{/each}
+						</Details>
+					</section>
+				{/if}
+
+				{#if concept.status === 'absent' || Number(concept.level) > 1}
+					<section class="prose mt-4 max-w-none">
+						<h3>{concept.status === 'absent' ? 'Explication hints' : 'Simplification hints'}</h3>
 						<SimplificationHints {concept} />
 					</section>
 				{/if}
 
-				<section class="prose mt-4 max-w-none">
-					<h3>Examples</h3>
-					<Examples {concept} />
-				</section>
+				{#if concept.status === 'present'}
+					<section class="prose mt-4 max-w-none">
+						<h3>Examples</h3>
+						<Examples {concept} />
+					</section>
+				{/if}
 			</main>
 		</article>
 	</section>

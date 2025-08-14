@@ -1,20 +1,25 @@
 <script>
-	/** @type {Concept['level']} */
-	export let level
+	/** @type {Concept} */
+	export let concept
+
+	$: level = concept.level
 
 	const level_descriptions = [
 		'Semantic Primitive',
 		'Semantic Molecule',
-		'Complex with an Insertion Rule',
-		'Complex without an Insertion Rule',
+		'Complex - usually explicated',
+		'Complex - usually in a complex alternate',
 		'Inexplicable',
 	]
 
-	$: description = level_descriptions[parseInt(level)] || ''
+	$: level_int = parseInt(level)
+	$: description = level_int >= 0 ? level_descriptions[level_int] : 'Not in the ontology'
+	$: level_class = level_int >= 0 ? `L${level}` : 'badge-neutral'
+	$: level_display = level_int >= 0 ? `L${level}${concept.status === 'pending' ? '?' : ''}` : level
 </script>
 
-<span class={`badge L${level} badge-lg tooltip tooltip-left font-mono`} data-tip={description}>
-	L{level}
+<span class={`badge ${level_class} badge-lg tooltip tooltip-left font-mono`} data-tip={description}>
+	{level_display}
 </span>
 
 <style>
