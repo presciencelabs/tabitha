@@ -23,7 +23,11 @@
 			return DEFAULT_DATA
 		}
 
-		return (await response.json())[0] ?? DEFAULT_DATA
+		/** @type {OntologyResult[]} */
+		const results = await response.json()
+		
+		// Use the result that exactly matches the original stem (eg. "lot" vs "Lot")
+		return results.find(result => result.stem === stem) ?? DEFAULT_DATA
 	}
 
 	/**
