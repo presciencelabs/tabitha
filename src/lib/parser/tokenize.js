@@ -16,7 +16,7 @@ function normalize_input(text) {
 		.replaceAll(/[“”]/g, '"')
 		// U+2019 : RIGHT SINGLE QUOTATION MARK
 		// U+02BC : MODIFIER LETTER APOSTROPHE
-		.replaceAll(/’ʼ/g, "'")
+		.replaceAll(/[’ʼ]/g, "'")
 }
 
 /**
