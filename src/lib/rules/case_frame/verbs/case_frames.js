@@ -610,8 +610,14 @@ const verb_case_frames = new Map([
 		['like-B', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
 	['listen', [
-		['listen-A', { 'patient': directly_after_verb_with_adposition('to') }],
-		['listen-B', { 'patient': directly_after_verb_with_adposition('to') }],
+		['listen-A', {
+			'patient': directly_after_verb_with_adposition('to'),
+			'destination': { },
+		}],
+		['listen-B', {
+			'patient': directly_after_verb_with_adposition('to'),
+			'destination': { },
+		}],
 	]],
 	['live', [
 		['live-A', {
