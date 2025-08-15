@@ -10,7 +10,13 @@ import { ERRORS } from './error_messages'
  * @returns {string}
  */
 function normalize_input(text) {
-	return text.replaceAll(/[“”]/g, '"').replaceAll(/’/g, '\'')
+	return text
+		// U+201C : LEFT DOUBLE QUOTATION MARK
+		// U+201D : RIGHT DOUBLE QUOTATION MARK
+		.replaceAll(/[“”]/g, '"')
+		// U+2019 : RIGHT SINGLE QUOTATION MARK
+		// U+02BC : MODIFIER LETTER APOSTROPHE
+		.replaceAll(/’ʼ/g, "'")
 }
 
 /**
