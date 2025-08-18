@@ -1,17 +1,17 @@
 /**
- * @param {{ ontology_id: number }} lookup 
+ * @param {{ ontology_status: OntologyStatus }} lookup 
  * @returns {boolean}
  */
 function IS_IN_ONTOLOGY(lookup) {
-	return lookup.ontology_id > 0
+	return lookup.ontology_status === 'present'
 }
 
 /**
- * @param {{ ontology_id: number, level: number }} lookup 
+ * @param {{ ontology_status: OntologyStatus }} lookup 
  * @returns {boolean}
  */
 function IS_OR_WILL_BE_IN_ONTOLOGY(lookup) {
-	return lookup.ontology_id > 0 || lookup.level > -1
+	return ['present', 'pending'].includes(lookup.ontology_status)
 }
 
 /**

@@ -15,14 +15,13 @@ type SimpleToken = TokenBase & {
 }
 
 type SimpleLookupResult = LookupWord & {
-	lexicon_id: number
 	form: string
 	// TODO include features
-	ontology_id: number
 	sense: string
 	level: number
 	gloss: string
 	categorization: string
+	ontology_status: OntologyStatus
 	how_to_entries: HowToEntry[]
 	case_frame: SimpleCaseFrame
 }

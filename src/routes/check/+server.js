@@ -91,10 +91,8 @@ function simplify_tokens(sentences) {
 	 * @param {LookupResult} lookup 
 	 * @returns {SimpleLookupResult}
 	 */
-	function simplify_lookup({ lexicon_id, ontology_id, stem, part_of_speech, sense, form, level, gloss, categorization, how_to_entries, case_frame }) {
+	function simplify_lookup({ stem, part_of_speech, sense, form, level, gloss, categorization, ontology_status, how_to_entries, case_frame }) {
 		return {
-			lexicon_id,
-			ontology_id,
 			stem,
 			part_of_speech,
 			sense,
@@ -102,6 +100,7 @@ function simplify_tokens(sentences) {
 			level,
 			gloss,
 			categorization,
+			ontology_status,
 			how_to_entries,
 			case_frame: simplify_case_frame(case_frame),
 		}

@@ -46,11 +46,11 @@ function create_sentence(tokens) {
  * @param {string} [data.sense='A']
  * @param {string} [data.part_of_speech='Noun']
  * @param {number} [data.level=1]
- * @param {number} [data.ontology_id=1]
+ * @param {OntologyStatus} [data.ontology_status='present']
  * @returns {LookupResult}
  */
-function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_id=1 }={}) {
-	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_id })
+function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_status='present' }={}) {
+	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_status })
 }
 
 describe('built-in checker rules', () => {
@@ -235,16 +235,16 @@ describe('built-in checker rules', () => {
 			const test_tokens = [create_sentence([
 				create_lookup_token('token', { lookup_results: [] }),
 				create_lookup_token('token', { lookup_results: [
-					lookup_result('token', { level: 1, ontology_id: 1 }),
-					lookup_result('token2', { level: 2, ontology_id: 2 }),
+					lookup_result('token', { level: 1 }),
+					lookup_result('token2', { level: 2 }),
 				] }),
 				create_lookup_token('token', { lookup_results: [
-					lookup_result('token', { level: 1, ontology_id: 3 }),
-					lookup_result('token4', { level: 4, ontology_id: 4 }),
+					lookup_result('token', { level: 1 }),
+					lookup_result('token4', { level: 4 }),
 				] }),
 				create_lookup_token('token', { lookup_results: [
-					lookup_result('token', { level: 2, ontology_id: 5 }),
-					lookup_result('token1', { level: 1, ontology_id: 6 }),
+					lookup_result('token', { level: 2 }),
+					lookup_result('token1', { level: 1 }),
 				] }),
 			])]
 

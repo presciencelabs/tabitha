@@ -1,17 +1,12 @@
 type LexicalFormResult = LookupWord & {
-	id: number
 	form: string
 }
 
 type OntologyResult = LookupWord & {
-	id: string
 	sense: string
-	level: number
+	level: string
 	gloss: string
 	categorization: string
-}
-
-type HowToResult = HowToEntry & {
-	term: string
-	part_of_speech: string
+	status: OntologyStatus
+	how_to_hints: HowToEntry[]
 }

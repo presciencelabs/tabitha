@@ -255,8 +255,6 @@ export function stem_with_sense(result) {
  *
  * @param {{ stem: string, part_of_speech: string }} lookup
  * @param {Object} [other_data={}]
- * @param {number} [other_data.lexicon_id=-1]
- * @param {number} [other_data.ontology_id=-1]
  * @param {string} [other_data.form='']
  * @param {string} [other_data.sense='']
  * @param {number} [other_data.level=-1]
@@ -264,22 +262,22 @@ export function stem_with_sense(result) {
  * @param {string} [other_data.categorization='']
  * @param {HowToEntry[]} [other_data.how_to=[]]
  * @param {CaseFrameResult?} [other_data.case_frame=null]
+ * @param {OntologyStatus} [other_data.ontology_status='unknown']
  * @returns {LookupResult}
  */
 export function create_lookup_result(
 	{ stem, part_of_speech },
-	{ lexicon_id=0, ontology_id=0, form='stem', sense='', level=-1, gloss='', categorization='', how_to=[], case_frame=null }={},
+	{ form='stem', sense='', level=-1, gloss='', categorization='', how_to=[], case_frame=null, ontology_status='unknown' }={},
 ) {
 	return {
 		stem,
 		part_of_speech,
-		lexicon_id,
-		ontology_id,
 		form: form.toLowerCase(),
 		sense,
 		level,
 		gloss,
 		categorization,
+		ontology_status,
 		how_to_entries: how_to,
 		case_frame: {
 			rules: [],

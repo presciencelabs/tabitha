@@ -56,15 +56,16 @@ type LookupWord = {
 	part_of_speech: string
 }
 
+type OntologyStatus = 'present' | 'pending' | 'absent' | 'unknown'
+
 type LookupResult = LookupWord & {
-	lexicon_id: number
 	form: string
 	// TODO include features
-	ontology_id: number
 	sense: string
 	level: number
 	gloss: string
 	categorization: string
+	ontology_status: OntologyStatus
 	how_to_entries: HowToEntry[]
 	case_frame: CaseFrame
 }

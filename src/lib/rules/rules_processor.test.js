@@ -34,11 +34,11 @@ function create_lookup_token(token, { lookup_results=[] }={}) {
  * @param {string} [data.sense='A'] 
  * @param {string} [data.part_of_speech='Noun'] 
  * @param {number} [data.level=1] 
- * @param {number} [data.ontology_id=1] 
+ * @param {OntologyStatus} [data.ontology_status='present'] 
  * @returns {LookupResult}
  */
-function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_id=1 }={}) {
-	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_id })
+function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_status='present' }={}) {
+	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_status })
 }
 
 describe('transform rules', () => {

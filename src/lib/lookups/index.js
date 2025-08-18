@@ -3,7 +3,6 @@ import { REGEXES } from '../regexes'
 import { create_context_filter, create_token_filter, simple_rule_action } from '../rules/rules_parser'
 import { apply_rule_to_tokens } from '../rules/rules_processor'
 import { check_forms } from './form'
-import { check_how_to } from './how_to'
 import { check_ontology } from './ontology'
 
 /**
@@ -28,7 +27,6 @@ export async function perform_ontology_lookups(sentences) {
 	const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)
 
 	await Promise.all(lookup_tokens.map(check_ontology))
-	await Promise.all(lookup_tokens.map(check_how_to))
 
 	result_filter_rules.forEach(({ rule }) => apply_rule_to_tokens(lookup_tokens, rule))
 

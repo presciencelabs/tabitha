@@ -751,7 +751,7 @@ const builtin_checker_rules = [
 		},
 	},
 	{
-		name: 'Check for words not in the ontology',
+		name: 'Check ontology status',
 		comment: '',
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
@@ -761,30 +761,6 @@ const builtin_checker_rules = [
 
 				if (token.pairing) {
 					yield* check_ontology_status(token.pairing)
-				}
-			}),
-		},
-	},
-	{
-		name: 'Check for words with DELETE in the gloss',
-		comment: '',
-		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
-			context: create_context_filter({}),
-			action: message_set_action(function* ({ trigger_token: token }) {
-				yield* check_gloss(token)
-
-				if (token.pairing) {
-					yield* check_gloss(token.pairing)
-				}
-
-				/**
-				 * @param {Token} token
-				 */
-				function* check_gloss(token) {
-					if (token.lookup_results.at(0)?.gloss.includes('DELETE')) {
-						yield { token_to_flag: token, warning: 'The {category} {sense} is set to be removed from the Ontology. Hover over the word for possible alternatives.' }
-					}
 				}
 			}),
 		},
@@ -959,19 +935,24 @@ function* check_ontology_status(token) {
 		return {}
 	}
 
-	if (token.lookup_results.length === 0) {
+	const top_result = token.lookup_results.at(0)
+
+	if (!top_result) {
 		yield { token_to_flag: token, warning: "'{token}' is not recognized. Consult the How-To document or consider using a different word." }
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
 		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word so the editor can check the syntax more accurately." }
 
-	} else if (token.lookup_results.some(result => result.sense)) {
+	} else if (top_result.ontology_status === 'pending') {
 		yield { token_to_flag: token, info: 'The {category} \'{stem}\' will be added to the Ontology in a future update. Consult the How-To document for more info.' }
 
-	} else if (token.lookup_results.some(result => result.how_to_entries.length > 0)) {
+	} else if (top_result.ontology_status === 'absent') {
 		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 
-	} else {
-		// a dummy result for an unknown word
+	} else if (top_result.ontology_status === 'unknown') {
 		yield { token_to_flag: token, warning: 'The {category} \'{token}\' is not recognized. Consult the How-To document or consider using a different word.' }
+	}
+	
+	if (top_result?.gloss.includes('DELETE')) {
+		yield { token_to_flag: token, warning: 'The {category} {sense} is set to be removed from the Ontology. Hover over the word for possible alternatives.' }
 	}
 }
