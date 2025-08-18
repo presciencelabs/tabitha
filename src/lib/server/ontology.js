@@ -45,7 +45,10 @@ export const get_concepts = db => async concept_filter => {
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
 	const { results } = await query_builder.prepare().all()
 
-	return normalize(results)
+	const concepts = normalize(results)
+
+	const how_to_results = await get_simplification_hints(db)(concept_filter)
+	return merge_how_to_results(concepts, how_to_results)
 
 	/**
 	 * @param {DbRowConcept[]} matches_from_db
@@ -77,33 +80,34 @@ export async function get_version(db) {
  *
  * @returns {(filter: ConceptSearchFilter) => Promise<SimplificationHint[]>}
  */
-export const get_filtered_simplification_hints = db => async filter => {
+export const get_simplification_hints = db => async filter => {
+	if (filter.scope === 'glosses') {
+		// a glosses search doesn't make sense for simplification hints
+		return []
+	}
+
 	const query_builder = build_concept_query(db, 'Complex_Terms')
 
 	if (filter.category && filter.category !== 'all') {
 		query_builder.add_filter('part_of_speech = ?', [filter.category])
 	}
 
-	const normalized_q = normalize_wildcards(filter.q)
-	if (ends_in_a_sense(filter.q)) {
-		query_builder.add_filter('term LIKE ?', [filter.q])
-
-	} else if (normalized_q === '%') {
-		// if the query is just a wildcard, just return hints for existing concepts (ones with a sense),
-		// as the user only wants to see what's actually in the ontology
-		query_builder.add_filter('term LIKE ?', [`${normalized_q}-_`])
+	const matches = filter.q.match(/^(.*)-([A-Z])$/)
+	if (matches) {
+		const [, stem, sense] = matches
+		query_builder
+			.add_filter('stem LIKE ?', [stem])
+			.add_filter('sense = ?', [sense])
 
 	} else {
-		/**
-		 * @typedef {[filter: string, params: string[]]} FilterArgs
-		 * @type {{ [k: string]: FilterArgs }}
-		 */
-		const scope_filters = {
-			stems: ['(term LIKE ? OR term LIKE ?)', [normalized_q, `${normalized_q}-_`]],
-			glosses: ['explication LIKE ?', [`%${normalized_q}%`]],
-			all: ['term LIKE ? OR explication LIKE ?', [normalized_q, `%${normalized_q}%`]],
+		const normalized_q = normalize_wildcards(filter.q)
+		query_builder.add_filter('stem LIKE ?', [normalized_q])
+
+		if (normalized_q === '%') {
+			// if the query is just a wildcard, just return hints for existing concepts (ones with a sense),
+			// as the user only wants to see what's actually in the ontology
+			query_builder.add_filter('sense LIKE _', [])
 		}
-		query_builder.add_filter(...scope_filters[filter.scope])
 	}
 
 	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
@@ -112,71 +116,8 @@ export const get_filtered_simplification_hints = db => async filter => {
 	return results.map(normalize_results)
 
 	/** @param {SimplificationHint} arg */
-	function normalize_results({ term, part_of_speech, structure, pairing, explication, ontology_status }) {
-		return { term, part_of_speech, structure, pairing, explication, ontology_status }
-	}
-}
-
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {(term: string) => Promise<SimplificationHint[]>} term is case-insensitive
- */
-export const get_simplification_hints = db => async term => {
-	if (! term) {
-		return []
-	}
-
-	const sql = `
-		SELECT *
-		FROM Complex_Terms
-		WHERE term LIKE ?
-	`
-
-	// normalize wildcards
-	const normalized_term = normalize_wildcards(term)
-
-	/**
-	 * LIKE creates case-insensitivity, also supports % as a wildcard if explicitly requested
-	 *
-	 * handles situations like these:
-	 * 	- complex_term=accurate
-	 * 	- complex_term=Accurate
-	 * 	- complex_term=Accura%
-	 * 	- complex_term=accuse-A (results in multiple rows)
-	 *
-	 * but not this:
-	 * 	- complex_term=flourish (this must be flourish-A)
-	 *
-	 * @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>}
-	 */
-	let { results } = await db.prepare(sql).bind(normalized_term).all()
-
-	if (results.length) {
-		return results.map(normalize_results)
-	}
-
-	/**
-	 * if the term had a sense and there were no matches, no need to try anything else, e.g., love-A
-	 */
-	if (ends_in_a_sense(term)) {
-		return []
-	}
-
-	const term_w_any_sense = `${normalized_term}-_` // _ here means a single character wildcard:  https://sqlite.org/lang_expr.html#like
-	/**
-	 * handles the following cases:
-	 *		- complex_term=flourish
-	 *		- complex_term=accuse (results in multiple rows for accuse, both accuse-A and accuse-B)
-	 *
-	 * @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>}
-	 */
-	const { results: results_second_try } = await db.prepare(sql).bind(term_w_any_sense).all()
-
-	return results_second_try.map(normalize_results)
-
-	/** @param {SimplificationHint} arg */
-	function normalize_results({ term, part_of_speech, structure, pairing, explication, ontology_status }) {
-		return { term, part_of_speech, structure, pairing, explication, ontology_status }
+	function normalize_results({ stem, sense, part_of_speech, structure, pairing, explication, ontology_status }) {
+		return { stem, sense, part_of_speech, structure, pairing, explication, ontology_status }
 	}
 }
 
@@ -216,20 +157,109 @@ export const get_examples = db => async (concept, part_of_speech, source) => {
 }
 
 /**
- * @param {string} term
- * @returns {boolean}
- */
-function ends_in_a_sense(term) {
-	const ENDS_IN_A_SENSE = /-[A-Z]$/
-	return ENDS_IN_A_SENSE.test(term)
-}
-
-/**
  * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
  * @returns {string} SQL-ready string, i.e., `%` for wildcards
  */
 function normalize_wildcards(possible_wildard) {
 	return possible_wildard.replace(/[*#]/g, '%')
+}
+
+/**
+ * @param {Concept[]} concepts
+ * @param {SimplificationHint[]} how_to_results
+ * @returns {Concept[]}
+ */
+function merge_how_to_results(concepts, how_to_results) {
+	for (const how_to of how_to_results) {
+		const existing_concept = concepts.find(match => concepts_match(match, how_to))
+		if (existing_concept) {
+			existing_concept.how_to_hints.push(how_to)
+		} else if (!!how_to.sense) {
+			// how-to entries with a sense are concepts that haven't been added to the ontology yet
+			concepts.push(create_pending_result(how_to))
+		} else {
+			// how-to entries without a sense will not be added to the ontology
+			concepts.push(create_how_to_result(how_to))
+		}
+	}
+	return concepts
+
+	/**
+	 * @param {ConceptKey} a
+	 * @param {ConceptKey} b
+	 */
+	function concepts_match(a, b) {
+		return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
+	}
+
+	/**
+	 * @param {SimplificationHint} hint
+	 * @returns {Concept}
+	 */
+	function create_how_to_result(hint) {
+		return {
+			id: create_concept_key(hint),
+			stem: hint.stem,
+			sense: hint.sense,
+			part_of_speech: hint.part_of_speech,
+			level: 'N/A',
+			categorization: '',
+			examples: '',
+			gloss: 'Not in the Ontology, but suggestions are available',
+			brief_gloss: '',
+			occurrences: 0,
+			categories: [],
+			curated_examples: [],
+			status: 'absent',
+			how_to_hints: [hint],
+		}
+	}
+
+	/**
+	 * 
+	 * @param {SimplificationHint} hint 
+	 * @returns {Concept}
+	 */
+	function create_pending_result(hint) {
+		return {
+			id: create_concept_key(hint),
+			stem: hint.stem,
+			sense: hint.sense,
+			part_of_speech: hint.part_of_speech,
+			level: guess_level(),
+			categorization: '',
+			examples: '',
+			gloss: 'Not yet in the Ontology, but will be added in a future update',
+			brief_gloss: '',
+			occurrences: 0,
+			categories: [],
+			curated_examples: [],
+			status: 'pending',
+			how_to_hints: [hint],
+		}
+
+		function guess_level() {
+			const LEVEL_1_REGEX = /level 1|simple/
+			const LEVEL_3_REGEX = /level 3|complex alternate/
+			const lower_status = hint.ontology_status.toLowerCase()
+
+			if (LEVEL_3_REGEX.test(lower_status) || LEVEL_3_REGEX.test(hint.explication.toLowerCase())) {
+				return '3'
+			} else if (LEVEL_1_REGEX.test(lower_status)) {
+				return '1'
+			} else {
+				return '2'
+			}
+		}
+	}
+
+	/**
+	 * @param {ConceptKey} concept 
+	 * @returns {string}
+	 */
+	function create_concept_key({ stem, sense, part_of_speech }) {
+		return `${stem}-${sense}-${part_of_speech}`
+	}
 }
 
 /**

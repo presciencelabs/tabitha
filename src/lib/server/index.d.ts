@@ -1,8 +1,11 @@
-type DbRowConcept = {
-	id: string
+type ConceptKey = {
 	stem: string
 	sense: string
 	part_of_speech: string
+}
+
+type DbRowConcept = ConceptKey & {
+	id: string
 	level: string
 	categorization: string
 	examples: string
@@ -12,9 +15,7 @@ type DbRowConcept = {
 	occurrences: string
 }
 
-type SimplificationHint = {
-	term: string
-	part_of_speech: string
+type SimplificationHint = ConceptKey & {
 	structure: string
 	pairing: string
 	explication: string
@@ -26,6 +27,7 @@ interface Concept extends DbRowConcept {
 	curated_examples: CuratedExample[]
 	occurrences: number
 	status: OntologyStatus
+	how_to_hints: SimplificationHint[]
 }
 
 type OntologyStatus = 'present' | 'pending' | 'absent'

@@ -12,6 +12,7 @@ export function transform(match_from_db) {
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		occurrences: transform_occurrences(match_from_db.occurrences),
 		status: 'present',
+		how_to_hints: [],
 	}
 }
 
