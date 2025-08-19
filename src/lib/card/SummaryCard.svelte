@@ -2,11 +2,15 @@
 	import Icon from '@iconify/svelte'
 	import Header from './Header.svelte'
 	import Meaning from './Meaning.svelte'
+	import SimplificationHints from './SimplificationHints.svelte'
 	import { Category } from './categorization'
 	import { DetailedCard } from '$lib'
 
 	/** @type {Concept} */
 	export let concept
+
+	/** @type {boolean} */
+	export let show_how_to
 
 	let expanded = false
 	function expand() {
@@ -30,6 +34,13 @@
 		{#if concept.part_of_speech === 'Verb'}
 			<section class="prose mt-4 max-w-none">
 				<Category {concept} />
+			</section>
+		{/if}
+		
+		{#if show_how_to && (concept.how_to_hints.length > 0 || ['2', '3'].includes(concept.level))}
+			<section class="prose mt-4 max-w-none">
+				<h3 class="mb-0">Suggestions for how to handle</h3>
+				<SimplificationHints {concept} />
 			</section>
 		{/if}
 

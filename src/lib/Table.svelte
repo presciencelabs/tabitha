@@ -29,7 +29,7 @@
 	</thead>
 
 	<tbody>
-		{#each concepts as concept (concept.id)}
+		{#each concepts as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
 			<tr class="hover hover:cursor-pointer" on:click={() => open(concept)}>
 				<td>
 					{concept.stem}
