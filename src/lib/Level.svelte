@@ -4,16 +4,19 @@
 
 	$: level = concept.level
 
-	const level_descriptions = [
-		'Semantic Primitive',
-		'Semantic Molecule',
-		'Complex - usually explicated',
-		'Complex - usually in a complex alternate',
-		'Inexplicable',
-	]
+	/** @type {Record<string, string>}*/
+	const level_descriptions = {
+		'0': 'Semantic Primitive',
+		'1': 'Semantic Molecule',
+		'2': 'Complex - usually explicated',
+		'3': 'Complex - usually in a complex alternate',
+		'4': 'Inexplicable',
+		'N/A': 'Not in the ontology',
+		'FW': 'Function Word',
+	}
 
-	$: level_int = parseInt(level)
-	$: description = level_int >= 0 ? level_descriptions[level_int] : 'Not in the ontology'
+	$: level_int = Number(level)
+	$: description = level_descriptions[level] || ''
 	$: level_class = level_int >= 0 ? `L${level}` : 'badge-neutral'
 	$: level_display = level_int >= 0 ? `L${level}${concept.status === 'pending' ? '?' : ''}` : level
 </script>

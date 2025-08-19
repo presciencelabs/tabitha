@@ -174,7 +174,7 @@ function merge_how_to_results(concepts, how_to_results) {
 		const existing_concept = concepts.find(match => concepts_match(match, how_to))
 		if (existing_concept) {
 			existing_concept.how_to_hints.push(how_to)
-		} else if (!!how_to.sense) {
+		} else if (how_to.sense) {
 			// how-to entries with a sense are concepts that haven't been added to the ontology yet
 			concepts.push(create_pending_result(how_to))
 		} else {
