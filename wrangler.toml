@@ -11,5 +11,5 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Targets"
-database_name = "Targets.2025-02-13"
-database_id = "6e9c40d4-ca63-4735-91a0-6943c342442c"
+database_name = "Targets.2025-08-19"
+database_id = "52ee72c4-ce84-467d-bf36-0f035c6711ef"
