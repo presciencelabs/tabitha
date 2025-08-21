@@ -94,9 +94,6 @@ const adjective_case_frames = new Map([
 			'patient_clause_different_participant': { 'trigger': 'none' },
 		}],
 	]],
-	['happy', [
-		['happy-A', { 'nominal_argument': by_adposition('with') }],
-	]],
 	['honest', [
 		['honest-A', { 'nominal_argument': by_adposition('with') }],
 	]],
