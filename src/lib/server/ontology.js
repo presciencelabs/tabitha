@@ -106,7 +106,7 @@ export const get_simplification_hints = db => async filter => {
 		if (normalized_q === '%') {
 			// if the query is just a wildcard, just return hints for existing concepts (ones with a sense),
 			// as the user only wants to see what's actually in the ontology
-			query_builder.add_filter('sense LIKE _', [])
+			query_builder.add_filter('sense LIKE "_"', [])
 		}
 	}
 
