@@ -99,7 +99,7 @@ const adposition_case_frames = new Map([
  */
 function create_usage_rules() {
 	return Object.entries(default_adposition_usage_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('adp_default', role_tag, rule_json))
 }
 
 /**

@@ -250,7 +250,7 @@ const adjective_case_frames = new Map([
  */
 function create_default_argument_rules() {
 	return Object.entries(default_adjective_case_frame_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('adj_default', role_tag, rule_json))
 }
 
 /**
@@ -271,7 +271,7 @@ function create_adjective_argument_rules() {
 
 const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()
 const ADJECTIVE_CASE_FRAME_RULES = create_adjective_argument_rules()
-const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule(['modified_noun_with_subgroup', modified_noun_with_subgroup()])
+const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule('adj_default', 'modified_noun_with_subgroup', modified_noun_with_subgroup())
 
 /**
  * @param {Token} token

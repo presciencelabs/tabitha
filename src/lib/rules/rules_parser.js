@@ -299,10 +299,13 @@ function context_result(success, { context_indexes=[], subtoken_indexes=[] }={})
  * @returns {TokenTransform[]}
  */
 export function create_token_transforms(transform_json) {
-	if (Array.isArray(transform_json)) {
+	if (transform_json === undefined) {
+		return []
+	} else if (Array.isArray(transform_json)) {
 		return transform_json.map(create_token_transform)
+	} else {
+		return [create_token_transform(transform_json)]
 	}
-	return [create_token_transform(transform_json)]
 }
 
 /**
@@ -377,18 +380,6 @@ export function create_token_transform(transform_json) {
 
 /**
  *
- * @param {Token[]} tokens
- * @param {number[]} token_indexes
- * @param {TokenTransform[]} transforms
- */
-export function apply_token_transforms(tokens, token_indexes, transforms) {
-	for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
-		tokens[token_indexes[i]] = transforms[i](tokens[token_indexes[i]])
-	}
-}
-
-/**
- *
  * @param {(trigger_context: RuleTriggerContext) => void} action
  * @returns {RuleAction}
  */
@@ -418,6 +409,18 @@ export function message_set_action(action) {
 
 		return trigger_context.trigger_index + 1
 	}
+}
+
+/**
+ * @param {string} group_name 
+ * @returns {(rule: BuiltInRule, index: number) => TokenRule}
+ */
+export function from_built_in_rule(group_name) {
+	return (rule, index) => ({
+		id: `${group_name}:built-in:${index}`,
+		name: rule.name,
+		...rule.rule,
+	})
 }
 
 /** @type {Map<SkipGroup, SkipJsonSingle[]>} */

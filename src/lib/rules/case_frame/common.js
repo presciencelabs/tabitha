@@ -69,13 +69,15 @@ const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = new Map([
 
 /**
  * 
- * @param {[RoleTag, RoleRuleValueJson]} rule_json 
+ * @param {WordSense} sense 
+ * @param {RoleTag} role_tag 
+ * @param {RoleRuleValueJson} rule_json 
  * @returns {ArgumentRoleRule[]}
  */
-export function parse_case_frame_rule([role_tag, rule_json]) {
+export function parse_case_frame_rule(sense, role_tag, rule_json) {
 	if (Array.isArray(rule_json)) {
 		// An argument role may have multiple possible trigger rules, ie different structures that are allowed.
-		return rule_json.flatMap(rule_option => parse_case_frame_rule([role_tag, rule_option]))
+		return rule_json.flatMap(rule_option => parse_case_frame_rule(sense, role_tag, rule_option))
 	}
 
 	const tag_role = rule_json['tag_role'] ?? true
@@ -88,11 +90,11 @@ export function parse_case_frame_rule([role_tag, rule_json]) {
 
 	return [{
 		role_tag,
-		trigger_rule: parse_transform_rule(rule_json),
+		trigger_rule: { ...parse_transform_rule(rule_json, 0), id: `case_frame:${sense}:${role_tag}` },
 		relative_context_index: rule_json['argument_context_index'] ?? -1,
 		missing_message: missing_message.replaceAll('{role}', role_tag),
 		extra_message: extra_message.replaceAll('{role}', role_tag),
-		main_word_tag: rule_json['main_word_tag'] ?? {},
+		main_word_tag: rule_json['main_word_tag'] ?? null,
 	}]
 }
 
@@ -112,11 +114,12 @@ export function parse_sense_rules(rule_json, defaults) {
 	function parse_sense_rule(defaults) {
 		return ([sense, rules_json]) => {
 			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json
-				? parse_case_frame_rule([rule.role_tag, rules_json[rule.role_tag]])
+				? parse_case_frame_rule(sense, rule.role_tag, rules_json[rule.role_tag])
 				: [rule])
 
 			const other_rules = 'other_rules' in rules_json
-				? Object.entries(rules_json['other_rules']).flatMap(parse_case_frame_rule)
+				? Object.entries(rules_json['other_rules'])
+					.flatMap(([other_tag, other_rule_json]) => parse_case_frame_rule(sense, other_tag, other_rule_json))
 				: []
 
 			return {
@@ -250,6 +253,7 @@ function match_argument_rule(main_trigger_context, rule) {
 			tokens,
 			trigger_index: argument_index,
 			trigger_token: tokens[argument_index],
+			rule_id: rule.trigger_rule.id,
 			...context_result,
 		})
 
@@ -270,6 +274,7 @@ function match_argument_rule(main_trigger_context, rule) {
 				tokens,
 				trigger_index: i,
 				trigger_token: tokens[i],
+				rule_id: rule.trigger_rule.id,
 				...context_result,
 			})
 		}
@@ -295,6 +300,7 @@ function create_role_match_result(rule, success, argument_context=null) {
 			trigger_token: create_token('', TOKEN_TYPE.NOTE),
 			context_indexes: [],
 			subtoken_indexes: [],
+			rule_id: rule.trigger_rule.id,
 		},
 		rule,
 	}

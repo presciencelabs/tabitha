@@ -1,7 +1,7 @@
 import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
-import { create_context_filter, create_token_filter, simple_rule_action } from './rules_parser'
+import { create_context_filter, create_token_filter, simple_rule_action, from_built_in_rule } from './rules_parser'
 
 /**
  * These rules are for tagging tokens based on the syntax. These cannot rely on any lookup data.
@@ -14,8 +14,8 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'subordinate_clause' } }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
-			action: simple_rule_action(({ trigger_token }) => {
-				add_tag_to_token(trigger_token, { 'clause_type': 'patient_clause_quote_begin' })
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				add_tag_to_token(trigger_token, { 'clause_type': 'patient_clause_quote_begin' }, rule_id)
 			}),
 		},
 	},
@@ -25,16 +25,16 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause|patient_clause_quote_begin' } }),
 			context: create_context_filter({}),
-			action: simple_rule_action(({ trigger_token }) => {
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
 				// find first word token, even if nested in another clause
 				const word_token = find_first_word(trigger_token)
 				if (!word_token) {
 					return
 				}
 
-				add_tag_to_token(word_token, { 'position': 'first_word' })
+				add_tag_to_token(word_token, { 'position': 'first_word' }, rule_id)
 				if (word_token.pairing) {
-					add_tag_to_token(word_token.pairing, { 'position': 'first_word' })
+					add_tag_to_token(word_token.pairing, { 'position': 'first_word' }, rule_id)
 				}
 			}),
 		},
@@ -45,8 +45,8 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
 			context: create_context_filter({}),
-			action: simple_rule_action(({ trigger_token }) => {
-				add_tag_to_token(trigger_token, { 'relation': 'genitive_saxon' })
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				add_tag_to_token(trigger_token, { 'relation': 'genitive_saxon' }, rule_id)
 			}),
 		},
 	},
@@ -58,8 +58,8 @@ const builtin_syntax_rules = [
 			context: create_context_filter({
 				'followedby': { 'tag': { 'syntax': 'verse_ref_colon' } },
 			}),
-			action: simple_rule_action(({ trigger_token }) => {
-				add_tag_to_token(trigger_token, { 'role': 'verse_ref' })
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				add_tag_to_token(trigger_token, { 'role': 'verse_ref' }, rule_id)
 			}),
 		},
 	},
@@ -71,7 +71,7 @@ const builtin_syntax_rules = [
 			context: create_context_filter({
 				'precededby': { 'tag': { 'syntax': 'verse_ref_colon' } },
 			}),
-			action: ({ tokens, trigger_index, trigger_token }) => {
+			action: ({ tokens, trigger_index, trigger_token, rule_id }) => {
 				if (trigger_token.token.includes('-')) {
 					// this is a verse range (eg. Jeremiah 31:31-34)
 					const verse_numbers = trigger_token.token.split('-')
@@ -80,17 +80,22 @@ const builtin_syntax_rules = [
 						create_token(verse_numbers[0], TOKEN_TYPE.LOOKUP_WORD, {
 							lookup_term: verse_numbers[0],
 							tag: { 'role': 'verse_ref' },
+							rule_info: `create - ${rule_id}`,
 						}),
-						create_token('-', TOKEN_TYPE.FUNCTION_WORD, { tag: { 'syntax': 'verse_ref_hyphen' } }),
+						create_token('-', TOKEN_TYPE.FUNCTION_WORD, {
+							tag: { 'syntax': 'verse_ref_hyphen' },
+							rule_info: `create - ${rule_id}`,
+						}),
 						create_token(verse_numbers[1], TOKEN_TYPE.LOOKUP_WORD, {
 							lookup_term: verse_numbers[1],
 							tag: { 'role': 'verse_ref' },
+							rule_info: `create - ${rule_id}`,
 						}),
 					)
 					return trigger_index + 3	// add 2 and advance 1
 				}
 
-				add_tag_to_token(trigger_token, { 'role': 'verse_ref' })
+				add_tag_to_token(trigger_token, { 'role': 'verse_ref' }, rule_id)
 
 				return trigger_index + 1
 			},
@@ -98,7 +103,7 @@ const builtin_syntax_rules = [
 	},
 ]
 
-export const SYNTAX_RULES = builtin_syntax_rules.map(({ rule }) => rule).concat(PRONOUN_RULES)
+export const SYNTAX_RULES = builtin_syntax_rules.map(from_built_in_rule('syntax')).concat(PRONOUN_RULES)
 
 /**
  * 

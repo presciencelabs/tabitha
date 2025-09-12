@@ -1,4 +1,4 @@
-import { create_context_filter, message_set_action } from './rules_parser'
+import { create_context_filter, from_built_in_rule, message_set_action } from './rules_parser'
 import { TOKEN_TYPE, add_tag_to_token } from '../token'
 
 const FIRST_PERSON = ['i', 'me', 'my', 'myself', 'we', 'us', 'our', 'ourselves']
@@ -49,20 +49,18 @@ const builtin_pronoun_rules = [
 		'name': 'Tag valid pronoun referents and check for invalid ones',
 		'comment': '',
 		'rule': {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && token.pronoun !== null,
 			context: create_context_filter({}),
-			action: message_set_action(({ trigger_token }) => {
-				if (trigger_token.pronoun === null) {
-					return
-				}
-				
+			action: message_set_action(({ trigger_token, rule_id }) => {
+				/** @type {Token} */
+				// @ts-expect-error -- the trigger filter ensures this is not null
 				const pronoun = trigger_token.pronoun
 				const normalized_pronoun = pronoun.token.toLowerCase()
 
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
 				const message = PRONOUN_MESSAGES.get(normalized_pronoun) ?? 'Unrecognized pronoun "{token}"'
 				if (tag) {
-					add_tag_to_token(trigger_token, { 'pronoun': tag })
+					add_tag_to_token(trigger_token, { 'pronoun': tag }, rule_id)
 				} else {
 					return { token_to_flag: pronoun, error: message }
 				}
@@ -71,4 +69,4 @@ const builtin_pronoun_rules = [
 	},
 ]
 
-export const PRONOUN_RULES = builtin_pronoun_rules.map(({ rule }) => rule)
+export const PRONOUN_RULES = builtin_pronoun_rules.map(from_built_in_rule('pronoun'))

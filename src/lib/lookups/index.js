@@ -1,6 +1,6 @@
 import { TOKEN_TYPE, token_has_tag } from '../token'
 import { REGEXES } from '../regexes'
-import { create_context_filter, create_token_filter, simple_rule_action } from '../rules/rules_parser'
+import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '../rules/rules_parser'
 import { apply_rule_to_tokens } from '../rules/rules_processor'
 import { check_forms } from './form'
 import { check_ontology } from './ontology'
@@ -28,7 +28,7 @@ export async function perform_ontology_lookups(sentences) {
 
 	await Promise.all(lookup_tokens.map(check_ontology))
 
-	result_filter_rules.forEach(({ rule }) => apply_rule_to_tokens(lookup_tokens, rule))
+	result_filter_rules.map(from_built_in_rule('result_filter')).forEach(rule => apply_rule_to_tokens(lookup_tokens, rule))
 
 	return sentences
 }

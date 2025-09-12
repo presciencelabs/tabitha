@@ -5,6 +5,7 @@ type TokenBase = {
 	type: TokenType
 	tag: Tag
 	messages: Message[]
+	applied_rules: string[]
 }
 
 type Token = TokenBase & {

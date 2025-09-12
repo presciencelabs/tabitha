@@ -1,5 +1,5 @@
 import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
-import { create_context_filter, create_token_filter, simple_rule_action } from '$lib/rules/rules_parser'
+import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
 import { select_pairing_sense, select_sense } from './sense_selection'
 import { get_adjective_case_frame_rules } from './adjectives/case_frames'
 import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules, get_same_subject_verb_case_frame_rules } from './verbs/case_frames'
@@ -56,7 +56,7 @@ const argument_and_sense_rules = [
 				const present_arguments = selected_result.case_frame.result.valid_arguments.map(arg => arg.role_tag)
 				if (!(present_arguments.includes('modified_noun') || present_arguments.includes('modified_noun_with_subgroup'))
 						&& !token_has_tag(token, { 'role': 'verse_ref' })) {
-					add_tag_to_token(token, { 'adj_usage': 'predicative' })
+					add_tag_to_token(token, { 'adj_usage': 'predicative' }, trigger_context.rule_id)
 				}
 			}),
 		},
@@ -97,13 +97,14 @@ const argument_and_sense_rules = [
 				'notprecededby': { 'tag': ['in_relative_clause', 'in_interrogative'], 'skip': 'all' },
 				'subtokens': { 'category': 'Verb', 'skip': 'all' },
 			}),
-			action: simple_rule_action(({ trigger_token, subtoken_indexes }) => {
+			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
 				const verb_trigger_context = {
 					tokens: trigger_token.sub_tokens,
 					trigger_token: trigger_token.sub_tokens[subtoken_indexes[0]],
 					trigger_index: subtoken_indexes[0],
 					context_indexes: [],
 					subtoken_indexes: [],
+					rule_id,
 				}
 
 				// TODO insert a 'placeholder' token as the agent
@@ -160,4 +161,4 @@ const argument_and_sense_rules = [
 	},
 ]
 
-export const ARGUMENT_AND_SENSE_RULES = argument_and_sense_rules.map(({ rule }) => rule)
+export const ARGUMENT_AND_SENSE_RULES = argument_and_sense_rules.map(from_built_in_rule('case_frame'))

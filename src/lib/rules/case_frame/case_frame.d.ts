@@ -9,7 +9,7 @@ type ArgumentRoleRule = {
 	trigger_rule: TokenRule
 	missing_message: string
 	extra_message: string
-	main_word_tag: Tag
+	main_word_tag: Tag|null
 }
 
 type ArgumentRulesForSense = {

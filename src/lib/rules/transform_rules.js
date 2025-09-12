@@ -1,5 +1,5 @@
 import { add_tag_to_token, TOKEN_TYPE } from '$lib/token'
-import { apply_token_transforms, create_context_filter, create_token_filter, create_token_transform, create_token_transforms, simple_rule_action } from './rules_parser'
+import { create_context_filter, create_token_filter, create_token_transform, create_token_transforms, from_built_in_rule, simple_rule_action } from './rules_parser'
 
 /**
  * These are words that may change their underlying data based on the context around them.
@@ -536,9 +536,10 @@ const transform_rules_json = [
 /**
  *
  * @param {TransformRuleJson} rule_json
+ * @param {number} index
  * @returns {TokenRule}
  */
-export function parse_transform_rule(rule_json) {
+export function parse_transform_rule(rule_json, index) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])
 	const transform = create_token_transform(rule_json['transform'])
@@ -546,6 +547,8 @@ export function parse_transform_rule(rule_json) {
 	const subtoken_transforms = create_token_transforms(rule_json['subtoken_transform'])
 
 	return {
+		id: `transform:${index}`,
+		name: rule_json['name'] ?? '',
 		trigger,
 		context,
 		action: transform_rule_action,
@@ -556,14 +559,27 @@ export function parse_transform_rule(rule_json) {
 	 * @param {RuleTriggerContext} trigger_context 
 	 * @returns {number}
 	 */
-	function transform_rule_action({ tokens, trigger_index, context_indexes, subtoken_indexes }) {
-		const transforms = [transform, ...context_transforms]
-		const indexes = [trigger_index, ...context_indexes]
-
-		apply_token_transforms(tokens, indexes, transforms)
-		apply_token_transforms(tokens[trigger_index].sub_tokens, subtoken_indexes, subtoken_transforms)
+	function transform_rule_action({ tokens, trigger_index, context_indexes, subtoken_indexes, rule_id }) {
+		tokens[trigger_index] = transform(tokens[trigger_index])
+		apply_token_transforms(tokens, context_indexes, context_transforms, `transform:context - ${rule_id}`)
+		apply_token_transforms(tokens[trigger_index].sub_tokens, subtoken_indexes, subtoken_transforms, `transform:subtoken - ${rule_id}`)
 
 		return trigger_index + 1
+	}
+
+	/**
+	 *
+	 * @param {Token[]} tokens
+	 * @param {number[]} token_indexes
+	 * @param {TokenTransform[]} transforms
+	 * @param {string} rule_info
+	 */
+	function apply_token_transforms(tokens, token_indexes, transforms, rule_info) {
+		for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
+			const transformed_token = transforms[i](tokens[token_indexes[i]])
+			transformed_token.applied_rules.push(rule_info)
+			tokens[token_indexes[i]] = transformed_token
+		}
 	}
 }
 
@@ -621,4 +637,4 @@ function tag_nested_clauses(clause_token, tag_to_set) {
 }
 
 export const TRANSFORM_RULES = transform_rules_json.map(parse_transform_rule)
-	.concat(builtin_transform_rules.map(({ rule }) => rule))
+	.concat(builtin_transform_rules.map(from_built_in_rule('transform')))

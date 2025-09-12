@@ -33,9 +33,10 @@ export const MESSAGE_TYPE = {
  * @param {Token?} [other_data.pairing=null]
  * @param {PairingType} [other_data.pairing_type='none']
  * @param {Token?} [other_data.pronoun=null]
+ * @param {string?} [other_data.rule_info=null]
  * @return {Token}
  */
-export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', lookup_results=[], sub_tokens=[], pairing=null, pairing_type='none', pronoun=null }={}) {
+export function create_token(token, type, { message=null, tag={}, specified_sense='', lookup_term='', lookup_results=[], sub_tokens=[], pairing=null, pairing_type='none', pronoun=null, rule_info=null }={}) {
 	return {
 		token,
 		type,
@@ -48,16 +49,19 @@ export function create_token(token, type, { message=null, tag={}, specified_sens
 		pairing,
 		pairing_type,
 		pronoun,
+		applied_rules: rule_info ? [rule_info] : [],
 	}
 }
 
 /**
  * @param {string} token
  * @param {Message} message
+ * @param {string?} rule_id
  * @returns {Token}
  */
-export function create_added_token(token, message) {
-	return create_token(token, TOKEN_TYPE.ADDED, { message })
+export function create_added_token(token, message, rule_id=null) {
+	const rule_info = rule_id ? `add - ${rule_id}` : null
+	return create_token(token, TOKEN_TYPE.ADDED, { message, rule_info })
 }
 
 /**
@@ -97,7 +101,7 @@ export function set_message(trigger_context, message_info) {
 		...message_type,
 		message: message_info.plain ? message_text : format_token_message(trigger_context, message_text, token_to_flag),
 	}
-	set_message_plain(token_to_flag, message)
+	set_message_plain(token_to_flag, message, trigger_context.rule_id)
 }
 
 /**
@@ -105,9 +109,11 @@ export function set_message(trigger_context, message_info) {
  *
  * @param {Token} token
  * @param {Message} message
+ * @param {string} rule_id
  */
-export function set_message_plain(token, message) {
+export function set_message_plain(token, message, rule_id) {
 	token.messages.push(message)
+	token.applied_rules.push(`message:${message.label} - ${rule_id}`)
 }
 
 /**
@@ -194,9 +200,11 @@ export function split_stem_and_sense(term) {
  *
  * @param {Token} token
  * @param {Tag} tag
+ * @param {string} [rule_id='Unknown'] 
  */
-export function add_tag_to_token(token, tag) {
+export function add_tag_to_token(token, tag, rule_id='Unknown') {
 	token.tag = { ...token.tag, ...tag }
+	token.applied_rules.push(`tag:${Object.keys(tag).join('|')} - ${rule_id}`)
 }
 
 /**

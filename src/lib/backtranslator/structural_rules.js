@@ -1,6 +1,6 @@
 import { TOKEN_TYPE, create_token, token_has_tag } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
-import { create_context_filter, create_token_filter, simple_rule_action } from '$lib/rules/rules_parser'
+import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
 
 /** @type {BuiltInRule[]} */
 const structural_rules_json = [
@@ -543,4 +543,4 @@ function is_first_word(token) {
 }
 
 
-export const BT_STRUCTURAL_RULES = structural_rules_json.map(({ rule }) => rule)
+export const BT_STRUCTURAL_RULES = structural_rules_json.map(from_built_in_rule('bt_structural'))

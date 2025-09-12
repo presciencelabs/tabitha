@@ -57,10 +57,14 @@ export function apply_rule_to_tokens(tokens, rule) {
 			i++
 			continue
 		}
+
+		const rule_id = `${rule.id} - ${rule.name}`
+		tokens[i].applied_rules.push(`trigger - ${rule_id}`)
 		i = rule.action({
 			tokens,
 			trigger_index: i,
 			trigger_token: tokens[i],
+			rule_id,
 			...context_result,
 		})
 	}

@@ -61,7 +61,7 @@ function expand_token(token) {
 
 /**
  * 
- * @param {Sentence[]} sentences 
+ * @param {Sentence[]} sentences
  * @returns {SimpleToken[]}
  */
 function simplify_tokens(sentences) {
@@ -72,7 +72,7 @@ function simplify_tokens(sentences) {
 	 * @param {Token} token 
 	 * @returns {SimpleToken}
 	 */
-	function simplify_token({ token, type, tag, messages, lookup_results, pairing, pairing_type, pronoun, sub_tokens }) {
+	function simplify_token({ token, type, tag, messages, lookup_results, pairing, pairing_type, pronoun, sub_tokens, applied_rules }) {
 		return {
 			token,
 			type,
@@ -83,6 +83,7 @@ function simplify_tokens(sentences) {
 			pairing_type,
 			pronoun: pronoun ? simplify_token(pronoun) : null,
 			sub_tokens: sub_tokens.map(simplify_token),
+			applied_rules,
 		}
 	}
 

@@ -16,20 +16,26 @@ type RuleTriggerContext = {
 	tokens: Token[]
 	context_indexes: number[]
 	subtoken_indexes: number[]
+	rule_id: string
 }
 
 type RuleAction = (trigger_context: RuleTriggerContext) => number
 
-type TokenRule = {
+type TokenRuleCore = {
 	trigger: TokenFilter
 	context: TokenContextFilter
 	action: RuleAction
 }
 
+type TokenRule = TokenRuleCore & {
+	id: string
+	name: string
+}
+
 type BuiltInRule = {
 	name: string
 	comment: string
-	rule: TokenRule
+	rule: TokenRuleCore
 }
 
 // Json structures
@@ -72,24 +78,24 @@ type TokenTransformJson = {
 	function?: Tag
 }
 
-interface TokenRuleBase {
+interface TokenRuleJsonBase {
 	name?: string
 	trigger?: TokenFilterJson
 	context?: TokenContextFilterJson
 	comment?: string
 }
 
-interface LookupRuleJson extends TokenRuleBase {
+interface LookupRuleJson extends TokenRuleJsonBase {
 	lookup: string
 	combine?: number
 }
 
-interface PartOfSpeechRuleJson extends TokenRuleBase {
+interface PartOfSpeechRuleJson extends TokenRuleJsonBase {
 	category: string
 	remove: string
 }
 
-interface TransformRuleJson extends TokenRuleBase {
+interface TransformRuleJson extends TokenRuleJsonBase {
 	transform?: TokenTransformJson
 	context_transform?: TokenTransformJson | TokenTransformJson[]
 	subtoken_transform?: TokenTransformJson | TokenTransformJson[]
@@ -102,6 +108,6 @@ type CheckerActionJson = {
 	message: string
 }
 
-type CheckerRuleJson = TokenRuleBase & {
+type CheckerRuleJson = TokenRuleJsonBase & {
 	[key in MessageLabel]?: CheckerActionJson
 }

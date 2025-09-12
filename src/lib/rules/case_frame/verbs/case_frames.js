@@ -1125,7 +1125,7 @@ const verb_case_frames = new Map([
  */
 function create_default_argument_rules() {
 	return Object.entries(default_verb_case_frame_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('verb_default', role_tag, rule_json))
 }
 
 /**
@@ -1200,7 +1200,7 @@ export function get_passive_verb_case_frame_rules(token) {
 		'agent': by_adposition('by'),
 	}
 	const passive_rules = Object.entries(passive_rules_json)
-		.flatMap(rule_json => parse_case_frame_rule(rule_json))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('verb_passive', role_tag, rule_json))
 
 	const active_rules = get_verb_case_frame_rules(token)
 	return {
@@ -1226,7 +1226,7 @@ export function get_passive_verb_case_frame_rules(token) {
  */
 export function get_same_subject_verb_case_frame_rules(token) {
 	// for a same-subject subordinate clause, the agent is always missing, so attach it to the opening bracket for now
-	const agent_rules = parse_case_frame_rule(['agent', { 'trigger': { 'token': '[' }, 'tag_role': false }])
+	const agent_rules = parse_case_frame_rule('verb_same_subject', 'agent', { 'trigger': { 'token': '[' }, 'tag_role': false })
 
 	const active_rules = get_verb_case_frame_rules(token)
 	return {

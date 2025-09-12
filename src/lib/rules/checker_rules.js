@@ -3,7 +3,7 @@ import { ERRORS } from '$lib/parser/error_messages'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_one_part_of_speech, set_message_plain } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
-import { create_context_filter, create_token_filter, message_set_action } from './rules_parser'
+import { create_context_filter, create_token_filter, from_built_in_rule, message_set_action } from './rules_parser'
 
 /**
  * @type {CheckerRuleJson[]}
@@ -833,9 +833,10 @@ const builtin_checker_rules = [
 /**
  *
  * @param {CheckerRuleJson} rule_json
+ * @param {number} index
  * @returns {TokenRule}
  */
-export function parse_checker_rule(rule_json) {
+export function parse_checker_rule(rule_json, index) {
 	const trigger = create_token_filter(rule_json['trigger'])
 	const context = create_context_filter(rule_json['context'])
 
@@ -846,6 +847,8 @@ export function parse_checker_rule(rule_json) {
 	const action = checker_action(checker_action_json, message_type)
 
 	return {
+		id: `checker:${index}`,
+		name: rule_json['name'] ?? '',
 		trigger,
 		context,
 		action,
@@ -858,7 +861,7 @@ export function parse_checker_rule(rule_json) {
 	 */
 	function checker_action(action, message_type) {
 		return trigger_context => {
-			const { tokens, trigger_index } = trigger_context
+			const { tokens, trigger_index, rule_id } = trigger_context
 
 			const formatted_message = format_token_message(trigger_context, action.message)
 			const message = {
@@ -868,16 +871,16 @@ export function parse_checker_rule(rule_json) {
 
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (action.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(action.precededby, message))
+				tokens.splice(trigger_index, 0, create_added_token(action.precededby, message, rule_id))
 				return trigger_index + 2
 			}
 			if (action.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(action.followedby, message))
+				tokens.splice(trigger_index + 1, 0, create_added_token(action.followedby, message, rule_id))
 				return trigger_index + 2
 			}
 
 			const token_to_flag = get_token_to_flag(action, trigger_context)
-			set_message_plain(token_to_flag, message)
+			set_message_plain(token_to_flag, message, trigger_context.rule_id)
 			return trigger_index + 1
 		}
 	}
@@ -898,7 +901,7 @@ export function parse_checker_rule(rule_json) {
 	}
 }
 
-export const CHECKER_RULES = builtin_checker_rules.map(({ rule }) => rule).concat(checker_rules_json.map(parse_checker_rule))
+export const CHECKER_RULES = builtin_checker_rules.map(from_built_in_rule('checker')).concat(checker_rules_json.map(parse_checker_rule))
 
 /**
  *

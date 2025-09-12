@@ -1,5 +1,5 @@
 import { ERRORS } from '$lib/parser/error_messages'
-import { create_context_filter, create_token_filter, message_set_action, simple_rule_action } from './rules_parser'
+import { create_context_filter, create_token_filter, from_built_in_rule, message_set_action, simple_rule_action } from './rules_parser'
 import { TOKEN_TYPE, create_lookup_result, is_one_part_of_speech } from '$lib/token'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
@@ -571,7 +571,7 @@ const builtin_part_of_speech_rules = [
 		name: 'If an ambiguous word could be a Verb, and there are no other Verbs in the clause, select the Verb',
 		comment: 'this is an implicit rule in the Analyzer',
 		rule: {
-			trigger: token => has_part_of_speech(token, 'Verb'),
+			trigger: token => has_part_of_speech(token, 'Verb') && !is_one_part_of_speech(token),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ tokens, trigger_token, trigger_index }) => {
 				// Can't use the context filter, because there may be another ambiguous word somewhere.
@@ -588,15 +588,18 @@ const builtin_part_of_speech_rules = [
 /**
  *
  * @param {PartOfSpeechRuleJson} rule_json
+ * @param {number} index
  * @returns {TokenRule}
  */
-export function parse_part_of_speech_rule(rule_json) {
+export function parse_part_of_speech_rule(rule_json, index) {
 	const category = category_filter(rule_json['category'])
 	const trigger = create_token_filter(rule_json['trigger'] ?? 'all')
 	const context = create_context_filter(rule_json['context'])
 	const action = create_remove_action(rule_json['remove'])
 
 	return {
+		id: `part_of_speech:${index}`,
+		name: rule_json['name'] ?? '',
 		trigger: token => category(token) && trigger(token),
 		context,
 		action,
@@ -631,7 +634,7 @@ export function parse_part_of_speech_rule(rule_json) {
 	}
 }
 
-export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(({ rule }) => rule)
+export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(from_built_in_rule('part_of_speech'))
 	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
 
 /**
