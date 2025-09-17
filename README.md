@@ -1,6 +1,6 @@
 # Ontology web app
 
-Available at [https://ontology.tbta.bible](https://ontology.tbta.bible)
+Available at [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
 
 ## API
 
@@ -34,7 +34,7 @@ Grab relevant OAuth keys from a teammate's `.env.local` file and add them to you
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tbta.bible:5173](http://localhost.tbta.bible:5173)
+The site should then be available here: [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173)
 
 ### Static analysis
 
