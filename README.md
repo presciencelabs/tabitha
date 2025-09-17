@@ -1,10 +1,10 @@
 # Sources API
 
-Available at [https://sources.tbta.bible](https://sources.tbta.bible)
+Available at [https://sources.tabitha.bible](https://sources.tabitha.bible)
 
 ## API
 
-`https://sources.tbta.bible/Bible/Acts/10/9`
+`https://sources.tabitha.bible/Bible/Acts/10/9`
 
 ## Local development
 
@@ -28,7 +28,7 @@ Running the following command will load the data locally:
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tbta.bible:8789](http://localhost.tbta.bible:8789)
+The site should then be available here: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789)
 
 ## Static analysis
 

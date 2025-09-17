@@ -9,7 +9,7 @@ export default defineConfig({
 	],
 
 	server: {
-		host: 'localhost.tbta.bible',
+		host: 'localhost.tabitha.bible',
 		port: 8789,
 	},
 })
