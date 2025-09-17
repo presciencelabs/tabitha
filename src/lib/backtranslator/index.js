@@ -55,6 +55,8 @@ export function textify(sentences) {
 			return ''
 		} else if (token.type === TOKEN_TYPE.PHRASE) {
 			return ''
+		} else if (token.type === TOKEN_TYPE.GAP) {
+			return ''
 		} else if (token.token.startsWith('_')) {
 			return ''
 		} else if (['[', ']'].includes(token.token)) {

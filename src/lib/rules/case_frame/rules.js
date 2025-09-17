@@ -1,14 +1,33 @@
-import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
-import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
+import { add_tag_to_token, create_gap_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
+import { create_context_filter, create_skip_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
 import { select_pairing_sense, select_sense } from './sense_selection'
 import { get_adjective_case_frame_rules } from './adjectives/case_frames'
-import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules, get_same_subject_verb_case_frame_rules } from './verbs/case_frames'
+import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './verbs/case_frames'
 import { get_adposition_case_frame_rules } from './adpositions/case_frames'
 import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
 
 
 /** @type {BuiltInRule[]} */
 const argument_and_sense_rules = [
+	{
+		name: 'Fill gap in same-subject clauses',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_same_participant|patient_clause_same_subject_passive|adverbial_clause_same_subject' } }),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				// place the gap token right after any conjunction or adposition
+				const skip_filter = create_skip_filter(['clause_start', { 'category': 'Adposition' }])
+				let gap_position = 0
+				while (skip_filter(trigger_token.sub_tokens[gap_position])) {
+					gap_position += 1
+				}
+
+				const gap_token = create_gap_token(rule_id, { 'syntax': 'head_np' })
+				trigger_token.sub_tokens.splice(gap_position, 0, gap_token)
+			}),
+		},
+	},
 	{
 		name: 'Initialize case frame rules and usage',
 		comment: '',
@@ -77,39 +96,15 @@ const argument_and_sense_rules = [
 		comment: 'For now, only trigger when not within a relative clause or a question since arguments get moved around or are missing',
 		rule: {
 			trigger: token => create_token_filter({ 'category': 'Verb' })(token)
-					&& token.lookup_results.every(({ case_frame }) => case_frame.result.status === 'invalid'),
+					&& token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid'),
 			context: create_context_filter({
 				'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
+				'followedby': { 'tag': { 'pre_np_adposition': 'agent_of_passive' }, 'skip': 'all' },
 				'notprecededby': { 'tag': ['in_relative_clause', 'in_interrogative'], 'skip': 'all' },
 			}),
 			action: simple_rule_action(trigger_context => {
 				initialize_case_frame_rules(trigger_context, get_passive_verb_case_frame_rules)
 				check_case_frames(trigger_context)
-			}),
-		},
-	},
-	{
-		name: 'Verb case frame, same-participant patient clauses',
-		comment: '',
-		rule: {
-			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_same_participant|adverbial_clause_same_subject' } }),
-			context: create_context_filter({
-				'notprecededby': { 'tag': ['in_relative_clause', 'in_interrogative'], 'skip': 'all' },
-				'subtokens': { 'category': 'Verb', 'skip': 'all' },
-			}),
-			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
-				const verb_trigger_context = {
-					tokens: trigger_token.sub_tokens,
-					trigger_token: trigger_token.sub_tokens[subtoken_indexes[0]],
-					trigger_index: subtoken_indexes[0],
-					context_indexes: [],
-					subtoken_indexes: [],
-					rule_id,
-				}
-
-				// TODO insert a 'placeholder' token as the agent
-				initialize_case_frame_rules(verb_trigger_context, get_same_subject_verb_case_frame_rules)
-				check_case_frames(verb_trigger_context)
 			}),
 		},
 	},

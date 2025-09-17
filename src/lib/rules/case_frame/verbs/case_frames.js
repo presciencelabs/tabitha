@@ -1176,7 +1176,7 @@ export function get_verb_case_frame_rules(token) {
 		return {
 			rules_by_sense: [],
 			default_rule_getter: () => [],
-			role_info_getter: () => ({ possible_roles: [], required_roles: [] }),
+			role_info_getter: get_verb_usage_info,
 			should_check: false,
 		}
 	}
@@ -1217,32 +1217,6 @@ export function get_passive_verb_case_frame_rules(token) {
 	 */
 	function replace_passive_rules(role_rules) {
 		return role_rules.filter(rule => !['patient', 'agent'].includes(rule.role_tag)).concat(passive_rules)
-	}
-}
-
-/**
- * @param {Token} token 
- * @returns {CaseFrameRuleInfo}
- */
-export function get_same_subject_verb_case_frame_rules(token) {
-	// for a same-subject subordinate clause, the agent is always missing, so attach it to the opening bracket for now
-	const agent_rules = parse_case_frame_rule('verb_same_subject', 'agent', { 'trigger': { 'token': '[' }, 'tag_role': false })
-
-	const active_rules = get_verb_case_frame_rules(token)
-	return {
-		...active_rules,
-		rules_by_sense: active_rules.rules_by_sense
-			.map(rules_for_sense => ({ ...rules_for_sense, role_rules: replace_agent_rule(rules_for_sense.role_rules) })),
-		default_rule_getter: lookup => replace_agent_rule(active_rules.default_rule_getter(lookup)),
-	}
-
-	/**
-	 * 
-	 * @param {ArgumentRoleRule[]} role_rules 
-	 * @returns {ArgumentRoleRule[]}
-	 */
-	function replace_agent_rule(role_rules) {
-		return role_rules.filter(rule => !['agent'].includes(rule.role_tag)).concat(agent_rules)
 	}
 }
 

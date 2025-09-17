@@ -74,12 +74,7 @@ const result_filter_rules = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag(token, { 'position': 'first_word' }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token: token }) => {
-				if (token.token !== 'null') {
-					// 'null' is used for some double pairings like 'friends/brothers and null/sisters'.
-					// But the concept in the ontology is NULL, so should not be filtered by capitalization
-					filter_results_by_capitalization(token)
-				}
-
+				filter_results_by_capitalization(token)
 				if (token.pairing) {
 					filter_results_by_capitalization(token.pairing)
 				}
@@ -113,6 +108,12 @@ function starts_lowercase(text) {
  * @param {Token} token 
  */
 function filter_results_by_capitalization(token) {
+	if (token.token === 'null') {
+		// 'null' is used for some double pairings like 'friends/brothers and null/sisters', and for some dynamic\literal pairings.
+		// But the concept in the ontology is NULL, so should not be filtered by capitalization
+		return
+	}
+
 	token.lookup_results = starts_lowercase(token.token)
 		? token.lookup_results.filter(result => starts_lowercase(result.stem))
 		: token.lookup_results.filter(result => !starts_lowercase(result.stem))

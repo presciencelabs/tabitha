@@ -10,6 +10,7 @@ export const TOKEN_TYPE = {
 	CLAUSE: 'Clause',
 	ADDED: 'Added',
 	PHRASE: 'Phrase',
+	GAP: 'Gap',
 }
 
 /** @type { { [key: string]: MessageType } } */
@@ -62,6 +63,17 @@ export function create_token(token, type, { message=null, tag={}, specified_sens
 export function create_added_token(token, message, rule_id=null) {
 	const rule_info = rule_id ? `add - ${rule_id}` : null
 	return create_token(token, TOKEN_TYPE.ADDED, { message, rule_info })
+}
+
+/**
+ * @param {string} rule_id
+ * @param {Tag} [tag={}]
+ * @returns {Token}
+ */
+export function create_gap_token(rule_id, tag={}) {
+	const gap_result = create_lookup_result({ stem: 'GAP', part_of_speech: 'Noun' })
+	const rule_info = `add - ${rule_id}`
+	return create_token('GAP', TOKEN_TYPE.GAP, { lookup_results: [gap_result], tag, rule_info })
 }
 
 /**

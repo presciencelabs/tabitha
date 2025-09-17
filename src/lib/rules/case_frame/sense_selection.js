@@ -449,7 +449,7 @@ export function select_sense(trigger_context) {
 		valid_argument.rule.trigger_rule.action(valid_argument.trigger_context)
 		valid_argument.trigger_context.trigger_token.applied_rules.push(`transform:argument - ${valid_argument.trigger_context.rule_id}`)
 		if (valid_argument.rule.main_word_tag) {
-			add_tag_to_token(token, valid_argument.rule.main_word_tag, trigger_context.rule_id)
+			add_tag_to_token(token, valid_argument.rule.main_word_tag, valid_argument.trigger_context.rule_id)
 		}
 	}
 }

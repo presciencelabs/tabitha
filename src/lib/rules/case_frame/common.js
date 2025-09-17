@@ -151,15 +151,23 @@ export function initialize_case_frame_rules({ trigger_token }, rule_info_getter)
 			return
 		}
 		const { rules_by_sense, default_rule_getter, role_info_getter, should_check } = rule_info_getter(token)
-		if (!should_check) {
-			return
-		}
+
 		for (const lookup of token.lookup_results.filter(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
-			const rules_for_sense = get_rules_for_sense(rules_by_sense, default_rule_getter)(lookup)
-			lookup.case_frame = {
-				rules: rules_for_sense.role_rules,
-				usage: role_info_getter(lookup.categorization, rules_for_sense),
-				result: create_case_frame(),
+			if (should_check) {
+				const rules_for_sense = get_rules_for_sense(rules_by_sense, default_rule_getter)(lookup)
+				lookup.case_frame = {
+					rules: rules_for_sense.role_rules,
+					usage: role_info_getter(lookup.categorization, rules_for_sense),
+					result: create_case_frame(),
+				}
+			} else {
+				// still initialize the usage even if we won't perform the check
+				const empty_rules = { sense: '', role_rules: [], other_required: [], other_optional: [], patient_clause_type: '' }
+				lookup.case_frame = {
+					rules: [],
+					usage: role_info_getter(lookup.categorization, empty_rules),
+					result: create_case_frame(),
+				}
 			}
 		}
 	}
@@ -318,8 +326,13 @@ function check_usage(lookup, role_matches) {
 
 	const { possible_roles, required_roles } = lookup.case_frame.usage
 
+	// Sometimes the same token matches multiple roles, especially with clauses. So if an 'extra' argument
+	// also matched a valid argument, remove it from the extras.
+
 	const valid_arguments = role_matches.filter(({ role_tag }) => possible_roles.includes(role_tag))
-	const extra_arguments = role_matches.filter(({ role_tag }) => !possible_roles.includes(role_tag))
+	const extra_arguments = role_matches.filter(({ role_tag, trigger_context }) => 
+		!possible_roles.includes(role_tag)
+		&& !valid_arguments.some(({ trigger_context: { trigger_index} }) => trigger_context.trigger_index === trigger_index))
 	const missing_arguments = required_roles.filter(role => !role_matches.some(({ role_tag }) => role_tag === role))
 
 	const is_valid = extra_arguments.length === 0 && missing_arguments.length === 0
