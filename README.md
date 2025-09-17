@@ -1,10 +1,10 @@
 # Targets API
 
-Available at [https://targets.tbta.bible](https://targets.tbta.bible)
+Available at [https://targets.tabitha.bible](https://targets.tabitha.bible)
 
 ## API
 
-`https://targets.tbta.bible/English/John/1/1`
+`https://targets.tabitha.bible/English/John/1/1`
 
 ## Local development
 
@@ -28,7 +28,7 @@ Running the following command will load the data locally:
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tbta.bible:8788](http://localhost.tbta.bible:8788)
+The site should then be available here: [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788)
 
 ## Static analysis
 
