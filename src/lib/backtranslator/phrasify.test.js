@@ -35,7 +35,7 @@ describe('phrasify', () => {
 	test("The man [who John knows] wants [to see the king's wood table].", async () => {
 		await test_phrasify({
 			input_text: "The man [who John knows] wants [to see the king's wood table].",
-			expected_text: "{NP The man [ who {NP John } {VP knows } ] } {VP wants } [ {VP to see } {NP {NP the king's } {NP wood } table } ] .",
+			expected_text: "{NP The man [ who {NP John } {VP knows } {NP GAP_REL } ] } {VP wants } [ {NP GAP_SAME_SUB } {VP to see } {NP {NP the king's } {NP wood } table } ] .",
 		})
 	})
 	test("The top of John's big house is red.", async () => {
@@ -113,7 +113,7 @@ describe('phrasify', () => {
 	test('John did not want [to leave].', async () => {
 		await test_phrasify({
 			input_text: 'John did not want [to leave].',
-			expected_text: '{NP John } {VP did not want } [ {VP to leave } ] .',
+			expected_text: '{NP John } {VP did not want } [ {NP GAP_SAME_SUB } {VP to leave } ] .',
 		})
 	})
 	test("Those things were given/entrusted by God _implicitActiveAgent to God's _implicit holy people.", async () => {

@@ -358,6 +358,16 @@ const part_of_speech_rules_json = [
 		'comment': "Daniel 2:1 'for about(Adj/Adp) two years.'  This rule applies specifically to the word 'about' because in general, both Adjectives and Adpositions can precede Adjectives.  Exclude the word 'all' as in Ruth 3:16 'Ruth told Naomi about(Adj/Adp) all(Adj) the things that Boaz did.' Exclude 'many' as in Kande's Story 5:9 'They talked about many things.' This rule really should specify that when 'about' is followed by a numeric Adjective, delete the Adposition.",
 	},
 	{
+		'name': 'If Adjective-Adposition "about" NOT followed by an Adjective, delete the Adjective',
+		'category': 'Adjective|Adposition',
+		'trigger': { 'stem': 'about' },
+		'context': {
+			'notfollowedby': { 'category': 'Adjective' },
+		},
+		'remove': 'Adjective',
+		'comment': "John knew the thing [that John talked about].",
+	},
+	{
 		'name': 'If Adjective-Adposition followed by a Noun, delete the Adjective',
 		'category': 'Adjective|Adposition',
 		'trigger': { 'stem': 'about' },

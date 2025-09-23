@@ -67,13 +67,15 @@ export function create_added_token(token, message, rule_id=null) {
 
 /**
  * @param {string} rule_id
+ * @param {string} type
  * @param {Tag} [tag={}]
  * @returns {Token}
  */
-export function create_gap_token(rule_id, tag={}) {
-	const gap_result = create_lookup_result({ stem: 'GAP', part_of_speech: 'Noun' })
+export function create_gap_token(rule_id, type, tag={}) {
+	const token = `GAP_${type}`
+	const gap_result = create_lookup_result({ stem: token, part_of_speech: 'Noun' })
 	const rule_info = `add - ${rule_id}`
-	return create_token('GAP', TOKEN_TYPE.GAP, { lookup_results: [gap_result], tag, rule_info })
+	return create_token(token, TOKEN_TYPE.GAP, { lookup_results: [gap_result], tag, rule_info })
 }
 
 /**

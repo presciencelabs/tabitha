@@ -16,6 +16,7 @@ function init() {
 	return {
 		subscribe,
 		set: value => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 			browser && localStorage.setItem('saved', value)
 			set(value)
 		},

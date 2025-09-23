@@ -1,5 +1,5 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
-import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message } from '$lib/token'
+import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message, token_has_tag } from '$lib/token'
 import { parse_transform_rule } from '../transform_rules'
 
 /**
@@ -332,7 +332,7 @@ function check_usage(lookup, role_matches) {
 	const valid_arguments = role_matches.filter(({ role_tag }) => possible_roles.includes(role_tag))
 	const extra_arguments = role_matches.filter(({ role_tag, trigger_context }) => 
 		!possible_roles.includes(role_tag)
-		&& !valid_arguments.some(({ trigger_context: { trigger_index} }) => trigger_context.trigger_index === trigger_index))
+		&& !valid_arguments.some(({ trigger_context: { trigger_index } }) => trigger_context.trigger_index === trigger_index))
 	const missing_arguments = required_roles.filter(role => !role_matches.some(({ role_tag }) => role_tag === role))
 
 	const is_valid = extra_arguments.length === 0 && missing_arguments.length === 0
@@ -356,13 +356,16 @@ export function* validate_case_frame(trigger_context) {
 	if (token.lookup_results.every(lookup => lookup.case_frame.result.status === 'unchecked')) {
 		return
 	}
+
+	// show the case frame messages as warnings when inside a relative clause, in case something is mishandled
+	const severity = token_has_tag(trigger_context.tokens[0], 'in_relative_clause') ? 'warning' : 'error'
 	
 	const selected_result = token.lookup_results[0]
 	const sense = stem_with_sense(selected_result)
 	const case_frame = selected_result.case_frame.result
 
 	if (no_matches_and_ambiguous_sense(token)) {
-		yield { error: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
+		yield { [severity]: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
 
 		// flag any extra roles common to all lookup results
 		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }) => role_is_extra_for_all(role_tag, token))
@@ -370,8 +373,8 @@ export function* validate_case_frame(trigger_context) {
 			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.get(extra_argument.role_tag)
 				|| extra_argument.rule.extra_message.replaceAll('{sense}', "'{stem}'")
 			// put the error message on both the trigger token AND the argument token
-			yield { error: extra_message }
-			yield flag_extra_argument(trigger_context, extra_argument, extra_message)
+			yield { [severity]: extra_message }
+			yield flag_extra_argument(trigger_context, extra_argument, extra_message, severity)
 		}
 
 		// show the invalid arguments for each lookup result
@@ -380,11 +383,11 @@ export function* validate_case_frame(trigger_context) {
 		}
 
 	} else if (case_frame.status === 'invalid') {
-		yield { error: 'Incorrect usage of {sense}. Check other errors and warnings for more information, and consult the Ontology.' }
+		yield { [severity]: 'Incorrect usage of {sense}. Check other errors and warnings for more information, and consult the Ontology.' }
 		yield show_invalid_roles(selected_result)
 		
 		for (const extra_argument of case_frame.extra_arguments) {
-			yield flag_extra_argument(trigger_context, extra_argument, extra_argument.rule.extra_message)
+			yield flag_extra_argument(trigger_context, extra_argument, extra_argument.rule.extra_message, severity)
 		}
 	}
 
@@ -414,7 +417,7 @@ export function* validate_case_frame(trigger_context) {
 		if (no_matches_and_ambiguous_sense(pairing_token)) {
 			yield {
 				token_to_flag: pairing_token,
-				error: `'{stem}' may not be compatible with this usage of ${simple_sense}.`,
+				[severity]: `'{stem}' may not be compatible with this usage of ${simple_sense}.`,
 			}
 
 			// show the invalid arguments for each lookup result
@@ -425,7 +428,7 @@ export function* validate_case_frame(trigger_context) {
 		} else if (selected_pairing_result.case_frame.result.status === 'invalid') {
 			yield {
 				token_to_flag: pairing_token,
-				error: `{sense} may not be compatible with this usage of ${simple_sense}.`,
+				[severity]: `{sense} may not be compatible with this usage of ${simple_sense}.`,
 			}
 			yield { token_to_flag: pairing_token, ...show_invalid_roles(selected_pairing_result) }
 		}
@@ -482,13 +485,14 @@ function role_is_extra_for_all(role_tag, token) {
  * @param {RuleTriggerContext} trigger_context 
  * @param {RoleMatchResult} extra_argument 
  * @param {string} message
+ * @param {MessageLabel} severity
  * @returns {MessageInfo}
  */
-function flag_extra_argument(trigger_context, extra_argument, message) {
+function flag_extra_argument(trigger_context, extra_argument, message, severity) {
 	// The message is formatted based on the verb trigger token, not the argument token
 	const formatted_message = format_token_message(trigger_context, message)
 
 	const argument_token = extra_argument.trigger_context.trigger_token
 	const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
-	return { token_to_flag, error: formatted_message, plain: true }
+	return { token_to_flag, [severity]: formatted_message, plain: true }
 }

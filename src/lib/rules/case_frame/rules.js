@@ -1,10 +1,11 @@
-import { add_tag_to_token, create_gap_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
-import { create_context_filter, create_skip_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
+import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
+import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
 import { select_pairing_sense, select_sense } from './sense_selection'
 import { get_adjective_case_frame_rules } from './adjectives/case_frames'
 import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './verbs/case_frames'
 import { get_adposition_case_frame_rules } from './adpositions/case_frames'
 import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
+import { fill_relative_clause_gap, fill_same_subject_gap } from './gap_handling'
 
 
 /** @type {BuiltInRule[]} */
@@ -16,15 +17,18 @@ const argument_and_sense_rules = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_same_participant|patient_clause_same_subject_passive|adverbial_clause_same_subject' } }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token, rule_id }) => {
-				// place the gap token right after any conjunction or adposition
-				const skip_filter = create_skip_filter(['clause_start', { 'category': 'Adposition' }])
-				let gap_position = 0
-				while (skip_filter(trigger_token.sub_tokens[gap_position])) {
-					gap_position += 1
-				}
-
-				const gap_token = create_gap_token(rule_id, { 'syntax': 'head_np' })
-				trigger_token.sub_tokens.splice(gap_position, 0, gap_token)
+				fill_same_subject_gap(trigger_token.sub_tokens, rule_id)
+			}),
+		},
+	},
+	{
+		name: 'Fill gap in relative clauses',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				fill_relative_clause_gap(trigger_token.sub_tokens, rule_id)
 			}),
 		},
 	},
@@ -82,25 +86,25 @@ const argument_and_sense_rules = [
 	},
 	{
 		name: 'Verb case frame, active',
-		comment: 'For now, only trigger when not within a relative clause, question, or same-subject clause since arguments get moved around or are missing',
+		comment: 'For now, only trigger when not within a question since arguments get moved around',
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
 			context: create_context_filter({
-				'notprecededby': { 'tag': ['in_relative_clause', 'in_interrogative'], 'skip': 'all' },
+				'notprecededby': { 'tag': 'in_interrogative', 'skip': 'all' },
 			}),
 			action: simple_rule_action(check_case_frames),
 		},
 	},
 	{
 		name: 'Verb case frame, passive',
-		comment: 'For now, only trigger when not within a relative clause or a question since arguments get moved around or are missing',
+		comment: 'For now, only trigger when not within a question since arguments get moved around',
 		rule: {
 			trigger: token => create_token_filter({ 'category': 'Verb' })(token)
 					&& token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid'),
 			context: create_context_filter({
 				'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 				'followedby': { 'tag': { 'pre_np_adposition': 'agent_of_passive' }, 'skip': 'all' },
-				'notprecededby': { 'tag': ['in_relative_clause', 'in_interrogative'], 'skip': 'all' },
+				'notprecededby': { 'tag': 'in_interrogative', 'skip': 'all' },
 			}),
 			action: simple_rule_action(trigger_context => {
 				initialize_case_frame_rules(trigger_context, get_passive_verb_case_frame_rules)
@@ -119,13 +123,10 @@ const argument_and_sense_rules = [
 	},
 	{
 		name: 'Adposition case frames',
-		comment: `Need to do this after Adjectives and Verbs so that argument-related adpositions don't get checked.
-			Also skip relative clauses because there may be a dangling adposition (eg. 'place [that John lived at]'`,
+		comment: "Need to do this after Adjectives and Verbs so that argument-related adpositions don't get checked.",
 		rule: {
 			trigger: create_token_filter({ 'category': 'Adposition' }),
-			context: create_context_filter({
-				'notprecededby': { 'tag': { 'syntax': 'relativizer' }, 'skip': 'all' },
-			}),
+			context: create_context_filter({}),
 			action: simple_rule_action(check_case_frames),
 		},
 	},
