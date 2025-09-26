@@ -11,5 +11,5 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Sources" # i.e. available in your Worker on env.DB
-database_name = "Sources.2025-08-12"
-database_id = "cc1e4d13-2cf9-4cf3-914d-c7f986dc2201"
+database_name = "Sources.2025-09-25"
+database_id = "e6aa6e22-7a9b-4d52-a28a-66f6708ea0b4"
