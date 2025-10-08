@@ -88,7 +88,7 @@ function transform_function_word([word, gloss]) {
 		occurrences: 0,
 		categories: [],
 		curated_examples: [],
-		status: 'absent',
+		status: 'function_word',
 		how_to_hints: [],
 	}
 }

@@ -1,10 +1,9 @@
 <script>
 	import Icon from '@iconify/svelte'
 	import Header from './Header.svelte'
-	import Meaning from './Meaning.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
 	import { Category } from './categorization'
-	import { DetailedCard } from '$lib'
+	import { DetailedCard, Meaning } from '$lib'
 
 	/** @type {Concept} */
 	export let concept
@@ -27,7 +26,7 @@
 			<Header {concept} />
 		</section>
 
-		<section class="prose flex-grow">
+		<section class="prose max-w-none">
 			<Meaning {concept} />
 		</section>
 

@@ -1,5 +1,5 @@
 <script>
-	import { DetailedCard, Level, Occurrences } from '$lib'
+	import { DetailedCard, Level, Occurrences, Meaning } from '$lib'
 
 	/** @type {Concept[]} */
 	export let concepts
@@ -41,7 +41,7 @@
 					{concept.part_of_speech}
 				</td>
 				<td>
-					{concept.gloss}
+					<Meaning {concept} />
 				</td>
 				<td>
 					<Level {concept} />

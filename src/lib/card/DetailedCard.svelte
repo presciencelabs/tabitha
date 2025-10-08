@@ -1,8 +1,7 @@
 <script>
 	import Icon from '@iconify/svelte'
-	import { Details, Examples } from '$lib'
+	import { Details, Examples, Meaning } from '$lib'
 	import Header from './Header.svelte'
-	import Meaning from './Meaning.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
 	import { Category } from './categorization'
 	import { onMount } from 'svelte'
@@ -33,13 +32,15 @@
 					<Header {concept} />
 				</section>
 
-				<section class="prose flex-grow">
+				<section class="prose max-w-none">
 					<Meaning {concept} />
 				</section>
 
-				<section class="prose mt-4 max-w-none">
-					<Category {concept} />
-				</section>
+				{#if concept.part_of_speech === 'Verb'}
+					<section class="prose mt-4 max-w-none">
+						<Category {concept} />
+					</section>
+				{/if}
 
 				{#if concept.status === 'present'}
 					<section class="prose mt-4 max-w-none">

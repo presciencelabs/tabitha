@@ -30,7 +30,7 @@ interface Concept extends DbRowConcept {
 	how_to_hints: SimplificationHint[]
 }
 
-type OntologyStatus = 'present' | 'pending' | 'absent'
+type OntologyStatus = 'present' | 'pending' | 'absent' | 'function_word'
 
 type ConceptSearchFilter = {
 	q: string

@@ -205,7 +205,7 @@ function merge_how_to_results(concepts, how_to_results) {
 			level: 'N/A',
 			categorization: '',
 			examples: '',
-			gloss: 'Not in the Ontology, but suggestions are available',
+			gloss: 'NOT IN THE ONTOLOGY, but suggestions are available',
 			brief_gloss: '',
 			occurrences: 0,
 			categories: [],

@@ -4,21 +4,19 @@
 
 	$: level = concept.level
 
-	/** @type {Record<string, string>}*/
-	const level_descriptions = {
-		'0': 'Semantic Primitive',
-		'1': 'Semantic Molecule',
-		'2': 'Complex - usually explicated',
-		'3': 'Complex - usually in a complex alternate',
-		'4': 'Inexplicable',
-		'N/A': 'Not in the ontology',
-		'FW': 'Function Word',
+	/** @type {Record<string, [string, string]>}*/
+	const level_info = {
+		'0': ['Semantic Primitive', 'L0'],
+		'1': ['Semantic Molecule', 'L1'],
+		'2': ['Complex - usually explicated', 'L2'],
+		'3': ['Complex - usually in a complex alternate', 'L3'],
+		'4': ['Inexplicable', 'L4'],
+		'N/A': ['Not in the ontology', 'badge-error'],
+		'FW': ['Function Word', 'badge-netural'],
 	}
 
-	$: level_int = Number(level)
-	$: description = level_descriptions[level] || ''
-	$: level_class = level_int >= 0 ? `L${level}` : 'badge-neutral'
-	$: level_display = level_int >= 0 ? `L${level}${concept.status === 'pending' ? '?' : ''}` : level
+	$: [description, level_class] = level_info[level] || ['', 'badge-neutral']
+	$: level_display = Number(level) >= 0 ? `L${level}${concept.status === 'pending' ? '?' : ''}` : level
 </script>
 
 <span class={`badge ${level_class} badge-lg tooltip tooltip-left font-mono`} data-tip={description}>
