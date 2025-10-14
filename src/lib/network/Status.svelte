@@ -4,7 +4,7 @@
 </script>
 
 {#if $offline}
-	<span class="badge badge-error badge-lg gap-4 tracking-widest">
+	<span class="badge badge-error badge-lg gap-4 tracking-widest mt-2">
 		<Icon icon="carbon:cloud-offline" /> offline
 	</span>
 {/if}

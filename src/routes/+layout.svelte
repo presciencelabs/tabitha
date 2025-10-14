@@ -30,32 +30,31 @@
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<footer class="prose footer mt-20 max-w-none bg-neutral p-10 text-neutral-content">
+<footer class="footer footer-horizontal mt-20 max-w-none bg-neutral p-10 text-neutral-content">
 	<nav>
-		<header class="footer-title">Theme</header>
-
 		<Selector colors="bg-accent text-accent-content" />
 	</nav>
 
-	<nav class="place-self-start md:justify-self-end">
+	<nav class="justify-self-end">
 		{#if user}
-			<section class="flex items-center gap-2">
-				<div>
-					<div class="font-serif text-lg tracking-widest">{user.name}</div>
-
-					<span class="text-sm italic">
-						{user.email}
-					</span>
-				</div>
+			<div class="flex items-center justify-between w-full">
+				<span class="font-serif text-lg tracking-widest">{user.name}</span>
 
 				<button onclick={sign_out} class="btn btn-sm btn-outline btn-error">
 					<Icon icon="material-symbols:logout-rounded" class="h-5 w-5" />
 				</button>
-			</section>
+			</div>
+
+			<span class="text-sm italic">
+				{user.email}
+			</span>
 		{:else}
 			<button onclick={() => signIn('google')} class="btn btn-sm btn-outline btn-success">
 				Sign in to see additional features
 			</button>
 		{/if}
+
+		<div class="divider w-full divider-accent"></div>
+		<a href="/downloads" class="link link-hover">Ontology downloads</a>
 	</nav>
 </footer>

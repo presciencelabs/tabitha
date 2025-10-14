@@ -18,3 +18,7 @@ database_id = "9fe34c02-0d9c-487a-8898-c8412794b554"
 binding = "DB_Auth"
 database_name = "Auth"
 database_id = "b3f48161-a488-4737-ab9a-f59c22090c80"
+
+[[r2_buckets]]
+binding = "R2_db_backups"
+bucket_name = "db-backups"

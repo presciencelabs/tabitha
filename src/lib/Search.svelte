@@ -24,6 +24,7 @@
 
 	/** @param {HTMLInputElement} input */
 	function auto_focus(input) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		autofocus && input.focus()
 	}
 
@@ -39,7 +40,7 @@
 	<!--
 		used role="search" ∵ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility.
 	-->
-	<form role="search" class="join w-full">
+	<form role="search" action="/" class="join w-full">
 		<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg w-full join-item" />
 
 		<select name="category" bind:value={category} class="select select-primary select-lg join-item">

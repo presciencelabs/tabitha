@@ -22,6 +22,10 @@ Running the following command will load the data locally:
 
 > dump files can be found in https://github.com/presciencelabs/tabitha-databases/tree/main/databases
 
+🚨 If wanting to test downloads locally, files will need to be loaded into the local R2.  For example:
+
+`pnpx wrangler r2 object put db-backups/Ontology.9493.2025-08-15.tabitha.sqlite --file ../tabitha-databases/databases/Ontology.9493.2025-08-15.tabitha.sqlite`
+
 #### 2. Configure local auth
 
 Grab relevant OAuth keys from a teammate's `.env.local` file and add them to your local `.env.local` file.
