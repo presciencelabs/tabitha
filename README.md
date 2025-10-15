@@ -241,3 +241,82 @@ graph TD
 	V2 -.- V2-go([go])
 	N3 -.- N3-store([store])
 ```
+
+# Current/Future Architecture
+
+```mermaid
+graph TD;
+    subgraph "Users"
+        direction LR
+        Phase1Analyst[Phase 1 Analyst];
+        OutsideSystem(["💻 Outside System <br/>(API Consumer)"]);
+        GrammarDeveloper[Grammar Developer];
+    end
+
+    subgraph Platform ["The Cloud"]
+        direction TB
+
+        subgraph UILayer [" "]
+            direction LR
+            OntologyUI["Ontology UI <br/>(PWA)"];
+            EditorUI["Editor UI <br/>(PWA)"];
+        end
+
+        subgraph APILayer [" "]
+            direction LR
+            OntologyAPI[Ontology API];
+            EditorAPI[Editor API];
+            SourcesAPI["Sources App <br/>(API Only)"];
+            TargetsAPI["Targets App <br/>(API Only)"];
+        end
+
+        subgraph FutureComponents [" "]
+            direction LR
+            Rules[Rules Builder];
+            Generation[Generation Function];
+            Analyzer[Analyzer App];
+            Lexicon[Lexicon App];
+        end
+
+        subgraph DataLayer [" "]
+            direction LR
+            OntologyDB[(Ontology DB)];
+            SourcesDB[(Sources DB)];
+            TargetsDB[(Targets DB)];
+            AuthDB[(Auth DB)];
+        end
+    end
+
+    %% Connections from Personas to UI/API
+    Phase1Analyst --> OntologyUI;
+    Phase1Analyst --> EditorUI;
+    GrammarDeveloper --> Rules;
+    GrammarDeveloper --> Analyzer;
+    GrammarDeveloper --> Generation;
+    GrammarDeveloper --> Lexicon;
+    OutsideSystem --> OntologyAPI;
+    OutsideSystem --> SourcesAPI;
+    OutsideSystem --> TargetsAPI;
+
+    %% Connections from UI Layer to lower layers
+    OntologyUI --> OntologyAPI;
+    EditorUI --> EditorAPI;
+    OntologyUI -->|CRUD| AuthDB;
+    
+    %% Connections from API Layer to Data Layer
+    OntologyAPI --> OntologyDB;
+    SourcesAPI --> SourcesDB;
+    TargetsAPI --> TargetsDB;
+
+    %% Styling for future components
+    style Rules fill:#fff,stroke:#ccc,stroke-width:2px,stroke-dasharray: 5 5;
+    style Generation fill:#fff,stroke:#ccc,stroke-width:2px,stroke-dasharray: 5 5;
+    style Analyzer fill:#fff,stroke:#ccc,stroke-width:2px,stroke-dasharray: 5 5;
+    style Lexicon fill:#fff,stroke:#ccc,stroke-width:2px,stroke-dasharray: 5 5;
+```
+
+## Guiding principles
+
+1. Offline support is built-in via PWAs and SQLite, both offer the possibility of running all capabilities on a client machine with online sync.
+1. Generation will most likely be done via WASM interaction to the existing C++ code... whether that's done via an API request with generation happening on a server or it's done via a Web Worker and some type of Web Container is unknown at this time.
+
