@@ -958,12 +958,7 @@ const verb_case_frames = new Map([
 			'patient': by_adposition('about'),
 		}],
 		['tell-D', { 'instrument': by_adposition('with') }],
-		['tell-E', {
-			'destination': directly_after_verb(),
-			'patient': { 'trigger': 'none' },
-			'patient_clause_type': 'patient_clause_quote_begin',
-			'comment': "clear the patient so it doesn't get confused with the destination",
-		}],
+		['tell-E', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
 	['think', [
 		['think-A', { 'patient': by_adposition('about') }],
