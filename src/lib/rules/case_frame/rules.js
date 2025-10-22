@@ -73,6 +73,9 @@ const argument_and_sense_rules = [
 
 				const token = trigger_context.trigger_token
 				const selected_result = token.lookup_results[0]
+				if (selected_result.case_frame.result.status === 'unchecked') {
+					return
+				}
 
 				// An adjective being used predicatively should be tagged as such so the verb case frame rules can check it.
 				// A verse reference is another special case that should not interfere with Verb case frames.

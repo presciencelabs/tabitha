@@ -49,7 +49,10 @@ export function with_no_double_patient() {
 		'other_rules': {
 			'double_patient': {
 				'trigger': { 'tag': { 'syntax': 'head_np' } },
-				'context': { 'precededby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' } },
+				'context': {
+					'precededby': { 'tag': { 'syntax': 'head_np' }, 'skip': 'np_modifiers' },
+					'notprecededby': { 'tag': { 'syntax': 'comma' }, 'skip': 'np_modifiers' },
+				},
 				'extra_message': "'{stem}' requires the patient to immediately follow the Verb. Make sure to use 'to X' for the destination.",
 			},
 		},
