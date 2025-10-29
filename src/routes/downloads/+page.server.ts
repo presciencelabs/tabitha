@@ -9,13 +9,11 @@ type Backup = {
 	version: string,
 }
 
-export const load: PageServerLoad = async ({platform}) => {
+export const load: PageServerLoad = async ({ platform }) => {
 	console.info('checking for downloads...')
 
 	// https://developers.cloudflare.com/r2/api/workers/workers-api-reference/#bucket-method-definitions
 	const { objects }: R2Objects = await platform!.env.R2_db_backups.list()
-
-	console.log(`found ${objects.length} objects`)
 
 	const backups = objects.map(transform).sort(most_recent_first) ?? []
 

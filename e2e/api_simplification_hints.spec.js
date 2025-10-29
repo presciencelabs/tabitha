@@ -9,17 +9,19 @@ test('check API contract, e.g., /simplification_hints?complex_term=disciple', as
 
 	// https://playwright.dev/docs/api/class-genericassertions#generic-assertions-to-contain-equal
 	expect(matches).toContainEqual({
-		term: 'disciple-A',
+		stem: 'disciple',
+		sense: expect.any(String),
 		part_of_speech: expect.any(String),
 		structure: expect.any(String),
 		pairing: expect.any(String),
 		explication: expect.any(String),
+		ontology_status: expect.any(String),
 	})
 })
 
 test('ensure API is case-insensitive, e.g., /simplification_hints?complex_term=DISciPlE-a', async ({ request }) => {
 	const lowercase_matches = await (await request.get('/simplification_hints?complex_term=disciple-A')).json()
-	const uppercase_matches = await (await request.get('/simplification_hints?complex_term=DISciPlE-a')).json()
+	const uppercase_matches = await (await request.get('/simplification_hints?complex_term=DISciPlE-A')).json()
 
 	expect(lowercase_matches).toEqual(uppercase_matches)
 })

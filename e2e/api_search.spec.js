@@ -16,6 +16,8 @@ test('check API contract, e.g., /search?q=love', async ({ request }) => {
 		level: expect.any(Number),
 		gloss: expect.any(String),
 		categorization: expect.any(String),
+		status: expect.any(String),
+		how_to_hints: [],
 	})
 })
 
