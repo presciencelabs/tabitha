@@ -1,3 +1,3 @@
 type ChapterResult = {
-	chapter: string
+	chapter: number
 }
