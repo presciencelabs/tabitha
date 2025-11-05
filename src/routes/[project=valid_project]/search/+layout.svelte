@@ -14,6 +14,6 @@
 	<Search {project} />
 </header>
 
-<main class="mx-8 mt-8">
+<main class="mx-8 mt-6">
 	{@render children?.()}
 </main>

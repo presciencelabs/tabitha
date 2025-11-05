@@ -13,3 +13,8 @@ type SearchTextResult = {
 }
 
 type FilterMap = Map<string, string[]>
+
+type ReturnTo = {
+	app: string
+	q: string
+}

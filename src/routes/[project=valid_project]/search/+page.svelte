@@ -3,9 +3,13 @@
 	import Icon from '@iconify/svelte'
 	import { SourceData } from '$lib'
 	import { bible_books } from '$lib/lookups'
+	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 
 	/** @type {import('./$types').PageData} */
 	export let data
+
+	/** @type {ReturnTo|undefined}*/
+	const return_to = data.return_to
 
 	$: matches = data.results
 	$: found = !!matches.length
@@ -102,6 +106,16 @@
 		return index_1 - index_2
 	}
 </script>
+
+<!--Eventually return_to may support other values as well-->
+{#if return_to?.app === 'ontology'}
+	<div class="mb-2">
+		<a class="btn" href="{PUBLIC_ONTOLOGY_API_HOST}{return_to.q ? `?q=${return_to.q}` : '/'}">
+			<Icon icon="mdi:arrow-left-thin" class="h-6 w-6" />
+			Return to Ontology
+		</a>
+	</div>
+{/if}
 
 <header class="flex justify-between">
 	<em class="badge badge-lg invisible gap-2" class:visible={searched} class:badge-success={found} class:badge-warning={!found}>
