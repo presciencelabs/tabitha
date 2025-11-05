@@ -104,4 +104,6 @@ export function find_replace(text) {
 		// remove neighboring implicit markers
 		.replace(/>> <</g, ' ')
 		.replace(/([^>])> <([^<])/g, '$1 $2')
+		// move comma into the implicit marking
+		.replace(/(>+),/g, ',$1')
 }
