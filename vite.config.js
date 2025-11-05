@@ -8,12 +8,6 @@ export default defineConfig({
 		sveltekit(),
 	],
 
-	test: {
-		include: [
-			'src/**/*.test.js',
-		],
-	},
-
 	server: {
 		host: 'localhost.tabitha.bible',
 		port: 5173,

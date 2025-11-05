@@ -365,7 +365,7 @@ const part_of_speech_rules_json = [
 			'notfollowedby': { 'category': 'Adjective' },
 		},
 		'remove': 'Adjective',
-		'comment': "John knew the thing [that John talked about].",
+		'comment': 'John knew the thing [that John talked about].',
 	},
 	{
 		'name': 'If Adjective-Adposition followed by a Noun, delete the Adjective',
