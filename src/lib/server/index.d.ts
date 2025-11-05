@@ -34,7 +34,7 @@ type OntologyStatus = 'present' | 'pending' | 'absent' | 'function_word'
 
 type ConceptSearchFilter = {
 	q: string
-	scope: 'stems' | 'glosses' | 'all'
+	scope: 'stems' | 'glosses' | 'all' | 'english'
 	category: string
 }
 

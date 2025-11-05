@@ -54,6 +54,7 @@
 			<option value="stems">Stems only</option>
 			<option value="glosses">Glosses only</option>
 			<option value="all">Stems and Glosses</option>
+			<option value="english">Generated English</option>
 		</select>
 
 		<button class="btn btn-primary btn-lg join-item">
