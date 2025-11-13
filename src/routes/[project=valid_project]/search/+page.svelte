@@ -107,16 +107,6 @@
 	}
 </script>
 
-<!--Eventually return_to may support other values as well-->
-{#if return_to?.app === 'ontology'}
-	<div class="mb-2">
-		<a class="btn" href="{PUBLIC_ONTOLOGY_API_HOST}{return_to.q ? `?q=${return_to.q}` : '/'}">
-			<Icon icon="mdi:arrow-left-thin" class="h-6 w-6" />
-			Return to Ontology
-		</a>
-	</div>
-{/if}
-
 <header class="flex justify-between">
 	<em class="badge badge-lg invisible gap-2" class:visible={searched} class:badge-success={found} class:badge-warning={!found}>
 		<Icon {icon} />
@@ -127,6 +117,18 @@
 
 <section class="join join-vertical invisible pt-2 w-full" class:visible={searched}>
 	<form class="join gap-4 bg-info text-info-content px-4 pb-4 overflow-x-auto join-item">
+		{#if return_to?.app === 'ontology'}
+			<!--Eventually return_to may support other values as well-->
+			<div class="mt-6">
+				<a class="btn" href="{PUBLIC_ONTOLOGY_API_HOST}{return_to.q ? `?q=${return_to.q}&scope=stems` : '/'}">
+					<Icon icon="mdi:arrow-left-thin" class="h-6 w-6" />
+					Return to Ontology
+				</a>
+			</div>
+
+			<div class="divider divider-horizontal pt-4 mx-0"></div>
+		{/if}
+
 		{#each filters as [name, options]}
 			<label class="join-item flex flex-col">
 				<span class="text-info-content label py-1">{name}</span>
