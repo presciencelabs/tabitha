@@ -1,4 +1,4 @@
-import { search_text } from '$lib/server/search'
+import { parse_search_query, search_text } from '$lib/server/search'
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ url: { searchParams }, params: { project }, locals: { db } }) {
@@ -11,10 +11,11 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 	/** @type {ReturnTo|undefined} */
 	const return_to = return_to_raw ? JSON.parse(decodeURIComponent(return_to_raw)) : undefined
 
-	const results = await search_text(db, project, q)
+	const parsed_q = parse_search_query(q)
+	const results = await search_text(db, project, parsed_q)
 	return {
 		results,
-		search_term: q,
+		search_terms: parsed_q.or_terms.flatMap(or_term => or_term.and_terms),
 		return_to,
 	}
 }

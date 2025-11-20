@@ -1,18 +1,43 @@
 import type { D1Database } from '@cloudflare/workers-types'
 
-export async function search_text(db: D1Database, project: string, q: string) {
+type AndTerm = string
+type OrTerm = {
+	and_terms: AndTerm[]
+}
+type ParsedSearchQuery = {
+	or_terms: OrTerm[]
+}
+
+export function parse_search_query(q: string): ParsedSearchQuery {
 	const normalized_q = normalize_wildcards(q)
+
+	const or_strings = normalized_q.split('|')
+	const or_terms = or_strings.map(or_term => ({
+		and_terms: [...or_term.matchAll(/\s*"(.+?)"|(\S+)\s*/g)]
+			.map(m => m[1] || m[2])
+			.map(term => term.trim())
+			.filter(term => term.length > 0),
+	}))
+	return { or_terms }
+}
+
+export async function search_text(db: D1Database, project: string, parsed_q: ParsedSearchQuery) {
+
+	const query_conditions = parsed_q.or_terms.map(or_term => {
+		const and_conditions = or_term.and_terms.map(() => 'text LIKE ?').join(' AND ')
+		return `(${and_conditions})`
+	}).join(' OR ')
 
 	const query = `
 		SELECT text, audience, book, chapter, verse
 		FROM Text
-		WHERE project = ? AND text LIKE ?
+		WHERE project = ? AND (${query_conditions})
 	`
 
-	// Remove wildcards around the query, as they will be added back in by default
-	const trimmed_q = normalized_q.replace(/^%|%$/g, '')
+	// Remove wildcards around each query term, as they will be added back in by default
+	const q_values = parsed_q.or_terms.flatMap(or_term => or_term.and_terms.map(term => term.replaceAll(/^%|%$/g, '')).map(term => `%${term}%`))
 
-	const { results: matches } = await db.prepare(query).bind(project, `%${trimmed_q}%`).all<DbTextResult>()
+	const { results: matches } = await db.prepare(query).bind(project, ...q_values).all<DbTextResult>()
 
 	return transform(matches)
 
@@ -39,5 +64,5 @@ export async function search_text(db: D1Database, project: string, q: string) {
  * @returns {string} SQL-ready string, i.e., `%` for wildcards
  */
 function normalize_wildcards(possible_wildard: string): string {
-	return possible_wildard.replace(/[*#]/g, '%')
+	return possible_wildard.replaceAll(/[*#]/g, '%')
 }
