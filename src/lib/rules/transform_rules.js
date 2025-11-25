@@ -108,6 +108,15 @@ const transform_rules_json = [
 		'comment': 'a later rule needs to know if the relativizer is "that". clear the determiner tag but keep the syntax one',
 	},
 	{
+		'name': 'Revert clause type for a "relative clause" with "that" when it modifies a pronoun',
+		'trigger': { 'tag': { 'clause_type': 'relative_clause_that' } },
+		'context': {
+			'precededby': { 'tag': 'pronoun' },
+		},
+		'transform': { 'tag': { 'clause_type': 'subordinate_clause' } },
+		'comment': '"that" will never be a relativizer when modifying a pronoun (only "who" will be)',
+	},
+	{
 		'name': 'Set tag for "that" when not preceded by a Noun',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': {
