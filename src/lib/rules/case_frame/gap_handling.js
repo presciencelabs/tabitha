@@ -73,6 +73,18 @@ function find_relative_clause_gap(tokens) {
 		}
 	}
 
+	// Next check if there's a dangling adposition right before another adposition
+	// eg. John knows the problem [that John talked about {} to Mary].
+	let prev_adp_index = -1
+	for (let i = 0; i < tokens.length; i++) {
+		if (adposition_filter(tokens[i])) {
+			if (prev_adp_index === i-1) {
+				return [prev_adp_index + 1]
+			}
+			prev_adp_index = i
+		}
+	}
+
 	// Next check if there's a gap right after the verb
 	// eg. John saw the person [who John told {} about the problem].
 	const [found_obj, index_obj] = find_following(tokens, verb_index, head_np_filter, np_vp_filter)
