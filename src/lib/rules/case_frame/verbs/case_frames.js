@@ -997,7 +997,7 @@ const verb_case_frames = new Map([
 				],
 			},
 		}],
-		['throw-E', { 'destination': by_adposition('into') }],
+		['throw-E', { 'destination': by_adposition('into|on|at') }],
 	]],
 	['tie', [
 		['tie-A', { 'instrument': by_adposition('with') }],

@@ -1,4 +1,4 @@
-import { create_gap_token } from '$lib/token'
+import { create_gap_token, TOKEN_TYPE } from '$lib/token'
 import { create_skip_filter, create_token_filter } from '../rules_parser'
 
 /**
@@ -93,7 +93,7 @@ function find_relative_clause_gap(tokens) {
  */
 function find_preceding(tokens, start_index, token_filter, skip_filter=()=>false) {
 	let index = start_index - 1
-	while (index >= 0 && !token_filter(tokens[index]) && skip_filter(tokens[index])) {
+	while (index >= 0 && !token_filter(tokens[index]) && should_skip(tokens[index], skip_filter)) {
 		index -= 1
 	}
 	return token_filter(tokens[index]) ? [true, index] : [false, index]
@@ -107,7 +107,7 @@ function find_preceding(tokens, start_index, token_filter, skip_filter=()=>false
  */
 function skip_following(tokens, start_index, skip_filter) {
 	let index = start_index + 1
-	while (index < tokens.length && skip_filter(tokens[index])) {
+	while (index < tokens.length && should_skip(tokens[index], skip_filter)) {
 		index += 1
 	}
 	return index
@@ -122,8 +122,16 @@ function skip_following(tokens, start_index, skip_filter) {
  */
 function find_following(tokens, start_index, token_filter, skip_filter=()=>false) {
 	let index = start_index + 1
-	while (index < tokens.length && !token_filter(tokens[index]) && skip_filter(tokens[index])) {
+	while (index < tokens.length && !token_filter(tokens[index]) && should_skip(tokens[index], skip_filter)) {
 		index += 1
 	}
 	return token_filter(tokens[index]) ? [true, index] : [false, index]
+}
+
+/**
+ * @param {Token} token
+ * @param {TokenFilter} skip_filter
+ */
+function should_skip(token, skip_filter) {
+	return skip_filter(token) || token.type === TOKEN_TYPE.NOTE
 }
