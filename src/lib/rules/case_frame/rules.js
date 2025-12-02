@@ -1,11 +1,11 @@
-import { add_tag_to_token, is_one_part_of_speech, token_has_tag } from '$lib/token'
+import { add_tag_to_token, is_one_part_of_speech, token_has_tag, TOKEN_TYPE } from '$lib/token'
 import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '$lib/rules/rules_parser'
 import { select_pairing_sense, select_sense } from './sense_selection'
 import { get_adjective_case_frame_rules } from './adjectives/case_frames'
 import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './verbs/case_frames'
 import { get_adposition_case_frame_rules } from './adpositions/case_frames'
 import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
-import { fill_relative_clause_gap, fill_same_subject_gap } from './gap_handling'
+import { fill_interrogative_gap, fill_relative_clause_gap, fill_same_subject_gap, handle_be_interrogative, restore_ghost_tokens } from './gap_handling'
 
 
 /** @type {BuiltInRule[]} */
@@ -33,6 +33,20 @@ const argument_and_sense_rules = [
 		},
 	},
 	{
+		name: 'Fill gap in interrogative clauses',
+		comment: 'There is only a gap if a head_noun comes before an auxiliary, and another head_noun is between the auxiliary and main verb',
+		rule: {
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE, 'tag': 'interrogative' }),
+			context: create_context_filter({
+				'subtokens': { 'category': 'Verb', 'skip': 'all' },
+			}),
+			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
+				const verb_index = subtoken_indexes[0]
+				fill_interrogative_gap(trigger_token.sub_tokens, verb_index, rule_id)
+			}),
+		},
+	},
+	{
 		name: 'Initialize case frame rules and usage',
 		comment: '',
 		rule: {
@@ -50,6 +64,19 @@ const argument_and_sense_rules = [
 				if (case_frame_rule_getter) {
 					initialize_case_frame_rules(trigger_context, case_frame_rule_getter)
 				}
+			}),
+		},
+	},
+	{
+		name: 'Move the verb for some "be" interrogative clauses',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE, 'tag': 'interrogative' }),
+			context: create_context_filter({
+				'subtokens': { 'stem': 'be', 'skip': 'all' },
+			}),
+			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
+				handle_be_interrogative(trigger_token.sub_tokens, subtoken_indexes[0], rule_id)
 			}),
 		},
 	},
@@ -89,25 +116,22 @@ const argument_and_sense_rules = [
 	},
 	{
 		name: 'Verb case frame, active',
-		comment: 'For now, only trigger when not within a question since arguments get moved around',
+		comment: '',
 		rule: {
 			trigger: create_token_filter({ 'category': 'Verb' }),
-			context: create_context_filter({
-				'notprecededby': { 'tag': 'in_interrogative', 'skip': 'all' },
-			}),
+			context: create_context_filter({}),
 			action: simple_rule_action(check_case_frames),
 		},
 	},
 	{
 		name: 'Verb case frame, passive',
-		comment: 'For now, only trigger when not within a question since arguments get moved around',
+		comment: '',
 		rule: {
 			trigger: token => create_token_filter({ 'category': 'Verb' })(token)
 					&& token.lookup_results.some(({ case_frame }) => case_frame.result.status === 'invalid'),
 			context: create_context_filter({
 				'precededby': { 'tag': { 'auxiliary': 'passive' }, 'skip': 'all' },
 				'followedby': { 'tag': { 'pre_np_adposition': 'agent_of_passive' }, 'skip': 'all' },
-				'notprecededby': { 'tag': 'in_interrogative', 'skip': 'all' },
 			}),
 			action: simple_rule_action(trigger_context => {
 				initialize_case_frame_rules(trigger_context, get_passive_verb_case_frame_rules)
@@ -155,6 +179,17 @@ const argument_and_sense_rules = [
 					check_pairing_case_frames(trigger_context)
 				}
 				select_pairing_sense(trigger_context)
+			}),
+		},
+	},
+	{
+		name: 'Revert ghost tokens to lookup tokens',
+		comment: 'In a previous rule, the lookup results of ghost tokens were moved to their corresponding gap tokens. These now get moved back.',
+		rule: {
+			trigger: token => token_has_tag(token, 'gap_index'),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ tokens, trigger_index }) => {
+				restore_ghost_tokens(tokens, trigger_index)
 			}),
 		},
 	},

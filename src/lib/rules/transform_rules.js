@@ -230,11 +230,6 @@ const transform_rules_json = [
 	},
 	// General function words
 	{
-		'name': 'tag "?" with "question"',
-		'trigger': { 'token': '?' },
-		'transform': { 'tag': { 'syntax': 'question' } },
-	},
-	{
 		'name': '"no" before a noun becomes negative_noun_polarity',
 		'trigger': { 'token': 'no' },
 		'context': { 'followedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } } },
@@ -267,14 +262,46 @@ const transform_rules_json = [
 		'context_transform': [{ }, { 'function': { 'pre_np_adposition': 'comparative_as' } }],
 		'comment': "eg 'as valuable as X', etc ",
 	},
+	// Interrogatives
 	{
-		'name': '\'who\'/\'what\' gets tagged with interrogative_which when in a question',
+		'name': '\'who\'/\'what\' gets tagged as interrogative determiner when in a question',
 		'trigger': { 'token': 'Who|who|What|what' },
 		'context': {
 			'followedby': { 'token': '?', 'skip': 'all' },
 		},
-		'transform': { 'tag': { 'determiner': 'interrogative' }, 'remove_tag': 'syntax' },
+		'transform': { 'tag': { 'determiner': 'interrogative', 'noun_tracking': 'interrogative' }, 'remove_tag': 'syntax' },
 		'comment': '"who/what" becomes "which person-A/thing-A" respectively when in a question. So tag it, but do not make it a function word',
+	},
+	{
+		'name': '"how-much-many" gets tagged with interrogative determiner',
+		'trigger': { 'stem': 'how-much-many' },
+		'context': {},
+		'transform': { 'tag': { 'determiner': 'interrogative' } },
+		'comment': '',
+	},
+	{
+		'name': 'tag clauses with "?" as "interrogative: yes-no"',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE },
+		'context': {
+			'subtokens': { 'token': '?', 'skip': 'all' },
+		},
+		'transform': { 'tag': { 'interrogative': 'yes-no' } },
+	},
+	{
+		'name': 'interrogatives that have an interrogative determiner are content questions',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'interrogative': 'yes-no' } },
+		'context': {
+			'subtokens': { 'tag': { 'determiner': 'interrogative' }, 'skip': 'all' },
+		},
+		'transform': { 'tag': { 'interrogative': 'content' } },
+	},
+	{
+		'name': 'interrogatives that have a question adverb are content questions',
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'interrogative': 'yes-no' } },
+		'context': {
+			'subtokens': { 'stem': 'how-long|how|where|why', 'skip': 'all' },
+		},
+		'transform': { 'tag': { 'interrogative': 'content' } },
 	},
 	// Noun-Noun relationships
 	{
@@ -490,6 +517,15 @@ const transform_rules_json = [
 		'transform': { 'remove_tag': ['syntax', 'role'] },
 	},
 	{
+		'name': 'nouns modified by an interrogative determiner get tagged with noun_tracking of interrogative',
+		'trigger': { 'tag': { 'syntax': 'head_np' } },
+		'context': {
+			'precededby': { 'tag': { 'determiner': 'interrogative' }, 'skip': 'np_modifiers' },
+		},
+		'transform': { 'tag': { 'noun_tracking': 'interrogative' } },
+		'comment': '',
+	},
+	{
 		'name': 'handle noun argument for relationship with X',
 		'trigger': { 'stem': 'relationship' },
 		'context': {
@@ -647,10 +683,8 @@ const builtin_transform_rules = [
 		name: "All clauses within a question are tagged as 'in_interrogative'",
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE }),
-			context: create_context_filter({
-				'subtokens': { 'token': '?', 'skip': 'all' },
-			}),
+			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE, 'tag': 'interrogative' }),
+			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token }) => {
 				tag_nested_clauses(trigger_token, { 'in_interrogative': 'true' })
 			}),

@@ -28,7 +28,8 @@ describe('textify', () => {
 
 	test('Added token', () => {
 		const test_tokens = tokenize_input('This is a test.')
-		test_tokens.splice(2, 0, create_added_token('added', { ...MESSAGE_TYPE.ERROR, message: 'message' }))
+		const rule_id = 'BT_TEST'
+		test_tokens.splice(2, 0, create_added_token('added', { ...MESSAGE_TYPE.ERROR, message: 'message', rule_id }))
 		const expected = 'This is a test .'
 
 		const result = textify(clausify(test_tokens))

@@ -67,12 +67,12 @@ export function create_added_token(token, message, rule_id=null) {
 
 /**
  * @param {string} rule_id
- * @param {string} type
+ * @param {string} label
  * @param {Tag} [tag={}]
  * @returns {Token}
  */
-export function create_gap_token(rule_id, type, tag={}) {
-	const token = `GAP_${type}`
+export function create_gap_token(rule_id, label, tag={}) {
+	const token = `GAP_${label}`
 	const gap_result = create_lookup_result({ stem: token, part_of_speech: 'Noun' })
 	const rule_info = `add - ${rule_id}`
 	return create_token(token, TOKEN_TYPE.GAP, { lookup_results: [gap_result], tag, rule_info })
@@ -114,8 +114,9 @@ export function set_message(trigger_context, message_info) {
 	const message = {
 		...message_type,
 		message: message_info.plain ? message_text : format_token_message(trigger_context, message_text, token_to_flag),
+		rule_id: trigger_context.rule_id,
 	}
-	set_message_plain(token_to_flag, message, trigger_context.rule_id)
+	set_message_plain(token_to_flag, message)
 }
 
 /**
@@ -123,11 +124,10 @@ export function set_message(trigger_context, message_info) {
  *
  * @param {Token} token
  * @param {Message} message
- * @param {string} rule_id
  */
-export function set_message_plain(token, message, rule_id) {
+export function set_message_plain(token, message) {
 	token.messages.push(message)
-	token.applied_rules.push(`message:${message.label} - ${rule_id}`)
+	token.applied_rules.push(`message:${message.label} - ${message.rule_id}`)
 }
 
 /**

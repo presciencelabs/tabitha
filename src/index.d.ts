@@ -39,6 +39,7 @@ type MessageType = {
 
 type Message = MessageType & {
 	message: string
+	rule_id: string
 	// TODO #101 add optional fix_action structure
 }
 

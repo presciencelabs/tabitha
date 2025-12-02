@@ -251,11 +251,13 @@ function create_directional_context_filter(context_json, offset) {
 		 * @returns {ContextFilterResult}
 		 */
 		function check_context_with_skip(tokens, start_index) {
+			const tokens_to_skip = [TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE]
+
 			for (let i = start_index + offset; end_check(tokens, i); i += offset) {
 				if (filter(tokens[i])) {
 					return context_result(true, { context_indexes: [i] })
 				}
-				if (!skip_filter(tokens[i]) && ![TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE].includes(tokens[i].type)) {
+				if (!skip_filter(tokens[i]) && !tokens_to_skip.includes(tokens[i].type)) {
 					return context_result(false)
 				}
 			}
@@ -427,6 +429,7 @@ export function from_built_in_rule(group_name) {
 const SKIP_GROUPS = new Map([
 	['clause_start', [
 		{ 'token': '[' },
+		{ 'token': '"' },
 		{ 'tag': { 'syntax': 'coord_clause' } },
 		{ 'category': 'Conjunction' },
 	]],

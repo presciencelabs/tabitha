@@ -11,11 +11,31 @@ import { BT_STRUCTURAL_RULES } from './structural_rules'
  */
 export function backtranslate(sentences) {
 	return pipe(
+		remove_some_gap_tokens,
 		phrasify,
 		rules_applier(BT_STRUCTURAL_RULES),
 		textify,
 		find_replace,
 	)(sentences)
+}
+
+/**
+ * @param {Sentence[]} sentences
+ * @returns {Sentence[]}
+ */
+export function remove_some_gap_tokens(sentences) {
+	return remove_intv_v_gaps(sentences.map(sentence => sentence.clause)).map(clause => ({ clause }))
+
+	/**
+	 * @param {Token[]} tokens
+	 * @returns {Token[]}
+	 */
+	function remove_intv_v_gaps(tokens) {
+		return tokens.filter(token => token.token !== 'GAP_INTV_V').map(token => {
+			token.sub_tokens = remove_intv_v_gaps(token.sub_tokens)
+			return token
+		})
+	}
 }
 
 /**

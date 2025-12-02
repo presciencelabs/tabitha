@@ -870,6 +870,7 @@ export function parse_checker_rule(rule_json, index) {
 			const message = {
 				...message_type,
 				message: formatted_message,
+				rule_id: trigger_context.rule_id,
 			}
 
 			// The action will have a precededby, followedby, or neither. Never both.
@@ -883,7 +884,7 @@ export function parse_checker_rule(rule_json, index) {
 			}
 
 			const token_to_flag = get_token_to_flag(action, trigger_context)
-			set_message_plain(token_to_flag, message, trigger_context.rule_id)
+			set_message_plain(token_to_flag, message)
 			return trigger_index + 1
 		}
 	}

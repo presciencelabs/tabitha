@@ -357,8 +357,8 @@ export function* validate_case_frame(trigger_context) {
 		return
 	}
 
-	// show the case frame messages as warnings when inside a relative clause, in case something is mishandled
-	const severity = token_has_tag(trigger_context.tokens[0], 'in_relative_clause') ? 'warning' : 'error'
+	// show the case frame messages as warnings when inside a relative clause or question, in case something is mishandled
+	const severity = token_has_tag(trigger_context.tokens[0], 'in_relative_clause|in_interrogative') ? 'warning' : 'error'
 	
 	const selected_result = token.lookup_results[0]
 	const sense = stem_with_sense(selected_result)
