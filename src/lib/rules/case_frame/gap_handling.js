@@ -7,7 +7,7 @@ import { create_context_filter, create_skip_filter, create_token_filter, simple_
  */
 export function fill_same_subject_gap(tokens, rule_id) {
 	// place the gap token right after any conjunction or adposition
-	const skip_filter = create_skip_filter(['clause_start', { 'category': 'Adposition' }])
+	const skip_filter = create_skip_filter(['clause_start', { 'category': 'Adposition' }, { 'tag': { 'syntax': 'gerundifier' } }])
 	const gap_index = skip_following(tokens, 0, skip_filter)
 	insert_gap_noun_token('SAME_SUB', tokens, [gap_index], rule_id)
 }

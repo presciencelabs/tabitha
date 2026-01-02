@@ -130,25 +130,6 @@ const transform_rules_json = [
 		'comment': '"that" should only be a demonstrative in this case. clear the syntax tag but keep the determiner one',
 	},
 	{
-		'name': 'tag subordinate clauses starting with an adposition as adverbial',
-		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
-		'context': {
-			'subtokens': {
-				'category': 'Adposition',
-				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
-			},
-		},
-		'transform': { 'tag': { 'clause_type': 'adverbial_clause' } },
-	},
-	{
-		'name': 'tag "in-order-to/by/without" clauses as "same subject" adverbial',
-		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },
-		'context': {
-			'subtokens': { 'stem': 'in-order-to|by|without', 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
-		},
-		'transform': { 'tag': { 'clause_type': 'adverbial_clause|adverbial_clause_same_subject' } },
-	},
-	{
 		'name': 'tag subordinate clauses along with \'it\' as agent clauses',
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 'precededby': { 'tag': { 'syntax': 'agent_proposition_subject' }, 'skip': 'all' } },
@@ -175,7 +156,7 @@ const transform_rules_json = [
 		'name': "tag subordinate clauses starting with the infinitive 'to' as 'same_participant'",
 		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
 		'context': { 
-			'subtokens': { 'tag': { 'syntax': 'infinitive' }, 'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }] },
+			'subtokens': { 'tag': { 'syntax': 'infinitive' }, 'skip': 'clause_start' },
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John wanted [to sing]',
@@ -187,11 +168,24 @@ const transform_rules_json = [
 			'subtokens': {
 				'category': 'Verb',
 				'form': 'stem|participle',
-				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+				'skip': 'clause_start',
 			},
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
 		'comment': 'eg John likes [singing]',
+	},
+	{
+		'name': "tag subordinate clauses starting with some adpositions + participle Verb as 'same_participant'",
+		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
+		'context': {
+			'subtokens': [
+				{ 'token': 'of|for|in', 'skip': 'clause_start' },
+				{ 'category': 'Verb', 'form': 'stem|participle' },
+			],
+		},
+		'transform': { 'tag': { 'clause_type': 'patient_clause_same_participant' } },
+		'subtoken_transform': { 'function': { 'syntax': 'gerundifier' } },
+		'comment': 'eg John is guilty [of bad things]. John is interested [in singing].',
 	},
 	{
 		'name': 'tag subordinate clauses where the verb is a participle for see/hear',
@@ -206,6 +200,25 @@ const transform_rules_json = [
 		},
 		'transform': { 'tag': { 'clause_type': 'patient_clause_simultaneous|patient_clause_different_participant' } },
 		'comment': 'eg. "John saw [Mary walking]." This rule should apply before setting "be" as an auxilliary, but after setting the aspect verbs as auxilliaries',
+	},
+	{
+		'name': 'tag subordinate clauses starting with an adposition as adverbial',
+		'trigger': { 'tag': { 'clause_type': 'subordinate_clause' } },
+		'context': {
+			'subtokens': {
+				'category': 'Adposition',
+				'skip': [{ 'token': '[' }, { 'category': 'Conjunction' }],
+			},
+		},
+		'transform': { 'tag': { 'clause_type': 'adverbial_clause' } },
+	},
+	{
+		'name': 'tag "in-order-to/by/without" clauses as "same subject" adverbial',
+		'trigger': { 'tag': { 'clause_type': 'adverbial_clause' } },
+		'context': {
+			'subtokens': { 'stem': 'in-order-to|by|without', 'skip': 'clause_start' },
+		},
+		'transform': { 'tag': { 'clause_type': 'adverbial_clause|adverbial_clause_same_subject' } },
 	},
 	{
 		'name': 'any remaining subordinate_clause is a \'different_participant\' patient clause by default',

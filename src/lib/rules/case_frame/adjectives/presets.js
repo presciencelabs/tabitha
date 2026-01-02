@@ -78,7 +78,7 @@ export function by_complementizer(complementizer) {
  */
 export function by_same_participant_complementizer(complementizer) {
 	return {
-		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause|patient_clause_different_participant' } },
+		'trigger': { 'type': TOKEN_TYPE.CLAUSE, 'tag': { 'clause_type': 'adverbial_clause|patient_clause_same_participant' } },
 		'context': {
 			'subtokens': { 'token': complementizer, 'skip': 'clause_start' },
 		},
