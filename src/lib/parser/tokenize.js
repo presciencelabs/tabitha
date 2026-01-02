@@ -60,7 +60,7 @@ export function tokenize_input(text = '') {
 		} else if (match(REGEXES.FORWARD_SLASH)) {
 			return pairing('complex')
 
-		} else if (match(REGEXES.BACK_SLASH)) {
+		} else if (match(REGEXES.PIPE)) {
 			return pairing('literal')
 
 		} else if (match_two(/\.\d/)) {
@@ -231,7 +231,7 @@ export function tokenize_input(text = '') {
 	 * @returns {(token: string) => Token}
 	 */
 	function pairing_token(pairing_type) {
-		const pairing_regex = pairing_type === 'complex' ? REGEXES.FORWARD_SLASH : REGEXES.BACK_SLASH
+		const pairing_regex = pairing_type === 'complex' ? REGEXES.FORWARD_SLASH : REGEXES.PIPE
 		return token => {
 			const [left, right] = token.split(pairing_regex).map(lookup_token)
 			left.pairing = right
@@ -261,7 +261,7 @@ export function tokenize_input(text = '') {
 	 * @returns {Token}
 	 */
 	function error_token(message) {
-		return create_token(collect_text(), TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message } })
+		return create_token(collect_text(), TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message, rule_id: '' } })
 	}
 
 	/**

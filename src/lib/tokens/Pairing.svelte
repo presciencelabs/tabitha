@@ -21,7 +21,7 @@
 	<Message {token} />
 	<Word {token} classes="join-item" />
 
-	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">{token.pairing_type === 'complex' ? '/' : '\\'}</TokenDisplay>
+	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">{token.pairing_type === 'complex' ? '/' : '|'}</TokenDisplay>
 
 	<Message token={pairing_token} />
 	<Word token={pairing_token} classes="join-item" />

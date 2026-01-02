@@ -6,7 +6,7 @@ const MISSING_CLOSING_BRACKET = 'Missing a closing bracket somewhere in the prev
 const NO_SPACE_BEFORE_OPENING_BRACKET = 'Missing a space before [.'
 
 const INVALID_COMPLEX_PAIRING_SYNTAX = 'Complex pairings should have the form simple/complex, e.g., follower/disciple.'
-const INVALID_LITERAL_PAIRING_SYNTAX = 'Literal pairings should have the form dynamic\\literal, e.g., reward\\prize.'
+const INVALID_LITERAL_PAIRING_SYNTAX = 'Literal pairings should have the form dynamic|literal, e.g., reward|prize.'
 const UNRECOGNIZED_CLAUSE_NOTATION = 'This clause notation is not recognized.' // TODO show what IS recognized
 const NO_SPACE_BEFORE_UNDERSCORE = 'Notes notation should have a space before the underscore, e.g., ⎕_implicit.'
 const UNRECOGNIZED_CHAR = 'Unrecognized character.'

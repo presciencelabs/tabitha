@@ -13,7 +13,7 @@ const OPENING_BRACKET = /\[/
 const OPENING_PAREN = /\(/
 const CLOSING_PAREN = /\)/
 const FORWARD_SLASH = /\//
-const BACK_SLASH = /\\/
+const PIPE = /\|/
 
 // Could be you(son) your(son's) your(sons') you(son-C) your(son's-C) your(sons'-C)
 const EXTRACT_PRONOUN_REFERENT = /^(.+)\(([\w'-]+)\)$/
@@ -55,7 +55,7 @@ export const REGEXES = {
 	OPENING_PAREN,
 	CLOSING_PAREN,
 	FORWARD_SLASH,
-	BACK_SLASH,
+	PIPE,
 	TOKEN_END_BOUNDARY,
 	WORD_START_CHAR,
 	WORD_CHAR,
