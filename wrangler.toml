@@ -1,7 +1,7 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
 name = "sources"
-compatibility_date = "2025-06-17"
+compatibility_date = "2025-12-18"
 
 compatibility_flags = [
 	"nodejs_compat"
@@ -11,5 +11,5 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Targets"
-database_name = "Targets.2025-09-25"
-database_id = "cb7615fa-9872-44b0-9e0b-09a15e23bfd4"
+database_name = "Targets.2025-12-18"
+database_id = "f5cc9899-9dfb-4d4f-8ba7-e92b5ea86897"
