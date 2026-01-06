@@ -340,16 +340,13 @@ const structural_rules_json = [
 	},
 	{
 		name: "Yahweh -> the LORD",
-		comment: '',
+		comment: "Need to handle cases like 'Yahweh's' and 'you(Yahweh)'",
 		rule: {
-			trigger: create_token_filter({ 'stem': 'Yahweh' }),
+			trigger: token => token.token.startsWith('Yahweh'),
 			context: create_context_filter({ }),
-			action: simple_rule_action(({ tokens, trigger_token, trigger_index }) => {
-				const new_tokens = [
-					create_token(is_first_word(trigger_token) ? 'The' : 'the', TOKEN_TYPE.FUNCTION_WORD),
-					create_token('LORD', TOKEN_TYPE.LOOKUP_WORD),
-				]
-				tokens.splice(trigger_index, 1, ...new_tokens)
+			action: simple_rule_action(({ trigger_token }) => {
+				const new_token = is_first_word(trigger_token) ? 'The LORD' : 'the LORD'
+				trigger_token.token = trigger_token.token.replace('Yahweh', new_token)
 			}),
 		},
 	},
