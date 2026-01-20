@@ -40,7 +40,7 @@
 					<Category {concept} />
 				</section>
 
-				{#if concept.status === 'present'}
+				{#if concept.status === 'in ontology'}
 					<section class="prose mt-4 max-w-none">
 						<Details colors="bg-base-200">
 							<span slot="summary">
@@ -85,7 +85,7 @@
 					</section>
 				{/if}
 
-				{#if concept.status === 'present'}
+				{#if concept.status === 'in ontology'}
 					<section class="prose mt-4 max-w-none">
 						<h3>Examples</h3>
 						<Examples {concept} />

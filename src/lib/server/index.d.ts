@@ -19,7 +19,8 @@ type SimplificationHint = ConceptKey & {
 	structure: string
 	pairing: string
 	explication: string
-	ontology_status: string
+	ontology_status: OntologyStatus
+	level: number
 }
 
 interface Concept extends DbRowConcept {
@@ -30,7 +31,7 @@ interface Concept extends DbRowConcept {
 	how_to_hints: SimplificationHint[]
 }
 
-type OntologyStatus = 'present' | 'pending' | 'absent' | 'function_word'
+type OntologyStatus = 'in ontology' | 'approved' | 'suggested' | 'not used' | 'function_word'
 
 type ConceptSearchFilter = {
 	q: string

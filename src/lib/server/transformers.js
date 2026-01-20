@@ -11,7 +11,7 @@ export function transform(match_from_db) {
 		categories: transform_categorization(match_from_db),
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		occurrences: transform_occurrences(match_from_db.occurrences),
-		status: 'present',
+		status: 'in ontology',
 		how_to_hints: [],
 	}
 }

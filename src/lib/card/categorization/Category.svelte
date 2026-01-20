@@ -24,6 +24,6 @@
 	$: component = lookup[concept.part_of_speech] || TBD
 </script>
 
-{#if concept.status !== 'absent'}
+{#if ['in ontology', 'approved'].includes(concept.status)}
 	<svelte:component this={component} {categories} />
 {/if}

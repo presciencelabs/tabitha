@@ -116,8 +116,8 @@ export const get_simplification_hints = db => async filter => {
 	return results.map(normalize_results)
 
 	/** @param {SimplificationHint} arg */
-	function normalize_results({ stem, sense, part_of_speech, structure, pairing, explication, ontology_status }) {
-		return { stem, sense, part_of_speech, structure, pairing, explication, ontology_status }
+	function normalize_results({ stem, sense, part_of_speech, structure, pairing, explication, ontology_status, level }) {
+		return { stem, sense, part_of_speech, structure, pairing, explication, ontology_status, level }
 	}
 }
 
@@ -175,11 +175,7 @@ function merge_how_to_results(concepts, how_to_results) {
 		const existing_concept = concepts.find(match => concepts_match(match, how_to))
 		if (existing_concept) {
 			existing_concept.how_to_hints.push(how_to)
-		} else if (how_to.sense) {
-			// how-to entries with a sense are concepts that haven't been added to the ontology yet
-			concepts.push(create_pending_result(how_to))
 		} else {
-			// how-to entries without a sense will not be added to the ontology
 			concepts.push(create_how_to_result(how_to))
 		}
 	}
@@ -198,59 +194,29 @@ function merge_how_to_results(concepts, how_to_results) {
 	 * @returns {Concept}
 	 */
 	function create_how_to_result(hint) {
+		const level = hint.level === -1 ? 'N/A' : hint.level.toString()
+		const gloss_map = new Map([
+			['approved', 'Not yet in the Ontology, but will be added in a future update'],
+			['suggested', 'Not in the Ontology, but has been suggested, and discussion is ongoing'],
+			['not used', 'NOT IN THE ONTOLOGY, but suggestions are available'],
+			['in ontology', 'Inaccurately marked as "in ontology". Please update the How-To document'],
+		])
+		const gloss = gloss_map.get(hint.ontology_status) ?? 'Unexpected Ontology Status. Please update the How-To document'
 		return {
 			id: create_concept_key(hint),
 			stem: hint.stem,
 			sense: hint.sense,
 			part_of_speech: hint.part_of_speech,
-			level: 'N/A',
+			level,
 			categorization: '',
 			examples: '',
-			gloss: 'NOT IN THE ONTOLOGY, but suggestions are available',
+			gloss,
 			brief_gloss: '',
 			occurrences: 0,
 			categories: [],
 			curated_examples: [],
-			status: 'absent',
+			status: hint.ontology_status,
 			how_to_hints: [hint],
-		}
-	}
-
-	/**
-	 * 
-	 * @param {SimplificationHint} hint 
-	 * @returns {Concept}
-	 */
-	function create_pending_result(hint) {
-		return {
-			id: create_concept_key(hint),
-			stem: hint.stem,
-			sense: hint.sense,
-			part_of_speech: hint.part_of_speech,
-			level: guess_level(),
-			categorization: '',
-			examples: '',
-			gloss: 'Not yet in the Ontology, but will be added in a future update',
-			brief_gloss: '',
-			occurrences: 0,
-			categories: [],
-			curated_examples: [],
-			status: 'pending',
-			how_to_hints: [hint],
-		}
-
-		function guess_level() {
-			const LEVEL_1_REGEX = /level 1|simple/
-			const LEVEL_3_REGEX = /level 3|complex alternate/
-			const lower_status = hint.ontology_status.toLowerCase()
-
-			if (LEVEL_3_REGEX.test(lower_status) || LEVEL_3_REGEX.test(hint.explication.toLowerCase())) {
-				return '3'
-			} else if (LEVEL_1_REGEX.test(lower_status)) {
-				return '1'
-			} else {
-				return '2'
-			}
 		}
 	}
 

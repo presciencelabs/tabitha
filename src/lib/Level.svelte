@@ -16,7 +16,7 @@
 	}
 
 	$: [description, level_class] = level_info[level] || ['', 'badge-neutral']
-	$: level_display = Number(level) >= 0 ? `L${level}${concept.status === 'pending' ? '?' : ''}` : level
+	$: level_display = Number(level) >= 0 ? `L${level}` : level
 </script>
 
 <span class={`badge ${level_class} badge-lg tooltip tooltip-left font-mono`} data-tip={description}>
