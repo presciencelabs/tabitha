@@ -949,10 +949,13 @@ function* check_ontology_status(token) {
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
 		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word so the editor can check the syntax more accurately." }
 
-	} else if (top_result.ontology_status === 'pending') {
+	} else if (top_result.ontology_status === 'approved') {
 		yield { token_to_flag: token, info: 'The {category} \'{stem}\' will be added to the Ontology in a future update. Consult the How-To document for more info.' }
 
-	} else if (top_result.ontology_status === 'absent') {
+	} else if (top_result.ontology_status === 'suggested') {
+		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology, but discussion is ongoing. Hover over the word for potential hints from the How-To document.' }
+
+	} else if (top_result.ontology_status === 'not used') {
 		yield { token_to_flag: token, error: 'The {category} \'{stem}\' is not in the Ontology. Hover over the word for hints from the How-To document.' }
 
 	} else if (top_result.ontology_status === 'unknown') {

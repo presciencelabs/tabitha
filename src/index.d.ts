@@ -58,7 +58,7 @@ type LookupWord = {
 	part_of_speech: string
 }
 
-type OntologyStatus = 'present' | 'pending' | 'absent' | 'unknown'
+type OntologyStatus = 'in ontology' | 'approved' | 'suggested' | 'not used' | 'unknown'
 
 type LookupResult = LookupWord & {
 	form: string

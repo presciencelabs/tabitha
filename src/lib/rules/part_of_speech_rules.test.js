@@ -45,10 +45,10 @@ function create_sentence(tokens) {
  * @param {string} [data.sense='A']
  * @param {string} [data.part_of_speech='Noun']
  * @param {number} [data.level=1]
- * @param {OntologyStatus} [data.ontology_status='present']
+ * @param {OntologyStatus} [data.ontology_status='in ontology']
  * @returns {LookupResult}
  */
-function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_status='present' }={}) {
+function lookup_result(stem, { sense='A', part_of_speech='Noun', level=1, ontology_status='in ontology' }={}) {
 	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_status })
 }
 

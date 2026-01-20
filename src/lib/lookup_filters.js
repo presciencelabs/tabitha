@@ -3,7 +3,7 @@
  * @returns {boolean}
  */
 function IS_IN_ONTOLOGY(lookup) {
-	return lookup.ontology_status === 'present'
+	return lookup.ontology_status === 'in ontology'
 }
 
 /**
@@ -11,7 +11,7 @@ function IS_IN_ONTOLOGY(lookup) {
  * @returns {boolean}
  */
 function IS_OR_WILL_BE_IN_ONTOLOGY(lookup) {
-	return ['present', 'pending'].includes(lookup.ontology_status)
+	return ['in ontology', 'approved'].includes(lookup.ontology_status)
 }
 
 /**

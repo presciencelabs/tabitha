@@ -320,7 +320,7 @@ function create_role_match_result(rule, success, argument_context=null) {
  * @returns {CaseFrameResult}
  */
 function check_usage(lookup, role_matches) {
-	if (lookup.ontology_status !== 'present') {
+	if (!LOOKUP_FILTERS.IS_IN_ONTOLOGY(lookup)) {
 		return create_case_frame()
 	}
 
