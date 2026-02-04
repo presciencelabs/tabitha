@@ -16,6 +16,7 @@ test('check API contract, e.g., /simplification_hints?complex_term=disciple', as
 		pairing: expect.any(String),
 		explication: expect.any(String),
 		ontology_status: expect.any(String),
+		level: expect.any(Number),
 	})
 })
 

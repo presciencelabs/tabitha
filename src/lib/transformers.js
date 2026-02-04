@@ -1,28 +1,12 @@
 import { semantic_category, sources, theta_grid, usage_info } from '$lib/lookups'
 
 /**
- * @param {DbRowConcept} match_from_db
- *
- * @returns {Concept}
- */
-export function transform(match_from_db) {
-	return {
-		...match_from_db,
-		categories: transform_categorization(match_from_db),
-		curated_examples: transform_curated_examples(match_from_db.curated_examples),
-		occurrences: transform_occurrences(match_from_db.occurrences),
-		status: 'in ontology',
-		how_to_hints: [],
-	}
-}
-
-/**
- * @param {string} curated_examples_from_db "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
+ * @param {string} curated_examples_raw "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
  *
  * @returns {CuratedExample[]}
  */
-function transform_curated_examples(curated_examples_from_db) {
-	const encoded_examples = curated_examples_from_db.split('\n').filter(field => !!field)
+export function transform_curated_examples(curated_examples_raw) {
+	const encoded_examples = curated_examples_raw.split('\n').filter(field => !!field)
 	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
 	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
 	// 4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothes are more beautiful than Solomon's clothes.
@@ -79,15 +63,6 @@ function transform_curated_examples(curated_examples_from_db) {
 }
 
 /**
- * @param {string} occurrences_from_db
- *
- * @returns {number}
- */
-function transform_occurrences(occurrences_from_db) {
-	return Number(occurrences_from_db)
-}
-
-/**
  * @type {Record<string, (categories_from_db: string) => string[]>}
  */
 const categorization_decoders = {
@@ -100,11 +75,12 @@ const categorization_decoders = {
 }
 
 /**
- * @param {DbRowConcept} concept_from_db
+ * @param {string} part_of_speech
+ * @param {string} categorization
  *
  * @returns {string[]}
  */
-function transform_categorization({ part_of_speech, categorization }) {
+export function transform_categorization(part_of_speech, categorization) {
 	const decoder = categorization_decoders[part_of_speech]
 
 	return decoder ? decoder(categorization) : [...categorization]

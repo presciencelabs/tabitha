@@ -5,6 +5,7 @@
 	import SimplificationHints from './SimplificationHints.svelte'
 	import { Category } from './categorization'
 	import { onMount } from 'svelte'
+	import { CONCEPT_FILTERS } from '$lib/filters'
 
 	/** @type {Concept} */
 	export let concept
@@ -36,11 +37,14 @@
 					<Meaning {concept} />
 				</section>
 
-				<section class="prose mt-4 max-w-none">
-					<Category {concept} />
-				</section>
+				{#if CONCEPT_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(concept)}
+					{@const { part_of_speech, categories } = concept}
+					<section class="prose mt-4 max-w-none">
+						<Category {part_of_speech} {categories} />
+					</section>
+				{/if}
 
-				{#if concept.status === 'in ontology'}
+				{#if CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept)}
 					<section class="prose mt-4 max-w-none">
 						<Details colors="bg-base-200">
 							<span slot="summary">
@@ -78,14 +82,14 @@
 					</section>
 				{/if}
 
-				{#if concept.how_to_hints.length > 0 || ['2', '3'].includes(concept.level)}
+				{#if concept.how_to_hints.length > 0 || CONCEPT_FILTERS.IS_COMPLEX(concept)}
 					<section class="prose mt-4 max-w-none">
 						<h3 class="mb-0">Suggestions for how to handle</h3>
 						<SimplificationHints {concept} />
 					</section>
 				{/if}
 
-				{#if concept.status === 'in ontology'}
+				{#if CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept)}
 					<section class="prose mt-4 max-w-none">
 						<h3>Examples</h3>
 						<Examples {concept} />

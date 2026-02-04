@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '$lib/app.css'
 
+	import { page } from '$app/state'
 	import { Brand, Search } from '$lib'
 	import { Selector } from '$lib/theme'
 	import { signIn, signOut } from '@auth/sveltekit/client'
@@ -10,6 +11,7 @@
 
 	let user = $derived(data.user)
 	let version = $derived(data.version)
+	let show_search_bar = $derived(page.url.pathname === '/')
 
 	async function sign_out() {
 		// https://next-auth.js.org/getting-started/client#signout
@@ -22,7 +24,10 @@
 <header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
 	<Brand {version} />
 
-	<Search autofocus />
+	<!--TODO maybe use a header slot?-->
+	{#if show_search_bar}
+		<Search autofocus />
+	{/if}
 </header>
 
 <main class="mx-8 mt-8">

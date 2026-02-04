@@ -1,4 +1,4 @@
-import { transform } from './transformers'
+import { transform_categorization, transform_curated_examples } from '$lib/transformers'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
@@ -56,6 +56,23 @@ export const get_concepts = db => async concept_filter => {
 	 */
 	function normalize(matches_from_db) {
 		return matches_from_db.map(transform)
+	}
+}
+
+/**
+ * @param {DbRowConcept} match_from_db
+ *
+ * @returns {Concept}
+ */
+function transform(match_from_db) {
+	return {
+		...match_from_db,
+		level: match_from_db.level.toString(),
+		categories: transform_categorization(match_from_db.part_of_speech, match_from_db.categorization),
+		curated_examples: transform_curated_examples(match_from_db.curated_examples),
+		curated_examples_raw: match_from_db.curated_examples,
+		status: 'in ontology',
+		how_to_hints: [],
 	}
 }
 
@@ -215,6 +232,7 @@ function merge_how_to_results(concepts, how_to_results) {
 			occurrences: 0,
 			categories: [],
 			curated_examples: [],
+			curated_examples_raw: '',
 			status: hint.ontology_status,
 			how_to_hints: [hint],
 		}

@@ -1,4 +1,5 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } from '$env/static/private'
+import { is_authorized } from '$lib/server/auth'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Google from '@auth/sveltekit/providers/google'
 import { error, type Handle, type RequestEvent } from '@sveltejs/kit'
@@ -55,20 +56,11 @@ const authz_handle: Handle = async ({ event, resolve }) => {
 		const AUTH_ERROR_MESSAGE = 'You must be signed in and have permission to access this page'
 		const { route, locals } = event
 
+		const session = await locals.auth()
+		locals.user = session?.user
+
 		if (route.id?.startsWith('/protected')) {
-			const session = await locals.auth()
-
-			if (!session?.user) {
-				throw error(401, AUTH_ERROR_MESSAGE)
-			}
-
-			const sql = `
-				SELECT true AS found
-				FROM Users
-				WHERE email = ? AND app = ?
-			`
-			const found = await locals.db_auth.prepare(sql).bind(session.user.email, 'ontology').first('found')
-			if (!found) {
+			if (!is_authorized(locals, 'PROTECTED_ACCESS')) {
 				throw error(401, AUTH_ERROR_MESSAGE)
 			}
 		}
