@@ -19,9 +19,9 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
 
 	/** @param {Concept} concept */
 	function make_lite(concept) {
-		const { id, stem, sense, part_of_speech, level, gloss, categorization, status, how_to_hints } = concept
+		const { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints } = concept
 
-		return { id, stem, sense, part_of_speech, level, gloss, categorization, status, how_to_hints: how_to_hints.map(make_lite_hints) }
+		return { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints: how_to_hints.map(make_lite_hints) }
 	}
 
 	/** @param {SimplificationHint} hint */
