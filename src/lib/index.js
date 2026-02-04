@@ -8,6 +8,7 @@ import Level from './Level.svelte'
 import Occurrences from './Occurrences.svelte'
 import Search from './Search.svelte'
 import Table from './Table.svelte'
+import ConceptKey from './ConceptKey.svelte'
 
 export {
 	Brand,
@@ -21,4 +22,5 @@ export {
 	Search,
 	SummaryCard,
 	Table,
+	ConceptKey,
 }

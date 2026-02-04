@@ -13,7 +13,7 @@ test('check API contract, e.g., /search?q=love', async ({ request }) => {
 		stem: 'love',
 		sense: expect.any(String),
 		part_of_speech: expect.any(String),
-		level: expect.any(Number),
+		level: expect.any(String),
 		gloss: expect.any(String),
 		categorization: expect.any(String),
 		status: expect.any(String),

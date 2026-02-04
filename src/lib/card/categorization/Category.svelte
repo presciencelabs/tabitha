@@ -5,8 +5,11 @@
 	import UsageInfoForAdjective from './UsageInfoForAdjective.svelte'
 	import UsageInfoForParticles from './UsageInfoForParticles.svelte'
 
-	/** @type {Concept} */
-	export let concept
+	/** @type {string} */
+	export let part_of_speech
+
+	/** @type {string[]} */
+	export let categories
 
 	/**
 	 * @type {Record<Concept['part_of_speech'], ConstructorOfATypedSvelteComponent>}
@@ -20,10 +23,7 @@
 		Verb: ThetaGrid,
 	}
 
-	$: categories = concept.categories
-	$: component = lookup[concept.part_of_speech] || TBD
+	$: component = lookup[part_of_speech] || TBD
 </script>
 
-{#if ['in ontology', 'approved'].includes(concept.status)}
-	<svelte:component this={component} {categories} />
-{/if}
+<svelte:component this={component} {categories} />

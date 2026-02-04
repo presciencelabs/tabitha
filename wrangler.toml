@@ -17,7 +17,7 @@ database_id = "441ed35c-dbb6-4dd0-860c-aefe18be3fc8"
 [[d1_databases]]
 binding = "DB_Auth"
 database_name = "Auth"
-database_id = "b3f48161-a488-4737-ab9a-f59c22090c80"
+database_id = "c547b234-05fd-4923-ab0e-689d993894ad"
 
 [[r2_buckets]]
 binding = "R2_db_backups"

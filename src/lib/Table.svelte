@@ -44,7 +44,7 @@
 					<Meaning {concept} />
 				</td>
 				<td>
-					<Level {concept} />
+					<Level level={concept.level} />
 				</td>
 				<td class="text-center">
 					<Occurrences {concept} />

@@ -275,3 +275,11 @@ export const sources = new Map([
 	['Grammar Introduction', grammar_introduction_books],
 	['Community Development Texts', community_development_text_books],
 ])
+
+export const levels = new Map([
+	['0', 'Semantic Primitive'],
+	['1', 'Semantic Molecule'],
+	['2', 'Complex - usually explicated'],
+	['3', 'Complex - usually in a complex alternate'],
+	['4', 'Inexplicable'],
+])

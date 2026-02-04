@@ -6,13 +6,13 @@ type ConceptKey = {
 
 type DbRowConcept = ConceptKey & {
 	id: string
-	level: string
+	level: number
 	categorization: string
 	examples: string
 	curated_examples: string
 	gloss: string
 	brief_gloss: string
-	occurrences: string
+	occurrences: number
 }
 
 type SimplificationHint = ConceptKey & {
@@ -24,8 +24,10 @@ type SimplificationHint = ConceptKey & {
 }
 
 interface Concept extends DbRowConcept {
+	level: string
 	categories: string[]
 	curated_examples: CuratedExample[]
+	curated_examples_raw: string
 	occurrences: number
 	status: OntologyStatus
 	how_to_hints: SimplificationHint[]
@@ -76,3 +78,7 @@ type SimplifiedEncodingPhrase = {
 }
 
 type SimplifiedSemanticEncoding =  SimplifiedEncodingPhrase[]
+
+type Permission = 'PROTECTED_ACCESS' | 'ADD_CONCEPT' | 'UPDATE_CONCEPT' | 'DELETE_CONCEPT'
+
+type UserEmail = string
