@@ -12,6 +12,9 @@ export async function GET({ locals: { db }, params: { type, id_primary, id_secon
 		error(404, 'Unknown source reference.')
 	}
 	
-	source.parsed_semantic_encoding = await transform_semantic_encoding(db, source.semantic_encoding)
-	return json(source)
+	const parsed_semantic_encoding = await transform_semantic_encoding(db, source.semantic_encoding)
+	return json({
+		...source,
+		parsed_semantic_encoding,
+	})
 }

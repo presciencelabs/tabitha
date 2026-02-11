@@ -1,4 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types'
+import { is_boundary_end, is_boundary_start } from './entity_filters'
 
 const CATEGORY_NAME_LOOKUP = new Map([
 	['N', 'Noun'],
@@ -140,16 +141,16 @@ function get_feature_value(category: CategoryName, position: number, feature_cod
 
 function get_concept_data(value: string, category: string, feature_codes: string): SourceConceptData {
 	if (!WORD_ENTITY_CATEGORIES.has(category)) {
-		return { concept: null, pairing_concept: null }
+		return { concept: null, pairing_concept: null, pairing_type: '' }
 	}
 
 	const sense = feature_codes[1]
 
 	// follower/Adisciple -> follower / disciple-A
-	const EXTRACT_PAIRING = /^([^/]+)\/([A-Z])(.+)$/
+	const EXTRACT_PAIRING = /^(.+?)([\\/])([A-Z])(.+)$/
 	const match = value.match(EXTRACT_PAIRING)
 	if (match) {
-		const [, stem, pairing_sense, pairing_stem] = match
+		const [, stem, pairing_type, pairing_sense, pairing_stem] = match
 		return {
 			concept: {
 				stem,
@@ -161,6 +162,7 @@ function get_concept_data(value: string, category: string, feature_codes: string
 				sense: pairing_sense,
 				part_of_speech: category,
 			},
+			pairing_type,
 		}
 	}
 
@@ -171,5 +173,38 @@ function get_concept_data(value: string, category: string, feature_codes: string
 			part_of_speech: category,
 		},
 		pairing_concept: null,
+		pairing_type: '',
 	}
+}
+
+export function structure_semantic_encoding(entities: SourceEntity[]): PageSourceEntity[] {
+	const new_entities: PageSourceEntity[] = entities.map((entity, i) => ({ ...entity, id: i, parent_id: -1, boundary_category: '' }))
+
+	const parent_id_stack: number[] = []
+	for (const [i, entity] of new_entities.entries()) {
+		entity.parent_id = parent_id_stack.at(-1) ?? -1
+
+		if (is_boundary_start(entity)) {
+			entity.boundary_category = entity.category_abbr
+			parent_id_stack.push(i)
+
+		} else if (is_boundary_end(entity)) {
+			entity.boundary_category = new_entities[entity.parent_id].boundary_category
+			parent_id_stack.pop()
+		}
+	}
+
+	return new_entities
+}
+
+export function get_noun_list(source: Source): NounListEntry[] {
+	const noun_list_start = source.semantic_encoding.lastIndexOf('~|') // this indicates the start of the noun list
+	return source.semantic_encoding
+		.slice(noun_list_start + 2).trim()
+		.split('|')
+		.filter(entry => entry.length)
+		.map((entry, index) => ({
+			noun: `${entry.slice(1)}-${entry[0]}`,	// the sense is always the first letter
+			index: index < 9 ? `${index + 1}` : String.fromCharCode('A'.charCodeAt(0) + (index - 9)),
+		}))
 }

@@ -8,3 +8,7 @@ type Reference = {
 	id_secondary: string
 	id_tertiary: string
 }
+
+type ViewSettings = {
+	show_hover_popups: boolean
+}

@@ -47,3 +47,44 @@
 .L4-text {
 	color: whitesmoke;
 }
+
+.entity-N {
+	color: whitesmoke;
+	background-color: #aa795d;
+}
+.entity-NP {
+	color: #aa795d;
+}
+.entity-V {
+	color: whitesmoke;
+	background-color: #507a8b;
+}
+.entity-VP {
+	color: #507a8b;
+}
+.entity-Adj {
+	color: whitesmoke;
+	background-color: #548159;
+}
+.entity-AdjP {
+	color: #548159;
+}
+.entity-Adv {
+	color: #222222;
+	background-color: #86CBA7;
+}
+.entity-AdvP {
+	color: #86CBA7;
+}
+.entity-Adp {
+	color: whitesmoke;
+	background-color: #86657C;
+}
+.entity-Con {
+	color: #222222;
+	background-color: #E3E3E3;
+}
+.entity-Par, .entity-Phr, .entity-period {
+	color: whitesmoke;
+	background-color: #4c4c4c;
+}

@@ -1,10 +1,12 @@
 <script>
 	import Punctuation from './Punctuation.svelte'
 
-	/** @type {SourceEntity} */
+	/** @type {PageSourceEntity} */
 	export let source_entity
 
-		// TODO change character and size based on boundary type
+	const bracket_entity = { ...source_entity, value: ']' }
 </script>
 
-<Punctuation {source_entity} />
+<div class="inline-flex entity-{source_entity.boundary_category}">
+	<Punctuation source_entity={bracket_entity} classes={source_entity.value === '}' ? 'text-7xl' : ''} />
+</div>

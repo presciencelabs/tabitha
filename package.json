@@ -28,6 +28,7 @@
     "@cloudflare/workers-types": "^4.20251014.0",
     "@eslint/compat": "^1.4.1",
     "@eslint/js": "^9.38.0",
+		"@iconify/svelte": "^5.0.2",
     "@playwright/test": "^1.56.1",
     "@stylistic/eslint-plugin": "^5.5.0",
     "@sveltejs/adapter-cloudflare": "^7.2.4",
