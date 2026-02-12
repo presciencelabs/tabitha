@@ -1,7 +1,7 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration
 
 name = "sources"
-compatibility_date = "2025-12-18"
+compatibility_date = "2026-02-06"
 
 compatibility_flags = [
 	"nodejs_compat"
@@ -11,8 +11,8 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Ontology"
-database_name = "Ontology.9494.2025-12-18"
-database_id = "441ed35c-dbb6-4dd0-860c-aefe18be3fc8"
+database_name = "Ontology_9494_2026-01-29"
+database_id = "cdc31345-4222-4a1c-a70e-442adb6374fc"
 
 [[d1_databases]]
 binding = "DB_Auth"
