@@ -241,11 +241,33 @@ const transform_rules_json = [
 		'transform': { 'remove_tag': 'syntax' },
 		'comment': 'this clears the relativizer tag but keeps the determiner tag',
 	},
+	{
+		'name': 'a relative clause is restrictive by default',
+		'trigger': { 'tag': { 'clause_type': 'relative_clause' } },
+		'context': { },
+		'transform': { 'tag': { 'relative_clause': 'restrictive' } },
+	},
+	{
+		'name': 'tag relative clauses on proper names as descriptive',
+		'trigger': { 'tag': { 'clause_type': 'relative_clause' } },
+		'context': {
+			'precededby': { 'category': 'Noun', 'level': '4' },
+		},
+		'transform': { 'tag': { 'relative_clause': 'descriptive' } },
+	},
+	{
+		'name': 'tag relative clauses with a _descriptive note as descriptive',
+		'trigger': { 'tag': { 'clause_type': 'relative_clause' } },
+		'context': {
+			'subtokens': { 'token': '_descriptive', 'skip': 'all' },
+		},
+		'transform': { 'tag': { 'relative_clause': 'descriptive' } },
+	},
 	// General function words
 	{
 		'name': '"no" before a noun becomes negative_noun_polarity',
 		'trigger': { 'token': 'no' },
-		'context': { 'followedby': { 'category': 'Noun', 'skip': { 'category': 'Adjective' } } },
+		'context': { 'followedby': { 'category': 'Noun', 'skip': 'adjp' } },
 		'transform': { 'function': { 'determiner': 'negative_noun_polarity' } },
 	},
 	{
@@ -623,6 +645,37 @@ const transform_rules_json = [
 		'name': 'tag "and/or/but" at start of sentences',
 		'trigger': { 'stem': 'and|or|but', 'tag': { 'position': 'first_word' } },
 		'transform': { 'tag': { 'syntax': 'coord_clause' } },
+	},
+	// Noun List Indexing
+	{
+		'name': 'Set tag for nouns indexed with _1',
+		'trigger': { 'category': 'Noun' },
+		'context': { 'followedby': { 'token': '_1' } },
+		'transform': { 'tag': { 'noun_index': '1' } },
+	},
+	{
+		'name': 'Set tag for nouns indexed with _2',
+		'trigger': { 'category': 'Noun' },
+		'context': { 'followedby': { 'token': '_2' } },
+		'transform': { 'tag': { 'noun_index': '2' } },
+	},
+	{
+		'name': 'Set tag for nouns indexed with _3',
+		'trigger': { 'category': 'Noun' },
+		'context': { 'followedby': { 'token': '_3' } },
+		'transform': { 'tag': { 'noun_index': '3' } },
+	},
+	{
+		'name': 'Set tag for nouns indexed with _4',
+		'trigger': { 'category': 'Noun' },
+		'context': { 'followedby': { 'token': '_4' } },
+		'transform': { 'tag': { 'noun_index': '4' } },
+	},
+	{
+		'name': 'Set tag for nouns indexed with _5',
+		'trigger': { 'category': 'Noun' },
+		'context': { 'followedby': { 'token': '_5' } },
+		'transform': { 'tag': { 'noun_index': '5' } },
 	},
 ]
 

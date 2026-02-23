@@ -86,26 +86,11 @@ const structural_rules_json = [
 		},
 	},
 	{
-		name: 'Add commas around descriptive relative clauses, headed by level 4 words',
+		name: 'Add commas around descriptive relative clauses',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
-			context: create_context_filter({ 'precededby': { 'category': 'Noun', 'level': '4' } }),
-			action: simple_rule_action(({ trigger_token }) => {
-				trigger_token.sub_tokens = [
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
-					...trigger_token.sub_tokens,
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
-				]
-			}),
-		},
-	},
-	{
-		name: 'Add commas around relative clauses marked with _descriptive',
-		comment: '',
-		rule: {
-			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
-			context: create_context_filter({ 'subtokens': { 'token': '_descriptive', 'skip': 'all' } }),
+			trigger: create_token_filter({ 'tag': { 'relative_clause': 'descriptive' } }),
+			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.sub_tokens = [
 					create_token(',', TOKEN_TYPE.PUNCTUATION),

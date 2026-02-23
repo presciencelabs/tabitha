@@ -1,7 +1,7 @@
 import { TOKEN_TYPE } from '$lib/token'
 import { pipe } from '$lib/pipeline'
 import { rules_applier } from '$lib/rules'
-import { phrasify } from './phrasify'
+import { phrasify } from '$lib/parser/phrasify'
 import { BT_STRUCTURAL_RULES } from './structural_rules'
 
 /**

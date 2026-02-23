@@ -111,7 +111,7 @@ const verb_sense_priority_overrides = [
 		['bring-C', { 'patient': { 'stem': 'animal|cattle|chicken|cow|horse|goat' } }],
 	]],
 	['call', [
-		['call-B', { }],
+		['call-B', { 'state': { } }],
 		['call-C', { }],
 	]],
 	['care', [

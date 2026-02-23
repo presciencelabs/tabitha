@@ -238,9 +238,16 @@ export function token_has_tag(token, tag_to_check) {
 		return filter_keys.some(key => token.tag[key]?.length > 0 )
 	}
 	return Object.entries(tag_to_check).every(([key, value]) => {
-		const filter_values = value.split('|')
 		const tag_values = token.tag[key]?.split('|') ?? []
-		return tag_values.some(tag => filter_values.includes(tag))
+		if (value.includes('|')) {
+			const filter_values = value.split('|')
+			return filter_values.some(tag => tag_values.includes(tag))
+		} else if (value.includes('&')) {
+			const filter_values = value.split('&')
+			return filter_values.every(tag => tag_values.includes(tag))
+		} else {
+			return tag_values.includes(value)
+		}
 	})
 }
 

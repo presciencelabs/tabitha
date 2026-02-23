@@ -14,8 +14,9 @@ const builtin_syntax_rules = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'subordinate_clause' } }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
-			action: simple_rule_action(({ trigger_token, rule_id }) => {
+			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
 				add_tag_to_token(trigger_token, { 'clause_type': 'patient_clause_quote_begin' }, rule_id)
+				add_tag_to_token(trigger_token.sub_tokens[subtoken_indexes[0]], { 'quote': 'begin' }, rule_id)
 			}),
 		},
 	},

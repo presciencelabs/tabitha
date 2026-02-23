@@ -141,8 +141,10 @@ function phrasify_tokens(tokens) {
 	 */
 	function flatten_phrases(token) {
 		if (token.type === TOKEN_TYPE.PHRASE) {
+			const tags_to_maintain = ['role', 'adj_usage', 'implicit']
+			const tag = Object.fromEntries(Object.entries(token.tag).filter(([key]) => tags_to_maintain.includes(key)))
 			return [
-				create_token(`{${token.tag['phrase_type']}`, TOKEN_TYPE.PHRASE),
+				create_token(`{${token.tag['phrase_type']}`, TOKEN_TYPE.PHRASE, { tag }),
 				...token.sub_tokens.flatMap(flatten_phrases),
 				create_token('}', TOKEN_TYPE.PHRASE),
 			]
