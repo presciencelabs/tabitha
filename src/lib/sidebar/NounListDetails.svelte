@@ -22,8 +22,8 @@
 	}
 
 	function add_and_set_index() {
-		noun_list.push({ index: next_index, noun: `${data.concept?.stem}-${data.concept?.sense}` })
 		set_index(next_index)
+		noun_list.push({ index: next_index, noun: `${data.concept?.stem}-${data.concept?.sense}` })
 	}
 </script>
 
