@@ -34,24 +34,6 @@
 		return ''
 	})
 
-	const main_clauses = source_entities.reduce(clause_reducer, [])
-
-	/**
-	 * @param {PageSourceEntity[][]} clauses
-	 * @param {PageSourceEntity} source_entity
-	 */
-	function clause_reducer(clauses, source_entity) {
-		// Split the clauses so they're each on their own line.
-		// A paragraph marking should be put on the same line as the clause that follows.
-		if (source_entity.value === '|') {
-			clauses.push([])
-		} else if (source_entity.value === '{' && clauses.at(-1)?.at(-1)?.value !== '|') {
-			clauses.push([])
-		}
-		clauses.at(-1)?.push(source_entity)
-		return clauses
-	}
-
 	/** @type {[(entity: PageSourceEntity) => boolean, typeof Concept][]}*/
 	const component_filters = [
 		[is_boundary_start, BoundaryStart],
@@ -107,18 +89,16 @@
 	}
 </script>
 
-{#each main_clauses as main_clause}
-	<div class="inline-flex flex-wrap py-3">
-		{#each main_clause as entity}
-			{@const i = entity.id}
-			{@const component = component_filters.find(([filter]) => filter(entity))?.[1]}
-			<div bind:this={entity_divs[i]} role="button" tabindex="0" class="content-center h-20 {entity_highlights[i]}"
-					on:mouseenter={() => entity_mouseover(i)}
-					on:focus={() => entity_focus(i)}
-					on:mouseleave={entity_mouseout}
-					on:blur={() => {}} >
-				<svelte:component this={component} source_entity={entity} />
-			</div>
-		{/each}
-	</div>
-{/each}
+<div class="inline-flex flex-wrap py-3">
+	{#each source_entities as entity}
+		{@const i = entity.id}
+		{@const component = component_filters.find(([filter]) => filter(entity))?.[1]}
+		<div bind:this={entity_divs[i]} role="button" tabindex="0" class="cursor-default content-center h-20 {entity_highlights[i]}"
+				on:mouseenter={() => entity_mouseover(i)}
+				on:focus={() => entity_focus(i)}
+				on:mouseleave={entity_mouseout}
+				on:blur={() => {}} >
+			<svelte:component this={component} source_entity={entity} />
+		</div>
+	{/each}
+</div>
