@@ -19,8 +19,8 @@
 		<div class="badge badge-lg rounded-full border-base-content badge-outline mx-1 py-5 text-md entity-{selected_entity.category_abbr}">
 			<span class="pe-2 py-4">
 				{selected_entity.category_abbr}
-				{#if selected_entity.category === 'Noun'}
-					<sub class="-bottom-1.5 -left-1 italic">{selected_entity.feature_codes[0]}</sub>
+				{#if selected_entity.noun_list_index}
+					<sub class="-bottom-1.5 -left-1 italic">{selected_entity.noun_list_index}</sub>
 				{/if}
 			</span>
 

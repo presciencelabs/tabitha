@@ -7,6 +7,7 @@ type SourceEntity = {
 type SourceFeatures = {
 	feature_codes: string
 	features: EntityFeature[]
+	noun_list_index: string|null
 }
 
 type SourceConceptData = {

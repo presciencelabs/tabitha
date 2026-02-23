@@ -1,15 +1,16 @@
 <script lang="ts">
 	interface Props {
 		nav_data: NavData
+		url_end?: string
 	}
-	let { nav_data }: Props = $props()
+	let { nav_data, url_end='' }: Props = $props()
 
 	function create_reference_string({ id_primary, id_secondary, id_tertiary }: Reference) {
 		return `${id_primary} ${id_secondary}:${id_tertiary}`
 	}
 
 	function create_url({ type, id_primary, id_secondary, id_tertiary }: Reference) {
-		return `/${type}/${id_primary}/${id_secondary}/${id_tertiary}`
+		return `/${type}/${id_primary}/${id_secondary}/${id_tertiary}${url_end}`
 	}
 </script>
 

@@ -7,6 +7,10 @@
 
 	const last_feature_to_display = features.findLastIndex(({ name }) => !name.startsWith('Spare'))
 	const features_to_display = features.slice(0, last_feature_to_display + 1)
+	if (source_entity.noun_list_index) {
+		// show the noun list index as a feature
+		features_to_display.splice(0, 0, { name: 'Noun List Index', value: source_entity.noun_list_index })
+	}
 
 	/**
 	 * @param {EntityFeature} feature

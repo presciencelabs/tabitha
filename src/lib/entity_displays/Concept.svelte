@@ -12,8 +12,8 @@
 		{#snippet button_content()}
 			<span class="pe-2 my-4">
 				{source_entity.category_abbr}
-				{#if source_entity.category === 'Noun'}
-					<sub class="-bottom-1.5 -left-1 italic">{source_entity.feature_codes[0]}</sub>
+				{#if source_entity.noun_list_index}
+					<sub class="-bottom-1.5 -left-1 italic">{source_entity.noun_list_index}</sub>
 				{/if}
 			</span>
 		{/snippet}

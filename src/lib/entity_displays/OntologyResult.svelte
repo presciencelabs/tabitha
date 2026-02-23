@@ -26,6 +26,7 @@
 		
 		// Use the result that exactly matches the original stem (eg. "lot" vs "Lot")
 		const result = results.find(result => result.stem === stem) ?? DEFAULT_DATA
+		// TODO find a better way to do this
 		data.ontology_data = result
 	})
 </script>

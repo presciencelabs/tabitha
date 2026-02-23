@@ -1,6 +1,5 @@
 <script>
-	import { SourceEntities } from '$lib'
-	import Navigation from '$lib/Navigation.svelte'
+	import { Navigation, SourceEntities } from '$lib'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar/Sidebar.svelte'
 
