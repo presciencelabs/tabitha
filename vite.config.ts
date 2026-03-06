@@ -32,5 +32,9 @@ export default defineConfig({
 				}
 			}
 		]
-	}
+	},
+	server: {
+		host: 'localhost.tabitha.bible',
+		port: 8793,	// ???
+	},
 });

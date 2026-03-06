@@ -1,5 +1,7 @@
 {
 	"files.associations": {
 		"*.css": "tailwindcss"
-	}
+	},
+	"editor.insertSpaces": false,
+	"editor.tabSize": 3
 }
