@@ -1,4 +1,6 @@
 <script>
+	import '$lib/app.css'
+
 	import Brand from '$lib/Brand.svelte'
 
 	let { children } = $props()

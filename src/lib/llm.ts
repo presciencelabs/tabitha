@@ -1,100 +1,78 @@
 import { API_KEY_GEMINI } from '$env/static/private'
 import { GoogleGenAI } from '@google/genai'
-import { find_triggered_issues } from '$lib/trigger_filters'
+import { trigger_filters, filter_by_encoding, filter_by_language_profile } from '$lib/trigger_filters'
 
-export async function get_llm_suggestions(encoding: SourceApiResult, english: string, settings: CopilotSettings): Promise<CopilotApiResult> {
-	const model = 'gemini-2.5-flash'
+export async function get_llm_cautions(encoding: SourceApiResult, english: string, settings: CopilotSettings): Promise<CopilotLlmOutput> {
+	const triggered_issues = trigger_filters
+		.filter(filter_by_encoding(encoding.encoding))
+		.filter(filter_by_language_profile(settings.language_profile))
 
-	const role = `You are an expert Bible exegetical adviser who trains mother-tongue translators of
-				the Bible. You are an expert in Bible translation. You have PhD in linguistics and ThD
-				from a conservative evangelical seminary.`
+	console.log(triggered_issues.map(({ name }) => name))
+	const trigger_prompts = triggered_issues.map(({ prompt }) => prompt)
 
-	const mtt_info_map = new Map<MttLevel, [string, string]>([
-		['grade 5', ['grade 5', 'DO NOT use any linguistic or grammar terms.']],
-		['high-school', ['high-school', 'You can use only basic linguistic terms.']],
-		['BA', ['B.A. in linguistics', '']],
-	])
-	const mtt_info = mtt_info_map.get(settings.mtt_level) ?? ['', '']
-
-	const trigger_issues = find_triggered_issues(encoding.encoding, settings.language_profile)
-	console.log(trigger_issues.map(({ name }) => name))
-	const trigger_prompts = trigger_issues.map(({ prompt }, i) => `${i}: ${prompt}`).join('\n')
-
-	if (trigger_prompts.length === 0) {
+	if (trigger_prompts.length === 0 && (!settings.lwc || settings.lwc === 'English')) {
 		return {
-			suggestions: [],
-			english_text: english,
+			cautions: ['No suggestions for this verse based on the TBTA analysis.'],
 		}
 	}
 
-	const lwc_prompt = settings.lwc
-			? `Translate this English text into ${settings.lwc} and send as the 'lwc_text': ${english}
-				ALL your suggestions and EVERY word in them MUST be translated and written in ${settings.lwc}.
-				When you quote a part of the TBTA data, you should use the TBTA verse that you translated from English into ${settings.lwc}.
-				Do NOT leave anything untranslated into ${settings.lwc}.`
-			: `When you quote a part of the TBTA data, you should use the TBTA verse written in English: ${english}`
+	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
+			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
-	const prompt = `Your task is to give guidance to an mother-tongue translator (MTT) based only on the TBTA semantic analysis data provided below.
-				Do not use any other knowledge except it. Your suggestions MUST be restricted to the following:
-				${trigger_prompts}
+			You task is to render preselected caution guidance to a mother-tongue translator (MTT) based on the provided tbta_encoding.
+			Use only the supplied JSON. Do not add new cautions.
+			Write ONLY in the requested output_language, and be concise.
+			If output_language is not English, translate the english_text and return it.
+			Base the cautions ONLY on the tbta_encoding, but if necessary you can use the provided or translated english_text for quoting and reference.
+			If you quote the the text in one of your cautions, only quote the parts from the sentence that are relevant to the caution.
+			If max_cautions is 0, there is no limit to the number of cautions. Otherwise do not provide more than max_cautions cautions.
 
-				DO NOT give more than ${settings.max_suggestions} suggestions.
-				Write your suggestions for an MTT with a ${mtt_info[0]} level education. ${mtt_info[1]}
-				Make sure that your suggestions are helpful for MTTs who speak ${settings.lwc ?? 'English'}.
-				Make sure that you do NOT use complex terminology from TBTA data.
+			Write according to the specified education level of the MTT according to:
+			- grade5 = simple everyday language, no linguistic or grammar terms
+			- high_school = simple language, only basic grammar terms
+			- undergraduate = moderate linguistic terminology allowed
 
-				Write them as a plain text without points and subpoints. Be concise.
-				Carefully check your suggestions for logical errors. Do NOT make logical errors in your suggestions.
-				Do not use any asterisks. NEVER use asterisks.
-				Do NOT capitalize pronouns unless it is the first word in a sentence. But always capitalize pronoun "I".
-				Put your suggestions as proposals/suggestions, not as demands/orders. Do not write "Do that".
-				Use a form more fitting for recommendations, not something that an MTT must do.
-				Every suggestion and every sentence MUST begin with a capital letter.
-				In your suggestions, only quote the parts from the sentence that are relevant to the suggestion.
+			Return exactly the schema requested.`
 
-				${lwc_prompt}
-
-				DO NOT base your suggestions on the English text, but ONLY from the TBTA analysis that is provided below.
-
-				Here is the TBTA analysis, which marks grammatical and lexical information, for you:
-				${JSON.stringify(encoding)}
-
-				NEVER EVER write anything from the prompt in your output unless I specifically ask you to do so.`
+	const llm_input: CopilotLlmInput = {
+		output_language: settings.lwc ?? 'English',
+		prose_level: settings.mtt_level,
+		tbta_encoding: JSON.stringify(encoding),
+		english_text: english,
+		issues: trigger_prompts,
+		max_cautions: settings.max_cautions,
+	}
 
 	const ai = new GoogleGenAI({ apiKey: API_KEY_GEMINI })
 
 	const response = await ai.models.generateContent({
-		model,
-		contents: prompt,
+		model: 'gemini-2.5-flash',
+		contents: JSON.stringify(llm_input),
 		config: {
-			temperature: 0.0,
+			temperature: 0.5,
 			seed: 0.0,
 			frequencyPenalty: 0.0,
 			presencePenalty: 0.0,
-			systemInstruction: role,
+			systemInstruction: system_instruction,
 			responseMimeType: 'application/json',
 			responseJsonSchema: {
 				'type': 'object',
 				'properties': {
-					'suggestions': {
+					'cautions': {
 						'type': 'array',
 						'items': {
 							'type': 'string',
-							'description': 'Suggestion or note to the MTT.'
+							'description': 'Caution or note to the MTT.'
 						}
 					},
-					...(settings.lwc ? {
-						'lwc_text': {
-							'type': 'string',
-							'description': `the TBTA text translated from English into ${settings.lwc}`
-						}
-					} : {}),
+					'translated_text': {
+						'type': 'string',
+						'description': `the english_text translated from English into ${settings.lwc} (if necessary)`
+					},
 				}
 			}
 		}
 	})
 
-	const result = JSON.parse(response.text || '{"suggestions":[]}') as CopilotApiResult
-	result.english_text = english
-	return result
+	return response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { cautions: [] }
 }

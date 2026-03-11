@@ -5,6 +5,7 @@ type LanguageProfile = {
 	dual: boolean
 	trial: boolean
 	honorifics: boolean
+	indirect_speech: boolean
 }
 
 type Reference = {
@@ -33,17 +34,30 @@ type TargetApiResult = {
 	audience: string
 }
 
-type MttLevel = 'grade 5' | 'high-school' | 'BA'
+type MttLevel = 'grade5' | 'high_school' | 'undergraduate'
 
 type CopilotSettings = {
 	language_profile: LanguageProfile
-	lwc?: string
+	lwc: string
 	mtt_level: MttLevel
-	max_suggestions: number
+	max_cautions: number
 }
 
-type CopilotApiResult = {
+type CopilotLlmInput = {
+	output_language: string
+	prose_level: MttLevel
+	tbta_encoding: string
 	english_text: string
-	lwc_text?: string
-	suggestions: string[]
+	issues: string[]
+	max_cautions: number
+}
+
+type CopilotLlmOutput = {
+	cautions: string[]
+	translated_text?: string
+}
+
+type CopilotApiResult = CopilotLlmOutput & {
+	english_text: string
+	verse: Reference
 }

@@ -24,7 +24,7 @@ importers:
         specifier: ^5.43.0
         version: 5.53.0
       tailwindcss:
-        specifier: ^4.1.16
+        specifier: ^4.1.18
         version: 4.2.0
     devDependencies:
       '@eslint/compat':
@@ -69,6 +69,9 @@ importers:
       playwright:
         specifier: ^1.58.1
         version: 1.58.2
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
       svelte-check:
         specifier: ^4.3.6
         version: 4.4.3(picomatch@4.0.3)(svelte@5.53.0)(typescript@5.9.3)

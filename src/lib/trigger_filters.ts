@@ -27,63 +27,61 @@ function features_present(category: string, featureNames: string[]): EntityFilte
 	return node => node.category === category && node.features !== undefined && featureNames.some(name => name in (node.features ?? {}));
 }
 
-const triggerFilters: TriggerFilter[] = [
+export const trigger_filters: TriggerFilter[] = [
 	{
 		name: 'literal/dynamic alternates',
 		condition: feature_value('Clause', 'Alternative Analysis', 'Literal Alternate'),
-		prompt: `For each clause marked as 'Literal Alternate', describe how it can be understood as its 'Dynamic Alternate' equivalent by comparing and quoting ONLY the parts of the sentence that are different.
+		prompt: `For each clause marked as 'Literal Alternate', state minimally how it can be understood as its 'Dynamic Alternate' equivalent by comparing and quoting ONLY the parts of the sentence that are different.
 'Literal' here refers to how closely the wording matches to the original Biblical text, not that it is not metaphorical. And 'Dynamic' refers to a more meaning-based wording.
-Do not ask the MTT to keep them separate or to choose one of them. Instead, simply compare the parts that are different so they can see the full meaning.
-Remember that the MTT does not have the TBTA semantic analysis data, so if you refer to it, you need to make clear what you are referring to.`,
+Simply compare the parts that are different so they can see the full meaning.`,
 	},
 	{
 		name: 'primary and other alternates',
 		condition: feature_value('Clause', 'Alternative Analysis', 'Primary Analysis'),
 		prompt: `For each Clause with 'Primary Analysis', also show its 'Alternative Analysis' options, comparing and quoting the parts that are different.
-The 'Primary Analysis' is the most common interpretation of the original Biblical text, and the other analysis are alternative interpretations.
-Do not ask the MTT to keep them separate or to choose one of them. Instead, simply compare the parts that are different so they can see all the possibilities.
-Remember that the MTT does not have the TBTA semantic analysis data, so if you refer to it, you need to make clear what you are referring to.`,
+The 'Primary Analysis' is the most common interpretation of the original Biblical text, and the other analyses are alternative interpretations.
+Simply compare the parts that are different so they can see all the possibilities.`,
 	},
 	{
 		name: 'dynamic expansion',
 		condition: feature_value('Noun Phrase', 'Implicit', 'Dynamic Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Dynamic Expansion', explain that the the first noun X can be represented as Y of X where Y is the second noun.`,
+		prompt: `For any Noun Phrase with 'Dynamic Expansion', state minimally that the the first noun X can be represented as Y of X, where Y is the second noun.`,
 	},
 	{
 		name: 'literal expansion',
 		condition: feature_value('Noun Phrase', 'Implicit', 'Literal Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Literal Expansion', explain that the the phrase X of Y can be understood as simply Y.`,
+		prompt: `For any Noun Phrase with 'Literal Expansion', state minimally that the the phrase X of Y can be understood as simply Y.`,
 	},
 	{
 		name: 'rhetorical questions (present in language)',
 		lang_condition: (profile) => profile.rhetorical_questions,
 		condition: feature_present('Clause', 'Rhetorical Question'),
-		prompt: `Explain what kind of rhetorical question it is and what the expected answer is, based on the value of the Rhetorical Question feature.
-Tell the MTT to think about how to phrase it to communicate that meaning.`,
+		prompt: `Explain what kind of rhetorical question is present and what the expected answer is, based on the value of the Rhetorical Question feature.
+State that they need to think about how to phrase it to communicate that meaning.`,
 	},
 	{
 		name: 'rhetorical questions (absent in language)',
 		lang_condition: (profile) => !profile.rhetorical_questions,
 		condition: feature_present('Clause', 'Rhetorical Question'),
-		prompt: `Explain that this verse contains rhetorical questions, and show the MTT the 'Equivalent Statement'.`,
+		prompt: `State that this verse contains rhetorical questions, and show each 'Equivalent Statement'.`,
 	},
 	{
 		name: 'exclusive "we"',
 		lang_condition: (profile) => profile.clusivity,
 		condition: feature_value('Noun', 'Person', 'First Exclusive'),
-		prompt: `Explain that this verse contains exclusive 'we', so tell the MTT to be extra mindful of who the speaker/writer is referring to.`,
+		prompt: `State that this verse contains exclusive 'we', so tell the MTT to be extra mindful of who the speaker/writer is referring to.`,
 	},
 	{
 		name: 'passive',
 		lang_condition: (profile) => !profile.passive,
 		condition: feature_value('Clause', 'Topic Noun Phrase', 'Most Patient-like'),
-		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', explain to the MTT that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].
-If the Noun Phrase marked with 'Most Agent-like' has 'Implicit' == 'Optional Agent of Passive', then your suggestion should first explain that the actor/agent is understood to be [the 'Most Agent-like' noun].`,
+		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].
+If the Noun Phrase marked with 'Most Agent-like' has 'Implicit' == 'Optional Agent of Passive', then your caution should first explain that the actor/agent is understood to be [the 'Most Agent-like' noun].`,
 	},
 	{
 		name: 'dual',
 		lang_condition: (profile) => profile.dual,
-		condition: feature_value('Noun', 'Number', 'Dual'),
+		condition: node => feature_value('Noun', 'Number', 'Dual')(node) && feature_value('Noun', 'Person', 'Third')(node),
 		prompt: `Show the MTT which Nouns are marked as Dual so they can decide which form to use. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
 	},
 	{
@@ -102,27 +100,29 @@ Tell the MTT to be mindful of this social relation in how they express what is b
 	{
 		name: 'explanation of name',
 		condition: feature_value('Noun Phrase', 'Implicit', 'Explanation of Name'),
-		prompt: `For any Implicit 'Explanation of Name', note that the first noun (usually a proper noun) is the name of a second noun (usually something like city or region).`,
+		prompt: `For any Implicit 'Explanation of Name', state minimally that the first noun (usually a proper noun) is the name of a second noun (usually something like city or region).
+		That second noun is not in the source text, so this is helpful extra information for the MTT.`,
 	},
 	{
 		name: 'complex alternates',
 		condition: feature_present('Clause', 'Vocabulary Alternate'),
-		prompt: `For each 'complex vocabulary alternate', describe how it can be understood as its simple equivalent by comparing the parts of the sentence that are different.
-Do not merge or harmonize the alternates, and do not ask the MTT to keep them separate.
-Remember that the MTT does not have the TBTA semantic analysis data, so if you refer to it, you need to make clear what you are referring to.`,
+		prompt: `For each 'complex vocabulary alternate', describe minimally how it can be understood as its simple equivalent by comparing the parts of the sentences that are different.`,
 	},
 	{
 		name: 'pairings',
 		condition: node => 'pairing_concept' in node,
-		prompt: `For all unique pairings, explain that the second pairing_concept can also be understood as its corresponding simpler concept.`,
+		prompt: `For all unique pairings, state minimally that if they don't have a good equivalent for the second pairing_concept, it can also be understood as its corresponding simpler concept.
+		If the two concepts are really close in meaning, don't bother making a caution for them.`,
 	},
 	{
 		name: 'implicit information',
-		condition: feature_values('Clause', 'Implicit Information', ['Implicit Situational', 'Implicit Background Information', 'Implicit Historical Information']),
-		prompt: `For any clause with the feature 'implicit situtational/background/historical information', note that that information is not in the original source but may be helpful to understand the surrounding context.`,
+		condition: feature_values('Clause', 'Implicit Information', ['Implicit Situational Information', 'Implicit Background Information', 'Implicit Historical Information']),
+		prompt: `Explain the surrounding context of any clause with the feature 'implicit situtational/background/historical information', in light of but without directly quoting that implicit information.
+		DO NOT directly quote the implicit clause, but include its meaning within the explanation of the surrounding context.`,
 	},
 	{
 		name: 'indirect speech',
+		lang_condition: profile => !profile.indirect_speech,
 		condition: node => node.concept === 'say-C',
 		prompt: `Explain that this verse usually uses indirect speech, so tell the MTT to think about how to word it as direct speech.`,
 	},
@@ -137,8 +137,10 @@ function find_node_in_encoding(encoding: EncodingEntity[], entity_filter: Entity
 	return false
 }
 
-export function find_triggered_issues(encoding: EncodingEntity[], languageProfile: LanguageProfile): TriggerFilter[] {
-	const filtered_by_encoding = triggerFilters.filter(trigger => find_node_in_encoding(encoding, trigger.condition))
-	const filtered_by_language_profile = filtered_by_encoding.filter(trigger => !trigger.lang_condition || trigger.lang_condition(languageProfile))
-	return filtered_by_language_profile
+export function filter_by_encoding(encoding: EncodingEntity[]): (trigger: TriggerFilter) => boolean {
+	return trigger => find_node_in_encoding(encoding, trigger.condition)
+}
+
+export function filter_by_language_profile(language_profile: LanguageProfile): (trigger: TriggerFilter) => boolean {
+	return trigger => !trigger.lang_condition || trigger.lang_condition(language_profile)
 }
