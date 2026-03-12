@@ -17,5 +17,11 @@
 			"pattern": "copilot.tabitha.bible",
 			"custom_domain": true
 		}
-	]
+	],
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		}
+	}
 }

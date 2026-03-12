@@ -19,3 +19,21 @@ export async function fetch_target_text(verse_ref: Reference, project: string, p
 	return results.find(res => res.audience === preferred_audience) || results.at(0)
 }
 
+export const polished_books = [
+	'Genesis',
+	'Joshua',
+	'Ruth',
+	'1 Samuel',
+	'2 Samuel',
+	'Nehemiah',
+	'Esther',
+	'Daniel',
+	'Jonah',
+	'Nahum',
+	'Matthew',
+	'Mark',
+	'Acts',
+	'Titus',
+	'Philemon',
+	'3 John',
+]

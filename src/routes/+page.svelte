@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { fetch_target_text } from '$lib/lookups'
-    import RadioToggle from '$lib/RadioToggle.svelte';
+	import { fetch_target_text, polished_books } from '$lib/lookups'
+	import RadioToggle from '$lib/RadioToggle.svelte'
 
 	const { data } = $props()
 
@@ -29,12 +29,27 @@
 		result = await response.json() as CopilotApiResult
 		fetching_cautions = false
 	}
+
+	const NT_index_start = polished_books.findIndex(book => book === 'Matthew')
+	const OT_books = polished_books.slice(0, NT_index_start)
+	const NT_books = polished_books.slice(NT_index_start)
 </script>
 
 <form>
 	<section class="py-4 flex gap-4 prose">
 		<h3>Verse</h3>
-		<input bind:value={reference.book} class="input w-50" />
+		<select class="select w-60" bind:value={reference.book}>
+			<optgroup label="Old Testament">
+				{#each OT_books as book}
+					<option value={book}>{book}</option>
+				{/each}
+			</optgroup>
+			<optgroup label="New Testament">
+				{#each NT_books as book}
+					<option value={book}>{book}</option>
+				{/each}
+			</optgroup>
+		</select>
 		<input bind:value={reference.chapter} class="input w-20" type="number" />
 		<input bind:value={reference.verse} class="input w-20" type="number" />
 		<button type="button" class="btn btn-md" onclick={get_english_text}>
@@ -60,7 +75,7 @@
 			<div class="mb-2">
 				Number of notes
 				<select class="select" bind:value={settings.max_cautions}>
-					<option value={0}>No limit</option>
+					<option value={-1}>No limit</option>
 					{#each [1, 2, 3, 4, 5] as num}
 						<option value={num}>{num}</option>
 					{/each}
