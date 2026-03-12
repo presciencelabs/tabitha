@@ -1,4 +1,4 @@
-import { API_KEY_GEMINI } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { GoogleGenAI } from '@google/genai'
 import { trigger_filters, filter_by_encoding, filter_by_language_profile } from '$lib/trigger_filters'
 
@@ -43,7 +43,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 		max_cautions: settings.max_cautions,
 	}
 
-	const ai = new GoogleGenAI({ apiKey: API_KEY_GEMINI })
+	const ai = new GoogleGenAI({ apiKey: env.API_KEY_GEMINI })
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-2.5-flash',
