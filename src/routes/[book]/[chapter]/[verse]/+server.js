@@ -50,7 +50,9 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 		}
 		return json(result)
 
-	} catch {
+	} catch (error) {
+		console.error('Error fetching notes from LLM:', error)
+
 		/** @type {CopilotApiResult} */
 		const result = {
 			verse: reference,
