@@ -119,13 +119,17 @@
 		<details class="collapse collapse-arrow bg-base-200 border-base-300 border m-2 w-[80%]">
 			<summary class="collapse-title font-semibold">Language Profile</summary>
 			<div class="collapse-content text-sm w-1/2">
-				<RadioToggle label={'Clusivity'} bind:value={settings.language_profile.clusivity} />
-				<RadioToggle label={'Dual'} bind:value={settings.language_profile.dual} />
-				<RadioToggle label={'Trial'} bind:value={settings.language_profile.trial} />
-				<RadioToggle label={'Passive'} bind:value={settings.language_profile.passive} />
-				<RadioToggle label={'Rhetorical Questions'} bind:value={settings.language_profile.rhetorical_questions} />
-				<RadioToggle label={'Honorifics'} bind:value={settings.language_profile.honorifics} />
-				<RadioToggle label={'Indirect Speech'} bind:value={settings.language_profile.indirect_speech} />
+				<table class="table table-sm">
+					<tbody>
+						<RadioToggle label={'Clusivity'} bind:value={settings.language_profile.clusivity} />
+						<RadioToggle label={'Dual'} bind:value={settings.language_profile.dual} />
+						<RadioToggle label={'Trial'} bind:value={settings.language_profile.trial} />
+						<RadioToggle label={'Passive'} bind:value={settings.language_profile.passive} />
+						<RadioToggle label={'Rhetorical Questions'} bind:value={settings.language_profile.rhetorical_questions} />
+						<RadioToggle label={'Honorifics'} bind:value={settings.language_profile.honorifics} />
+						<RadioToggle label={'Indirect Speech'} bind:value={settings.language_profile.indirect_speech} />
+					</tbody>
+				</table>
 			</div>
 		</details>
 	</details>

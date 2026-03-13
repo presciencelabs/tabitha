@@ -7,14 +7,18 @@
 	const name = $derived(label.toLowerCase().replaceAll(' ', '_'))
 </script>
 
-<div class="grid grid-cols-3">
-	{label}
-	<label class="ms-2">
-		<input name={name} bind:group={value} class="radio radio-xs" type="radio" value={true} />
-		Present
-	</label>
-	<label class="ms-2">
-		<input name={name} bind:group={value} class="radio radio-xs" type="radio" value={false} />
-		Absent
-	</label>
-</div>
+<tr>
+	<td>{label}</td>
+	<td>
+		<label>
+			<input name={name} bind:group={value} class="radio radio-xs" type="radio" value={true} />
+			Present
+		</label>
+	</td>
+	<td>
+		<label>
+			<input name={name} bind:group={value} class="radio radio-xs" type="radio" value={false} />
+			Absent
+		</label>
+	</td>
+</tr>
