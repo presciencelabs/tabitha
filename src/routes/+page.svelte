@@ -13,11 +13,12 @@
 		language_profile: {
 			rhetorical_questions: true,
 			clusivity: true,
-			passive: true,
+			passive: false,
 			dual: true,
 			trial: true,
 			honorifics: true,
-			indirect_speech: true,
+			indirect_speech: false,
+			closing_quotation_frame: true,
 		},
 		lwc: 'English',
 		mtt_level: 'high_school',
@@ -86,8 +87,8 @@
 		</div>
 	{/if}
 	
-	<details class="collapse collapse-arrow bg-base-100 border-base-300 border mt-5" open>
-		<summary class="collapse-title font-semibold">Options</summary>
+	<details class="collapse collapse-arrow bg-base-100 border-base-300 border mt-5">
+		<summary class="collapse-title font-semibold">Options/Settings</summary>
 		<div class="collapse-content text-sm">
 			<div class="mb-2">
 				Number of notes
@@ -128,6 +129,7 @@
 						<RadioToggle label={'Rhetorical Questions'} bind:value={settings.language_profile.rhetorical_questions} />
 						<RadioToggle label={'Honorifics'} bind:value={settings.language_profile.honorifics} />
 						<RadioToggle label={'Indirect Speech'} bind:value={settings.language_profile.indirect_speech} />
+						<RadioToggle label={'Closing quotation frames'} bind:value={settings.language_profile.closing_quotation_frame} />
 					</tbody>
 				</table>
 			</div>

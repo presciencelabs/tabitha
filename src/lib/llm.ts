@@ -20,7 +20,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
 			You task is to render preselected caution guidance to a mother-tongue translator (MTT) based on the provided tbta_encoding.
-			Use only the supplied JSON. Do not add new cautions.
+			Use only the supplied JSON. Use and obey ALL the provided 'issues' to make your cautions. Do not add new cautions.
 			Write ONLY in the requested output_language, and be concise.
 			If output_language is not English, translate the english_text and return it.
 			Base the cautions ONLY on the tbta_encoding, but if necessary you can use the provided or translated english_text for quoting and reference.

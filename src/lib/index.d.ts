@@ -6,6 +6,7 @@ type LanguageProfile = {
 	trial: boolean
 	honorifics: boolean
 	indirect_speech: boolean
+	closing_quotation_frame: boolean
 }
 
 type Reference = {

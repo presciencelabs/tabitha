@@ -43,14 +43,11 @@ The 'Primary Analysis' is the most common interpretation of the original Biblica
 Simply compare the parts that are different so they can see all the possibilities.`,
 	},
 	{
-		name: 'dynamic expansion',
-		condition: feature_value('Noun Phrase', 'Implicit', 'Dynamic Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Dynamic Expansion', state minimally that the the first noun X can be represented as Y of X, where Y is the second noun.`,
-	},
-	{
-		name: 'literal expansion',
-		condition: feature_value('Noun Phrase', 'Implicit', 'Literal Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Literal Expansion', state minimally that the the phrase X of Y can be understood as simply Y.`,
+		name: 'complex alternates',
+		condition: feature_present('Clause', 'Vocabulary Alternate'),
+		prompt: `For each clause marked as 'Complex Vocabulary Alternate', explain that it can be understood as its corresponding 'Simple Vocabulary Alternate' by quoting and comparing the parts of the sentences that are different.
+		You should always quote and compare them, even if you think they are too different in meaning.
+		If the simple alterate is not in the english_text, convert the encoding to natural English to quote it.`,
 	},
 	{
 		name: 'rhetorical questions (present in language)',
@@ -66,17 +63,32 @@ State that they need to think about how to phrase it to communicate that meaning
 		prompt: `State that this verse contains rhetorical questions, and show each 'Equivalent Statement'.`,
 	},
 	{
-		name: 'exclusive "we"',
-		lang_condition: (profile) => profile.clusivity,
-		condition: feature_value('Noun', 'Person', 'First Exclusive'),
-		prompt: `State that this verse contains exclusive 'we', so tell the MTT to be extra mindful of who the speaker/writer is referring to.`,
+		name: 'passive implicit agent',
+		lang_condition: (profile) => !profile.passive,
+		condition: feature_value('Noun Phrase', 'Implicit', 'Optional Agent of Passive'),
+		prompt: `For each unique Noun Phrase marked as 'Optional Agent of Passive', state minimally that that noun is understood to be the actor/agent in its surrounding clause(s).`,
 	},
 	{
 		name: 'passive',
 		lang_condition: (profile) => !profile.passive,
-		condition: feature_value('Clause', 'Topic Noun Phrase', 'Most Patient-like'),
-		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].
-If the Noun Phrase marked with 'Most Agent-like' has 'Implicit' == 'Optional Agent of Passive', then your caution should first explain that the actor/agent is understood to be [the 'Most Agent-like' noun].`,
+		condition: feature_value('Clause', 'Topic NP', 'Most Patient-like'),
+		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].`,
+	},
+	{
+		name: 'dynamic expansion',
+		condition: feature_value('Noun Phrase', 'Implicit', 'Dynamic Expansion (Metonymy)'),
+		prompt: `For any Noun Phrase with 'Dynamic Expansion', state minimally that the the first noun X can be represented as Y of X, where Y is the second noun.`,
+	},
+	{
+		name: 'literal expansion',
+		condition: feature_value('Noun Phrase', 'Implicit', 'Literal Expansion (Metonymy)'),
+		prompt: `For any Noun Phrase with 'Literal Expansion', state minimally that the the phrase X of Y can be understood as simply Y.`,
+	},
+	{
+		name: 'exclusive "we"',
+		lang_condition: (profile) => profile.clusivity,
+		condition: feature_value('Noun', 'Person', 'First Exclusive'),
+		prompt: `State that this verse contains exclusive 'we', so tell the MTT to be extra mindful of who the speaker/writer is referring to.`,
 	},
 	{
 		name: 'dual',
@@ -98,15 +110,15 @@ If the Noun Phrase marked with 'Most Agent-like' has 'Implicit' == 'Optional Age
 Tell the MTT to be mindful of this social relation in how they express what is being said.`,
 	},
 	{
+		name: 'speaker attitude',
+		condition: feature_values('Clause', "Speaker's Attitude", ['Endearing', 'Polite', 'Honorable', 'Complimentary', 'Derogatory', 'Antagonistic-Hostile', 'Anger', 'Rebuke', 'Imploring']),
+		prompt: `Show the MTT the Speaker's Attitude if it is not neutral. Tell the MTT to be mindful of this attitude in how they express what is being said.`,
+	},
+	{
 		name: 'explanation of name',
 		condition: feature_value('Noun Phrase', 'Implicit', 'Explanation of Name'),
 		prompt: `For any Implicit 'Explanation of Name', state minimally that the first noun (usually a proper noun) is the name of a second noun (usually something like city or region).
 		That second noun is not in the source text, so this is helpful extra information for the MTT.`,
-	},
-	{
-		name: 'complex alternates',
-		condition: feature_present('Clause', 'Vocabulary Alternate'),
-		prompt: `For each 'complex vocabulary alternate', describe minimally how it can be understood as its simple equivalent by comparing the parts of the sentences that are different.`,
 	},
 	{
 		name: 'pairings',
@@ -115,11 +127,17 @@ Tell the MTT to be mindful of this social relation in how they express what is b
 		If the two concepts are really close in meaning, don't bother making a caution for them.`,
 	},
 	{
-		name: 'implicit information',
-		condition: feature_values('Clause', 'Implicit Information', ['Implicit Situational Information', 'Implicit Background Information', 'Implicit Historical Information']),
-		prompt: `Explain the surrounding context of any clause with the feature 'implicit situtational/background/historical information', in light of but without directly quoting that implicit information.
-		DO NOT directly quote the implicit clause, but include its meaning within the explanation of the surrounding context.`,
+		name: 'closing quotation frame',
+		lang_condition: (profile) => profile.closing_quotation_frame,
+		condition: feature_value('Clause', 'Type', 'Closing Quotation Frame'),
+		prompt: `For each 'Closing Quotation Frame' if the quote does not also begin in this verse, remind the the MTT of who said what to who by converting the closing quotation frame to natural English.`,
 	},
+	// {
+	// 	name: 'implicit information',
+	// 	condition: feature_values('Clause', 'Implicit Information', ['Implicit Situational Information', 'Implicit Background Information', 'Implicit Historical Information']),
+	// 	prompt: `Explain the surrounding context of any clause with the feature 'implicit situtational/background/historical information', in light of but without directly quoting that implicit information.
+	// 	DO NOT directly quote the implicit clause, but include its meaning within the explanation of the surrounding context.`,
+	// },
 	{
 		name: 'indirect speech',
 		lang_condition: profile => !profile.indirect_speech,
