@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { fetch_target_text, polished_books } from '$lib/lookups'
-	import RadioToggle from '$lib/RadioToggle.svelte'
+	import { fetch_target_text, polished_books, language_profile_infos } from '$lib/lookups'
 	import { persisted } from '$lib/store.svelte'
+	import Icon from '@iconify/svelte'
 
 	let reference = $state(persisted<Reference>('saved_verse', {
 		book: 'Genesis',
@@ -122,14 +122,40 @@
 			<div class="collapse-content text-sm w-1/2">
 				<table class="table table-sm">
 					<tbody>
-						<RadioToggle label={'Clusivity'} bind:value={settings.language_profile.clusivity} />
-						<RadioToggle label={'Dual'} bind:value={settings.language_profile.dual} />
-						<RadioToggle label={'Trial'} bind:value={settings.language_profile.trial} />
-						<RadioToggle label={'Passive'} bind:value={settings.language_profile.passive} />
-						<RadioToggle label={'Rhetorical Questions'} bind:value={settings.language_profile.rhetorical_questions} />
-						<RadioToggle label={'Honorifics'} bind:value={settings.language_profile.honorifics} />
-						<RadioToggle label={'Indirect Speech'} bind:value={settings.language_profile.indirect_speech} />
-						<RadioToggle label={'Closing quotation frames'} bind:value={settings.language_profile.closing_quotation_frame} />
+						{#each Object.keys(language_profile_infos) as key}
+							{@const typed_key = key as keyof LanguageProfile}
+							{@const label = `${key[0].toUpperCase()}${key.slice(1)}`.replaceAll('_', ' ')}
+							{@const info = language_profile_infos[typed_key]}
+							<tr>
+								<td>
+									{label}
+									{#if info.length}
+										<div class="dropdown dropdown-hover dropdown-right dropdown-center">
+											<div role="button" class="btn btn-circle btn-ghost btn-xs text-info">
+												<Icon icon="mdi:information-slab-circle-outline" class="h-4 w-4" />
+											</div>
+											<div class="card card-sm dropdown-content bg-base-100 rounded-box w-64 shadow-sm">
+												<div class="card-body">
+													{info}
+												</div>
+											</div>
+										</div>
+									{/if}
+								</td>
+								<td>
+									<label>
+										<input name={key} bind:group={settings.language_profile[typed_key]} class="radio radio-xs" type="radio" value={true} />
+										Present
+									</label>
+								</td>
+								<td>
+									<label>
+										<input name={key} bind:group={settings.language_profile[typed_key]} class="radio radio-xs" type="radio" value={false} />
+										Absent
+									</label>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -171,3 +197,9 @@
 	</div>
 {/if}
 
+<style>
+	/* this corrects a problem where the info popup was getting hidden behind the next element below it */
+	details[open] {
+		z-index: 999;
+	}
+</style>

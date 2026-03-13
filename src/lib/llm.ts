@@ -25,6 +25,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 			If output_language is not English, translate the english_text and return it.
 			Base the cautions ONLY on the tbta_encoding, but if necessary you can use the provided or translated english_text for quoting and reference.
 			If you quote the the text in one of your cautions, only quote the parts from the sentence that are relevant to the caution.
+			Avoid wording things like 'your translation should clearly show...' or 'make sure your translation shows...', but more like 'be mindful of...
 			If max_cautions is -1, there is no limit to the number of cautions. Otherwise do not provide more than max_cautions cautions.
 
 			Write according to the specified education level of the MTT according to:
@@ -74,5 +75,11 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 		}
 	})
 
-	return response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { cautions: [] }
+	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { cautions: [] }
+	return { ...output, cautions: output.cautions.map(postprocess) }
+}
+
+function postprocess(caution: string) {
+	// remove senses in case the LLM included it
+	return caution.replaceAll(/-[A-Z](\W)/g, '$1')
 }

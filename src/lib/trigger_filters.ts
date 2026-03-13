@@ -45,7 +45,7 @@ Simply compare the parts that are different so they can see all the possibilitie
 	{
 		name: 'complex alternates',
 		condition: feature_present('Clause', 'Vocabulary Alternate'),
-		prompt: `For each clause marked as 'Complex Vocabulary Alternate', explain that it can be understood as its corresponding 'Simple Vocabulary Alternate' by quoting and comparing the parts of the sentences that are different.
+		prompt: `For each clause marked as 'Complex Vocabulary Alternate', explain that it can be understood as its corresponding 'Simple Vocabulary Alternate(s)' by quoting and comparing the parts of the sentences that are different.
 		You should always quote and compare them, even if you think they are too different in meaning.
 		If the simple alterate is not in the english_text, convert the encoding to natural English to quote it.`,
 	},
@@ -105,13 +105,13 @@ State that they need to think about how to phrase it to communicate that meaning
 	{
 		name: 'honorifics',
 		lang_condition: (profile) => profile.honorifics,
-		condition: features_present('Clause', ['Speaker', 'Listener', "Speaker's Age", 'Speaker-Listener Age']),
+		condition: features_present('Clause', ['Speaker', 'Listener', "Speaker`s Age", 'Speaker-Listener Age']),
 		prompt: `Show the MTT the social relation between the speaker and listener based on these features in the TBTA semantic analysis: Speaker, Listener, Speaker's Age, Speaker-Listener Age.
 Tell the MTT to be mindful of this social relation in how they express what is being said.`,
 	},
 	{
 		name: 'speaker attitude',
-		condition: feature_values('Clause', "Speaker's Attitude", ['Endearing', 'Polite', 'Honorable', 'Complimentary', 'Derogatory', 'Antagonistic-Hostile', 'Anger', 'Rebuke', 'Imploring']),
+		condition: feature_values('Clause', "Speaker`s Attitude", ['Endearing', 'Polite', 'Honorable', 'Complimentary', 'Derogatory', 'Antagonistic-Hostile', 'Anger', 'Rebuke', 'Imploring']),
 		prompt: `Show the MTT the Speaker's Attitude if it is not neutral. Tell the MTT to be mindful of this attitude in how they express what is being said.`,
 	},
 	{
@@ -142,7 +142,7 @@ Tell the MTT to be mindful of this social relation in how they express what is b
 		name: 'indirect speech',
 		lang_condition: profile => !profile.indirect_speech,
 		condition: node => node.concept === 'say-C',
-		prompt: `Explain that this verse usually uses indirect speech, so tell the MTT to think about how to word it as direct speech.`,
+		prompt: `Convert the patient clause(s) of say-C to a direct quote and offer that as a possibility of how to reword it.`,
 	},
 ];
 
