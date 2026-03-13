@@ -1,11 +1,28 @@
 <script lang="ts">
 	import { fetch_target_text, polished_books } from '$lib/lookups'
 	import RadioToggle from '$lib/RadioToggle.svelte'
+	import { persisted } from '$lib/store.svelte'
 
-	const { data } = $props()
+	let reference = $state(persisted<Reference>('saved_verse', {
+		book: 'Genesis',
+		chapter: 1,
+		verse: 1,
+	}).value)
 
-	const settings = $derived(data.settings)
-	const reference = $derived(data.reference)
+	let settings = $state(persisted<CopilotSettings>('saved_settings', {
+		language_profile: {
+			rhetorical_questions: true,
+			clusivity: true,
+			passive: true,
+			dual: true,
+			trial: true,
+			honorifics: true,
+			indirect_speech: true,
+		},
+		lwc: 'English',
+		mtt_level: 'high_school',
+		max_cautions: -1,
+	}).value)
 
 	let fetching_english = $state(false)
 	let english_text: TargetApiResult|undefined = $state(undefined)
