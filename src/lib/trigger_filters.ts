@@ -72,7 +72,8 @@ State that they need to think about how to phrase it to communicate that meaning
 		name: 'passive',
 		lang_condition: (profile) => !profile.passive,
 		condition: feature_value('Clause', 'Topic NP', 'Most Patient-like'),
-		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].`,
+		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].
+		If the Most Agent-like Noun is also marked as 'Optional Agent of Passive', do not write this caution for it.`,
 	},
 	{
 		name: 'dynamic expansion',

@@ -8,6 +8,7 @@
 		chapter: 1,
 		verse: 1,
 	}).value)
+	let submitted_reference: Reference = $state($state.snapshot(reference))
 
 	let settings = $state(persisted<CopilotSettings>('saved_settings', {
 		language_profile: {
@@ -31,7 +32,9 @@
 	let fetching_cautions = $state(false)
 	let result: CopilotApiResult|null = $state(null)
 
-	const lwcs = ['English', 'Swahili', 'Indonesian', 'Tagalog', 'Spanish', 'French', 'Russian']
+	let error_text = $state('')
+
+	const lwcs = ['English', 'Arabic', 'Cebuano', 'French', 'Hindi', 'Indonesian', 'Mandarin', 'Portugese', 'Russian', 'Spanish', 'Swahili', 'Tagalog', 'Tok Pisin']
 
 	async function get_english_text() {
 		fetching_english = true
@@ -42,9 +45,17 @@
 	async function get_cautions() {
 		fetching_cautions = true
 		const { book, chapter, verse } = reference
+		submitted_reference = { book, chapter, verse }
 		const params = JSON.stringify(settings)
 		const response = await fetch(`/${book}/${chapter}/${verse}?settings=${encodeURIComponent(params)}`)
-		result = await response.json() as CopilotApiResult
+
+		if (response.ok) {
+			result = await response.json() as CopilotApiResult
+		} else {
+			error_text = (await response.json())?.message as string || 'Unexpected error occurred'
+			console.error(error_text)
+		}
+
 		fetching_cautions = false
 	}
 
@@ -76,18 +87,18 @@
 	</section>
 
 	{#if fetching_english}
-		<div class="prose">
+		<div class="prose mb-5">
 			<h4>English Preview</h4>
 			<div>Loading...</div>
 		</div>
 	{:else if english_text}
-		<div class="w-full">
+		<div class="w-full mb-5">
 			<div class="prose"><h4>English Preview</h4></div>
 			<div>({english_text?.audience}) {english_text?.text || ''}</div>
 		</div>
 	{/if}
 	
-	<details class="collapse collapse-arrow bg-base-100 border-base-300 border mt-5">
+	<details class="collapse collapse-arrow bg-base-100 border-base-300 border">
 		<summary class="collapse-title font-semibold">Options/Settings</summary>
 		<div class="collapse-content text-sm">
 			<div class="mb-2">
@@ -124,8 +135,7 @@
 					<tbody>
 						{#each Object.keys(language_profile_infos) as key}
 							{@const typed_key = key as keyof LanguageProfile}
-							{@const label = `${key[0].toUpperCase()}${key.slice(1)}`.replaceAll('_', ' ')}
-							{@const info = language_profile_infos[typed_key]}
+							{@const [label, info] = language_profile_infos[typed_key]}
 							<tr>
 								<td>
 									{label}
@@ -162,33 +172,36 @@
 		</details>
 	</details>
 
-	<button type="button" class="btn btn-md mt-5" onclick={get_cautions} disabled={fetching_cautions}>
+	<button type="button" class="btn btn-md my-4" onclick={get_cautions} disabled={fetching_cautions}>
 		Get notes
 	</button>
 </form>
 
 {#if fetching_cautions}
-	<div class="prose"><h2>Notes for {reference.book} {reference.chapter}:{reference.verse}</h2></div>
+	<div class="prose"><h2>Notes for {submitted_reference.book} {submitted_reference.chapter}:{submitted_reference.verse}</h2></div>
 	<p>Loading...</p>
+{:else if error_text.length}
+	<div class="prose"><h2>Notes for {submitted_reference.book} {submitted_reference.chapter}:{submitted_reference.verse}</h2></div>
+	<div>{error_text}</div>
 {:else if result}
-	<div class="w-full">
+	<div class="w-full pb-8">
 		<div class="prose"><h2>Notes for {result.verse.book} {result.verse.chapter}:{result.verse.verse}</h2></div>
 
-		<div class="mt-5">
+		<div class="mt-3">
 			<div class="prose"><h4>English Text</h4></div>
-			<p class="text-sm">{result.english_text}</p>
+			<p>{result.english_text}</p>
 		</div>
 
 		{#if result.translated_text && settings.lwc !== 'English'}
-			<div class="mt-5">
+			<div class="mt-3">
 				<div class="prose"><h4>LWC Text ({settings.lwc})</h4></div>
 				<p>{result.translated_text}</p>
 			</div>
 		{/if}
 
-		<div class="mt-5">
+		<div class="mt-3">
 			<div class="prose"><h4>Notes/Cautions</h4></div>
-			<ul class="list list-disc text-md">
+			<ul class="list list-disc text-base ms-5">
 				{#each result.cautions as caution}
 					<li>{caution}</li>
 				{/each}
@@ -196,10 +209,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	/* this corrects a problem where the info popup was getting hidden behind the next element below it */
-	details[open] {
-		z-index: 999;
-	}
-</style>

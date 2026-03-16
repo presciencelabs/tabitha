@@ -4,6 +4,7 @@ export async function fetch_encoding(verse_ref: Reference): Promise<SourceApiRes
 	const { book, chapter, verse } = verse_ref
 	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}/${verse}/simple-json?glosses=true`)
 	if (!response.ok) {
+		console.error(await response.text())
 		return undefined
 	}
 	return await response.json() as SourceApiResult
@@ -13,21 +14,11 @@ export async function fetch_target_text(verse_ref: Reference, project: string, p
 	const { book, chapter, verse } = verse_ref
 	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/${project}/${book}/${chapter}/${verse}`)
 	if (!response.ok) {
+		console.error(await response.text())
 		return undefined
 	}
 	const results = await response.json() as TargetApiResult[]
 	return results.find(res => res.audience === preferred_audience) || results.at(0)
-}
-
-export const language_profile_infos: Record<keyof LanguageProfile, string> = {
-	'rhetorical_questions': 'Your language uses and understands rhetorical questions. If not, show notes that suggest an equivalent statement for any rhetorical questions.',
-	'passive': 'Your language has a passive voice. If not, show notes that identify any actor that is not explicitly mentioned.',
-	'honorifics': 'Your language has special markings or pronouns for acknowledging social relationships or dynamics. Show notes to help identify these relationships.',
-	'indirect_speech': 'Your langauge uses indirect speech ("John said that Mary left"). If not, show notes to help convert these to direct quotes.',
-	'clusivity': 'Your language marks inclusive "we" (me and you) differently from exclusive "we" (me and them). Show notes for when "we" is exclusive.',
-	'dual': 'Your language has a special marking for when there are two of a thing (eg "John\'s EYES"). Show notes to identify possible nouns that need this marking.',
-	'trial': 'Your language has a special marking for when there are three of a thing (eg "We (three)"). Show notes to identify possible nouns that need this marking.',
-	'closing_quotation_frame': 'Your language closes a quotation by repeating part or all of how the quotation was introduced. Show notes to remind how longer quotes were introduced.',
 }
 
 export const polished_books = [
@@ -48,3 +39,38 @@ export const polished_books = [
 	'Philemon',
 	'3 John',
 ]
+
+export const language_profile_infos: Record<keyof LanguageProfile, [string, string]> = {
+	'rhetorical_questions': [
+		'Rhetorical Questions',
+		'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
+	],
+	'passive': [
+		'Passive',
+		'Your language has a passive voice. If not, the copilot will show notes that identify any actor that is not explicitly mentioned.',
+	],
+	'honorifics': [
+		'Honorifics',
+		'Your language has special markings or pronouns for acknowledging social relationships or dynamics. The copilot will show notes to help identify these relationships.',
+	],
+	'indirect_speech': [
+		'Indirect Speech',
+		'Your language uses indirect speech ("John said that Mary left"). If not, the copilot will show notes to help convert these to direct quotes.',
+	],
+	'clusivity': [
+		'Inclusive and exclusive "we"',
+		'Your language marks inclusive "we" (we with you) differently from exclusive "we" (we without you). The copilot will show notes for when "we" is exclusive.',
+	],
+	'dual': [
+		'Dual number',
+		'Your language has a special marking for when there are exactly two of a thing (eg "John\'s EYES"). The copilot will show notes to identify possible nouns that need this marking.',
+	],
+	'trial': [
+		'Trial number',
+		'Your language has a special marking for when there are exactly three of a thing (eg "We (three)"). The copilot will show notes to identify possible nouns that need this marking.',
+	],
+	'closing_quotation_frame': [
+		'Closing quotation frames',
+		'Your language closes a quotation by putting some special words in the end. The copilot will show notes to remind how longer quotes were introduced.',
+	],
+}
