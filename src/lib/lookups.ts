@@ -88,3 +88,72 @@ export const language_profile_infos: Record<keyof LanguageProfile, [string, stri
 		'Your language closes a quotation by putting some special words in the end. The copilot will show notes to remind how longer quotes were introduced.',
 	],
 }
+
+interface LwcInfo {
+	code: string
+	no_notes_text?: string
+}
+export const lwc_info: Record<string, LwcInfo> = {
+	'English': {
+		code: 'ENG',
+		no_notes_text: 'No notes for this verse based on the TBTA analysis.',
+	},
+	'Arabic': {
+		code: 'ARB',
+		// no_notes_text: 'بحسب تحليل TBTA، فإن هذه الفقرة لا تقدم أي نصيحة.',
+	},
+	'Cebuano': {
+		code: 'CEB',
+		// no_notes_text: 'Walay mga sugyot para niini nga bersikulo base sa pagtuki sa TBTA.',
+	},
+	'French': {
+		code: 'FRE',
+		no_notes_text: "Aucune suggestion pour ce verset d'après l'analyse TBTA.",
+	},
+	'Hindi': {
+		code: 'HIN',
+		// no_notes_text: 'TBTA एनालिसिस के आधार पर इस श्लोक के लिए कोई सुझाव नहीं है',
+	},
+	'Indonesian': {
+		code: 'IND',
+		no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
+	},
+	'Mandarin': {
+		code: 'MAN',
+		// no_notes_text: '根据TBTA分析，这节经文没有建议。',
+	},
+	'Portugese (Br)': {
+		code: 'POR',
+		// no_notes_text: 'Nenhuma sugestão para este versículo com base na análise TBTA.',
+	},
+	'Russian': {
+		code: 'RUS',
+		no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
+	},
+	'Spanish': {
+		code: 'SPA',
+		// no_notes_text: 'No hay sugerencias para este versículo según el análisis de TBTA.',
+	},
+	'Swahili': {
+		code: 'SWA',
+		no_notes_text: 'Hakuna mapendekezo ya mstari huu kulingana na uchambuzi wa TBTA.',
+	},
+	'Tagalog': {
+		code: 'TAG',
+		no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
+	},
+	'Tok Pisin': {
+		code: 'TKP',
+		no_notes_text: 'Nogat tingting long dispela ves bihainim TBTA analisis.',
+	},
+}
+
+interface MttLevelInfo {
+	label: string
+	code: string
+}
+export const mtt_level_info: Record<MttLevel, MttLevelInfo> = {
+	'grade5': { label: 'Grade 5', code: 'G5' },
+	'high_school': { label: 'High-school', code: 'HS' },
+	'undergraduate': { label: 'Undergraduate', code: 'UG' },
+}

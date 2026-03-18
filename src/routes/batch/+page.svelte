@@ -2,7 +2,7 @@
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-    import { fetch_verses_for_chapter } from '$lib/lookups';
+	import { fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
 
 	let reference = $state(persisted<Reference>('saved_verse', {
 		book: 'Genesis',
@@ -37,7 +37,6 @@
 		fetch_verses_for_chapter(reference.book, reference.chapter)
 			.then(result => {
 				verse_count = result
-				console.log(verse_count)
 			})
 			.finally(() => {
 				fetching_verse_count = false
@@ -64,7 +63,7 @@
 			const url = window.URL.createObjectURL(blob)
 			const a = document.createElement('a')
 			a.href = url
-			a.download = `${book} ${chapter} - TBTA Copilot Notes.sfm` // File name
+			a.download = `${book} ${chapter} - TBTA Copilot Notes ${lwc_info[settings.lwc].code} ${mtt_level_info[settings.mtt_level].code}.sfm` // File name
 			document.body.appendChild(a)
 			a.click()
 			

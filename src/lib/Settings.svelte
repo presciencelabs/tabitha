@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { language_profile_infos } from '$lib/lookups'
+	import { language_profile_infos, lwc_info, mtt_level_info } from '$lib/lookups'
 	import Icon from '@iconify/svelte'
 
 	interface Props {
 		settings: CopilotSettings
 	}
 	let { settings = $bindable() }: Props = $props()
-
-	const lwcs = ['English', 'Arabic', 'Cebuano', 'French', 'Hindi', 'Indonesian', 'Mandarin', 'Portugese', 'Russian', 'Spanish', 'Swahili', 'Tagalog', 'Tok Pisin']
 </script>
 
 <details class="collapse collapse-arrow bg-base-100 border-base-300 border">
@@ -25,15 +23,15 @@
 		<div class="mb-2">
 			MTT education level
 			<select class="select" bind:value={settings.mtt_level}>
-				<option value="grade5">Grade 5</option>
-				<option value="high_school">High-school</option>
-				<option value="undergraduate">Undergraduate</option>
+				{#each Object.entries(mtt_level_info) as [mtt_level, info]}
+					<option value={mtt_level}>{info.label}</option>
+				{/each}
 			</select>
 		</div>
 		<div>
 			LWC
 			<select class="select" bind:value={settings.lwc}>
-				{#each lwcs as lwc}
+				{#each Object.keys(lwc_info) as lwc}
 					<option value={lwc}>{lwc}</option>
 				{/each}
 			</select>

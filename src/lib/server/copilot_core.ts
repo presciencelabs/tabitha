@@ -1,5 +1,5 @@
 import { get_llm_cautions } from '$lib/server/llm'
-import { fetch_encoding, fetch_target_text } from '$lib/lookups'
+import { fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 
 export async function get_copilot_result(reference: Reference, settings: CopilotSettings): Promise<CopilotApiResult> {
 	const encoding = await fetch_encoding(reference)
@@ -39,16 +39,19 @@ export function error_result(reference: Reference, message: string|undefined = u
 	}
 }
 
-export function convert_to_sfm(result: CopilotApiResult): string {
-	// Convert the results to Paratext SFM format:
-	//   \p \v [verse number] TBTA English
-	//   \p Second language (if present)
-	//   \li First suggestion
-	//   \li Second suggestion...
-	const cautions = result.cautions.length ? result.cautions : ['No suggestions for this verse based on the TBTA analysis.']
-	return [
-		`\\p \\v ${result.verse.verse} ${result.english_text}`,
-		...(result.translated_text ? [`\\p ${result.translated_text}`] : []),
-		...cautions.map(c => `\\li - ${c}`),
-	].join('\n')
+export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => string {
+	const no_suggestions_text = lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text
+	return result => {
+		// Convert the results to Paratext SFM format:
+		//   \p \v [verse number] TBTA English
+		//   \p Second language (if present)
+		//   \li First suggestion
+		//   \li Second suggestion...
+		const cautions = result.cautions.length ? result.cautions : [no_suggestions_text]
+		return [
+			`\\p \\v ${result.verse.verse} ${result.english_text}`,
+			...(result.translated_text ? [`\\p ${result.translated_text}`] : []),
+			...cautions.map(c => `\\li - ${c}`),
+		].join('\n')
+	}
 }

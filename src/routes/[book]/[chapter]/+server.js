@@ -47,7 +47,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 
 	const sfm_text = [
 		`\\c ${chapter_int}`,
-		...results.map(convert_to_sfm),
+		...results.map(convert_to_sfm(settings.lwc)),
 	].join('\n')
 
 	const filename = `${book} ${chapter} - TBTA Copilot Notes.sfm`

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fetch_target_text } from '$lib/lookups'
+	import { fetch_target_text, lwc_info } from '$lib/lookups'
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
@@ -122,7 +122,7 @@
 						<li>{caution}</li>
 					{/each}
 				{:else}
-					<li>No suggestions for this verse based on the TBTA analysis.</li>
+					<li>{lwc_info[settings.lwc].no_notes_text || lwc_info['English'].no_notes_text}</li>
 				{/if}
 			</ul>
 		</div>

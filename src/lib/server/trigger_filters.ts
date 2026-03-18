@@ -3,7 +3,7 @@ type LanguageProfileFilter = (profile: LanguageProfile) => boolean
 
 interface TriggerFilter {
 	name: string
-	condition: EntityFilter
+	condition: EntityFilter|EntityFilter[]
 	lang_condition?: LanguageProfileFilter
 	prompt: string
 }
@@ -94,19 +94,28 @@ State that they need to think about how to phrase it to communicate that meaning
 	{
 		name: 'dual',
 		lang_condition: (profile) => profile.dual,
-		condition: node => feature_value('Noun', 'Number', 'Dual')(node) && feature_value('Noun', 'Person', 'Third')(node),
+		condition: [
+			feature_value('Noun', 'Number', 'Dual'),
+			feature_value('Noun', 'Person', 'Third'),
+		],
 		prompt: `For each unique noun marked as Dual, show the MTT that noun. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'trial',
 		lang_condition: (profile) => profile.trial,
-		condition: feature_value('Noun', 'Number', 'Trial'),
+		condition: [
+			feature_value('Noun', 'Number', 'Trial'),
+			feature_value('Noun', 'Person', 'Third'),
+		],
 		prompt: `For each unique noun marked as Trial, show the MTT that noun. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'honorifics',
 		lang_condition: (profile) => profile.honorifics,
-		condition: features_present('Clause', ['Speaker', 'Listener', "Speaker`s Age", 'Speaker-Listener Age']),
+		condition: [
+			features_present('Clause', ['Speaker', 'Listener', "Speaker`s Age", 'Speaker-Listener Age']),
+			node => node.features?.['Speaker'] !== node.features?.['Listener'] || !!node.features?.['Speaker-Listener Age'],
+		],
 		prompt: `Show the MTT the social relation between the speaker and listener based on these features in the TBTA semantic analysis: Speaker, Listener, Speaker's Age, Speaker-Listener Age.
 Tell the MTT to be mindful of this social relation in how they express what is being said.`,
 	},
@@ -158,7 +167,12 @@ function find_node_in_encoding(encoding: EncodingEntity[], entity_filter: Entity
 }
 
 export function filter_by_encoding(encoding: EncodingEntity[]): (trigger: TriggerFilter) => boolean {
-	return trigger => find_node_in_encoding(encoding, trigger.condition)
+	return trigger => {
+		const condition: EntityFilter = Array.isArray(trigger.condition)
+			? node => (trigger.condition as EntityFilter[]).every(c => c(node))
+			: trigger.condition
+		return find_node_in_encoding(encoding, condition)
+	}
 }
 
 export function filter_by_language_profile(language_profile: LanguageProfile): (trigger: TriggerFilter) => boolean {
