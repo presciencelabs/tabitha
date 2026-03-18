@@ -38,7 +38,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 	const llm_input: CopilotLlmInput = {
 		output_language: settings.lwc ?? 'English',
 		prose_level: settings.mtt_level,
-		tbta_encoding: JSON.stringify(encoding),
+		tbta_encoding: preprocess_encoding(encoding),
 		english_text: english,
 		issues: trigger_prompts,
 		max_cautions: settings.max_cautions,
@@ -83,6 +83,20 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 		// Sometimes the LLM still includes 'translated_text' even when the output language is English
 		translated_text: settings.lwc === 'English' ? undefined : output.translated_text,
 	}
+}
+
+function preprocess_encoding(encoding: SourceApiResult): string {
+	return JSON.stringify(encoding)
+		.replaceAll('"be-G"', '"be-for-G"')
+		.replaceAll('"be-I"', '"be-with-I"')
+		.replaceAll('"be-I"', '"be-with-I"')
+		.replaceAll('"be-P"', '"be-about-P"')
+		.replaceAll('"be-Q"', '"be-made-of-Q"')
+		.replaceAll('"be-R"', '"be-part-of-R"')
+		.replaceAll('"be-T"', '"be-from-T"')
+		.replaceAll('"be-U"', '"be-like-U"')
+		.replaceAll('"be-W"', '"be-in-W"')
+		.replaceAll('"become-G"', '"become-like-G"')
 }
 
 function postprocess(caution: string) {

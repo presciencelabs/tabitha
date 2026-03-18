@@ -95,13 +95,13 @@ State that they need to think about how to phrase it to communicate that meaning
 		name: 'dual',
 		lang_condition: (profile) => profile.dual,
 		condition: node => feature_value('Noun', 'Number', 'Dual')(node) && feature_value('Noun', 'Person', 'Third')(node),
-		prompt: `Show the MTT which Nouns are marked as Dual. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
+		prompt: `For each unique noun marked as Dual, show the MTT that noun. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'trial',
 		lang_condition: (profile) => profile.trial,
 		condition: feature_value('Noun', 'Number', 'Trial'),
-		prompt: `Show the MTT which Nouns are marked as Trial. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
+		prompt: `For each unique noun marked as Trial, show the MTT that noun. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'honorifics',
