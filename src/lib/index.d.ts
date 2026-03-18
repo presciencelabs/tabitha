@@ -61,4 +61,5 @@ type CopilotLlmOutput = {
 type CopilotApiResult = CopilotLlmOutput & {
 	english_text: string
 	verse: Reference
+	error?: string
 }

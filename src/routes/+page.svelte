@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { fetch_target_text, polished_books, language_profile_infos } from '$lib/lookups'
+	import { fetch_target_text } from '$lib/lookups'
 	import { persisted } from '$lib/store.svelte'
-	import Icon from '@iconify/svelte'
+	import BookSelect from '$lib/BookSelect.svelte'
+	import Settings from '$lib/Settings.svelte'
 
 	let reference = $state(persisted<Reference>('saved_verse', {
 		book: 'Genesis',
@@ -34,8 +35,6 @@
 
 	let error_text = $state('')
 
-	const lwcs = ['English', 'Arabic', 'Cebuano', 'French', 'Hindi', 'Indonesian', 'Mandarin', 'Portugese', 'Russian', 'Spanish', 'Swahili', 'Tagalog', 'Tok Pisin']
-
 	async function get_english_text() {
 		fetching_english = true
 		english_text = await fetch_target_text(reference, 'English', 'Unchurched Adults')
@@ -44,6 +43,8 @@
 
 	async function get_cautions() {
 		fetching_cautions = true
+		error_text = ''
+		
 		const { book, chapter, verse } = reference
 		submitted_reference = { book, chapter, verse }
 		const params = JSON.stringify(settings)
@@ -51,6 +52,7 @@
 
 		if (response.ok) {
 			result = await response.json() as CopilotApiResult
+			error_text = result.error || ''
 		} else {
 			error_text = (await response.json())?.message as string || 'Unexpected error occurred'
 			console.error(error_text)
@@ -58,27 +60,12 @@
 
 		fetching_cautions = false
 	}
-
-	const NT_index_start = polished_books.findIndex(book => book === 'Matthew')
-	const OT_books = polished_books.slice(0, NT_index_start)
-	const NT_books = polished_books.slice(NT_index_start)
 </script>
 
 <form>
 	<section class="py-4 flex gap-4 prose">
 		<h3>Verse</h3>
-		<select class="select w-60" bind:value={reference.book}>
-			<optgroup label="Old Testament">
-				{#each OT_books as book}
-					<option value={book}>{book}</option>
-				{/each}
-			</optgroup>
-			<optgroup label="New Testament">
-				{#each NT_books as book}
-					<option value={book}>{book}</option>
-				{/each}
-			</optgroup>
-		</select>
+		<BookSelect bind:book={reference.book} />
 		<input bind:value={reference.chapter} class="input w-20" type="number" />
 		<input bind:value={reference.verse} class="input w-20" type="number" />
 		<button type="button" class="btn btn-md" onclick={get_english_text}>
@@ -98,79 +85,7 @@
 		</div>
 	{/if}
 	
-	<details class="collapse collapse-arrow bg-base-100 border-base-300 border">
-		<summary class="collapse-title font-semibold">Options/Settings</summary>
-		<div class="collapse-content text-sm">
-			<div class="mb-2">
-				Number of notes
-				<select class="select" bind:value={settings.max_cautions}>
-					<option value={-1}>No limit</option>
-					{#each [1, 2, 3, 4, 5] as num}
-						<option value={num}>{num}</option>
-					{/each}
-				</select>
-			</div>
-			<div class="mb-2">
-				MTT education level
-				<select class="select" bind:value={settings.mtt_level}>
-					<option value="grade5">Grade 5</option>
-					<option value="high_school">High-school</option>
-					<option value="undergraduate">Undergraduate</option>
-				</select>
-			</div>
-			<div>
-				LWC
-				<select class="select" bind:value={settings.lwc}>
-					{#each lwcs as lwc}
-						<option value={lwc}>{lwc}</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-
-		<details class="collapse collapse-arrow bg-base-200 border-base-300 border m-2 w-[80%]">
-			<summary class="collapse-title font-semibold">Language Profile</summary>
-			<div class="collapse-content text-sm w-1/2">
-				<table class="table table-sm">
-					<tbody>
-						{#each Object.keys(language_profile_infos) as key}
-							{@const typed_key = key as keyof LanguageProfile}
-							{@const [label, info] = language_profile_infos[typed_key]}
-							<tr>
-								<td>
-									{label}
-									{#if info.length}
-										<div class="dropdown dropdown-hover dropdown-right dropdown-center">
-											<div role="button" class="btn btn-circle btn-ghost btn-xs text-info">
-												<Icon icon="mdi:information-slab-circle-outline" class="h-4 w-4" />
-											</div>
-											<div class="card card-sm dropdown-content bg-base-100 rounded-box w-64 shadow-sm">
-												<div class="card-body">
-													{info}
-												</div>
-											</div>
-										</div>
-									{/if}
-								</td>
-								<td>
-									<label>
-										<input name={key} bind:group={settings.language_profile[typed_key]} class="radio radio-xs" type="radio" value={true} />
-										Present
-									</label>
-								</td>
-								<td>
-									<label>
-										<input name={key} bind:group={settings.language_profile[typed_key]} class="radio radio-xs" type="radio" value={false} />
-										Absent
-									</label>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</details>
-	</details>
+	<Settings bind:settings={settings} />
 
 	<button type="button" class="btn btn-md my-4" onclick={get_cautions} disabled={fetching_cautions}>
 		Get notes
@@ -202,9 +117,13 @@
 		<div class="mt-3">
 			<div class="prose"><h4>Notes/Cautions</h4></div>
 			<ul class="list list-disc text-base ms-5">
-				{#each result.cautions as caution}
-					<li>{caution}</li>
-				{/each}
+				{#if result.cautions.length > 0}
+					{#each result.cautions as caution}
+						<li>{caution}</li>
+					{/each}
+				{:else}
+					<li>No suggestions for this verse based on the TBTA analysis.</li>
+				{/if}
 			</ul>
 		</div>
 	</div>

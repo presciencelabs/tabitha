@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { GoogleGenAI } from '@google/genai'
-import { trigger_filters, filter_by_encoding, filter_by_language_profile } from '$lib/trigger_filters'
+import { trigger_filters, filter_by_encoding, filter_by_language_profile } from '$lib/server/trigger_filters'
 
 export async function get_llm_cautions(encoding: SourceApiResult, english: string, settings: CopilotSettings): Promise<CopilotLlmOutput> {
 	const triggered_issues = trigger_filters
@@ -12,7 +12,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 
 	if (trigger_prompts.length === 0 && (!settings.lwc || settings.lwc === 'English')) {
 		return {
-			cautions: ['No suggestions for this verse based on the TBTA analysis.'],
+			cautions: [],
 		}
 	}
 
@@ -76,10 +76,18 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 	})
 
 	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { cautions: [] }
-	return { ...output, cautions: output.cautions.map(postprocess) }
+	
+	return {
+		...output,
+		cautions: output.cautions.map(postprocess),
+		// Sometimes the LLM still includes 'translated_text' even when the output language is English
+		translated_text: settings.lwc === 'English' ? undefined : output.translated_text,
+	}
 }
 
 function postprocess(caution: string) {
 	// remove senses in case the LLM included it
-	return caution.replaceAll(/-[A-Z](\W)/g, '$1')
+	return caution
+		.replaceAll(/ \(\w+-[A-Z]\)/g, '')
+		.replaceAll(/-[A-Z](\W)/g, '$1')
 }

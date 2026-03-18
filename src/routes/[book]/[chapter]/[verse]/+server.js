@@ -1,6 +1,5 @@
-import { get_llm_cautions } from '$lib/llm'
-import { fetch_encoding, fetch_target_text } from '$lib/lookups'
 import { error, json } from '@sveltejs/kit'
+import { get_copilot_result } from '$lib/server/copilot_core'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params: { book, chapter, verse }, url: { searchParams } }) {
@@ -30,37 +29,6 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 	/** @type {Reference} */
 	const reference = { book, chapter: chapter_int, verse: verse_int }
 
-	const encoding = await fetch_encoding(reference)
-	if (!encoding) {
-		error(404, 'Verse reference does not exist')
-	}
-
-	console.log(reference)
-	const english = await fetch_target_text(reference, 'English', 'Unchurched Adults')
-	const english_text = english?.text || ''
-
-
-	try {
-		const llm_output = await get_llm_cautions(encoding, english_text, settings)
-		/** @type {CopilotApiResult} */
-		const result = {
-			verse: reference,
-			english_text,
-			...llm_output,
-		}
-		return json(result)
-
-	} catch (error) {
-		console.error('Error fetching notes from LLM:', error)
-
-		/** @type {CopilotApiResult} */
-		const result = {
-			verse: reference,
-			english_text,
-			cautions: [
-				'Copilot notes had a temporary issue and could not be loaded. Please try again later.',
-			],
-		}
-		return json(result)
-	}
+	const result = await get_copilot_result(reference, settings)
+	return json(result)
 }

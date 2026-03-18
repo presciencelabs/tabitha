@@ -21,6 +21,20 @@ export async function fetch_target_text(verse_ref: Reference, project: string, p
 	return results.find(res => res.audience === preferred_audience) || results.at(0)
 }
 
+export async function fetch_verses_for_chapter(book: string, chapter: number): Promise<number|undefined> {
+	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}`)
+	if (!response.ok) {
+		console.error(await response.text())
+		return undefined
+	}
+	const result = await response.json() as { id_tertiary: string }[]
+	if (result.length === 0) {
+		return 0
+	}
+	const last_verse = Math.max(...result.map(i => parseInt(i.id_tertiary)))
+	return last_verse
+}
+
 export const polished_books = [
 	'Genesis',
 	'Joshua',

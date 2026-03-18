@@ -95,13 +95,13 @@ State that they need to think about how to phrase it to communicate that meaning
 		name: 'dual',
 		lang_condition: (profile) => profile.dual,
 		condition: node => feature_value('Noun', 'Number', 'Dual')(node) && feature_value('Noun', 'Person', 'Third')(node),
-		prompt: `Show the MTT which Nouns are marked as Dual so they can decide which form to use. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
+		prompt: `Show the MTT which Nouns are marked as Dual. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'trial',
 		lang_condition: (profile) => profile.trial,
 		condition: feature_value('Noun', 'Number', 'Trial'),
-		prompt: `Show the MTT which Nouns are marked as Trial so they can decide which form to use. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
+		prompt: `Show the MTT which Nouns are marked as Trial. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
 	},
 	{
 		name: 'honorifics',
@@ -131,7 +131,8 @@ Tell the MTT to be mindful of this social relation in how they express what is b
 		name: 'closing quotation frame',
 		lang_condition: (profile) => profile.closing_quotation_frame,
 		condition: feature_value('Clause', 'Type', 'Closing Quotation Frame'),
-		prompt: `For each 'Closing Quotation Frame' if the quote does not also begin in this verse, remind the the MTT of who said what to who by converting the closing quotation frame to natural English.`,
+		prompt: `For each 'Closing Quotation Frame' if the quote does not also begin in this verse, remind the the MTT of who said what to who by converting the closing quotation frame to natural English.
+		Do not quote the entire quote again.`,
 	},
 	// {
 	// 	name: 'implicit information',
