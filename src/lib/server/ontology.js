@@ -42,6 +42,8 @@ export const get_concepts = db => async concept_filter => {
 		query_builder.add_filter(...scope_filters[concept_filter.scope])
 	}
 
+	query_builder.order_by('id')
+
 	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
 	const { results } = await query_builder.prepare().all()
 
@@ -250,6 +252,7 @@ function merge_how_to_results(concepts, how_to_results) {
 /**
  * @typedef {{
  * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
+ * 		order_by: (column: string) => ConceptQueryBuilder,
  * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
  * }} ConceptQueryBuilder
  *
@@ -264,6 +267,9 @@ function build_concept_query(db, table) {
 	/** @type {string[]} */
 	const all_params = []
 
+	/** @type {string} */
+	let order_by_sql = ''
+
 	/**
 	 * @param {string} filter
 	 * @param {string[]} params
@@ -276,6 +282,15 @@ function build_concept_query(db, table) {
 	}
 
 	/**
+	 * @param {string} column
+	 * @this {ConceptQueryBuilder}
+	 */
+	function order_by(column) {
+		order_by_sql = `ORDER BY ${column}`
+		return this
+	}
+
+	/**
 	 * @returns {import('@cloudflare/workers-types').D1PreparedStatement}
 	 */
 	function prepare() {
@@ -283,11 +298,13 @@ function build_concept_query(db, table) {
 		return db.prepare(`
 			SELECT *
 			FROM ${table}
-			WHERE ${joined_filters}`).bind(...all_params)
+			WHERE ${joined_filters}
+			${order_by_sql}`).bind(...all_params)
 	}
 
 	return {
 		add_filter,
+		order_by,
 		prepare,
 	}
 }

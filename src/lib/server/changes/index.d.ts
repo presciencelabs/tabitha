@@ -5,3 +5,5 @@ type ConceptUpdateData = ConceptKey & {
 	categorization: string
 	curated_examples: string
 }
+
+type ConceptCreateData = ConceptUpdateData

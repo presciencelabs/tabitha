@@ -283,3 +283,5 @@ export const levels = new Map([
 	['3', 'Complex - usually in a complex alternate'],
 	['4', 'Inexplicable'],
 ])
+
+export const parts_of_speech = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal']

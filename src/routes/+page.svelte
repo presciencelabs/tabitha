@@ -30,6 +30,15 @@
 	<DisplayPreference on:preference={set_preference} />
 </header>
 
+{#if data.can_add}
+	<section>
+		<a class="btn" href="/protected/concept/create">
+			<Icon icon="material-symbols:add" class="w-5 h-5" />
+			Add Concept
+		</a>
+	</section>
+{/if}
+
 {#if display_preference === 'grid'}
 	<section class="mt-8 flex flex-row flex-wrap gap-10">
 		{#each matches as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}

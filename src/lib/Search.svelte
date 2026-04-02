@@ -3,6 +3,7 @@
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
 	import { writable } from 'svelte/store'
+	import { parts_of_speech } from '$lib/lookups'
 
 	export let autofocus = false
 
@@ -11,7 +12,6 @@
 
 	/** @type {string} */
 	let category = new URLSearchParams($page.url.search).get('category') || 'all'
-	const categories = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal']
 
 	let scope = writable('')
 
@@ -45,7 +45,7 @@
 
 		<select name="category" bind:value={category} class="select select-primary select-lg join-item">
 			<option value="all">All Concepts</option>
-			{#each categories as category_value}
+			{#each parts_of_speech as category_value}
 				<option value="{category_value}">{category_value}s</option>
 			{/each}
 		</select>
