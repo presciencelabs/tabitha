@@ -1,6 +1,7 @@
 import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
 import { CATEGORY_ABBREVIATIONS } from '$lib/encoding/lookups'
-import { structure_semantic_encoding, transform_features_to_codes } from '$lib/encoding/semantic_encoding'
+import { structure_semantic_encoding } from '$lib/encoding/semantic_encoding'
+import { transform_features_to_codes } from '$lib/encoding/features'
 import { json } from '@sveltejs/kit'
 
 /** @type {import('./$types').RequestHandler} */

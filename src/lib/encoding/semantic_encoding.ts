@@ -1,5 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } from './lookups'
+import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
 import { is_boundary_end, is_boundary_start } from './entity_filters'
 
 /**
@@ -26,7 +27,7 @@ export async function transform_semantic_encoding(db: D1Database, semantic_encod
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg (?:([\w.])-([^~]*))?~\\lu ([^~]+)/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
-	const all_features = await load_feature_map(db)
+	const all_features = await load_source_feature_map(db)
 
 	return entities.map(decode_entity)
 
@@ -51,102 +52,40 @@ export async function transform_semantic_encoding(db: D1Database, semantic_encod
 	}
 }
 
-type FeatureValueInfo = { value: FeatureValue, code: string }
-type FeatureInfo = { name: FeatureName, values: FeatureValueInfo[] }
-type FeatureMap = Map<CategoryName, FeatureInfo[]>
+export async function transform_target_encoding(db: D1Database, semantic_encoding: string, project: string): Promise<TargetEntity[]> {
+	// In addition to the source encoding, '~\z1' denotes the target word
+	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg ([^~]+)?~\\lu ([^~]+)~\\z1 ?([^~]+)?/g
+	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
-async function load_feature_map(db: D1Database): Promise<FeatureMap> {
-	const sql = 'SELECT * FROM Features'
-	const { results } = await db.prepare(sql).all<DbFeature>()
+	const all_features = await load_target_feature_map(project) || await load_source_feature_map(db)
 
-	const grouped_by_category = Map.groupBy(results, ({ category }) => category)
-	const feature_map_entries = [...grouped_by_category.entries().map(by_feature_name)]
-	return new Map(feature_map_entries)
+	return entities.map(decode_entity)
 
-	function by_feature_name(category_entry: [CategoryName, DbFeature[]]): [CategoryName, FeatureInfo[]] {
-		const [category, features] = category_entry
-		const infos = [...Map.groupBy(features, ({ feature }) => feature).entries()]
-			.toSorted(([, db_features]) => db_features[0].position)
-			.map(([name, db_features]) => ({ name, values: db_features }))
-		return [category, infos]
-	}
-}
+	// ['~\wd ~\tg N-1A1SDAnK3NN........~\lu God~\z1 God', 'N-1A1SDAnK3NN........', 'God', 'God']
+	function decode_entity(entity_match: RegExpMatchArray): TargetEntity {
+		const category_code = entity_match[1]?.[0] || ''
+		const is_user_defined = category_code === '&'
 
-function decode_features(raw_feature_codes: string, category: CategoryName, all_features: FeatureMap): SourceFeatures {
-	if (!raw_feature_codes.length) {
-		return { feature_codes: '', features: [], noun_list_index: null }
-	}
+		const category = is_user_defined ? entity_match[1].slice(1) : CATEGORY_NAME_LOOKUP.get(category_code) || ''
+		const category_abbr = is_user_defined ? category : CATEGORY_ABBREVIATIONS.get(category) || ''
+		const raw_feature_codes = is_user_defined ? '' : entity_match[1]?.slice(2) || ''
+		const { feature_codes, features, noun_list_index } = decode_features(raw_feature_codes, category, all_features)
 
-	const is_noun = category === 'Noun'
+		const value = entity_match[2]
+		const concept = decode_concept_data(value, category, raw_feature_codes).concept
+		const target = entity_match[3] || ''
 
-	// The first feature is the semantic complexity level, which is set during generation.
-	// It is therefore meaningless at this stage and can be dropped.
-	// The second feature is the lexical sense, which is treated specially elsewhere.
-	// So it too can be dropped from the features.
-	const feature_codes = WORD_ENTITY_CATEGORIES.has(category) ? raw_feature_codes.slice(is_noun ? 3 : 2) : raw_feature_codes
-
-	// The third feature on a Noun is the Noun List Index, and its value is just the character itself.
-	// This feature is not included in the 'Features' database, and so needs to be handled separately.
-	const noun_list_index = is_noun ? raw_feature_codes[2] : null
-
-	const features = feature_codes_to_structure(category, feature_codes, all_features)
-
-	return {
-		feature_codes,
-		features,
-		noun_list_index,
-	}
-}
-
-function encode_features(entity: SourceEntity): string {
-	if (entity.concept) {
-		// The '1' is supposed to represent the complexity level, but is set at generation time. So it is always 1 in the encoding.
-		return `1${entity.concept.sense}${entity.noun_list_index || ''}${entity.feature_codes}`
-	}
-	return entity.feature_codes
-}
-
-function feature_codes_to_structure(category: CategoryName, feature_codes: string, all_features: FeatureMap): EntityFeature[] {
-	const category_features = all_features.get(category) || []
-	const feature_code_array = [...feature_codes]
-
-	return category_features.map((feature_info, index) => {
-		const code = feature_code_array[index]
-		const value_info = feature_info.values.find(v => v.code === code)
-		if (!value_info) {
-			console.error(`Unknown '${category}' feature code '${code}' of '${feature_info.name}'`)
+		return {
+			category,
+			category_abbr,
+			value,
+			concept,
+			target,
+			feature_codes,
+			features: features.map(({ value, name }) => ({ value, name: name || 'Unknown Lexical Feature' })),
+			noun_list_index,
 		}
-		const value = value_info?.value || ''
-		return { name: feature_info.name, value }
-	})
-}
-
-function feature_structure_to_codes(category: CategoryName, features: EntityFeature[], all_features: FeatureMap): string {
-	const category_features = all_features.get(category) || []
-	
-	const codes = category_features.map(feature_info => {
-		const value = features.find(f => f.name.toLowerCase() === feature_info.name.toLowerCase())?.value.toLowerCase()
-		const value_info = feature_info.values.find(v => v.value.toLowerCase() === value)
-		if (value && !value_info) {
-			console.error(`Unknown '${category}' feature value '${value}' of '${feature_info.name}'`)
-		}
-		
-		// As a default, first try '.' if it exists as a code, otherwise use the first value
-		return value_info?.code || feature_info.values.find(f => f.code === '.')?.code || feature_info.values[0].code
-	})
-	return codes.join('')
-}
-
-export async function transform_features_to_codes(db: D1Database, source_entities: SourceEntity[]): Promise<SourceEntity[]> {
-	const all_features = await load_feature_map(db)
-
-	return source_entities.map(entity => {
-		const { category, features } = entity
-		const feature_codes = feature_structure_to_codes(category, features, all_features)
-		// fill in any missing features in the structure
-		const new_features = feature_codes_to_structure(category, feature_codes, all_features)
-		return { ...entity, feature_codes, features: new_features }
-	})
+	}
 }
 
 function decode_concept_data(value: string, category: CategoryName, raw_feature_codes: string): SourceConceptData {
@@ -188,6 +127,7 @@ function decode_concept_data(value: string, category: CategoryName, raw_feature_
 }
 
 function encode_concept_data(entity: SourceEntity): { value: string } {
+	// Encode the concept entity data back into the TBTA-compatible format for storage and generation
 	if (entity.concept && entity.pairing_concept) {
 		return { value: `${entity.concept.stem}${entity.pairing_type}${entity.pairing_concept.sense}${entity.pairing_concept.stem}` }
 	} else if (entity.concept) {
