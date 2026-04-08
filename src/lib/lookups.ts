@@ -121,6 +121,9 @@ export const lwc_info: Record<string, LwcInfo> = {
 		code: 'IND',
 		no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
 	},
+	'Malayalam': {
+		code: 'MAL',
+	},
 	'Mandarin': {
 		code: 'MAN',
 		// no_notes_text: '根据TBTA分析，这节经文没有建议。',
