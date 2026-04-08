@@ -98,6 +98,9 @@ export const lwc_info: Record<string, LwcInfo> = {
 		code: 'ENG',
 		no_notes_text: 'No notes for this verse based on the TBTA analysis.',
 	},
+	'Afrikaans': {
+		code: 'AFR',
+	},
 	'Arabic': {
 		code: 'ARB',
 		// no_notes_text: 'بحسب تحليل TBTA، فإن هذه الفقرة لا تقدم أي نصيحة.',
@@ -141,6 +144,9 @@ export const lwc_info: Record<string, LwcInfo> = {
 	'Tagalog': {
 		code: 'TAG',
 		no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
+	},
+	'Tamil': {
+		code: 'TAM',
 	},
 	'Tok Pisin': {
 		code: 'TKP',

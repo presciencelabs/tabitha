@@ -10,12 +10,6 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 	console.log(triggered_issues.map(({ name }) => name))
 	const trigger_prompts = triggered_issues.map(({ prompt }) => prompt)
 
-	if (trigger_prompts.length === 0 && (!settings.lwc || settings.lwc === 'English')) {
-		return {
-			cautions: [],
-		}
-	}
-
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
 			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
