@@ -7,8 +7,11 @@ type Source = {
 	phase_1_encoding: string
 	semantic_encoding: string
 	comments: string
+	status: SourceStatus
 	notes: string
 }
+
+type SourceStatus = 'Not Started' | 'Initial Analysis in Progress' | 'Initial Analysis Complete' | 'Final Review in Progress' | 'Ready to Translate'
 
 type ApiSource = Source & {
 	parsed_semantic_encoding: SourceEntity[]
