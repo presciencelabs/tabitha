@@ -18,8 +18,11 @@ type SourceData = {
 	phase_1_encoding: string
 	semantic_encoding: string
 	parsed_semantic_encoding: SourceEntity[]
+	status: SourceStatus
 	notes: string
 }
+
+type SourceStatus = 'Not Started' | 'Initial Analysis in Progress' | 'Initial Analysis Complete' | 'Final Review in Progress' | 'Ready to Translate'
 
 type SourceEntity = {
 	category: CategoryName

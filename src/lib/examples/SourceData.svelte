@@ -51,6 +51,14 @@
 			<Icon icon="fe:link-external" class="h-6 w-6" />
 		</a>
 	</h4>
+
+	{#if source.status !== 'Ready to Translate'}
+		<div role="alert" class="alert alert-warning alert-soft">
+			<Icon icon="mdi:alert-outline" class="h-6 w-6" />
+			<span>Source data for this verse is still being reviewed, so this usage may not be accurate.</span>
+		</div>
+	{/if}
+
 	<p>
 		<SourceEntities source_entities={source.parsed_semantic_encoding} {selected_concept} />
 	</p>
