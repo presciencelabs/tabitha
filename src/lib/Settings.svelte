@@ -28,13 +28,19 @@
 				{/each}
 			</select>
 		</div>
-		<div>
+		<div class="mb-2">
 			LWC
 			<select class="select" bind:value={settings.lwc}>
 				{#each Object.keys(lwc_info) as lwc}
 					<option value={lwc}>{lwc}</option>
 				{/each}
 			</select>
+		</div>
+		<div>
+			<label>
+				<input type="checkbox" bind:checked={settings.show_note_sources} />
+				Show note sources
+			</label>
 		</div>
 	</div>
 

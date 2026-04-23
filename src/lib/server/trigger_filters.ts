@@ -120,11 +120,6 @@ State that they need to think about how to phrase it to communicate that meaning
 Tell the MTT to be mindful of this social relation in how they express what is being said.`,
 	},
 	{
-		name: 'speaker attitude',
-		condition: feature_values('Clause', "Speaker`s Attitude", ['Endearing', 'Polite', 'Honorable', 'Complimentary', 'Derogatory', 'Antagonistic-Hostile', 'Anger', 'Rebuke', 'Imploring']),
-		prompt: `Show the MTT the Speaker's Attitude if it is not neutral. Tell the MTT to be mindful of this attitude in how they express what is being said.`,
-	},
-	{
 		name: 'explanation of name',
 		condition: feature_value('Noun Phrase', 'Implicit', 'Explanation of Name'),
 		prompt: `For any Implicit 'Explanation of Name', state minimally that the first noun (usually a proper noun) is the name of a second noun (usually something like city or region).
@@ -143,12 +138,6 @@ Tell the MTT to be mindful of this social relation in how they express what is b
 		prompt: `For each 'Closing Quotation Frame' if the quote does not also begin in this verse, remind the the MTT of who said what to who by converting the closing quotation frame to natural English.
 		Do not quote the entire quote again.`,
 	},
-	// {
-	// 	name: 'implicit information',
-	// 	condition: feature_values('Clause', 'Implicit Information', ['Implicit Situational Information', 'Implicit Background Information', 'Implicit Historical Information']),
-	// 	prompt: `Explain the surrounding context of any clause with the feature 'implicit situtational/background/historical information', in light of but without directly quoting that implicit information.
-	// 	DO NOT directly quote the implicit clause, but include its meaning within the explanation of the surrounding context.`,
-	// },
 	{
 		name: 'indirect speech',
 		lang_condition: profile => !profile.indirect_speech,

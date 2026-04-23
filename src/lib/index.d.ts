@@ -42,6 +42,7 @@ type CopilotSettings = {
 	lwc: string
 	mtt_level: MttLevel
 	max_cautions: number
+	show_note_sources: boolean
 }
 
 type CopilotLlmInput = {
@@ -53,8 +54,13 @@ type CopilotLlmInput = {
 	max_cautions: number
 }
 
+type CopilotLlmCaution = {
+	note: string
+	source: string
+}
+
 type CopilotLlmOutput = {
-	cautions: string[]
+	cautions: CopilotLlmCaution[]
 	translated_text?: string
 }
 

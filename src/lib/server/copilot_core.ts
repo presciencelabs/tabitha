@@ -47,7 +47,7 @@ export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => strin
 		//   \p Second language (if present)
 		//   \li First suggestion
 		//   \li Second suggestion...
-		const cautions = result.cautions.length ? result.cautions : [no_suggestions_text]
+		const cautions = result.cautions.length ? result.cautions.map(({ note }) => note) : [no_suggestions_text]
 		return [
 			`\\p \\v ${result.verse.verse} ${result.english_text}`,
 			...(result.translated_text ? [`\\p ${result.translated_text}`] : []),

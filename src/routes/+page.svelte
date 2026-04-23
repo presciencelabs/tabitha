@@ -25,6 +25,7 @@
 		lwc: 'English',
 		mtt_level: 'high_school',
 		max_cautions: -1,
+		show_note_sources: false,
 	}).value)
 
 	let fetching_english = $state(false)
@@ -119,7 +120,10 @@
 			<ul class="list list-disc text-base ms-5">
 				{#if result.cautions.length > 0}
 					{#each result.cautions as caution}
-						<li>{caution}</li>
+						<li>{caution.note}</li>
+						{#if settings.show_note_sources}
+							<li class="pl-4">Source: {caution.source}</li>
+						{/if}
 					{/each}
 				{:else}
 					<li>{lwc_info[settings.lwc].no_notes_text || lwc_info['English'].no_notes_text}</li>

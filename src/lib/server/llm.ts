@@ -14,16 +14,14 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
 			You task is to render preselected caution guidance to a mother-tongue translator (MTT) based on the provided tbta_encoding.
-			Use the supplied JSON. Use ALL the provided 'issues' to make your cautions. 
-			If there are other cautions helpful for MTTs, add them too.
-			Write ONLY in the requested output_language and be concise.
+			Use only the supplied JSON. Use and obey ALL the provided 'issues' to make your cautions. Do not add new cautions.
+			Write ONLY in the requested output_language, and be concise.
 			If output_language is not English, translate the english_text and return it.
 			Base the cautions ONLY on the tbta_encoding, but if necessary you can use the provided or translated english_text for quoting and reference.
 			If you quote the the text in one of your cautions, only quote the parts from the sentence that are relevant to the caution.
 			Avoid wording things like 'your translation should clearly show...' or 'make sure your translation shows...', but more like 'be mindful of...
 			If max_cautions is -1, there is no limit to the number of cautions. Otherwise do not provide more than max_cautions cautions.
-			Write only helpful suggestions. Evaluate your suggestions for obviousness and do not write obvious ones.
-			Write as many helpful suggestions as needed, but do not surpass the limit.
+			Evaluate your suggestions for obviousness and do not write obvious ones.
 
 			Write according to the specified education level of the MTT according to:
 			- grade5 = simple everyday language, no linguistic or grammar terms
@@ -59,9 +57,18 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 					'cautions': {
 						'type': 'array',
 						'items': {
-							'type': 'string',
-							'description': 'Caution or note to the MTT.'
-						}
+							'type': 'object',
+							'properties': {
+								'note': {
+									'type': 'string',
+									'description': 'Caution or note to the MTT.',
+								},
+								'source': {
+									'type': 'string',
+									'description': 'The part of the encoding that triggered this caution, for traceability and debugging. This should only show the relevant categories, concepts, and features.',
+								},
+							},
+						},
 					},
 					'translated_text': {
 						'type': 'string',
@@ -76,7 +83,7 @@ export async function get_llm_cautions(encoding: SourceApiResult, english: strin
 	
 	return {
 		...output,
-		cautions: output.cautions.map(postprocess),
+		cautions: output.cautions.map(({ note, source }) => ({ note: postprocess(note), source })),
 		// Sometimes the LLM still includes 'translated_text' even when the output language is English
 		translated_text: settings.lwc === 'English' ? undefined : output.translated_text,
 	}
