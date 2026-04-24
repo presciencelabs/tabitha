@@ -1,24 +1,34 @@
-## Developing
+# Tabitha Copilot
 
-`cp .env .env.local` and supply tokens (you can get them from another team member)
+## Prerequisites
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- **pnpm** - used for package management
+
+## Setup
+
+Copy `.env` to `.env.local` and supply the required tokens (you can get them from another team member):
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+cp .env .env.local
 ```
 
+## Developing
+
+Install dependencies with `pnpm install` and start a development server:
+
+```sh
+pnpm install
+
+pnpm run dev
+```
 
 ## Building
 
 To create a production version of your app:
 
 ```sh
-npm run build
+pnpm run build
 ```
 
-You can preview the production build with `npm run preview`.
-app available at http://localhost.tabitha.bible:4173
+You can preview the production build with `pnpm run preview`.
+app available at [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793)
