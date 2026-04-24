@@ -48,3 +48,7 @@ type EntityFeature = {
 	name: FeatureName,
 	value: FeatureValue,
 }
+
+type StatusApiResult = {
+	status: SourceStatus
+}

@@ -51,10 +51,10 @@
 	{:then}
 		<Filters {concept} examples={all_examples} on:data-filtered={({ detail }) => filtered_examples = detail} />
 
-		{#each filtered_examples.sort(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED) as { reference, context }, i}
+		{#each filtered_examples.sort(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED) as { reference, context, book_status }, i}
 			<details on:toggle={event => handle_queue(event, i)} transition:fade={FADE_CHARACTERISTICS} class="collapse collapse-arrow bg-base-100 overflow-visible">
 				<summary class="collapse-title border border-base-200">
-					<ExampleSummary {reference} {context} />
+					<ExampleSummary {reference} {context} {book_status} />
 				</summary>
 
 				<section class="collapse-content">

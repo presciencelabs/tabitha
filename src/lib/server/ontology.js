@@ -162,16 +162,20 @@ export const get_examples = db => async (concept, part_of_speech, source) => {
 
 	return results.map(normalize_results)
 
-	/** @param {DbRowExample} arg */
+	/**
+	 * @param {DbRowExample} arg
+	 * @return {Example}
+	*/
 	function normalize_results({ ref_type, ref_id_primary, ref_id_secondary, ref_id_tertiary, context_json }) {
 		return {
 			reference: {
 				type: ref_type,
 				id_primary: ref_id_primary,
-				id_secondary: ref_id_secondary,
-				id_tertiary: ref_id_tertiary,
+				id_secondary: ref_id_secondary.toString(),
+				id_tertiary: ref_id_tertiary.toString(),
 			},
 			context: JSON.parse(context_json),
+			book_status: 'Ready to Translate',	// this will be updated after the API call to Sources
 		}
 	}
 }

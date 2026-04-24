@@ -59,7 +59,7 @@
 		</div>
 	{/if}
 
-	<p>
+	<div class="my-2">
 		<SourceEntities source_entities={source.parsed_semantic_encoding} {selected_concept} />
-	</p>
+	</div>
 {/await}

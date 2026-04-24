@@ -50,14 +50,15 @@ type CuratedExample = {
 type DbRowExample = {
 	ref_type: string
 	ref_id_primary: string
-	ref_id_secondary: string
-	ref_id_tertiary: string
+	ref_id_secondary: number
+	ref_id_tertiary: number
 	context_json: string
 }
 
 type Example = {
 	reference: Reference
 	context: ContextArguments
+	book_status: SourceStatus
 }
 
 type ContextArgumentName = string
