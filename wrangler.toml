@@ -3,16 +3,14 @@
 name = "sources"
 compatibility_date = "2026-03-26"
 
-compatibility_flags = [
-	"nodejs_compat"
-]
+compatibility_flags = ["nodejs_compat"]
 
 pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Ontology"
-database_name = "Ontology_9494_2026-04-09"
-database_id = "22029b4b-8a86-459c-988e-830bf9be74a4"
+database_name = "Ontology_9494_2026-04-29"
+database_id = "0b5dd62e-4b19-4714-866e-41279877f91f"
 
 [[d1_databases]]
 binding = "DB_Auth"
