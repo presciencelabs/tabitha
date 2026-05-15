@@ -25,6 +25,9 @@ function clean_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
 			entries.push(['target', entity.target])
 		}
 		const simple_features = simplify_features(entity.features, entity.category)
+		if (entity.noun_list_index) {
+			simple_features['Noun List Index'] = entity.noun_list_index
+		}
 		if (Object.keys(simple_features).length) {
 			entries.push(['features', simple_features])
 		}
