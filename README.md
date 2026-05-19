@@ -14,7 +14,7 @@ Available at [https://sources.tabitha.bible](https://sources.tabitha.bible)
 
 #### 1. Load the database
 
-Dump files can be found under the 'databases' folder within the databases repo:  https://github.com/presciencelabs/tabitha-databases/databases
+Dump files can be found under the 'databases' folder within the databases repo: https://github.com/presciencelabs/tabitha-databases/tree/main/databases 
 
 Running the following command will load the data locally:
 
