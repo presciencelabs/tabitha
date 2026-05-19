@@ -36,22 +36,22 @@ export async function fetch_verses_for_chapter(book: string, chapter: number): P
 }
 
 export const polished_books = [
-	'Genesis',
-	'Joshua',
-	'Ruth',
-	'1 Samuel',
-	'2 Samuel',
-	'Nehemiah',
-	'Esther',
-	'Daniel',
+	// 'Genesis',
+	// 'Joshua',
+	// 'Ruth',
+	// '1 Samuel',
+	// '2 Samuel',
+	// 'Nehemiah',
+	// 'Esther',
+	// 'Daniel',
 	'Jonah',
-	'Nahum',
-	'Matthew',
-	'Mark',
-	'Acts',
+	// 'Nahum',
+	// 'Matthew',
+	// 'Mark',
+	// 'Acts',
 	'Titus',
-	'Philemon',
-	'3 John',
+	// 'Philemon',
+	// '3 John',
 ]
 
 export const language_profile_infos: Record<keyof LanguageProfile, [string, string]> = {
@@ -98,63 +98,63 @@ export const lwc_info: Record<string, LwcInfo> = {
 		code: 'ENG',
 		no_notes_text: 'No notes for this verse based on the TBTA analysis.',
 	},
-	'Afrikaans': {
-		code: 'AFR',
-	},
-	'Arabic': {
-		code: 'ARB',
-		// no_notes_text: 'بحسب تحليل TBTA، فإن هذه الفقرة لا تقدم أي نصيحة.',
-	},
-	'Cebuano': {
-		code: 'CEB',
-		// no_notes_text: 'Walay mga sugyot para niini nga bersikulo base sa pagtuki sa TBTA.',
-	},
+	// 'Afrikaans': {
+	// 	code: 'AFR',
+	// },
+	// 'Arabic': {
+	// 	code: 'ARB',
+	// 	// no_notes_text: 'بحسب تحليل TBTA، فإن هذه الفقرة لا تقدم أي نصيحة.',
+	// },
+	// 'Cebuano': {
+	// 	code: 'CEB',
+	// 	// no_notes_text: 'Walay mga sugyot para niini nga bersikulo base sa pagtuki sa TBTA.',
+	// },
 	'French': {
 		code: 'FRE',
 		no_notes_text: "Aucune suggestion pour ce verset d'après l'analyse TBTA.",
 	},
-	'Hindi': {
-		code: 'HIN',
-		// no_notes_text: 'TBTA एनालिसिस के आधार पर इस श्लोक के लिए कोई सुझाव नहीं है',
-	},
-	'Indonesian': {
-		code: 'IND',
-		no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
-	},
-	'Malayalam': {
-		code: 'MAL',
-	},
-	'Mandarin': {
-		code: 'MAN',
-		// no_notes_text: '根据TBTA分析，这节经文没有建议。',
-	},
-	'Portugese (Br)': {
-		code: 'POR',
-		// no_notes_text: 'Nenhuma sugestão para este versículo com base na análise TBTA.',
-	},
-	'Russian': {
-		code: 'RUS',
-		no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
-	},
-	'Spanish': {
-		code: 'SPA',
-		// no_notes_text: 'No hay sugerencias para este versículo según el análisis de TBTA.',
-	},
+	// 'Hindi': {
+	// 	code: 'HIN',
+	// 	// no_notes_text: 'TBTA एनालिसिस के आधार पर इस श्लोक के लिए कोई सुझाव नहीं है',
+	// },
+	// 'Indonesian': {
+	// 	code: 'IND',
+	// 	no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
+	// },
+	// 'Malayalam': {
+	// 	code: 'MAL',
+	// },
+	// 'Mandarin': {
+	// 	code: 'MAN',
+	// 	// no_notes_text: '根据TBTA分析，这节经文没有建议。',
+	// },
+	// 'Portugese (Br)': {
+	// 	code: 'POR',
+	// 	// no_notes_text: 'Nenhuma sugestão para este versículo com base na análise TBTA.',
+	// },
+	// 'Russian': {
+	// 	code: 'RUS',
+	// 	no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
+	// },
+	// 'Spanish': {
+	// 	code: 'SPA',
+	// 	// no_notes_text: 'No hay sugerencias para este versículo según el análisis de TBTA.',
+	// },
 	'Swahili': {
 		code: 'SWA',
 		no_notes_text: 'Hakuna mapendekezo ya mstari huu kulingana na uchambuzi wa TBTA.',
 	},
-	'Tagalog': {
-		code: 'TAG',
-		no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
-	},
-	'Tamil': {
-		code: 'TAM',
-	},
-	'Tok Pisin': {
-		code: 'TKP',
-		no_notes_text: 'Nogat tingting long dispela ves bihainim TBTA analisis.',
-	},
+	// 'Tagalog': {
+	// 	code: 'TAG',
+	// 	no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
+	// },
+	// 'Tamil': {
+	// 	code: 'TAM',
+	// },
+	// 'Tok Pisin': {
+	// 	code: 'TKP',
+	// 	no_notes_text: 'Nogat tingting long dispela ves bihainim TBTA analisis.',
+	// },
 }
 
 interface MttLevelInfo {

@@ -1,169 +1,108 @@
-type EntityFilter = (node: EncodingEntity) => boolean
-type LanguageProfileFilter = (profile: LanguageProfile) => boolean
 
-interface TriggerFilter {
+type TriggerTemplate = {
 	name: string
-	condition: EntityFilter|EntityFilter[]
-	lang_condition?: LanguageProfileFilter
-	prompt: string
+	flags: string[]
+	avg_divisor: 'present_flags' | 'possible_flags'
+	trigger_grouper?: (trigger: TriggerData) => string
 }
 
-function feature_value(category: string, feature_name: string, feature_value: any): EntityFilter {
-	return node => node.category === category && node.features?.[feature_name] === feature_value
+type TriggerData = {
+	name: string
+	node_id: string
+	flags: CopilotWeightedFlag[]
+	weight: number
 }
 
-function feature_values(category: string, feature_name: string, feature_values: any[]): EntityFilter {
-	return node => {
-		const node_value = node.features?.[feature_name]
-		return node.category === category && feature_values.some(value => node_value === value)
+const triggers: TriggerTemplate[] = [
+	{
+		name: 'TAMP',
+		flags: ['Verb Time', 'Verb Aspect', 'Verb Mood', 'Verb Polarity'],
+		avg_divisor: 'possible_flags',
+	},
+	{
+		name: 'Noun Person',
+		flags: ['Noun Person'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`
+	},
+	{
+		name: 'Noun Number',
+		flags: ['Noun Number'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`
+	},
+	{
+		name: 'Modifier Degree',
+		flags: ['Modifier Degree'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['concept']}-${t.flags[0].value}`
+	},
+	{
+		name: 'Social Dynamic',
+		flags: ['Speaker', 'Listener', 'Speaker Attitude'],
+		avg_divisor: 'possible_flags',
+		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';')
+	},
+	{
+		name: 'Intent/Result',
+		flags: ['Intent/Result'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['event'] || ''}-${t.flags[0].value}`
+	},
+	{
+		name: 'Means/Reason',
+		flags: ['Means/Reason'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['means_or_reason'] || ''}-${t.flags[0].value}`
+	},
+	{
+		name: 'Explanation of Name',
+		flags: ['Explanation of Name'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => t.flags[0].value
+	},
+	{
+		name: 'Metonymy',
+		flags: ['Metonymy'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => t.flags[0].value
+	},
+	{
+		name: 'Metaphor',
+		flags: ['Metaphor'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['subject']}->${t.flags[0].encoding_anchor['state']}`
+	},
+	{
+		name: 'Optional Agent of Passive',
+		flags: ['Optional Agent of Passive'],
+		avg_divisor: 'present_flags',
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['verb']} by ${t.flags[0].encoding_anchor['agent']}`
+	},
+]
+
+export function collect_triggers(flags: CopilotWeightedFlag[]): TriggerData[] {
+	return triggers.flatMap(trigger => apply_trigger(trigger, flags))
+}
+
+function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): TriggerData[] {
+	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
+	const grouped = Map.groupBy(trigger_flags, t => t.encoding_anchor['node_id'])
+
+	const triggers: TriggerData[] = []
+	for (const flags of grouped.values()) {
+		const avg_divisor = trigger.avg_divisor === 'possible_flags' ? trigger.flags.length : flags.length
+		const avg_weight = flags.map(f => f.weight).reduce((acc, w) => acc + w, 0.0) / avg_divisor
+		triggers.push({
+			name: trigger.name,
+			node_id: flags[0].encoding_anchor.node_id,
+			flags,
+			weight: avg_weight,
+		})
 	}
-}
-
-function feature_present(category: string, feature_name: string): EntityFilter {
-	return node => node.category === category && node.features !== undefined && feature_name in node.features;
-}
-
-function features_present(category: string, featureNames: string[]): EntityFilter {
-	return node => node.category === category && node.features !== undefined && featureNames.some(name => name in (node.features ?? {}));
-}
-
-export const trigger_filters: TriggerFilter[] = [
-	{
-		name: 'literal/dynamic alternates',
-		condition: feature_value('Clause', 'Alternative Analysis', 'Literal Alternate'),
-		prompt: `For each clause marked as 'Literal Alternate', state minimally how it can be understood as its 'Dynamic Alternate' equivalent by comparing and quoting ONLY the parts of the sentence that are different.
-'Literal' here refers to how closely the wording matches to the original Biblical text, not that it is not metaphorical. And 'Dynamic' refers to a more meaning-based wording.
-Simply compare the parts that are different so they can see the full meaning.`,
-	},
-	{
-		name: 'primary and other alternates',
-		condition: feature_value('Clause', 'Alternative Analysis', 'Primary Analysis'),
-		prompt: `For each Clause with 'Primary Analysis', also show its 'Alternative Analysis' options, comparing and quoting the parts that are different.
-The 'Primary Analysis' is the most common interpretation of the original Biblical text, and the other analyses are alternative interpretations.
-Simply compare the parts that are different so they can see all the possibilities.`,
-	},
-	{
-		name: 'complex alternates',
-		condition: feature_present('Clause', 'Vocabulary Alternate'),
-		prompt: `For each clause marked as 'Complex Vocabulary Alternate', explain that it can be understood as its corresponding 'Simple Vocabulary Alternate(s)' by quoting and comparing the parts of the sentences that are different.
-		You should always quote and compare them, even if you think they are too different in meaning.
-		If the simple alterate is not in the english_text, convert the encoding to natural English to quote it.`,
-	},
-	{
-		name: 'rhetorical questions (present in language)',
-		lang_condition: (profile) => profile.rhetorical_questions,
-		condition: feature_present('Clause', 'Rhetorical Question'),
-		prompt: `Explain what kind of rhetorical question is present and what the expected answer is, based on the value of the Rhetorical Question feature.
-State that they need to think about how to phrase it to communicate that meaning.`,
-	},
-	{
-		name: 'rhetorical questions (absent in language)',
-		lang_condition: (profile) => !profile.rhetorical_questions,
-		condition: feature_present('Clause', 'Rhetorical Question'),
-		prompt: `State that this verse contains rhetorical questions, and show each 'Equivalent Statement'.`,
-	},
-	{
-		name: 'passive implicit agent',
-		lang_condition: (profile) => !profile.passive,
-		condition: feature_value('Noun Phrase', 'Implicit', 'Optional Agent of Passive'),
-		prompt: `For each unique Noun Phrase marked as 'Optional Agent of Passive', state minimally that that noun is understood to be the actor/agent in its surrounding clause(s).`,
-	},
-	{
-		name: 'passive',
-		lang_condition: (profile) => !profile.passive,
-		condition: feature_value('Clause', 'Topic NP', 'Most Patient-like'),
-		prompt: `For each Clause with the 'Topic Noun Phrase' set to 'Most Patient-like', state minimally that in that sentence they should emphasize [the 'Most Patient-like' Noun] and deemphasize [the 'Most Agent-like' Noun].
-		If the Most Agent-like Noun is also marked as 'Optional Agent of Passive', do not write this caution for it.`,
-	},
-	{
-		name: 'dynamic expansion',
-		condition: feature_value('Noun Phrase', 'Implicit', 'Dynamic Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Dynamic Expansion', state minimally that the the first noun X can be represented as Y of X, where Y is the second noun.`,
-	},
-	{
-		name: 'literal expansion',
-		condition: feature_value('Noun Phrase', 'Implicit', 'Literal Expansion (Metonymy)'),
-		prompt: `For any Noun Phrase with 'Literal Expansion', state minimally that the the phrase X of Y can be understood as simply Y.`,
-	},
-	{
-		name: 'exclusive "we"',
-		lang_condition: (profile) => profile.clusivity,
-		condition: feature_value('Noun', 'Person', 'First Exclusive'),
-		prompt: `State that this verse contains exclusive 'we', so tell the MTT to be extra mindful of who the speaker/writer is referring to.`,
-	},
-	{
-		name: 'dual',
-		lang_condition: (profile) => profile.dual,
-		condition: [
-			feature_value('Noun', 'Number', 'Dual'),
-			feature_value('Noun', 'Person', 'Third'),
-		],
-		prompt: `For each unique noun marked as Dual, show the MTT that noun. If the Noun is already modified by the number '2', DO NOT show it to the MTT.`,
-	},
-	{
-		name: 'trial',
-		lang_condition: (profile) => profile.trial,
-		condition: [
-			feature_value('Noun', 'Number', 'Trial'),
-			feature_value('Noun', 'Person', 'Third'),
-		],
-		prompt: `For each unique noun marked as Trial, show the MTT that noun. If the Noun is already modified by the number '3', DO NOT show it to the MTT.`,
-	},
-	{
-		name: 'honorifics',
-		lang_condition: (profile) => profile.honorifics,
-		condition: [
-			features_present('Clause', ['Speaker', 'Listener', "Speaker`s Age", 'Speaker-Listener Age']),
-			node => node.features?.['Speaker'] !== node.features?.['Listener'] || !!node.features?.['Speaker-Listener Age'],
-		],
-		prompt: `Show the MTT the social relation between the speaker and listener based on these features in the TBTA semantic analysis: Speaker, Listener, Speaker's Age, Speaker-Listener Age.
-Tell the MTT to be mindful of this social relation in how they express what is being said.`,
-	},
-	{
-		name: 'explanation of name',
-		condition: feature_value('Noun Phrase', 'Implicit', 'Explanation of Name'),
-		prompt: `For any Implicit 'Explanation of Name', state minimally that the first noun (usually a proper noun) is the name of a second noun (usually something like city or region).
-		That second noun is not in the source text, so this is helpful extra information for the MTT.`,
-	},
-	{
-		name: 'pairings',
-		condition: node => 'pairing_concept' in node,
-		prompt: `For all unique pairings, state minimally that if they don't have a good equivalent for the second pairing_concept, it can also be understood as its corresponding simpler concept.
-		If the two concepts are really close in meaning, don't bother making a caution for them.`,
-	},
-	{
-		name: 'closing quotation frame',
-		lang_condition: (profile) => profile.closing_quotation_frame,
-		condition: feature_value('Clause', 'Type', 'Closing Quotation Frame'),
-		prompt: `For each 'Closing Quotation Frame' if the quote does not also begin in this verse, remind the the MTT of who said what to who by converting the closing quotation frame to natural English.
-		Do not quote the entire quote again.`,
-	},
-	{
-		name: 'indirect speech',
-		lang_condition: profile => !profile.indirect_speech,
-		condition: node => node.concept === 'say-C',
-		prompt: `Convert the patient clause(s) of say-C to a direct quote and offer that as a possibility of how to reword it.`,
-	},
-];
-
-function find_node_in_encoding(encoding: EncodingEntity[], entity_filter: EntityFilter): boolean {
-	for (const node of encoding) {
-		if (entity_filter(node) || (node.children && find_node_in_encoding(node.children, entity_filter))) {
-			return true
-		}
+	if (trigger.trigger_grouper) {
+		// just return the first trigger within a group
+		return [...Map.groupBy(triggers, trigger.trigger_grouper).values()].map(trigger_group => trigger_group[0])
 	}
-	return false
-}
-
-export function filter_by_encoding(encoding: EncodingEntity[]): (trigger: TriggerFilter) => boolean {
-	return trigger => {
-		const condition: EntityFilter = Array.isArray(trigger.condition)
-			? node => (trigger.condition as EntityFilter[]).every(c => c(node))
-			: trigger.condition
-		return find_node_in_encoding(encoding, condition)
-	}
-}
-
-export function filter_by_language_profile(language_profile: LanguageProfile): (trigger: TriggerFilter) => boolean {
-	return trigger => !trigger.lang_condition || trigger.lang_condition(language_profile)
+	return triggers
 }
