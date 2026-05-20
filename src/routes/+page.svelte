@@ -24,8 +24,8 @@
 		},
 		lwc: 'English',
 		mtt_level: 'high_school',
-		max_cautions: -1,
 		show_note_sources: false,
+		show_english: true,
 	}).value)
 
 	let fetching_english = $state(false)
@@ -103,10 +103,12 @@
 	<div class="w-full pb-8">
 		<div class="prose"><h2>Notes for {result.verse.book} {result.verse.chapter}:{result.verse.verse}</h2></div>
 
-		<div class="mt-3">
-			<div class="prose"><h4>English Text</h4></div>
-			<p>{result.english_text}</p>
-		</div>
+		{#if settings.lwc === 'English' || settings.show_english}
+			<div class="mt-3">
+				<div class="prose"><h4>English Text</h4></div>
+				<p>{result.english_text}</p>
+			</div>
+		{/if}
 
 		{#if result.translated_text && settings.lwc !== 'English'}
 			<div class="mt-3">

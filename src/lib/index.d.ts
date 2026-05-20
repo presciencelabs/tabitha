@@ -15,14 +15,35 @@ type Reference = {
 	verse: number
 }
 
-type EntityFeatures = Record<string, string>
+type FeatureName = string
+type FeatureValue = string
+type EntityFeatures = Record<FeatureName, FeatureValue>
 
 type EncodingEntity = {
 	category: string
 	concept?: string
 	pairing_concept?: string
-	features?: Record<string, string>
+	features?: EntityFeatures
 	children?: EncodingEntity[]
+	node_id?: string
+}
+
+type FlagExtractionRule = {
+	flag: string
+	rules: FlagExtractionLayer[]
+}
+
+type FlagExtractionLayer = {
+	value: string | ((match: EntityMatch) => string | undefined) | undefined
+	pattern: PatternEntity
+	anchor_extra?: (match: EntityMatch) => Record<string, string>
+	comment?: string
+}
+
+type PatternEntity = EncodingEntity & {
+	name?: string
+	category?: string
+	children?: PatternEntity[]
 }
 
 type SourceApiResult = {
@@ -41,17 +62,17 @@ type CopilotSettings = {
 	language_profile: LanguageProfile
 	lwc: string
 	mtt_level: MttLevel
-	max_cautions: number
 	show_note_sources: boolean
+	show_english: boolean
 }
 
 type CopilotLlmInput = {
+	verse: string
 	output_language: string
 	prose_level: MttLevel
 	tbta_encoding: string
 	english_text: string
-	issues: string[]
-	max_cautions: number
+	triggers: TriggerData[]
 }
 
 type CopilotLlmCaution = {
@@ -68,4 +89,37 @@ type CopilotApiResult = CopilotLlmOutput & {
 	english_text: string
 	verse: Reference
 	error?: string
+}
+
+type EncodingAnchor = {
+	[key: string]: string
+	node_id: string
+}
+
+type CopilotTriggerFlag = {
+	name: string
+	value: string
+	encoding_anchor: EncodingAnchor
+}
+
+type CopilotWeightedFlag = CopilotTriggerFlag & {
+	weight: number
+}
+
+type IndexStack = number[]
+
+type EntityMatchCapture = {
+	node: EncodingEntity
+	indexStack: IndexStack
+}
+
+type EntityMatch = {
+	success: boolean
+	bindings: Record<string, any>
+	captures: Record<string, EntityMatchCapture>
+}
+
+type EntityMatchResult = EntityMatch & {
+	flag: string
+	rule: FlagExtractionLayer
 }

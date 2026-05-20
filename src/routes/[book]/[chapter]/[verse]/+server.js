@@ -22,8 +22,9 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 			indirect_speech: true,
 		},
 		mtt_level: 'high_school',
-		max_cautions: -1,
 		lwc: 'English',
+		show_english: true,
+		show_note_sources: false,
 	}
 
 	/** @type {Reference} */

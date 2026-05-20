@@ -1,0 +1,64 @@
+{
+	"Verb Time": {
+		"Eternity Past": 3,
+		"Unknown Past": 3,
+		"Unknown Future": 3
+	},
+	"Verb Aspect": {
+		"Inceptive": 3,
+		"Completive": 3,
+		"Cessative": 3,
+		"Continuative": 5,
+		"Imperfective": 3,
+		"Routine": 4,
+		"Gnomic": 5
+	},
+	"Verb Mood": {
+		"Definite Potential": 5,
+		"Probable Potential": 5,
+		"'might' Potential": 5
+	},
+	"Verb Polarity": {
+		"Negative": 1,
+		"Emphatic Affirmative": 5,
+		"Emphatic Negative": 5
+	},
+	"Noun Person": {
+		"First as Third": 2,
+		"Second as Third": 2,
+		"First Inclusive as Third": 2,
+		"First Exclusive as Third": 2
+	},
+	"Modifier Degree": {
+		"Comparative": 2,
+		"Superlative": 3,
+		"Intensified": 2,
+		"Extremely Intensified": 5,
+		"'too'": 5,
+		"'less'": 3,
+		"'least'": 5,
+		"Equality": 3,
+		"Intensified Comparative": 5,
+		"Intensified 'less'": 5,
+		"Superlative of 2 items": 3
+	},
+	"Explanation of Name": {
+		"*": 5
+	},
+	"Metonymy": {
+		"Dynamic Expansion (Metonymy)": 1,
+		"Literal Expansion (Metonymy)": 5
+	},
+	"Intent/Result": {
+		"Intent": 4,
+		"Logical Consequence": 3,
+		"Simple Result": 2
+	},
+	"Means/Reason": {
+		"Means": 4,
+		"Reason": 2
+	},
+	"Metaphor": {
+		"*": 5
+	}
+}
