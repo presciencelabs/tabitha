@@ -22,8 +22,9 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 			indirect_speech: true,
 		},
 		mtt_level: 'high_school',
-		max_cautions: -1,
 		lwc: 'English',
+		show_english: true,
+		show_note_sources: false,
 	}
 
 	const last_verse = await fetch_verses_for_chapter(book, chapter_int)

@@ -30,9 +30,14 @@ type EncodingEntity = {
 
 type FlagExtractionRule = {
 	flag: string
-	value: string | ((match: EntityMatch) => string)
+	rules: FlagExtractionLayer[]
+}
+
+type FlagExtractionLayer = {
+	value: string | ((match: EntityMatch) => string | undefined) | undefined
 	pattern: PatternEntity
 	anchor_extra?: (match: EntityMatch) => Record<string, string>
+	comment?: string
 }
 
 type PatternEntity = EncodingEntity & {
@@ -57,8 +62,8 @@ type CopilotSettings = {
 	language_profile: LanguageProfile
 	lwc: string
 	mtt_level: MttLevel
-	max_cautions: number
 	show_note_sources: boolean
+	show_english: boolean
 }
 
 type CopilotLlmInput = {
@@ -112,4 +117,9 @@ type EntityMatch = {
 	success: boolean
 	bindings: Record<string, any>
 	captures: Record<string, EntityMatchCapture>
+}
+
+type EntityMatchResult = EntityMatch & {
+	flag: string
+	rule: FlagExtractionLayer
 }

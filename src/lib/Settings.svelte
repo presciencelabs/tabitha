@@ -12,16 +12,7 @@
 	<summary class="collapse-title font-semibold">Options/Settings</summary>
 	<div class="collapse-content text-sm">
 		<div class="mb-2">
-			Number of notes
-			<select class="select" bind:value={settings.max_cautions}>
-				<option value={-1}>No limit</option>
-				{#each [1, 2, 3, 4, 5] as num}
-					<option value={num}>{num}</option>
-				{/each}
-			</select>
-		</div>
-		<div class="mb-2">
-			MTT education level
+			Detail Level
 			<select class="select" bind:value={settings.mtt_level}>
 				{#each Object.entries(mtt_level_info) as [mtt_level, info]}
 					<option value={mtt_level}>{info.label}</option>
@@ -30,11 +21,18 @@
 		</div>
 		<div class="mb-2">
 			LWC
-			<select class="select" bind:value={settings.lwc}>
+			<select class="select pl-1" bind:value={settings.lwc}>
 				{#each Object.keys(lwc_info) as lwc}
 					<option value={lwc}>{lwc}</option>
 				{/each}
 			</select>
+			
+			{#if settings.lwc !== 'English'}
+				<label class="pl-2">
+					<input type="checkbox" bind:checked={settings.show_english} />
+					Show English
+				</label>
+			{/if}
 		</div>
 		<div>
 			<label>

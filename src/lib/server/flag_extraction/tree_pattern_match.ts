@@ -171,6 +171,33 @@ function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings = {
 	return { success: true, bindings: localBindings, captures: localCaptures }
 }
 
+export function get_matches(root_entity: EncodingEntity, extractions: FlagExtractionRule[]): EntityMatchResult[] {
+	function traverseDFS(node: EncodingEntity, stack: IndexStack = []): EntityMatchResult[] {
+		const matches: EntityMatchResult[] = []
+
+		for (const { flag, rules } of extractions) {
+			for (const rule of rules) {
+				const match = matchPattern(node, rule.pattern, {}, {}, stack)
+				if (match.success) {
+					matches.push({ ...match, flag, rule })
+					// Once a rule matches, don't check the other rules for the same flag
+					continue
+				}
+			}
+		}
+
+		if (node.children) {
+			for (let i = 0; i < node.children.length; i++) {
+				matches.push(...traverseDFS(node.children[i], [...stack, i]))
+			}
+		}
+		
+		return matches
+	}
+	
+	return traverseDFS(root_entity)
+}
+
 /**
  * Create a recursive tree matcher
  *

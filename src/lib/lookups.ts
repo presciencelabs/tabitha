@@ -162,7 +162,7 @@ interface MttLevelInfo {
 	code: string
 }
 export const mtt_level_info: Record<MttLevel, MttLevelInfo> = {
-	'grade5': { label: 'Grade 5', code: 'G5' },
-	'high_school': { label: 'High-school', code: 'HS' },
-	'undergraduate': { label: 'Undergraduate', code: 'UG' },
+	'grade5': { label: 'Direct', code: 'G5' },
+	'high_school': { label: 'Detailed', code: 'HS' },
+	'undergraduate': { label: 'Technical', code: 'UG' },
 }

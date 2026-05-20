@@ -11,6 +11,9 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 			Do not quote the text or encoding directly, but use your knowledge of the verse context, making sure the caution is related to the trigger.
 			Do not add additional cautions.
 
+			Never comment on, assess, or question the encoding or feature data you are given.
+			If a feature assignment looks unusual, render it as instructed regardless - do not remark on it.
+
 			Write ONLY in the requested output_language, and be concise.
 			If output_language is not English, translate the english_text and return it.
 
@@ -47,7 +50,7 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 								},
 								'source': {
 									'type': 'string',
-									'description': 'The encoding_anchor of the trigger that this caution relates to.',
+									'description': 'The full flags objects from the trigger object that this caution relates to.',
 								},
 							},
 						},
