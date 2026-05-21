@@ -122,10 +122,13 @@
 			<ul class="list list-disc text-base ms-5">
 				{#if result.cautions.length > 0}
 					{#each result.cautions as caution}
-						<li>{caution.note}</li>
-						{#if settings.show_note_sources}
-							<li class="pl-4">Source: {caution.source}</li>
-						{/if}
+						<li>{caution.note}
+							{#if settings.show_note_sources}
+								<ul class="list ms-5">
+									<li>- {caution.source}</li>
+								</ul>
+							{/if}
+						</li>
 					{/each}
 				{:else}
 					<li>{lwc_info[settings.lwc].no_notes_text || lwc_info['English'].no_notes_text}</li>

@@ -117,10 +117,10 @@ export const lwc_info: Record<string, LwcInfo> = {
 	// 	code: 'HIN',
 	// 	// no_notes_text: 'TBTA एनालिसिस के आधार पर इस श्लोक के लिए कोई सुझाव नहीं है',
 	// },
-	// 'Indonesian': {
-	// 	code: 'IND',
-	// 	no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
-	// },
+	'Indonesian': {
+		code: 'IND',
+		no_notes_text: 'Tidak ada saran untuk ayat ini berdasarkan analisis TBTA.',
+	},
 	// 'Malayalam': {
 	// 	code: 'MAL',
 	// },
@@ -132,10 +132,10 @@ export const lwc_info: Record<string, LwcInfo> = {
 	// 	code: 'POR',
 	// 	// no_notes_text: 'Nenhuma sugestão para este versículo com base na análise TBTA.',
 	// },
-	// 'Russian': {
-	// 	code: 'RUS',
-	// 	no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
-	// },
+	'Russian': {
+		code: 'RUS',
+		no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
+	},
 	// 'Spanish': {
 	// 	code: 'SPA',
 	// 	// no_notes_text: 'No hay sugerencias para este versículo según el análisis de TBTA.',
@@ -144,10 +144,10 @@ export const lwc_info: Record<string, LwcInfo> = {
 		code: 'SWA',
 		no_notes_text: 'Hakuna mapendekezo ya mstari huu kulingana na uchambuzi wa TBTA.',
 	},
-	// 'Tagalog': {
-	// 	code: 'TAG',
-	// 	no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
-	// },
+	'Tagalog': {
+		code: 'TAG',
+		no_notes_text: 'Walang mungkahi para sa talatang ito batay sa pagsusuri ng TBTA.',
+	},
 	// 'Tamil': {
 	// 	code: 'TAM',
 	// },
