@@ -10,7 +10,7 @@
 		"Cessative": 3,
 		"Continuative": 5,
 		"Imperfective": 3,
-		"Routine": 4,
+		"Routine": 3,
 		"Gnomic": 5
 	},
 	"Verb Mood": {
@@ -46,8 +46,7 @@
 		"*": 5
 	},
 	"Metonymy": {
-		"Dynamic Expansion (Metonymy)": 1,
-		"Literal Expansion (Metonymy)": 5
+		"*": 5
 	},
 	"Intent/Result": {
 		"Intent": 4,

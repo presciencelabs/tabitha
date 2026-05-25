@@ -3,7 +3,9 @@ type TriggerTemplate = {
 	name: string
 	flags: string[]
 	avg_divisor: 'present_flags' | 'possible_flags'
+	flag_grouper?: (flag: CopilotWeightedFlag) => string
 	trigger_grouper?: (trigger: TriggerData) => string
+	prompt?: string
 }
 
 type TriggerData = {
@@ -11,6 +13,7 @@ type TriggerData = {
 	node_id: string
 	flags: CopilotWeightedFlag[]
 	weight: number
+	prompt?: string
 }
 
 const triggers: TriggerTemplate[] = [
@@ -23,61 +26,69 @@ const triggers: TriggerTemplate[] = [
 		name: 'Noun Person',
 		flags: ['Noun Person'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Noun Number',
 		flags: ['Noun Number'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Modifier Degree',
 		flags: ['Modifier Degree'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['concept']}-${t.flags[0].value}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['concept']}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Social Dynamic',
 		flags: ['Speaker', 'Listener', 'Speaker Attitude'],
 		avg_divisor: 'possible_flags',
-		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';')
+		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';'),
 	},
 	{
 		name: 'Intent/Result',
 		flags: ['Intent/Result'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['event'] || ''}-${t.flags[0].value}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['event'] || ''}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Means/Reason',
 		flags: ['Means/Reason'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['means_or_reason'] || ''}-${t.flags[0].value}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['means_or_reason'] || ''}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Explanation of Name',
 		flags: ['Explanation of Name'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => t.flags[0].value
+		trigger_grouper: t => t.flags[0].value,
 	},
 	{
 		name: 'Metonymy',
 		flags: ['Metonymy'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => t.flags[0].value
+		trigger_grouper: t => t.flags[0].value,
+		prompt: 'If metonymy_type is Dynamic, explain that the {whole} can be understood as {part} {whole}. If metonymy_type is Literal, explain that {part} {whole} can be understood simply as {whole}.'
 	},
 	{
 		name: 'Metaphor',
 		flags: ['Metaphor'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['subject']}->${t.flags[0].encoding_anchor['state']}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['subject']}->${t.flags[0].encoding_anchor['state']}`,
 	},
 	{
 		name: 'Optional Agent of Passive',
 		flags: ['Optional Agent of Passive'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['verb']} by ${t.flags[0].encoding_anchor['agent']}`
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['verb']} by ${t.flags[0].encoding_anchor['agent']}`,
+	},
+	{
+		name: 'Closing Quotation Frame',
+		flags: ['Opening Quotation Frame', 'Closing Quotation Frame'],
+		avg_divisor: 'present_flags',
+		flag_grouper: f => f.value,
+		prompt: 'Write a reminder about who was speaking and listening.',
 	},
 ]
 
@@ -87,7 +98,8 @@ export function collect_triggers(flags: CopilotWeightedFlag[]): TriggerData[] {
 
 function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): TriggerData[] {
 	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
-	const grouped = Map.groupBy(trigger_flags, t => t.encoding_anchor['node_id'])
+	const grouper: (flag: CopilotWeightedFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
+	const grouped = Map.groupBy(trigger_flags, grouper)
 
 	const triggers: TriggerData[] = []
 	for (const flags of grouped.values()) {
@@ -98,6 +110,7 @@ function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): 
 			node_id: flags[0].encoding_anchor.node_id,
 			flags,
 			weight: avg_weight,
+			...(trigger.prompt ? { prompt: trigger.prompt } : {})
 		})
 	}
 	if (trigger.trigger_grouper) {

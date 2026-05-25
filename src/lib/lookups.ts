@@ -55,22 +55,14 @@ export const polished_books = [
 ]
 
 export const language_profile_infos: Record<keyof LanguageProfile, [string, string]> = {
-	'rhetorical_questions': [
-		'Rhetorical Questions',
-		'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
-	],
-	'passive': [
-		'Passive',
-		'Your language has a passive voice. If not, the copilot will show notes that identify any actor that is not explicitly mentioned.',
-	],
-	'honorifics': [
-		'Honorifics',
-		'Your language has special markings or pronouns for acknowledging social relationships or dynamics. The copilot will show notes to help identify these relationships.',
-	],
-	'indirect_speech': [
-		'Indirect Speech',
-		'Your language uses indirect speech ("John said that Mary left"). If not, the copilot will show notes to help convert these to direct quotes.',
-	],
+	// 'rhetorical_questions': [
+	// 	'Rhetorical Questions',
+	// 	'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
+	// ],
+	// 'indirect_speech': [
+	// 	'Indirect Speech',
+	// 	'Your language uses indirect speech ("John said that Mary left"). If not, the copilot will show notes to help convert these to direct quotes.',
+	// ],
 	'clusivity': [
 		'Inclusive and exclusive "we"',
 		'Your language marks inclusive "we" (we with you) differently from exclusive "we" (we without you). The copilot will show notes for when "we" is exclusive.',
@@ -82,6 +74,14 @@ export const language_profile_infos: Record<keyof LanguageProfile, [string, stri
 	'trial': [
 		'Trial number',
 		'Your language has a special marking for when there are exactly three of a thing (eg "We (three)"). The copilot will show notes to identify possible nouns that need this marking.',
+	],
+	'passive': [
+		'Passive',
+		'Your language has a passive voice. If not, the copilot will show notes that identify any actor that is not explicitly mentioned.',
+	],
+	'honorifics': [
+		'Honorifics',
+		'Your language has special markings or pronouns for acknowledging social relationships or dynamics. The copilot will show notes to help identify these relationships.',
 	],
 	'closing_quotation_frame': [
 		'Closing quotation frames',

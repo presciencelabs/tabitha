@@ -1,11 +1,11 @@
 type LanguageProfile = {
-	rhetorical_questions: boolean
+	// rhetorical_questions: boolean
 	clusivity: boolean
 	passive: boolean
 	dual: boolean
 	trial: boolean
 	honorifics: boolean
-	indirect_speech: boolean
+	// indirect_speech: boolean
 	closing_quotation_frame: boolean
 }
 
@@ -42,6 +42,7 @@ type FlagExtractionLayer = {
 
 type PatternEntity = EncodingEntity & {
 	name?: string
+	optional?: boolean
 	category?: string
 	children?: PatternEntity[]
 }

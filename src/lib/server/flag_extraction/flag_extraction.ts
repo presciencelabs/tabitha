@@ -25,7 +25,7 @@ function extract_value(match: EntityMatchResult): string | undefined {
 	if (rule.value === undefined) {
 		return undefined
 	} else if (typeof rule.value === 'string') {
-		return rule.value.replaceAll(/\$\w+/g, m => match.bindings[m])
+		return rule.value.replaceAll(/\$\w+/g, m => match.bindings[m] || '')
 	} else {
 		return rule.value(match)
 	}

@@ -8,6 +8,7 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 
 			You task is to render preselected caution guidance to a mother-tongue translator (MTT) based on the provided tbta_encoding.
 			Identify the location of each 'trigger' and write a caution related to the features in each trigger, one caution per trigger.
+			Follow the prompt that is provided with a trigger, if provided.
 			Do not quote the text or encoding directly, but use your knowledge of the verse context, making sure the caution is related to the trigger.
 			Do not add additional cautions.
 

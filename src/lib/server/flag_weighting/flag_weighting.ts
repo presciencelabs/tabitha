@@ -57,6 +57,14 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 			'Anger': 4,
 		}
 	}
+	if (profile.closing_quotation_frame) {
+		weights['Opening Quotation Frame'] = {
+			'*': 0.5,
+		}
+		weights['Closing Quotation Frame'] = {
+			'*': 1,
+		}
+	}
 
 	return weights
 }

@@ -114,7 +114,7 @@ function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings = {
 
 	// check non-children properties
 	for (const key of Object.keys(pattern) as (keyof EncodingEntity | keyof PatternEntity)[]) {
-		if (key === 'children' || key === 'name') {
+		if (key === 'children' || key === 'name' || key === 'optional') {
 			continue
 		}
 
@@ -162,7 +162,7 @@ function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings = {
 				}
 			}
 
-			if (!matched) {
+			if (!matched && !childPattern.optional) {
 				return { success: false, bindings, captures }
 			}
 		}

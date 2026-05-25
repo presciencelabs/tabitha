@@ -60,7 +60,7 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 		flag: 'Noun Number',
 		rules: [{
 			comment: 'If the noun is already modified by a number, do not flag it as Dual/Trial/Quadrial',
-			value: undefined,
+			value: match => match.captures['$numeral'] ? undefined : match.bindings['$number'],
 			pattern: {
 				category: 'Noun Phrase',
 				children: [
@@ -74,29 +74,15 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 						},
 					},
 					{
+						optional: true,
 						category: 'Adjective Phrase',
 						children: [{
+							name: '$numeral',
 							category: 'Adjective',
 							concept: '2-A|3-A|4-A',
 						}],
 					},
 				],
-			},
-		},
-		{
-			value: '$number',
-			comment: 'Keep the NP so that it triggers on the same node as the first rule',
-			pattern: {
-				category: 'Noun Phrase',
-				children: [{
-					name: '$anchor',
-					category: 'Noun',
-					concept: '$concept',
-					features: {
-						'Number': '$number',
-						'Noun List Index': '$noun_index',
-					},
-				}],
 			},
 		}],
 	},
@@ -165,6 +151,99 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 				features: {
 					'Speaker`s Attitude': '$attitude',
 				},
+			},
+		}],
+	},
+	{
+		flag: 'Opening Quotation Frame',
+		rules: [{
+			value: '$speaker $verb $listener',
+			pattern: {
+				category: 'Clause',
+				children: [
+					{
+						category: 'Noun Phrase',
+						features: {
+							'Semantic Role': 'Most Agent-like',
+						},
+						children: [{
+							category: 'Noun',
+							concept: '$speaker',
+						}],
+					},
+					{
+						category: 'Verb Phrase',
+						children: [{
+							category: 'Verb',
+							concept: '$verb',
+						}],
+					},
+					{
+						optional: true,
+						category: 'Noun Phrase',
+						features: {
+							'Semantic Role': 'Most Patient-like',
+						},
+						children: [{
+							category: 'Noun',
+							concept: '$listener',
+						}],
+					},
+					{
+						name: '$anchor',
+						category: 'Clause',
+						features: {
+							'Type': 'Patient (Object Complement)',
+						},
+						children: [{
+							category: 'Particle',
+							concept: '-QuoteBegin-A',
+						}],
+					},
+				],
+			},
+		}],
+	},
+	{
+		flag: 'Closing Quotation Frame',
+		rules: [{
+			value: '$speaker $verb $listener',
+			pattern: {
+				name: '$anchor',
+				category: 'Clause',
+				features: {
+					'Type': 'Closing Quotation Frame',
+				},
+				children: [
+					{
+						category: 'Noun Phrase',
+						features: {
+							'Semantic Role': 'Most Agent-like',
+						},
+						children: [{
+							category: 'Noun',
+							concept: '$speaker',
+						}],
+					},
+					{
+						category: 'Verb Phrase',
+						children: [{
+							category: 'Verb',
+							concept: '$verb',
+						}],
+					},
+					{
+						optional: true,
+						category: 'Noun Phrase',
+						features: {
+							'Semantic Role': 'Most Patient-like',
+						},
+						children: [{
+							category: 'Noun',
+							concept: '$listener',
+						}],
+					},
+				],
 			},
 		}],
 	},
