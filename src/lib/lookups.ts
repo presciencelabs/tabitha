@@ -1,4 +1,5 @@
 import { PUBLIC_TARGETS_API_HOST, PUBLIC_SOURCES_API_HOST } from '$env/static/public'
+import { get_target_text } from '$lib/temp_target_text/get_target_text'
 
 export async function fetch_encoding(verse_ref: Reference): Promise<SourceApiResult|undefined> {
 	const { book, chapter, verse } = verse_ref
@@ -11,6 +12,11 @@ export async function fetch_encoding(verse_ref: Reference): Promise<SourceApiRes
 }
 
 export async function fetch_target_text(verse_ref: Reference, project: string, preferred_audience: string): Promise<TargetApiResult|undefined> {
+	if (project !== 'English') {
+		const text = get_target_text(verse_ref, project)
+		return text ? { text, audience: preferred_audience } : undefined
+	}
+
 	const { book, chapter, verse } = verse_ref
 	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/${project}/${book}/${chapter}/${verse}`)
 	if (!response.ok) {

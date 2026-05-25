@@ -73,6 +73,7 @@ type CopilotLlmInput = {
 	prose_level: MttLevel
 	tbta_encoding: string
 	english_text: string
+	lwc_text?: string
 	triggers: TriggerData[]
 }
 
@@ -83,7 +84,7 @@ type CopilotLlmCaution = {
 
 type CopilotLlmOutput = {
 	cautions: CopilotLlmCaution[]
-	translated_text?: string
+	lwc_text?: string
 }
 
 type CopilotApiResult = CopilotLlmOutput & {

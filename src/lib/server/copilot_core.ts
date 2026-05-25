@@ -19,6 +19,8 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	}
 	const english_text = english.text
 
+	const lwc_text = settings.lwc === 'English' ? undefined : (await fetch_target_text(reference, settings.lwc, 'Default'))?.text
+
 	const flags = extract_flags(encoding.encoding)
 	const weighted_flags = assign_flag_weights(flags, settings.language_profile).filter(({ weight }) => weight > 0)
 	const all_triggers = collect_triggers(weighted_flags)
@@ -39,7 +41,8 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 		output_language: settings.lwc ?? 'English',
 		prose_level: settings.mtt_level,
 		tbta_encoding: preprocess_encoding(encoding),
-		english_text: english_text,
+		english_text,
+		lwc_text,
 		triggers: selected_triggers,
 	}
 
@@ -77,7 +80,7 @@ export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => strin
 		const cautions = result.cautions.length ? result.cautions.map(({ note }) => note) : [no_suggestions_text]
 		return [
 			`\\p \\v ${result.verse.verse} ${result.english_text}`,
-			...(result.translated_text ? [`\\p ${result.translated_text}`] : []),
+			...(result.lwc_text ? [`\\p ${result.lwc_text}`] : []),
 			...cautions.map(c => `\\li - ${c}`),
 		].join('\n')
 	}

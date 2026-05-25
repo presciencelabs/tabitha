@@ -3,6 +3,8 @@ import { GoogleGenAI } from '@google/genai'
 
 export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
 
+	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
+
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
 			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
@@ -16,7 +18,7 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 			If a feature assignment looks unusual, render it as instructed regardless - do not remark on it.
 
 			Write ONLY in the requested output_language, and be concise.
-			If output_language is not English, translate the english_text and return it.
+			${translate_tbta_text ? 'Translate the english_text into the output_language and return it as the lwc_text.' : ''}
 
 			Write according to the specified education level of the MTT according to:
 			- grade5 = simple everyday language, no linguistic or grammar terms
@@ -56,10 +58,12 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 							},
 						},
 					},
-					'translated_text': {
-						'type': 'string',
-						'description': `the english_text translated from English into ${llm_input.output_language} (if necessary)`
-					},
+					...(translate_tbta_text ? {
+						'lwc_text': {
+							'type': 'string',
+							'description': `the english_text translated from English into ${llm_input.output_language}`
+						}
+					} : {}),
 				}
 			}
 		}
@@ -71,7 +75,7 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 		...output,
 		cautions: output.cautions.map(({ note, source }) => ({ note: postprocess(note), source })),
 		// Sometimes the LLM still includes 'translated_text' even when the output language is English
-		translated_text: llm_input.output_language === 'English' ? undefined : output.translated_text,
+		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,
 	}
 }
 
