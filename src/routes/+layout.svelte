@@ -15,3 +15,10 @@
 <main class="mx-8 mt-8">
 	<slot />
 </main>
+
+<footer class="footer footer-horizontal mt-20 max-w-none bg-neutral p-10 text-neutral-content">
+	<nav class="justify-self-end">
+		<a href="/lookup/status/Bible" class="link link-hover">Bible encoding status</a>
+		<a href="/lookup/features" class="link link-hover">Source features list</a>
+	</nav>
+</footer>

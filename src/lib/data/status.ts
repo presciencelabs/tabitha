@@ -1,4 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types'
+import { get_primary_ids } from './read'
 
 interface StatusCountResult {
 	not_started_count: number
@@ -7,6 +8,11 @@ interface StatusCountResult {
 	review_count: number
 	ready_count: number
 	total_count: number
+}
+
+export async function get_all_book_statuses(db: D1Database, type: string): Promise<StatusResult[]> {
+	const primary_ids = await get_primary_ids(db, type)
+	return await Promise.all(primary_ids.map(({ id_primary }) => get_book_status(db, { type, id_primary })))
 }
 
 export async function get_book_status(db: D1Database, reference: StatusRequestReference): Promise<StatusResult> {
