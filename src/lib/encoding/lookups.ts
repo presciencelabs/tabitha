@@ -38,3 +38,18 @@ export const CATEGORY_ABBREVIATIONS = new Map([
 ])
 
 export const WORD_ENTITY_CATEGORIES = new Set(['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Phrasal', 'Particle'])
+
+export const GRAMMAR_ONLY_FEATURES = [
+	'Verb-Adjective Degree',
+	'Verb-Target Tense & Form',
+	'Noun Phrase-Thing-Thing Relationship',
+	'Noun Phrase-Relativized',
+	'Noun Phrase-Specific Phrase Structure Rule Code 1',
+	'Verb Phrase-Specific Phrase Structure Rule Code 1',
+	'Adjective Phrase-Specific Phrase Structure Rule Code 1',
+	'Adverb Phrase-Specific Phrase Structure Rule Code 1',
+	'Clause-Speech Style',
+	'Clause-Notional Structure Schema',
+	'Clause-Specific Phrase Structure Rule Code 1',
+	'Clause-Specific Phrase Structure Rule Code 2',
+]

@@ -49,7 +49,11 @@ type TargetApiFeatureResult = {
 	lexical: TargetApiFeature[]
 }
 
-type FeatureValueInfo = { value: FeatureValue, code: string }
+type FeatureValueInfo = {
+	value: FeatureValue
+	code: string
+	example?: string
+}
 type FeatureInfo = { name: FeatureName, values: FeatureValueInfo[] }
 type FeatureMap = Map<CategoryName, FeatureInfo[]>
 
