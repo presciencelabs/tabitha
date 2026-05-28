@@ -6,6 +6,26 @@ import { transform_categorization, transform_curated_examples } from '$lib/trans
 // 	https://developers.cloudflare.com/d1/platform/client-api/#parameter-binding
 
 /**
+ * @param {import('@cloudflare/workers-types').D1Database} db
+ *
+ * @returns {Promise<Concept[]>}
+ */
+export async function get_all_concepts(db) {
+	db.prepare('SELECT * FROM Concepts')
+	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
+	const { results } = await db.prepare('SELECT * FROM Concepts').all()
+
+	const concepts = results.map(transform)
+	
+	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
+	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all()
+
+	// TODO maybe use a map for the merge so it doesn't loop through the concepts so many times (O(C+H) instead of O(C*H))
+	const all_results = merge_how_to_results(concepts, how_to_results)
+	return all_results
+}
+
+/**
  * case-insensitive match, will accept % as a wildcard as well as sense-specific search, e.g., love-A
  *
  * @param {import('@cloudflare/workers-types').D1Database} db
@@ -36,6 +56,7 @@ export const get_concepts = db => async concept_filter => {
 		 */
 		const scope_filters = {
 			stems: ['stem LIKE ?', [normalized_q]],
+			semantic: ['stem LIKE ?', [normalized_q]],
 			glosses: ['gloss LIKE ?', [`%${normalized_q}%`]],
 			all: ['stem LIKE ? OR gloss LIKE ?', [normalized_q, `%${normalized_q}%`]],
 		}

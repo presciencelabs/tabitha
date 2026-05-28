@@ -2,6 +2,7 @@ import { get_concepts } from '$lib/server/ontology'
 import { get_function_words } from '$lib/server/function_words'
 import { redirect } from '@sveltejs/kit'
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+import { find_related_concepts } from '$lib/server/semantic_search'
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ url: { searchParams }, locals: { db_ontology } }) {
@@ -23,6 +24,11 @@ export async function load({ url: { searchParams }, locals: { db_ontology } }) {
 		...await get_concepts(db_ontology)(search_filter),
 		...get_function_words(search_filter),
 	]
+
+	if (search_filter.scope === 'semantic') {
+		const related = await find_related_concepts(db_ontology, search_filter.q)
+		results.push(...related)
+	}
 
 	return {
 		results,

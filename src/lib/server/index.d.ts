@@ -37,7 +37,7 @@ type OntologyStatus = 'in ontology' | 'approved' | 'suggested' | 'not used' | 'f
 
 type ConceptSearchFilter = {
 	q: string
-	scope: 'stems' | 'glosses' | 'all' | 'english'
+	scope: 'stems' | 'glosses' | 'all' | 'english' | 'semantic'
 	category: string
 }
 
