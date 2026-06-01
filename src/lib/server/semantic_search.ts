@@ -51,9 +51,9 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 				'items': {
 					'type': 'string',
 					'description': 'The concept identifier.',
-				}
-			}
-		}
+				},
+			},
+		},
 	})
 
 	const output = response.text?.length ? JSON.parse(response.text) as string[] : []

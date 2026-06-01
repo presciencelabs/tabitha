@@ -1,4 +1,4 @@
-import { semantic_category, sources, theta_grid, usage_info } from '$lib/lookups'
+import { curated_example_category_codes, curated_example_feature_codes, semantic_category, sources, theta_grid, usage_info } from '$lib/lookups'
 
 /**
  * @param {string} curated_examples_raw "4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.\n4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.\n4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothers are more beautiful than Solomon's clothes.\n"
@@ -7,9 +7,14 @@ import { semantic_category, sources, theta_grid, usage_info } from '$lib/lookups
  */
 export function transform_curated_examples(curated_examples_raw) {
 	const encoded_examples = curated_examples_raw.split('\n').filter(field => !!field)
-	// 4,2,2,2|(NPp|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
-	// 4,17,2,2|(NPp|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
-	// 4,40,6,29|(NPp|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothes are more beautiful than Solomon's clothes.
+	// beautiful-A:
+	//   4,2,2,2|(NPA|baby|)|(VP|be|)|(APP|beautiful|)|~The baby was beautiful.
+	//   4,17,2,2|(NPA|Xerxes|)|(VP|search|)|(NPP|(APA|beautiful|)|virgin|)|~Xerxes searched for a beautiful virgin.
+	//   4,40,6,29|(NPA|clothes|(NPN|of|flower|)|)|(VP|be|)|(APP|beautiful|(NPN|clothes|(NPN|of|Solomon|)|)|)|~The flower's clothes are more beautiful than Solomon's clothes.
+	// be-V:
+	//   6,8,1,67|[A|(NPA|John|)|(VP|read|)|(NPP|book|)|]|(VP|be|)|(APP|true|)|~It is true that John read that book.
+	//   4,41,14,21|[A|(NPA|man|)|(VP|born|)|(aP|never|)|]|(VP|be|)|(APP|good|)|(NPB|man|)|~It's better for that man that he was never born.
+
 	return encoded_examples.map(decode)
 
 	/**
@@ -18,44 +23,47 @@ export function transform_curated_examples(curated_examples_raw) {
 	 * @returns {CuratedExample}
 	 */
 	function decode(encoded_example) {
-		const encoded_reference = encoded_example.split('|')[0] // '4,2,2,2'
-		const simplified_semantic_encoding = encoded_example.match(/\|(.*)\|~/)?.[1] || '' // (NPp|baby|)|(VP|be|)|(APP|beautiful|)
+		const parts = encoded_example.split('|')
+		const encoded_reference = parts[0] // '4,2,2,2'
+		const encoded_entities = parts.slice(1, -1) // ['(NPA', 'baby', ')', '(VP', 'be', ')', '(APP', 'beautiful', ')']
+		const sentence = parts.at(-1)?.slice(1) || '' // The baby was beautiful. (ignore the '~')
 
 		return {
 			reference: decode_reference(encoded_reference),
-			encoding: decode_simplified_encoding(simplified_semantic_encoding),
-			sentence: encoded_example.split('~')[1], // The baby was beautiful.
+			encoding: decode_simplified_encoding(encoded_entities),
+			sentence,
 		}
 
 		/**
-		 * @param {string} simplified_semantic_encoding '(NPp|baby|)|(VP|be|)|(APP|beautiful|)'
+		 * @param {string[]} encoded_entities ['(NPA', 'baby', ')', '(VP', 'be', ')', '(APP', 'beautiful', ')']
 		 *
 		 * @returns {SimplifiedSemanticEncoding}
 		 */
-		function decode_simplified_encoding(simplified_semantic_encoding) {
-			const encoded_phrases = simplified_semantic_encoding.match(/\([^)]+\|[^)]+\)/g) || [] // ['(NPp|baby|)', '(VP|be|)', '(APP|beautiful|)']
+		function decode_simplified_encoding(encoded_entities) {
+			const entities = encoded_entities.map(decode_entity)
 
-			const argument_phrases = encoded_phrases.map(decode_phrase)
-
-			return argument_phrases
+			return entities
 
 			/**
-			 * @param {string} encoded_phrase '(NPp|baby|)'
+			 * @param {string} encoded_entity '(NPp', 'baby', ')', etc
 			 *
-			 * @returns {SimplifiedEncodingPhrase}
+			 * @returns {SimplifiedEncodingEntity}
 			 */
-			function decode_phrase(encoded_phrase) {
-				const [type, word] = encoded_phrase.replace(/[()]/g, '').split('|') // ['NPp', 'baby']
-				const part_of_speech = `${type[0]}${type[1]}` //'NP' or 'VP' or 'AP'
-				const role = type[2] || '' // 'p' or '' or 'P'
+			function decode_entity(encoded_entity) {
+				// (NPA => { category: 'NP', value: '(', feature: { code: 'A', value: 'Most Agent-like' } }
+				// baby => { category: 'value', value: 'baby', feature: undefined }
+				// ) => { category: 'Phrase end', value: ')', feature: undefined }
+				// (VP => { category: 'VP', value: '(', feature: undefined }
+				// (APP => { category: 'AdjP', value: '(', feature: { code: 'P', value: 'Predicative' } }
+				// [A => { category: 'Clause', value: '[', feature: { code: 'A', value: 'Agent' } }
 
-				// (NPp|baby|) => { part_of_speech: 'NP', role: 'p', word: 'baby' }
-				// (VP|be|) => { part_of_speech: 'VP', role: '', word: 'be' }
-				// (APP|beautiful|) => { part_of_speech: 'AP', role: 'P', word: 'beautiful' }
+				const category = Object.entries(curated_example_category_codes).find(([code]) => encoded_entity.startsWith(code))?.[1] || 'Word'
+				const feature_code = encoded_entity.at(-1) || ''
+				const feature_value = curated_example_feature_codes[category]?.[feature_code]
 				return {
-					part_of_speech,
-					role,
-					word,
+					category,
+					word: category === 'Word' ? encoded_entity : undefined,
+					feature: feature_value ? { code: feature_code, value: feature_value } : undefined,
 				}
 			}
 		}

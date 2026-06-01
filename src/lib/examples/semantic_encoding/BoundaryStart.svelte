@@ -3,11 +3,18 @@
 
 	/** @type {SourceEntity} */
 	export let source_entity
+
+	/** @type {Record<string, string>}*/
+	const boundary_size_map = {
+		'{': 'text-2xl',
+		'[': 'text-xl',
+		'(': 'text-xl',
+	}
 </script>
 
 <span class="inline-flex pe-1 tracking-widest">
-	<span class="text-lg font-thin">
-		{source_entity.value}
+	<span class="{boundary_size_map[source_entity.value]} font-thin">
+		{'['}
 	</span>
 	<Features {source_entity} classes={'self-center'}>
 		<span class="text-sm tracking-tight">

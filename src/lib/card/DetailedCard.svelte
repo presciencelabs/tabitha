@@ -6,6 +6,7 @@
 	import { Category } from './categorization'
 	import { onMount } from 'svelte'
 	import { CONCEPT_FILTERS } from '$lib/filters'
+	import SimplifiedEntities from '$lib/examples/curated_examples/SimplifiedEntities.svelte'
 
 	/** @type {Concept} */
 	export let concept
@@ -44,7 +45,7 @@
 					</section>
 				{/if}
 
-				{#if CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept)}
+				{#if curated_examples.length > 0 && CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept)}
 					<section class="prose mt-4 max-w-none">
 						<Details colors="bg-base-200">
 							<span slot="summary">
@@ -61,22 +62,10 @@
 										{reference.id_secondary}:{reference.id_tertiary})
 									</cite>
 
-									<footer class="mt-4 flex justify-around bg-base-100">
-										{#each encoding as { part_of_speech, role, word }}
-											<span class="flex flex-col items-center py-2">
-												<span class="mb-1 not-italic tracking-widest text-base-content">
-													{word}
-												</span>
-												<small class="font-mono text-xs text-base-content">
-													{part_of_speech}
-													{role ? `[${role}]` : ''}
-												</small>
-											</span>
-										{/each}
+									<footer class="mt-4 px-4 flex gap-2 justify-left bg-base-100">
+										<SimplifiedEntities entities={encoding} />
 									</footer>
 								</blockquote>
-							{:else}
-								–
 							{/each}
 						</Details>
 					</section>

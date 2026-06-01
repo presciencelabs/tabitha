@@ -36,3 +36,19 @@
 		winter,
 		wireframe;
 }
+
+.entity-NP, .entity-N {
+	color: #aa795d;
+}
+.entity-VP, .entity-V {
+	color: #507a8b;
+}
+.entity-AdjP, .entity-Adj {
+	color: #548159;
+}
+.entity-AdvP, .entity-Adv {
+	color: #86CBA7;
+}
+.entity-Adp {
+	color: #86657C;
+}

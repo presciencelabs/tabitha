@@ -72,13 +72,18 @@ type Reference = {
 	id_tertiary: string
 }
 
-type SimplifiedEncodingPhrase = {
-	part_of_speech: string
-	role: string
-	word: string
+type SimplifiedEncodingEntity = {
+	category: CategoryName
+	word: string | undefined
+	feature: SimpleEncodingFeature | undefined
 }
 
-type SimplifiedSemanticEncoding =  SimplifiedEncodingPhrase[]
+type SimpleEncodingFeature = {
+	code: string
+	value: string
+}
+
+type SimplifiedSemanticEncoding =  SimplifiedEncodingEntity[]
 
 type Permission = 'PROTECTED_ACCESS' | 'ADD_CONCEPT' | 'UPDATE_CONCEPT' | 'DELETE_CONCEPT'
 

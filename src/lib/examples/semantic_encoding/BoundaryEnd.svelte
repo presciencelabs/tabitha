@@ -1,8 +1,15 @@
 <script>
-	import Punctuation from './Punctuation.svelte'
-
 	/** @type {SourceEntity} */
 	export let source_entity
+	
+	/** @type {Record<string, string>}*/
+	const boundary_size_map = {
+		'}': 'text-2xl',
+		']': 'text-xl',
+		')': 'text-xl',
+	}
 </script>
 
-<Punctuation {source_entity} />
+<span class="{boundary_size_map[source_entity.value]} font-thin pe-1">
+	{']'}
+</span>
