@@ -26,8 +26,7 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	const all_triggers = collect_triggers(weighted_flags)
 	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.weight - t2.weight)
 
-	const sensitivity = 1
-	const selected_triggers = sorted_triggers.filter(t => t.weight >= sensitivity)
+	const selected_triggers = sorted_triggers.filter(t => t.weight >= settings.sensitivity)
 
 	for (const { name, node_id, flags, weight} of sorted_triggers) {
 		console.log(`${name} @${node_id} - ${weight}`)

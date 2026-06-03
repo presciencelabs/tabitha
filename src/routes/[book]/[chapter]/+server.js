@@ -13,16 +13,18 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 	/** @type {CopilotSettings} */
 	const settings = param_settings ? JSON.parse(param_settings) : {
 		language_profile: {
-			rhetorical_questions: true,
+			// rhetorical_questions: true,
 			clusivity: true,
 			passive: true,
 			dual: true,
 			trial: true,
 			honorifics: true,
-			indirect_speech: true,
+			// indirect_speech: true,
+			closing_quotation_frame: true,
 		},
 		mtt_level: 'high_school',
 		lwc: 'English',
+		sensitivity: 1,
 		show_english: true,
 		show_note_sources: false,
 	}

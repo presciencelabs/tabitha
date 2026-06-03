@@ -1,3 +1,13 @@
+
+type CopilotSettings = {
+	language_profile: LanguageProfile
+	lwc: string
+	mtt_level: MttLevel
+	sensitivity: number
+	show_note_sources: boolean
+	show_english: boolean
+}
+
 type LanguageProfile = {
 	// rhetorical_questions: boolean
 	clusivity: boolean
@@ -58,14 +68,6 @@ type TargetApiResult = {
 }
 
 type MttLevel = 'grade5' | 'high_school' | 'undergraduate'
-
-type CopilotSettings = {
-	language_profile: LanguageProfile
-	lwc: string
-	mtt_level: MttLevel
-	show_note_sources: boolean
-	show_english: boolean
-}
 
 type CopilotLlmInput = {
 	verse: string

@@ -24,6 +24,7 @@
 		},
 		lwc: 'English',
 		mtt_level: 'high_school',
+		sensitivity: 1,
 		show_note_sources: false,
 		show_english: true,
 	}).value)

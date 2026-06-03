@@ -1,6 +1,6 @@
 import { browser } from '$app/environment'
 
-export function persisted<T>(key: string, defaultValue: T) {
+export function persisted<T extends {}>(key: string, defaultValue: T) {
   let state = $state(defaultValue)
 
   // Use $effect.root for side effects outside a component's lifecycle
@@ -10,7 +10,9 @@ export function persisted<T>(key: string, defaultValue: T) {
       const storedValue = localStorage.getItem(key)
       if (storedValue) {
         try {
-          state = JSON.parse(storedValue) as T
+          // enforce the structure of the default value (needed for adding/removing properties of something like settings)
+          const parsed_value = JSON.parse(storedValue)
+          state = Object.fromEntries(Object.entries(defaultValue).map(([k, v]) => ([k, parsed_value[k] || v]))) as T
         } catch (e) {
           console.error('Error parsing localStorage value for', key, e)
         }

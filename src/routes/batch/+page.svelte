@@ -12,18 +12,20 @@
 
 	let settings = $state(persisted<CopilotSettings>('saved_settings', {
 		language_profile: {
-			rhetorical_questions: true,
+			// rhetorical_questions: true,
 			clusivity: true,
 			passive: false,
 			dual: true,
 			trial: true,
 			honorifics: true,
-			indirect_speech: false,
+			// indirect_speech: false,
 			closing_quotation_frame: true,
 		},
 		lwc: 'English',
 		mtt_level: 'high_school',
-		max_cautions: -1,
+		sensitivity: 1,
+		show_note_sources: false,
+		show_english: true,
 	}).value)
 
 	let fetching_verse_count = $state(false)

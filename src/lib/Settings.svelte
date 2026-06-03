@@ -12,6 +12,14 @@
 	<summary class="collapse-title font-semibold">Options/Settings</summary>
 	<div class="collapse-content text-sm">
 		<div class="mb-2">
+			Sensitivity
+			<select class="select" bind:value={settings.sensitivity}>
+				{#each [1, 2, 3, 4, 5] as sentitivity_level}
+					<option value={sentitivity_level}>{sentitivity_level}</option>
+				{/each}
+			</select>
+		</div>
+		<div class="mb-2">
 			Detail Level
 			<select class="select" bind:value={settings.mtt_level}>
 				{#each Object.entries(mtt_level_info) as [mtt_level, info]}
