@@ -1,4 +1,4 @@
-import { get_llm_cautions } from '$lib/server/llm'
+import { get_llm_notes } from '$lib/server/llm'
 import { fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
@@ -26,14 +26,8 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	const all_triggers = collect_triggers(weighted_flags)
 	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.weight - t2.weight)
 
-	const selected_triggers = sorted_triggers.filter(t => t.weight >= settings.sensitivity)
-
-	for (const { name, node_id, flags, weight} of sorted_triggers) {
-		console.log(`${name} @${node_id} - ${weight}`)
-		for (const flag of flags) {
-			console.log(`   ${flag.name} - ${flag.value} - ${flag.weight}`)
-		}
-	}
+	const sensitivity = Number(settings.sensitivity)	// in case it somehow gets converted to a string somewhere
+	const selected_triggers = sorted_triggers.filter(t => t.weight >= sensitivity)
 
 	const llm_input: CopilotLlmInput = {
 		verse: `${reference.book} ${reference.chapter}:${reference.verse}`,
@@ -46,7 +40,7 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	}
 
 	try {
-		const llm_output = await get_llm_cautions(llm_input)
+		const llm_output = await get_llm_notes(llm_input)
 		return {
 			verse: reference,
 			english_text,
@@ -64,7 +58,7 @@ export function error_result(reference: Reference, message: string|undefined = u
 		verse: reference,
 		error: message || 'Copilot notes experienced a temporary issue and could not be loaded. Please try again later.',
 		english_text: '',
-		cautions: [],
+		notes: [],
 	}
 }
 
@@ -76,11 +70,11 @@ export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => strin
 		//   \p Second language (if present)
 		//   \li First suggestion
 		//   \li Second suggestion...
-		const cautions = result.cautions.length ? result.cautions.map(({ note }) => note) : [no_suggestions_text]
+		const notes = result.notes.length ? result.notes.map(({ meaning, check }) => `${meaning} ${check}`) : [no_suggestions_text]
 		return [
 			`\\p \\v ${result.verse.verse} ${result.english_text}`,
 			...(result.lwc_text ? [`\\p ${result.lwc_text}`] : []),
-			...cautions.map(c => `\\li - ${c}`),
+			...notes.map(c => `\\li - ${c}`),
 		].join('\n')
 	}
 }

@@ -45,7 +45,7 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 	if (profile.honorifics) {
 		weights['Speaker'] = {
 			'King': 5,
-			'God': 3,
+			'God': 1,
 			'Man': 1,
 		}
 		weights['Listener'] = {

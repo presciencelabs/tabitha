@@ -1,18 +1,26 @@
 import { env } from '$env/dynamic/private'
 import { GoogleGenAI } from '@google/genai'
 
-export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
+export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
+
+	if (!translate_tbta_text && llm_input.triggers.length === 0) {
+		return { notes: [] }
+	}
 
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
 			You are an expert in Bible translation. You have PhD in linguistics and ThD from a conservative evangelical seminary.
 
-			You task is to render preselected caution guidance to a mother-tongue translator (MTT) based on the provided tbta_encoding.
-			Identify the location of each 'trigger' and write a caution related to the features in each trigger, one caution per trigger.
-			Follow the prompt that is provided with a trigger, if provided.
-			Do not quote the text, encoding, or triggers directly, but use your knowledge of the verse context, making sure the caution is related to the trigger.
-			Do not add additional cautions.
+			You task is to render preselected meaning notes to a mother-tongue translator (MTT) based on the provided tbta_encoding.
+			Identify the location of each 'trigger' and write a note related to the features in each trigger, one note per trigger.
+			Each note should have two parts:
+				1) a description of the meaning represented by the trigger.
+				2) a cautionary note to tell the MTT to consider if the meaning is expressed in their translation. Avoid strong wording like 'make sure that...' or 'clearly' or 'should'.
+			Obey the prompt that is attached to a trigger, if provided.
+			Do not quote the text, encoding, or triggers directly, but use the surrounding verse context, making sure the caution is related to the trigger.
+			Never add additional interpretation that isn't represented in the text, encoding, or triggers.
+			Do not add additional notes.
 
 			Never comment on, assess, or question the encoding or feature data you are given.
 			If a feature assignment looks unusual, render it as instructed regardless - do not remark on it.
@@ -32,7 +40,7 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 	const ai = new GoogleGenAI({ apiKey: env.API_KEY_GEMINI })
 
 	const response = await ai.models.generateContent({
-		model: 'gemini-2.5-flash',
+		model: 'gemini-3.5-flash',
 		contents: JSON.stringify(llm_input),
 		config: {
 			temperature: 0.0,
@@ -44,14 +52,18 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 			responseJsonSchema: {
 				'type': 'object',
 				'properties': {
-					'cautions': {
+					'notes': {
 						'type': 'array',
 						'items': {
 							'type': 'object',
 							'properties': {
-								'note': {
+								'meaning': {
 									'type': 'string',
-									'description': 'Caution or note to the MTT.',
+									'description': 'The interpreted meaning represented by the trigger, in a single sentence.',
+								},
+								'check': {
+									'type': 'string',
+									'description': 'A note to the MTT to consider whether their translation carries the above meaning.',
 								},
 								'source': {
 									'type': 'string',
@@ -71,11 +83,10 @@ export async function get_llm_cautions(llm_input: CopilotLlmInput): Promise<Copi
 		}
 	})
 
-	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { cautions: [] }
+	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: [] }
 	
 	return {
-		...output,
-		cautions: output.cautions.map(({ note, source }) => ({ note: postprocess(note), source })),
+		notes: output.notes.map(({ meaning, check, source }) => ({ meaning: postprocess(meaning), check: postprocess(check), source })),
 		// Sometimes the LLM still includes 'translated_text' even when the output language is English
 		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,
 	}

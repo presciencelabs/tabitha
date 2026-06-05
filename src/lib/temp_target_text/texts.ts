@@ -1,4 +1,4 @@
-export const tagalog_titus_1_2 = `
+export const tagalog_titus_1_3 = `
 \\id TIT
 \\mt1 Tagalog-Unchurched Adults
 \\mt1 Tito

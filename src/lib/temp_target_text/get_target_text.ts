@@ -1,4 +1,4 @@
-import { tagalog_titus_1_2 } from './texts'
+import { tagalog_titus_1_3 } from './texts'
 
 export function get_target_text(ref: Reference, lwc: string): string | undefined {
 	const book_map = target_text_map.get(lwc)?.get(ref.book)
@@ -10,7 +10,7 @@ export function get_target_text(ref: Reference, lwc: string): string | undefined
 
 const target_text_map: Map<string, Map<string, string[][]>> = new Map([
 	['Tagalog', new Map([
-		['Titus', parse_sfm(tagalog_titus_1_2)],
+		['Titus', parse_sfm(tagalog_titus_1_3)],
 	])],
 ])
 

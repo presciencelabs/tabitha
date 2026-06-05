@@ -1,9 +1,14 @@
 
-type CopilotSettings = {
+type CopilotSettings = CopilotNoteSettings & CopilotDisplaySettings
+
+type CopilotNoteSettings = {
 	language_profile: LanguageProfile
 	lwc: string
 	mtt_level: MttLevel
 	sensitivity: number
+}
+
+type CopilotDisplaySettings = {
 	show_note_sources: boolean
 	show_english: boolean
 }
@@ -79,13 +84,14 @@ type CopilotLlmInput = {
 	triggers: TriggerData[]
 }
 
-type CopilotLlmCaution = {
-	note: string
+type CopilotLlmNote = {
+	meaning: string
+	check: string
 	source: string
 }
 
 type CopilotLlmOutput = {
-	cautions: CopilotLlmCaution[]
+	notes: CopilotLlmNote[]
 	lwc_text?: string
 }
 

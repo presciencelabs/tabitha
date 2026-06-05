@@ -5,7 +5,7 @@ type TriggerTemplate = {
 	avg_divisor: 'present_flags' | 'possible_flags'
 	flag_grouper?: (flag: CopilotWeightedFlag) => string
 	trigger_grouper?: (trigger: TriggerData) => string
-	prompt?: string
+	prompt?: string | ((flags: CopilotWeightedFlag[]) => string)
 }
 
 type TriggerData = {
@@ -23,16 +23,21 @@ const triggers: TriggerTemplate[] = [
 		avg_divisor: 'possible_flags',
 	},
 	{
-		name: 'Noun Person',
-		flags: ['Noun Person'],
+		name: 'Noun Person and Number',
+		flags: ['Noun Person', 'Noun Number'],
 		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
-	},
-	{
-		name: 'Noun Number',
-		flags: ['Noun Number'],
-		avg_divisor: 'present_flags',
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags.map(({ value }) => value).join('-')}`,
+		prompt: flags => {
+			const person = flags.find(f => f.name === 'Noun Person')?.value
+			if (person === 'First Inclusive') {
+				return `First Inclusive means that the reader/listener is included when the writer/speaker says "we/us", but not necessarily ONLY including them.
+					Write your note accordingly, using your knowledge of who the speaker and listener are.`
+			} else if (person === 'First Exclusive') {
+				return `First Exclusive means that the reader/listener is NOT included when the writer/speaker says "we/us".
+					Write your note accordingly, using your knowledge of who the speaker and listener are.`
+			}
+			return ''
+		},
 	},
 	{
 		name: 'Modifier Degree',
@@ -63,13 +68,20 @@ const triggers: TriggerTemplate[] = [
 		flags: ['Explanation of Name'],
 		avg_divisor: 'present_flags',
 		trigger_grouper: t => t.flags[0].value,
+		prompt: `For the meaning, write something like "This is the first time {proper_name} is mentioned in this book, and {proper_name} is a {label}.
+		For the check, write something like "Consider making this clear in your translation or include a footnote."`,
 	},
 	{
 		name: 'Metonymy',
 		flags: ['Metonymy'],
 		avg_divisor: 'present_flags',
 		trigger_grouper: t => t.flags[0].value,
-		prompt: 'If metonymy_type is Dynamic, explain that the {whole} can be understood as {part} {whole}. If metonymy_type is Literal, explain that {part} {whole} can be understood simply as {whole}.'
+		prompt: flags => {
+			const meaning_prompt = flags[0].encoding_anchor['metonymy_type']?.startsWith('Dynamic')
+				? 'For the meaning, explain that the original text simply contains {whole}, but can be understood as {part} {whole}.'
+				: 'For the meaning, explain that the original text contains {part} {whole}, but can be understood simply as {whole}.'
+			return `${meaning_prompt} For the check, write something like "Consider which way is clearer in your language."`
+		},
 	},
 	{
 		name: 'Metaphor',
@@ -82,6 +94,8 @@ const triggers: TriggerTemplate[] = [
 		flags: ['Optional Agent of Passive'],
 		avg_divisor: 'present_flags',
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['verb']} by ${t.flags[0].encoding_anchor['agent']}`,
+		prompt: `For the meaning, write something like "The original text did not include the agent for {verb}, but it is likely {agent}".
+		For the check, write something like "Consider including {agent} as the actor if your language needs it."`,
 	},
 	{
 		name: 'Closing Quotation Frame',
@@ -105,13 +119,16 @@ function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): 
 	for (const flags of grouped.values()) {
 		const avg_divisor = trigger.avg_divisor === 'possible_flags' ? trigger.flags.length : flags.length
 		const avg_weight = flags.map(f => f.weight).reduce((acc, w) => acc + w, 0.0) / avg_divisor
-		triggers.push({
+		const trigger_data: TriggerData = {
 			name: trigger.name,
 			node_id: flags[0].encoding_anchor.node_id,
 			flags,
 			weight: avg_weight,
-			...(trigger.prompt ? { prompt: trigger.prompt } : {})
-		})
+		}
+		if (trigger.prompt) {
+			trigger_data.prompt = typeof trigger.prompt === 'string' ? trigger.prompt : trigger.prompt(flags)
+		}
+		triggers.push(trigger_data)
 	}
 	if (trigger.trigger_grouper) {
 		// just return the first trigger within a group

@@ -32,7 +32,7 @@
 	let fetching_english = $state(false)
 	let english_text: TargetApiResult|undefined = $state(undefined)
 
-	let fetching_cautions = $state(false)
+	let fetching_notes = $state(false)
 	let result: CopilotApiResult|null = $state(null)
 
 	let error_text = $state('')
@@ -43,8 +43,8 @@
 		fetching_english = false
 	}
 
-	async function get_cautions() {
-		fetching_cautions = true
+	async function get_notes() {
+		fetching_notes = true
 		error_text = ''
 		
 		const { book, chapter, verse } = reference
@@ -60,7 +60,7 @@
 			console.error(error_text)
 		}
 
-		fetching_cautions = false
+		fetching_notes = false
 	}
 </script>
 
@@ -89,12 +89,12 @@
 	
 	<Settings bind:settings={settings} />
 
-	<button type="button" class="btn btn-md my-4" onclick={get_cautions} disabled={fetching_cautions}>
+	<button type="button" class="btn btn-md my-4" onclick={get_notes} disabled={fetching_notes}>
 		Get notes
 	</button>
 </form>
 
-{#if fetching_cautions}
+{#if fetching_notes}
 	<div class="prose"><h2>Notes for {submitted_reference.book} {submitted_reference.chapter}:{submitted_reference.verse}</h2></div>
 	<p>Loading...</p>
 {:else if error_text.length}
@@ -121,12 +121,12 @@
 		<div class="mt-3">
 			<div class="prose"><h4>Notes/Cautions</h4></div>
 			<ul class="list list-disc text-base ms-5">
-				{#if result.cautions.length > 0}
-					{#each result.cautions as caution}
-						<li>{caution.note}
+				{#if result.notes.length > 0}
+					{#each result.notes as note}
+						<li>{note.meaning} {note.check}
 							{#if settings.show_note_sources}
 								<ul class="list ms-5">
-									<li>- {caution.source}</li>
+									<li>- {note.source}</li>
 								</ul>
 							{/if}
 						</li>
