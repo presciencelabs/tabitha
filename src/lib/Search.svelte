@@ -29,6 +29,10 @@
 	}
 
 	function store_scope() {
+		// don't store the 'semantic' scope to avoid accidental uses
+		if ($scope === 'semantic') {
+			return
+		}
 		localStorage.setItem('search_scope', $scope)
 
 		console.info('search scope saved: ', $scope)
@@ -50,7 +54,7 @@
 			{/each}
 		</select>
 
-		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-primary select-lg join-item">
+		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-primary select-lg join-item {$scope === 'semantic' ? 'border-6 border-error' : ''}">
 			<option value="stems">Stems only</option>
 			<option value="glosses">Glosses only</option>
 			<option value="all">Stems and Glosses</option>
