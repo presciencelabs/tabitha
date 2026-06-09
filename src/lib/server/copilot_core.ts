@@ -2,7 +2,7 @@ import { get_llm_notes } from '$lib/server/llm'
 import { fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
-import { collect_triggers } from './trigger_filters'
+import { collect_triggers } from './trigger_collection'
 
 export async function get_copilot_result(reference: Reference, settings: CopilotSettings): Promise<CopilotApiResult> {
 	const encoding = await fetch_encoding(reference)
