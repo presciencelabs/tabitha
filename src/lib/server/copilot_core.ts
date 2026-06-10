@@ -2,7 +2,7 @@ import { get_llm_notes } from '$lib/server/llm'
 import { fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
-import { collect_triggers } from './trigger_collection'
+import { collect_triggers, triggers_match } from './triggers'
 
 export async function get_copilot_result(reference: Reference, settings: CopilotSettings): Promise<CopilotApiResult> {
 	const encoding = await fetch_encoding(reference)
@@ -24,7 +24,7 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	const flags = extract_flags(encoding.encoding)
 	const weighted_flags = assign_flag_weights(flags, settings.language_profile).filter(({ weight }) => weight > 0)
 	const all_triggers = collect_triggers(weighted_flags)
-	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.weight - t2.weight)
+	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.node_id.localeCompare(t2.node_id))
 
 	const sensitivity = Number(settings.sensitivity)	// in case it somehow gets converted to a string somewhere
 	const selected_triggers = sorted_triggers.filter(t => t.weight >= sensitivity)
@@ -41,10 +41,14 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 
 	try {
 		const llm_output = await get_llm_notes(llm_input)
+		const notes = llm_output.notes.map(({ meaning, check, trigger }) =>
+			({ meaning, check, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! })
+		)
 		return {
 			verse: reference,
 			english_text,
-			...llm_output,
+			lwc_text: llm_output.lwc_text,
+			notes,
 		}
 
 	} catch (error) {

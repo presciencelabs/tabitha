@@ -84,10 +84,21 @@ type CopilotLlmInput = {
 	triggers: TriggerData[]
 }
 
+type TriggerIdData = {
+	name: string
+	node_id: string
+}
+
+type TriggerData = TriggerIdData & {
+	flags: CopilotWeightedFlag[]
+	weight: number
+	prompt?: string
+}
+
 type CopilotLlmNote = {
 	meaning: string
 	check: string
-	source: string
+	trigger: TriggerIdData
 }
 
 type CopilotLlmOutput = {
@@ -95,9 +106,17 @@ type CopilotLlmOutput = {
 	lwc_text?: string
 }
 
-type CopilotApiResult = CopilotLlmOutput & {
-	english_text: string
+type CopilotNote = {
+	meaning: string
+	check: string
+	trigger: TriggerData
+}
+
+type CopilotApiResult = {
 	verse: Reference
+	english_text: string
+	lwc_text?: string
+	notes: CopilotNote[]
 	error?: string
 }
 

@@ -8,15 +8,6 @@ type TriggerTemplate = {
 	prompt?: string | ((flags: CopilotWeightedFlag[]) => string)
 }
 
-type TriggerData = {
-	trigger_id?: number
-	name: string
-	node_id: string
-	flags: CopilotWeightedFlag[]
-	weight: number
-	prompt?: string
-}
-
 const triggers: TriggerTemplate[] = [
 	{
 		name: 'TAMP',
@@ -24,12 +15,12 @@ const triggers: TriggerTemplate[] = [
 		weight_calculator: power_sum,
 	},
 	{
-		name: 'Noun Person and Number',
-		flags: ['Noun Person', 'Noun Number'],
-		weight_calculator: flags => Math.max(...flags.map(f => f.weight)),
-		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags.map(({ value }) => value).join('-')}`,
+		name: 'Noun Person',
+		flags: ['Noun Person'],
+		weight_calculator: flags => flags[0].weight,
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 		prompt: flags => {
-			const person = flags.find(f => f.name === 'Noun Person')?.value
+			const person = flags[0].value
 			if (person === 'First Inclusive') {
 				return `First Inclusive means that the reader/listener is included when the writer/speaker says "we/us".
 					DO NOT say "if your language has an inclusive/exclusive distinction".`
@@ -39,6 +30,12 @@ const triggers: TriggerTemplate[] = [
 			}
 			return ''
 		},
+	},
+	{
+		name: 'Noun Number',
+		flags: ['Noun Number'],
+		weight_calculator: flags => flags[0].weight,
+		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 	},
 	{
 		name: 'Modifier Degree',
@@ -115,6 +112,10 @@ export function collect_triggers(flags: CopilotWeightedFlag[]): TriggerData[] {
 	return triggers.flatMap(trigger => apply_trigger(trigger, flags))
 }
 
+export function triggers_match(t1: TriggerIdData, t2: TriggerIdData) {
+	return t1.name === t2.name && t1.node_id === t2.node_id
+}
+
 function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): TriggerData[] {
 	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
 	const grouper: (flag: CopilotWeightedFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
@@ -123,8 +124,6 @@ function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): 
 	const triggers: TriggerData[] = []
 	for (const flags of grouped.values()) {
 		const weight = trigger.weight_calculator(flags)
-		// const avg_divisor = trigger.avg_divisor === 'possible_flags' ? trigger.flags.length : flags.length
-		// const avg_weight = flags.map(f => f.weight).reduce((acc, w) => acc + w, 0.0) / avg_divisor
 		const trigger_data: TriggerData = {
 			name: trigger.name,
 			node_id: flags[0].encoding_anchor.node_id,

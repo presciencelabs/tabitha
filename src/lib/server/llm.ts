@@ -1,12 +1,17 @@
 import { env } from '$env/dynamic/private'
+import { get_cached_notes } from '$lib/temp_notes_cache/get_cached_notes'
 import { GoogleGenAI } from '@google/genai'
+import { triggers_match } from './triggers'
 
 export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 
-	if (!translate_tbta_text && llm_input.triggers.length === 0) {
-		return { notes: [] }
+	const cached_notes = get_cached_notes(llm_input)
+	const remaining_triggers = llm_input.triggers.filter(trigger => !cached_notes.find(note => triggers_match(note.trigger, trigger)))
+
+	if (!translate_tbta_text && remaining_triggers.length === 0) {
+		return { notes: cached_notes }
 	}
 
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
@@ -44,7 +49,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-3.5-flash',
-		contents: JSON.stringify(llm_input),
+		contents: JSON.stringify({ ...llm_input, triggers: remaining_triggers }),
 		config: {
 			temperature: 0.0,
 			seed: 42,
@@ -68,9 +73,18 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 									'type': 'string',
 									'description': 'A note to the MTT to consider whether their translation carries the above meaning.',
 								},
-								'source': {
-									'type': 'string',
-									'description': 'The full flags objects from the trigger object that this caution relates to.',
+								'trigger': {
+									'type': 'object',
+									'properties': {
+										'name': {
+											'type': 'string',
+											'description': 'The name of the trigger that this note relates to.',
+										},
+										'node_id': {
+											'type': 'string',
+											'description': 'The node_id from the trigger that this note relates to.'
+										},
+									},
 								},
 							},
 						},
@@ -86,11 +100,13 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 		}
 	})
 
-	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: [] }
+	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: cached_notes }
 	
 	return {
-		notes: output.notes.map(({ meaning, check, source }) => ({ meaning: postprocess(meaning), check: postprocess(check), source })),
-		// Sometimes the LLM still includes 'translated_text' even when the output language is English
+		notes: [
+			...cached_notes,
+			...output.notes.map(({ meaning, check, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), trigger })),
+		],
 		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,
 	}
 }

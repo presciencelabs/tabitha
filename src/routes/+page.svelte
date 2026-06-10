@@ -126,7 +126,7 @@
 						<li>{note.meaning} {note.check}
 							{#if settings.show_note_sources}
 								<ul class="list ms-5">
-									<li>- {note.source}</li>
+									<li>- {JSON.stringify(note.trigger.flags)}</li>
 								</ul>
 							{/if}
 						</li>
