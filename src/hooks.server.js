@@ -25,7 +25,7 @@ export async function handle({ event, resolve }) {
 
 		// putting it on `locals` to clean up usage in routes
 		// @ts-expect-error until the TODO above is resolved
-		event.locals.db = event.platform?.env.DB_Sources
+		event.locals.db = event.platform?.env.DB_Sources?.withSession()
 	}
 
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS

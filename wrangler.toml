@@ -8,6 +8,9 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
-binding = "DB_Sources"                               # i.e. available in your Worker on env.DB
+binding = "DB_Sources"
 database_name = "Sources.2026-04-29"
 database_id = "d6afced9-9a1c-4f31-a512-e32ac3f84e69"
+
+[placement]
+mode = "off" # necessary to ensure read replication is taken advantage of, i.e., app will execute code at edge, not at datacenter
