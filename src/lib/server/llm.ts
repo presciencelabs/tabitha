@@ -11,7 +11,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 	const remaining_triggers = llm_input.triggers.filter(trigger => !cached_notes.find(note => triggers_match(note.trigger, trigger)))
 
 	if (!translate_tbta_text && remaining_triggers.length === 0) {
-		return { notes: cached_notes }
+		return { notes: cached_notes, lwc_text: llm_input.lwc_text }
 	}
 
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
