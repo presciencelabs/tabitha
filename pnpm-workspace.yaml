@@ -1,3 +1,9 @@
+allowBuilds:
+  '@google/genai': true
+  esbuild: true
+  protobufjs: true
+  sharp: true
+  workerd: true
 onlyBuiltDependencies:
   - '@sveltejs/kit'
   - '@tailwindcss/oxide'

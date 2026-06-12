@@ -20,3 +20,6 @@ database_id = "c547b234-05fd-4923-ab0e-689d993894ad"
 [[r2_buckets]]
 binding = "R2_db_backups"
 bucket_name = "db-backups"
+
+[placement]
+mode = "off" # necessary to ensure read replication is taken advantage of, i.e., app will execute code at edge, not at datacenter

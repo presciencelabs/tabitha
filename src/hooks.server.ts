@@ -23,8 +23,8 @@ const db_config_handle: Handle = async function db_config_handle({ event, resolv
 		throw error(500, `database missing from platform arg: ${JSON.stringify(event.platform)}`)
 	}
 
-	event.locals.db_ontology = event.platform?.env.DB_Ontology
-	event.locals.db_auth = event.platform?.env.DB_Auth
+	event.locals.db_ontology = event.platform.env.DB_Ontology.withSession()
+	event.locals.db_auth = event.platform.env.DB_Auth.withSession()
 
 	return resolve(event)
 }
