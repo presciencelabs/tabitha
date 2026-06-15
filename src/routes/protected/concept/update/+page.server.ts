@@ -35,7 +35,7 @@ export const actions = {
 			level: form_data.get('level') as string,
 			gloss: form_data.get('gloss') as string,
 			brief_gloss: form_data.get('brief_gloss') as string,
-			categorization: form_data.get('categorization') as string,
+			categories: form_data.getAll('categories[]') as string[],
 			curated_examples: form_data.get('curated_examples') as string,
 		}
 

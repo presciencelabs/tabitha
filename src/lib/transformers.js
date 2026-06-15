@@ -71,6 +71,23 @@ export function transform_curated_examples(curated_examples_raw) {
 }
 
 /**
+ * @param {string} encoded_reference four numbers separated by a comma
+ *
+ * @returns {Reference}
+ */
+function decode_reference(encoded_reference) {
+	const [type_key, primary_key, id_secondary, id_tertiary] = encoded_reference.split(',').map(Number)
+	const [type, primary_keys] = Array.from(sources.entries())[type_key]
+
+	return {
+		type,
+		id_primary: primary_keys[primary_key],
+		id_secondary: id_secondary + '',
+		id_tertiary: id_tertiary + '',
+	}
+}
+
+/**
  * @type {Record<string, (categories_from_db: string) => string[]>}
  */
 const categorization_decoders = {
@@ -88,7 +105,7 @@ const categorization_decoders = {
  *
  * @returns {string[]}
  */
-export function transform_categorization(part_of_speech, categorization) {
+export function decode_categorization(part_of_speech, categorization) {
 	const decoder = categorization_decoders[part_of_speech]
 
 	return decoder ? decoder(categorization) : [...categorization]
@@ -143,23 +160,6 @@ function transform_adjective_categorization(categories_from_db) {
 }
 
 /**
- * @param {string} encoded_reference four numbers separated by a comma
- *
- * @returns {Reference}
- */
-function decode_reference(encoded_reference) {
-	const [type_key, primary_key, id_secondary, id_tertiary] = encoded_reference.split(',').map(Number)
-	const [type, primary_keys] = Array.from(sources.entries())[type_key]
-
-	return {
-		type,
-		id_primary: primary_keys[primary_key],
-		id_secondary: id_secondary + '',
-		id_tertiary: id_tertiary + '',
-	}
-}
-
-/**
  * @param {string} categories_from_db '[AFGMOTgo]' OR ''
  *
  * @returns {string[]} – e.g., ['Abstracts'] or ['Feminine names'] or ['Not yet categorized']
@@ -207,6 +207,123 @@ function transform_particle_categorization(part_of_speech) {
 		 */
 		function decode_frequency(character) {
 			return character === '_' ? 'never' : character === character.toUpperCase() ? 'always' : 'sometimes'
+		}
+	}
+}
+
+/**
+ * @type {Record<string, (categories: string[]) => string>}
+ */
+const categorization_encoders = {
+	Adjective: encode_adjective_categorization,
+	Adposition: encode_usage_categorization('Adposition'),
+	Adverb: encode_usage_categorization('Adverb'),
+	Conjunction: encode_usage_categorization('Conjunction'),
+	Noun: encode_noun_categorization,
+	Verb: encode_verb_categorization,
+}
+
+/**
+ * @param {string} part_of_speech
+ * @param {string[]} categories
+ *
+ * @returns {string}
+ */
+export function encode_categorization(part_of_speech, categories) {
+	const encoder = categorization_encoders[part_of_speech]
+
+	return encoder ? encoder(categories) : ''
+}
+
+/**
+ * @param {string[]} categories
+ *
+ * @returns {string} – e.g., '[AFGMOTgo]' OR ''
+ */
+function encode_noun_categorization(categories) {
+	// Noun categorization is just one letter
+	const category = categories[0]
+	if (!category) {
+		// Default to 'All other objects'
+		return 'o'
+	}
+	return Object.entries(semantic_category['Noun']).find(([, value]) => value === category)?.[0] || 'o'
+}
+
+/**
+ * @param {string[]} categories 
+ * @returns {string}
+ */
+function encode_verb_categorization(categories) {
+	// invert the theta_grid map
+	const argument_map = Object.fromEntries(Object.entries(theta_grid).map(([letter, category]) => [category, letter]))
+	return categories.map(category => argument_map[category]).join('')
+}
+
+/**
+ * @param {string[]} categories
+ *
+ * position 1 is the semantic category, the remaining positions are the usage, see DisplayOntologyDlg.cppL1064
+ *
+ * @returns {string} - '[GCOFQIL][Aa_][Bb_][Cc_][Dd_][Ee_][Ff_]'
+ */
+function encode_adjective_categorization(categories) {
+	if (categories.length === 0) {
+		// default to 'Generic', and all 'never'
+		return `G${'_'.repeat(usage_info['Adjective'].length)}`
+	}
+
+	const [category, ...usages] = categories
+	const encoded_category = Object.entries(semantic_category['Adjective']).find(([, value]) => value === category)?.[0] || 'G'
+
+	return `${encoded_category}${encode_usage_categorization('Adjective')(usages)}`
+}
+
+/**
+ * @param {Concept['part_of_speech']} part_of_speech
+ *
+ * @returns {(categories: string[]) => string}
+ */
+function encode_usage_categorization(part_of_speech) {
+	return encode_categories
+
+	/**
+	 * @param {string[]} categories
+	 *
+	 * @returns {string}
+	 */
+	function encode_categories(categories) {
+		const usages = usage_info[part_of_speech]
+
+		if (categories.length === 0) {
+			return '_'.repeat(usages.length)
+		}
+
+		return categories.map(encode_usage).join('')
+
+		/**
+		 * @param {string} sentence - the full usage sentence starting with 'always', 'sometimes', or 'never'
+		 * @param {number} i - the position within the categorization string
+		 * @returns {string} - the categorization character [ABC|abc|_]
+		 */
+		function encode_usage(sentence, i) {
+			return encode_frequency(sentence, get_usage_character(i))
+		}
+
+		/**
+		 * @param {string} sentence starting with "always" or "sometimes" or "never"
+		 * @param {string} character the position-based upper-case character
+		 * @returns {string} - an uppercase character, lowercase character, or '_'
+		 */
+		function encode_frequency(sentence, character) {
+			return sentence.startsWith('never') ? '_' : sentence.startsWith('always') ? character : character.toLowerCase()
+		}
+
+		/**
+		 * @param {number} i 
+		 */
+		function get_usage_character(i) {
+			return String.fromCharCode('A'.charCodeAt(0) + i)
 		}
 	}
 }

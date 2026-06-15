@@ -1,4 +1,4 @@
-import { transform_categorization, transform_curated_examples } from '$lib/transformers'
+import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
@@ -91,7 +91,7 @@ function transform(match_from_db) {
 	return {
 		...match_from_db,
 		level: match_from_db.level.toString(),
-		categories: transform_categorization(match_from_db.part_of_speech, match_from_db.categorization),
+		categories: decode_categorization(match_from_db.part_of_speech, match_from_db.categorization),
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		curated_examples_raw: match_from_db.curated_examples,
 		status: 'in ontology',

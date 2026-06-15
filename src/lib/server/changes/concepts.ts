@@ -1,5 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { get_concepts } from '$lib/server/ontology'
+import { decode_categorization, encode_categorization } from '$lib/transformers'
+import { theta_grid_arguments } from '$lib/lookups'
 
 export async function get_concept_for_update(db: D1Database, concept_key: ConceptKey): Promise<ConceptUpdateData|null> {
 	const sql = `
@@ -20,9 +22,21 @@ export async function get_concept_for_update(db: D1Database, concept_key: Concep
 		level: level.toString(),
 		gloss,
 		brief_gloss,
-		categorization,
+		categories: decode_categorization_for_update(part_of_speech, categorization),
 		curated_examples,
 	}
+}
+
+function decode_categorization_for_update(part_of_speech: string, categorization: string): string[] {
+	const categories = decode_categorization(part_of_speech, categorization)
+
+	if (part_of_speech === 'Verb') {
+		// The above decoder removes empty theta grid arguments, so they are not in a consistent sequence.
+		// For the purpose of 'update', we need to fill in the gaps.
+		return theta_grid_arguments.map(arg => categories.find(category => category.includes(arg)) || '')
+	}
+
+	return categories
 }
 
 export async function update_concept(db: D1Database, data: ConceptUpdateData) {
@@ -32,7 +46,9 @@ export async function update_concept(db: D1Database, data: ConceptUpdateData) {
 		WHERE stem = ? AND sense = ? AND part_of_speech = ?
 	`
 
-	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categorization, curated_examples } = data
+	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categories, curated_examples } = data
+	const categorization = encode_categorization(part_of_speech, categories)
+
 	await db.prepare(sql).bind(level, gloss, brief_gloss, categorization, curated_examples, stem, sense, part_of_speech).run()
 }
 
@@ -59,7 +75,9 @@ export async function create_concept(db: D1Database, data: ConceptCreateData) {
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "", 0)
 	`
 
-	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categorization, curated_examples } = data
+	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categories, curated_examples } = data
+	const categorization = encode_categorization(part_of_speech, categories)
+
 	await db.prepare(insert_sql)
 		.bind(new_id, stem, sense, part_of_speech, level, gloss, brief_gloss, categorization, curated_examples)
 		.run()

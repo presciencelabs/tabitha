@@ -50,6 +50,8 @@ export const theta_grid = {
 	_: '',
 }
 
+export const theta_grid_arguments = Object.values(required)
+
 /**
  * @type {Record<Concept['part_of_speech'], Record<string, string>>}
  */
