@@ -26,7 +26,13 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 	/** @type {LexicalForm[]} */
 	const forms = await transform({ stem_matches, forms_matches })
 
-	return json(forms)
+	const TWELVE_HOUR_CACHE = {
+		'cache-control': `max-age=${12 * 60 * 60}`,
+	}
+
+	return json(forms, {
+		headers: TWELVE_HOUR_CACHE,
+	})
 
 	/**
 	 * @param {{
