@@ -1,6 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
-import { WORD_ENTITY_CATEGORIES } from './lookups'
+import { GRAMMAR_ONLY_FEATURES, WORD_ENTITY_CATEGORIES } from './lookups'
 
 export async function get_source_features(db: D1Database): Promise<DbFeature[]> {
 	const sql = 'SELECT * FROM Features'
@@ -124,4 +124,8 @@ export async function transform_features_to_codes(db: D1Database, source_entitie
 		const new_features = feature_codes_to_structure(category, feature_codes, all_features)
 		return { ...entity, feature_codes, features: new_features }
 	})
+}
+
+export function is_used_in_source(category: CategoryName): (feature: { name: FeatureName }) => boolean {
+	return feature => !feature.name.startsWith('Spare') && !GRAMMAR_ONLY_FEATURES.includes(`${category}-${feature.name}`)
 }

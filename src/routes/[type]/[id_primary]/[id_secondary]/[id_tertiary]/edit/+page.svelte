@@ -3,7 +3,7 @@
 	import { Navigation, SourceEntities } from '$lib'
 	import type { PageProps } from './$types'
 	import Settings from '$lib/settings/Settings.svelte'
-	import Sidebar from '$lib/sidebar/Sidebar.svelte'
+	import Sidebar from '$lib/sidebar_edit/Sidebar.svelte'
 	import Icon from '@iconify/svelte'
 
 	let { data }: PageProps = $props()
@@ -11,6 +11,7 @@
 	let phase1_text = $state(data.source.phase_1_encoding)
 	let source_entities = $state(data.source.parsed_semantic_encoding)
 	let noun_list = $state(data.source.noun_list)
+	const all_features = data.features
 
 	let is_checked = $state(false)
 	let checking = $state(false)
@@ -161,7 +162,7 @@
 			<SourceEntities {source_entities} {selected_entity} {handle_entity_selected} />
 		</div>
 		{#if sidebar_open}
-			<Sidebar bind:selected_entity={selected_entity} is_open={sidebar_open} {close_sidebar} {noun_list} enable_edit={true} />
+			<Sidebar bind:selected_entity={selected_entity} is_open={sidebar_open} {close_sidebar} {noun_list} {all_features} />
 		{/if}
 	</div>
 {/if}

@@ -1,8 +1,8 @@
 <script>
 	import Punctuation from './Punctuation.svelte'
 
-	/** @type {PageSourceEntity} */
-	export let source_entity
+	/** @type {{ source_entity: PageSourceEntity }} */
+	let { source_entity } = $props()
 
 	const bracket_entity = { ...source_entity, value: ']' }
 </script>

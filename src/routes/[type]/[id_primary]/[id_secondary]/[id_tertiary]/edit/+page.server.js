@@ -1,5 +1,6 @@
 import { get_next_reference, get_previous_reference } from '$lib/data/navigation'
 import { get_source_data } from '$lib/data/read'
+import { load_source_feature_map } from '$lib/encoding/features'
 import { get_noun_list, structure_semantic_encoding, transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { error } from '@sveltejs/kit'
 
@@ -19,6 +20,8 @@ export async function load({ locals: { db }, params: { type, id_primary, id_seco
 	const previous = await get_previous_reference(db, reference)
 	const next = await get_next_reference(db, reference)
 
+	const features = await load_source_feature_map(db)
+
 	return {
 		source: {
 			...source,
@@ -30,5 +33,6 @@ export async function load({ locals: { db }, params: { type, id_primary, id_seco
 			current: reference,
 			next,
 		},
+		features,
 	}
 }

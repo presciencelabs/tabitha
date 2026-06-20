@@ -1,19 +1,20 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
-	import SidebarDetail from './SidebarDetail.svelte'
-	import ConceptDetails from './ConceptDetails.svelte'
-	import AllSenseDetails from './AllSenseDetails.svelte'
-	import FeaturesDetails from './FeaturesDetails.svelte'
-	import SidebarEntityDisplay from './SidebarEntityDisplay.svelte'
-	import NounListDetails from './NounListDetails.svelte'
+	import SidebarDetail from '$lib/sidebar/SidebarDetail.svelte'
+	import SidebarEntityDisplay from '$lib/sidebar/SidebarEntityDisplay.svelte'
+	import ConceptDetails from '$lib/sidebar/ConceptDetails.svelte'
+	import AllSenseDetails from '$lib/sidebar_edit/AllSenseDetails.svelte'
+	import FeaturesDetails from '$lib/sidebar_edit/FeaturesDetails.svelte'
+	import NounListDetails from '$lib/sidebar_edit/NounListDetails.svelte'
 
 	interface Props {
 		selected_entity: PageSourceEntity|null
 		is_open: boolean
 		close_sidebar: () => void
 		noun_list: NounListEntry[]
+		all_features: FeatureMap
 	}
-	let { selected_entity, is_open, close_sidebar, noun_list }: Props = $props()
+	let { selected_entity = $bindable(), is_open, close_sidebar, noun_list, all_features }: Props = $props()
 </script>
 
 <div
@@ -43,7 +44,7 @@
 					</SidebarDetail>
 					<SidebarDetail summary_title="All Senses">
 						{#snippet details_content()}
-							<AllSenseDetails data={selected_entity!.concept!} />
+							<AllSenseDetails bind:data={selected_entity!.concept!} />
 						{/snippet}
 					</SidebarDetail>
 				{/if}
@@ -57,7 +58,7 @@
 					</SidebarDetail>
 					<SidebarDetail summary_title="All Senses - Pairing">
 						{#snippet details_content()}
-							<AllSenseDetails data={selected_entity!.pairing_concept!} />
+							<AllSenseDetails bind:data={selected_entity!.pairing_concept!} />
 						{/snippet}
 					</SidebarDetail>
 				{/if}
@@ -66,7 +67,7 @@
 				{#if selected_entity.category === 'Noun'}
 					<SidebarDetail summary_title="Noun List Index">
 						{#snippet details_content()}
-							<NounListDetails data={selected_entity!} {noun_list} />
+							<NounListDetails bind:data={selected_entity!} {noun_list} />
 						{/snippet}
 					</SidebarDetail>
 				{/if}
@@ -75,7 +76,7 @@
 				{#if selected_entity.features.length > 0}
 					<SidebarDetail summary_title="Features" start_open={true}>
 						{#snippet details_content()}
-							<FeaturesDetails data={selected_entity!} />
+							<FeaturesDetails bind:data={selected_entity!} {all_features}/>
 						{/snippet}
 					</SidebarDetail>
 				{/if}

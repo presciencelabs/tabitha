@@ -3,7 +3,9 @@
 	import HoverPopup from './HoverPopup.svelte'
 	import OntologyResult from './OntologyResult.svelte'
 
-	export let source_entity: PageSourceEntity
+	let { source_entity }: { source_entity: PageSourceEntity } = $props()
+
+	// this non-null assertion is the reason this needs to be in typescript
 	const concept = source_entity.concept!	// will always be non-null at this point
 </script>
 

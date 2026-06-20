@@ -3,18 +3,10 @@
 	import HoverPopup from './HoverPopup.svelte'
 	import Punctuation from './Punctuation.svelte'
 
-	/** @type {PageSourceEntity} */
-	export let source_entity
+	/** @type {{ source_entity: PageSourceEntity }} */
+	let { source_entity } = $props()
 
-	const feature_codes_to_display = get_feature_codes_to_display()
-	const feature_code_display = feature_codes_to_display.length ? '-' + feature_codes_to_display.join('') : ''
-
-	function get_feature_codes_to_display() {
-		if (source_entity.category === 'Noun Phrase') {
-			return [source_entity.feature_codes[1]]
-		}
-		return []
-	}
+	let feature_code_display = $derived(source_entity.category === 'Noun Phrase' ? `-${source_entity.feature_codes[1]}` : '')
 
 	const bracket_entity = { ...source_entity, value: '[' }
 </script>
