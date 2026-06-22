@@ -6,7 +6,7 @@
 	let { source_entity }: { source_entity: PageSourceEntity } = $props()
 
 	// this non-null assertion is the reason this needs to be in typescript
-	const concept = source_entity.concept!	// will always be non-null at this point
+	let concept = $derived(source_entity.concept!)	// will always be non-null at this point
 </script>
 
 <div class="badge badge-lg rounded-full border-base-content badge-outline mx-1 py-5 text-md entity-{source_entity.category_abbr}">
@@ -26,12 +26,12 @@
 
 	<div class="py-4">
 		{#if source_entity.pairing_concept === null}
-			<OntologyResult data={concept} />
+			<OntologyResult bind:data={concept} />
 		{:else}
 			<div class="join">
-				<OntologyResult data={concept} />
+				<OntologyResult bind:data={concept} />
 				<span class="px-1">{source_entity.pairing_type}</span>
-				<OntologyResult data={source_entity.pairing_concept} />
+				<OntologyResult bind:data={source_entity.pairing_concept} />
 			</div>
 		{/if}
 	</div>

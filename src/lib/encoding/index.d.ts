@@ -66,6 +66,7 @@ type OntologyResult = {
 	level: string
 	gloss: string
 	categories: string[]
+	status: string
 }
 
 type TargetEntity = {

@@ -1,6 +1,23 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 
 /**
+ * @param {string} part_of_speech
+ * @returns {Promise<OntologyResult[]>}
+ */
+export async function fetch_all_concepts_for_part_of_speech(part_of_speech) {
+	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=*&category=${part_of_speech}`)
+
+	if (!response.ok) {
+		return []
+	}
+
+	/** @type {OntologyResult[]} */
+	const results = await response.json()
+
+	return results.filter(result => result.status === 'in ontology')
+}
+
+/**
  * @param {SourceConcept} concept
  * @returns {Promise<OntologyResult[]>}
  */
@@ -16,5 +33,5 @@ export async function fetch_ontology_data_for_all_senses(concept) {
 	const results = await response.json()
 	
 	// Use the result that exactly matches the original stem (eg. "lot" vs "Lot")
-	return results.filter(result => result.stem === stem)
+	return results.filter(result => result.stem === stem && result.status === 'in ontology')
 }

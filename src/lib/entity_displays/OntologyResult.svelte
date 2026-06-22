@@ -15,6 +15,7 @@
 			level: '',
 			gloss: '',
 			categories: [],
+			status: 'in ontology',
 		}
 
 		if (!response.ok) {

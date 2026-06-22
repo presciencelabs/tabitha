@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte'
 	import SidebarDetail from '$lib/sidebar/SidebarDetail.svelte'
 	import SidebarEntityDisplay from '$lib/sidebar/SidebarEntityDisplay.svelte'
-	import ConceptDetails from '$lib/sidebar/ConceptDetails.svelte'
+	import ConceptDetails from '$lib/sidebar_edit/ConceptDetails.svelte'
 	import AllSenseDetails from '$lib/sidebar_edit/AllSenseDetails.svelte'
 	import FeaturesDetails from '$lib/sidebar_edit/FeaturesDetails.svelte'
 	import NounListDetails from '$lib/sidebar_edit/NounListDetails.svelte'
@@ -39,7 +39,7 @@
 				{#if selected_entity.concept !== null}
 					<SidebarDetail summary_title="Concept Details">
 						{#snippet details_content()}
-							<ConceptDetails data={selected_entity!.concept!} />
+							<ConceptDetails bind:data={selected_entity!.concept!} />
 						{/snippet}
 					</SidebarDetail>
 					<SidebarDetail summary_title="All Senses">
@@ -53,7 +53,7 @@
 				{#if selected_entity.pairing_concept !== null}
 					<SidebarDetail summary_title="Concept Details - Pairing">
 						{#snippet details_content()}
-							<ConceptDetails data={selected_entity!.pairing_concept!} />
+							<ConceptDetails bind:data={selected_entity!.pairing_concept!} />
 						{/snippet}
 					</SidebarDetail>
 					<SidebarDetail summary_title="All Senses - Pairing">
