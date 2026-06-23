@@ -77,12 +77,12 @@
 	let selected_entity: PageSourceEntity|null = $state(null)
 	let sidebar_open = $state(false)
 
-	function handle_entity_selected(entity: PageSourceEntity) {
+	function on_entity_select(entity: PageSourceEntity) {
 		selected_entity = entity
 		sidebar_open = true
 	}
 
-	function close_sidebar() {
+	function on_sidebar_close() {
 		selected_entity = null
 		sidebar_open = false
 	}
@@ -159,10 +159,10 @@
 	<div class="divider my-2"></div>
 	<div class="flex h-screen">
 		<div class="overflow-y-auto transition-all duration-300 flex-[1_1_auto]" style="margin-right: {sidebar_open ? '24rem' : '0'};">
-			<SourceEntities {source_entities} {selected_entity} {handle_entity_selected} />
+			<SourceEntities {source_entities} {selected_entity} {on_entity_select} />
 		</div>
 		{#if sidebar_open}
-			<Sidebar bind:selected_entity={selected_entity} is_open={sidebar_open} {close_sidebar} {noun_list} {all_features} />
+			<Sidebar bind:entity={selected_entity} onclose={on_sidebar_close} {noun_list} {all_features} />
 		{/if}
 	</div>
 {/if}

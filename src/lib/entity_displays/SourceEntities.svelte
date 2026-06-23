@@ -1,30 +1,28 @@
-<script>
+<script lang="ts">
 	import Concept from './Concept.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
 	import Punctuation from './Punctuation.svelte'
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 
-	/** @type {PageSourceEntity[]} */
-	export let source_entities
+	interface Props {
+		source_entities: PageSourceEntity[]
+		selected_entity: PageSourceEntity|null
+		on_entity_select: (entity: PageSourceEntity) => void
+	}
+	let { source_entities, selected_entity, on_entity_select }: Props = $props()
 
-	/** @type {PageSourceEntity|null} */
-	export let selected_entity
+	let entity_divs: HTMLElement[] = $state([])
 
-	/** @type {(entity: PageSourceEntity) => void}*/
-	export let handle_entity_selected
+	type IndexRange = [number, number]
 
-	/** @type {HTMLElement[]} */
-	let entity_divs = []
-
-	/** @type {[number, number]|null} */
-	$: hover_range = null
-	$: select_range = !selected_entity ? null
+	let hover_range: IndexRange | null = $state(null)
+	let select_range: IndexRange | null = $derived(!selected_entity ? null
 		: is_boundary_start(selected_entity)
 			? get_boundary_range(selected_entity.id)
-			: [selected_entity.id, selected_entity.id]
+			: [selected_entity.id, selected_entity.id])
 
-	$: entity_highlights = source_entities.map((_, i) => {
+	let entity_highlights = $derived(source_entities.map((_, i) => {
 		if (hover_range && i >= hover_range[0] && i <= hover_range[1]) {
 			return 'bg-base-300'
 		}
@@ -32,20 +30,16 @@
 			return 'bg-neutral-content'
 		}
 		return ''
-	})
+	}))
 
-	/** @type {[(entity: PageSourceEntity) => boolean, typeof Concept][]}*/
-	const component_filters = [
+	const component_filters: [(entity: PageSourceEntity) => boolean, typeof Concept][] = [
 		[is_boundary_start, BoundaryStart],
 		[is_boundary_end, BoundaryEnd],
 		[({ concept }) => !!concept, Concept],
 		[() => true, Punctuation],
 	]
 
-	/**
-	 * @param {number} i
-	 */
-	function entity_mouseover(i) {
+	function entity_mouseover(i: number) {
 		hover_range = get_boundary_range(i)
 	}
 
@@ -53,24 +47,17 @@
 		hover_range = null
 	}
 
-	/**
-	 * @param {number} i
-	 */
-	function entity_focus(i) {
+	function entity_focus(i: number) {
 		const entity = source_entities[i]
 		if (is_boundary_end(entity)) {
 			// select the boundary start instead
-			handle_entity_selected(source_entities[entity.parent_id])
+			on_entity_select(source_entities[entity.parent_id])
 		} else {
-			handle_entity_selected(entity)
+			on_entity_select(entity)
 		}
 	}
 
-	/**
-	 * @param {number} i
-	 * @returns {[number, number]}
-	 */
-	function get_boundary_range(i) {
+	function get_boundary_range(i: number): IndexRange {
 		const entity = source_entities[i]
 		if (is_boundary_start(entity)) {
 			const last_id = source_entities.findLastIndex(e => e.parent_id === i)
@@ -92,13 +79,13 @@
 <div class="inline-flex flex-wrap py-3">
 	{#each source_entities as entity}
 		{@const i = entity.id}
-		{@const component = component_filters.find(([filter]) => filter(entity))?.[1]}
+		{@const Component = component_filters.find(([filter]) => filter(entity))?.[1]}
 		<div bind:this={entity_divs[i]} role="button" tabindex="0" class="cursor-default content-center h-20 {entity_highlights[i]}"
-				on:mouseenter={() => entity_mouseover(i)}
-				on:focus={() => entity_focus(i)}
-				on:mouseleave={entity_mouseout}
-				on:blur={() => {}} >
-			<svelte:component this={component} source_entity={entity} />
+				onmouseenter={() => entity_mouseover(i)}
+				onfocus={() => entity_focus(i)}
+				onmouseleave={entity_mouseout}
+				onblur={() => {}} >
+			<Component source_entity={entity} />
 		</div>
 	{/each}
 </div>
