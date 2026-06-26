@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
-	import { Navigation, SourceEntities } from '$lib'
+	import { Navigation } from '$lib'
 	import type { PageProps } from './$types'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar_edit/Sidebar.svelte'
 	import Icon from '@iconify/svelte'
+	import SourceEntitiesEdit from '$lib/edit/SourceEntitiesEdit.svelte'
 
 	let { data }: PageProps = $props()
 
@@ -77,9 +78,9 @@
 	let selected_entity: PageSourceEntity|null = $state(null)
 	let sidebar_open = $state(false)
 
-	function on_entity_select(entity: PageSourceEntity) {
+	function on_entity_select(entity: PageSourceEntity|null) {
 		selected_entity = entity
-		sidebar_open = true
+		sidebar_open = !!entity
 	}
 
 	function on_sidebar_close() {
@@ -159,7 +160,7 @@
 	<div class="divider my-2"></div>
 	<div class="flex h-screen">
 		<div class="overflow-y-auto transition-all duration-300 flex-[1_1_auto]" style="margin-right: {sidebar_open ? '24rem' : '0'};">
-			<SourceEntities {source_entities} {selected_entity} {on_entity_select} />
+			<SourceEntitiesEdit bind:source_entities={source_entities} {selected_entity} {on_entity_select} />
 		</div>
 		{#if sidebar_open}
 			<Sidebar bind:entity={selected_entity} onclose={on_sidebar_close} {noun_list} {all_features} />

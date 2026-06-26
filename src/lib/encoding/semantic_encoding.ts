@@ -1,7 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } from './lookups'
 import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
-import { is_boundary_end, is_boundary_start } from './entity_filters'
+import { structure_entities } from './structured'
 
 /**
  * The phase_2_encoding looks something like:
@@ -139,21 +139,7 @@ function encode_concept_data(entity: SourceEntity): { value: string } {
 
 export function structure_semantic_encoding(entities: SourceEntity[]): PageSourceEntity[] {
 	const new_entities: PageSourceEntity[] = entities.map((entity, i) => ({ ...entity, id: i, parent_id: -1, boundary_category: '' }))
-
-	const parent_id_stack: number[] = []
-	for (const [i, entity] of new_entities.entries()) {
-		entity.parent_id = parent_id_stack.at(-1) ?? -1
-
-		if (is_boundary_start(entity)) {
-			entity.boundary_category = entity.category_abbr
-			parent_id_stack.push(i)
-
-		} else if (is_boundary_end(entity)) {
-			entity.boundary_category = new_entities[entity.parent_id].boundary_category
-			parent_id_stack.pop()
-		}
-	}
-
+	structure_entities(new_entities)
 	return new_entities
 }
 
