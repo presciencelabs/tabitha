@@ -99,6 +99,7 @@
 	}
 </script>
 
+<!-- TODO: watch this closely after upgrading daisyui to 5.6+ (borders are solid by default) -->
 <section class="join join-vertical">
 	<form class="join gap-4 bg-info text-info-content px-4 pb-4 overflow-x-auto join-item">
 		{#each filters as [name, options]}
