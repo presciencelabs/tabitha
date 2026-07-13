@@ -1,75 +1,79 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import { get_primary_ids } from './read'
-
-interface StatusCountResult {
-	not_started_count: number
-	in_progress_count: number
-	initial_complete_count: number
-	review_count: number
-	ready_count: number
-	total_count: number
-}
 
 export async function get_all_book_statuses(db: D1Database, type: string): Promise<StatusResult[]> {
-	const primary_ids = await get_primary_ids(db, type)
-	return await Promise.all(primary_ids.map(({ id_primary }) => get_book_status(db, { type, id_primary })))
+	const sql = `
+		SELECT status, id_primary
+		FROM ChapterStatus
+		WHERE type LIKE ?
+	`
+	const { results } = await db.prepare(sql).bind(type).all<{ status: SourceStatus, id_primary: string }>()
+	const by_book = Map.groupBy(results, result => result.id_primary)
+
+	return by_book.entries().map(([id_primary, statuses]) => ({
+		reference: { type, id_primary },
+		status: combine_statuses(statuses),
+	})).toArray()
 }
 
 export async function get_book_status(db: D1Database, reference: StatusRequestReference): Promise<StatusResult> {
 	const sql = `
-		SELECT
-			COUNT(*) FILTER (WHERE status = 'Not Started') AS not_started_count,
-			COUNT(*) FILTER (WHERE status = 'Initial Analysis in Progress') AS in_progress_count,
-			COUNT(*) FILTER (WHERE status = 'Initial Analysis Complete') AS initial_complete_count,
-			COUNT(*) FILTER (WHERE status = 'Final Review in Progress') AS review_count,
-			COUNT(*) FILTER (WHERE status = 'Ready to Translate') AS ready_count,
-			COUNT(*) AS total_count
-		FROM Sources
+		SELECT status
+		FROM ChapterStatus
 		WHERE type LIKE ?
 			AND id_primary LIKE ?
 	`
 
-	const result = await db.prepare(sql).bind(reference.type, reference.id_primary).first<StatusCountResult>()
+	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ status: SourceStatus }>()
 	return {
 		reference,
-		status: get_status_from_counts(result),
+		status: combine_statuses(results)
 	}
+}
+
+function combine_statuses(status_array: { status: SourceStatus }[]) {
+	const just_statuses = status_array.map(({ status }) => status)
+	const status_mapping: [(statuses: SourceStatus[]) => boolean, SourceStatus][] = [
+		[statuses => statuses.every(s => s === 'Ready to Translate'), 'Ready to Translate'],
+		[statuses => statuses.every(s => s === 'Not Started'), 'Not Started'],
+		[statuses => statuses.some(s => s === 'Not Started'), 'Initial Analysis in Progress'],
+		[statuses => statuses.some(s => s === 'Initial Analysis in Progress'), 'Initial Analysis in Progress'],
+		[statuses => statuses.some(s => s === 'Final Review in Progress'), 'Final Review in Progress'],
+		[() => true, 'Initial Analysis Complete'],
+	]
+	return just_statuses.length ? status_mapping.find(([predicate]) => predicate(just_statuses))![1] : 'Not Started'
+}
+
+export async function get_chapter_statuses_for_book(db: D1Database, reference: StatusRequestReference): Promise<StatusResult[]> {
+	const sql = `
+		SELECT id_secondary, status
+		FROM ChapterStatus
+		WHERE type LIKE ?
+			AND id_primary LIKE ?
+	`
+
+	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ id_secondary: string, status: SourceStatus }>()
+	return results.map(({ id_secondary, status }) => ({
+		reference: { ...reference, id_secondary },
+		status,
+	}))
 }
 
 export async function get_chapter_status(db: D1Database, reference: StatusRequestReference): Promise<StatusResult> {
 	const sql = `
-		SELECT
-			COUNT(*) FILTER (WHERE status = 'Not Started') AS not_started_count,
-			COUNT(*) FILTER (WHERE status = 'Initial Analysis in Progress') AS in_progress_count,
-			COUNT(*) FILTER (WHERE status = 'Initial Analysis Complete') AS initial_complete_count,
-			COUNT(*) FILTER (WHERE status = 'Final Review in Progress') AS review_count,
-			COUNT(*) FILTER (WHERE status = 'Ready to Translate') AS ready_count,
-			COUNT(*) AS total_count
-		FROM Sources
+		SELECT status
+		FROM ChapterStatus
 		WHERE type LIKE ?
 			AND id_primary LIKE ?
 			AND id_secondary = ?
 	`
 
 	const prepared_statement = db.prepare(sql).bind(reference.type, reference.id_primary, reference.id_secondary!.toString())
-	const result = await prepared_statement.first<StatusCountResult>()
+	const result = await prepared_statement.first<{ status: SourceStatus }>()
+	
 	return {
 		reference,
-		status: get_status_from_counts(result),
+		status: result?.status ?? 'Not Started',
 	}
-}
-
-function get_status_from_counts(status_counts: StatusCountResult|null): SourceStatus {
-	const status_count_mapping: [(status_counts: StatusCountResult) => boolean, SourceStatus][] = [
-		[({ total_count, ready_count }) => total_count === ready_count, 'Ready to Translate'],
-		[({ total_count, not_started_count }) => total_count === not_started_count, 'Not Started'],
-		[({ not_started_count }) => not_started_count > 0, 'Initial Analysis in Progress'],
-		[({ in_progress_count }) => in_progress_count > 0, 'Initial Analysis in Progress'],
-		[({ review_count }) => review_count > 0, 'Final Review in Progress'],
-		[() => true, 'Initial Analysis Complete'],
-	]
-
-	return status_counts ? status_count_mapping.find(([predicate]) => predicate(status_counts))![1] : 'Not Started'
 }
 
 export async function get_verse_statuses(db: D1Database, references: Reference[]): Promise<StatusResult[]> {

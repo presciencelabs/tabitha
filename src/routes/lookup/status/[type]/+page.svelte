@@ -1,5 +1,7 @@
 <script>
 	import { status_list } from '$lib/data/lookups.js'
+	import EncodingStatus from '$lib/EncodingStatus.svelte'
+	import Icon from '@iconify/svelte'
 
 	const { data } = $props()
 
@@ -26,16 +28,24 @@
 	</select>
 </div>
 
-<div class="flex py-3 gap-7">
+<div class="flex flex-col md:flex-row py-3 gap-7">
 	{#each filtered_status_groups as { group_name, statuses }}
-		<div class="flex-auto">
+		<div class="w-full md:flex-auto">
 			<table class="table table-zebra">
 				<thead><tr><th>{group_name}</th></tr></thead>
 				<tbody>
-					{#each statuses as { reference: { id_primary }, status }}
+					{#each statuses as { reference: { type, id_primary }, status }}
 						<tr>
 							<th>{id_primary}</th>
-							<td>{status}</td>
+							<td>
+								<EncodingStatus {status} />
+							</td>
+							<td>
+								<a href="/lookup/status/{type}/{id_primary}" class="link flex">
+									Chapter details
+									<Icon icon="fe:link-external" class="h-4 w-4 mt-1" />
+								</a>
+							</td>
 						</tr>
 					{/each}
 				</tbody>
