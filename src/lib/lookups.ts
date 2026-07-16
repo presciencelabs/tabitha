@@ -172,3 +172,27 @@ export const mtt_level_info: Record<MttLevel, MttLevelInfo> = {
 	'high_school': { label: 'Detailed', code: 'HS' },
 	'undergraduate': { label: 'Technical', code: 'UG' },
 }
+
+export const copilot_modes: CopilotMode[] = [
+	'brief',
+	'discern',
+]
+
+export const default_settings: CopilotSettings = {
+	language_profile: {
+		// rhetorical_questions: true,
+		clusivity: true,
+		passive: true,
+		dual: true,
+		trial: true,
+		honorifics: true,
+		// indirect_speech: true,
+		closing_quotation_frame: true,
+	},
+	mtt_level: 'high_school',
+	lwc: 'English',
+	sensitivity: 1,
+	show_english: true,
+	show_note_sources: false,
+	mode: 'discern',
+}

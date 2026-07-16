@@ -2,7 +2,7 @@
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-	import { fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
+	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
 
 	let reference = $state(persisted<Reference>('saved_verse', {
 		book: 'Genesis',
@@ -10,23 +10,7 @@
 		verse: 1,
 	}).value)
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings', {
-		language_profile: {
-			// rhetorical_questions: true,
-			clusivity: true,
-			passive: false,
-			dual: true,
-			trial: true,
-			honorifics: true,
-			// indirect_speech: false,
-			closing_quotation_frame: true,
-		},
-		lwc: 'English',
-		mtt_level: 'high_school',
-		sensitivity: 1,
-		show_note_sources: false,
-		show_english: true,
-	}).value)
+	let settings = $state(persisted<CopilotSettings>('saved_settings', default_settings).value)
 
 	let fetching_verse_count = $state(false)
 	let verse_count: number|undefined = $state(-1)

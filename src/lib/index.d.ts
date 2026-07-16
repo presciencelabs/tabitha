@@ -1,3 +1,4 @@
+type CopilotMode = 'discern' | 'brief'
 
 type CopilotSettings = CopilotNoteSettings & CopilotDisplaySettings
 
@@ -6,22 +7,12 @@ type CopilotNoteSettings = {
 	lwc: string
 	mtt_level: MttLevel
 	sensitivity: number
+	mode: CopilotMode
 }
 
 type CopilotDisplaySettings = {
 	show_note_sources: boolean
 	show_english: boolean
-}
-
-type LanguageProfile = {
-	// rhetorical_questions: boolean
-	clusivity: boolean
-	passive: boolean
-	dual: boolean
-	trial: boolean
-	honorifics: boolean
-	// indirect_speech: boolean
-	closing_quotation_frame: boolean
 }
 
 type Reference = {
@@ -98,6 +89,7 @@ type TriggerData = TriggerIdData & {
 type CopilotLlmNote = {
 	meaning: string
 	check: string
+	quoted_text: string
 	trigger: TriggerIdData
 }
 
@@ -109,6 +101,7 @@ type CopilotLlmOutput = {
 type CopilotNote = {
 	meaning: string
 	check: string
+	quoted_text: string
 	trigger: TriggerData
 }
 

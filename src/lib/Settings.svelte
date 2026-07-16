@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { language_profile_infos, lwc_info, mtt_level_info } from '$lib/lookups'
+	import { language_profile_infos, lwc_info, mtt_level_info, copilot_modes } from '$lib/lookups'
 	import Icon from '@iconify/svelte'
 
 	interface Props {
@@ -41,6 +41,14 @@
 					Show English
 				</label>
 			{/if}
+		</div>
+		<div class="mb-2">
+			Mode
+			<select class="select" bind:value={settings.mode}>
+				{#each copilot_modes as mode}
+					<option value={mode}>{mode}</option>
+				{/each}
+			</select>
 		</div>
 		<div>
 			<label>

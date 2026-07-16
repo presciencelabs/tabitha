@@ -35,7 +35,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 			Write ONLY in the requested output_language, and be concise.
 			${translate_tbta_text
-				? 'Translate the english_text into the output_language and return it as the lwc_text. Use that resulting text when citing words or phrases in your notes.'
+				? 'Translate the english_text into the output_language and return it as the lwc_text. Maintain anything within <<>>. Use that resulting text when citing words or phrases in your notes.'
 				: 'When citing words or phrases in your notes, always use the form that appears in the provided lwc_text.'}
 
 			Write according to the specified education level of the MTT according to:
@@ -73,6 +73,10 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 									'type': 'string',
 									'description': 'A note to the MTT to consider whether their translation carries the above meaning.',
 								},
+								'quoted_text': {
+									'type': 'string',
+									'description': 'The part of the text that relates to the note with at least a few words of context, quoted from the lwc_text.'
+								},
 								'trigger': {
 									'type': 'object',
 									'properties': {
@@ -105,7 +109,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 	return {
 		notes: [
 			...cached_notes,
-			...output.notes.map(({ meaning, check, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), trigger })),
+			...output.notes.map(({ meaning, check, quoted_text, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), quoted_text, trigger })),
 		],
 		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,
 	}

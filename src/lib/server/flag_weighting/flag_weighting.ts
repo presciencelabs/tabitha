@@ -1,14 +1,15 @@
-import default_flag_weights from './default_flag_weights.json' with { type: 'json' }
+import { default_flag_weights_for_discern, default_flag_weights_for_brief } from './default_flag_weights'
 
 type FlagWeightingMap = Record<string, Record<string, number>>
 
-export function assign_flag_weights(flags: CopilotTriggerFlag[], language_profile: LanguageProfile): CopilotWeightedFlag[] {
-	const profile_weights = get_profile_weights(language_profile)
-	return flags.map(flag => assign_flag_weight(flag, profile_weights))
+export function assign_flag_weights(flags: CopilotTriggerFlag[], settings: CopilotNoteSettings): CopilotWeightedFlag[] {
+	const default_weights = settings.mode === 'discern' ? default_flag_weights_for_discern : default_flag_weights_for_brief
+	const profile_weights = get_profile_weights(settings.language_profile)
+	return flags.map(flag => assign_flag_weight(flag, profile_weights, default_weights))
 }
 
-function assign_flag_weight(flag: CopilotTriggerFlag, profile_weights: FlagWeightingMap): CopilotWeightedFlag {
-	const weight = get_flag_weight(flag, profile_weights) ?? get_flag_weight(flag, default_flag_weights) ?? 0
+function assign_flag_weight(flag: CopilotTriggerFlag, profile_weights: FlagWeightingMap, default_weights: FlagWeightingMap): CopilotWeightedFlag {
+	const weight = get_flag_weight(flag, profile_weights) ?? get_flag_weight(flag, default_weights) ?? 0
 	return { ...flag, weight }
 }
 

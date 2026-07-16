@@ -24,6 +24,8 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	const flags = extract_flags(encoding.encoding)
 	const weighted_flags = assign_flag_weights(flags, settings.language_profile).filter(({ weight }) => weight > 0)
 	const all_triggers = collect_triggers(weighted_flags)
+	const weighted_flags = assign_flag_weights(flags, settings).filter(({ weight }) => weight > 0)
+	const all_triggers = collect_triggers(weighted_flags, settings.language_profile)
 	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.node_id.localeCompare(t2.node_id))
 
 	const sensitivity = Number(settings.sensitivity)	// in case it somehow gets converted to a string somewhere
@@ -41,8 +43,8 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 
 	try {
 		const llm_output = await get_llm_notes(llm_input)
-		const notes = llm_output.notes.map(({ meaning, check, trigger }) =>
-			({ meaning, check, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! })
+		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) =>
+			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! })
 		)
 		return {
 			verse: reference,

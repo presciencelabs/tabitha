@@ -155,6 +155,32 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 		}],
 	},
 	{
+		flag: 'Speaker-Listener Age',
+		rules: [{
+			value: '$relative_age',
+			pattern: {
+				name: '$anchor',
+				category: 'Clause',
+				features: {
+					'Speaker-Listener Age': '$relative_age',
+				},
+			},
+		}],
+	},
+	{
+		flag: 'Rhetorical Question',
+		rules: [{
+			value: '$question_type',
+			pattern: {
+				name: '$anchor',
+				category: 'Clause',
+				features: {
+					'Rhetorical Question': '$question_type',
+				},
+			},
+		}],
+	},
+	{
 		flag: 'Opening Quotation Frame',
 		rules: [{
 			value: '$speaker $verb $listener',

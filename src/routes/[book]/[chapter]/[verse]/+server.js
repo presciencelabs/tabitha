@@ -1,5 +1,6 @@
 import { error, json } from '@sveltejs/kit'
 import { get_copilot_result } from '$lib/server/copilot_core'
+import { default_settings } from '$lib/lookups'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params: { book, chapter, verse }, url: { searchParams } }) {
@@ -9,24 +10,15 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 		error(400, 'chapter or verse must be integers')
 	}
 
-	const param_settings = searchParams.get('settings')
+	const param_settings = JSON.parse(searchParams.get('settings') || '{}')
 	/** @type {CopilotSettings} */
-	const settings = param_settings ? JSON.parse(param_settings) : {
+	const settings = {
+		...default_settings,
+		...param_settings,
 		language_profile: {
-			// rhetorical_questions: true,
-			clusivity: true,
-			passive: true,
-			dual: true,
-			trial: true,
-			honorifics: true,
-			// indirect_speech: true,
-			closing_quotation_frame: true,
+			...default_settings.language_profile,
+			...(param_settings.language_profile ?? {})
 		},
-		mtt_level: 'high_school',
-		lwc: 'English',
-		sensitivity: 1,
-		show_english: true,
-		show_note_sources: false,
 	}
 
 	/** @type {Reference} */

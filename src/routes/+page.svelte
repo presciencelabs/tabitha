@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fetch_target_text, lwc_info } from '$lib/lookups'
+	import { default_settings, fetch_target_text, lwc_info } from '$lib/lookups'
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
@@ -11,23 +11,7 @@
 	}).value)
 	let submitted_reference: Reference = $state($state.snapshot(reference))
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings', {
-		language_profile: {
-			// rhetorical_questions: true,
-			clusivity: true,
-			passive: false,
-			dual: true,
-			trial: true,
-			honorifics: true,
-			// indirect_speech: false,
-			closing_quotation_frame: true,
-		},
-		lwc: 'English',
-		mtt_level: 'high_school',
-		sensitivity: 1,
-		show_note_sources: false,
-		show_english: true,
-	}).value)
+	let settings = $state(persisted<CopilotSettings>('saved_settings', default_settings).value)
 
 	let fetching_english = $state(false)
 	let english_text: TargetApiResult|undefined = $state(undefined)
@@ -123,7 +107,14 @@
 			<ul class="list list-disc text-base ms-5">
 				{#if result.notes.length > 0}
 					{#each result.notes as note}
-						<li>{note.meaning} {note.check}
+						<li>
+							{#if note.quoted_text}
+								"...{note.quoted_text}..." -
+							{/if}
+							{note.meaning}
+							{#if settings.mode === 'discern'}
+								{note.check}
+							{/if}
 							{#if settings.show_note_sources}
 								<ul class="list ms-5">
 									<li>- {JSON.stringify(note.trigger.flags)}</li>

@@ -2,10 +2,10 @@
 type TriggerTemplate = {
 	name: string
 	flags: string[]
-	weight_calculator: (flags: CopilotWeightedFlag[]) => number
+	weight_calculator: (flags: CopilotWeightedFlag[], language_profile: LanguageProfile) => number
 	flag_grouper?: (flag: CopilotWeightedFlag) => string
 	trigger_grouper?: (trigger: TriggerData) => string
-	prompt?: string | ((flags: CopilotWeightedFlag[]) => string)
+	prompt?: string | ((flags: CopilotWeightedFlag[], language_profile: LanguageProfile) => string)
 }
 
 const triggers: TriggerTemplate[] = [
@@ -45,10 +45,16 @@ const triggers: TriggerTemplate[] = [
 	},
 	{
 		name: 'Social Dynamic',
-		flags: ['Speaker', 'Listener', 'Speaker Attitude'],
+		flags: ['Speaker', 'Listener', 'Speaker Attitude', 'Speaker-Listener Age'],
 		// TODO The weights should be more about the speaker-listener pair
 		weight_calculator: power_sum,
 		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';'),
+		prompt: flags => {
+			if (flags.some(f => f.name === 'Speaker-Listener Age')) {
+				return "Speaker-Listener Age refers to the speaker's age relative to the listener's age. Write your note accordingly."
+			}
+			return ''
+		}
 	},
 	{
 		name: 'Intent/Result',
@@ -89,6 +95,12 @@ const triggers: TriggerTemplate[] = [
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['subject']}->${t.flags[0].encoding_anchor['state']}`,
 	},
 	{
+		name: 'Rhetorical Question',
+		flags: ['Rhetorical Question'],
+		weight_calculator: flags => flags[0].weight,
+		prompt: `Explain that this is a rhetorical question, and explain the type and expected answer.`,
+	},
+	{
 		name: 'Optional Agent of Passive',
 		flags: ['Optional Agent of Passive'],
 		weight_calculator: flags => flags[0].weight,
@@ -108,22 +120,22 @@ const triggers: TriggerTemplate[] = [
 	},
 ]
 
-export function collect_triggers(flags: CopilotWeightedFlag[]): TriggerData[] {
-	return triggers.flatMap(trigger => apply_trigger(trigger, flags))
+export function collect_triggers(flags: CopilotWeightedFlag[], language_profile: LanguageProfile): TriggerData[] {
+	return triggers.flatMap(trigger => apply_trigger(trigger, flags, language_profile))
 }
 
 export function triggers_match(t1: TriggerIdData, t2: TriggerIdData) {
 	return t1.name === t2.name && t1.node_id === t2.node_id
 }
 
-function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): TriggerData[] {
+function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[], language_profile: LanguageProfile): TriggerData[] {
 	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
 	const grouper: (flag: CopilotWeightedFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
 	const grouped = Map.groupBy(trigger_flags, grouper)
 
 	const triggers: TriggerData[] = []
 	for (const flags of grouped.values()) {
-		const weight = trigger.weight_calculator(flags)
+		const weight = trigger.weight_calculator(flags, language_profile)
 		const trigger_data: TriggerData = {
 			name: trigger.name,
 			node_id: flags[0].encoding_anchor.node_id,
@@ -131,7 +143,7 @@ function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[]): 
 			weight,
 		}
 		if (trigger.prompt) {
-			trigger_data.prompt = typeof trigger.prompt === 'string' ? trigger.prompt : trigger.prompt(flags)
+			trigger_data.prompt = typeof trigger.prompt === 'string' ? trigger.prompt : trigger.prompt(flags, language_profile)
 		}
 		triggers.push(trigger_data)
 	}
