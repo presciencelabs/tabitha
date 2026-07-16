@@ -57,37 +57,4 @@ export const implicit_feature_flags: FlagExtractionRule[] = [
 			anchor_extra: match => ({ metonymy_type: match.captures['$anchor'].node.features?.['Implicit'] ?? '' }),
 		}],
 	},
-	{
-		flag: 'Optional Agent of Passive',
-		rules: [{
-			value: '$agent',
-			pattern: {
-				category: 'Clause',
-				features: {
-					'Topic NP': 'Most Patient-like',
-				},
-				children: [
-					{
-						name: '$anchor',
-						category: 'Noun Phrase',
-						features: {
-							'Semantic Role': 'Most Agent-like',
-							'Implicit': 'Optional Agent of Passive',
-						},
-						children: [{
-							category: 'Noun',
-							concept: '$agent',
-						}],
-					},
-					{
-						category: 'Verb Phrase',
-						children: [{
-							category: 'Verb',
-							concept: '$verb',
-						}],
-					},
-				],
-			},
-		}],
-	},
 ]

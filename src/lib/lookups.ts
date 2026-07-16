@@ -42,9 +42,9 @@ export async function fetch_verses_for_chapter(book: string, chapter: number): P
 }
 
 export const polished_books = [
-	// 'Genesis',
+	'Genesis',
 	// 'Joshua',
-	// 'Ruth',
+	'Ruth',
 	// '1 Samuel',
 	// '2 Samuel',
 	// 'Nehemiah',
@@ -52,23 +52,19 @@ export const polished_books = [
 	// 'Daniel',
 	'Jonah',
 	// 'Nahum',
-	// 'Matthew',
+	'Matthew',
 	// 'Mark',
-	// 'Acts',
+	'Acts',
 	'Titus',
 	// 'Philemon',
 	// '3 John',
 ]
 
 export const language_profile_infos: Record<keyof LanguageProfile, [string, string]> = {
-	// 'rhetorical_questions': [
-	// 	'Rhetorical Questions',
-	// 	'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
-	// ],
-	// 'indirect_speech': [
-	// 	'Indirect Speech',
-	// 	'Your language uses indirect speech ("John said that Mary left"). If not, the copilot will show notes to help convert these to direct quotes.',
-	// ],
+	'rhetorical_questions': [
+		'Rhetorical Questions',
+		'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
+	],
 	'clusivity': [
 		'Inclusive and exclusive "we"',
 		'Your language marks inclusive "we" (we with you) differently from exclusive "we" (we without you). The copilot will show notes for when "we" is exclusive.',
@@ -180,13 +176,12 @@ export const copilot_modes: CopilotMode[] = [
 
 export const default_settings: CopilotSettings = {
 	language_profile: {
-		// rhetorical_questions: true,
+		rhetorical_questions: true,
 		clusivity: true,
 		passive: true,
 		dual: true,
 		trial: true,
 		honorifics: true,
-		// indirect_speech: true,
 		closing_quotation_frame: true,
 	},
 	mtt_level: 'high_school',
@@ -194,5 +189,5 @@ export const default_settings: CopilotSettings = {
 	sensitivity: 1,
 	show_english: true,
 	show_note_sources: false,
-	mode: 'discern',
+	mode: 'brief',
 }

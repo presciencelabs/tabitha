@@ -32,8 +32,10 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 		}
 	}
 	if (!profile.passive) {
-		weights['Optional Agent of Passive'] = {
+		weights['Agent of Passive'] = {
 			'person-A': 1,
+			'God-A': 1,
+			'Yahweh-A': 1,
 			'*': 5,
 		}
 	}
@@ -44,18 +46,33 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 		}
 	}
 	if (profile.honorifics) {
+		// TODO let the profile pick the Speaker and Listener values it cares about
 		weights['Speaker'] = {
 			'King': 5,
-			'God': 1,
+			'God': 0,
 			'Man': 1,
+			'*': 3,
 		}
 		weights['Listener'] = {
-			'God': 2,
+			'God': 0,
 			'Man': 1,
-			'Crowd': 3,
+			'Crowd': 2,
+			'*': 3,
 		}
 		weights['Speaker Attitude'] = {
 			'Anger': 4,
+		}
+		weights['Speaker-Listener Age'] = {
+			'Older - Different Generation': 5,
+			'Older - Same Generation': 4,
+			'Essentially the Same Age': 3,
+			'Younger - Different Generation': 4,
+			'Younger - Same Generation': 5,
+		}
+	}
+	if (!profile.rhetorical_questions) {
+		weights['Rhetorical Question'] = {
+			'Equivalent Statement': 5,
 		}
 	}
 	if (profile.closing_quotation_frame) {

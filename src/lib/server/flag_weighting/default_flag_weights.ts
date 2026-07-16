@@ -9,7 +9,7 @@ export const default_flag_weights_for_discern = {
 		"Completive": 3,
 		"Cessative": 3,
 		"Continuative": 5,
-		"Imperfective": 1,
+		"Imperfective": 0,
 		"Routine": 3,
 		"Gnomic": 5,
 	},
@@ -37,7 +37,7 @@ export const default_flag_weights_for_discern = {
 		"'too'": 5,
 		"'less'": 3,
 		"'least'": 5,
-		"Equality": 3,
+		"Equality": 5,
 		"Intensified Comparative": 5,
 		"Intensified 'less'": 5,
 		"Superlative of 2 items": 3,
@@ -119,11 +119,11 @@ export const default_flag_weights_for_brief = {
 	"Intent/Result": {
 		"Intent": 2,
 		"Logical Consequence": 2,
-		"Simple Result": 0,
+		"Simple Result": 1,
 	},
 	"Means/Reason": {
-		"Means": 2,
-		"Reason": 0,
+		"Means": 3,
+		"Reason": 2,
 	},
 	"Metaphor": {
 		"*": 5,

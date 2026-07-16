@@ -42,19 +42,31 @@ const triggers: TriggerTemplate[] = [
 		flags: ['Modifier Degree'],
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['concept']}-${t.flags[0].value}`,
-	},
-	{
-		name: 'Social Dynamic',
-		flags: ['Speaker', 'Listener', 'Speaker Attitude', 'Speaker-Listener Age'],
-		// TODO The weights should be more about the speaker-listener pair
-		weight_calculator: power_sum,
-		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';'),
 		prompt: flags => {
-			if (flags.some(f => f.name === 'Speaker-Listener Age')) {
-				return "Speaker-Listener Age refers to the speaker's age relative to the listener's age. Write your note accordingly."
+			if (flags[0].value === "'too'") {
+				return 'In your note, mention how there is a negative sense of excess, not just a lot.'
 			}
 			return ''
 		}
+	},
+	{
+		name: 'Social Dynamic',
+		flags: ['Speaker', 'Listener', 'Speaker-Listener Age'],
+		// TODO The weights should be more about the speaker-listener pair
+		weight_calculator: flags => flags.length > 1 ? power_sum(flags) : 0,
+		trigger_grouper: t => t.flags.map(f => `${f.name}-${f.value}`).join(';'),
+		prompt: flags => {
+			if (flags.some(f => f.name === 'Speaker-Listener Age')) {
+				return "Speaker-Listener Age refers to the speaker's age relative to the listener's age. It is usually an estimate and cannot be strongly stated, so write your note accordingly."
+			}
+			return ''
+		}
+	},
+	{
+		name: 'Speaker Attitude',
+		flags: ['Speaker Attitude'],
+		weight_calculator: flags => flags[0].weight,
+		trigger_grouper: t => t.flags[0].value,
 	},
 	{
 		name: 'Intent/Result',
@@ -98,15 +110,32 @@ const triggers: TriggerTemplate[] = [
 		name: 'Rhetorical Question',
 		flags: ['Rhetorical Question'],
 		weight_calculator: flags => flags[0].weight,
-		prompt: `Explain that this is a rhetorical question, and explain the type and expected answer.`,
+		// A rhetorical question and equivalent statement are always in adjacent clauses
+		flag_grouper: f => f.encoding_anchor['node_id'].lastIndexOf('.') >= 0 ? f.encoding_anchor['node_id'].slice(0, f.encoding_anchor['node_id'].lastIndexOf('.')) : '',
+		prompt: flags => {
+			if (flags.some(f => f.value === 'Equivalent Statement')) {
+				return `Explain that this is a rhetorical question, explain the type and expected answer, and that it can instead be understood or worded as the {equivalent statement}.
+				Convert the encoding of the equivalent statement into readable, grammatical text in the output language.`
+			} else {
+				return 'Explain that this is a rhetorical question, and explain the type and expected answer.'
+			}
+		},
 	},
 	{
-		name: 'Optional Agent of Passive',
-		flags: ['Optional Agent of Passive'],
+		name: 'Agent of Passive',
+		flags: ['Agent of Passive'],
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['verb']} by ${t.flags[0].encoding_anchor['agent']}`,
-		prompt: `For the meaning, write something like "The original text did not include the one doing {verb}, but it is likely {agent}".
-		For the check, write something like "Consider including {agent} as the one doing {verb} if your language needs it."`,
+		prompt: flags => {
+			if (flags[0].encoding_anchor['is_optional'] === 'true') {
+				return `For the meaning, write something like "The original text did not include the one doing {verb}, but it is likely {agent}".
+				For the check, write something like "Consider including {agent} as the one doing {verb} if your language needs it."`
+			} else {
+				// TODO this should be the third passive option
+				return `For the meaning, explain that the original text indicates that {agent} did the {verb}, but it/they are not the focus.
+				For the check, write something LIKE "Try to inlcude this in your translation, but keep it de-emphasized if possible."`
+			}
+		}
 	},
 	{
 		name: 'Closing Quotation Frame',
@@ -116,7 +145,7 @@ const triggers: TriggerTemplate[] = [
 			return closing && flags.length === 1 ? closing.weight : 0
 		},
 		flag_grouper: f => f.value,
-		prompt: 'Write a reminder about who was speaking and listening.',
+		prompt: `Write something LIKE "This is the end of the quote where {speaker} was speaking to {listener}". You do not need to write a 'check' for this.`
 	},
 ]
 

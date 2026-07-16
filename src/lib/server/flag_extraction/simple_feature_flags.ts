@@ -181,6 +181,42 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 		}],
 	},
 	{
+		flag: 'Agent of Passive',
+		rules: [{
+			value: '$agent',
+			pattern: {
+				name: '$clause',
+				category: 'Clause',
+				features: {
+					'Topic NP': 'Most Patient-like',
+				},
+				children: [
+					{
+						name: '$anchor',
+						category: 'Noun Phrase',
+						features: {
+							'Semantic Role': 'Most Agent-like',
+						},
+						children: [{
+							category: 'Noun',
+							concept: '$agent',
+						}],
+					},
+					{
+						category: 'Verb Phrase',
+						children: [{
+							category: 'Verb',
+							concept: '$verb',
+						}],
+					},
+				],
+			},
+			anchor_extra: match => ({
+				is_optional: match.captures['$anchor'].node.features?.['Implicit'] === 'Optional Agent of Passive' ? 'true' : 'false',
+			}),
+		}],
+	},
+	{
 		flag: 'Opening Quotation Frame',
 		rules: [{
 			value: '$speaker $verb $listener',
