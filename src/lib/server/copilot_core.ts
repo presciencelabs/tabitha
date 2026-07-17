@@ -22,8 +22,6 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	const lwc_text = settings.lwc === 'English' ? undefined : (await fetch_target_text(reference, settings.lwc, 'Default'))?.text
 
 	const flags = extract_flags(encoding.encoding)
-	const weighted_flags = assign_flag_weights(flags, settings.language_profile).filter(({ weight }) => weight > 0)
-	const all_triggers = collect_triggers(weighted_flags)
 	const weighted_flags = assign_flag_weights(flags, settings).filter(({ weight }) => weight > 0)
 	const all_triggers = collect_triggers(weighted_flags, settings.language_profile)
 	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.node_id.localeCompare(t2.node_id))
