@@ -1,5 +1,6 @@
 export const default_flag_weights_for_discern = {
 	"Verb Time": {
+		"Historic Past": 2,
 		"Eternity Past": 3,
 		"Unknown Past": 3,
 		"Unknown Future": 3,
@@ -42,6 +43,9 @@ export const default_flag_weights_for_discern = {
 		"Intensified 'less'": 5,
 		"Superlative of 2 items": 3,
 	},
+	"Speaker Attitude": {
+		"Anger": 4,
+	},
 	"Explanation of Name": {
 		"*": 5,
 	},
@@ -68,6 +72,7 @@ export const default_flag_weights_for_discern = {
 
 export const default_flag_weights_for_brief = {
 	"Verb Time": {
+		"Historic Past": 2,
 		"Eternity Past": 3,
 		"Unknown Past": 3,
 		"Unknown Future": 3,
@@ -109,6 +114,9 @@ export const default_flag_weights_for_brief = {
 		"Intensified Comparative": 5,
 		"Intensified 'less'": 5,
 		"Superlative of 2 items": 3,
+	},
+	"Speaker Attitude": {
+		"Anger": 4,
 	},
 	"Explanation of Name": {
 		"*": 5,

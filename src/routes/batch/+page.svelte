@@ -10,7 +10,7 @@
 		verse: 1,
 	}).value)
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings', default_settings).value)
+	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
 
 	let fetching_verse_count = $state(false)
 	let verse_count: number|undefined = $state(-1)

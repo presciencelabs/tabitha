@@ -25,13 +25,49 @@ function get_flag_weight(flag: CopilotTriggerFlag, weights: FlagWeightingMap): n
 function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 	const weights: FlagWeightingMap = {}
 
-	if (profile.clusivity) {
+	if (profile.multiple_past) {
+		weights['Verb Time'] = {
+			'Immediate Past': 3,
+			'Earlier Today': 4,
+			'Yesterday': 4,
+			'2 Days Ago': 4,
+			'3 Days Ago': 4,
+			'A Week Ago': 4,
+			'A Month Ago': 4,
+			'A Year Ago': 4,
+			"During Speaker's Lifetime": 4,
+		}
+	}
+	if (profile.multiple_future) {
+		weights['Verb Time'] = {
+			...(weights['Verb Time'] ?? {}),
+			'Later Today': 4,
+			'Tomorrow': 4,
+			'2 Days from Now': 4,
+			'3 Days from Now': 4,
+			'A Week from Now': 4,
+			'A Month from Now': 4,
+			'A Year from Now': 4,
+			"During Speaker's Lifetime (future)": 4,
+		}
+	}
+
+	if (profile.noun_number.length > 0) {
+		weights['Noun Number'] = Object.fromEntries(profile.noun_number.map(value => [value, 5]))
+	}
+
+	if (profile.noun_proximity.length > 0) {
+		weights['Noun Proximity'] = Object.fromEntries(profile.noun_proximity.map(value => [value, 5]))
+	}
+
+	if (profile.noun_clusivity) {
 		weights['Noun Person'] = {
 			'First Inclusive': 3,
 			'First Exclusive': 5,
 		}
 	}
-	if (!profile.passive) {
+
+	if (profile.passive !== 'agent_allowed') {
 		weights['Agent of Passive'] = {
 			'person-A': 1,
 			'God-A': 1,
@@ -39,28 +75,24 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 			'*': 5,
 		}
 	}
-	if (profile.dual || profile.trial) {
-		weights['Noun Number'] = {
-			'Dual': profile.dual ? 5 : 0,
-			'Trial': profile.trial ? 5 : 0,
+	if (!profile.rhetorical_questions) {
+		weights['Rhetorical Question'] = {
+			'Equivalent Statement': 5,
 		}
 	}
 	if (profile.honorifics) {
 		// TODO let the profile pick the Speaker and Listener values it cares about
+		// It's usually obvious when God is speaking or being spoken to, and the resulting notes don't seem as useful
 		weights['Speaker'] = {
-			'King': 5,
 			'God': 0,
 			'Man': 1,
-			'*': 3,
+			'*': 4,
 		}
 		weights['Listener'] = {
 			'God': 0,
 			'Man': 1,
 			'Crowd': 2,
-			'*': 3,
-		}
-		weights['Speaker Attitude'] = {
-			'Anger': 4,
+			'*': 4,
 		}
 		weights['Speaker-Listener Age'] = {
 			'Older - Different Generation': 5,
@@ -70,18 +102,17 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 			'Younger - Same Generation': 5,
 		}
 	}
-	if (!profile.rhetorical_questions) {
-		weights['Rhetorical Question'] = {
-			'Equivalent Statement': 5,
-		}
-	}
-	if (profile.closing_quotation_frame) {
+	if (profile.speech_formula_position !== 'before') {
 		weights['Opening Quotation Frame'] = {
 			'*': 1,
 		}
 		weights['Closing Quotation Frame'] = {
 			'*': 5,
 		}
+	}
+
+	for (const [flag, value_weights] of Object.entries(profile.custom_weights)) {
+		weights[flag] = value_weights
 	}
 
 	return weights

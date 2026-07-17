@@ -11,7 +11,7 @@
 	}).value)
 	let submitted_reference: Reference = $state($state.snapshot(reference))
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings', default_settings).value)
+	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
 
 	let fetching_english = $state(false)
 	let english_text: TargetApiResult|undefined = $state(undefined)

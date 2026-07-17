@@ -12,7 +12,18 @@ const triggers: TriggerTemplate[] = [
 	{
 		name: 'TAMP',
 		flags: ['Verb Time', 'Verb Aspect', 'Verb Mood', 'Verb Polarity'],
-		weight_calculator: power_sum,
+		weight_calculator: flags => {
+			if (flags.length === 1 && flags[0].value === 'Negative') {
+				return 0
+			}
+			return power_sum(flags)
+		},
+		prompt: (flags, profile) => {
+			if (flags.some(f => f.name === 'Verb Time') && (profile.multiple_past || profile.multiple_future)) {
+				return 'For the check, write that they should consider if their translation uses a tense that includes {time value}.'
+			}
+			return ''
+		}
 	},
 	{
 		name: 'Noun Person',
@@ -115,7 +126,7 @@ const triggers: TriggerTemplate[] = [
 		prompt: flags => {
 			if (flags.some(f => f.value === 'Equivalent Statement')) {
 				return `Explain that this is a rhetorical question, explain the type and expected answer, and that it can instead be understood or worded as the {equivalent statement}.
-				Convert the encoding of the equivalent statement into readable, grammatical text in the output language.`
+				Convert the encoding of the equivalent statement into readable, grammatical text in the output language, as part of the 'meaning'.`
 			} else {
 				return 'Explain that this is a rhetorical question, and explain the type and expected answer.'
 			}

@@ -15,6 +15,30 @@ type CopilotDisplaySettings = {
 	show_english: boolean
 }
 
+type LanguageProfile = {
+	multiple_past: boolean
+	multiple_future: boolean
+	noun_number: string[]
+	noun_proximity: string[]
+	noun_clusivity: boolean
+	as_third_handling: 'third' | 'first_second' | 'apposition'
+
+	passive: 'none' | 'agent_forbidden' | 'agent_allowed' | 'other'
+	rhetorical_questions: boolean
+	honorifics: boolean
+	speech_formula_position: 'before' | 'after' | 'both' | 'either'
+
+	custom_weights: Record<string, Record<string, number>>
+	custom_combinations: ProfileCustomCombination[]
+}
+
+type ProfileCustomCombination = {
+	name: string
+	flags: Record<string, string[]>
+	weight: number
+	prompt: string
+}
+
 type Reference = {
 	book: string
 	chapter: number

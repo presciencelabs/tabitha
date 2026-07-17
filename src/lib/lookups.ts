@@ -60,37 +60,6 @@ export const polished_books = [
 	// '3 John',
 ]
 
-export const language_profile_infos: Record<keyof LanguageProfile, [string, string]> = {
-	'rhetorical_questions': [
-		'Rhetorical Questions',
-		'Your language uses and understands rhetorical questions. If not, the copilot will show notes that suggest an equivalent statement for any rhetorical questions.',
-	],
-	'clusivity': [
-		'Inclusive and exclusive "we"',
-		'Your language marks inclusive "we" (we with you) differently from exclusive "we" (we without you). The copilot will show notes for when "we" is exclusive.',
-	],
-	'dual': [
-		'Dual number',
-		'Your language has a special marking for when there are exactly two of a thing (eg "John\'s EYES"). The copilot will show notes to identify possible nouns that need this marking.',
-	],
-	'trial': [
-		'Trial number',
-		'Your language has a special marking for when there are exactly three of a thing (eg "We (three)"). The copilot will show notes to identify possible nouns that need this marking.',
-	],
-	'passive': [
-		'Passive',
-		'Your language has a passive voice. If not, the copilot will show notes that identify any actor that is not explicitly mentioned.',
-	],
-	'honorifics': [
-		'Honorifics',
-		'Your language has special markings or pronouns for acknowledging social relationships or dynamics. The copilot will show notes to help identify these relationships.',
-	],
-	'closing_quotation_frame': [
-		'Closing quotation frames',
-		'Your language closes a quotation by putting some special words in the end. The copilot will show notes to remind how longer quotes were introduced.',
-	],
-}
-
 interface LwcInfo {
 	code: string
 	no_notes_text?: string
@@ -176,13 +145,20 @@ export const copilot_modes: CopilotMode[] = [
 
 export const default_settings: CopilotSettings = {
 	language_profile: {
+		multiple_past: false,
+		multiple_future: false,
+		noun_number: [],
+		noun_proximity: [],
+		noun_clusivity: false,
+		as_third_handling: 'apposition',
+
+		passive: 'agent_allowed',
 		rhetorical_questions: true,
-		clusivity: true,
-		passive: true,
-		dual: true,
-		trial: true,
-		honorifics: true,
-		closing_quotation_frame: true,
+		honorifics: false,
+		speech_formula_position: 'before',
+
+		custom_weights: {},
+		custom_combinations: [],
 	},
 	mtt_level: 'high_school',
 	lwc: 'English',
