@@ -4,9 +4,31 @@ Available at [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
 
 ## API
 
-`/search?q=love[&scope=[**stems**|glosses|all]]`
+### 1. Concept Search API
 
-`/simplification_hints?complex_term=disciple`
+- `GET /search?q={query}` — Searches ontology concepts by stem, gloss, or category.
+  - **Query Params:**
+    - `q` (`string`, required) — Search term.
+    - `scope` (`stems` | `glosses` | `all`, optional, default `stems`) — Search scope.
+    - `category` (`string`, optional) — Filter by grammatical category.
+  - **Example:** `/search?q=love&scope=all`
+
+### 2. Simplification Hints API
+
+- `GET /simplification_hints?complex_term={term}` — Retrieves simplification hints for complex terms.
+  - **Query Params:**
+    - `complex_term` (`string`, required) — Complex term to query.
+    - `category` (`string`, optional) — Grammatical category.
+  - **Example:** `/simplification_hints?complex_term=disciple`
+
+### 3. Concept Usage Examples API
+
+- `GET /examples?concept={concept}&part_of_speech={pos}` — Retrieves usage examples for an ontology concept along with current translation status.
+  - **Query Params:**
+    - `concept` (`string`, required) — Concept stem-sense identifier.
+    - `part_of_speech` (`string`, required) — Part of speech (e.g. `Noun`, `Verb`).
+    - `source` (`string`, optional) — Source reference filter.
+  - **Example:** `/examples?concept=love-01&part_of_speech=Noun`
 
 ## Local development
 
