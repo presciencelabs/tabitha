@@ -4,7 +4,7 @@
 	import Settings from '$lib/Settings.svelte'
 	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
 
-	let reference = $state(persisted<Reference>('saved_verse', {
+	let reference = $state(persisted<VerseReference>('saved_verse', {
 		book: 'Genesis',
 		chapter: 1,
 		verse: 1,
@@ -20,7 +20,7 @@
 
 	$effect(() => {
 		fetching_verse_count = true
-		fetch_verses_for_chapter(reference.book, reference.chapter)
+		fetch_verses_for_chapter(reference)
 			.then(result => {
 				verse_count = result
 			})

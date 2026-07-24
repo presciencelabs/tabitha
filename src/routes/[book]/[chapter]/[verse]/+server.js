@@ -21,7 +21,7 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 		},
 	}
 
-	/** @type {Reference} */
+	/** @type {VerseReference} */
 	const reference = { book, chapter: chapter_int, verse: verse_int }
 
 	const result = await get_copilot_result(reference, settings)

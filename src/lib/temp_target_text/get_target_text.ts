@@ -1,6 +1,6 @@
 import { indonesian_titus_1_3, tagalog_titus_1_3 } from './texts'
 
-export function get_target_text(ref: Reference, lwc: string): string | undefined {
+export function get_target_text(ref: VerseReference, lwc: string): string | undefined {
 	const book_map = target_text_map.get(lwc)?.get(ref.book)
 	if (!book_map) {
 		return undefined
