@@ -1,17 +1,12 @@
 import { env } from '$env/dynamic/private'
-import { get_cached_notes } from '$lib/temp_notes_cache/get_cached_notes'
 import { GoogleGenAI } from '@google/genai'
-import { triggers_match } from './triggers'
 
 export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 
-	const cached_notes = get_cached_notes(llm_input)
-	const remaining_triggers = llm_input.triggers.filter(trigger => !cached_notes.find(note => triggers_match(note.trigger, trigger)))
-
-	if (!translate_tbta_text && remaining_triggers.length === 0) {
-		return { notes: cached_notes, lwc_text: llm_input.lwc_text }
+	if (!translate_tbta_text && llm_input.triggers.length === 0) {
+		return { notes: [], lwc_text: llm_input.lwc_text }
 	}
 
 	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
@@ -49,7 +44,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-3.5-flash',
-		contents: JSON.stringify({ ...llm_input, triggers: remaining_triggers }),
+		contents: JSON.stringify(llm_input),
 		config: {
 			temperature: 0.0,
 			seed: 42,
@@ -104,13 +99,10 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 		}
 	})
 
-	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: cached_notes }
+	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: [] }
 	
 	return {
-		notes: [
-			...cached_notes,
-			...output.notes.map(({ meaning, check, quoted_text, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), quoted_text, trigger })),
-		],
+		notes: output.notes.map(({ meaning, check, quoted_text, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), quoted_text, trigger })),
 		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,
 	}
 }

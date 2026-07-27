@@ -28,6 +28,7 @@ type BriefOutput = BriefTabithaOutput & BriefTnnBasedOutput & {
 }
 
 type BriefTabithaOutput = {
+	// TODO rename all the 'sectionX' properties to more meaningful names
 	section1: {
 		// Provenance flags
 		flagNotes: CopilotNote[]

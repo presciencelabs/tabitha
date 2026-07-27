@@ -149,7 +149,7 @@ async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
 
 	const substitutions = response.text ? JSON.parse(response.text) : []
 	for (let i = 0; i < substitutions.length; ++i) {
-		text = text.replace(`${placeholderOpener}${i}${placeholderCloser}`, substitutions[i].replaceAll('\"', '\\\"'))
+		text = text.replaceAll(`${placeholderOpener}${i}${placeholderCloser}`, substitutions[i].replaceAll('\"', '\\\"'))
 	}
 
 	return JSON.parse(text)
@@ -185,17 +185,6 @@ async function get_brief_data(input: BriefInput, ai: GoogleGenAI): Promise<Brief
 	}
 }
 
-const section_headings = [
-	'',
-	'SECTION 1 — PROVENANCE FLAGS',
-	'SECTION 2 — TBTA LWC VERSE',
-	'SECTION 3 — TaBiThA SEMANTIC NOTES',
-	'SECTION 4 — SIL TRANSLATOR NOTES',
-	'SECTION 5 — CULTURAL & CONTEXTUAL BACKGROUND',
-	'SECTION 6 — IMAGE KEYWORDS',
-	'SECTION 7 — CONSULTANT DECISION',
-]
-
 export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput): string {
 	if (!output) {
 		return `\\v ${verse_ref.verse} Could not get notes for this verse...`
@@ -206,7 +195,7 @@ export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput):
 	items.push(`\\v ${verse_ref.verse} ${output.section2.lwcText}`)
 
 	// Copilot notes
-	items.push(`\\s ${mark_for_translation(section_headings[3], output.lwc)}`)
+	items.push(`\\s ${mark_for_translation('TaBiThA SEMANTIC NOTES', output.lwc)}`)
 	for (const note of output.section3.notes) {
 		const lwc_span = note.lwcSpan ? `"${note.lwcSpan}" — ` : ''
 		items.push(`\\iex ${lwc_span}(${mark_for_translation(note.name, output.lwc)}) ${note.text}`)
@@ -216,14 +205,16 @@ export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput):
 	}
 
 	// TNN notes
-	for (const tnn_note of output.section4.notes) {
-		items.push(`\\s ${mark_for_translation(section_headings[4], output.lwc)}`)
-		items.push(`\\iex ${mark_for_translation(tnn_note.text, output.lwc)}`)
+	if (output.section4.notes.length > 0) {
+		items.push(`\\s ${mark_for_translation('SIL TRANSLATOR NOTES', output.lwc)}`)
+		for (const tnn_note of output.section4.notes) {
+			items.push(`\\iex ${mark_for_translation(tnn_note.text, output.lwc)}`)
+		}
 	}
 
 	// Cultural & background
 	if (output.section5.cultural.length || output.section5.background.length) {
-		items.push(`\\s ${mark_for_translation(section_headings[5], output.lwc)}`)
+		items.push(`\\s ${mark_for_translation('CULTURAL & CONTEXTUAL BACKGROUND', output.lwc)}`)
 		for (const { term, summary } of output.section5.cultural) {
 			items.push(`\\iex ${mark_for_translation(term, output.lwc)} — ${mark_for_translation(summary, output.lwc)}`)
 		}
@@ -234,7 +225,7 @@ export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput):
 
 	// Image keywords
 	if (output.section6.keywords.length) {
-		items.push(`\\s ${mark_for_translation(section_headings[6], output.lwc)}`)
+		items.push(`\\s ${mark_for_translation('IMAGE KEYWORDS', output.lwc)}`)
 		for (const keyword of output.section6.keywords) {
 			items.push(`\\iex ${mark_for_translation(keyword, output.lwc)}`)
 		}
@@ -242,7 +233,7 @@ export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput):
 
 	// Consultant decisions
 	if (output.section7.decisions.length) {
-		items.push(`\\s ${mark_for_translation(section_headings[7], output.lwc)}`)
+		items.push(`\\s ${mark_for_translation('CONSULTANT DECISION', output.lwc)}`)
 		for (const decision of output.section7.decisions) {
 			items.push(`\\iex ${mark_for_translation(decision.status, output.lwc)} — ${mark_for_translation(decision.text, output.lwc)}`)
 		}
@@ -261,7 +252,7 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 		pagePreamble: mark_for_translation('page', readerLanguage),
 		rigorMode: output.rigor,
 		lwcName: mark_for_translation(output.lwc, readerLanguage),
-		flagsHeading: mark_for_translation(section_headings[1], readerLanguage),
+		flagsHeading: mark_for_translation('PROVENANCE FLAGS', readerLanguage),
 		flagNotes: output.section1.flagNotes.flatMap(question =>
 			question.trigger.flags.map(flag => ({
 				title: question.trigger.name,
@@ -271,15 +262,15 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 				btText: mark_for_translation(`${question.meaning} ${question.check}`, 'English', output.lwc)
 			}))
 		),
-		sourceHeading: mark_for_translation(section_headings[2], readerLanguage),
+		sourceHeading: mark_for_translation('TBTA LWC VERSE', readerLanguage),
 		sourceBody: output.section2.lwcText,
-		notesHeading: mark_for_translation(section_headings[3], readerLanguage),
+		notesHeading: mark_for_translation('TaBiThA SEMANTIC NOTES', readerLanguage),
 		notes: output.section1.flagNotes.map((question, index) => ({
 			ordinal: index + 1,
 			name: mark_for_translation(question.trigger.name, readerLanguage),
 			text: question.meaning + ' ' + question.check
 		})),
-		tnnHeading: mark_for_translation(section_headings[4], readerLanguage),
+		tnnHeading: mark_for_translation('SIL TRANSLATOR NOTES', readerLanguage),
 		tnnTraces: output.section4.sourcePointabilityRows.filter(row => row.verdict.type != 'RETAIN').map(row => ({
 			note: row.note,
 			function: row.function,
@@ -297,7 +288,7 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 		excludedNotes: output.section4.excluded.map(row => ({
 			text: `${row.note}: ${row.reason}`
 		})),
-		contextHeading: mark_for_translation(section_headings[5], readerLanguage),
+		contextHeading: mark_for_translation('CULTURAL & CONTEXTUAL BACKGROUND', readerLanguage),
 		contextNotesCulturalHeading: mark_for_translation('Cultural', readerLanguage),
 		contextNotesCultural: output.section5.cultural.map(row => ({
 			title: mark_for_translation(row.term, readerLanguage),
@@ -308,11 +299,11 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 			title: mark_for_translation(row.term, readerLanguage),
 			text: mark_for_translation(row.summary, readerLanguage)
 		})),
-		imagesHeading: mark_for_translation(section_headings[6], readerLanguage),
+		imagesHeading: mark_for_translation('IMAGE KEYWORDS', readerLanguage),
 		imageNotes: output.section6.keywords.map(keyword => ({
 			title: keyword
 		})),
-		consultantHeading: mark_for_translation(section_headings[7], readerLanguage),
+		consultantHeading: mark_for_translation('CONSULTANT DECISION', readerLanguage),
 		consultantNotes: output.section7.decisions.length == 0 ? [{ text: mark_for_translation('No Section 7 candidate was identified.', readerLanguage) }] : output.section7.decisions.map(decision => ({
 			text: `${mark_for_translation(decision.status, readerLanguage)} — ${mark_for_translation(decision.text, readerLanguage)}`
 		}))
