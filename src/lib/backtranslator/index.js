@@ -108,9 +108,9 @@ export function find_replace(text) {
 		// remove both spaces around hyphen (found in verse references)
 		.replace(/ - /g, '-')
 		// always remove spaces before certain punctuation
-		.replace(/ ([.,:?!>)])/g, '$1')
+		.replace(/ ([.,:?!>)}])/g, '$1')
 		// always remove spaces after some punctuation
-		.replace(/([<(]) /g, '$1')
+		.replace(/([<({]) /g, '$1')
 		// remove spaces after a verse-reference colon
 		.replace(/(\d:) (\d)/g, '$1$2')
 		// remove comma before other punctuation

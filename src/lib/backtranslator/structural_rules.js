@@ -204,7 +204,7 @@ const structural_rules_json = [
 	},
 	{
 		name: 'Literal and dynamic expansion and metonymy',
-		comment: 'The noun phrases get switched around. eg "The Lord of the eyes _literalExpansion..." -> "The eyes of the Lord...',
+		comment: 'The noun phrases get switched around. eg "The Lord of the eyes _literalExpansion..." -> "{The eyes of} the Lord...',
 		rule: {
 			trigger: create_token_filter({ 'token': '_literalExpansion|_dynamicExpansion|_metonymy' }),
 			context: create_context_filter({
@@ -217,7 +217,7 @@ const structural_rules_json = [
 				const [outer_noun_index, of_index] = context_indexes
 				const is_literal = tokens[trigger_index].token === '_literalExpansion'
 
-				// eg: {NP by the Lord {NP of the eyes _literalExpansion } } => {NP by {NP the eyes _literalExpansion of } the Lord }
+				// eg: {NP by the Lord {NP of the eyes _literalExpansion } } => {NP by '{' {NP the eyes _literalExpansion of } '}'  the Lord }
 				// eg: {NP {NP King } Herod {NP of the soldiers _dynamicExpansion } } => {NP <<{NP The soldiers _dynamicExpansion of }>> {NP king } Herod }
 
 				// move 'of' to the end of the inner phrase and add the implicit markers
@@ -230,12 +230,12 @@ const structural_rules_json = [
 				}
 
 				const new_inner_phrase = [
-					...is_literal ? [] : [create_token('<<', TOKEN_TYPE.PUNCTUATION)],
+					create_token(is_literal ? '{' : '<<', TOKEN_TYPE.PUNCTUATION),
 					...tokens.slice(inner_phrase_start, of_index),
 					...tokens.slice(of_index + 1, inner_phrase_end),
 					tokens[of_index],
 					tokens[inner_phrase_end],
-					...is_literal ? [] : [create_token('>>', TOKEN_TYPE.PUNCTUATION)],
+					create_token(is_literal ? '}' : '>>', TOKEN_TYPE.PUNCTUATION),
 				]
 
 				// for the outer noun, don't include any adposition or conjunction
@@ -512,7 +512,7 @@ function find_next_word(tokens, start_index) {
 	// Find the next word in the sentence (skip any notes, phrases, or implicit markers)
 	const skip_filters = [
 		create_token_filter({ 'type': `${TOKEN_TYPE.NOTE}|${TOKEN_TYPE.PHRASE}` }),
-		create_token_filter({ 'token': '<<|>>|<|>' }),
+		create_token_filter({ 'token': '<<|>>|<|>|{|}' }),
 	]
 	return tokens.slice(start_index).find(token => !skip_filters.some(filter => filter(token)))
 }
