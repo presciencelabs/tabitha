@@ -90,6 +90,7 @@ type SourceApiResult = {
 type TargetApiResult = {
 	text: string
 	audience: string
+	ideal?: string
 }
 
 type MttLevel = 'grade5' | 'high_school' | 'undergraduate'

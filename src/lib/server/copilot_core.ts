@@ -1,5 +1,5 @@
 import { get_llm_notes } from '$lib/server/llm'
-import { fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
+import { default_target_audience, fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
@@ -12,14 +12,22 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	}
 
 	console.log(reference)
-	const english = await fetch_target_text(reference, 'English', 'Unchurched Adults')
+	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
 	if (!english) {
 		console.error(`Error fetching english text for ${reference}`)
 		return error_result(reference)
 	}
-	const english_text = english.text
+	const english_text = english.ideal || english.text
 
-	const lwc_text = settings.lwc === 'English' ? undefined : (await fetch_target_text(reference, settings.lwc, 'Default'))?.text
+	const lwc_text_result = settings.lwc !== 'English'
+		? await fetch_target_text(reference, settings.lwc, default_target_audience[settings.lwc] || 'Unchurched Adults')
+		: english
+
+	if (!lwc_text_result) {
+		console.error(`Error fetching ${settings.lwc} text for ${reference}`)
+		return error_result(reference)
+	}
+	const lwc_text = lwc_text_result.ideal || lwc_text_result.text
 
 	const flags = extract_flags(encoding.encoding)
 	const weighted_flags = assign_flag_weights(flags, settings).filter(({ weight }) => weight > 0)
@@ -35,7 +43,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 		prose_level: settings.mtt_level,
 		tbta_encoding: preprocess_encoding(encoding),
 		english_text,
-		lwc_text,
+		lwc_text: settings.lwc === 'English' ? undefined : lwc_text,
 		triggers: selected_triggers,
 	}
 

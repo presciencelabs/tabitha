@@ -1,5 +1,4 @@
 import { PUBLIC_TARGETS_API_HOST, PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-import { get_target_text } from '$lib/temp_target_text/get_target_text'
 
 export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult|undefined> {
 	const { book, chapter, verse } = verse_ref
@@ -12,11 +11,6 @@ export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceA
 }
 
 export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult|undefined> {
-	if (project !== 'English') {
-		const text = get_target_text(verse_ref, project)
-		return text ? { text, audience: preferred_audience } : undefined
-	}
-
 	const { book, chapter, verse } = verse_ref
 	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/${project}/${book}/${chapter}/${verse}`)
 	if (!response.ok) {
@@ -203,6 +197,13 @@ export const lwc_info: Record<string, LwcInfo> = {
 	// 	code: 'TKP',
 	// 	no_notes_text: 'Nogat tingting long dispela ves bihainim TBTA analisis.',
 	// },
+}
+
+export const default_target_audience: Record<string, string> = {
+	'English': 'Unchurched Adults',
+	'Indonesian': 'Unchurched Adults',
+	'Swahili': 'All Helps',
+	'Tagalog': 'Unchurched Adults',
 }
 
 interface MttLevelInfo {
