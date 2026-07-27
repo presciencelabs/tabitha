@@ -2,7 +2,7 @@
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
+	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
 
 	let reference = $state(persisted<VerseReference>('saved_verse', {
 		book: 'Genesis',
@@ -34,6 +34,7 @@
 		error_text = ''
 		try {
 			const { book, chapter } = reference
+			const book_code = usfm_book_codes[book] || book
 			const params = JSON.stringify(settings)
 			const response = await fetch(`/${book}/${chapter}?settings=${encodeURIComponent(params)}`)
 
@@ -49,7 +50,7 @@
 			const url = window.URL.createObjectURL(blob)
 			const a = document.createElement('a')
 			a.href = url
-			a.download = `${book} ${chapter} - TBTA Copilot Notes ${lwc_info[settings.lwc].code} ${mtt_level_info[settings.mtt_level].code}.sfm` // File name
+			a.download = `${book_code} ${chapter} - TaBiThA ${settings.mode} notes - ${lwc_info[settings.lwc].code} ${mtt_level_info[settings.mtt_level].code}.sfm` // File name
 			document.body.appendChild(a)
 			a.click()
 			

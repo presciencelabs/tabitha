@@ -58,8 +58,8 @@ export const default_flag_weights_for_discern = {
 		"Simple Result": 2,
 	},
 	"Means/Reason": {
-		"Means": 4,
-		"Reason": 2,
+		"Means": 3,
+		"Reason": 0,
 	},
 	"Metaphor": {
 		"*": 5,
@@ -125,13 +125,13 @@ export const default_flag_weights_for_brief = {
 		"*": 5,
 	},
 	"Intent/Result": {
-		"Intent": 2,
+		"Intent": 3,
 		"Logical Consequence": 2,
-		"Simple Result": 1,
+		"Simple Result": 2,
 	},
 	"Means/Reason": {
 		"Means": 3,
-		"Reason": 2,
+		"Reason": 0,
 	},
 	"Metaphor": {
 		"*": 5,
