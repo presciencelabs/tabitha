@@ -1,7 +1,7 @@
 import { PUBLIC_TARGETS_API_HOST, PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 import { get_target_text } from '$lib/temp_target_text/get_target_text'
 
-export async function fetch_encoding(verse_ref: Reference): Promise<SourceApiResult|undefined> {
+export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult|undefined> {
 	const { book, chapter, verse } = verse_ref
 	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}/${verse}/simple-json?glosses=true`)
 	if (!response.ok) {
@@ -11,7 +11,7 @@ export async function fetch_encoding(verse_ref: Reference): Promise<SourceApiRes
 	return await response.json() as SourceApiResult
 }
 
-export async function fetch_target_text(verse_ref: Reference, project: string, preferred_audience: string): Promise<TargetApiResult|undefined> {
+export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult|undefined> {
 	if (project !== 'English') {
 		const text = get_target_text(verse_ref, project)
 		return text ? { text, audience: preferred_audience } : undefined
@@ -27,7 +27,7 @@ export async function fetch_target_text(verse_ref: Reference, project: string, p
 	return results.find(res => res.audience === preferred_audience) || results.at(0)
 }
 
-export async function fetch_verses_for_chapter(book: string, chapter: number): Promise<number|undefined> {
+export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number|undefined> {
 	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}`)
 	if (!response.ok) {
 		console.error(await response.text())
@@ -49,16 +49,86 @@ export const polished_books = [
 	// '2 Samuel',
 	// 'Nehemiah',
 	// 'Esther',
-	// 'Daniel',
+	'Daniel',
 	'Jonah',
 	// 'Nahum',
 	'Matthew',
-	// 'Mark',
+	'Mark',
 	'Acts',
 	'Titus',
 	// 'Philemon',
 	// '3 John',
 ]
+
+export const usfm_book_codes: Record<string, string> = {
+	'Genesis': 'GEN',
+	'Exodus': 'EXO',
+	'Leviticus': 'LEV',
+	'Numbers': 'NUM',
+	'Deuteronomy': 'DEU',
+	'Joshua': 'JOS',
+	'Judges': 'JDG',
+	'Ruth': 'RUT',
+	'1 Samuel': '1SA',
+	'2 Samuel': '2SA',
+	'1 Kings': '1KI',
+	'2 Kings': '2KI',
+	'1 Chronicles': '1CH',
+	'2 Chronicles': '2CH',
+	'Ezra': 'EZR',
+	'Nehemiah': 'NEH',
+	'Esther': 'EST',
+	'Job': 'JOB',
+	'Psalms': 'PSA',
+	'Proverbs': 'PRO',
+	'Ecclesiastes': 'ECC',
+	'Song of Songs': 'SNG',
+	'Isaiah': 'ISA',
+	'Jeremiah': 'JER',
+	'Lamentations': 'LAM',
+	'Ezekiel': 'EZK',
+	'Daniel': 'DAN',
+	'Hosea': 'HOS',
+	'Joel': 'JOL',
+	'Amos': 'AMO',
+	'Obadiah': 'OBA',
+	'Jonah': 'JON',
+	'Micah': 'MIC',
+	'Nahum': 'NAM',
+	'Habakkuk': 'HAB',
+	'Zephaniah': 'ZEP',
+	'Haggai': 'HAG',
+	'Zechariah': 'ZEC',
+	'Malachi': 'MAL',
+
+	'Matthew': 'MAT',
+	'Mark': 'MRK',
+	'Luke': 'LUK',
+	'John': 'JHN',
+	'Acts': 'ACT',
+	'Romans': 'ROM',
+	'1 Corinthians': '1CO',
+	'2 Corinthians': '2CO',
+	'Galatians': 'GAL',
+	'Ephesians': 'EPH',
+	'Philippians': 'PHP',
+	'Colossians': 'COL',
+	'1 Thessalonians': '1TH',
+	'2 Thessalonians': '2TH',
+	'1 Timothy': '1TI',
+	'2 Timothy': '2TI',
+	'Titus': 'TIT',
+	'Philemon': 'PHM',
+	'Hebrews': 'HEB',
+	'James': 'JAS',
+	'1 Peter': '1PE',
+	'2 Peter': '2PE',
+	'1 John': '1JN',
+	'2 John': '2JN',
+	'3 John': '3JN',
+	'Jude': 'JUD',
+	'Revelation': 'REV',
+}
 
 interface LwcInfo {
 	code: string
@@ -80,10 +150,10 @@ export const lwc_info: Record<string, LwcInfo> = {
 	// 	code: 'CEB',
 	// 	// no_notes_text: 'Walay mga sugyot para niini nga bersikulo base sa pagtuki sa TBTA.',
 	// },
-	'French': {
-		code: 'FRE',
-		no_notes_text: "Aucune suggestion pour ce verset d'après l'analyse TBTA.",
-	},
+	// 'French': {
+	// 	code: 'FRE',
+	// 	no_notes_text: "Aucune suggestion pour ce verset d'après l'analyse TBTA.",
+	// },
 	// 'Hindi': {
 	// 	code: 'HIN',
 	// 	// no_notes_text: 'TBTA एनालिसिस के आधार पर इस श्लोक के लिए कोई सुझाव नहीं है',
@@ -103,10 +173,10 @@ export const lwc_info: Record<string, LwcInfo> = {
 	// 	code: 'POR',
 	// 	// no_notes_text: 'Nenhuma sugestão para este versículo com base na análise TBTA.',
 	// },
-	'Russian': {
-		code: 'RUS',
-		no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
-	},
+	// 'Russian': {
+	// 	code: 'RUS',
+	// 	no_notes_text: 'Для этого стиха нет предложений на основе анализа TBTA.',
+	// },
 	// 'Spanish': {
 	// 	code: 'SPA',
 	// 	// no_notes_text: 'No hay sugerencias para este versículo según el análisis de TBTA.',

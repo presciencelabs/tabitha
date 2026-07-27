@@ -4,7 +4,7 @@ import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
 
-export async function get_copilot_result(reference: Reference, settings: CopilotSettings): Promise<CopilotApiResult> {
+export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings): Promise<CopilotApiResult> {
 	const encoding = await fetch_encoding(reference)
 	if (!encoding) {
 		console.error(`Error fetching encoding for ${reference}`)
@@ -57,7 +57,7 @@ export async function get_copilot_result(reference: Reference, settings: Copilot
 	}
 }
 
-export function error_result(reference: Reference, message: string|undefined = undefined) {
+export function error_result(reference: VerseReference, message: string|undefined = undefined) {
 	return {
 		verse: reference,
 		error: message || 'Copilot notes experienced a temporary issue and could not be loaded. Please try again later.',

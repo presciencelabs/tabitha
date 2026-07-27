@@ -39,7 +39,12 @@ type ProfileCustomCombination = {
 	prompt: string
 }
 
-type Reference = {
+type ChapterReference = {
+	book: string
+	chapter: number
+}
+
+type VerseReference = {
 	book: string
 	chapter: number
 	verse: number
@@ -130,7 +135,7 @@ type CopilotNote = {
 }
 
 type CopilotApiResult = {
-	verse: Reference
+	verse: VerseReference
 	english_text: string
 	lwc_text?: string
 	notes: CopilotNote[]

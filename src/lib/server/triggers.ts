@@ -31,36 +31,36 @@ const triggers: TriggerTemplate[] = [
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 		prompt: (flags, profile) => {
-			let prompt = ''
+			let prompt = []
 			const person = flags[0].value
 			
 			if (person.includes('Inclusive')) {
 				if (profile.noun_clusivity) {
-					prompt += `First Inclusive means that the reader/listener is included when the writer/speaker says "we/us".
-						DO NOT say "if your language has an inclusive/exclusive distinction".`
+					prompt.push(`First Inclusive means that the reader/listener is included when the writer/speaker says "we/us".
+						DO NOT say "if your language has an inclusive/exclusive distinction".`)
 				} else {
-					prompt += 'Ignore the "Inclusive" part and treat it as simple First person plural (we/us).'
+					prompt.push('Ignore the "Inclusive" part and treat it as simple First person plural (we/us).')
 				}
 			} else if (person.includes('Exclusive')) {
 				if (profile.noun_clusivity) {
-					prompt += `First Exclusive means that the reader/listener is NOT included when the writer/speaker says "we/us".
-						DO NOT say "if your language has an inclusive/exclusive distinction".`
+					prompt.push(`First Exclusive means that the reader/listener is NOT included when the writer/speaker says "we/us".
+						DO NOT say "if your language has an inclusive/exclusive distinction".`)
 				} else {
-					prompt += 'Ignore the "Exclusive" part and treat it as simple First person plural (we/us).'
+					prompt.push('Ignore the "Exclusive" part and treat it as simple First person plural (we/us).')
 				}
 			}
 
 			if (['First as Third', 'First Inclusive as Third', 'First Exclusive as Third'].includes(person)) {
-				prompt += `First as Third means the speaker is referring to themselves in the third person, something like "be kind to [your servant]", meaning "be kind to me/us".
+				prompt.push(`First as Third means the speaker is referring to themselves in the third person, something like "be kind to [your servant]", meaning "be kind to me/us".
 					Write a note saying when they say {noun} they are referring to themselves.
-					For the check, they should consider how they want to express that in their translation.`
+					For the check, they should consider how they want to express that in their translation.`)
 			} else if (person === 'Second as Third') {
-				prompt += `Second as Third means the speaker is referring to the listener in the third person, something like "[the king] is being kind to me", meaning "you are being kind to me".
+				prompt.push(`Second as Third means the speaker is referring to the listener in the third person, something like "[the king] is being kind to me", meaning "you are being kind to me".
 					Write a note saying that when they say {noun} they are referring to who they are talking to.
-					For the check, they should consider how they want to express that in their translation.`
+					For the check, they should consider how they want to express that in their translation.`)
 			}
 
-			return prompt
+			return prompt.join('\n')
 		},
 	},
 	{
@@ -105,12 +105,16 @@ const triggers: TriggerTemplate[] = [
 		flags: ['Intent/Result'],
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['event'] || ''}-${t.flags[0].value}`,
+		prompt: `The possible values are 'Intent', 'Logical Consequence', 'Simple Result'.
+		For the meaning, contrast the provided value with one of the other possible values which it could be conflated with.`
 	},
 	{
 		name: 'Means/Reason',
 		flags: ['Means/Reason'],
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['means_or_reason'] || ''}-${t.flags[0].value}`,
+		prompt: `The possible values are 'Reason' (eg. because) and 'Means' (eg. by or through).
+		For the meaning, contrast the provided value with the other possible value.`
 	},
 	{
 		name: 'Explanation of Name',

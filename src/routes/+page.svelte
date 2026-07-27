@@ -4,12 +4,12 @@
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
 
-	let reference = $state(persisted<Reference>('saved_verse', {
+	let reference = $state(persisted<VerseReference>('saved_verse', {
 		book: 'Genesis',
 		chapter: 1,
 		verse: 1,
 	}).value)
-	let submitted_reference: Reference = $state($state.snapshot(reference))
+	let submitted_reference: VerseReference = $state($state.snapshot(reference))
 
 	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
 
