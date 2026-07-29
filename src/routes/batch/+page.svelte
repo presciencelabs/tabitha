@@ -39,7 +39,7 @@
 			const response = await fetch(`/${book}/${chapter}?settings=${encodeURIComponent(params)}`)
 
 			if (!response.ok) {
-				const message = (await response.json())?.message as string || 'Unexpected error occurred'
+				const message = (await response.text()) || 'Unexpected error occurred'
 				throw new Error(message)
 			}
 

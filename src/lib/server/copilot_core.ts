@@ -83,6 +83,10 @@ export function error_result(reference: VerseReference, message: string|undefine
 export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => string {
 	const no_suggestions_text = lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text
 	return result => {
+		if (result.error) {
+			return `\\p \\v ${result.verse.verse} Unexpected error loading notes for this verse. Contact an administrator.`
+		}
+
 		// Convert the results to Paratext SFM format:
 		//   \p \v [verse number] TBTA English
 		//   \p Second language (if present)

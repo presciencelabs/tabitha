@@ -187,7 +187,7 @@ async function get_brief_data(input: BriefInput, ai: GoogleGenAI): Promise<Brief
 
 export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput): string {
 	if (!output) {
-		return `\\v ${verse_ref.verse} Could not get notes for this verse...`
+		return `\\v ${verse_ref.verse} Unexpected issue getting notes for this verse...`
 	}
 
 	const items: string[] = []
@@ -326,7 +326,7 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 	const results: [VerseReference, BriefOutput][] = await Promise.all(all_verses.map(async (verse) => {
 		const verse_ref = { ...chapter_ref, verse }
 		let result = await create_brief_for_verse(verse_ref, settings, ai)
-		// if there was an error, try one more time
+		// if there was an error, try one more time. the error itself is logged elsewhere
 		if (!result) {
 			result = await create_brief_for_verse(verse_ref, settings, ai)
 		}
@@ -348,6 +348,10 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 
 export async function create_brief_for_verse(verse_ref: VerseReference, settings: BriefSettings, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
 	const note_results = await get_copilot_result(verse_ref, settings)
+	if (note_results.error) {
+		console.error(`Error fetching notes from LLM for ${verse_ref.book} ${verse_ref.chapter}: ${verse_ref.verse} - ${note_results.error}.`)
+		return undefined
+	}
 
 	const brief_input: BriefInput = {
 		verse: verse_ref,

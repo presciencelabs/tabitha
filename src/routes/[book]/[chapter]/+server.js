@@ -56,7 +56,11 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 			let result = await get_copilot_result(reference, settings)
 			// if there was an error, try one more time
 			if (result.error) {
+				console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}. Trying again once more...`)
 				result = await get_copilot_result(reference, settings)
+				if (result.error) {
+					console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}.`)
+				}
 			}
 			return result
 		}))
