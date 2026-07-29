@@ -5,16 +5,18 @@ import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
 
 export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings): Promise<CopilotApiResult> {
+	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
+
 	const encoding = await fetch_encoding(reference)
 	if (!encoding) {
-		console.error(`Error fetching encoding for ${reference}`)
-		return error_result(reference, 'Verse reference does not exist')
+		console.error(`Error fetching encoding for ${reference.book} ${reference.chapter}:${reference.verse}`)
+		return error_result(reference, `Verse reference ${ref_display} does not exist`)
 	}
 
 	console.log(reference)
 	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
 	if (!english) {
-		console.error(`Error fetching english text for ${reference}`)
+		console.error(`Error fetching english text for ${ref_display}`)
 		return error_result(reference)
 	}
 	const english_text = english.ideal || english.text
@@ -24,7 +26,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 		: english
 
 	if (!lwc_text_result) {
-		console.error(`Error fetching ${settings.lwc} text for ${reference}`)
+		console.error(`Error fetching ${settings.lwc} text for ${ref_display}`)
 		return error_result(reference)
 	}
 	const lwc_text = lwc_text_result.ideal || lwc_text_result.text
@@ -60,7 +62,11 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 		}
 
 	} catch (error) {
-		console.error('Error fetching notes from LLM:', error)
+		if (error instanceof Error) {
+			console.error(`Error fetching notes from LLM for ${ref_display}:`, error.message)
+		} else {
+			console.error(`Error fetching notes from LLM for ${ref_display}:`, error)
+		}
 		return error_result(reference)
 	}
 }
