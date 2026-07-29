@@ -9,8 +9,8 @@ pages_build_output_dir = ".svelte-kit/cloudflare"
 
 [[d1_databases]]
 binding = "DB_Sources"
-database_name = "Sources_2026-06-25"
-database_id = "73c42795-ed9e-4729-af86-a9d80108fefd"
+database_name = "Sources_2026-07-27"
+database_id = "38e626c1-4edb-4b0d-b0b0-ed47b0d8d671"
 
 [placement]
 mode = "off" # necessary to ensure read replication is taken advantage of, i.e., app will execute code at edge, not at datacenter
