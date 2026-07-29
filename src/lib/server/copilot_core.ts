@@ -17,7 +17,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)
-		return error_result(reference)
+		return error_result(reference, `There is no English text saved yet for this verse.`)
 	}
 	const english_text = english.ideal || english.text
 
@@ -27,7 +27,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 
 	if (!lwc_text_result) {
 		console.error(`Error fetching ${settings.lwc} text for ${ref_display}`)
-		return error_result(reference)
+		return error_result(reference, `There is no ${settings.lwc} text saved yet for this verse.`)
 	}
 	const lwc_text = lwc_text_result.ideal || lwc_text_result.text
 
@@ -64,17 +64,18 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(`Error fetching notes from LLM for ${ref_display}:`, error.message)
+			return error_result(reference, `Error encountered calling the LLM - ${error.message}`)
 		} else {
 			console.error(`Error fetching notes from LLM for ${ref_display}:`, error)
+			return error_result(reference, `Error encountered calling the LLM - ${error}`)
 		}
-		return error_result(reference)
 	}
 }
 
-export function error_result(reference: VerseReference, message: string|undefined = undefined) {
+export function error_result(reference: VerseReference, message: string) {
 	return {
 		verse: reference,
-		error: message || 'Copilot notes experienced a temporary issue and could not be loaded. Please try again later.',
+		error: message,
 		english_text: '',
 		notes: [],
 	}

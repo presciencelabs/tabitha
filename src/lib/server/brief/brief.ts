@@ -349,7 +349,7 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 export async function create_brief_for_verse(verse_ref: VerseReference, settings: BriefSettings, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
 	const note_results = await get_copilot_result(verse_ref, settings)
 	if (note_results.error) {
-		console.error(`Error fetching notes from LLM for ${verse_ref.book} ${verse_ref.chapter}: ${verse_ref.verse} - ${note_results.error}.`)
+		// the error is already logged elsewhere
 		return undefined
 	}
 
