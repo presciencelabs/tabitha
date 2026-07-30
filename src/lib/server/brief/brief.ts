@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { fetch_verses_for_chapter, lwc_info, usfm_book_codes } from '$lib/lookups'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI } from '@google/genai/node'
 import { brief_main_prompt, translate_prompt } from './prompts'
 import { json_response_schema } from './json_response_schema'
 import { get_copilot_result } from '../copilot_core'
@@ -313,7 +313,17 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 }
 
 export async function create_brief_for_chapter(chapter_ref: ChapterReference, settings: BriefSettings) {
-	const ai = new GoogleGenAI({ apiKey: env.API_KEY_GEMINI })
+	const ai = new GoogleGenAI({
+		vertexai: true,
+		project: env.GEMINI_PROJECT_ID,
+		location: env.GEMINI_LOCATION,
+		googleAuthOptions: {
+			credentials: {
+				client_email: env.GEMINI_CLIENT_EMAIL,
+				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
+			}
+		}
+	})
 
 	const last_verse = await fetch_verses_for_chapter(chapter_ref)
 	if (!last_verse) {

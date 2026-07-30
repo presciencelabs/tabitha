@@ -119,7 +119,5 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 function postprocess(caution: string) {
 	// remove senses in case the LLM included it
-	return caution
-		.replaceAll(/ \(\w+-[A-Z]\)/g, '')
-		.replaceAll(/-[A-Z](\W)/g, '$1')
+	return caution?.replaceAll(/ \(\w+-[A-Z]\)/g, '').replaceAll(/-[A-Z](\W)/g, '$1')
 }
