@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI } from '@google/genai/node'
 
 export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
 
