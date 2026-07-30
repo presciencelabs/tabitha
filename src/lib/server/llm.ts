@@ -40,7 +40,16 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 			Return the schema requested.`
 
-	const ai = new GoogleGenAI({ apiKey: env.API_KEY_GEMINI })
+	const ai = new GoogleGenAI({
+		project: env.GEMINI_PROJECT_ID,
+		location: env.GEMINI_LOCATION,
+		googleAuthOptions: {
+			credentials: {
+				client_email: env.GEMINI_CLIENT_EMAIL,
+				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
+			}
+		}
+	})
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-3.5-flash',
