@@ -42,11 +42,11 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 
 	const ai = new GoogleGenAI({
 		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
+		project: env.GEMINI_PROJECT_ID || 'gen-lang-client-0319586327',
+		location: env.GEMINI_LOCATION || 'us-central1',
 		googleAuthOptions: {
 			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
+				client_email: env.GEMINI_CLIENT_EMAIL || 'vertex-copilot-sa@gen-lang-client-0319586327.iam.gserviceaccount.com',
 				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
 			}
 		}
