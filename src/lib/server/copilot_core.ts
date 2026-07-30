@@ -111,7 +111,6 @@ function preprocess_encoding(encoding: SourceApiResult): string {
 	return JSON.stringify(encoding_w_ids)
 		.replaceAll('"be-G"', '"be-for-G"')
 		.replaceAll('"be-I"', '"be-with-I"')
-		.replaceAll('"be-I"', '"be-with-I"')
 		.replaceAll('"be-P"', '"be-about-P"')
 		.replaceAll('"be-Q"', '"be-made-of-Q"')
 		.replaceAll('"be-R"', '"be-part-of-R"')

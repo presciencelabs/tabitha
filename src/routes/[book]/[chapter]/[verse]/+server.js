@@ -1,11 +1,9 @@
 import { error, json } from '@sveltejs/kit'
 import { get_copilot_result } from '$lib/server/copilot_core'
 import { default_settings } from '$lib/lookups'
-import { GoogleGenAI } from '@google/genai/node'
-import { env } from '$env/dynamic/private'
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ params: { book, chapter, verse }, url: { searchParams } }) {
+export async function GET({ params: { book, chapter, verse }, url: { searchParams }, locals: { ai } }) {
 	const chapter_int = parseInt(chapter)
 	const verse_int = parseInt(verse)
 	if (!chapter_int || !verse_int) {
@@ -25,18 +23,6 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 
 	/** @type {VerseReference} */
 	const reference = { book, chapter: chapter_int, verse: verse_int }
-	
-	const ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
-	})
 
 	const result = await get_copilot_result(reference, settings, ai)
 	return json(result)

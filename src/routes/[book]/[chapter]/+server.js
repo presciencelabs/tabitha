@@ -3,11 +3,9 @@ import { convert_to_sfm, get_copilot_result } from '$lib/server/copilot_core'
 import { error, text } from '@sveltejs/kit'
 import { default_settings } from '$lib/lookups'
 import { create_brief_for_chapter } from '$lib/server/brief/brief'
-import { GoogleGenAI } from '@google/genai/node'
-import { env } from '$env/dynamic/private'
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ params: { book, chapter }, url: { searchParams } }) {
+export async function GET({  params: { book, chapter }, url: { searchParams }, locals: { ai } }) {
 	const chapter_int = parseInt(chapter)
 	if (!chapter_int) {
 		error(400, 'chapter must be an integer')
@@ -33,18 +31,6 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 	/** @type {string} */
 	let filename
 
-	const ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
-	})
-
 	if (settings.mode === 'brief') {
 		sfm_text = await create_brief_for_chapter(chapter_ref, {
 			...settings,
@@ -65,7 +51,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 		const all_verses = Array.from({ length: last_verse }, (_, i) => i + 1)
 
 		/** @type {CopilotApiResult[]} */
-		const results = await Promise.all(all_verses.map(async (verse) => {
+		const results = await map_concurrent(all_verses, 5, async (verse) => {
 			const reference = { book, chapter: chapter_int, verse }
 			let result = await get_copilot_result(reference, settings, ai)
 			// if there was an error, try one more time
@@ -77,7 +63,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 				}
 			}
 			return result
-		}))
+		})
 
 		sfm_text = [
 			`\\c ${chapter_int}`,
@@ -93,3 +79,27 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 		}
 	})
 }
+
+/**
+ * @template T, R
+ * @param {T[]} items
+ * @param {number} limit
+ * @param {(item: T) => Promise<R>} fn
+ * @returns {Promise<R[]>}
+ */
+async function map_concurrent(items, limit, fn) {
+	/** @type {R[]} */
+	const results = new Array(items.length)
+	for (let i = 0; i < items.length; i += limit) {
+		const chunk = items.slice(i, i + limit)
+		const chunk_results = await Promise.all(chunk.map(async (item, idx) => {
+			const res = await fn(item)
+			return { idx: i + idx, res }
+		}))
+		for (const { idx, res } of chunk_results) {
+			results[idx] = res
+		}
+	}
+	return results
+}
+

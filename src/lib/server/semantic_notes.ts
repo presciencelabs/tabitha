@@ -81,8 +81,10 @@ export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleG
 											'description': 'The node_id from the trigger that this note relates to.'
 										},
 									},
+									'required': ['name', 'node_id'],
 								},
 							},
+							'required': ['meaning', 'check', 'quoted_text', 'trigger'],
 						},
 					},
 					...(translate_tbta_text ? {
@@ -91,7 +93,8 @@ export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleG
 							'description': `the english_text translated from English into ${llm_input.output_language}`
 						}
 					} : {}),
-				}
+				},
+				'required': ['notes'],
 			}
 		}
 	})

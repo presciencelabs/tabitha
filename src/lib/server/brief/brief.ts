@@ -115,10 +115,11 @@ async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
 		const parts = text.substring(openerIndex + translationOpener.length, closerIndex).split(translationDelimiter)
 
 		let placeholder: number
-		if (parts[0] in placeholder_map) {
+		if (placeholder_map.has(parts[0])) {
 			placeholder = placeholder_map.get(parts[0])!
 		} else {
 			placeholder = prompt.length
+			placeholder_map.set(parts[0], placeholder)
 			prompt.push({ text: parts[0], sourceLanguage: parts[1], targetLanguage: parts[2] })
 		}
 		text = text.substring(0, openerIndex) + placeholderOpener + placeholder + placeholderCloser + text.substring(closerIndex + translationCloser.length, text.length)
@@ -321,7 +322,7 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 
 	const all_verses = Array.from({ length: last_verse }, (_, i) => i + 1)
 
-	const results: [VerseReference, BriefOutput][] = await Promise.all(all_verses.map(async (verse) => {
+	const results: [VerseReference, BriefOutput][] = await map_concurrent(all_verses, 5, async (verse) => {
 		const verse_ref = { ...chapter_ref, verse }
 		let result = await create_brief_for_verse(verse_ref, settings, ai)
 		// if there was an error, try one more time. the error itself is logged elsewhere
@@ -329,7 +330,7 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 			result = await create_brief_for_verse(verse_ref, settings, ai)
 		}
 		return [verse_ref, result!]
-	}))
+	})
 
 	if (settings.output_format === 'usfm' && settings.output_style === 'production') {
 		const usfm_lines = [
@@ -360,5 +361,17 @@ export async function create_brief_for_verse(verse_ref: VerseReference, settings
 		lwc_text: note_results.lwc_text || note_results.english_text,
 		notes: note_results.notes,
 	}
-	return await get_brief_data(brief_input, ai)
+	return get_brief_data(brief_input, ai)
+}
+
+async function map_concurrent<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+	const results: R[] = new Array(items.length)
+	for (let i = 0; i < items.length; i += limit) {
+		const chunk = items.slice(i, i + limit)
+		const chunk_results = await Promise.all(chunk.map((item, idx) => fn(item).then(res => [i + idx, res] as const)))
+		for (const [idx, res] of chunk_results) {
+			results[idx] = res
+		}
+	}
+	return results
 }
