@@ -1,10 +1,11 @@
-import { get_llm_notes } from '$lib/server/llm'
+import { get_semantic_notes } from '$lib/server/semantic_notes'
 import { default_target_audience, fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
+import type { GoogleGenAI } from '@google/genai/node'
 
-export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings): Promise<CopilotApiResult> {
+export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings, ai: GoogleGenAI): Promise<CopilotApiResult> {
 	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
 
 	const encoding = await fetch_encoding(reference)
@@ -50,7 +51,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	}
 
 	try {
-		const llm_output = await get_llm_notes(llm_input)
+		const llm_output = await get_semantic_notes(llm_input, ai)
 		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) =>
 			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! })
 		)

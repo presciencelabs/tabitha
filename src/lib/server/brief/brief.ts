@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { fetch_verses_for_chapter, lwc_info, usfm_book_codes } from '$lib/lookups'
-import { GoogleGenAI } from '@google/genai/node'
+import type { GoogleGenAI } from '@google/genai/node'
 import { brief_main_prompt, translate_prompt } from './prompts'
 import { json_response_schema } from './json_response_schema'
 import { get_copilot_result } from '../copilot_core'
@@ -185,7 +185,7 @@ async function get_brief_data(input: BriefInput, ai: GoogleGenAI): Promise<Brief
 	}
 }
 
-export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput): string {
+function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput): string {
 	if (!output) {
 		return `\\v ${verse_ref.verse} Unexpected issue getting notes for this verse...`
 	}
@@ -242,7 +242,7 @@ export function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput):
 	return items.join('\n')
 }
 
-export async function convert_to_docx(verse_ref: VerseReference, output: BriefOutput, ai: GoogleGenAI) {
+async function convert_to_docx(verse_ref: VerseReference, output: BriefOutput, ai: GoogleGenAI) {
 	// TODO fully implement this - this is currently here to keep the pre-existing conversion to this template data
 	const readerLanguage = output.lwc
 	const template_data: BriefDocxTemplateData = await translate_json({
@@ -312,19 +312,7 @@ export async function convert_to_docx(verse_ref: VerseReference, output: BriefOu
 	// TODO fill in the template with the above data
 }
 
-export async function create_brief_for_chapter(chapter_ref: ChapterReference, settings: BriefSettings) {
-	const ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
-	})
-
+export async function create_brief_for_chapter(chapter_ref: ChapterReference, settings: BriefSettings, ai: GoogleGenAI) {
 	const last_verse = await fetch_verses_for_chapter(chapter_ref)
 	if (!last_verse) {
 		console.error(`Error fetching verses for ${chapter_ref.book} ${chapter_ref.chapter}`)
@@ -357,7 +345,7 @@ export async function create_brief_for_chapter(chapter_ref: ChapterReference, se
 }
 
 export async function create_brief_for_verse(verse_ref: VerseReference, settings: BriefSettings, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
-	const note_results = await get_copilot_result(verse_ref, settings)
+	const note_results = await get_copilot_result(verse_ref, settings, ai)
 	if (note_results.error) {
 		// the error is already logged elsewhere
 		return undefined

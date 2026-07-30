@@ -1,7 +1,6 @@
-import { env } from '$env/dynamic/private'
-import { GoogleGenAI } from '@google/genai/node'
+import type { GoogleGenAI } from '@google/genai/node'
 
-export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<CopilotLlmOutput> {
+export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleGenAI): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 
@@ -39,18 +38,6 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 			- undergraduate = moderate linguistic terminology allowed
 
 			Return the schema requested.`
-
-	const ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
-	})
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-3.5-flash',

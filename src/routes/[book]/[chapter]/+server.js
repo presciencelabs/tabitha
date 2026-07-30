@@ -3,6 +3,8 @@ import { convert_to_sfm, get_copilot_result } from '$lib/server/copilot_core'
 import { error, text } from '@sveltejs/kit'
 import { default_settings } from '$lib/lookups'
 import { create_brief_for_chapter } from '$lib/server/brief/brief'
+import { GoogleGenAI } from '@google/genai/node'
+import { env } from '$env/dynamic/private'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params: { book, chapter }, url: { searchParams } }) {
@@ -31,13 +33,25 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 	/** @type {string} */
 	let filename
 
+	const ai = new GoogleGenAI({
+		vertexai: true,
+		project: env.GEMINI_PROJECT_ID,
+		location: env.GEMINI_LOCATION,
+		googleAuthOptions: {
+			credentials: {
+				client_email: env.GEMINI_CLIENT_EMAIL,
+				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
+			}
+		}
+	})
+
 	if (settings.mode === 'brief') {
 		sfm_text = await create_brief_for_chapter(chapter_ref, {
 			...settings,
 			rigor: 'HIGH',
 			output_format: 'usfm',
 			output_style: 'production',
-		}) || ''
+		}, ai) || ''
 
 		filename = `${book_code} ${chapter} - TaBiThA Brief.sfm`
 
@@ -53,11 +67,11 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 		/** @type {CopilotApiResult[]} */
 		const results = await Promise.all(all_verses.map(async (verse) => {
 			const reference = { book, chapter: chapter_int, verse }
-			let result = await get_copilot_result(reference, settings)
+			let result = await get_copilot_result(reference, settings, ai)
 			// if there was an error, try one more time
 			if (result.error) {
 				console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}. Trying again once more...`)
-				result = await get_copilot_result(reference, settings)
+				result = await get_copilot_result(reference, settings, ai)
 				if (result.error) {
 					console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}.`)
 				}
