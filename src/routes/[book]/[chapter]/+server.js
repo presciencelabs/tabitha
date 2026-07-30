@@ -3,11 +3,9 @@ import { convert_to_sfm, get_copilot_result } from '$lib/server/copilot_core'
 import { error, text } from '@sveltejs/kit'
 import { default_settings } from '$lib/lookups'
 import { create_brief_for_chapter } from '$lib/server/brief/brief'
-import { GoogleGenAI } from '@google/genai/node'
-import { env } from '$env/dynamic/private'
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ params: { book, chapter }, url: { searchParams } }) {
+export async function GET({  params: { book, chapter }, url: { searchParams }, locals: { ai } }) {
 	const chapter_int = parseInt(chapter)
 	if (!chapter_int) {
 		error(400, 'chapter must be an integer')
@@ -32,18 +30,6 @@ export async function GET({ params: { book, chapter }, url: { searchParams } }) 
 
 	/** @type {string} */
 	let filename
-
-	const ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
-	})
 
 	if (settings.mode === 'brief') {
 		sfm_text = await create_brief_for_chapter(chapter_ref, {

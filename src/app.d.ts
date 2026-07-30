@@ -1,3 +1,5 @@
+import type { GoogleGenAI } from '@google/genai/node'
+
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
@@ -10,7 +12,9 @@ declare global {
 		}
 
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			ai: GoogleGenAI
+		}
 		// interface PageData {}
 		// interface PageState {}
 	}
