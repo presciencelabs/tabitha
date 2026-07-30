@@ -41,6 +41,7 @@ export async function get_llm_notes(llm_input: CopilotLlmInput): Promise<Copilot
 			Return the schema requested.`
 
 	const ai = new GoogleGenAI({
+		vertexai: true,
 		project: env.GEMINI_PROJECT_ID,
 		location: env.GEMINI_LOCATION,
 		googleAuthOptions: {
