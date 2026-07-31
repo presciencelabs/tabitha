@@ -58,13 +58,34 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 				const sfm_verses = new Array(total_verses)
 				let next_to_send = 0
 				let next_to_start = 0
+				let is_flushing = false
 
-				// Flush ready sequential results to controller
-				function flush() {
-					while (next_to_send < total_verses && sfm_verses[next_to_send] !== undefined) {
-						const sfm = sfm_verses[next_to_send]
-						controller.enqueue(encoder.encode(sfm + '\n'))
-						next_to_send++
+				// Flush ready sequential results to controller (translating in batches if in brief mode)
+				async function flush() {
+					if (is_flushing) return
+					is_flushing = true
+
+					try {
+						while (next_to_send < total_verses && sfm_verses[next_to_send] !== undefined) {
+							// Collect contiguous ready untranslated verses
+							const batch = []
+							while (next_to_send < total_verses && sfm_verses[next_to_send] !== undefined) {
+								batch.push(sfm_verses[next_to_send])
+								next_to_send++
+							}
+
+							// Translate batch in 1 LLM API call if in brief mode
+							const translated_batch = settings.mode === 'brief'
+								? await translate_json(batch, ai)
+								: batch
+
+							// Enqueue translated verses
+							for (const sfm of translated_batch) {
+								controller.enqueue(encoder.encode(sfm + '\n'))
+							}
+						}
+					} finally {
+						is_flushing = false
 					}
 				}
 
@@ -84,7 +105,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 						}
 
 						sfm_verses[verse_idx] = await get_sfm_for_verse(result, settings, ai)
-						flush()
+						await flush()
 					}
 				}
 
@@ -141,8 +162,7 @@ async function get_sfm_for_verse(result, settings, ai) {
 			}
 		}
 
-		const untranslated_sfm = convert_to_usfm_for_brief(result.verse, brief_output)
-		return await translate_json(untranslated_sfm, ai)
+		return convert_to_usfm_for_brief(result.verse, brief_output)
 
 	} else {
 		return convert_to_usfm_for_discern(settings.lwc)(result)
