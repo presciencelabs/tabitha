@@ -101,7 +101,7 @@ function mark_for_translation(text: string, targetLanguageName: string, sourceLa
 	return sourceLanguageName != targetLanguageName ? `${translationOpener}${text}${translationDelimiter}${sourceLanguageName}${translationDelimiter}${targetLanguageName}${translationCloser}` : text
 }
 
-async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
+export async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
 	const placeholder_map = new Map<string, number>()
 
 	// TODO use Regex?
@@ -129,9 +129,10 @@ async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
 		return obj
 	}
 	
+	const prompt_string = JSON.stringify(prompt)
 	const response = await ai.models.generateContent({
 		model: 'gemini-3.5-flash',
-		contents: JSON.stringify(prompt),
+		contents: prompt_string,
 		config: {
 			temperature: 0.0,
 			seed: 41,
@@ -157,6 +158,24 @@ async function translate_json<T>(obj: T, ai: GoogleGenAI): Promise<T> {
 }
 
 // main
+
+export async function create_brief_for_verse(note_results: CopilotApiResult, settings: BriefSettings, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
+	if (note_results.error) {
+		// the error is already logged elsewhere
+		return undefined
+	}
+
+	const brief_input: BriefInput = {
+		verse: note_results.verse,
+		lwc: settings.lwc,
+		rigor: settings.rigor,
+		output_format: settings.output_format,
+		output_style: settings.output_style,
+		lwc_text: note_results.lwc_text || note_results.english_text,
+		notes: note_results.notes,
+	}
+	return get_brief_data(brief_input, ai)
+}
 
 async function get_brief_data(input: BriefInput, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
 	const tnnBasedInfo = await get_tnn_based_info(input, ai)
@@ -186,7 +205,7 @@ async function get_brief_data(input: BriefInput, ai: GoogleGenAI): Promise<Brief
 	}
 }
 
-function convert_to_usfm(verse_ref: VerseReference, output: BriefOutput): string {
+export function convert_to_usfm_for_brief(verse_ref: VerseReference, output: BriefOutput | undefined): string {
 	if (!output) {
 		return `\\v ${verse_ref.verse} Unexpected issue getting notes for this verse...`
 	}
@@ -311,67 +330,4 @@ async function convert_to_docx(verse_ref: VerseReference, output: BriefOutput, a
 	}, ai)
 
 	// TODO fill in the template with the above data
-}
-
-export async function create_brief_for_chapter(chapter_ref: ChapterReference, settings: BriefSettings, ai: GoogleGenAI) {
-	const last_verse = await fetch_verses_for_chapter(chapter_ref)
-	if (!last_verse) {
-		console.error(`Error fetching verses for ${chapter_ref.book} ${chapter_ref.chapter}`)
-		throw Error('Chapter reference does not exist')
-	}
-
-	const all_verses = Array.from({ length: last_verse }, (_, i) => i + 1)
-
-	const results: [VerseReference, BriefOutput][] = await map_concurrent(all_verses, 5, async (verse) => {
-		const verse_ref = { ...chapter_ref, verse }
-		let result = await create_brief_for_verse(verse_ref, settings, ai)
-		// if there was an error, try one more time. the error itself is logged elsewhere
-		if (!result) {
-			result = await create_brief_for_verse(verse_ref, settings, ai)
-		}
-		return [verse_ref, result!]
-	})
-
-	if (settings.output_format === 'usfm' && settings.output_style === 'production') {
-		const usfm_lines = [
-			`\\id ${usfm_book_codes[chapter_ref.book] || chapter_ref.book}`,
-			`\\c ${chapter_ref.chapter}`,
-			...results.map(([verse_ref, result]) => convert_to_usfm(verse_ref, result)),
-		]
-		return (await translate_json(usfm_lines, ai)).join('\n')
-
-	} else {
-		return undefined
-	}
-}
-
-export async function create_brief_for_verse(verse_ref: VerseReference, settings: BriefSettings, ai: GoogleGenAI): Promise<BriefOutput | undefined> {
-	const note_results = await get_copilot_result(verse_ref, settings, ai)
-	if (note_results.error) {
-		// the error is already logged elsewhere
-		return undefined
-	}
-
-	const brief_input: BriefInput = {
-		verse: verse_ref,
-		lwc: settings.lwc,
-		rigor: settings.rigor,
-		output_format: settings.output_format,
-		output_style: settings.output_style,
-		lwc_text: note_results.lwc_text || note_results.english_text,
-		notes: note_results.notes,
-	}
-	return get_brief_data(brief_input, ai)
-}
-
-async function map_concurrent<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
-	const results: R[] = new Array(items.length)
-	for (let i = 0; i < items.length; i += limit) {
-		const chunk = items.slice(i, i + limit)
-		const chunk_results = await Promise.all(chunk.map((item, idx) => fn(item).then(res => [i + idx, res] as const)))
-		for (const [idx, res] of chunk_results) {
-			results[idx] = res
-		}
-	}
-	return results
 }

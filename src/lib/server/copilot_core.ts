@@ -82,7 +82,7 @@ export function error_result(reference: VerseReference, message: string) {
 	}
 }
 
-export function convert_to_sfm(lwc: string): (result: CopilotApiResult) => string {
+export function convert_to_usfm_for_discern(lwc: string): (result: CopilotApiResult) => string {
 	const no_suggestions_text = lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text
 	return result => {
 		if (result.error) {

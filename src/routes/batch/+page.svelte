@@ -16,6 +16,7 @@
 	let verse_count: number|undefined = $state(-1)
 
 	let fetching_cautions = $state(false)
+	let completed_verses = $state(0)
 	let error_text = $state('')
 
 	$effect(() => {
@@ -31,6 +32,7 @@
 	
 	async function download_cautions() {
 		fetching_cautions = true
+		completed_verses = 0
 		error_text = ''
 		try {
 			const { book, chapter } = reference
@@ -38,13 +40,30 @@
 			const params = JSON.stringify(settings)
 			const response = await fetch(`/${book}/${chapter}?settings=${encodeURIComponent(params)}`)
 
-			if (!response.ok) {
+			if (!response.ok || !response.body) {
 				const message = (await response.text()) || 'Unexpected error occurred'
 				throw new Error(message)
 			}
 
+			const reader = response.body.getReader()
+			const decoder = new TextDecoder()
+			let sfm_text = ''
+
+			while (true) {
+				const { done, value } = await reader.read()
+				if (done) break
+
+				const chunk_text = decoder.decode(value, { stream: true })
+				sfm_text += chunk_text
+
+				const matches = chunk_text.match(/\\v\s+\d+/g)
+				if (matches) {
+					completed_verses += matches.length
+				}
+			}
+
 			// Create blob from response
-			const blob = await response.blob()
+			const blob = new Blob([sfm_text], { type: 'text/plain;charset=utf-8' })
 			
 			// Create link and trigger download
 			const url = window.URL.createObjectURL(blob)
@@ -89,7 +108,15 @@
 </form>
 
 {#if fetching_cautions}
-	<p>Loading notes for {verse_count} verses... This may take a while.</p>
+	{@const mode_label = settings.mode === 'brief' ? 'brief' : 'notes'}
+	<p>
+		{#if completed_verses && completed_verses > 0}
+			Loading {mode_label}: {completed_verses} / {verse_count} verses completed...
+		{:else}
+			Loading {mode_label}... This may take a while.
+		{/if}
+	</p>
 {:else if error_text.length}
 	<p>{error_text}</p>
 {/if}
+

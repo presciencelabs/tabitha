@@ -1,8 +1,8 @@
 import { fetch_verses_for_chapter, usfm_book_codes } from '$lib/lookups'
-import { convert_to_sfm, get_copilot_result } from '$lib/server/copilot_core'
-import { error, text } from '@sveltejs/kit'
+import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
+import { error } from '@sveltejs/kit'
 import { default_settings } from '$lib/lookups'
-import { create_brief_for_chapter } from '$lib/server/brief/brief'
+import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({  params: { book, chapter }, url: { searchParams }, locals: { ai } }) {
@@ -25,81 +25,114 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 	const chapter_ref = { book, chapter: chapter_int }
 	const book_code = usfm_book_codes[book] ?? book
 
-	/** @type {string} */
-	let sfm_text
-
-	/** @type {string} */
-	let filename
-
-	if (settings.mode === 'brief') {
-		sfm_text = await create_brief_for_chapter(chapter_ref, {
-			...settings,
-			rigor: 'HIGH',
-			output_format: 'usfm',
-			output_style: 'production',
-		}, ai) || ''
-
-		filename = `${book_code} ${chapter} - TaBiThA Brief.sfm`
-
-	} else {
-		const last_verse = await fetch_verses_for_chapter({ book, chapter: chapter_int })
-		if (!last_verse) {
-			console.error(`Error fetching verses for ${book} ${chapter}`)
-			error(404, 'Chapter reference does not exist')
-		}
-
-		const all_verses = Array.from({ length: last_verse }, (_, i) => i + 1)
-
-		/** @type {CopilotApiResult[]} */
-		const results = await map_concurrent(all_verses, 5, async (verse) => {
-			const reference = { book, chapter: chapter_int, verse }
-			let result = await get_copilot_result(reference, settings, ai)
-			// if there was an error, try one more time
-			if (result.error) {
-				console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}. Trying again once more...`)
-				result = await get_copilot_result(reference, settings, ai)
-				if (result.error) {
-					console.error(`Error fetching notes from LLM for ${book} ${chapter}: ${verse} - ${result.error}.`)
-				}
-			}
-			return result
-		})
-
-		sfm_text = [
-			`\\c ${chapter_int}`,
-			...results.map(convert_to_sfm(settings.lwc)),
-		].join('\n')
-
-		filename = `${book_code} ${chapter} - TaBiThA Notes.sfm`
+	const last_verse = await fetch_verses_for_chapter({ book, chapter: chapter_int })
+	if (!last_verse) {
+		console.error(`Error fetching verses for ${book} ${chapter}`)
+		error(404, 'Chapter reference does not exist')
 	}
 
-	return text(sfm_text, {
+	const total_verses = last_verse
+	const filename = `${book_code} ${chapter} - TaBiThA ${settings.mode === 'brief' ? 'Brief' : 'Notes'}.sfm`
+	const encoder = new TextEncoder()
+
+	const stream = new ReadableStream({
+		async start(controller) {
+			try {
+				controller.enqueue(encoder.encode(`\\id ${usfm_book_codes[chapter_ref.book] || chapter_ref.book}\n`))
+				controller.enqueue(encoder.encode(`\\c ${chapter_int}\n`))
+
+				const concurrency_limit = 5
+				/** @type {string[]} */
+				const sfm_verses = new Array(total_verses)
+				let next_to_send = 0
+				let next_to_start = 0
+
+				// Flush ready sequential results to controller
+				function flush() {
+					while (next_to_send < total_verses && sfm_verses[next_to_send] !== undefined) {
+						const sfm = sfm_verses[next_to_send]
+						controller.enqueue(encoder.encode(sfm + '\n'))
+						next_to_send++
+					}
+				}
+
+				async function worker() {
+					while (next_to_start < total_verses) {
+						const verse_idx = next_to_start++
+						const verse = verse_idx + 1
+						const reference = { book, chapter: chapter_int, verse }
+
+						let result = await get_copilot_result(reference, settings, ai)
+						if (result.error) {
+							console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}. Retrying...`)
+							result = await get_copilot_result(reference, settings, ai)
+							if (result.error) {
+								console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}.`)
+							}
+						}
+
+						sfm_verses[verse_idx] = await get_sfm_for_verse(result, settings, ai)
+						flush()
+					}
+				}
+
+				// Launch workers up to concurrency_limit
+				const workers = []
+				for (let i = 0; i < Math.min(concurrency_limit, total_verses); i++) {
+					workers.push(worker())
+				}
+
+				await Promise.all(workers)
+			} catch (err) {
+				console.error('Error in batch streaming:', err)
+				controller.error(err)
+			} finally {
+				controller.close()
+			}
+		}
+	})
+
+	return new Response(stream, {
 		headers: {
-			'Content-Disposition': `attachment; filename="${filename}"`
+			'Content-Type': 'text/plain; charset=utf-8',
+			'Content-Disposition': `attachment; filename="${filename}"`,
+			'Cache-Control': 'no-cache',
+			'X-Content-Type-Options': 'nosniff',
 		}
 	})
 }
 
 /**
- * @template T, R
- * @param {T[]} items
- * @param {number} limit
- * @param {(item: T) => Promise<R>} fn
- * @returns {Promise<R[]>}
+ * 
+ * @param {CopilotApiResult} result 
+ * @param {CopilotSettings} settings 
+ * @param {import('@google/genai/node').GoogleGenAI} ai 
+ * @returns {Promise<string>}
  */
-async function map_concurrent(items, limit, fn) {
-	/** @type {R[]} */
-	const results = new Array(items.length)
-	for (let i = 0; i < items.length; i += limit) {
-		const chunk = items.slice(i, i + limit)
-		const chunk_results = await Promise.all(chunk.map(async (item, idx) => {
-			const res = await fn(item)
-			return { idx: i + idx, res }
-		}))
-		for (const { idx, res } of chunk_results) {
-			results[idx] = res
+async function get_sfm_for_verse(result, settings, ai) {
+	if (settings.mode === 'brief') {
+		/** @type {BriefSettings} */
+		const brief_settings = {
+			...settings,
+			rigor: 'HIGH',
+			output_format: 'usfm',
+			output_style: 'production',
 		}
-	}
-	return results
-}
 
+		let brief_output = await create_brief_for_verse(result, brief_settings, ai)
+		// if there was an error, try one more time. the error itself is logged elsewhere
+		if (!brief_output) {
+			console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Retrying to get brief notes...`)
+			brief_output = await create_brief_for_verse(result, brief_settings, ai)
+			if (!brief_output) {
+				console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Could not generate brief notes. Skipping this verse.`)
+			}
+		}
+
+		const untranslated_sfm = convert_to_usfm_for_brief(result.verse, brief_output)
+		return await translate_json(untranslated_sfm, ai)
+
+	} else {
+		return convert_to_usfm_for_discern(settings.lwc)(result)
+	}
+}
