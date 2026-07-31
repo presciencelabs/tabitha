@@ -14,7 +14,6 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 		return error_result(reference, `Verse reference ${ref_display} does not exist`)
 	}
 
-	console.log(reference)
 	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)

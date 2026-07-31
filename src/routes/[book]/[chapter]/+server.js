@@ -11,6 +11,9 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 		error(400, 'chapter must be an integer')
 	}
 
+	let start_verse = searchParams.has('v1') ? parseInt(searchParams.get('v0') || '') : 1
+	let end_verse = searchParams.has('v1') ? parseInt(searchParams.get('v1') || '') : null
+
 	const param_settings = JSON.parse(searchParams.get('settings') || '{}')
 	/** @type {CopilotSettings} */
 	const settings = {
@@ -31,7 +34,16 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 		error(404, 'Chapter reference does not exist')
 	}
 
-	const total_verses = last_verse
+	if (!start_verse) {
+		start_verse = 1
+	} else if (start_verse > last_verse) {
+		start_verse = last_verse
+	}
+	if (!end_verse || end_verse > last_verse) {
+		end_verse = last_verse
+	}
+
+	let total_verses = end_verse - start_verse + 1
 	const filename = `${book_code} ${chapter} - TaBiThA ${settings.mode === 'brief' ? 'Brief' : 'Notes'}.sfm`
 	const encoder = new TextEncoder()
 
@@ -59,7 +71,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 				async function worker() {
 					while (next_to_start < total_verses) {
 						const verse_idx = next_to_start++
-						const verse = verse_idx + 1
+						const verse = start_verse + verse_idx
 						const reference = { book, chapter: chapter_int, verse }
 
 						let result = await get_copilot_result(reference, settings, ai)

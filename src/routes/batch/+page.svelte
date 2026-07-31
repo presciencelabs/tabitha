@@ -4,11 +4,12 @@
 	import Settings from '$lib/Settings.svelte'
 	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
 
-	let reference = $state(persisted<VerseReference>('saved_verse', {
+	let reference = $state(persisted<ChapterReference>('saved_verse', {
 		book: 'Genesis',
 		chapter: 1,
-		verse: 1,
 	}).value)
+	let start_verse = $state(1)
+	let end_verse = $state(0)
 
 	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
 
@@ -24,6 +25,7 @@
 		fetch_verses_for_chapter(reference)
 			.then(result => {
 				verse_count = result
+				end_verse = verse_count || start_verse
 			})
 			.finally(() => {
 				fetching_verse_count = false
@@ -38,7 +40,7 @@
 			const { book, chapter } = reference
 			const book_code = usfm_book_codes[book] || book
 			const params = JSON.stringify(settings)
-			const response = await fetch(`/${book}/${chapter}?settings=${encodeURIComponent(params)}`)
+			const response = await fetch(`/${book}/${chapter}?v0=${start_verse}&v1=${end_verse}&settings=${encodeURIComponent(params)}`)
 
 			if (!response.ok || !response.body) {
 				const message = (await response.text()) || 'Unexpected error occurred'
@@ -69,7 +71,9 @@
 			const url = window.URL.createObjectURL(blob)
 			const a = document.createElement('a')
 			a.href = url
-			a.download = `${book_code} ${chapter} - TaBiThA ${settings.mode} notes - ${lwc_info[settings.lwc].code} ${mtt_level_info[settings.mtt_level].code}.sfm` // File name
+			const ref_string = `${book_code} ${chapter} ${start_verse}-${end_verse}`
+			const setting_codes = `${lwc_info[settings.lwc].code} ${mtt_level_info[settings.mtt_level].code}`
+			a.download = `${ref_string} - TaBiThA ${settings.mode} notes - ${setting_codes}.sfm` // File name
 			document.body.appendChild(a)
 			a.click()
 			
@@ -86,18 +90,26 @@
 </script>
 
 <form>
-	<section class="py-4 flex gap-4 prose">
-		<h3>Chapter</h3>
+	<section class="py-4 flex gap-4">
+		<div class="prose"><h3>Chapter</h3></div>
+		
 		<BookSelect bind:book={reference.book} disabled={fetching_cautions} />
 		<input bind:value={reference.chapter} class="input w-20" type="number" disabled={fetching_cautions} />
 
-		<div class="mt-1">
-			{#if !verse_count}
+		{#if !verse_count}
+			<div class="prose mt-1">
 				Invalid chapter
-			{:else if verse_count > 0}
-				{verse_count} verses
-			{/if}
-		</div>
+			</div>
+		{:else}
+			<div class="divider divider-horizontal"></div>
+			<div class="flex gap-4">
+				<div class="prose"><h3>Verses</h3></div>
+				<input bind:value={start_verse} class="input w-20" type="number" disabled={fetching_cautions} />
+				<div class="mt-1">to</div>
+				<input bind:value={end_verse} class="input w-20" type="number" disabled={fetching_cautions} />
+				<div class="mt-1">({verse_count} verses in chapter)</div>
+			</div>
+		{/if}
 	</section>
 
 	<Settings bind:settings={settings} />
