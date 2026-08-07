@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "tabitha-ontology",
+	"name": "ontology",
 	"compatibility_date": "2026-08-06",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -19,7 +19,7 @@
 	},
 	"env": {
 		"production": {
-			"name": "tabitha-ontology",
+			"name": "ontology",
 			"vars": {
 				"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com" // Ontology (prod)
 			},
