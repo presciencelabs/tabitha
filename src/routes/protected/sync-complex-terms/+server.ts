@@ -1,0 +1,22 @@
+import { error, json } from '@sveltejs/kit'
+import { sync_complex_terms } from '$lib/server/complex_terms'
+import type { RequestHandler } from './$types'
+
+export const POST: RequestHandler = async ({ locals }) => {
+	if (!locals.user) {
+		throw error(401, 'Unauthorized')
+	}
+
+	try {
+		const count = await sync_complex_terms(locals.db_ontology)
+		return json({
+			success: true,
+			count,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (err: unknown) {
+		const message = err instanceof Error ? err.message : String(err)
+		console.error('Failed to sync complex terms:', message)
+		throw error(500, `Failed to sync complex terms: ${message}`)
+	}
+}

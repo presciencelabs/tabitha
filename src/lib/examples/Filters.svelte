@@ -99,14 +99,13 @@
 	}
 </script>
 
-<!-- TODO: watch this closely after upgrading daisyui to 5.6+ (borders are solid by default) -->
-<section class="join join-vertical">
-	<form class="join gap-4 bg-info text-info-content px-4 pb-4 overflow-x-auto join-item">
+<section class="flex flex-col">
+	<form class="flex gap-4 bg-info text-info-content px-4 pt-2 pb-3.5 overflow-x-auto rounded-box">
 		{#each filters as [name, options]}
 			{@const normalized_name = normalize_name(name)}
 
-			<label class="join-item flex flex-col">
-				<span class="label">{name}</span>
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend text-info-content">{name}</legend>
 
 				<select bind:value={selected_filters[normalized_name]} class="select text-base-content">
 					{#each [...options] as option, i}
@@ -115,12 +114,12 @@
 						<option value={option} selected={is_first_option}>{option}</option>
 					{/each}
 				</select>
-			</label>
+			</fieldset>
 		{/each}
 	</form>
 
 	{#if filtered_examples.length > 0 && filtered_examples.length < examples.length}
-		<aside transition:fade={FADE_CHARACTERISTICS} class="alert alert-info join-item">
+		<aside transition:fade={FADE_CHARACTERISTICS} class="alert alert-info mt-2">
 			<span>
 				Matched
 				<span class="font-mono">{filtered_examples.length}</span>

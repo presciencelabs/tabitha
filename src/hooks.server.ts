@@ -1,7 +1,9 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } from '$env/static/private'
 import { is_authorized } from '$lib/server/auth'
+import { sync_complex_terms } from '$lib/server/complex_terms'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Google from '@auth/sveltekit/providers/google'
+import type { ExecutionContext, ScheduledEvent } from '@cloudflare/workers-types'
 import { error, type Handle, type RequestEvent } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
@@ -68,3 +70,25 @@ const authz_handle: Handle = async ({ event, resolve }) => {
 }
 
 export const handle = sequence(cors_handle, db_config_handle, authn_handle, authz_handle)
+
+type ScheduledArgs = {
+	event: ScheduledEvent
+	env: App.Platform['env']
+	ctx: ExecutionContext
+}
+
+export async function scheduled({ event, env, ctx }: ScheduledArgs) {
+	if (!env?.DB_Ontology) return
+
+	switch (event.cron) {
+		case '0 */12 * * *':
+			ctx.waitUntil(sync_complex_terms(env.DB_Ontology))
+			break
+		default:
+			console.info(`Cron not recognized for schedule: ${event.cron}`)
+			break
+	}
+}
+
+
+

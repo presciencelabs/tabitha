@@ -1,3 +1,4 @@
+/// <reference types="svelte" />
 import type { User } from '@auth/sveltekit'
 import type { D1Database } from '@cloudflare/workers-types'
 

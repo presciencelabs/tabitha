@@ -62,6 +62,23 @@ pnpm dev
 
 The site should then be available here: [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173)
 
+#### 4. Complex Terms Synchronization
+
+Complex terms and simplification hints are synchronized from Google Sheets every 12 hours via Cloudflare Cron Triggers, or manually on demand.
+
+- **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"**.
+- **Testing Cron Trigger locally**:
+
+  ```bash
+  npx wrangler dev --test-scheduled
+  ```
+
+  In a separate terminal, trigger the scheduled execution:
+
+  ```bash
+  curl "http://localhost.tabitha.bible:8787/__scheduled"
+  ```
+
 ### Static analysis
 
 ```bash
