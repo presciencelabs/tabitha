@@ -63,7 +63,7 @@ const authz_handle: Handle = async ({ event, resolve }) => {
 		locals.user = session?.user
 
 		if (route.id?.startsWith('/protected')) {
-			if (!is_authorized(locals, 'PROTECTED_ACCESS')) {
+			if (!await is_authorized(locals, 'PROTECTED_ACCESS')) {
 				throw error(401, AUTH_ERROR_MESSAGE)
 			}
 		}
