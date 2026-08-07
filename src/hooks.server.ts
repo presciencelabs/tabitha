@@ -22,7 +22,8 @@ const cors_handle: Handle = async function cors_handle({ event, resolve }) {
 
 const db_config_handle: Handle = async function db_config_handle({ event, resolve }) {
 	if (!event.platform?.env.DB_Ontology) {
-		throw error(500, `database missing from platform arg: ${JSON.stringify(event.platform)}`)
+		console.error('Database binding DB_Ontology is missing from platform environment.')
+		throw error(500, 'Database configuration error: DB_Ontology binding is missing.')
 	}
 
 	event.locals.db_ontology = event.platform.env.DB_Ontology.withSession()
