@@ -4,5 +4,5 @@
 </script>
 
 <span class="px-1 -mt-4 text-6xl font-thin {classes}">
-	{source_entity.value}
+	{source_entity.category === 'Paragraph' || source_entity.value === 'Paragraph' ? '¶' : source_entity.value}
 </span>
