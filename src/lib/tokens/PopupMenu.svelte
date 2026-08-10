@@ -9,6 +9,4 @@
 	<div role="button">
 		<slot name="button_content" />
 	</div>
-	<!--This empty div makes the join-items behave as desired-->
-	<div class="join-item"></div>
 </div>
