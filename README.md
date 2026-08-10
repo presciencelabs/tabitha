@@ -45,7 +45,7 @@ Dump files can be found under the 'databases' folder within the databases repo: 
 
 Running the following command will load the data locally:
 
-`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file <DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
+`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file <DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
 
 #### 2. Start the app
 

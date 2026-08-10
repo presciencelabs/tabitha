@@ -13,7 +13,7 @@ declare global {
 		interface Platform {
 			// Cloudflare-specific
 			env: {
-				DB_Sources: D1Database // see wrangler.toml to match this name
+				DB_Sources: D1Database // see wrangler.jsonc to match this name
 			}
 		}
 	}
