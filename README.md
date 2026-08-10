@@ -40,7 +40,7 @@ Dump files can be found under the "Artifacts" section of the workflow runs of th
 
 Running the following command will load the data locally:
 
-`wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
+`wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file=<DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
 
 #### 2. Start the app
 
