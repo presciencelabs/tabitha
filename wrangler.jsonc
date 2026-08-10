@@ -1,0 +1,30 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "editor",
+	"compatibility_date": "2026-08-06",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"routes": [
+		{
+			"pattern": "editor.tabitha.bible",
+			"custom_domain": true
+		}
+	],
+	"placement": {
+		// Necessary to support edge proximity routing
+		// https://developers.cloudflare.com/d1/concepts/sessions/
+		"mode": "off"
+	}
+}

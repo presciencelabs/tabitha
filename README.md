@@ -64,6 +64,8 @@ pnpm test:unit:coverage
 
 ## Building
 
+> Deployed as a Cloudflare Worker using `wrangler.jsonc`.
+
 Creates a production version of the app:
 
 ```bash
