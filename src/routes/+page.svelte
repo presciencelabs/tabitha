@@ -21,7 +21,7 @@
 </script>
 
 <header class="flex justify-between">
-	<em class="badge badge-lg invisible gap-2" class:visible={searched} class:badge-success={found} class:badge-warning={!found}>
+	<em class="badge badge-lg gap-2 transition-opacity duration-200 {searched ? 'opacity-100' : 'opacity-0'} {found ? 'badge-success' : 'badge-warning'}">
 		<Icon {icon} />
 
 		<strong>{matches.length}</strong> results
@@ -50,10 +50,3 @@
 		<Table concepts={matches} />
 	</section>
 {/if}
-
-<style>
-	/* overrode tailwind here to keep from having to use !visible (!important) due to tw's definition order of visible and invisible */
-	.visible {
-		visibility: visible;
-	}
-</style>

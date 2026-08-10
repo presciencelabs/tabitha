@@ -16,7 +16,7 @@
 	}
 </script>
 
-<table class="md:table-normal table table-xs sm:table-sm lg:table-lg">
+<table class="table table-xs sm:table-sm md:table-md lg:table-lg">
 	<thead class="border-b-4">
 		<tr>
 			<th>Stem</th>
@@ -30,7 +30,7 @@
 
 	<tbody>
 		{#each concepts as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
-			<tr class="hover hover:cursor-pointer" on:click={() => open(concept)}>
+			<tr class="hover cursor-pointer" on:click={() => open(concept)}>
 				<td>
 					{concept.stem}
 				</td>
@@ -41,7 +41,7 @@
 					{concept.part_of_speech}
 				</td>
 				<td>
-					<Meaning {concept} />
+					<Meaning {concept} compact />
 				</td>
 				<td>
 					<Level level={concept.level} />

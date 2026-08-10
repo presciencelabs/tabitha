@@ -39,45 +39,42 @@
 			<Header concept={concept_for_header} />
 		</section>
 
-		<form method="POST" action="?/update&concept={encodeURIComponent(concept_key())}">
+		<form method="POST" action="?/update&concept={encodeURIComponent(concept_key())}" class="flex flex-col gap-6">
 			<section class="flex flex-col gap-4">
-				<label>
-					Level
-					<br />
-					<select name="level" bind:value={concept_data.level} class="select w-20">
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Level</legend>
+					<select name="level" bind:value={concept_data.level} class="select select-bordered w-24">
 						{#each levels.keys() as level}
 							<option value={level}>{level}</option>
 						{/each}
 					</select>
-				</label>
+				</fieldset>
 
-				<label>
-					Gloss
-					<textarea name="gloss" bind:value={concept_data.gloss} class="textarea field-sizing-content w-full"></textarea>
-				</label>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Gloss</legend>
+					<textarea name="gloss" bind:value={concept_data.gloss} class="textarea textarea-bordered field-sizing-content w-full" rows="2"></textarea>
+				</fieldset>
 			</section>
 
-			<section class="py-4 flex flex-col gap-4">
-				<label>
-					Brief gloss
-					<br />
-					<input name="brief_gloss" bind:value={concept_data.brief_gloss} class="input" />
-					<br />
-					<span class="text-xs text-accent">optional - for stems with lots of senses</span>
-				</label>
+			<section class="flex flex-col gap-4">
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Brief gloss</legend>
+					<input name="brief_gloss" bind:value={concept_data.brief_gloss} class="input input-bordered w-full max-w-md" />
+					<p class="label text-xs text-accent">optional - for stems with lots of senses</p>
+				</fieldset>
 
 				<Category part_of_speech={concept_data.part_of_speech} bind:categories={concept_data.categories} />
 
-				<div>
-					<label>
-						Curated examples
-						<textarea name="curated_examples" bind:value={concept_data.curated_examples} class="textarea field-sizing-content w-full" rows="3"></textarea>
-					</label>
-				</div>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Curated examples</legend>
+					<textarea name="curated_examples" bind:value={concept_data.curated_examples} class="textarea textarea-bordered field-sizing-content w-full" rows="3"></textarea>
+				</fieldset>
 			</section>
 
-			<button class="btn btn-primary" type="submit" disabled={!is_dirty}>Save</button>
-			<a href="/?q={concept_data.stem}" class="btn">Cancel</a>
+			<div class="flex gap-2">
+				<button class="btn btn-primary" type="submit" disabled={!is_dirty}>Save</button>
+				<a href="/?q={concept_data.stem}" class="btn btn-ghost">Cancel</a>
+			</div>
 		</form>
 
 	</main>

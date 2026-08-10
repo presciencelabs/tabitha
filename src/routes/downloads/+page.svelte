@@ -18,7 +18,7 @@
 
 	<tbody>
 		{#each data.backups as { name, version, created_at, size_mb, url } (name)}
-			<tr class="hover:bg-base-300">
+			<tr class="hover">
 				<td>{name}</td>
 				<td>{version}</td>
 				<td>{created_at.toLocaleString()}</td>
@@ -31,7 +31,7 @@
 				</td>
 			</tr>
 		{:else}
-			<tr><td colspan="4">No backups available.</td></tr>
+			<tr><td colspan="5">No backups available.</td></tr>
 		{/each}
 	</tbody>
 </table>

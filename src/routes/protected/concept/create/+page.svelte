@@ -56,65 +56,60 @@
 			</div>
 		{/if}
 
-		<form method="POST" action="?/create">
-			<section class="flex gap-4 w-full">
-				<label>
-					Stem
-					<input name="stem" bind:value={concept_data.stem} class="input" required />
-				</label>
+		<form method="POST" action="?/create" class="flex flex-col gap-6">
+			<section class="flex flex-wrap gap-4 items-end">
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Stem</legend>
+					<input name="stem" bind:value={concept_data.stem} class="input input-bordered" required />
+				</fieldset>
 
-				<label>
-					Part of speech
-					<select name="part_of_speech" bind:value={concept_data.part_of_speech} class="select" required>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Part of speech</legend>
+					<select name="part_of_speech" bind:value={concept_data.part_of_speech} class="select select-bordered" required>
 						{#each parts_of_speech as pos}
 							<option value={pos}>{pos}</option>
 						{/each}
 					</select>
-				</label>
+				</fieldset>
 
-				<label>
-					Level
-					<br />
-					<select name="level" bind:value={concept_data.level} class="select w-20">
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Level</legend>
+					<select name="level" bind:value={concept_data.level} class="select select-bordered w-24">
 						{#each levels.keys() as level}
 							<option value={level}>{level}</option>
 						{/each}
 					</select>
-				</label>
+				</fieldset>
 
 				{#if concept_data.sense && concept_data.sense !== 'A'}
-					<a href={`/?q=${concept_data.stem}&category=${concept_data.part_of_speech}`} target="_blank" class="link link-accent link-hover text-sm flex items-end">
+					<a href={`/?q=${concept_data.stem}&category=${concept_data.part_of_speech}`} target="_blank" class="link link-accent link-hover text-sm flex items-center gap-1 pb-2">
 						view other senses
-						<Icon icon="fe:link-external" class="h-6 w-6" />
+						<Icon icon="fe:link-external" class="h-4 w-4" />
 					</a>
 				{/if}
 			</section>
 
-			<section class="py-4 flex flex-col gap-4">
-				<div>
-					<label>
-						Gloss
-						<textarea name="gloss" bind:value={concept_data.gloss} class="textarea field-sizing-content w-full"></textarea>
-					</label>
-				</div>
-				<div>
-					<label>
-						Brief gloss
-						<br />
-						<input name="brief_gloss" bind:value={concept_data.brief_gloss} class="input" />
-						<br />
-						<span class="text-xs text-accent">optional - for stems with lots of senses</span>
-					</label>
-				</div>
+			<section class="flex flex-col gap-4">
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Gloss</legend>
+					<textarea name="gloss" bind:value={concept_data.gloss} class="textarea textarea-bordered field-sizing-content w-full" rows="2"></textarea>
+				</fieldset>
+
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend font-semibold">Brief gloss</legend>
+					<input name="brief_gloss" bind:value={concept_data.brief_gloss} class="input input-bordered w-full max-w-md" />
+					<p class="label text-xs text-accent">optional - for stems with lots of senses</p>
+				</fieldset>
 			</section>
 
-			<section class="py-4 flex flex-col gap-4">
+			<section>
 				<Category part_of_speech={concept_data.part_of_speech} bind:categories={concept_data.categories} />
 			</section>
 
-			<button class="btn btn-primary" type="submit" disabled={!can_save}>Save</button>
-			<!--TODO return_to-->
-			<a href="/" class="btn">Cancel</a>
+			<div class="flex gap-2">
+				<button class="btn btn-primary" type="submit" disabled={!can_save}>Save</button>
+				<a href="/" class="btn btn-ghost">Cancel</a>
+			</div>
 		</form>
 
 	</main>

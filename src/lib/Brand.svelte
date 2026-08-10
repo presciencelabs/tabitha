@@ -7,7 +7,7 @@
 
 <div class="prose">
 	<h1 class="mb-0 hidden md:block">
-		Ontology <sup class="relative -top-6 end-16 text-sm text-neutral-500">TaBiThA</sup>
+		Ontology <sup class="relative -top-6 end-16 text-sm text-base-content/60">TaBiThA</sup>
 	</h1>
 
 	<div class="flex items-center gap-4">

@@ -17,14 +17,12 @@
 	}
 </script>
 
-<fieldset class="join gap-0 text-center">
-	<label class="btn join-item" class:btn-accent={display_preference === 'grid'}>
-		<Icon icon="mdi:view-grid" class="h-6 w-6" />
-		<input type="radio" bind:group={display_preference} value="grid" class="hidden" />
-	</label>
+<div class="join">
+	<button class="btn join-item" class:btn-accent={display_preference === 'grid'} on:click={() => display_preference = 'grid'} title="Grid View">
+		<Icon icon="mdi:view-grid" class="h-5 w-5" />
+	</button>
 
-	<label class="btn join-item" class:btn-accent={display_preference === 'table'}>
-		<Icon icon="uiw:table" class="h-6 w-6" />
-		<input type="radio" bind:group={display_preference} value="table" class="hidden" />
-	</label>
-</fieldset>
+	<button class="btn join-item" class:btn-accent={display_preference === 'table'} on:click={() => display_preference = 'table'} title="Table View">
+		<Icon icon="uiw:table" class="h-5 w-5" />
+	</button>
+</div>

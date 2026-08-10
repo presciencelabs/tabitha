@@ -5,8 +5,8 @@
 	const { categories = $bindable() } = $props()
 </script>
 
-<fieldset class="rounded-lg border p-4">
-	<legend class="rounded-lg bg-base-200 px-2">Theta Grid</legend>
+<fieldset class="fieldset border border-base-300 rounded-box p-4">
+	<legend class="fieldset-legend font-semibold">Theta Grid</legend>
 
 	<table>
 		<tbody>

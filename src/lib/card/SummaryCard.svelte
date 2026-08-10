@@ -22,7 +22,7 @@
 	}
 </script>
 
-<article class="card card-bordered grow shadow-lg dark:shadow-neutral-700">
+<article class="card card-border grow shadow-md">
 	<main class="card-body">
 		<section class="prose card-title max-w-none justify-between">
 			<Header {concept} />

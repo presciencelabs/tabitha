@@ -10,11 +10,11 @@
 	/** @type {Record<string, [string, string]>}*/
 	const other_level_info = {
 		'N/A': ['Not in the ontology', 'badge-error'],
-		'FW': ['Function Word', 'badge-netural'],
+		'FW': ['Function Word', 'badge-neutral'],
 	}
 	$: [description, level_class] = levels.has(level)
 		? [levels.get(level) || '', `L${level}`]
-		: other_level_info[level] || ['', 'badge-netural']
+		: other_level_info[level] || ['', 'badge-neutral']
 	$: level_display = Number(level) >= 0 ? `L${level}` : level
 </script>
 

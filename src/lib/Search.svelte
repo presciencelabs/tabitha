@@ -45,16 +45,16 @@
 		used role="search" ∵ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search#search_form_labels_and_accessibility.
 	-->
 	<form role="search" action="/" class="join w-full">
-		<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-primary input-lg w-full join-item" />
+		<input type="search" name="q" id="q" bind:value use:auto_focus class="input input-bordered input-lg w-full join-item" />
 
-		<select name="category" bind:value={category} class="select select-primary select-lg join-item">
+		<select name="category" bind:value={category} class="select select-lg join-item">
 			<option value="all">All Concepts</option>
 			{#each parts_of_speech as category_value}
 				<option value="{category_value}">{category_value}s</option>
 			{/each}
 		</select>
 
-		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-primary select-lg join-item {$scope === 'semantic' ? 'border-6 border-error' : ''}">
+		<select name="scope" bind:value={$scope} on:change={store_scope} class="select select-lg join-item {$scope === 'semantic' ? 'select-error' : ''}">
 			<option value="stems">Stems only</option>
 			<option value="glosses">Glosses only</option>
 			<option value="all">Stems and Glosses</option>
@@ -68,13 +68,5 @@
 		</button>
 	</form>
 
-	<!-- chose visibility here to keep results from jumping up and down -->
-	<progress class="progress progress-warning invisible" class:visible={$navigating}></progress>
+	<progress class="progress progress-warning w-full transition-opacity duration-200 {$navigating ? 'opacity-100' : 'opacity-0'}"></progress>
 </search>
-
-<style>
-	/* overrode tailwind here to keep from having to use !visible (!important) due to tw's definition order of visible and invisible */
-	.visible {
-		visibility: visible;
-	}
-</style>
