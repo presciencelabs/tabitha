@@ -30,7 +30,7 @@ function create_sentence(tokens) {
  * @returns {Token}
  */
 function create_error_token(token, message) {
-	return create_added_token(token, { ...MESSAGE_TYPE.ERROR, message })
+	return create_added_token(token, { ...MESSAGE_TYPE.ERROR, message, rule_id: 'clause:syntax' })
 }
 
 describe('clausify: brackets', () => {

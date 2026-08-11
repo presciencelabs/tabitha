@@ -46,7 +46,7 @@ function create_pronoun_token(pronoun, referent_token) {
  * @returns {Token}
  */
 function create_error_token(token, message) {
-	return create_token(token, TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message: message } })
+	return create_token(token, TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message: message, rule_id: 'token:syntax' } })
 }
 
 describe('tokenize_input', () => {

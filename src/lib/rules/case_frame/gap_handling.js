@@ -40,7 +40,7 @@ export function fill_interrogative_gap(tokens, verb_index, rule_id) {
 			action: simple_rule_action(({ tokens, rule_id }) => {
 				const gap_index = find_clause_end_for_gap(tokens)
 				insert_gap_noun_token('INTV_N', tokens, [gap_index], rule_id)
-			})
+			}),
 		},
 		{
 			trigger: () => true,
@@ -50,7 +50,7 @@ export function fill_interrogative_gap(tokens, verb_index, rule_id) {
 			action: simple_rule_action(({ tokens, rule_id }) => {
 				const gap_indexes = find_clause_gap(tokens)
 				insert_gap_noun_token('INTV_N', tokens, gap_indexes, rule_id)
-			})
+			}),
 		},
 	]
 
@@ -204,7 +204,7 @@ function insert_ghosted_gap_token(gap_label, tokens, ghost_index, gap_index, rul
 	ghost_token.type = TOKEN_TYPE.NOTE	// temporarily change to NOTE to avoid being processed as a normal token
 	add_tag_to_token(ghost_token, { 'gap_index': `${gap_index}` }, rule_id)
 
-	const gap_token = create_gap_token(rule_id, gap_label, { 'ghost_index': `${ghost_index}`})
+	const gap_token = create_gap_token(rule_id, gap_label, { 'ghost_index': `${ghost_index}` })
 	tokens.splice(gap_index, 0, gap_token)
 	
 	gap_token.lookup_results = ghost_token.lookup_results

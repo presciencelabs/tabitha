@@ -37,7 +37,7 @@ export function replace_punctuation(sentences) {
 		
 		const particle_entry = PUNCTUATION_PARTICLES.find(([, filter]) => filter(token))
 		if (particle_entry) {
-			const [stem,] = particle_entry
+			const [stem] = particle_entry
 			return {
 				...token,
 				token: stem,

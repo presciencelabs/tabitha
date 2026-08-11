@@ -324,7 +324,7 @@ const structural_rules_json = [
 		},
 	},
 	{
-		name: "Yahweh -> the LORD",
+		name: 'Yahweh -> the LORD',
 		comment: "Need to handle cases like 'Yahweh's' and 'you(Yahweh)'",
 		rule: {
 			trigger: token => token.token.startsWith('Yahweh'),
@@ -354,7 +354,7 @@ const structural_rules_json = [
 		name: 'Expand out dynamic|literal pairings into two sentences.',
 		comment: '',
 		rule: {
-			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause'} }),
+			trigger: create_token_filter({ 'tag': { 'clause_type': 'main_clause' } }),
 			context: create_context_filter({ }),
 			action: ({ tokens, trigger_index, trigger_token }) => {
 				// Check if there is a dynamic|literal pairing anywhere within the sentence
@@ -404,7 +404,7 @@ const structural_rules_json = [
 							literal_token.pairing = { ...token, pairing: null }
 							new_tokens[i] = literal_token
 						} else if (token.sub_tokens.length > 0) {
-							new_tokens[i] = { ...token, sub_tokens: with_literal_pairing(token.sub_tokens)}
+							new_tokens[i] = { ...token, sub_tokens: with_literal_pairing(token.sub_tokens) }
 						}
 					}
 					return new_tokens

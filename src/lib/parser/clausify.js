@@ -43,7 +43,7 @@ export function clausify(tokens) {
 
 	if (!sentence_is_ending && !is_only_notes()) {
 		// add a 'missing period' error
-		add_token_to_clause(create_added_token('.', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_PERIOD }))
+		add_token_to_clause(create_added_token('.', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_PERIOD, rule_id: 'clause:syntax' }))
 	}
 
 	end_sentence()
@@ -65,7 +65,7 @@ export function clausify(tokens) {
 
 	function end_sentence() {
 		while (clause_tokens.length > 1) {
-			add_token_to_clause(create_added_token(']', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_CLOSING_BRACKET }))
+			add_token_to_clause(create_added_token(']', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_CLOSING_BRACKET, rule_id: 'clause:syntax' }))
 			end_clause()
 		}
 
@@ -79,7 +79,7 @@ export function clausify(tokens) {
 
 	function end_clause() {
 		if (clause_tokens.length === 1) {
-			clause_tokens[0].splice(0, 0, create_added_token('[', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_OPENING_BRACKET }))
+			clause_tokens[0].splice(0, 0, create_added_token('[', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_OPENING_BRACKET, rule_id: 'clause:syntax' }))
 			return
 		}
 
