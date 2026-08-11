@@ -22,6 +22,25 @@ const structural_rules_json = [
 		},
 	},
 	{
+		name: 'Suggestive lets',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'token': '_suggestiveLets' }),
+			context: create_context_filter({
+				'precededby': { 'tag': { 'pronoun': 'first_person' }, 'skip': 'all' },
+			}),
+			action: ({ tokens, trigger_index, context_indexes }) => {
+				const subject = tokens[context_indexes[0]]
+				if (!subject.pronoun) {
+					return trigger_index + 1
+				}
+				subject.pronoun.token = token_has_tag(subject, { 'position': 'first_word' }) ? "Let's" : "let's"
+
+				return trigger_index + 1
+			},
+		},
+	},
+	{
 		name: 'insert "that" into some "patient_clause_different_participant" clauses',
 		comment: '',
 		rule: {
