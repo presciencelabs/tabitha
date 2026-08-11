@@ -11,5 +11,6 @@ export default defineConfig({
 	server: {
 		host: 'localhost.tabitha.bible',
 		port: 5173,
+		strictPort: true, // neeed since there are OAuth settings in place for this port
 	},
 })
