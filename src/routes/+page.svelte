@@ -4,9 +4,9 @@
 	import { Tokens } from '$lib/tokens'
 	import Icon from '@iconify/svelte'
 
-	let entered_text = $saved
-	$: checking = false
-	$: check_response = { status: 'ok', tokens: [], back_translation: '' }
+	let entered_text = $state($saved)
+	let checking = $state(false)
+	let check_response = $state({ status: 'ok', tokens: [], back_translation: '' })
 
 	async function check_text() {
 		checking = true
@@ -28,12 +28,12 @@
 </script>
 
 <form class="grid justify-items-center">
-	<!-- svelte-ignore a11y-autofocus -->
+	<!-- svelte-ignore a11y_autofocus -->
 	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 	<div class="w-4/5 mt-8 grid grid-cols-3">
 		<div class="flex flex-row flex-wrap col-span-2">
-			<button on:click={ clear } class="btn btn-secondary">
+			<button onclick={ clear } class="btn btn-secondary">
 				Clear
 
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
@@ -47,7 +47,7 @@
 		</div>
 
 		<div class="justify-self-end">
-			<button on:click={ check_text } class="btn btn-primary" type="submit" disabled={checking}>
+			<button onclick={ check_text } class="btn btn-primary" type="submit" disabled={checking}>
 				Check
 
 				<Icon icon="mdi:format-list-checks" class="h-6 w-6" />

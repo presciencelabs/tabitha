@@ -6,8 +6,8 @@
 	import Message from './Message.svelte'
 	import { TOKEN_TYPE, token_has_message } from '$lib/token'
 
-	/** @type {SimpleToken} */
-	export let token
+	/** @type {{ token: SimpleToken }}*/
+	let { token } = $props()
 
 	/** @type {Map<TokenType, typeof Word>}*/
 	const component_map = new Map([
@@ -17,14 +17,14 @@
 		[TOKEN_TYPE.LOOKUP_WORD, Word],
 	])
 
-	const component = component_map.get(token.type)
+	const Component = component_map.get(token.type)
 </script>
 
 {#if token_has_message(token)}
 	<div class="join">
 		<Message {token} />
-		<svelte:component this={component} {token} classes="join-item" />
+		<Component {token} classes="join-item" />
 	</div>
 {:else}
-	<svelte:component this={component} {token} />
+	<Component {token} />
 {/if}

@@ -1,9 +1,8 @@
 <script>
 	import { Badge } from '$lib'
 
-	export let classes = ''
+	/** @type {{ children: import('svelte').Snippet, classes?: string }}*/
+	let { children, classes = '' } = $props()
 </script>
 
-<Badge classes="badge-outline px-4 py-5 text-lg tracking-widest {classes}">
-	<slot />
-</Badge>
+<Badge classes="badge-outline px-4 py-5 text-lg tracking-widest {classes}" {children} />

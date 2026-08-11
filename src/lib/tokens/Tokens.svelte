@@ -5,8 +5,8 @@
 	import Clause from './Clause.svelte'
 	import { TOKEN_TYPE } from '$lib/token'
 
-	/** @type {SimpleToken[]} */
-	export let tokens
+	/** @type {{ tokens: SimpleToken[] }}*/
+	let { tokens } = $props()
 
 	/** @type {Map<TokenType, typeof LookupWord>}*/
 	const component_map = new Map([
@@ -20,6 +20,6 @@
 </script>
 
 {#each tokens as token}
-	{@const component = component_map.get(token.type)}
-	<svelte:component this={component} {token} />
+	{@const Component = component_map.get(token.type)}
+	<Component {token} />
 {/each}

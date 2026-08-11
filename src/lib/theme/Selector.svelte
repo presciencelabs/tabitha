@@ -2,12 +2,12 @@
 	import { current_theme, set_theme } from '.'
 	import themes from './themes'
 
-	/** @type {string} class(es) separated by space */
-	export let colors = ''
+	/** @type {{ colors?: string }} class(es) separated by space */
+	let { colors = '' } = $props()
 
-	let open = false
+	let open = $state(false)
 
-	$: other_themes = themes.filter(theme => theme !== $current_theme)
+	let other_themes = $derived(themes.filter(theme => theme !== $current_theme))
 
 	/** @param {string} theme */
 	function set(theme) {
@@ -24,7 +24,7 @@
 		{#each other_themes as theme}
 			<li class="my-0 list-none pl-0">
 				<!-- taken from daisyUI's theme selector design: https://daisyui.com -->
-				<button on:click={() => set(theme)} class="my-2 w-full overflow-hidden rounded-lg text-left">
+				<button onclick={() => set(theme)} class="my-2 w-full overflow-hidden rounded-lg text-left">
 					<div data-theme={theme} class="bg-base-100 text-base-content">
 						<div class="grid grid-cols-5 grid-rows-3">
 							<div class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-4 py-3">

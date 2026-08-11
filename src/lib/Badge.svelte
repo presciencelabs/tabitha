@@ -1,7 +1,7 @@
 <script>
-	export let classes = ''
+	let { children, classes = '' } = $props()
 </script>
 
 <span class="badge badge-lg border-base-content {classes}">
-	<slot />
+	{@render children()}
 </span>

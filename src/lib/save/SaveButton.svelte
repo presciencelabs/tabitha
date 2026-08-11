@@ -2,11 +2,10 @@
 	import Icon from '@iconify/svelte'
 	import { saved } from '.'
 
-	/** @type {string} content */
-	export let content
-	export let classes = ''
+	/** @type {{ content: string, classes?: string }} */
+	let { content, classes = '' } = $props()
 
-	$: is_saved = content !== '' && $saved === content
+	let is_saved = $derived(content !== '' && $saved === content)
 
 	function save() {
 		$saved = content
@@ -20,19 +19,9 @@
 		<Icon icon="mdi:content-save-check" class="h-6 w-6" />
 	</button>
 {:else}
-	<button on:click={ save } class="btn btn-warning {classes}">
+	<button onclick={ save } class="btn btn-warning {classes}">
 		Save to this browser
 
 		<Icon icon="mdi:content-save" class="h-6 w-6" />
 	</button>
 {/if}
-<!-- <button on:click={ save } class="btn btn-secondary {classes}" class:btn-success={is_saved} class:btn-warning={!is_saved}>
-	Save to this browser
-
-	<Icon icon={ is_saved ? 'mdi:content-save-check' : 'mdi:content-save' } class="h-6 w-6" />
-</button>
-<button on:click={ save } class="btn btn-secondary {classes}" class:btn-success={is_saved} class:btn-warning={!is_saved}>
-	Save to this browser
-
-	<Icon icon={ is_saved ? 'mdi:content-save-check' : 'mdi:content-save' } class="h-6 w-6" />
-</button> -->

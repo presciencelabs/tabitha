@@ -2,15 +2,15 @@
 	import CopyButton from '$lib/CopyButton.svelte'
 	import Icon from '@iconify/svelte'
 
-	let entered_text = ''
-	let temperature = 0.0
-	let frequency_penalty = 0.0
-	let presence_penalty = 2.0
+	let entered_text = $state('')
+	let temperature = $state(0.0)
+	let frequency_penalty = $state(0.0)
+	let presence_penalty = $state(2.0)
 
-	let phase1_text = ''
-	let finish_reason = ''
+	let phase1_text = $state('')
+	let finish_reason = $state('')
 
-	$: generating = false
+	let generating = $state(false)
 
 	async function generate_phase1() {
 		generating = true
@@ -39,7 +39,7 @@
 </script>
 
 <form class="grid justify-items-center">
-	<!-- svelte-ignore a11y-autofocus -->
+	<!-- svelte-ignore a11y_autofocus -->
 	<textarea bind:value={entered_text} rows="6" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 	<div class="w-4/5 mt-8">
@@ -59,7 +59,7 @@
 
 	<div class="w-4/5 mt-8 grid grid-cols-3">
 		<div class="flex flex-row flex-wrap col-span-2">
-			<button on:click={ clear } class="btn btn-secondary">
+			<button onclick={ clear } class="btn btn-secondary">
 				Clear
 
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
@@ -67,7 +67,7 @@
 		</div>
 
 		<div class="justify-self-end">
-			<button on:click={ generate_phase1 } class="btn btn-primary" type="submit" disabled={generating}>
+			<button onclick={ generate_phase1 } class="btn btn-primary" type="submit" disabled={generating}>
 				Generate
 
 				<Icon icon="mdi:robot" class="h-6 w-6" />

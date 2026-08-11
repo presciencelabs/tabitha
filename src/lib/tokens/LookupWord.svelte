@@ -3,8 +3,8 @@
 	import PronounReferent from './PronounReferent.svelte'
 	import SingleToken from './SingleToken.svelte'
 
-	/** @type {SimpleToken} */
-	export let token
+	/** @type {{ token: SimpleToken }}*/
+	let { token } = $props()
 </script>
 
 {#if token.pairing}

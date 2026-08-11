@@ -5,8 +5,8 @@
 	import Icon from '@iconify/svelte'
 	import { token_has_message, MESSAGE_TYPE } from '$lib/token'
 
-	/** @type {SimpleToken} */
-	export let token
+	/** @type {{ token: SimpleToken, children?: import('svelte').Snippet }}*/
+	let { token, children } = $props()
 
 	const message_ui = {
 		[MESSAGE_TYPE.ERROR.label]: { text_class: 'text-error', icon: 'close-circle' },
@@ -20,20 +20,25 @@
 	{@const top_ui = message_ui[token.messages[0].label]}
 
 	<PopupMenu color_classes="bg-base-200 text-base-content">
-		<Badge classes="badge-outline px-2 py-5 join-item {top_ui.text_class}" slot="button_content">
-			<Icon icon="mdi:{top_ui.icon}" class="h-6 w-6" />
-			<slot />
-		</Badge>
+		{#snippet button_content()}
+			<Badge classes="badge-outline px-2 py-5 join-item {top_ui.text_class}">
+				<Icon icon="mdi:{top_ui.icon}" class="h-6 w-6" />
+				{@render children?.()}
+			</Badge>
+		{/snippet}
 
-		<Table slot="popup_content" entries={token.messages}>
-			<tr slot="entry_row" let:entry>
-				{@const { text_class, icon } = message_ui[entry.label]}
-
-				<td class="align-middle">
-					<Icon icon="mdi:{icon}" class="h-6 w-6 {text_class}" />
-				</td>
-				<td>{entry.message}</td>
-			</tr>
-		</Table>
+		{#snippet popup_content()}
+			<Table entries={token.messages}>
+				{#snippet entry_row(entry)}
+					{@const { text_class, icon } = message_ui[entry.label]}
+					<tr>
+						<td class="align-middle">
+							<Icon icon="mdi:{icon}" class="h-6 w-6 {text_class}" />
+						</td>
+						<td>{entry.message}</td>
+					</tr>
+				{/snippet}
+			</Table>
+		{/snippet}
 	</PopupMenu>
 {/if}

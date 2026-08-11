@@ -1,10 +1,9 @@
-<script>
+<script lang="ts">
     import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	/** @type {SimpleToken} */
-	export let token
+	let { token }: { token: SimpleToken } = $props()
 
 	/**
 	 * scenarios:
@@ -12,9 +11,7 @@
 	 * bad: /disciple follower/ disciple/disciple disciple/follower /
 	 */
 
-	/** @type {SimpleToken} */
-	// @ts-expect-error the pairing will always be non-null at this point
-	$: pairing_token = token.pairing
+	let pairing_token = $derived(token.pairing!)	// the pairing will always be non-null at this point
 </script>
 
 <div class="join">

@@ -3,8 +3,8 @@
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {SimpleToken} */
-	export let token
+	/** @type {{ token: SimpleToken }} */
+	let { token } = $props()
 </script>
 
 {#if token_has_message(token)}

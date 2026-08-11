@@ -3,6 +3,8 @@
 
 	import { Brand } from '$lib'
 	import { Selector } from '$lib/theme'
+
+	let { children } = $props()
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
@@ -11,7 +13,7 @@
 </header>
 
 <main class="mx-8 mt-8">
-	<slot />
+	{@render children()}
 </main>
 
 <!-- https://daisyui.com/components/footer -->

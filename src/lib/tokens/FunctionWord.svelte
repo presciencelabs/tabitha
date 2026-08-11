@@ -1,9 +1,8 @@
 <script>
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {SimpleToken} */
-	export let token
-	export let classes = ''
+	/** @type {{ token: SimpleToken, classes?: string }}*/
+	let { token, classes = '' } = $props()
 </script>
 
 {#if classes.includes('join-item')}

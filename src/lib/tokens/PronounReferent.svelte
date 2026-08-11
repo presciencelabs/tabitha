@@ -1,14 +1,12 @@
-<script>
+<script lang="ts">
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	/** @type {SimpleToken} */
-	export let token
+	/** @type {{ token: SimpleToken }}*/
+	let { token } = $props()
 
-	/** @type {SimpleToken} */
-	// @ts-expect-error the pronoun will always be non-null at this point
-	const pronoun = token.pronoun
+	let pronoun = $derived(token.pronoun!)	// the pronoun will always be non-null at this point
 </script>
 
 <div class="join">
