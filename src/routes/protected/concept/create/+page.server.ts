@@ -1,5 +1,6 @@
 import { is_authorized } from '$lib/server/auth'
-import { create_concept, get_concept_for_update } from '$lib/server/changes/concepts'
+import { record_create_concept } from '$lib/server/changes/changes.js'
+import { get_concept_for_update } from '$lib/server/changes/concepts'
 import { error, redirect } from '@sveltejs/kit'
 
 /** @type {import('./$types').PageServerLoad} */
@@ -39,7 +40,7 @@ export const actions = {
 			gloss: form_data.get('gloss') as string,
 			brief_gloss: form_data.get('brief_gloss') as string,
 			categories: form_data.getAll('categories[]') as string[],
-			curated_examples: form_data.get('curated_examples') as string,
+			curated_examples: '',
 		}
 
 		const existing = await get_concept_for_update(locals.db_ontology, data)
@@ -47,8 +48,9 @@ export const actions = {
 			throw error(400, 'A concept with this stem, sense, and part of speech already exists.')
 		}
 
-		await create_concept(locals.db_ontology, data)
+		await record_create_concept(locals.db_ontology, data, locals.user!)
 
-		redirect(303, `/?q=${encodeURIComponent(data.stem)}`)
+		// Redirect to the changes page because the change isn't actually reflected in Concepts yet
+		redirect(303, '/protected/changes?status=pending')
 	},
 }

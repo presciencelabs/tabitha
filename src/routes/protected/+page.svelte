@@ -91,5 +91,21 @@
 				</div>
 			</div>
 		{/if}
+
+		<div class="card bg-base-200 shadow-sm border border-base-300 p-5">
+			<h2 class="text-lg font-semibold mb-2 flex items-center gap-2">
+				<Icon icon="material-symbols:published-with-changes" class="w-5 h-5 text-primary" />
+				Changes
+			</h2>
+			<p class="text-sm text-base-content/70 mb-4">
+				View and apply pending changes to the Ontology. Applying changes will make a new downloadable Ontology Version.
+			</p>
+			<div>
+				<a href="/protected/changes?status=pending" class="btn btn-primary" title="Pending Changes">
+					<Icon icon="material-symbols:published-with-changes" class="w-5 h-5" />
+					View Pending Changes
+				</a>
+			</div>
+		</div>
 	</div>
 </div>

@@ -142,6 +142,24 @@ export const usage_info = {
 }
 
 /**
+ * @type {Record<Concept['part_of_speech'], string[]>}
+ */
+export const default_categories = {
+	Verb: [
+		'Agent-like',
+		...new Array(theta_grid_arguments.length-1).fill(''),
+	],
+	Noun: ['All other objects'],
+	Adjective: [
+		'Generic',
+		...usage_info.Adjective.map(v => `never ${v}`),
+	],
+	Adposition: usage_info.Adposition.map(v => `never ${v}`),
+	Adverb: usage_info.Adverb.map(v => `never ${v}`),
+	Conjunction: usage_info.Conjunction.map(v => `never ${v}`),
+}
+
+/**
  * Represents a collection of books.
  * @typedef {Record<number, string>} Book
  * @property {number} number - The unique number representing a book.

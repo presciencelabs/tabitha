@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { levels } from '$lib/lookups'
 	import Header from '$lib/card/Header.svelte'
 
-	let { data, form }: PageProps = $props()
+	let { data }: PageProps = $props()
 
+	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
 	let initial_data = $state.snapshot(concept_data)
 	let is_dirty = $derived(!deep_equal(concept_data, initial_data))
@@ -24,16 +24,7 @@
 
 <article class="card bg-base-200 mx-auto w-[80%]">
 	<main class="card-body">
-		{#if form?.success}
-			<!-- this message is ephemeral; it exists because the page was rendered in
-					response to a form submission. it will vanish if the user reloads -->
-			<div class="pb-6">
-				<div role="alert" class="alert alert-success">
-					<Icon icon="mdi:check-circle-outline" class="h-6 w-6" />
-					<span class="font-semibold">Successfully updated!</span>
-				</div>
-			</div>
-		{/if}
+		<!--TODO show error from server (db, validation, or other)-->
 
 		<section class="prose card-title max-w-none justify-between">
 			<Header concept={concept_for_header} />

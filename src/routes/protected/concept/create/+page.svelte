@@ -2,17 +2,22 @@
 	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
-	import { levels, parts_of_speech } from '$lib/lookups'
+	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import Header from '$lib/card/Header.svelte'
 
 	let { data }: PageProps = $props()
 
+	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
 	let can_save = $derived(concept_data.stem && concept_data.sense && concept_data.part_of_speech)
 
 	let debounced_stem_pos = $state({ stem: concept_data.stem, part_of_speech: concept_data.part_of_speech })
 	let debouce_delay = 500
 	let fetching_sense = $state(false)
+
+	$effect(() => {
+		concept_data.categories = default_categories[concept_data.part_of_speech]?.slice() ?? []
+	})
 
 	$effect(() => {
 		// the timer prevents a fetch request from being sent on every keystroke
@@ -71,6 +76,8 @@
 						{/each}
 					</select>
 				</fieldset>
+
+				<input name="sense" type="hidden" bind:value={concept_data.sense} />
 
 				<fieldset class="fieldset">
 					<legend class="fieldset-legend font-semibold">Level</legend>
