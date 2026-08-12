@@ -108,3 +108,11 @@
 .status-not-started {
 	background-color: #ddc9f0;
 }
+
+h1, h2, h3, h4, .text-balance {
+	text-wrap: balance;
+}
+
+p, article {
+	text-wrap: pretty;
+}

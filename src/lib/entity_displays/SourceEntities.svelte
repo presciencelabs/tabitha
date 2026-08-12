@@ -21,7 +21,7 @@
 		!selected_entity ? null
 			: is_boundary_start(selected_entity)
 				? get_boundary_range(selected_entity.id)
-				: [selected_entity.id, selected_entity.id]
+				: [selected_entity.id, selected_entity.id],
 	)
 
 	let entity_highlights = $derived(source_entities.map((_, i) => {
@@ -82,7 +82,9 @@
 	{#each source_entities as entity}
 		{@const i = entity.id}
 		{@const Component = component_filters.find(([filter]) => filter(entity))?.[1]}
-		<div bind:this={entity_divs[i]} role="button" tabindex="0" class="cursor-default content-center h-20 {entity_highlights[i]}"
+		<div bind:this={entity_divs[i]} role="button" tabindex="0" class="cursor-pointer content-center h-20 {entity_highlights[i]}"
+				onclick={() => entity_focus(i)}
+				onkeydown={e => (e.key === 'Enter' || e.key === ' ') && entity_focus(i)}
 				onmouseenter={() => entity_mouseover(i)}
 				onfocus={() => entity_focus(i)}
 				onmouseleave={entity_mouseout}

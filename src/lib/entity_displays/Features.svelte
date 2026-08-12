@@ -1,23 +1,20 @@
-<script>
+<script lang="ts">
 	import { is_used_in_source } from '$lib/encoding/features'
 
-	/** @type {{ source_entity: SourceEntity, classes?: string }} */
-	let { source_entity, classes='' } = $props()
+	let { source_entity, classes = '' }: { source_entity: SourceEntity, classes?: string } = $props()
 
-	let category = source_entity.category
-	let features = source_entity.features
+	let category = $derived(source_entity.category)
+	let features = $derived(source_entity.features)
 
-	const features_to_display = features.filter(is_used_in_source(category))
-	if (source_entity.noun_list_index) {
-		// show the noun list index as a feature
-		features_to_display.splice(0, 0, { name: 'Noun List Index', value: source_entity.noun_list_index })
-	}
+	let features_to_display = $derived.by(() => {
+		const list = features.filter(is_used_in_source(category))
+		if (source_entity.noun_list_index) {
+			return [{ name: 'Noun List Index', value: source_entity.noun_list_index }, ...list]
+		}
+		return list
+	})
 
-	/**
-	 * @param {EntityFeature} feature
-	 * @returns {boolean}
-	 */
-	function can_be_dulled({ value }) {
+	function can_be_dulled({ value }: EntityFeature) {
 		return value === 'No' || ['Un', 'No ', 'Not '].some(prefix => value.startsWith(prefix))
 	}
 </script>

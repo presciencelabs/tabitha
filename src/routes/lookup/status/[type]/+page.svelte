@@ -1,16 +1,16 @@
-<script>
+<script lang="ts">
 	import { status_list } from '$lib/data/lookups.js'
 	import EncodingStatus from '$lib/EncodingStatus.svelte'
 	import Icon from '@iconify/svelte'
 
-	const { data } = $props()
+	let { data } = $props()
 
-	const status_groups = data.status_groups
+	let status_groups = $derived(data.status_groups)
 	let selected_status = $state('All')
 
 	let filtered_status_groups = $derived(status_groups.map(({ group_name, statuses }) => ({
 		group_name,
-		statuses: selected_status === 'All' ? statuses : statuses.filter(s => s.status === selected_status)
+		statuses: selected_status === 'All' ? statuses : statuses.filter(s => s.status === selected_status),
 	})))
 </script>
 

@@ -1,10 +1,9 @@
-<script>
+<script lang="ts">
 	import Punctuation from './Punctuation.svelte'
 
-	/** @type {{ source_entity: PageSourceEntity }} */
-	let { source_entity } = $props()
+	let { source_entity }: { source_entity: PageSourceEntity } = $props()
 
-	const bracket_entity = { ...source_entity, value: ']' }
+	let bracket_entity = $derived({ ...source_entity, value: ']' })
 </script>
 
 <div class="inline-flex entity-{source_entity.boundary_category}">

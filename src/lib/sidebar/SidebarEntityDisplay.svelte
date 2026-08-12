@@ -1,9 +1,8 @@
-<script>
+<script lang="ts">
 	import { is_boundary_start } from '$lib/encoding/entity_filters'
 	import Punctuation from '$lib/entity_displays/Punctuation.svelte'
 
-	/** @type {PageSourceEntity} */
-	export let entity
+	let { entity }: { entity: PageSourceEntity } = $props()
 </script>
 
 <div class="entity-{entity.boundary_category}">

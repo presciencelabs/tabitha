@@ -1,8 +1,7 @@
 /**
  * TODO add and use an 'order' field in the db
- * @type {Record<string, Record<number, string>>}
  */
-export const ordered_primary_ids = {
+export const ordered_primary_ids: Record<string, Record<number, string>> = {
 	'Bible': {
 		1: 'Genesis',
 		2: 'Exodus',
@@ -75,16 +74,12 @@ export const ordered_primary_ids = {
 
 /**
  * TODO somehow store in the db
- * @type {Record<string, Record<string, [number, number]>>}
  */
-export const primary_id_groupings = {
+export const primary_id_groupings: Record<string, Record<string, [number, number]>> = {
 	'Bible': {
 		'Old Testament': [1, 39],
 		'New Testament': [40, 66],
 	},
 }
 
-/**
- * @type {SourceStatus[]}
- */
-export const status_list = ['Not Started', 'Initial Analysis in Progress', 'Initial Analysis Complete', 'Final Review in Progress', 'Ready to Translate']
+export const status_list: SourceStatus[] = ['Not Started', 'Initial Analysis in Progress', 'Initial Analysis Complete', 'Final Review in Progress', 'Ready to Translate']

@@ -15,7 +15,9 @@
 	let { entity, onclose, noun_list }: Props = $props()
 </script>
 
-<div class="fixed top-0 right-0 h-full w-100 bg-base-100 border-l border-base-300 shadow-xl flex flex-col">
+<svelte:window onkeydown={e => e.key === 'Escape' && onclose()} />
+
+<div class="fixed top-0 right-0 h-full w-96 bg-base-100 border-l border-base-300 shadow-xl flex flex-col">
 	<button class="btn btn-circle btn-ghost btn-sm absolute right-3 top-5" onclick={onclose} >
 		<Icon icon="material-symbols:close" class="h-4 w-4" />
 	</button>
@@ -30,32 +32,27 @@
 			</section>
 
 			<section>
+				{#snippet concept_sections(concept: SourceConcept, suffix: string)}
+					<SidebarDetail summary_title="Concept Details{suffix}">
+						{#snippet details_content()}
+							<ConceptDetails data={concept} />
+						{/snippet}
+					</SidebarDetail>
+					<SidebarDetail summary_title="All Senses{suffix}">
+						{#snippet details_content()}
+							<AllSenseDetails data={concept} />
+						{/snippet}
+					</SidebarDetail>
+				{/snippet}
+
 				<!--Ontology Details (if present)-->
 				{#if entity.concept !== null}
-					<SidebarDetail summary_title="Concept Details">
-						{#snippet details_content()}
-							<ConceptDetails data={entity!.concept!} />
-						{/snippet}
-					</SidebarDetail>
-					<SidebarDetail summary_title="All Senses">
-						{#snippet details_content()}
-							<AllSenseDetails data={entity!.concept!} />
-						{/snippet}
-					</SidebarDetail>
+					{@render concept_sections(entity.concept, '')}
 				{/if}
 
 				<!--Ontology Details for Pairing (if present)-->
 				{#if entity.pairing_concept !== null}
-					<SidebarDetail summary_title="Concept Details - Pairing">
-						{#snippet details_content()}
-							<ConceptDetails data={entity!.pairing_concept!} />
-						{/snippet}
-					</SidebarDetail>
-					<SidebarDetail summary_title="All Senses - Pairing">
-						{#snippet details_content()}
-							<AllSenseDetails data={entity!.pairing_concept!} />
-						{/snippet}
-					</SidebarDetail>
+					{@render concept_sections(entity.pairing_concept, ' - Pairing')}
 				{/if}
 
 				<!--Noun List Index-->

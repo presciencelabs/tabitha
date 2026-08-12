@@ -1,14 +1,10 @@
+import type { D1Database } from '@cloudflare/workers-types'
 import { get_secondary_ids, get_source_data, get_tertiary_ids } from './read'
 import { ordered_primary_ids } from './lookups'
 
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @param {Reference} reference
- * @returns {Promise<Reference|null>}
- */
-export async function get_previous_reference(db, reference) {
+export async function get_previous_reference(db: D1Database, reference: Reference): Promise<Reference | null> {
 	// try decrementing id_tertiary
-	let previous = {
+	let previous: Reference = {
 		...reference,
 		id_tertiary: `${Number(reference.id_tertiary) - 1}`,
 	}
@@ -51,14 +47,9 @@ export async function get_previous_reference(db, reference) {
 	return await get_source_data(db, previous) ? previous : null
 }
 
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @param {Reference} reference
- * @returns {Promise<Reference|null>}
- */
-export async function get_next_reference(db, reference) {
+export async function get_next_reference(db: D1Database, reference: Reference): Promise<Reference | null> {
 	// try incrementing id_tertiary
-	let next = {
+	let next: Reference = {
 		...reference,
 		id_tertiary: `${Number(reference.id_tertiary) + 1}`,
 	}
@@ -96,11 +87,7 @@ export async function get_next_reference(db, reference) {
 	return await get_source_data(db, next) ? next : null
 }
 
-/**
- * @param {Reference} reference
- * @returns {number|undefined}
- */
-function find_book_index(reference) {
+function find_book_index(reference: Reference): number | undefined {
 	const book_names = ordered_primary_ids[reference.type]
 	if (!book_names) {
 		return undefined
@@ -110,12 +97,7 @@ function find_book_index(reference) {
 	return index_string ? Number(index_string) : undefined
 }
 
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @param {string} book_name
- * @returns {Promise<string|null>}
- */
-async function get_last_chapter(db, book_name) {
+async function get_last_chapter(db: D1Database, book_name: string): Promise<string | null> {
 	const secondary_ids = await get_secondary_ids(db, 'Bible', book_name)
 	if (secondary_ids.length === 0) {
 		return null
@@ -123,13 +105,7 @@ async function get_last_chapter(db, book_name) {
 	return Math.max(...secondary_ids.map(({ id_secondary }) => Number(id_secondary))).toString()
 }
 
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @param {string} book_name
- * @param {string} chapter
- * @returns {Promise<string|null>}
- */
-async function get_last_verse(db, book_name, chapter) {
+async function get_last_verse(db: D1Database, book_name: string, chapter: string): Promise<string | null> {
 	const tertiary_ids = await get_tertiary_ids(db, 'Bible', book_name, chapter)
 	if (tertiary_ids.length === 0) {
 		return null

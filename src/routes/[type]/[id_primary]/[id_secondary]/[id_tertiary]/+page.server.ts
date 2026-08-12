@@ -2,10 +2,10 @@ import { get_next_reference, get_previous_reference } from '$lib/data/navigation
 import { get_source_data } from '$lib/data/read'
 import { get_noun_list, structure_semantic_encoding, transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { error } from '@sveltejs/kit'
+import type { PageServerLoad } from './$types'
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }) {
-	const reference = { type, id_primary, id_secondary, id_tertiary }
+export const load: PageServerLoad = async ({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }) => {
+	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }
 	const source = await get_source_data(db, reference)
 
 	if (!source) {

@@ -1,24 +1,41 @@
-<script>
+<script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'
 	import Icon from '@iconify/svelte'
 
-	/** @type {SourceConcept} */
-	export let data
+	interface Props {
+		data: SourceConcept
+		actions?: Snippet
+	}
 
-	/**
-	 * @param {SourceConcept} concept
-	 * @returns {string} fully-qualified URL to the ontology API
-	 */
-	function get_ontology_url_for_link({ stem, part_of_speech }) {
+	let { data = $bindable(), actions }: Props = $props()
+
+	let ontology_data = $state<OntologyResult | null>(null)
+
+	$effect(() => {
+		let cancelled = false
+		ontology_data = data.ontology_data ?? null
+
+		if (!data.ontology_data) {
+			fetch_concept_ontology_data(data).then(res => {
+				if (!cancelled) {
+					ontology_data = res
+				}
+			})
+		}
+
+		return () => {
+			cancelled = true
+		}
+	})
+
+	function get_ontology_url_for_link({ stem, part_of_speech }: SourceConcept) {
 		return `${PUBLIC_ONTOLOGY_API_HOST}/?q=${stem}&category=${part_of_speech}`
 	}
 
-	/**
-	 * @param {SourceConcept} concept
-	 * @returns {[string, string[]]}
-	 */
-	function get_category_and_usage(concept) {
-		const categories = concept.ontology_data?.categories || []
+	function get_category_and_usage(concept: SourceConcept, current_ontology: OntologyResult | null): [string, string[]] {
+		const categories = current_ontology?.categories || []
 		if (concept.part_of_speech === 'Noun') {
 			return [categories.at(0) ?? '', []]
 		} else if (concept.part_of_speech === 'Adjective') {
@@ -29,15 +46,21 @@
 	}
 </script>
 
-{#if data.ontology_data}
-	{@const { stem, sense, level, gloss } = data.ontology_data}
-	{@const [category, usages] = get_category_and_usage(data)}
+{#if ontology_data}
+	{@const { stem, sense, level, gloss } = ontology_data}
+	{@const [category, usages] = get_category_and_usage(data, ontology_data)}
 
-	<div class="flex justify-end">
-		<a class="link link-accent text-xs flex items-end" href={get_ontology_url_for_link(data)} target="_blank">
-			View in Ontology
-			<Icon icon="fe:link-external" class="h-4 w-4" />
-		</a>
+	<div class="flex w-full mb-2">
+		{#if actions}
+			{@render actions()}
+		{/if}
+
+		<div class="flex justify-end flex-auto">
+			<a class="link link-accent text-xs flex items-end" href={get_ontology_url_for_link(data)} target="_blank">
+				View in Ontology
+				<Icon icon="fe:link-external" class="h-4 w-4" />
+			</a>
+		</div>
 	</div>
 
 	<table class="table table-sm table-zebra">

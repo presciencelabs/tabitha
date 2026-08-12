@@ -9,10 +9,16 @@
 
 	let { data }: PageProps = $props()
 
-	let phase1_text = $state(data.source.phase_1_encoding)
-	let source_entities = $state(data.source.parsed_semantic_encoding)
-	let noun_list = $state(data.source.noun_list)
-	const all_features = data.features
+	let phase1_text = $state('')
+	let source_entities = $state<PageSourceEntity[]>([])
+	let noun_list = $state<NounListEntry[]>([])
+	let all_features = $derived(data.features)
+
+	$effect(() => {
+		phase1_text = data.source.phase_1_encoding
+		source_entities = data.source.parsed_semantic_encoding
+		noun_list = data.source.noun_list
+	})
 
 	let is_checked = $state(false)
 	let checking = $state(false)
@@ -20,26 +26,38 @@
 	let errors_and_warnings: [CheckerMessage, number][] = $state([])
 
 	let analyzing = $state(false)
+	let api_error = $state<string | null>(null)
 
 	function text_changed() {
 		is_checked = false
+		api_error = null
 	}
 
 	async function check_text() {
+		api_error = null
 		check_result = null
 		checking = true
-		const response = await fetch(`${PUBLIC_EDITOR_API_HOST}/check?text=${sanitize_input(phase1_text)}`)
 
-		const check_response: CheckerResult = await response.json()
-		check_response.tokens = check_response.tokens.flatMap(flatten_tokens)
+		try {
+			const response = await fetch(`${PUBLIC_EDITOR_API_HOST}/check?text=${sanitize_input(phase1_text)}`)
+			if (!response.ok) {
+				throw new Error(`Checker API returned HTTP ${response.status}`)
+			}
 
-		errors_and_warnings = check_response.tokens
-			.flatMap((token, i) => token.messages.map<[CheckerMessage, number]>(msg => [msg, i]))
-			.filter(([msg]) => ['error', 'warning'].includes(msg.label))
+			const check_response: CheckerResult = await response.json()
+			check_response.tokens = check_response.tokens.flatMap(flatten_tokens)
 
-		check_result = check_response
-		is_checked = true
-		checking = false
+			errors_and_warnings = check_response.tokens
+				.flatMap((token, i) => token.messages.map<[CheckerMessage, number]>(msg => [msg, i]))
+				.filter(([msg]) => ['error', 'warning'].includes(msg.label))
+
+			check_result = check_response
+			is_checked = true
+		} catch (err) {
+			api_error = err instanceof Error ? err.message : 'Failed to check text'
+		} finally {
+			checking = false
+		}
 
 		function flatten_tokens(token: CheckerToken): CheckerToken[] {
 			if (token.sub_tokens.length) {
@@ -62,13 +80,23 @@
 			}
 		}
 
+		api_error = null
 		check_result = null
 		analyzing = true
-		const response = await fetch(`/analyze?text=${sanitize_input(phase1_text)}`)
-		const result = await response.json() as AnalysisResult
-		source_entities = result.source_entities
-		noun_list = result.noun_list
-		analyzing = false
+
+		try {
+			const response = await fetch(`/analyze?text=${sanitize_input(phase1_text)}`)
+			if (!response.ok) {
+				throw new Error(`Analyze API returned HTTP ${response.status}`)
+			}
+			const result = await response.json() as AnalysisResult
+			source_entities = result.source_entities
+			noun_list = result.noun_list
+		} catch (err) {
+			api_error = err instanceof Error ? err.message : 'Failed to analyze text'
+		} finally {
+			analyzing = false
+		}
 	}
 
 	function sanitize_input(text: string) {
@@ -92,7 +120,7 @@
 <div class="flex flex-row flex-wrap max-w-full">
 	<Navigation nav_data={data.nav_data} url_end="/edit" />
 
-	<button onclick={ check_text } onchange={ text_changed } class="btn btn-primary ml-8" type="submit" disabled={checking}>
+	<button onclick={ check_text } class="btn btn-primary ml-8" type="submit" disabled={checking}>
 		Check
 		{#if checking}
 			<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
@@ -117,11 +145,19 @@
 	</div>
 </div>
 
+{#if api_error}
+	<div role="alert" class="alert alert-error my-3">
+		<Icon icon="mdi:alert-circle-outline" class="h-6 w-6" />
+		<span>API Request Failed: {api_error}</span>
+		<button class="btn btn-xs btn-ghost" onclick={() => api_error = null}>Dismiss</button>
+	</div>
+{/if}
+
 <div class="divider my-2"></div>
 <div>
 	<p class="label">Input Text</p>
 	<p>
-		<textarea bind:value={phase1_text} rows="3" class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
+		<textarea bind:value={phase1_text} oninput={text_changed} rows="3" class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 	</p>
 </div>
 

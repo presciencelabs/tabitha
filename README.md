@@ -45,7 +45,7 @@ Dump files can be found under the 'databases' folder within the databases repo: 
 
 Running the following command will load the data locally:
 
-`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file <DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
+`pnpm wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file <DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
 
 #### 2. Start the app
 
@@ -57,20 +57,35 @@ pnpm dev
 
 The site should then be available here: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789)
 
-## Static analysis
+## Static analysis & Testing
+
+### Static analysis
 
 ```bash
 pnpm check
 ```
-### Testing locally
 
-> `pnpm exec playwright install` will need to be run at least once to get the headless browsers for testing.
+### Unit testing (Vitest)
+
+Runs pure logic tests for reference parsing, feature decoding, semantic encoding, and API lookups:
+
+```bash
+pnpm test:unit
+```
+
+### End-to-end testing (Playwright)
+
+> `pnpm exec playwright install chromium` will need to be run at least once to get headless browsers for testing.
 
 ```bash
 pnpm test:e2e
 ```
 
-🐛 debugging tests can be done with `pnpm test:e2e:dev`.
+🐛 Debugging E2E tests interactively:
+
+```bash
+pnpm test:e2e:dev
+```
 
 ## Contributing
 

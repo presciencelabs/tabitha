@@ -26,11 +26,11 @@ export async function get_book_status(db: D1Database, reference: StatusRequestRe
 	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ status: SourceStatus }>()
 	return {
 		reference,
-		status: combine_statuses(results)
+		status: combine_statuses(results),
 	}
 }
 
-function combine_statuses(status_array: { status: SourceStatus }[]) {
+export function combine_statuses(status_array: { status: SourceStatus }[]) {
 	const just_statuses = status_array.map(({ status }) => status)
 	const status_mapping: [(statuses: SourceStatus[]) => boolean, SourceStatus][] = [
 		[statuses => statuses.every(s => s === 'Ready to Translate'), 'Ready to Translate'],

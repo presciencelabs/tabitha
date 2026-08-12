@@ -1,7 +1,7 @@
-<script>
-	const { data } = $props()
+<script lang="ts">
+	let { data } = $props()
 
-	const features_by_category = data.features
+	let features_by_category = $derived(data.features)
 
 	let chosen_category = $state('Noun')
 	let features_to_show = $derived(features_by_category.get(chosen_category) || [])

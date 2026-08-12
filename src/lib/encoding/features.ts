@@ -74,7 +74,7 @@ export function decode_features(raw_feature_codes: string, category: CategoryNam
 	}
 }
 
-function encode_features(entity: SourceEntity): string {
+export function encode_features(entity: SourceEntity): string {
 	// Encode the entity's features into the TBTA-compatible format
 	if (entity.concept) {
 		// The '1' is supposed to represent the complexity level, but is set at generation time. So it is always 1 in the encoding.

@@ -1,10 +1,8 @@
-// https://kit.svelte.dev/docs/routing#server
 import { error, redirect } from '@sveltejs/kit'
 import { parse_reference } from '$lib/data/ref_parser'
+import type { RequestHandler } from './$types'
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url: { searchParams } }) {
-	/** @type {string} */
+export const GET: RequestHandler = async ({ url: { searchParams } }) => {
 	const ref = searchParams.get('ref') ?? ''
 
 	const parsed_ref = parse_reference(ref)

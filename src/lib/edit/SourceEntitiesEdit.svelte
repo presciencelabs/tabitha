@@ -23,7 +23,7 @@
 		!selected_entity ? null
 			: is_boundary_start(selected_entity)
 				? get_boundary_range(selected_entity.id)
-				: [selected_entity.id, selected_entity.id]
+				: [selected_entity.id, selected_entity.id],
 	)
 
 	let entity_highlights: string[] = $derived(source_entities.map((_, i) => {
@@ -50,7 +50,7 @@
 		y: 0,
 	})
 
-	function open_entity_context_menu(event: any, entity_id: number) {
+	function open_entity_context_menu(event: MouseEvent, entity_id: number) {
 		event.stopPropagation()
 		event.preventDefault()
 		entity_context_menu_data = {
@@ -114,7 +114,9 @@
 	{#each source_entities as entity}
 		{@const i = entity.id}
 		{@const Component = component_filters.find(([filter]) => filter(entity))?.[1]}
-		<div role="button" tabindex="0" class="id-{i} cursor-default content-center h-20 {entity_highlights[i]}"
+		<div role="button" tabindex="0" class="id-{i} cursor-pointer content-center h-20 {entity_highlights[i]}"
+				onclick={() => entity_focus(i)}
+				onkeydown={e => (e.key === 'Enter' || e.key === ' ') && entity_focus(i)}
 				onmouseenter={() => entity_mouseover(i)}
 				onfocus={() => entity_focus(i)}
 				onmouseleave={entity_mouseout}

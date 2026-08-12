@@ -1,8 +1,8 @@
 import { get_book_status } from '$lib/data/status'
 import { json } from '@sveltejs/kit'
+import type { RequestHandler } from './$types'
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ locals: { db }, params: { type, id_primary } }) {
+export const GET: RequestHandler = async ({ locals: { db }, params: { type, id_primary } }) => {
 	const result = await get_book_status(db, { type, id_primary })
 
 	const SIX_HOUR_CACHE = {

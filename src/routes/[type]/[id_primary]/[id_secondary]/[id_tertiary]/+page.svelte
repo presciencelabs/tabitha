@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Navigation, SourceEntities } from '$lib'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar/Sidebar.svelte'
@@ -6,17 +6,14 @@
 
 	let { data } = $props()
 
-	let source = $state(data.source)
-	let nav_data = $state(data.nav_data)
+	let source = $derived(data.source)
+	let nav_data = $derived(data.nav_data)
 
 	/** @type {PageSourceEntity|null}*/
-	let selected_entity = $state(null)
+	let selected_entity = $state<PageSourceEntity | null>(null)
 	let sidebar_open = $state(false)
 
-	/**
-	 * @param {PageSourceEntity} entity
-	 */
-	function on_entity_select(entity) {
+	function on_entity_select(entity: PageSourceEntity) {
 		selected_entity = entity
 		sidebar_open = true
 	}
@@ -26,6 +23,10 @@
 		sidebar_open = false
 	}
 </script>
+
+<svelte:head>
+	<title>{source.id_primary} {source.id_secondary}:{source.id_tertiary} - TaBiThA Sources</title>
+</svelte:head>
 
 <div class="grid justify-items-stretch grid-cols-3 pb-5">
 	<div class="justify-self-start">
