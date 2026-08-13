@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
 	import Features from './Features.svelte'
+	import type { SourceEntity } from '$lib/types'
 
-	/** @type {SourceEntity} */
-	export let source_entity
+	let { source_entity }: { source_entity: SourceEntity } = $props()
 </script>
 
 <span class="inline-flex pe-1 tracking-widest">
@@ -11,9 +11,9 @@
 	</span>
 	<Features {source_entity} classes={'self-center'}>
 		<span class="text-sm tracking-tight">
-			<!-- For Noun Phrases, show the Semantic Role. For everything else, show no codes -->
 			{#if source_entity.category === 'Noun Phrase'}
-				{source_entity.category_abbr}-{source_entity.feature_codes[1]}
+				{@const semantic_role = source_entity.feature_codes[1]}
+				{source_entity.category_abbr}-{semantic_role}
 			{:else}
 				{source_entity.category_abbr}
 			{/if}

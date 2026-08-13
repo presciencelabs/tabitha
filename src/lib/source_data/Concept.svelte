@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+	import type { SourceConcept } from '$lib/types'
 
-	/** @type {SourceConcept} */
-	export let data
-	const concept = `${data.stem}-${data.sense}`
+	let { data }: { data: SourceConcept } = $props()
+	let concept = $derived(`${data.stem}-${data.sense}`)
 </script>
 
 <span class="text-sm tracking-tight">

@@ -1,15 +1,11 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/state'
 	import Icon from '@iconify/svelte'
 
-	/** @type {string} */
-	export let project
-	
-	/** @type {string|null} */
-	let value = new URLSearchParams(page.url.search).get('q')
+	let { project }: { project: string } = $props()
 
-	/** @type {string|null} */
-	let return_to = new URLSearchParams(page.url.search).get('return_to')
+	let value = $state(page.url.searchParams.get('q') ?? '')
+	let return_to = $state(page.url.searchParams.get('return_to') ?? '')
 </script>
 
 <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search -->

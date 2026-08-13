@@ -1,3 +1,0 @@
-type ProjectResult = {
-	project: string
-}

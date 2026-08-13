@@ -1,10 +1,9 @@
-<script>
-	/** @type {SourceEntity} */
-	export let source_entity
+<script lang="ts">
+	import type { SourceEntity } from '$lib/types'
 
-	export let classes = ''
+	let { source_entity }: { source_entity: SourceEntity } = $props()
 </script>
 
-<span class="text-lg font-thin {classes} pe-1">
+<span class="inline-flex tracking-widest text-lg font-thin">
 	{source_entity.value}
 </span>

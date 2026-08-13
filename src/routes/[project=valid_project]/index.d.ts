@@ -1,3 +1,0 @@
-type BookResult = {
-	book: string
-}

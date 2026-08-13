@@ -1,40 +1,39 @@
-<script>
+<script lang="ts">
+	import type { SourceEntity } from '$lib/types'
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
 	import Punctuation from './Punctuation.svelte'
 
-	/** @type {SourceEntity[]} */
-	export let source_entities
+	let { source_entities }: { source_entities: SourceEntity[] } = $props()
 
-	const main_clauses = source_entities.reduce(clause_reducer, [])
+	let main_clauses = $derived(source_entities.reduce(clause_reducer, [] as SourceEntity[][]))
 
-	/**
-	 * @param {SourceEntity[][]} clauses
-	 * @param {SourceEntity} source_entity
-	 */
-	function clause_reducer(clauses, source_entity) {
-		if (source_entity.value === '{') {
+	function clause_reducer(clauses: SourceEntity[][], entity: SourceEntity) {
+		if (entity.value === '{') {
 			clauses.push([])
 		}
-		clauses.at(-1)?.push(source_entity)
+
+		const last_clause = clauses[clauses.length - 1]
+		if (last_clause) {
+			last_clause.push(entity)
+		}
+
 		return clauses
 	}
 
-	/** @type {[(entity: SourceEntity) => boolean, typeof Word][]}*/
-	const component_filters = [
-		[({ value }) => ['{', '[', '('].includes(value), BoundaryStart],
-		[({ value }) => ['}', ']', ')'].includes(value), BoundaryEnd],
-		[({ concept }) => !!concept, Word],
-		[() => true, Punctuation],
-	]
+	function get_component(entity: SourceEntity) {
+		if (['{', '[', '('].includes(entity.value)) return BoundaryStart
+		if (['}', ']', ')'].includes(entity.value)) return BoundaryEnd
+		return entity.concept ? Word : Punctuation
+	}
 </script>
 
 {#each main_clauses as main_clause}
 	<div class="hover:bg-base-200">
 		{#each main_clause as source_entity}
-			{@const component = component_filters.find(([filter]) => filter(source_entity))?.[1]}
-			<svelte:component this={component} {source_entity} />
+			{@const Component = get_component(source_entity)}
+			<Component {source_entity} />
 		{/each}
 	</div>
 {/each}
