@@ -1,0 +1,68 @@
+PROPRIETARY NONPROFIT INTERNAL-USE SOFTWARE LICENSE
+Version 1.0
+Copyright (c) 2026 Wycliffe Canada
+All rights reserved.
+
+1. Definitions
+“Software” means the source code, object code, related files, and any updates made available by Licensor in this repository.
+
+“Licensor” means [Wycliffe Canada].
+
+“Qualified Nonprofit” means:
+(a) a nonprofit corporation, registered charity, church, ministry, school, university, or other organization
+that is organized and operated on a not-for-profit basis under the laws of its jurisdiction; and
+(b) not using the Software for commercial sale, commercial hosting, paid sublicensing, or other commercial exploitation.
+
+2. License Grant
+Subject to this License, Licensor grants a Qualified Nonprofit a limited, non-exclusive, non-transferable,
+non-sublicensable, revocable license to:
+(a) download and use the Software for its own internal nonprofit purposes; and
+(b) make a reasonable number of backup and archival copies.
+
+3. Restrictions
+Except with Licensor’s prior written permission, you may not:
+(a) sell, sublicense, rent, lease, distribute, publish, or otherwise make the Software available to any third party;
+(b) use the Software to provide paid services to third parties;
+(c) use the Software for commercial advantage or monetary compensation;
+(d) modify, adapt, translate, reverse engineer, decompile, disassemble, or create derivative works of the Software;
+(e) remove or alter any copyright, trademark, or proprietary notices; or
+(f) assign or transfer your rights under this License.
+
+4. Affiliates and Contractors
+You may permit your employees and individual contractors to use the Software on your behalf for your internal nonprofit purposes only,
+provided you remain responsible for their compliance with this License.
+
+5. Ownership
+The Software is licensed, not sold. Licensor retains all right, title, and interest in and to the Software,
+including all copyright, trade secret, patent, and other intellectual property rights.
+
+6. No Open Source License
+This License is proprietary and does not grant any open source rights.
+
+7. No Trademark Rights
+No trademark, service mark, trade name, logo, or branding rights are granted under this License.
+
+8. No Patent License
+No express or implied patent license is granted under this License.
+
+9. Termination
+This License terminates automatically if you violate any term of this License.
+Upon termination, you must stop using the Software and delete all copies in your possession or control.
+
+10. Disclaimer
+THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+11. Limitation of Liability
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, LICENSOR WILL NOT BE LIABLE FOR ANY INDIRECT,
+INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, OR FOR ANY LOSS OF DATA,
+REVENUE, OR PROFITS, ARISING OUT OF OR RELATING TO THE SOFTWARE OR THIS LICENSE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+12. Governing Law
+This License is governed by the laws of [British Columbia Canada], without regard to conflict-of-laws rules.
+
+13. Commercial Licensing
+For commercial use, modification rights, redistribution rights, or any use not expressly permitted by this License,
+contact: [david.duncan@wycliffe.ca]

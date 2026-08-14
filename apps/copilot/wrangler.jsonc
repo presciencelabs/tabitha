@@ -1,0 +1,36 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "tabitha-copilot",
+	"compatibility_date": "2026-02-20",
+	"compatibility_flags": [
+		"nodejs_als",
+		"nodejs_compat"
+	],
+	"vars": {
+		"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
+		"GEMINI_LOCATION": "global",
+		"GEMINI_CLIENT_EMAIL": "vertex-copilot-sa@gen-lang-client-0319586327.iam.gserviceaccount.com"
+	},
+	"placement": {
+		"mode":"smart"
+	},
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"routes": [
+		{
+			"pattern": "copilot-dev.tabitha.bible",
+			"custom_domain": true
+		}
+	],
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		}
+	}
+}
