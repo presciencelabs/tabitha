@@ -24,12 +24,16 @@
 		const { stem, sense, part_of_speech } = concept_data
 		return `${stem}-${sense}-${part_of_speech}`
 	}
+
+	function focus_alert(node: HTMLElement) {
+		node.focus()
+	}
 </script>
 
 <article class="card bg-base-200 mx-auto w-[80%]">
 	<div class="card-body">
 		{#if form?.error}
-			<aside class="alert alert-error mb-4">
+			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
 				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
 				<span>{form.error}</span>
 			</aside>
