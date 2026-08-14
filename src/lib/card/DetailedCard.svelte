@@ -34,7 +34,7 @@
 		</form>
 
 		<article class="card">
-			<main class="card-body">
+			<div class="card-body">
 				<section class="prose card-title max-w-none justify-between">
 					<Header {concept} />
 				</section>
@@ -99,7 +99,7 @@
 						<Examples {concept} />
 					</section>
 				{/if}
-			</main>
+			</div>
 		</article>
 	</section>
 

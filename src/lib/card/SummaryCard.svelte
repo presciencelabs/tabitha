@@ -26,7 +26,7 @@
 </script>
 
 <article class="card card-border grow shadow-md">
-	<main class="card-body">
+	<div class="card-body">
 		<section class="prose card-title max-w-none justify-between">
 			<Header {concept} />
 		</section>
@@ -67,7 +67,7 @@
 				EXPAND <Icon icon="gg:maximize-alt" class="h-4 w-4" />
 			</button>
 		</section>
-	</main>
+	</div>
 </article>
 
 {#if expanded}
