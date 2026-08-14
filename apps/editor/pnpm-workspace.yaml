@@ -1,0 +1,12 @@
+packages:
+  - '.'
+allowBuilds:
+  esbuild: true
+  sharp: false
+  workerd: false
+onlyBuiltDependencies:
+  - '@sveltejs/kit'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+  - workerd

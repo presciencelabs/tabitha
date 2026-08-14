@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui' {
+	themes:
+		light --default,
+		dark --prefersdark,
+		abyss,
+		acid,
+		aqua,
+		autumn,
+		black,
+		bumblebee,
+		business,
+		caramellatte,
+		cmyk,
+		coffee,
+		corporate,
+		cupcake,
+		cyberpunk,
+		dim,
+		emerald,
+		fantasy,
+		forest,
+		garden,
+		lemonade,
+		lofi,
+		luxury,
+		night,
+		nord,
+		pastel,
+		retro,
+		silk,
+		sunset,
+		synthwave,
+		valentine,
+		winter,
+		wireframe;
+}
+
+/* TODO: second copy of these, time to DRY them out.  Also used in Ontology app.
+
+	complexity level colors in TBTA are as follows:
+	0 => blue
+	1 => creme
+	2 => magenta
+	3 => green
+	4 => brown
+*/
+.L0 {
+	color: whitesmoke;
+	background-color: #0b66ff;
+}
+.L1 {
+	color: darkblue;
+	background-color: #fcffc5;
+	filter: saturate(200%);
+}
+.L2 {
+	color: yellow;
+	background-color: #fb00ff;
+}
+.L3 {
+	color: whitesmoke;
+	background-color: #0f7000;
+}
+.L4 {
+	color: whitesmoke;
+	background-color: #6b2f30;
+}
+.L0-text {
+	color: whitesmoke;
+}
+.L1-text {
+	color: darkblue;
+}
+.L2-text {
+	color: yellow;
+}
+.L3-text {
+	color: whitesmoke;
+}
+.L4-text {
+	color: whitesmoke;
+}
