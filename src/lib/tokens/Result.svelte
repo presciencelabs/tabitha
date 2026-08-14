@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import PopupMenu from './PopupMenu.svelte'
@@ -6,8 +6,12 @@
 	import Icon from '@iconify/svelte'
 	import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
-	/** @type {{ token: SimpleToken, classes?: string }}*/
-	let { token, classes = '' } = $props()
+	interface Props {
+		token: SimpleToken
+		classes?: string
+	}
+
+	let { token, classes = '' }: Props = $props()
 </script>
 
 <PopupMenu>
@@ -27,7 +31,7 @@
 					<tr>
 						<td class="whitespace-nowrap">
 							<span>
-								<a class="link not-prose {classes}" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank">
+								<a class="link not-prose" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank">
 									{concept}
 								</a>
 								{#if entry.case_frame.status === 'valid'}

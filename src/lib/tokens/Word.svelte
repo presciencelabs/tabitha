@@ -1,10 +1,14 @@
-<script>
-    import { LOOKUP_FILTERS } from '$lib/lookup_filters'
+<script lang="ts">
+	import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'
 
-	/** @type {{ token: SimpleToken, classes?: string }}*/
-	let { token, classes = '' } = $props()
+	interface Props {
+		token: SimpleToken
+		classes?: string
+	}
+
+	let { token, classes = '' }: Props = $props()
 </script>
 
 {#if token.lookup_results.some(LOOKUP_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY)}

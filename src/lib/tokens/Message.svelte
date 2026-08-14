@@ -1,12 +1,17 @@
-<script>
+<script lang="ts">
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import { Badge } from '$lib'
 	import Icon from '@iconify/svelte'
 	import { token_has_message, MESSAGE_TYPE } from '$lib/token'
+	import type { Snippet } from 'svelte'
 
-	/** @type {{ token: SimpleToken, children?: import('svelte').Snippet }}*/
-	let { token, children } = $props()
+	interface Props {
+		token: SimpleToken
+		children?: Snippet
+	}
+
+	let { token, children }: Props = $props()
 
 	const message_ui = {
 		[MESSAGE_TYPE.ERROR.label]: { text_class: 'text-error', icon: 'close-circle' },

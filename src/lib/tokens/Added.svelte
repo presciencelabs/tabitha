@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
 	import { token_has_message } from '$lib/token'
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {{ token: SimpleToken }} */
-	let { token } = $props()
+	interface Props {
+		token: SimpleToken
+	}
+
+	let { token }: Props = $props()
 </script>
 
 {#if token_has_message(token)}

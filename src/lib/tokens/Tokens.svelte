@@ -1,15 +1,14 @@
-<script>
+<script lang="ts">
+	import type { Component as SvelteComponent } from 'svelte'
 	import LookupWord from './LookupWord.svelte'
 	import Added from './Added.svelte'
 	import SingleToken from './SingleToken.svelte'
 	import Clause from './Clause.svelte'
 	import { TOKEN_TYPE } from '$lib/token'
 
-	/** @type {{ tokens: SimpleToken[] }}*/
-	let { tokens } = $props()
+	let { tokens }: { tokens: SimpleToken[] } = $props()
 
-	/** @type {Map<TokenType, typeof LookupWord>}*/
-	const component_map = new Map([
+	const component_map = new Map<string, SvelteComponent<{ token: SimpleToken }>>([
 		[TOKEN_TYPE.CLAUSE, Clause],
 		[TOKEN_TYPE.FUNCTION_WORD, SingleToken],
 		[TOKEN_TYPE.NOTE, SingleToken],
@@ -21,5 +20,7 @@
 
 {#each tokens as token}
 	{@const Component = component_map.get(token.type)}
-	<Component {token} />
+	{#if Component}
+		<Component {token} />
+	{/if}
 {/each}

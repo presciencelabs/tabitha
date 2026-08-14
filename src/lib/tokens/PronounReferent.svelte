@@ -3,8 +3,11 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	/** @type {{ token: SimpleToken }}*/
-	let { token } = $props()
+	interface Props {
+		token: SimpleToken
+	}
+
+	let { token }: Props = $props()
 
 	let pronoun = $derived(token.pronoun!)	// the pronoun will always be non-null at this point
 </script>

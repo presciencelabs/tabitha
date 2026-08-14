@@ -79,8 +79,20 @@ type SenseRuleJsonBase = {
 	comment?: string
 }
 
-type RoleRuleJson<K> = {
+type RoleRuleJson<K extends string = string> = {
 	[key in K]?: RoleRuleValueJson
 }
 
-type SenseRuleJson<K> = SenseRuleJsonBase & RoleRuleJson<K>
+type SenseRuleJson<K extends string = string> = SenseRuleJsonBase & RoleRuleJson<K>
+
+type ArgumentMatchFilter = (role_matches: RoleMatchResult[]) => boolean
+
+type RoleFilterRuleJson = TokenFilterJsonBase & {
+	context?: ContextFilterJson
+}
+
+type SensePriorityOverrideJson = Record<string, RoleFilterRuleJson>
+
+type PriorityOverrideRule = [WordSense, SensePriorityOverrideJson]
+
+type WordStemPriorityOverrides = [WordStem, PriorityOverrideRule[]]

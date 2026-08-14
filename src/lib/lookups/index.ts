@@ -1,0 +1,85 @@
+import { TOKEN_TYPE, token_has_tag } from '../token'
+import { REGEXES } from '../regexes'
+import { create_context_filter, create_token_filter, from_built_in_rule, simple_rule_action } from '../rules/rules_parser'
+import { apply_rule_to_tokens } from '../rules/rules_processor'
+import { check_forms } from './form'
+import { check_ontology } from './ontology'
+
+export async function perform_form_lookups(sentences: Sentence[]): Promise<Sentence[]> {
+	const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)
+
+	await Promise.all(lookup_tokens.map(check_forms))
+
+	return sentences
+}
+
+export async function perform_ontology_lookups(sentences: Sentence[]): Promise<Sentence[]> {
+	const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)
+
+	await Promise.all(lookup_tokens.map(check_ontology))
+
+	result_filter_rules.map(from_built_in_rule('result_filter')).forEach(rule => apply_rule_to_tokens(lookup_tokens, rule))
+
+	return sentences
+}
+
+function flatten_for_lookup(sentence: Sentence): Token[] {
+	return flatten_tokens(sentence.clause)
+
+	function flatten_tokens(token: Token): Token[] {
+		if (token.type === TOKEN_TYPE.CLAUSE) {
+			return token.sub_tokens.flatMap(flatten_tokens)
+		} else if (token.pairing) {
+			return [token, token.pairing]
+		}
+		return [token]
+	}
+}
+
+function is_lookup_token(token: Token): boolean {
+	return token.type === TOKEN_TYPE.LOOKUP_WORD
+}
+
+const result_filter_rules: BuiltInRule[] = [
+	{
+		name: 'Filter lookup results based on upper/lowercase for words not at the start of the sentence.',
+		comment: '',
+		rule: {
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag(token, { 'position': 'first_word' }),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token: token }) => {
+				filter_results_by_capitalization(token)
+				if (token.pairing) {
+					filter_results_by_capitalization(token.pairing)
+				}
+			}),
+		},
+	},
+	{
+		name: 'Remove lookup results for certain functional Adpositions (up, down, etc)',
+		comment: 'While these have an entry in the Ontology, they are only used in the Analyzer with specific Verbs. They should not be recognized as words on their own.',
+		rule: {
+			trigger: create_token_filter({ 'token': 'to|down|off|out|up' }),
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token }) => {
+				trigger_token.lookup_results = []
+			}),
+		},
+	},
+]
+
+function starts_lowercase(text: string): boolean {
+	return REGEXES.STARTS_LOWERCASE.test(text)
+}
+
+function filter_results_by_capitalization(token: Token) {
+	if (token.token === 'null') {
+		// 'null' is used for some double pairings like 'friends/brothers and null/sisters', and for some dynamic\literal pairings.
+		// But the concept in the ontology is NULL, so should not be filtered by capitalization
+		return
+	}
+
+	token.lookup_results = starts_lowercase(token.token)
+		? token.lookup_results.filter(result => starts_lowercase(result.stem))
+		: token.lookup_results.filter(result => !starts_lowercase(result.stem))
+}

@@ -1,8 +1,14 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
+	import type { Snippet } from 'svelte'
 
-	/** @type {{ content: string, classes?: string, children?: import('svelte').Snippet }}*/
-	let { content, classes = '', children } = $props()
+	interface Props {
+		content: string
+		classes?: string
+		children?: Snippet
+	}
+
+	let { content, classes = '', children }: Props = $props()
 
 	let copied = $state('')
 	async function copy() {

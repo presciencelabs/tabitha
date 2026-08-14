@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import CopyButton from '$lib/CopyButton.svelte'
 	import Icon from '@iconify/svelte'
 
@@ -42,18 +42,18 @@
 	<!-- svelte-ignore a11y_autofocus -->
 	<textarea bind:value={entered_text} rows="6" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
-	<div class="w-4/5 mt-8">
-		<label>
-			Temperature
-			<input type="number" bind:value={temperature} step="0.1" min="0" max="2" />
+	<div class="w-4/5 mt-8 flex flex-wrap gap-6">
+		<label class="form-control">
+			<div class="label"><span class="label-text">Temperature</span></div>
+			<input type="number" bind:value={temperature} step="0.1" min="0" max="2" class="input input-bordered w-32" />
 		</label>
-		<label>
-			Frequency Penalty
-			<input type="number" bind:value={frequency_penalty} step="0.1" min="-2" max="2" />
+		<label class="form-control">
+			<div class="label"><span class="label-text">Frequency Penalty</span></div>
+			<input type="number" bind:value={frequency_penalty} step="0.1" min="-2" max="2" class="input input-bordered w-32" />
 		</label>
-		<label>
-			Presence Penalty
-			<input type="number" bind:value={presence_penalty} step="0.1" min="-2" max="2" />
+		<label class="form-control">
+			<div class="label"><span class="label-text">Presence Penalty</span></div>
+			<input type="number" bind:value={presence_penalty} step="0.1" min="-2" max="2" class="input input-bordered w-32" />
 		</label>
 	</div>
 

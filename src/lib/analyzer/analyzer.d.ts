@@ -36,3 +36,12 @@ type SimpleSourceData = {
 	source_entities: SimpleSourceEntity[]
 	noun_list: NounListEntry[]
 }
+
+type FeatureRuleJson = TokenRuleJsonBase | TokenRuleJsonBase[]
+type FeatureValueRules = [FeatureValue, TokenRule[]]
+type FeatureRules = [FeatureName, FeatureValueRules[]]
+type FeatureRulesByCategory = Record<CategoryName, FeatureRules[]>
+
+type FeatureValueRulesJson = [FeatureValue, FeatureRuleJson]
+type FeatureRulesJson = [FeatureName, FeatureValueRulesJson[]]
+type FeatureRulesByCategoryJson = Record<CategoryName, FeatureRulesJson[]>

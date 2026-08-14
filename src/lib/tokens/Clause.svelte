@@ -1,8 +1,11 @@
-<script>
-    import Tokens from './Tokens.svelte'
+<script lang="ts">
+	import Tokens from './Tokens.svelte'
 
-	/** @type {{ token: SimpleToken }}*/
-	let { token } = $props()
+	interface Props {
+		token: SimpleToken
+	}
+
+	let { token }: Props = $props()
 </script>
 
 <Tokens tokens={token.sub_tokens} />

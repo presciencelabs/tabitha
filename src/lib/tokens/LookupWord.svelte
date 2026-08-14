@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
 	import Pairing from './Pairing.svelte'
 	import PronounReferent from './PronounReferent.svelte'
 	import SingleToken from './SingleToken.svelte'
 
-	/** @type {{ token: SimpleToken }}*/
-	let { token } = $props()
+	interface Props {
+		token: SimpleToken
+	}
+
+	let { token }: Props = $props()
 </script>
 
 {#if token.pairing}

@@ -1,14 +1,18 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
-	import { saved } from '.'
+	import { save_state } from '.'
 
-	/** @type {{ content: string, classes?: string }} */
-	let { content, classes = '' } = $props()
+	interface Props {
+		content: string
+		classes?: string
+	}
 
-	let is_saved = $derived(content !== '' && $saved === content)
+	let { content, classes = '' }: Props = $props()
+
+	let is_saved = $derived(content !== '' && save_state.value === content)
 
 	function save() {
-		$saved = content
+		save_state.set(content)
 	}
 </script>
 

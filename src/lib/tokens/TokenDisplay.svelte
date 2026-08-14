@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import { Badge } from '$lib'
+	import type { Snippet } from 'svelte'
 
-	/** @type {{ children: import('svelte').Snippet, classes?: string }}*/
-	let { children, classes = '' } = $props()
+	interface Props {
+		children: Snippet
+		classes?: string
+	}
+
+	let { children, classes = '' }: Props = $props()
 </script>
 
-<Badge classes="badge-outline px-4 py-5 text-lg tracking-widest {classes}" {children} />
+<Badge classes="badge-outline px-3 py-5 text-lg tracking-widest {classes}" {children} />

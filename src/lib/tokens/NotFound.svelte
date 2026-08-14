@@ -1,16 +1,14 @@
-<script>
+<script lang="ts">
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	/** @type {{ token: SimpleToken, classes?: string }} */
-	let { token, classes = '' } = $props()
+	let { token, classes = '' }: { token: SimpleToken, classes?: string } = $props()
 
-	/** @type {{lookup: SimpleLookupResult, how_to: HowToEntry}[]} */
-	const how_to_entries = token.lookup_results.flatMap(lookup => lookup.how_to_entries.map(how_to => ({ lookup, how_to })))
-	const has_structure = how_to_entries.some(entry => entry.how_to.structure)
-	const has_pairing = how_to_entries.some(entry => entry.how_to.pairing)
-	const has_explication = how_to_entries.some(entry => entry.how_to.explication)
+	const how_to_entries = $derived(token.lookup_results.flatMap(lookup => lookup.how_to_entries.map(how_to => ({ lookup, how_to }))))
+	const has_structure = $derived(how_to_entries.some(entry => entry.how_to.structure))
+	const has_pairing = $derived(how_to_entries.some(entry => entry.how_to.pairing))
+	const has_explication = $derived(how_to_entries.some(entry => entry.how_to.explication))
 </script>
 
 {#if how_to_entries.length}
