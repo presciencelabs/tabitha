@@ -1,0 +1,29 @@
+{
+  "name": "@tabitha/ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "svelte": "./src/index.js",
+      "default": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:lint": "eslint ."
+  },
+  "peerDependencies": {
+    "daisyui": "^5.7.16",
+    "svelte": "^5.56.4",
+    "tailwindcss": "^4.3.2"
+  },
+  "devDependencies": {
+    "@tabitha/eslint-config": "workspace:*",
+    "@tabitha/tsconfig": "workspace:*",
+    "eslint": "^10.6.0",
+    "svelte": "^5.56.4",
+    "svelte-check": "^4.7.2",
+    "typescript": "^6.0.3"
+  }
+}

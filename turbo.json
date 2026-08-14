@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "prepare": {
+      "outputs": [".svelte-kit/**"]
+    },
+    "build": {
+      "dependsOn": ["^build", "prepare"],
+      "outputs": [".svelte-kit/**", "dist/**", "build/**"]
+    },
+    "check": {
+      "dependsOn": ["prepare"]
+    },
+    "check:svelte": {
+      "dependsOn": ["prepare"]
+    },
+    "check:lint": {},
+    "check:lint:fix": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["prepare"]
+    },
+    "test:unit": {},
+    "test:e2e": {
+      "dependsOn": ["build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean:svelte": {
+      "cache": false
+    },
+    "clean:node": {
+      "cache": false
+    }
+  }
+}

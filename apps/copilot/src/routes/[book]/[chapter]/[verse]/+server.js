@@ -17,7 +17,7 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 		...param_settings,
 		language_profile: {
 			...default_settings.language_profile,
-			...(param_settings.language_profile ?? {})
+			...param_settings.language_profile ?? {},
 		},
 	}
 

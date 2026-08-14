@@ -91,5 +91,6 @@ function transform_function_word([word, gloss]) {
 		curated_examples_raw: '',
 		status: 'function_word',
 		how_to_hints: [],
+		pending_changes: [],
 	}
 }

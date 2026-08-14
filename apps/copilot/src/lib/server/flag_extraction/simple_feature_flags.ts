@@ -60,7 +60,7 @@ export const simple_feature_flags: FlagExtractionRule[] = [
 		flag: 'Noun Number',
 		rules: [{
 			comment: 'If the noun is already modified by a number, do not flag it as Dual/Trial/Quadrial',
-			value: match => match.captures['$numeral'] ? undefined : match.bindings['$number'],
+			value: match => match.captures['$numeral'] ? undefined : (match.bindings['$number'] as string | undefined),
 			pattern: {
 				category: 'Noun Phrase',
 				children: [

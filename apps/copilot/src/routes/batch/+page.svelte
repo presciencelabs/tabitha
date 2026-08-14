@@ -43,7 +43,7 @@
 			const response = await fetch(`/${book}/${chapter}?v0=${start_verse}&v1=${end_verse}&settings=${encodeURIComponent(params)}`)
 
 			if (!response.ok || !response.body) {
-				const message = (await response.text()) || 'Unexpected error occurred'
+				const message = await response.text() || 'Unexpected error occurred'
 				throw new Error(message)
 			}
 
@@ -80,8 +80,8 @@
 			// Cleanup
 			window.URL.revokeObjectURL(url)
 			a.remove()
-		} catch (error: any) {
-			error_text = 'Download failed: ' + error.message
+		} catch (error) {
+			error_text = 'Download failed: ' + (error instanceof Error ? error.message : String(error))
 			console.error(error)
 		} finally {
 			fetching_cautions = false

@@ -1,0 +1,19 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'tools/*'
+
+allowBuilds:
+  '@google/genai': true
+  esbuild: true
+  protobufjs: true
+  workerd: true
+
+onlyBuiltDependencies:
+  - '@google/genai'
+  - 'esbuild'
+  - 'protobufjs'
+  - 'workerd'
+
+overrides:
+  rolldown: '1.2.3'

@@ -1,7 +1,6 @@
-import { fetch_verses_for_chapter, usfm_book_codes } from '$lib/lookups'
+import { default_settings, fetch_verses_for_chapter, usfm_book_codes } from '$lib/lookups'
 import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
-import { default_settings } from '$lib/lookups'
 import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
 
 /** @type {import('./$types').RequestHandler} */
@@ -21,7 +20,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 		...param_settings,
 		language_profile: {
 			...default_settings.language_profile,
-			...(param_settings.language_profile ?? {})
+			...param_settings.language_profile ?? {},
 		},
 	}
 
@@ -122,7 +121,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 			} finally {
 				controller.close()
 			}
-		}
+		},
 	})
 
 	return new Response(stream, {
@@ -131,7 +130,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 			'Content-Disposition': `attachment; filename="${filename}"`,
 			'Cache-Control': 'no-cache',
 			'X-Content-Type-Options': 'nosniff',
-		}
+		},
 	})
 }
 

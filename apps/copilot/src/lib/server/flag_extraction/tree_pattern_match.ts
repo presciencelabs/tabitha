@@ -4,22 +4,22 @@
  *
  * Variables begin with "$"
  */
-function isVariable(value: any) {
-	return typeof value === "string" && value.startsWith("$")
+function isVariable(value: unknown): value is string {
+	return typeof value === 'string' && value.startsWith('$')
 }
 
 /**
  * Deep clone JSON-compatible data
  */
-function clone(value: any) {
+function clone<T>(value: T): T {
 	return JSON.parse(JSON.stringify(value))
 }
 
 /**
  * Resolve a variable through bindings
  */
-function resolveVariable(variable: string, bindings: Record<string, any>) {
-	let current = variable
+function resolveVariable(variable: string, bindings: Record<string, unknown>): unknown {
+	let current: unknown = variable
 
 	while (isVariable(current) && bindings[current] !== undefined && bindings[current] !== current) {
 		current = bindings[current]
@@ -31,7 +31,7 @@ function resolveVariable(variable: string, bindings: Record<string, any>) {
 /**
  * Compare two values recursively
  */
-function matchValue(a: any, b: any, bindings = {}) {
+function matchValue(a: unknown, b: unknown, bindings: Record<string, unknown> = {}) {
 	const localBindings = clone(bindings)
 
 	const result = matchValueInternal(a, b, localBindings)
@@ -42,14 +42,14 @@ function matchValue(a: any, b: any, bindings = {}) {
 
 	return {
 		success: result,
-		bindings: localBindings
+		bindings: localBindings,
 	}
 }
 
 /**
  * Internal recursive matching
  */
-function matchValueInternal(actual: any, pattern: any, bindings: Record<string, any>): boolean {
+function matchValueInternal(actual: unknown, pattern: unknown, bindings: Record<string, unknown>): boolean {
 	// resolve bound vars
 	// There should be no variables in 'actual', but they can be in 'pattern'
 	if (isVariable(pattern)) {
@@ -62,13 +62,13 @@ function matchValueInternal(actual: any, pattern: any, bindings: Record<string, 
 
 	if (isVariable(pattern)) {
 		bindings[pattern] = actual
-		return actual
+		return Boolean(actual)
 	}
 
 	// values can only be objects or strings
 	// the only array would be 'children', which is handled separately
 
-	if (actual === null || pattern === null) {
+	if (actual === null || pattern === null || actual === undefined || pattern === undefined) {
 		return actual === pattern
 	}
 
@@ -79,17 +79,22 @@ function matchValueInternal(actual: any, pattern: any, bindings: Record<string, 
 	}
 
 	// objects (pretty much only 'features')
-	for (const key of Object.keys(pattern)) {
-		if (!(key in actual)) {
-			return false
+	if (typeof pattern === 'object' && typeof actual === 'object') {
+		const patternObj = pattern as Record<string, unknown>
+		const actualObj = actual as Record<string, unknown>
+		for (const key of Object.keys(patternObj)) {
+			if (!(key in actualObj)) {
+				return false
+			}
+			const value_match = matchValueInternal(actualObj[key], patternObj[key], bindings)
+			if (!value_match) {
+				return false
+			}
 		}
-		const value_match = matchValueInternal(actual[key], pattern[key], bindings)
-		if (!value_match) {
-			return false
-		}
+		return true
 	}
 
-	return true
+	return actual === pattern
 }
 
 /**
@@ -100,7 +105,7 @@ function matchValueInternal(actual: any, pattern: any, bindings: Record<string, 
  *	- variable unification
  *	- named captures
  */
-function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings = {}, captures = {}, stack: IndexStack = []): EntityMatch {
+function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings: Record<string, unknown> = {}, captures: Record<string, EntityMatchCapture> = {}, stack: IndexStack = []): EntityMatch {
 	const localBindings = clone(bindings)
 	const localCaptures = clone(captures)
 
@@ -108,7 +113,7 @@ function matchPattern(node: EncodingEntity, pattern: PatternEntity, bindings = {
 	if (pattern.name) {
 		localCaptures[pattern.name] = {
 			node,
-			indexStack: stack
+			indexStack: stack,
 		}
 	}
 

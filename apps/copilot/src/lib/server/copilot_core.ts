@@ -17,7 +17,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)
-		return error_result(reference, `There is no English text saved yet for this verse.`)
+		return error_result(reference, 'There is no English text saved yet for this verse.')
 	}
 	const english_text = english.ideal || english.text
 
@@ -52,7 +52,7 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	try {
 		const llm_output = await get_semantic_notes(llm_input, ai)
 		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) =>
-			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! })
+			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! }),
 		)
 		return {
 			verse: reference,
@@ -96,7 +96,7 @@ export function convert_to_usfm_for_discern(lwc: string): (result: CopilotApiRes
 		const notes = result.notes.length ? result.notes.map(({ meaning, check }) => `${meaning} ${check}`) : [no_suggestions_text]
 		return [
 			`\\p \\v ${result.verse.verse} ${result.english_text}`,
-			...(result.lwc_text ? [`\\p ${result.lwc_text}`] : []),
+			...result.lwc_text ? [`\\p ${result.lwc_text}`] : [],
 			...notes.map(c => `\\li - ${c}`),
 		].join('\n')
 	}
@@ -120,7 +120,7 @@ function preprocess_encoding(encoding: SourceApiResult): string {
 }
 
 function add_node_ids(encoding: EncodingEntity[]): EncodingEntity[] {
-	let stack: IndexStack = []
+	const stack: IndexStack = []
 	function add_trace(node: EncodingEntity, index: number): EncodingEntity {
 		stack.push(index)
 		const node_id = stack.join('.')

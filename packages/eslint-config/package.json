@@ -1,0 +1,20 @@
+{
+  "name": "@tabitha/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "dependencies": {
+    "@eslint/compat": "^2.1.0",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.6.0",
+    "eslint-plugin-svelte": "^3.20.0",
+    "globals": "^17.7.0",
+    "svelte-eslint-parser": "^1.8.0",
+    "typescript-eslint": "^8.63.0"
+  }
+}

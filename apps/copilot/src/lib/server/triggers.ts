@@ -23,7 +23,7 @@ const triggers: TriggerTemplate[] = [
 				return 'For the check, write that they should consider if their translation uses a tense that includes {time value}.'
 			}
 			return ''
-		}
+		},
 	},
 	{
 		name: 'Noun Person',
@@ -31,7 +31,7 @@ const triggers: TriggerTemplate[] = [
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['noun_index']}-${t.flags[0].value}`,
 		prompt: (flags, profile) => {
-			let prompt = []
+			const prompt = []
 			const person = flags[0].value
 			
 			if (person.includes('Inclusive')) {
@@ -79,7 +79,7 @@ const triggers: TriggerTemplate[] = [
 				return 'In your note, mention how there is a negative sense of excess, not just a lot.'
 			}
 			return ''
-		}
+		},
 	},
 	{
 		name: 'Social Dynamic',
@@ -92,7 +92,7 @@ const triggers: TriggerTemplate[] = [
 				return "Speaker-Listener Age refers to the speaker's age relative to the listener's age. It is usually an estimate and cannot be strongly stated, so write your note accordingly."
 			}
 			return ''
-		}
+		},
 	},
 	{
 		name: 'Speaker Attitude',
@@ -106,7 +106,7 @@ const triggers: TriggerTemplate[] = [
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['event'] || ''}-${t.flags[0].value}`,
 		prompt: `The possible values are 'Intent', 'Logical Consequence', 'Simple Result'.
-		For the meaning, contrast the provided value with one of the other possible values which it could be conflated with.`
+		For the meaning, contrast the provided value with one of the other possible values which it could be conflated with.`,
 	},
 	{
 		name: 'Means/Reason',
@@ -114,7 +114,7 @@ const triggers: TriggerTemplate[] = [
 		weight_calculator: flags => flags[0].weight,
 		trigger_grouper: t => `${t.flags[0].encoding_anchor['means_or_reason'] || ''}-${t.flags[0].value}`,
 		prompt: `The possible values are 'Reason' (eg. because) and 'Means' (eg. by or through).
-		For the meaning, contrast the provided value with the other possible value.`
+		For the meaning, contrast the provided value with the other possible value.`,
 	},
 	{
 		name: 'Explanation of Name',
@@ -171,7 +171,7 @@ const triggers: TriggerTemplate[] = [
 				return `For the meaning, explain that the original text indicates that {agent} did the {verb}, but it/they are not the focus.
 				For the check, write something LIKE "Try to inlcude this in your translation, but keep it de-emphasized if possible."`
 			}
-		}
+		},
 	},
 	{
 		name: 'Closing Quotation Frame',
@@ -181,7 +181,7 @@ const triggers: TriggerTemplate[] = [
 			return closing && flags.length === 1 ? closing.weight : 0
 		},
 		flag_grouper: f => f.value,
-		prompt: `Write something LIKE "This is the end of the quote where {speaker} was speaking to {listener}". You do not need to write a 'check' for this.`
+		prompt: 'Write something LIKE "This is the end of the quote where {speaker} was speaking to {listener}". You do not need to write a \'check\' for this.',
 	},
 ]
 

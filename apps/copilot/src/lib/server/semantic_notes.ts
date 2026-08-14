@@ -67,7 +67,7 @@ export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleG
 								},
 								'quoted_text': {
 									'type': 'string',
-									'description': 'The part of the text that relates to the note with at least a few words of context, quoted from the lwc_text.'
+									'description': 'The part of the text that relates to the note with at least a few words of context, quoted from the lwc_text.',
 								},
 								'trigger': {
 									'type': 'object',
@@ -78,7 +78,7 @@ export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleG
 										},
 										'node_id': {
 											'type': 'string',
-											'description': 'The node_id from the trigger that this note relates to.'
+											'description': 'The node_id from the trigger that this note relates to.',
 										},
 									},
 									'required': ['name', 'node_id'],
@@ -87,16 +87,16 @@ export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleG
 							'required': ['meaning', 'check', 'quoted_text', 'trigger'],
 						},
 					},
-					...(translate_tbta_text ? {
+					...translate_tbta_text ? {
 						'lwc_text': {
 							'type': 'string',
-							'description': `the english_text translated from English into ${llm_input.output_language}`
-						}
-					} : {}),
+							'description': `the english_text translated from English into ${llm_input.output_language}`,
+						},
+					} : {},
 				},
 				'required': ['notes'],
-			}
-		}
+			},
+		},
 	})
 
 	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: [] }

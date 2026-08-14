@@ -13,8 +13,8 @@ export const init: ServerInit = async () => {
 			credentials: {
 				client_email: env.GEMINI_CLIENT_EMAIL,
 				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			}
-		}
+			},
+		},
 	})
 }
 

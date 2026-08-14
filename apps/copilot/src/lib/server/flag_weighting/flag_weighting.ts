@@ -40,7 +40,7 @@ function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {
 	}
 	if (profile.multiple_future) {
 		weights['Verb Time'] = {
-			...(weights['Verb Time'] ?? {}),
+			...weights['Verb Time'] ?? {},
 			'Later Today': 4,
 			'Tomorrow': 4,
 			'2 Days from Now': 4,

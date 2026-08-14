@@ -167,7 +167,7 @@ type EntityMatchCapture = {
 
 type EntityMatch = {
 	success: boolean
-	bindings: Record<string, any>
+	bindings: Record<string, unknown>
 	captures: Record<string, EntityMatchCapture>
 }
 
