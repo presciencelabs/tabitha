@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import Icon from '@iconify/svelte'
 	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
@@ -12,6 +13,7 @@
 
 	const MAX_EXAMPLES_DISPLAYED = 50
 
+	let loading = $state(true)
 	let all_examples = $state<Example[]>([])
 	let filtered_examples = $state<Example[]>([])
 	let displayed_examples = $derived(
@@ -19,9 +21,18 @@
 	)
 
 	async function load_examples({ stem, sense, part_of_speech }: Concept) {
-		const response = await fetch(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=Bible`)
-		all_examples = await response.json()
+		loading = true
+		try {
+			const response = await fetch(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=Bible`)
+			all_examples = await response.json()
+		} finally {
+			loading = false
+		}
 	}
+
+	onMount(() => {
+		load_examples(concept)
+	})
 
 	const FADE_CHARACTERISTICS = {
 		delay: 100,
@@ -43,10 +54,10 @@
 <article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
 	<h3>Bible</h3>
 
-	{#await load_examples(concept)}
+	{#if loading}
 		<span class="loading loading-spinner text-warning"></span>
 		loading the examples...
-	{:then}
+	{:else}
 		<Filters {concept} examples={all_examples} ondatafiltered={detail => filtered_examples = detail} />
 
 		{#each displayed_examples as { reference, context, book_status }, i}
@@ -82,7 +93,7 @@
 				</span>
 			</section>
 		{/if}
-	{/await}
+	{/if}
 </article>
 
 <style>
