@@ -1,5 +1,6 @@
 <script>
 	import { DetailedCard, Level, Occurrences, Meaning } from '$lib'
+	import PendingChange from '$lib/PendingChange.svelte'
 
 	/** @type {Concept[]} */
 	export let concepts
@@ -30,6 +31,7 @@
 
 	<tbody>
 		{#each concepts as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
+			{@const pending_level_change = concept.pending_changes.find(change => change.data.level)}
 			<tr class="hover cursor-pointer" on:click={() => open(concept)}>
 				<td>
 					{concept.stem}
@@ -45,6 +47,11 @@
 				</td>
 				<td>
 					<Level level={concept.level} />
+					{#if pending_level_change}
+						<PendingChange>
+							<Level level={pending_level_change.data.level?.value || ''} />
+						</PendingChange>
+					{/if}
 				</td>
 				<td class="text-center">
 					<Occurrences {concept} />

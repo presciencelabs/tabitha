@@ -10,7 +10,7 @@
 	let concept_data = $state(data.concept_data)
 	let initial_data = $state.snapshot(concept_data)
 	let is_dirty = $derived(!deep_equal(concept_data, initial_data))
-	let concept_for_header: Concept = $derived({ ...concept_data, categorization: '', curated_examples: [], curated_examples_raw: '', occurrences: 0, status: 'not used', how_to_hints: [], examples: '', id: '' })
+	let concept_for_header: Concept = $derived({ ...concept_data, categorization: '', curated_examples: [], curated_examples_raw: '', occurrences: 0, status: 'not used', how_to_hints: [], pending_changes: [], examples: '', id: '' })
 
 	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
 		return JSON.stringify(obj1) === JSON.stringify(obj2)

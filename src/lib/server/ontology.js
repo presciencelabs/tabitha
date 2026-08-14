@@ -1,4 +1,5 @@
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
+import { get_pending_changes } from './changes/changes'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
@@ -70,6 +71,11 @@ export const get_concepts = db => async concept_filter => {
 
 	const concepts = normalize(results)
 
+	const all_pending_changes = await get_pending_changes(db)
+	for (const concept of concepts) {
+		concept.pending_changes = all_pending_changes.filter(change => concepts_match(concept, change.concept))
+	}
+
 	const how_to_results = await get_simplification_hints(db)(concept_filter)
 	return merge_how_to_results(concepts, how_to_results)
 
@@ -96,6 +102,7 @@ function transform(match_from_db) {
 		curated_examples_raw: match_from_db.curated_examples,
 		status: 'in ontology',
 		how_to_hints: [],
+		pending_changes: [],
 	}
 }
 
@@ -226,14 +233,6 @@ function merge_how_to_results(concepts, how_to_results) {
 	return concepts
 
 	/**
-	 * @param {ConceptKey} a
-	 * @param {ConceptKey} b
-	 */
-	function concepts_match(a, b) {
-		return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
-	}
-
-	/**
 	 * @param {SimplificationHint} hint
 	 * @returns {Concept}
 	 */
@@ -262,6 +261,7 @@ function merge_how_to_results(concepts, how_to_results) {
 			curated_examples_raw: '',
 			status: hint.ontology_status,
 			how_to_hints: [hint],
+			pending_changes: [],
 		}
 	}
 
@@ -272,6 +272,14 @@ function merge_how_to_results(concepts, how_to_results) {
 	function create_concept_key({ stem, sense, part_of_speech }) {
 		return `${stem}-${sense}-${part_of_speech}`
 	}
+}
+
+/**
+ * @param {ConceptKey} a
+ * @param {ConceptKey} b
+ */
+function concepts_match(a, b) {
+	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 
 /**

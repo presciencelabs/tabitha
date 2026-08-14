@@ -1,11 +1,10 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
+	import PendingChange from './PendingChange.svelte'
 
-	/** @type {Concept} */
-	export let concept
+	let { concept, compact = false }: { concept: Concept, compact?: boolean } = $props()
 
-	/** @type {boolean} */
-	export let compact = false
+	let pending_change = $derived(concept.pending_changes.find(change => change.data.gloss))
 </script>
 
 {#if concept.status === 'not used'}
@@ -34,4 +33,10 @@
 	{/if}
 {:else}
 	{concept.gloss}
+	{#if pending_change}
+		<br />
+		<PendingChange>
+			{pending_change.data.gloss!.value}
+		</PendingChange>
+	{/if}
 {/if}

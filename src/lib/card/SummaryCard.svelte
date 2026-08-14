@@ -2,6 +2,7 @@
 	import Icon from '@iconify/svelte'
 	import Header from './Header.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
+	import PendingChange from '$lib/PendingChange.svelte'
 	import { Category } from './categorization'
 	import { DetailedCard, Meaning } from '$lib'
 	import { page } from '$app/state'
@@ -34,8 +35,16 @@
 
 		{#if concept.part_of_speech === 'Verb' && CONCEPT_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(concept)}
 			{@const { part_of_speech, categories } = concept}
+			{@const pending_categories_change = concept.pending_changes.find(change => change.data.categories)}
 			<section class="prose mt-4 max-w-none">
 				<Category {part_of_speech} {categories} />
+				
+				{#if pending_categories_change}
+					{@const pending_categories = pending_categories_change.data.categories?.value.filter(category => category) || []}
+					<PendingChange>
+						<Category {part_of_speech} categories={pending_categories} />
+					</PendingChange>
+				{/if}
 			</section>
 		{/if}
 		

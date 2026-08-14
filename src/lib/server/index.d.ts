@@ -31,6 +31,7 @@ interface Concept extends DbRowConcept {
 	occurrences: number
 	status: OntologyStatus
 	how_to_hints: SimplificationHint[]
+	pending_changes: OntologyChange[]
 }
 
 type OntologyStatus = 'in ontology' | 'approved' | 'suggested' | 'not used' | 'function_word'

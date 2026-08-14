@@ -3,6 +3,7 @@
 	import { Details, Examples, Meaning } from '$lib'
 	import Header from './Header.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
+	import PendingChange from '$lib/PendingChange.svelte'
 	import { Category } from './categorization'
 	import { onMount } from 'svelte'
 	import { CONCEPT_FILTERS } from '$lib/filters'
@@ -40,8 +41,16 @@
 
 				{#if CONCEPT_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(concept)}
 					{@const { part_of_speech, categories } = concept}
+					{@const pending_categories_change = concept.pending_changes.find(change => change.data.categories)}
 					<section class="prose mt-4 max-w-none">
 						<Category {part_of_speech} {categories} />
+
+						{#if pending_categories_change}
+							{@const pending_categories = pending_categories_change.data.categories?.value.filter(category => category) || []}
+							<PendingChange>
+								<Category {part_of_speech} categories={pending_categories} />
+							</PendingChange>
+						{/if}
 					</section>
 				{/if}
 
