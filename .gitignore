@@ -1,1 +1,39 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# SvelteKit & Vite
+.svelte-kit
+dist
+build
+
+# Cloudflare
+.wrangler
+
+# Turborepo
+.turbo
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing & Coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+coverage
+
+# OS & Logs
 .DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Database WAL / SHM & raw dumps
+*.sqlite-shm
+*.sqlite-wal
+*.sql
