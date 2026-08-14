@@ -2,8 +2,10 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { get_concepts } from '$lib/server/ontology'
 import { decode_categorization, encode_categorization } from '$lib/transformers'
 import { theta_grid_arguments } from '$lib/lookups'
+import type { Concept, ConceptKey, DbRowConcept } from '$lib/types'
+import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
 
-export async function get_concept_for_update(db: D1Database, concept_key: ConceptKey): Promise<ConceptUpdateData|null> {
+export async function get_concept_for_update(db: D1Database, concept_key: ConceptKey): Promise<ConceptUpdateData | null> {
 	const sql = `
 		SELECT *
 		FROM Concepts
@@ -55,14 +57,14 @@ export async function update_concept(db: D1Database, data: ConceptUpdateData) {
 export async function get_next_sense(db: D1Database, stem: string, part_of_speech: string): Promise<string> {
 	const concepts = await get_concepts(db)({ q: stem, category: part_of_speech, scope: 'stems' })
 	// the search results are not case-sensitive, so filter out concepts that don't exactly match the stem
-	const valid_senses = concepts.filter(c => c.stem === stem).map(c => c.sense)
+	const valid_senses = concepts.filter((c: Concept) => c.stem === stem).map((c: Concept) => c.sense)
 	return String.fromCharCode('A'.charCodeAt(0) + valid_senses.length)
 }
 
 export async function create_concept(db: D1Database, data: ConceptCreateData) {
 	// The new concept needs its id set according to its position in the list of concepts sorted by TBTA's custom sorting sequence.
 	// All other concepts below it in the order need to have their id incremented to make room for the new concept.
-	const new_id = await find_concept_position(db, data) + 1	// +1 because ids are 1-based
+	const new_id = await find_concept_position(db, data) + 1 // +1 because ids are 1-based
 
 	const update_sql = `
 		UPDATE CONCEPTS SET id = id + 1
@@ -91,7 +93,7 @@ async function find_concept_position(db: D1Database, data: ConceptKey): Promise<
 	const concepts = await get_concepts(db)({ q: '*', category: data.part_of_speech, scope: 'stems' })
 
 	const new_stem_lower = data.stem.toLowerCase()
-	const position = concepts.findIndex(({ stem }) => compare_stems(stem.toLowerCase(), new_stem_lower) > 0)
+	const position = concepts.findIndex(({ stem }: Concept) => compare_stems(stem.toLowerCase(), new_stem_lower) > 0)
 	return position >= 0 ? position : concepts.length
 
 	function compare_stems(a: string, b: string): number {
@@ -113,7 +115,7 @@ async function find_concept_position(db: D1Database, data: ConceptKey): Promise<
 			if (i >= a.length) return -1
 			if (j >= b.length) return 1
 
-			const ra = rank.get(a[i])!	// already known that a[i] exists in rank
+			const ra = rank.get(a[i])! // already known that a[i] exists in rank
 			const rb = rank.get(b[j])!
 
 			if (ra !== rb) return ra - rb

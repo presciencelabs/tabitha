@@ -1,34 +1,12 @@
-import { writable } from 'svelte/store'
 import Selector from './Selector.svelte'
+import { theme_state } from './theme.svelte'
 
-function initialize_theme() {
-	const saved_theme = localStorage.getItem('theme')
-
-	if (saved_theme) return set_theme(saved_theme)
-
-	const dark_mode = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-	set_theme(dark_mode ? 'dark' : 'light')
+export function initialize_theme(): void {
+	theme_state.initialize()
 }
 
-/** @param {string} theme themes configured in ontology/app/tailwind.config.js */
-function set_theme(theme) {
-	const html = document.documentElement
-
-	localStorage.setItem('theme', theme)
-
-	html.setAttribute('data-theme', theme)
-
-	current_theme.set(theme)
-
-	console.info('theme set:', html.getAttribute('data-theme'))
+export function set_theme(theme: string): void {
+	theme_state.set(theme)
 }
 
-const current_theme = writable('')
-
-export {
-	current_theme,
-	initialize_theme,
-	Selector,
-	set_theme,
-}
+export { Selector, theme_state }

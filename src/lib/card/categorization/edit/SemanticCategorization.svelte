@@ -1,15 +1,23 @@
-<script>
+<script lang="ts">
 	import { semantic_category } from '$lib/lookups'
+	import type { PartOfSpeech } from '$lib/types'
 
-	/** @type {{ part_of_speech: string, categories: string[] }} */
-	const { part_of_speech, categories = $bindable() } = $props()
+	interface Props {
+		part_of_speech: PartOfSpeech | string
+		categories?: string[]
+	}
+
+	let { part_of_speech, categories = $bindable([]) }: Props = $props()
+
+	let category_map = $derived(semantic_category[part_of_speech as PartOfSpeech])
+	let category_options = $derived(category_map ? Object.values(category_map) : [])
 </script>
 
 <fieldset class="fieldset border border-base-300 rounded-box p-4">
 	<legend class="fieldset-legend font-semibold">Semantic category</legend>
 
 	<select bind:value={categories[0]} name="categories[]" class="select">
-		{#each Object.values(semantic_category[part_of_speech]) as category}
+		{#each category_options as category}
 			<option value={category}>{category}</option>
 		{/each}
 	</select>

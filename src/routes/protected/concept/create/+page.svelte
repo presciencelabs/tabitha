@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
+	import type { PartOfSpeech } from '$lib/types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import Header from '$lib/card/Header.svelte'
@@ -16,7 +17,7 @@
 	let fetching_sense = $state(false)
 
 	$effect(() => {
-		concept_data.categories = default_categories[concept_data.part_of_speech]?.slice() ?? []
+		concept_data.categories = default_categories[concept_data.part_of_speech as PartOfSpeech]?.slice() ?? []
 	})
 
 	$effect(() => {

@@ -1,39 +1,35 @@
+import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 import { get_pending_changes } from './changes/changes'
+import type {
+	Concept,
+	ConceptKey,
+	ConceptSearchFilter,
+	DbRowConcept,
+	DbRowExample,
+	Example,
+	SimplificationHint,
+} from '$lib/types'
+import type { ConceptQueryBuilder } from './types'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
 // 	https://developers.cloudflare.com/d1/platform/client-api/#searching-with-like
 // 	https://developers.cloudflare.com/d1/platform/client-api/#parameter-binding
-
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- *
- * @returns {Promise<Concept[]>}
- */
-export async function get_all_concepts(db) {
-	db.prepare('SELECT * FROM Concepts')
-	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
-	const { results } = await db.prepare('SELECT * FROM Concepts').all()
-
+export async function get_all_concepts(db: D1Database): Promise<Concept[]> {
+	const { results } = await db.prepare('SELECT * FROM Concepts').all<DbRowConcept>()
 	const concepts = results.map(transform)
-	
-	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
-	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all()
+
+	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all<SimplificationHint>()
 
 	// TODO maybe use a map for the merge so it doesn't loop through the concepts so many times (O(C+H) instead of O(C*H))
-	const all_results = merge_how_to_results(concepts, how_to_results)
-	return all_results
+	return merge_how_to_results(concepts, how_to_results)
 }
 
 /**
  * case-insensitive match, will accept % as a wildcard as well as sense-specific search, e.g., love-A
- *
- * @param {import('@cloudflare/workers-types').D1Database} db
- *
- * @returns {(concept_filter: ConceptSearchFilter) => Promise<Concept[]>}
  */
-export const get_concepts = db => async concept_filter => {
+export const get_concepts = (db: D1Database) => async (concept_filter: ConceptSearchFilter): Promise<Concept[]> => {
 	const query_builder = build_concept_query(db, 'Concepts')
 
 	if (concept_filter.category && concept_filter.category !== 'all') {
@@ -47,29 +43,23 @@ export const get_concepts = db => async concept_filter => {
 		query_builder
 			.add_filter('stem LIKE ?', [stem])
 			.add_filter('sense = ?', [sense])
-
 	} else {
 		const normalized_q = normalize_wildcards(concept_filter.q)
 
-		/**
-		 * @typedef {[filter: string, params: string[]]} FilterArgs
-		 * @type {{ [k: string]: FilterArgs }}
-		 */
-		const scope_filters = {
+		const scope_filters: Record<string, [string, string[]]> = {
 			stems: ['stem LIKE ?', [normalized_q]],
 			semantic: ['stem LIKE ?', [normalized_q]],
 			glosses: ['gloss LIKE ?', [`%${normalized_q}%`]],
 			all: ['stem LIKE ? OR gloss LIKE ?', [normalized_q, `%${normalized_q}%`]],
 		}
-		query_builder.add_filter(...scope_filters[concept_filter.scope])
+		const filter_clause = scope_filters[concept_filter.scope] ?? scope_filters.stems
+		query_builder.add_filter(filter_clause[0], filter_clause[1])
 	}
 
 	query_builder.order_by('id')
 
-	/** @type {import('@cloudflare/workers-types').D1Result<DbRowConcept>} */
-	const { results } = await query_builder.prepare().all()
-
-	const concepts = normalize(results)
+	const { results } = await query_builder.prepare().all<DbRowConcept>()
+	const concepts = results.map(transform)
 
 	const all_pending_changes = await get_pending_changes(db)
 	for (const concept of concepts) {
@@ -78,22 +68,9 @@ export const get_concepts = db => async concept_filter => {
 
 	const how_to_results = await get_simplification_hints(db)(concept_filter)
 	return merge_how_to_results(concepts, how_to_results)
-
-	/**
-	 * @param {DbRowConcept[]} matches_from_db
-	 * @returns {Concept[]}
-	 */
-	function normalize(matches_from_db) {
-		return matches_from_db.map(transform)
-	}
 }
 
-/**
- * @param {DbRowConcept} match_from_db
- *
- * @returns {Concept}
- */
-function transform(match_from_db) {
+function transform(match_from_db: DbRowConcept): Concept {
 	return {
 		...match_from_db,
 		level: match_from_db.level.toString(),
@@ -106,28 +83,19 @@ function transform(match_from_db) {
 	}
 }
 
-/**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {Promise<string>}
- */
-export async function get_version(db) {
+export async function get_version(db: D1Database): Promise<string> {
 	const sql = `
 		SELECT version
 		FROM Version
 	`
-
-	/** @type {string} https://developers.cloudflare.com/d1/platform/client-api/#await-stmtfirstcolumn */
-	return await db.prepare(sql).first('version') || ''
+	const version = await db.prepare(sql).first<string>('version')
+	return version || ''
 }
 
 /**
  * case-insensitive match, will accept % as a wildcard as well as sense-specific search, e.g., love-A
- *
- * @param {import('@cloudflare/workers-types').D1Database} db
- *
- * @returns {(filter: ConceptSearchFilter) => Promise<SimplificationHint[]>}
  */
-export const get_simplification_hints = db => async filter => {
+export const get_simplification_hints = (db: D1Database) => async (filter: ConceptSearchFilter): Promise<SimplificationHint[]> => {
 	if (filter.scope === 'glosses') {
 		// a glosses search doesn't make sense for simplification hints
 		return []
@@ -145,7 +113,6 @@ export const get_simplification_hints = db => async filter => {
 		query_builder
 			.add_filter('stem LIKE ?', [stem])
 			.add_filter('sense = ?', [sense])
-
 	} else {
 		const normalized_q = normalize_wildcards(filter.q)
 		query_builder.add_filter('stem LIKE ?', [normalized_q])
@@ -157,71 +124,60 @@ export const get_simplification_hints = db => async filter => {
 		}
 	}
 
-	/** @type {import('@cloudflare/workers-types').D1Result<SimplificationHint>} */
-	const { results } = await query_builder.prepare().all()
+	const { results } = await query_builder.prepare().all<SimplificationHint>()
 
-	return results.map(normalize_results)
-
-	/** @param {SimplificationHint} arg */
-	function normalize_results({ stem, sense, part_of_speech, structure, pairing, explication, ontology_status, level }) {
-		return { stem, sense, part_of_speech, structure, pairing, explication, ontology_status, level }
-	}
+	return results.map(({ stem, sense, part_of_speech, structure, pairing, explication, ontology_status, level }) => ({
+		stem,
+		sense,
+		part_of_speech,
+		structure,
+		pairing,
+		explication,
+		ontology_status,
+		level,
+	}))
 }
 
 /**
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @returns {(concept: string, part_of_speech: string, source: string) => Promise<Example[]>} concept is case-sensitive
+ * Concept is case-sensitive
  */
-export const get_examples = db => async (concept, part_of_speech, source) => {
+export const get_examples = (db: D1Database) => async (
+	concept: string,
+	part_of_speech: string,
+	source: string,
+): Promise<Example[]> => {
 	const sense_match = concept.match(/^(.*)-([A-Z])$/)
 	const stem = sense_match ? sense_match[1] : concept
 	const sense = sense_match ? sense_match[2] : 'A'
 
-	/**
-	 * @type {import('@cloudflare/workers-types').D1Result<DbRowExample>}
-	 */
 	const { results } = await db.prepare(`
 		SELECT E.ref_type, RPL.name AS ref_id_primary, E.ref_id_secondary, E.ref_id_tertiary, E.context_json
 		FROM Exhaustive_Examples AS E
 		INNER JOIN Reference_Primary_Lookup AS RPL ON E.ref_id_primary = RPL.id
 		WHERE E.concept_stem = ? AND E.concept_sense = ? AND E.concept_part_of_speech = ? AND E.ref_type LIKE ?
-	`).bind(stem, sense, part_of_speech, source.length ? source : '%').all()
+	`).bind(stem, sense, part_of_speech, source.length ? source : '%').all<DbRowExample>()
 
-
-	return results.map(normalize_results)
-
-	/**
-	 * @param {DbRowExample} arg
-	 * @return {Example}
-	*/
-	function normalize_results({ ref_type, ref_id_primary, ref_id_secondary, ref_id_tertiary, context_json }) {
-		return {
-			reference: {
-				type: ref_type,
-				id_primary: ref_id_primary,
-				id_secondary: ref_id_secondary.toString(),
-				id_tertiary: ref_id_tertiary.toString(),
-			},
-			context: JSON.parse(context_json),
-			book_status: 'Ready to Translate',	// this will be updated after the API call to Sources
-		}
-	}
+	return results.map(({ ref_type, ref_id_primary, ref_id_secondary, ref_id_tertiary, context_json }) => ({
+		reference: {
+			type: ref_type,
+			id_primary: ref_id_primary,
+			id_secondary: ref_id_secondary.toString(),
+			id_tertiary: ref_id_tertiary.toString(),
+		},
+		context: JSON.parse(context_json),
+		book_status: 'Ready to Translate', // this will be updated after the API call to Sources
+	}))
 }
 
 /**
- * @param {string} possible_wildard – a string that may contain wildcards, e.g., '*' or '#' or '%'
- * @returns {string} SQL-ready string, i.e., `%` for wildcards
+ * @param possible_wildcard – a string that may contain wildcards, e.g., '*' or '#' or '%'
+ * @returns SQL-ready string, i.e., `%` for wildcards
  */
-function normalize_wildcards(possible_wildard) {
-	return possible_wildard.replace(/[*#]/g, '%')
+function normalize_wildcards(possible_wildcard: string): string {
+	return possible_wildcard.replace(/[*#]/g, '%')
 }
 
-/**
- * @param {Concept[]} concepts
- * @param {SimplificationHint[]} how_to_results
- * @returns {Concept[]}
- */
-function merge_how_to_results(concepts, how_to_results) {
+function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {
 	for (const how_to of how_to_results) {
 		const existing_concept = concepts.find(match => concepts_match(match, how_to))
 		if (existing_concept) {
@@ -232,11 +188,7 @@ function merge_how_to_results(concepts, how_to_results) {
 	}
 	return concepts
 
-	/**
-	 * @param {SimplificationHint} hint
-	 * @returns {Concept}
-	 */
-	function create_how_to_result(hint) {
+	function create_how_to_result(hint: SimplificationHint): Concept {
 		const level = hint.level === -1 ? 'N/A' : hint.level.toString()
 		const gloss_map = new Map([
 			['approved', 'Not yet in the Ontology, but will be added in a future update'],
@@ -265,79 +217,39 @@ function merge_how_to_results(concepts, how_to_results) {
 		}
 	}
 
-	/**
-	 * @param {ConceptKey} concept 
-	 * @returns {string}
-	 */
-	function create_concept_key({ stem, sense, part_of_speech }) {
+	function create_concept_key({ stem, sense, part_of_speech }: ConceptKey): string {
 		return `${stem}-${sense}-${part_of_speech}`
 	}
 }
 
-/**
- * @param {ConceptKey} a
- * @param {ConceptKey} b
- */
-function concepts_match(a, b) {
+function concepts_match(a: ConceptKey, b: ConceptKey): boolean {
 	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 
-/**
- * @typedef {{
- * 		add_filter: (filter: string, params: string[]) => ConceptQueryBuilder,
- * 		order_by: (column: string) => ConceptQueryBuilder,
- * 		prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
- * }} ConceptQueryBuilder
- *
- * @param {import('@cloudflare/workers-types').D1Database} db
- * @param {string} table
- * @returns { ConceptQueryBuilder }
- */
-function build_concept_query(db, table) {
-	/** @type {string[]} */
-	const all_filters = []
-
-	/** @type {string[]} */
-	const all_params = []
-
-	/** @type {string} */
+function build_concept_query(db: D1Database, table: string): ConceptQueryBuilder {
+	const all_filters: string[] = []
+	const all_params: (string | number)[] = []
 	let order_by_sql = ''
 
-	/**
-	 * @param {string} filter
-	 * @param {string[]} params
-	 * @this {ConceptQueryBuilder}
-	 */
-	function add_filter(filter, params) {
-		all_filters.push(filter)
-		all_params.push(...params)
-		return this
+	const builder: ConceptQueryBuilder = {
+		add_filter(filter: string, params: (string | number)[]) {
+			all_filters.push(filter)
+			all_params.push(...params)
+			return builder
+		},
+		order_by(column: string) {
+			order_by_sql = `ORDER BY ${column}`
+			return builder
+		},
+		prepare(): D1PreparedStatement {
+			const joined_filters = all_filters.map(filter => `(${filter})`).join(' AND ')
+			return db.prepare(`
+				SELECT *
+				FROM ${table}
+				WHERE ${joined_filters}
+				${order_by_sql}`).bind(...all_params)
+		},
 	}
 
-	/**
-	 * @param {string} column
-	 * @this {ConceptQueryBuilder}
-	 */
-	function order_by(column) {
-		order_by_sql = `ORDER BY ${column}`
-		return this
-	}
-
-	/**
-	 * @returns {import('@cloudflare/workers-types').D1PreparedStatement}
-	 */
-	function prepare() {
-		const joined_filters = all_filters.map(filter => `(${filter})`).join(' AND ')
-		return db.prepare(`
-			SELECT *
-			FROM ${table}
-			WHERE ${joined_filters}
-			${order_by_sql}`).bind(...all_params)
-	}
-
-	return {
-		add_filter,
-		order_by,
-		prepare,
-	}
+	return builder
 }

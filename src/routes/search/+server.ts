@@ -1,10 +1,10 @@
 import { json } from '@sveltejs/kit'
 import { get_concepts } from '$lib/server/ontology'
+import type { RequestHandler } from './$types'
+import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
-	/** @type {ConceptSearchFilter} */
-	const search_filter = {
+export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
+	const search_filter: ConceptSearchFilter = {
 		q: '',
 		scope: 'stems',
 		category: '',
@@ -17,22 +17,29 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
 
 	return response(lite_matches)
 
-	/** @param {Concept} concept */
-	function make_lite(concept) {
+	function make_lite(concept: Concept) {
 		const { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints } = concept
 
-		return { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints: how_to_hints.map(make_lite_hints) }
+		return {
+			id,
+			stem,
+			sense,
+			part_of_speech,
+			level,
+			gloss,
+			categorization,
+			categories,
+			status,
+			how_to_hints: how_to_hints.map(make_lite_hints),
+		}
 	}
 
-	/** @param {SimplificationHint} hint */
-	function make_lite_hints(hint) {
+	function make_lite_hints(hint: SimplificationHint) {
 		const { structure, pairing, explication } = hint
-
 		return { structure, pairing, explication }
 	}
 
-	/** @param {any} result  */
-	function response(result) {
+	function response<T>(result: T): Response {
 		const THREE_HOUR_CACHE = {
 			'cache-control': `max-age=${3 * 60 * 60}`,
 		}

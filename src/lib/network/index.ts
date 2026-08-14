@@ -1,23 +1,9 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
 import Status from './Status.svelte'
-import { writable } from 'svelte/store'
+import { network_state } from './network.svelte'
 
-/** @type {import('svelte/store').Writable<boolean>} */
-let offline
-
-function initialize_detection() {
-	offline = writable(!navigator.onLine)
-
-	window.addEventListener('offline', () => offline.set(true))
-	window.addEventListener('online', () => offline.set(false))
-
-	console.info('network detection initialized')
-
-	offline.subscribe(value => console.info('network status: ', value ? 'offline' : 'online'))
+export function initialize_detection(): void {
+	network_state.initialize()
 }
 
-export {
-	Status,
-	initialize_detection,
-	offline,
-}
+export { Status, network_state }

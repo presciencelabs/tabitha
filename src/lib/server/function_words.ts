@@ -1,5 +1,6 @@
-/** @type {[string, string][]} */
-const FUNCTION_WORDS = [
+import type { Concept, ConceptSearchFilter } from '$lib/types'
+
+const FUNCTION_WORDS: [string, string][] = [
 	['as', "Sometimes sets the Degree feature of an Adjective or Adverb to Equality (eg. 'as good as')"],
 	['begin', 'Sets the Aspect feature of a Verb to Inceptive.'],
 	['certainly', "Sets the Polarity feature of a Verb to Emphatic Affirmative or Emphatic Negative (when paired with 'not')."],
@@ -30,11 +31,7 @@ const FUNCTION_WORDS = [
 	['which', 'Indicates an interrogative Noun or a relative clause.'],
 ]
 
-/**
- * @param {ConceptSearchFilter} filter
- * @returns {Concept[]}
- */
-export function get_function_words(filter) {
+export function get_function_words(filter: ConceptSearchFilter): Concept[] {
 	if (!['all', ''].includes(filter.category) || filter.scope === 'glosses') {
 		return []
 	}
@@ -49,32 +46,25 @@ export function get_function_words(filter) {
 	return FUNCTION_WORDS.filter(get_word_filter(pre_wildcard, term, post_wildcard)).map(transform_function_word)
 }
 
-/**
- * @param {string} pre_wildcard
- * @param {string} term
- * @param {string} post_wildcard
- * @returns {(word_and_gloss: [string, string]) => boolean}
- */
-function get_word_filter(pre_wildcard, term, post_wildcard) {
+function get_word_filter(
+	pre_wildcard: string | undefined,
+	term: string,
+	post_wildcard: string | undefined,
+): (word_and_gloss: [string, string]) => boolean {
 	const key = `${pre_wildcard ? 1 : 0}${post_wildcard ? 1 : 0}`
 	const lower_term = term.toLowerCase()
 
-	/** @type {Record<string, (word_and_gloss: [string, string]) => boolean>} */
-	const filterMap = {
+	const filterMap: Record<string, (word_and_gloss: [string, string]) => boolean> = {
 		'00': ([word]) => word === lower_term,
 		'10': ([word]) => word.endsWith(lower_term),
 		'01': ([word]) => word.startsWith(lower_term),
 		'11': ([word]) => word.includes(lower_term),
 	}
 
-	return filterMap[key]
+	return filterMap[key] || (() => false)
 }
 
-/**
- * @param {[string, string]} word_and_gloss
- * @returns {Concept}
- */
-function transform_function_word([word, gloss]) {
+function transform_function_word([word, gloss]: [string, string]): Concept {
 	return {
 		id: `${word}-fw`,
 		stem: word,
@@ -91,5 +81,6 @@ function transform_function_word([word, gloss]) {
 		curated_examples_raw: '',
 		status: 'function_word',
 		how_to_hints: [],
+		pending_changes: [],
 	}
 }

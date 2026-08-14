@@ -1,10 +1,12 @@
 import { is_authorized } from '$lib/server/auth'
 import { record_update_concept } from '$lib/server/changes/changes'
-import { get_concept_for_update } from '$lib/server/changes/concepts.js'
+import { get_concept_for_update } from '$lib/server/changes/concepts'
 import { error, redirect } from '@sveltejs/kit'
+import type { Actions, PageServerLoad } from './$types'
+import type { ConceptKey } from '$lib/types'
+import type { ConceptUpdateData } from '$lib/server/types'
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ url: { searchParams }, locals }) {
+export const load: PageServerLoad = async ({ url: { searchParams }, locals }) => {
 	if (!await is_authorized(locals, 'UPDATE_CONCEPT')) {
 		throw error(403, 'You must have permission to update a concept in the Ontology.')
 	}
@@ -21,8 +23,7 @@ export async function load({ url: { searchParams }, locals }) {
 	}
 }
 
-/** @satisfies {import('./$types').Actions} */
-export const actions = {
+export const actions: Actions = {
 	update: async ({ request, locals, url: { searchParams } }) => {
 		if (!await is_authorized(locals, 'UPDATE_CONCEPT')) {
 			throw error(403, 'You must have permission to update a concept in the Ontology.')
@@ -59,7 +60,7 @@ function get_concept_from_url(searchParams: URLSearchParams): ConceptKey {
 	return concept_key
 }
 
-function parse_concept_key(key: string): ConceptKey|null {
+function parse_concept_key(key: string): ConceptKey | null {
 	const concept_match = key.match(/^(.+?)-([A-Z])-(.+)$/)
 	if (!concept_match) {
 		return null

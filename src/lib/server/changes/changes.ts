@@ -3,6 +3,16 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { create_concept, get_concept_for_update, update_concept } from './concepts'
 import { get_version } from '$lib/server/ontology'
 import { default_categories } from '$lib/lookups'
+import type {
+	OntologyChange,
+	OntologyChangeDataFields,
+	PartOfSpeech,
+} from '$lib/types'
+import type {
+	ConceptCreateData,
+	ConceptUpdateData,
+	DbOntologyChange,
+} from '$lib/server/types'
 
 async function create_table_if_not_exists(db: D1Database) {
 	const sql = `
@@ -26,19 +36,19 @@ async function create_table_if_not_exists(db: D1Database) {
 }
 
 export async function get_all_changes(db: D1Database): Promise<OntologyChange[]> {
-	create_table_if_not_exists(db)
+	await create_table_if_not_exists(db)
 
 	const sql = `
 		SELECT *
 		FROM Changes
 		ORDER BY applied_date DESC NULLS FIRST, approved_date DESC NULLS FIRST
 	`
-	const { results } =  await db.prepare(sql).all<DbOntologyChange>()
+	const { results } = await db.prepare(sql).all<DbOntologyChange>()
 	return results.map(transform)
 }
 
 export async function get_pending_changes(db: D1Database): Promise<OntologyChange[]> {
-	create_table_if_not_exists(db)
+	await create_table_if_not_exists(db)
 
 	const sql = `
 		SELECT *
@@ -46,12 +56,12 @@ export async function get_pending_changes(db: D1Database): Promise<OntologyChang
 		WHERE applied_date IS NULL
 		ORDER BY approved_date DESC NULLS FIRST
 	`
-	const { results } =  await db.prepare(sql).all<DbOntologyChange>()
+	const { results } = await db.prepare(sql).all<DbOntologyChange>()
 	return results.map(transform)
 }
 
 export async function record_create_concept(db: D1Database, create_data: ConceptCreateData, user: User) {
-	create_table_if_not_exists(db)
+	await create_table_if_not_exists(db)
 
 	const sql = `
 		INSERT INTO Changes (
@@ -80,7 +90,7 @@ export async function record_create_concept(db: D1Database, create_data: Concept
 }
 
 export async function record_update_concept(db: D1Database, update_data: ConceptUpdateData, user: User) {
-	create_table_if_not_exists(db)
+	await create_table_if_not_exists(db)
 
 	const sql = `
 		INSERT INTO Changes (
@@ -101,9 +111,13 @@ export async function record_update_concept(db: D1Database, update_data: Concept
 	const old = (await get_concept_for_update(db, update_data))!
 
 	const fields: (keyof OntologyChangeDataFields)[] = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples']
-	const change_data: OntologyChangeDataFields = Object.fromEntries(fields.flatMap(field => {
-		return old[field].toString() !== update_data[field].toString() ? [[field, { old: old[field], value: update_data[field] }]] : []
-	}))
+	const change_data: OntologyChangeDataFields = Object.fromEntries(
+		fields.flatMap(field => {
+			return old[field]?.toString() !== update_data[field]?.toString()
+				? [[field, { old: old[field], value: update_data[field] }]]
+				: []
+		}),
+	)
 
 	await db.prepare(sql)
 		.bind(stem, sense, part_of_speech, JSON.stringify(change_data), 'update', user.email!, new Date().toISOString())
@@ -113,10 +127,15 @@ export async function record_update_concept(db: D1Database, update_data: Concept
 function transform(db_change: DbOntologyChange): OntologyChange {
 	const {
 		id,
-		concept_stem, concept_sense, concept_part_of_speech,
-		data, action,
-		approved_by_email, approved_date,
-		applied_date, version,
+		concept_stem,
+		concept_sense,
+		concept_part_of_speech,
+		data,
+		action,
+		approved_by_email,
+		approved_date,
+		applied_date,
+		version,
 	} = db_change
 
 	return {
@@ -128,21 +147,21 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 		},
 		data: JSON.parse(data) as OntologyChangeDataFields,
 		action,
-		approved_by: approved_by_email && approved_date ? { email: approved_by_email, date: new Date(approved_date!) } : null,
+		approved_by: approved_by_email && approved_date ? { email: approved_by_email, date: new Date(approved_date) } : null,
 		applied_date: applied_date ? new Date(applied_date) : null,
 		version,
 	}
 }
 
 export async function apply_pending_changes(db: D1Database): Promise<{ count: number, failed: number, version: string }> {
-	create_table_if_not_exists(db)
+	await create_table_if_not_exists(db)
 
 	const sql = `
 		SELECT *
 		FROM Changes
 		WHERE approved_date IS NOT NULL AND applied_date IS NULL
 	`
-	const { results } =  await db.prepare(sql).all<DbOntologyChange>()
+	const { results } = await db.prepare(sql).all<DbOntologyChange>()
 	const pending_changes = results.map(transform)
 
 	if (!pending_changes.length) {
@@ -162,16 +181,16 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 	for (const change of pending_changes) {
 		try {
 			if (change.action === 'create') {
+				const fallback_categories = default_categories[change.concept.part_of_speech as PartOfSpeech] || []
 				const create_data: ConceptCreateData = {
 					...change.concept,
 					level: change.data.level?.value ?? '0',
 					gloss: change.data.gloss?.value ?? '',
 					brief_gloss: change.data.brief_gloss?.value ?? '',
-					categories: change.data.categories?.value ?? default_categories[change.concept.part_of_speech],
+					categories: change.data.categories?.value ?? fallback_categories,
 					curated_examples: change.data.curated_examples?.value ?? '',
 				}
 				await create_concept(db, create_data)
-
 			} else {
 				const current_data = (await get_concept_for_update(db, change.concept))!
 				const update_data: ConceptUpdateData = {
@@ -192,7 +211,6 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 			`
 			await db.prepare(sql).bind(applied_date, version, change.id).run()
 			count++
-
 		} catch (err: unknown) {
 			const message = err instanceof Error ? err.message : String(err)
 			console.error(`Failed to apply change ${change.id}: ${message}`)
@@ -206,7 +224,6 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 			failed++
 		}
 	}
-
 	// TODO once changes are fully supported, actually save the new version within the 'Version' table
 
 	return {

@@ -1,13 +1,13 @@
 import { json } from '@sveltejs/kit'
 import { get_simplification_hints } from '$lib/server/ontology'
+import type { RequestHandler } from './$types'
+import type { ConceptSearchFilter, SimplificationHint } from '$lib/types'
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
+export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
 	const complex_term = searchParams.get('complex_term') ?? ''
 	const category = searchParams.get('category') ?? ''
 
-	/** @type {ConceptSearchFilter} */
-	const concept_filter = {
+	const concept_filter: ConceptSearchFilter = {
 		q: complex_term,
 		scope: 'stems',
 		category,
@@ -17,8 +17,7 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }) {
 
 	return response(matches)
 
-	/** @param {SimplificationHint[]} result  */
-	function response(result) {
+	function response(result: SimplificationHint[]): Response {
 		const THREE_HOUR_CACHE = {
 			'cache-control': `max-age=${3 * 60 * 60}`,
 		}

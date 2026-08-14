@@ -1,7 +1,15 @@
 import { bible_books } from '$lib/lookups'
+import type {
+	Concept,
+	ContextArgumentMap,
+	ContextArgumentName,
+	Example,
+	FilterMap,
+	FilterRulesMap,
+	Options,
+} from '$lib/types'
 
-/** @type { ContextArgumentMap } */
-export const context_argument_map = new Map([
+export const context_argument_map: ContextArgumentMap = new Map([
 	['Noun', [
 		'Complex Handling',
 		'Pairing',
@@ -92,41 +100,29 @@ export const context_argument_map = new Map([
  * | Polarity		| 'Affirmative'					|
  * | Agent			| ...									|
  * | Patient		| ...									|
- *
- * @param { Concept } concept
- * @param { Example[] } examples
- * @returns { FilterMap }
  */
-export function derive_filters(concept, examples) {
-	/** @type { FilterMap } */
-	const filters = new Map()
+export function derive_filters(concept: Concept, examples: Example[]): FilterMap {
+	const filters: FilterMap = new Map()
 
 	// The Book filter has to be handled separately because it's a little different than the context filters.
-	const book_names_found_in_examples = examples.sort(by_book_order).map(book_name)
+	const book_names_found_in_examples = examples.slice().sort(by_book_order).map(book_name)
 	filters.set('Book', new Set(['Any', ...book_names_found_in_examples]))
 
-	/** @type { FilterMap } */
-	const context_filters = initialize_filter_map().get(concept.part_of_speech) ?? new Map()
-
-	/**
-	 * @typedef { number } Counter
-	 * @type { Record<ContextArgumentName, Counter> }
-	 */
-	const absence_tracker = {}
+	const context_filters: FilterMap = initialize_filter_map().get(concept.part_of_speech) ?? new Map()
+	const absence_tracker: Record<ContextArgumentName, number> = {}
 
 	examples.forEach(({ context }) => {
-		context_filters.forEach((options, argument_name) => {
+		context_filters.forEach((_options, argument_name) => {
 			if (context[argument_name]) {
 				context_filters.get(argument_name)?.add(context[argument_name])
-			}
-			else {
+			} else {
 				absence_tracker[argument_name] = (absence_tracker[argument_name] ?? 0) + 1
 			}
 		})
 	})
 
-	for (const [name, options] of context_filters.entries().filter(has_options)) {
-		const common_options = new Set()
+	for (const [name, options] of Array.from(context_filters.entries()).filter(has_options)) {
+		const common_options = new Set<string>()
 
 		// second condition added because take-A [Instrument and Addressee] both have only one option...
 		if (options.size > 1 || absence_tracker[name] && options.size === 1) {
@@ -145,23 +141,18 @@ export function derive_filters(concept, examples) {
 
 	return filters
 
-	/** @param { Example } example */
-	function book_name({ reference: { id_primary } }) {
+	function book_name({ reference: { id_primary } }: Example): string {
 		return id_primary
 	}
 
-	function initialize_filter_map() {
-		/** @type { FilterRulesMap } */
-		const filter_rules_map = new Map()
+	function initialize_filter_map(): FilterRulesMap {
+		const filter_rules_map: FilterRulesMap = new Map()
 
 		for (const [part_of_speech, args] of context_argument_map.entries()) {
-			/** @type { FilterMap } */
-			const filter_map = new Map()
+			const filter_map: FilterMap = new Map()
 
 			for (const filter_name of args) {
-				/** @type { Options } */
-				const options = new Set()
-
+				const options: Options = new Set()
 				filter_map.set(filter_name, options)
 			}
 
@@ -171,20 +162,18 @@ export function derive_filters(concept, examples) {
 		return filter_rules_map
 	}
 
-	/** @param { [ContextArgumentName, Options] } filter_map  */
-	function has_options([, options]) {
+	function has_options([, options]: [ContextArgumentName, Options]): boolean {
 		return options.size > 0
 	}
 }
 
 /**
  * Sorts by Bible book order rather than the natural alphabetical order
- *
- * @param { Example } example_1
- * @param { Example } example_2
- * @returns { number }
  */
-export function by_book_order({ reference: { id_primary: book_name_1 } }, { reference: { id_primary: book_name_2 } }) {
+export function by_book_order(
+	{ reference: { id_primary: book_name_1 } }: Example,
+	{ reference: { id_primary: book_name_2 } }: Example,
+): number {
 	const books_in_order = Object.values(bible_books)
 
 	const index_1 = books_in_order.indexOf(book_name_1)

@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private'
 import { GoogleGenAI } from '@google/genai'
 import { get_all_concepts } from './ontology'
 import type { D1Database } from '@cloudflare/workers-types'
+import type { Concept } from '$lib/types'
 
 export async function find_related_concepts(db: D1Database, search_term: string): Promise<Concept[]> {
 	const all_concepts = await get_all_concepts(db)
@@ -9,7 +10,9 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 	// check the cache
 	const cached_results = get_from_cache(search_term)
 	if (cached_results) {
-		return cached_results.map(key => all_concepts.find(c => key === concept_key(c))!)
+		return cached_results
+			.map(key => all_concepts.find(c => key === concept_key(c)))
+			.filter((c): c is Concept => c !== undefined)
 	}
 
 	// These filters currently result in ~3800 concepts getting sent to the LLM, down from ~6380
@@ -17,7 +20,7 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 		// don't bother including whole numbers, they just use up tokens
 		// leave decimal numbers though, so things like 'tenth' can relate to '.1'
 		c => c.gloss.includes('number') && !!c.stem.match(/^\d/),
-		// don't bother including proper names, unless one of the geographical ones like mount-Horeb, city-David, etc. Unsure about this one
+		// don't bother including proper names, unless one of the geographical ones like mount-Horeb, city-David, etc.
 		c => c.gloss.startsWith('(proper name)') /*&& !c.stem.match(/^(?:sea-|mount-|valley-|river-|desert-|city-|cave-|feast-|gate-)/i)*/,
 		// don't include dates and times other than '12PM' so it can relate to 'noon'
 		c => !!c.stem.match(/\d(?:BC|AD|PM|AM)$/) && c.stem !== '12PM',
@@ -55,22 +58,24 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 			responseMimeType: 'application/json',
 			// https://ai.google.dev/gemini-api/docs/structured-output?example=recipe#json_schema_support
 			responseJsonSchema: {
-				'type': 'array',
-				'description': 'The list of related concepts.',
-				'items': {
-					'type': 'string',
-					'description': 'The concept identifier.',
+				type: 'array',
+				description: 'The list of related concepts.',
+				items: {
+					type: 'string',
+					description: 'The concept identifier.',
 				},
 			},
 		},
 	})
 
-	const output = response.text?.length ? JSON.parse(response.text) as string[] : []
+	const output = response.text?.length ? (JSON.parse(response.text) as string[]) : []
 	if (output.length) {
 		set_cache(search_term, output)
 	}
 
-	return output.map(key => all_concepts.find(c => key === concept_key(c))!)
+	return output
+		.map(key => all_concepts.find(c => key === concept_key(c)))
+		.filter((c): c is Concept => c !== undefined)
 }
 
 function transform_concept(concept: Concept): { concept: string, gloss: string } {
@@ -82,7 +87,11 @@ function transform_concept(concept: Concept): { concept: string, gloss: string }
 	function transform_gloss(concept: Concept): string {
 		if (concept.status !== 'in ontology') {
 			// there is no gloss, but some fields can be used to help the LLM identify the semantics of the word
-			const { structure, pairing, explication } = concept.how_to_hints[0]
+			const hint = concept.how_to_hints[0]
+			if (!hint) return ''
+
+			const { structure, pairing, explication } = hint
+			
 			return `${structure} - ${pairing} - ${explication}`.trim()
 		} else {
 			// remove anything within parentheses
