@@ -1,13 +1,9 @@
-<script>
-	/** @type {{ data: PageSourceEntity, noun_list: NounListEntry[] }}*/
-	const { data = $bindable(), noun_list } = $props()
+<script lang="ts">
+	let { data = $bindable(), noun_list }: { data: PageSourceEntity, noun_list: NounListEntry[] } = $props()
 
 	const next_index = $derived(calculate_next_index())
 
-	/**
-	 * @param {string} index
-	 */
-	function set_index(index) {
+	function set_index(index: string) {
 		data.noun_list_index = index
 	}
 

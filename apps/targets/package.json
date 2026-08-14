@@ -12,7 +12,7 @@
     "build": "vite build",
     "dev": "vite dev",
     "test": "pnpm test:unit && pnpm test:e2e",
-    "test:unit": "vitest run",
+    "test:unit": "vitest run src",
     "test:unit:watch": "vitest watch",
     "test:e2e": "playwright test",
     "test:e2e:dev": "playwright test --ui",

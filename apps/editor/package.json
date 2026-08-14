@@ -11,7 +11,7 @@
     "check:lint:fix": "eslint . --fix",
     "build": "vite build",
     "dev": "vite dev",
-    "test:unit": "vitest run",
+    "test:unit": "vitest run src",
     "test:unit:watch": "vitest watch",
     "test:unit:coverage": "vitest run --coverage",
     "precommit": "pnpm check && pnpm build && pnpm test:unit",

@@ -1,6 +1,5 @@
-<script>
-	/** @type {{ data: PageSourceEntity, noun_list: NounListEntry[] }}*/
-	const { data, noun_list } = $props()
+<script lang="ts">
+	let { data, noun_list }: { data: PageSourceEntity, noun_list: NounListEntry[] } = $props()
 </script>
 
 <table class="table table-sm table-zebra">
