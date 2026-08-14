@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { levels } from '$lib/lookups'
+	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
 
 	let { data }: PageProps = $props()
@@ -10,7 +11,7 @@
 	let concept_data = $state(data.concept_data)
 	let initial_data = $state.snapshot(concept_data)
 	let is_dirty = $derived(!deep_equal(concept_data, initial_data))
-	let concept_for_header: Concept = $derived({ ...concept_data, categorization: '', curated_examples: [], curated_examples_raw: '', occurrences: 0, status: 'not used', how_to_hints: [], pending_changes: [], examples: '', id: '' })
+	let concept_for_header: Concept = $derived(create_fallback_concept(concept_data))
 
 	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
 		return JSON.stringify(obj1) === JSON.stringify(obj2)

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+	create_fallback_concept,
 	decode_categorization,
 	encode_categorization,
 	transform_curated_examples,
@@ -103,6 +104,25 @@ describe('transformers', () => {
 		it('handles fallback for unknown part of speech', () => {
 			expect(decode_categorization('Unknown', 'xyz')).toEqual(['x', 'y', 'z'])
 			expect(encode_categorization('Unknown', ['xyz'])).toBe('')
+		})
+	})
+
+	describe('create_fallback_concept', () => {
+		it('creates a concept with default values', () => {
+			const fallback = create_fallback_concept()
+			expect(fallback.id).toBe('')
+			expect(fallback.stem).toBe('')
+			expect(fallback.level).toBe('1')
+			expect(fallback.status).toBe('not used')
+			expect(fallback.categories).toEqual([])
+		})
+
+		it('merges custom properties over defaults', () => {
+			const fallback = create_fallback_concept({ stem: 'love', sense: '01', part_of_speech: 'Noun' })
+			expect(fallback.stem).toBe('love')
+			expect(fallback.sense).toBe('01')
+			expect(fallback.part_of_speech).toBe('Noun')
+			expect(fallback.level).toBe('1')
 		})
 	})
 })

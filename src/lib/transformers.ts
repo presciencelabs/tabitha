@@ -8,6 +8,7 @@ import {
 } from '$lib/lookups'
 import type {
 	CategoryName,
+	Concept,
 	CuratedExample,
 	PartOfSpeech,
 	Reference,
@@ -255,3 +256,36 @@ function encode_usage_categorization(part_of_speech: string): (categories: strin
 		}
 	}
 }
+
+/**
+ * Creates a minimal fallback Concept object from partial data.
+ * Useful for initializing header displays in concept creation/update forms.
+ */
+export function create_fallback_concept(
+	data: Partial<Omit<Concept, 'curated_examples'> & { curated_examples?: string | CuratedExample[] }> = {},
+): Concept {
+	const { curated_examples, ...rest } = data
+	const curated_examples_list: CuratedExample[] = Array.isArray(curated_examples) ? curated_examples : []
+	const curated_examples_str: string = typeof curated_examples === 'string' ? curated_examples : ''
+
+	return {
+		id: '',
+		stem: '',
+		sense: '',
+		part_of_speech: '',
+		level: '1',
+		gloss: '',
+		brief_gloss: '',
+		categorization: '',
+		categories: [],
+		curated_examples: curated_examples_list,
+		curated_examples_raw: curated_examples_str,
+		occurrences: 0,
+		status: 'not used',
+		how_to_hints: [],
+		pending_changes: [],
+		examples: '',
+		...rest,
+	}
+}
+
