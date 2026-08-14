@@ -1,0 +1,16 @@
+import { sveltekit } from '@sveltejs/kit/vite'
+import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+	plugins: [
+		tailwindcss(),
+		sveltekit(),
+	],
+
+	server: {
+		host: 'localhost.tabitha.bible',
+		port: 5173,
+		strictPort: true, // neeed since there are OAuth settings in place for this port
+	},
+})

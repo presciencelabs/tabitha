@@ -1,0 +1,10 @@
+.DS_Store
+.wrangler
+node_modules
+.svelte-kit
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+*.sql
+.env.local

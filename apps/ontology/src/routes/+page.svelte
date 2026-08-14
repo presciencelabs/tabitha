@@ -1,0 +1,52 @@
+<script>
+	import Icon from '@iconify/svelte' // https://iconify.design/
+	import { page } from '$app/stores'
+	import { DisplayPreference, SummaryCard, Table } from '$lib'
+
+	/** @type {import('./$types').PageData} */
+	export let data
+
+	/** @type {'grid'|'table'} */
+	let display_preference = 'grid'
+
+	$: searched = !!$page.url.search
+	$: matches = data.results
+	$: found = !!matches.length
+	$: icon = `material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`
+
+	/** @param {CustomEvent<'grid'|'table'>} preference_event */
+	function set_preference({ detail }) {
+		display_preference = detail
+	}
+</script>
+
+<header class="flex justify-between">
+	<em class="badge badge-lg gap-2 transition-opacity duration-200 {searched ? 'opacity-100' : 'opacity-0'} {found ? 'badge-success' : 'badge-warning'}">
+		<Icon {icon} />
+
+		<strong>{matches.length}</strong> results
+	</em>
+
+	<DisplayPreference on:preference={set_preference} />
+</header>
+
+{#if data.can_add}
+	<section>
+		<a class="btn" href="/protected/concept/create">
+			<Icon icon="material-symbols:add" class="w-5 h-5" />
+			Add Concept
+		</a>
+	</section>
+{/if}
+
+{#if display_preference === 'grid'}
+	<section class="mt-8 flex flex-row flex-wrap gap-10">
+		{#each matches as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
+			<SummaryCard {concept} show_how_to={matches.length <= 5} />
+		{/each}
+	</section>
+{:else}
+	<section class="prose mt-8 max-w-none overflow-x-auto">
+		<Table concepts={matches} />
+	</section>
+{/if}

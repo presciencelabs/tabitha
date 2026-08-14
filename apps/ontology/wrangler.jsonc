@@ -1,0 +1,57 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "ontology",
+	"compatibility_date": "2026-08-06",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"vars": {
+		"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com" // Ontology (Preview & Prod)
+	},
+	"triggers": {
+		// represents all the schedules to run hooks.server.ts.scheduled()
+		"crons": [
+			"0 */12 * * *" // every 12 hours, 00:00 UTC and 12:00 UTC
+		]
+	},
+	"routes": [
+		{
+			"pattern": "ontology.tabitha.bible",
+			"custom_domain": true
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB_Ontology",
+			"database_name": "Ontology_9494_2026-06-25",
+			"database_id": "8ca85ff3-063d-4d6b-8438-9bb68e264206"
+		},
+		{
+			"binding": "DB_Auth",
+			"database_name": "Auth",
+			"database_id": "c547b234-05fd-4923-ab0e-689d993894ad"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "R2_db_backups",
+			"bucket_name": "db-backups"
+		}
+	],
+	"placement": {
+		// Necessary to support D1 withSession() bookmarking and edge proximity routing
+		// https://developers.cloudflare.com/d1/concepts/sessions/
+		"mode": "off"
+	}
+}
