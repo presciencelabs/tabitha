@@ -46,17 +46,17 @@
 <section class="flex flex-col">
 	<form class="flex gap-4 bg-info text-info-content px-4 pt-2 pb-3.5 overflow-x-auto rounded-box">
 		{#each filters as [name, options]}
+			{@const first_option = [...options][0] ?? 'Any'}
 			<fieldset class="fieldset">
 				<legend class="fieldset-legend text-info-content">{name}</legend>
 
 				<select
-					value={selected_filters.get(name) ?? ''}
+					value={selected_filters.get(name) ?? first_option}
 					onchange={e => selected_filters.set(name, e.currentTarget.value)}
 					class="select text-base-content"
 				>
-					{#each [...options] as option, i}
-						{@const is_first_option = i === 0}
-						<option value={option} selected={is_first_option}>{option}</option>
+					{#each [...options] as option}
+						<option value={option}>{option}</option>
 					{/each}
 				</select>
 			</fieldset>
