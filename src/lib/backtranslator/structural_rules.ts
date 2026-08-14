@@ -40,6 +40,32 @@ const structural_rules_json: BuiltInRule[] = [
 		},
 	},
 	{
+		name: 'Jussive',
+		comment: '',
+		rule: {
+			trigger: create_token_filter({ 'token': '(jussive)' }),
+			context: create_context_filter({
+				'precededby': { 'tag': { 'position': 'first_word' }, 'skip': 'all' },
+			}),
+			action: ({ tokens, trigger_index, context_indexes }) => {
+				const first_word = tokens[context_indexes[0]]
+				const first_is_conjunction = first_word.lookup_results[0]?.part_of_speech === 'Conjunction'
+				const let_position = first_is_conjunction ? context_indexes[0] + 1 : context_indexes[0]
+				
+				const let_token = create_token('let', TOKEN_TYPE.FUNCTION_WORD)
+				const jussive_token = tokens.splice(trigger_index, 1)[0]
+
+				tokens.splice(let_position, 0, let_token, jussive_token)
+				
+				if (!first_is_conjunction) {
+					fix_capitalization([first_word], [let_token], true)
+				}
+
+				return trigger_index + 2	// removed 1 and inserted 2
+			},
+		},
+	},
+	{
 		name: 'insert "that" into some "patient_clause_different_participant" clauses',
 		comment: '',
 		rule: {
