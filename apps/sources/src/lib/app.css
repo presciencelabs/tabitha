@@ -1,0 +1,118 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui';
+
+/* TODO: third copy of these, time to DRY them out.  Also used in Ontology and Editor apps.
+
+	complexity level colors in TBTA are as follows:
+	0 => blue
+	1 => creme
+	2 => magenta
+	3 => green
+	4 => brown
+*/
+.L0 {
+	color: whitesmoke;
+	background-color: #0b66ff;
+}
+.L1 {
+	color: darkblue;
+	background-color: #fcffc5;
+	filter: saturate(200%);
+}
+.L2 {
+	color: yellow;
+	background-color: #fb00ff;
+}
+.L3 {
+	color: whitesmoke;
+	background-color: #0f7000;
+}
+.L4 {
+	color: whitesmoke;
+	background-color: #6b2f30;
+}
+.L0-text {
+	color: whitesmoke;
+}
+.L1-text {
+	color: darkblue;
+}
+.L2-text {
+	color: yellow;
+}
+.L3-text {
+	color: whitesmoke;
+}
+.L4-text {
+	color: whitesmoke;
+}
+
+.entity-N {
+	color: whitesmoke;
+	background-color: #aa795d;
+}
+.entity-NP {
+	color: #aa795d;
+}
+.entity-V {
+	color: whitesmoke;
+	background-color: #507a8b;
+}
+.entity-VP {
+	color: #507a8b;
+}
+.entity-Adj {
+	color: whitesmoke;
+	background-color: #548159;
+}
+.entity-AdjP {
+	color: #548159;
+}
+.entity-Adv {
+	color: #222222;
+	background-color: #86CBA7;
+}
+.entity-AdvP {
+	color: #86CBA7;
+}
+.entity-Adp {
+	color: whitesmoke;
+	background-color: #86657C;
+}
+.entity-Con {
+	color: #222222;
+	background-color: #E3E3E3;
+}
+.entity-Par, .entity-Phr, .entity-period {
+	color: whitesmoke;
+	background-color: #4c4c4c;
+}
+
+.status-ready {
+	background-color: #36b04b;
+}
+
+.status-review {
+	background-color: #dcf2cf;
+}
+
+.status-initial-complete {
+	background-color: #ffffe0;
+}
+
+.status-in-progress {
+	background-color: #c4e6f6;
+}
+
+.status-not-started {
+	background-color: #ddc9f0;
+}
+
+h1, h2, h3, h4, .text-balance {
+	text-wrap: balance;
+}
+
+p, article {
+	text-wrap: pretty;
+}
