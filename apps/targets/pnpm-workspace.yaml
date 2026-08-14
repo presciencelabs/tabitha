@@ -1,0 +1,11 @@
+packages:
+  - '.'
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
+onlyBuiltDependencies:
+  - '@sveltejs/kit'
+  - esbuild
+  - sharp
+  - workerd

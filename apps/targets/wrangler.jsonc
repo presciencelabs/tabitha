@@ -1,0 +1,37 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "targets",
+	"compatibility_date": "2026-08-06",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"routes": [
+		{
+			"pattern": "targets.tabitha.bible",
+			"custom_domain": true
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB_Targets",
+			"database_name": "Targets_2026-07-31",
+			"database_id": "9b9bd873-9e51-42f3-ba3d-393cf5a9bd2f"
+		}
+	],
+	"placement": {
+		// Necessary to support D1 withSession() bookmarking and edge proximity routing
+		// https://developers.cloudflare.com/d1/concepts/sessions/
+		"mode": "off"
+	}
+}
