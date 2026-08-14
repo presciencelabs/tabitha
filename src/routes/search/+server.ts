@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit'
+import { cached_json } from '$lib/server/response_helpers'
 import { get_concepts } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 
 	const lite_matches = matches.map(make_lite)
 
-	return response(lite_matches)
+	return cached_json(lite_matches)
 
 	function make_lite(concept: Concept) {
 		const { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints } = concept
@@ -37,15 +37,5 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 	function make_lite_hints(hint: SimplificationHint) {
 		const { structure, pairing, explication } = hint
 		return { structure, pairing, explication }
-	}
-
-	function response<T>(result: T): Response {
-		const THREE_HOUR_CACHE = {
-			'cache-control': `max-age=${3 * 60 * 60}`,
-		}
-
-		return json(result, {
-			headers: THREE_HOUR_CACHE,
-		})
 	}
 }

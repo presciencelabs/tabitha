@@ -1,5 +1,6 @@
 import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-import { json, error } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import { cached_json } from '$lib/server/response_helpers'
 import { get_examples } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { Example, SourceStatus, StatusApiResult } from '$lib/types'
@@ -12,17 +13,7 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 	const examples = await get_examples(db_ontology)(concept, part_of_speech, source)
 	const examples_with_status = await fetch_statuses_by_book(examples)
 
-	return response(examples_with_status)
-
-	function response(result: Example[]): Response {
-		const THREE_HOUR_CACHE = {
-			'cache-control': `max-age=${3 * 60 * 60}`,
-		}
-
-		return json(result, {
-			headers: THREE_HOUR_CACHE,
-		})
-	}
+	return cached_json(examples_with_status)
 }
 
 async function fetch_statuses_by_book(examples: Example[]): Promise<Example[]> {
