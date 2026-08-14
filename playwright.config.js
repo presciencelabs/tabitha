@@ -11,12 +11,14 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
+			use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost.tabitha.bible:5173' },
 		},
 	],
 
 	webServer: {
 		command: 'pnpm build && pnpm dev',
 		port: 5173,
+		// Reuse active dev server locally to prevent port conflicts; start fresh server in CI
+		reuseExistingServer: !process.env.CI,
 	},
 })
