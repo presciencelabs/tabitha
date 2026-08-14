@@ -22,7 +22,6 @@ export async function get_all_concepts(db: D1Database): Promise<Concept[]> {
 
 	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all<SimplificationHint>()
 
-	// TODO maybe use a map for the merge so it doesn't loop through the concepts so many times (O(C+H) instead of O(C*H))
 	return merge_how_to_results(concepts, how_to_results)
 }
 
@@ -178,15 +177,25 @@ function normalize_wildcards(possible_wildcard: string): string {
 }
 
 function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {
+	const merged_concepts = [...concepts]
+	const concept_map = new Map<string, Concept>()
+
+	for (const concept of merged_concepts) {
+		concept_map.set(create_concept_key(concept), concept)
+	}
+
 	for (const how_to of how_to_results) {
-		const existing_concept = concepts.find(match => concepts_match(match, how_to))
+		const key = create_concept_key(how_to)
+		const existing_concept = concept_map.get(key)
 		if (existing_concept) {
 			existing_concept.how_to_hints.push(how_to)
 		} else {
-			concepts.push(create_how_to_result(how_to))
+			const new_concept = create_how_to_result(how_to)
+			concept_map.set(key, new_concept)
+			merged_concepts.push(new_concept)
 		}
 	}
-	return concepts
+	return merged_concepts
 
 	function create_how_to_result(hint: SimplificationHint): Concept {
 		const level = hint.level === -1 ? 'N/A' : hint.level.toString()
