@@ -1,3 +1,4 @@
+import type { Permission } from '$lib/server/types'
 
 export async function is_authorized(locals: App.Locals, permission: Permission): Promise<boolean> {
 	if (!locals.user) {

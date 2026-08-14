@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
-	import { offline } from '.'
+	import { network_state } from '.'
 </script>
 
-{#if $offline}
+{#if network_state.is_offline}
 	<span class="badge badge-error badge-lg gap-4 tracking-widest mt-2">
 		<Icon icon="carbon:cloud-offline" /> offline
 	</span>

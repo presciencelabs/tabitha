@@ -1,8 +1,12 @@
-<script>
-    import { theta_grid_arguments } from '$lib/lookups'
+<script lang="ts">
+	import { theta_grid_arguments } from '$lib/lookups'
 
-	/** @type {{ categories: string[] }} */
-	const { categories = $bindable() } = $props()
+	interface Props {
+		categories?: string[]
+		part_of_speech?: string
+	}
+
+	let { categories = $bindable([]) }: Props = $props()
 </script>
 
 <fieldset class="fieldset border border-base-300 rounded-box p-4">
@@ -10,20 +14,20 @@
 
 	<table>
 		<tbody>
-		{#each theta_grid_arguments as argument, i}
-			<tr>
-				<td>
-					{argument}
-				</td>
-				<td class="pl-4">
-					<select bind:value={categories[i]} name="categories[]" class="select w-35">
-						<option value="">---</option>
-						<option value={argument}>Required</option>
-						<option value="({argument})">Optional</option>
-					</select>
-				</td>
-			</tr>
-		{/each}
+			{#each theta_grid_arguments as argument, i}
+				<tr>
+					<td>
+						{argument}
+					</td>
+					<td class="pl-4">
+						<select bind:value={categories[i]} name="categories[]" class="select w-35">
+							<option value="">---</option>
+							<option value={argument}>Required</option>
+							<option value="({argument})">Optional</option>
+						</select>
+					</td>
+				</tr>
+			{/each}
 		</tbody>
 	</table>
 </fieldset>

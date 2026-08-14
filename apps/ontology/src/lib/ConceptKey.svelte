@@ -1,6 +1,11 @@
-<script>
-	/** @type {ConceptKey} */
-	export let concept
+<script lang="ts">
+	import type { ConceptKey } from '$lib/types'
+
+	interface Props {
+		concept: ConceptKey
+	}
+
+	let { concept }: Props = $props()
 </script>
 
 <h2 class="relative whitespace-nowrap pb-6">

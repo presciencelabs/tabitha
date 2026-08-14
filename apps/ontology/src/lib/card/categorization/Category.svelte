@@ -1,20 +1,22 @@
-<script>
+<script lang="ts">
+	import type { Component } from 'svelte'
+	import type { PartOfSpeech } from '$lib/types'
 	import SemanticCategorization from './SemanticCategorization.svelte'
 	import TBD from './TBD.svelte'
 	import ThetaGrid from './ThetaGrid.svelte'
 	import UsageInfoForAdjective from './UsageInfoForAdjective.svelte'
 	import UsageInfoForParticles from './UsageInfoForParticles.svelte'
 
-	/** @type {string} */
-	export let part_of_speech
+	interface Props {
+		part_of_speech: PartOfSpeech | string
+		categories: string[]
+	}
 
-	/** @type {string[]} */
-	export let categories
+	let { part_of_speech, categories }: Props = $props()
 
-	/**
-	 * @type {Record<Concept['part_of_speech'], ConstructorOfATypedSvelteComponent>}
-	 */
-	const lookup = {
+	type DisplayComponent = Component<{ categories: string[] }>
+
+	const lookup: Partial<Record<PartOfSpeech, DisplayComponent>> = {
 		Adjective: UsageInfoForAdjective,
 		Adposition: UsageInfoForParticles,
 		Adverb: UsageInfoForParticles,
@@ -23,7 +25,7 @@
 		Verb: ThetaGrid,
 	}
 
-	$: component = lookup[part_of_speech] || TBD
+	let CurrentComponent = $derived(lookup[part_of_speech as PartOfSpeech] || TBD)
 </script>
 
-<svelte:component this={component} {categories} />
+<CurrentComponent {categories} />

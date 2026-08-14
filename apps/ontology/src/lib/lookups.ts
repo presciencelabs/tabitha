@@ -1,3 +1,5 @@
+import type { Book, PartOfSpeech } from '$lib/types'
+
 // Verb categorizations in the database '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
 // DisplayOntologyDlg.cppL1010
 //
@@ -15,7 +17,7 @@
 //		| 8 (Ii)		| Agent proposition	|
 //
 // Uppercase means required, lowercase means optional and an underscore('_') in any position means not applicable.
-const required = {
+const required: Record<string, string> = {
 	A: 'Agent-like',
 	B: 'Patient-like',
 	C: 'State',
@@ -27,35 +29,26 @@ const required = {
 	I: 'Agent proposition',
 }
 
-const optional = Object.entries(required).reduce(lowercase_and_parens, {})
+const optional: Record<string, string> = Object.entries(required).reduce(lowercase_and_parens, {})
 
 /**
- * @param {Record<string,string>} optional The new object being created that holds lowercase keys and parenthesized values.
- * @param {[string,string]} current_record
- *
- * @returns {Record<string,string>} - { a: '(Agent-like)', b: '(Patient-like)', ... }
+ * Creates an object holding lowercase keys and parenthesized values:
+ * e.g., `{ a: '(Agent-like)', b: '(Patient-like)', ... }`
  */
-function lowercase_and_parens(optional, [key, value]) {
-	optional[key.toLowerCase()] = `(${value})`
-
-	return optional
+function lowercase_and_parens(opt: Record<string, string>, [key, value]: [string, string]): Record<string, string> {
+	opt[key.toLowerCase()] = `(${value})`
+	return opt
 }
 
-/**
- * @type {Record<string, string>}
- */
-export const theta_grid = {
+export const theta_grid: Record<string, string> = {
 	...required,
 	...optional,
 	_: '',
 }
 
-export const theta_grid_arguments = Object.values(required)
+export const theta_grid_arguments: string[] = Object.values(required)
 
-/**
- * @type {Record<Concept['part_of_speech'], Record<string, string>>}
- */
-export const semantic_category = {
+export const semantic_category: Partial<Record<PartOfSpeech, Record<string, string>>> = {
 	// Adjective categorizations
 	// DisplayOntologyDlg.cppL1064
 	//
@@ -111,10 +104,7 @@ export const semantic_category = {
 	},
 }
 
-/**
- * @type {Record<Concept['part_of_speech'], string[]>}
- */
-export const usage_info = {
+export const usage_info: Partial<Record<PartOfSpeech, string[]>> = {
 	Adjective: [
 		'used attributively',
 		'used predicatively without an argument',
@@ -141,37 +131,26 @@ export const usage_info = {
 	],
 }
 
-/**
- * @type {Record<Concept['part_of_speech'], string[]>}
- */
-export const default_categories = {
+export const default_categories: Partial<Record<PartOfSpeech, string[]>> = {
 	Verb: [
 		'Agent-like',
-		...new Array(theta_grid_arguments.length-1).fill(''),
+		...new Array(theta_grid_arguments.length - 1).fill(''),
 	],
 	Noun: ['All other objects'],
 	Adjective: [
 		'Generic',
-		...usage_info.Adjective.map(v => `never ${v}`),
+		...usage_info.Adjective?.map(v => `never ${v}`) ?? [],
 	],
-	Adposition: usage_info.Adposition.map(v => `never ${v}`),
-	Adverb: usage_info.Adverb.map(v => `never ${v}`),
-	Conjunction: usage_info.Conjunction.map(v => `never ${v}`),
+	Adposition: usage_info.Adposition?.map(v => `never ${v}`) ?? [],
+	Adverb: usage_info.Adverb?.map(v => `never ${v}`) ?? [],
+	Conjunction: usage_info.Conjunction?.map(v => `never ${v}`) ?? [],
 }
 
 /**
- * Represents a collection of books.
- * @typedef {Record<number, string>} Book
- * @property {number} number - The unique number representing a book.
- * @property {string} name - The name of the book.
- */
-
-/**
- * @type {Book} – book number, book name
- *
+ * Bible books mapping: book number -> book name
  * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
  */
-export const bible_books = {
+export const bible_books: Book = {
 	1: 'Genesis',
 	2: 'Exodus',
 	3: 'Leviticus',
@@ -238,15 +217,13 @@ export const bible_books = {
 	64: '3 John',
 	65: 'Jude',
 	66: 'Revelation',
-	67: 'Revelations', //TODO: this can be removed once TBTA's Bible.mdb.Revelations table name is fixed
+	67: 'Revelations', // TODO: this can be removed once TBTA's Bible.mdb.Revelations table name is fixed
 }
 
 /**
- * @type {Book}
- *
  * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
  */
-const grammar_introduction_books = {
+const grammar_introduction_books: Book = {
 	1: 'Nouns',
 	2: 'Verbs',
 	3: 'Adjectives',
@@ -260,20 +237,18 @@ const grammar_introduction_books = {
 }
 
 /**
- * @type {Book}
- *
  * ReferenceUtils.cpp CReferenceUtils::GetBookNumber
  */
-const community_development_text_books = {
+const community_development_text_books: Book = {
 	1: 'Infected Eye',
 	2: "Kande's Story",
 	3: 'Avian Influenza',
 }
 
 /**
- * map lookup for the source and book of a reference
+ * Map lookup for the source and book of a reference.
  *
- * as of Nov 2023, the Ontology data looked like this:
+ * As of Nov 2023, the Ontology data looked like this:
  * | source | count 	|
  * |--------|--------|
  * |	3		|	6		| "Missions Documents"
@@ -282,10 +257,8 @@ const community_development_text_books = {
  * |	7		|	75		| "Community Development Texts"
  *
  * ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
- *
- * @type {Map<string, Book>}
  */
-export const sources = new Map([
+export const sources: Map<string, Book> = new Map<string, Book>([
 	['Hebrew Old Testament', {}],
 	['Greek New Testament', {}],
 	['Greek Grammar Introduction', {}],
@@ -296,7 +269,7 @@ export const sources = new Map([
 	['Community Development Texts', community_development_text_books],
 ])
 
-export const levels = new Map([
+export const levels: Map<string, string> = new Map([
 	['0', 'Semantic Primitive'],
 	['1', 'Semantic Molecule'],
 	['2', 'Complex - usually explicated'],
@@ -304,9 +277,9 @@ export const levels = new Map([
 	['4', 'Inexplicable'],
 ])
 
-export const parts_of_speech = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal']
+export const parts_of_speech = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal'] as const
 
-export const curated_example_category_codes = {
+export const curated_example_category_codes: Record<string, string> = {
 	'(NP': 'NP',
 	'(VP': 'VP',
 	'(AP': 'AdjP',
@@ -316,8 +289,7 @@ export const curated_example_category_codes = {
 	']': 'Clause end',
 }
 
-/** @type {Record<string, Record<string, string>>} */
-export const curated_example_feature_codes = {
+export const curated_example_feature_codes: Record<string, Record<string, string>> = {
 	'NP': {
 		'A': 'Agent',
 		'P': 'Patient',

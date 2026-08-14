@@ -1,27 +1,31 @@
-<script>
+<script lang="ts">
+	import { onMount } from 'svelte'
 	import Icon from '@iconify/svelte'
 	import { Details, Examples, Meaning } from '$lib'
 	import Header from './Header.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
 	import PendingChange from '$lib/PendingChange.svelte'
 	import { Category } from './categorization'
-	import { onMount } from 'svelte'
 	import { CONCEPT_FILTERS } from '$lib/filters'
 	import SimplifiedEntities from '$lib/examples/curated_examples/SimplifiedEntities.svelte'
+	import type { Concept } from '$lib/types'
 
-	/** @type {Concept} */
-	export let concept
+	interface Props {
+		concept: Concept
+		onclose?: () => void
+	}
 
-	/** @type {HTMLDialogElement} */
-	let dialog
+	let { concept, onclose }: Props = $props()
 
-	onMount(() => dialog.showModal())
+	let dialog = $state<HTMLDialogElement>()
 
-	$: curated_examples = concept.curated_examples
+	onMount(() => dialog?.showModal())
+
+	let curated_examples = $derived(concept.curated_examples)
 </script>
 
 <!-- https://daisyui.com/components/modal -->
-<dialog bind:this={dialog} on:close class="modal">
+<dialog bind:this={dialog} onclose={onclose} class="modal">
 	<section class="modal-box max-w-none">
 		<form method="dialog">
 			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
@@ -30,7 +34,7 @@
 		</form>
 
 		<article class="card">
-			<main class="card-body">
+			<div class="card-body">
 				<section class="prose card-title max-w-none justify-between">
 					<Header {concept} />
 				</section>
@@ -56,11 +60,13 @@
 
 				{#if curated_examples.length > 0 && CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept)}
 					<section class="prose mt-4 max-w-none">
-						<Details colors="bg-base-200">
-							<span slot="summary">
+						{#snippet curated_summary()}
+							<span>
 								Curated examples ({curated_examples.length})
 							</span>
+						{/snippet}
 
+						<Details colors="bg-base-200" summary={curated_summary}>
 							{#each curated_examples as { sentence, reference, encoding }}
 								<blockquote class="mb-0">
 									<span>
@@ -93,7 +99,7 @@
 						<Examples {concept} />
 					</section>
 				{/if}
-			</main>
+			</div>
 		</article>
 	</section>
 

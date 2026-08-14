@@ -24,7 +24,6 @@
 <header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
 	<Brand {version} />
 
-	<!--TODO maybe use a header slot?-->
 	{#if show_search_bar}
 		<Search autofocus />
 	{/if}

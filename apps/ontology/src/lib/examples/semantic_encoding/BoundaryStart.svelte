@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	import Features from './Features.svelte'
+	import type { SourceEntity } from '$lib/types'
 
-	/** @type {SourceEntity} */
-	export let source_entity
+	interface Props {
+		source_entity: SourceEntity
+	}
 
-	/** @type {Record<string, string>}*/
-	const boundary_size_map = {
+	let { source_entity }: Props = $props()
+
+	const boundary_size_map: Record<string, string> = {
 		'{': 'text-2xl',
 		'[': 'text-xl',
 		'(': 'text-xl',
@@ -13,7 +16,7 @@
 </script>
 
 <span class="inline-flex pe-1 tracking-widest">
-	<span class="{boundary_size_map[source_entity.value]} font-thin">
+	<span class="{boundary_size_map[source_entity.value] || 'text-xl'} font-thin">
 		{'['}
 	</span>
 	<Features {source_entity} classes={'self-center'}>

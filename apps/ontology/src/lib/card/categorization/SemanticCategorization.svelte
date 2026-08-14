@@ -1,8 +1,11 @@
-<script>
-	/** @type {Concept['categories']} */
-	export let categories
+<script lang="ts">
+	interface Props {
+		categories: string[]
+	}
 
-	$: name = categories[0]
+	let { categories }: Props = $props()
+
+	let name = $derived(categories[0] || '')
 </script>
 
 <fieldset class="fieldset border border-base-300 rounded-box p-2">

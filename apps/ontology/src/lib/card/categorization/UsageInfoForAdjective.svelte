@@ -1,11 +1,14 @@
-<script>
-	/** @type {Concept['categories']} */
-	export let categories
+<script lang="ts">
+	import UsageList from './UsageList.svelte'
 
-	$: [semantic_category, ...usages] = categories
-	$: always_usages = usages.filter(usage => usage.startsWith('always'))
-	$: sometimes_usages = usages.filter(usage => usage.startsWith('sometimes'))
-	$: grouped_usages = [...always_usages, ...sometimes_usages]
+	interface Props {
+		categories: string[]
+	}
+
+	let { categories }: Props = $props()
+
+	let semantic_category = $derived(categories[0] || '')
+	let usages = $derived(categories.slice(1))
 </script>
 
 <fieldset class="prose rounded-lg border p-4">
@@ -13,25 +16,5 @@
 		{semantic_category || 'None'}
 	</legend>
 
-	{#if grouped_usages.length}
-		<dl class="mt-0">
-			{#if always_usages.length}
-				<dt class="mt-0 italic">Always...</dt>
-
-				{#each always_usages as usage}
-					<dd>{usage.replace('always ', '')}</dd>
-				{/each}
-			{/if}
-
-			{#if sometimes_usages.length}
-				<dt class="mt-0 italic">Sometimes...</dt>
-
-				{#each sometimes_usages as usage}
-					<dd>{usage.replace('sometimes ', '')}</dd>
-				{/each}
-			{/if}
-		</dl>
-	{:else}
-		<p class="mt-0 italic">No usage information available.</p>
-	{/if}
+	<UsageList {usages} />
 </fieldset>

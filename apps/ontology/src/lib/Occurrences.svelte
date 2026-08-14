@@ -1,10 +1,14 @@
-<script>
+<script lang="ts">
 	import { CONCEPT_FILTERS } from './filters'
+	import type { Concept } from '$lib/types'
 
-	/** @type {Concept} */
-	export let concept
+	interface Props {
+		concept: Concept
+	}
 
-	$: occurrences = concept.occurrences
+	let { concept }: Props = $props()
+
+	let occurrences = $derived(concept.occurrences)
 </script>
 
 {#if CONCEPT_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(concept)}

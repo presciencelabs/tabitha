@@ -1,100 +1,44 @@
-<script>
-	import { createEventDispatcher, onMount } from 'svelte'
-	import { derive_filters } from '.'
+<script lang="ts">
+	import { SvelteMap } from 'svelte/reactivity'
 	import { fade } from 'svelte/transition'
+	import { derive_filters } from '.'
+	import type { Concept, ContextArgumentName, Example, FilterMap, Option } from '$lib/types'
 
-	/** @type { Concept } */
-	export let concept
+	interface Props {
+		concept: Concept
+		examples: Example[]
+		ondatafiltered?: (filtered_examples: Example[]) => void
+	}
 
-	/** @type { Example[] } */
-	export let examples
+	let { concept, examples, ondatafiltered }: Props = $props()
 
-	const dispatch = createEventDispatcher()
 	const FADE_CHARACTERISTICS = {
 		delay: 100,
 		duration: 700,
 	}
 
-	/** @type { FilterMap } */
-	let filters = new Map()
+	let filters: FilterMap = $derived(derive_filters(concept, examples))
+	let selected_filters = new SvelteMap<ContextArgumentName, Option>()
 
-	onMount(() => {
-		filters = derive_filters(concept, examples)
+	let filtered_examples = $derived(apply_filters(examples, selected_filters))
+
+	$effect(() => {
+		ondatafiltered?.(filtered_examples)
 	})
 
-	/**
-	 * converts things like "Topic NP" to "Topic_NP" or "Outer Adverb" to "Outer_Adverb" so they can be
-	 * 	used as property names on objects (since the select binding cannot be a Map in Svelte)
-	 *
-	 * @typedef { string } ContextArgumentNameNormalized
-	 *
-	 * @param { ContextArgumentName } name
-	 * @returns { ContextArgumentNameNormalized }
-	 */
-	function normalize_name(name) {
-		return name.replaceAll(' ', '_')
-	}
-	/**
-	 * reverses the above
-	 *
-	 * @param { ContextArgumentNameNormalized } name
-	 * @returns { ContextArgumentName }
-	 */
-	function denormalize_name(name) {
-		return name.replaceAll('_', ' ')
-	}
+	function apply_filters(examples_list: Example[] = [], filter_rules: Map<ContextArgumentName, Option>): Example[] {
+		return examples_list.filter(is_a_match)
 
-	/**
-	 * @typedef { Record<ContextArgumentNameNormalized, Option> } SelectedFilters – Had to choose an object-based
-	 * 	approach because Svelte doesn't support binding a Map to a select.
-	 *
-	 * @type { SelectedFilters }
-	 */
-	const selected_filters = {}
-
-	$: filtered_examples = apply_filters(examples, selected_filters)
-	$: dispatch('data-filtered', filtered_examples)
-
-	/**
-	 * @param { Example[] } examples
-	 * @param { SelectedFilters } filters
-	 * @returns { Example[] }
-	 */
-	function apply_filters(examples = [], filters) {
-		const results = examples.filter(is_a_match)
-
-		return results
-
-		/** @param { Example } example */
-		function is_a_match(example) {
-			return Object.entries(filters).every(satisfies_filter)
-
-			/** @param { [ContextArgumentNameNormalized, Option] } filter */
-			function satisfies_filter([normalized_name, option]) {
-				const argument_name = denormalize_name(normalized_name)
-
-				if (option === 'Any') {
-					return true
-				}
-
-				if (example.context[argument_name] === option) {
-					return true
-				}
-
-				if (example.reference.id_primary === option) {
-					return true
-				}
-
-				if (option === 'Present') {
-					return !!example.context[argument_name]
-				}
-
-				if (option === 'Not present') {
-					return !example.context[argument_name]
-				}
-
+		function is_a_match(example: Example): boolean {
+			for (const [name, option] of filter_rules.entries()) {
+				if (option === 'Any') continue
+				if (example.context[name] === option) continue
+				if (example.reference.id_primary === option) continue
+				if (option === 'Present' && example.context[name]) continue
+				if (option === 'Not present' && !example.context[name]) continue
 				return false
 			}
+			return true
 		}
 	}
 </script>
@@ -102,16 +46,17 @@
 <section class="flex flex-col">
 	<form class="flex gap-4 bg-info text-info-content px-4 pt-2 pb-3.5 overflow-x-auto rounded-box">
 		{#each filters as [name, options]}
-			{@const normalized_name = normalize_name(name)}
-
+			{@const first_option = [...options][0] ?? 'Any'}
 			<fieldset class="fieldset">
 				<legend class="fieldset-legend text-info-content">{name}</legend>
 
-				<select bind:value={selected_filters[normalized_name]} class="select text-base-content">
-					{#each [...options] as option, i}
-						{@const is_first_option = i === 0}
-
-						<option value={option} selected={is_first_option}>{option}</option>
+				<select
+					value={selected_filters.get(name) ?? first_option}
+					onchange={e => selected_filters.set(name, e.currentTarget.value)}
+					class="select text-base-content"
+				>
+					{#each [...options] as option}
+						<option value={option}>{option}</option>
 					{/each}
 				</select>
 			</fieldset>

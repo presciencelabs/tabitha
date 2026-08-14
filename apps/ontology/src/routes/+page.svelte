@@ -1,23 +1,17 @@
-<script>
-	import Icon from '@iconify/svelte' // https://iconify.design/
-	import { page } from '$app/stores'
+<script lang="ts">
+	import Icon from '@iconify/svelte'
+	import { page } from '$app/state'
 	import { DisplayPreference, SummaryCard, Table } from '$lib'
+	import type { PageProps } from './$types'
 
-	/** @type {import('./$types').PageData} */
-	export let data
+	let { data }: PageProps = $props()
 
-	/** @type {'grid'|'table'} */
-	let display_preference = 'grid'
+	let display_preference = $state<'grid' | 'table'>('grid')
 
-	$: searched = !!$page.url.search
-	$: matches = data.results
-	$: found = !!matches.length
-	$: icon = `material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`
-
-	/** @param {CustomEvent<'grid'|'table'>} preference_event */
-	function set_preference({ detail }) {
-		display_preference = detail
-	}
+	let searched = $derived(!!page.url.search)
+	let matches = $derived(data.results)
+	let found = $derived(!!matches.length)
+	let icon = $derived(`material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`)
 </script>
 
 <header class="flex justify-between">
@@ -27,7 +21,7 @@
 		<strong>{matches.length}</strong> results
 	</em>
 
-	<DisplayPreference on:preference={set_preference} />
+	<DisplayPreference bind:preference={display_preference} />
 </header>
 
 {#if data.can_add}

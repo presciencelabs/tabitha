@@ -1,36 +1,44 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
+	import type { PartOfSpeech } from '$lib/types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
+	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
 
-	let { data }: PageProps = $props()
+	let { data, form }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
 	let can_save = $derived(concept_data.stem && concept_data.sense && concept_data.part_of_speech)
 
 	let debounced_stem_pos = $state({ stem: concept_data.stem, part_of_speech: concept_data.part_of_speech })
-	let debouce_delay = 500
+	let debounce_delay = 500
 	let fetching_sense = $state(false)
 
+	function focus_alert(node: HTMLElement) {
+		node.focus()
+	}
+
 	$effect(() => {
-		concept_data.categories = default_categories[concept_data.part_of_speech]?.slice() ?? []
+		concept_data.categories = default_categories[concept_data.part_of_speech as PartOfSpeech]?.slice() ?? []
 	})
 
 	$effect(() => {
 		// the timer prevents a fetch request from being sent on every keystroke
 		debounced_stem_pos = { stem: concept_data.stem, part_of_speech: concept_data.part_of_speech }
+		fetching_sense = true
+
 		const timer = setTimeout(() => {
 			const { stem, part_of_speech } = debounced_stem_pos
 			if (stem && part_of_speech) {
-				fetching_sense = true
-				fetch(`/protected/concept/create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`).then(response => {
-					response.json().then(data => {
-						concept_data.sense = data.next_sense
-					}).finally(() => {
-						fetching_sense = false
+				fetch(`create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`).then(async res => {
+					const { sense } = await res.json()
+					concept_data.sense = sense
+				}).catch(err => {
+					console.error({
+						err,
 					})
 				}).finally(() => {
 					fetching_sense = false
@@ -38,20 +46,27 @@
 			} else {
 				fetching_sense = false
 			}
-		}, debouce_delay)
+		}, debounce_delay)
 
 		return () => clearTimeout(timer)
 	})
 </script>
 
 <article class="card bg-base-200 mx-auto w-[80%]">
-	<main class="card-body">
+	<div class="card-body">
 		<div class="prose pb-4">
 			<h2>Add a new concept</h2>
 		</div>
 
+		{#if form?.error}
+			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
+				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
+				<span>{form.error}</span>
+			</aside>
+		{/if}
+
 		{#if concept_data.sense}
-			{@const concept_for_header: Concept = { ...concept_data, categorization: '', curated_examples: [], curated_examples_raw: '', occurrences: 0, status: 'not used', how_to_hints: [], pending_changes: [], examples: '', id: '' }}
+			{@const concept_for_header = create_fallback_concept(concept_data)}
 			<section class="prose card-title max-w-none justify-between">
 				<Header concept={concept_for_header} />
 			</section>
@@ -119,5 +134,5 @@
 			</div>
 		</form>
 
-	</main>
+	</div>
 </article>

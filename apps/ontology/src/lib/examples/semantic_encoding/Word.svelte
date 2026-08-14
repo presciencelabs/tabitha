@@ -1,16 +1,23 @@
 <script lang="ts">
 	import Features from './Features.svelte'
 	import Concept from './Concept.svelte'
+	import type { SourceConcept, SourceEntity } from '$lib/types'
 
-	export let source_entity: SourceEntity
-
-	export let selected_concept: SourceConcept = {
-		stem: '',
-		sense: '',
-		part_of_speech: '',
+	interface Props {
+		source_entity: SourceEntity
+		selected_concept?: SourceConcept
 	}
 
-	const concept = source_entity.concept!	// will always be non-null at this point
+	let {
+		source_entity,
+		selected_concept = {
+			stem: '',
+			sense: '',
+			part_of_speech: '',
+		},
+	}: Props = $props()
+
+	let concept = $derived(source_entity.concept!)
 </script>
 
 <span class="inline-flex px-1 tracking-normal">
