@@ -11,9 +11,12 @@
 		"check:lint:fix": "eslint . --fix",
 		"build": "vite build",
 		"dev": "vite dev",
+		"test:unit": "vitest run",
+		"test:unit:watch": "vitest",
 		"test:e2e": "playwright test",
 		"test:e2e:dev": "playwright test --ui",
-		"precommit": "pnpm check && pnpm build && pnpm test:e2e",
+		"test": "pnpm test:unit && pnpm test:e2e",
+		"precommit": "pnpm check && pnpm build && pnpm test",
 		"clean:svelte": "rimraf .svelte-kit",
 		"clean:node": "rimraf node_modules",
 		"clean:powerwash": "(pnpm clean:svelte & pnpm clean:node) && pnpm install"
@@ -49,6 +52,7 @@
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.63.0",
 		"vite": "^8.1.3",
+		"vitest": "^4.1.10",
 		"wrangler": "^4.107.0"
 	}
 }
