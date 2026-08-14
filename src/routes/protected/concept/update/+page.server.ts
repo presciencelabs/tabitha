@@ -1,7 +1,7 @@
 import { is_authorized } from '$lib/server/auth'
 import { record_update_concept } from '$lib/server/changes/changes'
 import { get_concept_for_update } from '$lib/server/changes/concepts'
-import { error, redirect } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import type { ConceptKey } from '$lib/types'
 import type { ConceptUpdateData } from '$lib/server/types'
@@ -41,7 +41,12 @@ export const actions: Actions = {
 			curated_examples: form_data.get('curated_examples') as string,
 		}
 
-		await record_update_concept(locals.db_ontology, data, locals.user!)
+		try {
+			await record_update_concept(locals.db_ontology, data, locals.user!)
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err)
+			return fail(500, { error: `Failed to record update: ${message}` })
+		}
 
 		// Redirect to the changes page because the change isn't actually reflected in Concepts yet
 		redirect(303, '/protected/changes?status=pending')

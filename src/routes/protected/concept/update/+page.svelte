@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { PageProps } from './$types'
+	import Icon from '@iconify/svelte'
 	import { Category } from '$lib/card/categorization/edit'
 	import { levels } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
+	import type { Concept } from '$lib/types'
+	import type { ConceptUpdateData } from '$lib/server/types'
 
-	let { data }: PageProps = $props()
+	let { data, form }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
@@ -24,8 +27,13 @@
 </script>
 
 <article class="card bg-base-200 mx-auto w-[80%]">
-	<main class="card-body">
-		<!--TODO show error from server (db, validation, or other)-->
+	<div class="card-body">
+		{#if form?.error}
+			<aside class="alert alert-error mb-4">
+				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
+				<span>{form.error}</span>
+			</aside>
+		{/if}
 
 		<section class="prose card-title max-w-none justify-between">
 			<Header concept={concept_for_header} />
@@ -69,5 +77,5 @@
 			</div>
 		</form>
 
-	</main>
+	</div>
 </article>

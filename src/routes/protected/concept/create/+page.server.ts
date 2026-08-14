@@ -1,10 +1,11 @@
 import { is_authorized } from '$lib/server/auth'
-import { record_create_concept } from '$lib/server/changes/changes.js'
+import { record_create_concept } from '$lib/server/changes/changes'
 import { get_concept_for_update } from '$lib/server/changes/concepts'
-import { error, redirect } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
+import type { Actions, PageServerLoad } from './$types'
+import type { ConceptCreateData } from '$lib/server/types'
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
+export const load: PageServerLoad = async ({ locals }) => {
 	if (!await is_authorized(locals, 'ADD_CONCEPT')) {
 		throw error(403, 'You must have permission to add a concept to the Ontology.')
 	}
@@ -24,8 +25,7 @@ export async function load({ locals }) {
 	}
 }
 
-/** @satisfies {import('./$types').Actions} */
-export const actions = {
+export const actions: Actions = {
 	create: async ({ request, locals }) => {
 		if (!await is_authorized(locals, 'ADD_CONCEPT')) {
 			throw error(403, 'You must have permission to add a concept to the Ontology.')
@@ -48,7 +48,12 @@ export const actions = {
 			throw error(400, 'A concept with this stem, sense, and part of speech already exists.')
 		}
 
-		await record_create_concept(locals.db_ontology, data, locals.user!)
+		try {
+			await record_create_concept(locals.db_ontology, data, locals.user!)
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : String(err)
+			return fail(500, { error: `Failed to create concept: ${message}` })
+		}
 
 		// Redirect to the changes page because the change isn't actually reflected in Concepts yet
 		redirect(303, '/protected/changes?status=pending')

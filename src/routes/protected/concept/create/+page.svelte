@@ -7,7 +7,7 @@
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
 
-	let { data }: PageProps = $props()
+	let { data, form }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
@@ -49,10 +49,17 @@
 </script>
 
 <article class="card bg-base-200 mx-auto w-[80%]">
-	<main class="card-body">
+	<div class="card-body">
 		<div class="prose pb-4">
 			<h2>Add a new concept</h2>
 		</div>
+
+		{#if form?.error}
+			<aside class="alert alert-error mb-4">
+				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
+				<span>{form.error}</span>
+			</aside>
+		{/if}
 
 		{#if concept_data.sense}
 			{@const concept_for_header = create_fallback_concept(concept_data)}
@@ -123,5 +130,5 @@
 			</div>
 		</form>
 
-	</main>
+	</div>
 </article>
