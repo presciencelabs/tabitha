@@ -1,17 +1,20 @@
-<script>
-	import { DetailedCard, Level, Occurrences, Meaning } from '$lib'
+<script lang="ts">
+	import type { Concept } from '$lib/types'
+	import { DetailedCard, Level, Meaning, Occurrences } from '$lib'
 	import PendingChange from '$lib/PendingChange.svelte'
 
-	/** @type {Concept[]} */
-	export let concepts
+	interface Props {
+		concepts: Concept[]
+	}
 
-	/** @type {Concept | null} */
-	let selected_concept = null
+	let { concepts }: Props = $props()
 
-	/** @param {Concept} concept*/
-	function open(concept) {
+	let selected_concept = $state<Concept | null>(null)
+
+	function open(concept: Concept) {
 		selected_concept = concept
 	}
+
 	function close() {
 		selected_concept = null
 	}
@@ -32,7 +35,7 @@
 	<tbody>
 		{#each concepts as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
 			{@const pending_level_change = concept.pending_changes.find(change => change.data.level)}
-			<tr class="hover cursor-pointer" on:click={() => open(concept)}>
+			<tr class="hover cursor-pointer" onclick={() => open(concept)}>
 				<td>
 					{concept.stem}
 				</td>
@@ -62,5 +65,5 @@
 </table>
 
 {#if selected_concept}
-	<DetailedCard concept={selected_concept} on:close={close} />
+	<DetailedCard concept={selected_concept} onclose={close} />
 {/if}

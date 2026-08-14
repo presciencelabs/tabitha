@@ -1,6 +1,9 @@
-<script>
-	/** @type {Concept['categories']} */
-	export let categories
+<script lang="ts">
+	interface Props {
+		categories: string[]
+	}
+
+	let { categories }: Props = $props()
 </script>
 
 <div class="mt-2 flex flex-wrap gap-0 overflow-x-auto font-mono text-sm">

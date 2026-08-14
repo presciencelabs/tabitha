@@ -1,6 +1,11 @@
-<script>
-	/** @type {Concept} */
-	export let concept
+<script lang="ts">
+	import type { Concept } from '$lib/types'
+
+	interface Props {
+		concept: Concept
+	}
+
+	let { concept }: Props = $props()
 </script>
 
 <table class="table ml-8">
@@ -20,7 +25,7 @@
 			</tr>
 		{:else}
 			<tr>
-				<td colspan="2">No hints available at this time.</td>
+				<td colspan="3">No hints available at this time.</td>
 			</tr>
 		{/each}
 	</tbody>

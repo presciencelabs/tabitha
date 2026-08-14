@@ -1,24 +1,24 @@
-<script>
+<script lang="ts">
 	import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+	import type { Reference, TargetTextResult } from '$lib/types'
 
-	/** @type {Reference} */
-	export let reference
+	interface Props {
+		reference: Reference
+	}
 
-	/**
-	 * @param {Reference} reference
-	 *
-	 * @returns {Promise<TargetTextResult>}
-	 */
-	async function get_target_data({ id_primary, id_secondary, id_tertiary }) {
+	let { reference }: Props = $props()
+
+	async function get_target_data({ id_primary, id_secondary, id_tertiary }: Reference): Promise<TargetTextResult> {
 		const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/English/${id_primary}/${id_secondary}/${id_tertiary}`)
 
 		// Show the Unchurched Adults if available, because it's usually the most up-to-date.
 		// Otherwise, default to the first audience with text
-		/** @type {TargetTextResult[]}*/
-		const texts = await response.json()
-		return texts.find(text => text.audience === 'Unchurched Adults')
+		const texts: TargetTextResult[] = await response.json()
+		return (
+			texts.find(text => text.audience === 'Unchurched Adults')
 			|| texts.find(text => text.text)
 			|| { text: '--', audience: 'none saved yet...' }
+		)
 	}
 </script>
 

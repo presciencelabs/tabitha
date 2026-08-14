@@ -1,14 +1,21 @@
-<script>
-	/** @type {string} class(es) separated by space */
-	export let colors = ''
+<script lang="ts">
+	import type { Snippet } from 'svelte'
+
+	interface Props {
+		colors?: string
+		summary?: Snippet
+		children?: Snippet
+	}
+
+	let { colors = '', summary, children }: Props = $props()
 </script>
 
-<details class={`collapse collapse-arrow ${colors}`}>
+<details class="collapse collapse-arrow {colors}">
 	<summary class="collapse-title">
-		<slot name="summary" />
+		{@render summary?.()}
 	</summary>
 
-	<p class="collapse-content">
-		<slot />
-	</p>
+	<div class="collapse-content">
+		{@render children?.()}
+	</div>
 </details>

@@ -1,11 +1,15 @@
-<script>
-	/** @type {Concept['categories']} */
-	export let categories
+<script lang="ts">
+	interface Props {
+		categories: string[]
+	}
 
-	$: [semantic_category, ...usages] = categories
-	$: always_usages = usages.filter(usage => usage.startsWith('always'))
-	$: sometimes_usages = usages.filter(usage => usage.startsWith('sometimes'))
-	$: grouped_usages = [...always_usages, ...sometimes_usages]
+	let { categories }: Props = $props()
+
+	let semantic_category = $derived(categories[0] || '')
+	let usages = $derived(categories.slice(1))
+	let always_usages = $derived(usages.filter(usage => usage.startsWith('always')))
+	let sometimes_usages = $derived(usages.filter(usage => usage.startsWith('sometimes')))
+	let grouped_usages = $derived([...always_usages, ...sometimes_usages])
 </script>
 
 <fieldset class="prose rounded-lg border p-4">

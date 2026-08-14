@@ -1,22 +1,21 @@
-<script>
+<script lang="ts">
+	import type { Component } from 'svelte'
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
 	import Punctuation from './Punctuation.svelte'
+	import type { SourceConcept, SourceEntity } from '$lib/types'
 
-	/** @type {SourceEntity[]} */
-	export let source_entities
+	interface Props {
+		source_entities: SourceEntity[]
+		selected_concept: SourceConcept
+	}
 
-	/** @type {SourceConcept}*/
-	export let selected_concept
+	let { source_entities, selected_concept }: Props = $props()
 
-	const main_clauses = source_entities.reduce(clause_reducer, [])
+	let main_clauses = $derived(source_entities.reduce(clause_reducer, [] as SourceEntity[][]))
 
-	/**
-	 * @param {SourceEntity[][]} clauses
-	 * @param {SourceEntity} source_entity
-	 */
-	function clause_reducer(clauses, source_entity) {
+	function clause_reducer(clauses: SourceEntity[][], source_entity: SourceEntity) {
 		if (source_entity.value === '{') {
 			clauses.push([])
 		}
@@ -24,21 +23,34 @@
 		return clauses
 	}
 
-	/** @type {[(entity: SourceEntity) => boolean, typeof Word][]}*/
-	const component_filters = [
+	type EntityComponent = Component<{
+		source_entity: SourceEntity
+		selected_concept?: SourceConcept
+		classes?: string
+	}>
+
+	const component_filters: [(entity: SourceEntity) => boolean, EntityComponent][] = [
 		[is_boundary_start, BoundaryStart],
 		[is_boundary_end, BoundaryEnd],
 		[({ concept }) => !!concept, Word],
 		[() => true, Punctuation],
 	]
 
-	/**
-	 * @param {SourceEntity[]} entities
-	 * @param {number} index
-	 */
-	function get_parent_category(entities, index) {
+	function get_component(entity: SourceEntity): EntityComponent {
+		return component_filters.find(([filter]) => filter(entity))![1]
+	}
+
+	function is_boundary_start(entity: SourceEntity): boolean {
+		return ['{', '[', '('].includes(entity.value)
+	}
+
+	function is_boundary_end(entity: SourceEntity): boolean {
+		return ['}', ']', ')'].includes(entity.value)
+	}
+
+	function get_parent_category(entities: SourceEntity[], index: number): string {
 		let inner_level = 0
-		for (let j = index-1; j >= 0; j--) {
+		for (let j = index - 1; j >= 0; j--) {
 			const entity = entities[j]
 			if (is_boundary_start(entity)) {
 				if (inner_level === 0) {
@@ -53,28 +65,14 @@
 		}
 		return ''
 	}
-
-	/**
-	 * @param {SourceEntity} entity
-	 */
-	function is_boundary_start(entity) {
-		return ['{', '[', '('].includes(entity.value)
-	}
-
-	/**
-	 * @param {SourceEntity} entity
-	 */
-	function is_boundary_end(entity) {
-		return ['}', ']', ')'].includes(entity.value)
-	}
 </script>
 
 {#each main_clauses as main_clause}
 	<div class="hover:bg-base-200 flex flex-wrap items-center">
 		{#each main_clause as source_entity, i}
-			{@const component = component_filters.find(([filter]) => filter(source_entity))?.[1]}
+			{@const Component = get_component(source_entity)}
 			<span class="entity-{source_entity.category_abbr || get_parent_category(main_clause, i)}">
-				<svelte:component this={component} {source_entity} {selected_concept} />
+				<Component {source_entity} {selected_concept} />
 			</span>
 		{/each}
 	</div>

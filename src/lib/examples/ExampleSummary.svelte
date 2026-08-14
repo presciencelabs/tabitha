@@ -1,16 +1,16 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
+	import type { ContextArguments, Reference, SourceStatus } from '$lib/types'
 
-	/** @type { Reference } */
-	export let reference
+	interface Props {
+		reference: Reference
+		context: ContextArguments
+		book_status: SourceStatus
+	}
 
-	/** @type { ContextArguments } */
-	export let context
+	let { reference, context, book_status }: Props = $props()
 
-	/** @type { SourceStatus } */
-	export let book_status
-
-	$: ({ id_primary, id_secondary, id_tertiary } = reference)
+	let { id_primary, id_secondary, id_tertiary } = $derived(reference)
 </script>
 
 <section class="flex">

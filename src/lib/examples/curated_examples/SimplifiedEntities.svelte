@@ -1,33 +1,35 @@
-<script>
-	/** @type {SimplifiedSemanticEncoding} */
-	export let entities
+<script lang="ts">
+	import type { SimplifiedEncodingEntity, SimplifiedSemanticEncoding } from '$lib/types'
 
-	/** @type {Record<string, string>}*/
-	const boundary_char_map = {
-		'NP': '(',
-		'VP': '(',
-		'AdjP': '(',
-		'AdvP': '(',
+	interface Props {
+		entities: SimplifiedSemanticEncoding
+	}
+
+	let { entities }: Props = $props()
+
+	const boundary_char_map: Record<string, string> = {
+		NP: '(',
+		VP: '(',
+		AdjP: '(',
+		AdvP: '(',
 		'Phrase end': ')',
-		'Clause': '[',
+		Clause: '[',
 		'Clause end': ']',
 	}
 
-	/** @type {Record<string, string>}*/
-	const label_map = {
-		'NP': 'NP',
-		'VP': 'VP',
-		'AdjP': 'AdjP',
-		'AdvP': 'AdvP',
+	const label_map: Record<string, string> = {
+		NP: 'NP',
+		VP: 'VP',
+		AdjP: 'AdjP',
+		AdvP: 'AdvP',
 		// for 'Proposition' - verb clause arguments are called 'Patient/Agent Propositions'
-		'Clause': 'Prop',
+		Clause: 'Prop',
 	}
 
 	/**
 	 * Find the parent boundary, or if the entity is a boundary, return itself
-	 * @param {number} index
-	*/
-	function find_closest_boundary(index) {
+	 */
+	function find_closest_boundary(index: number): SimplifiedEncodingEntity {
 		let inner_level = 0
 		for (let j = index; j >= 0; j--) {
 			const entity = entities[j]
@@ -46,25 +48,16 @@
 		return entities[index]
 	}
 
-	/**
-	 * @param {number} index
-	*/
-	function get_style_class(index) {
+	function get_style_class(index: number): string {
 		const boundary_category = find_closest_boundary(index).category
 		return `entity-${boundary_category}`
 	}
 
-	/**
-	 * @param {SimplifiedEncodingEntity} entity
-	 */
-	function is_boundary_start(entity) {
+	function is_boundary_start(entity: SimplifiedEncodingEntity): boolean {
 		return entity.category in label_map
 	}
 
-	/**
-	 * @param {SimplifiedEncodingEntity} entity
-	 */
-	function is_boundary_end(entity) {
+	function is_boundary_end(entity: SimplifiedEncodingEntity): boolean {
 		return entity.category.endsWith('end')
 	}
 </script>
@@ -73,7 +66,7 @@
 	{@const boundary_char = boundary_char_map[entity.category]}
 	{@const label = entity.word || label_map[entity.category] || ''}
 	{@const style_class = get_style_class(i)}
-	
+
 	<span class="mb-1 py-2 not-italic text-base-content flex items-center">
 		{#if boundary_char}
 			<span class="text-3xl font-thin {style_class}">
@@ -95,6 +88,6 @@
 
 <style>
 	.entity-Clause {
-		opacity: 0.6
+		opacity: 0.6;
 	}
 </style>

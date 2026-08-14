@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
 	import Header from './Header.svelte'
 	import SimplificationHints from './SimplificationHints.svelte'
@@ -7,14 +7,16 @@
 	import { DetailedCard, Meaning } from '$lib'
 	import { page } from '$app/state'
 	import { CONCEPT_FILTERS } from '$lib/filters'
+	import type { Concept } from '$lib/types'
 
-	/** @type {Concept} */
-	export let concept
+	interface Props {
+		concept: Concept
+		show_how_to?: boolean
+	}
 
-	/** @type {boolean} */
-	export let show_how_to
+	let { concept, show_how_to = false }: Props = $props()
 
-	let expanded = false
+	let expanded = $state(false)
 	function expand() {
 		expanded = true
 	}
@@ -38,7 +40,7 @@
 			{@const pending_categories_change = concept.pending_changes.find(change => change.data.categories)}
 			<section class="prose mt-4 max-w-none">
 				<Category {part_of_speech} {categories} />
-				
+
 				{#if pending_categories_change}
 					{@const pending_categories = pending_categories_change.data.categories?.value.filter(category => category) || []}
 					<PendingChange>
@@ -47,7 +49,7 @@
 				{/if}
 			</section>
 		{/if}
-		
+
 		{#if show_how_to && (concept.how_to_hints.length > 0 || CONCEPT_FILTERS.IS_COMPLEX(concept))}
 			<section class="prose mt-4 max-w-none">
 				<h3 class="mb-0">Suggestions for how to handle</h3>
@@ -61,7 +63,7 @@
 					<Icon icon="mdi:edit-outline" class="h-5 w-5" />
 				</a>
 			{/if}
-			<button on:click={expand} class="btn btn-primary btn-sm">
+			<button onclick={expand} class="btn btn-primary btn-sm">
 				EXPAND <Icon icon="gg:maximize-alt" class="h-4 w-4" />
 			</button>
 		</section>
@@ -69,5 +71,5 @@
 </article>
 
 {#if expanded}
-	<DetailedCard {concept} on:close={close} />
+	<DetailedCard {concept} onclose={close} />
 {/if}

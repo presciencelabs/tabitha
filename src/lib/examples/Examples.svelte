@@ -1,23 +1,25 @@
-<script>
-	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
-	import Icon from '@iconify/svelte'
+<script lang="ts">
 	import { fade } from 'svelte/transition'
+	import Icon from '@iconify/svelte'
+	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
+	import type { Concept, Example } from '$lib/types'
 
-	/** @type { Concept } */
-	export let concept
+	interface Props {
+		concept: Concept
+	}
+
+	let { concept }: Props = $props()
 
 	const MAX_EXAMPLES_DISPLAYED = 50
 
-	/** @type { Example[] } */
-	let all_examples = []
+	let all_examples = $state<Example[]>([])
+	let filtered_examples = $state<Example[]>([])
+	let displayed_examples = $derived(
+		filtered_examples.toSorted(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED),
+	)
 
-	/** @type { Example[] } */
-	let filtered_examples = []
-
-	/** @param { Concept } concept */
-	async function load_examples({ stem, sense, part_of_speech }) {
+	async function load_examples({ stem, sense, part_of_speech }: Concept) {
 		const response = await fetch(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=Bible`)
-
 		all_examples = await response.json()
 	}
 
@@ -26,14 +28,10 @@
 		duration: 700,
 	}
 
-	/** @type { number[] } */
-	let retrieval_queue = []
+	let retrieval_queue = $state<number[]>([])
 
-	/**
-	 * @param { Event & { currentTarget: HTMLDetailsElement }} event
-	 * @param { number } id
-	 */
-	function handle_queue({ currentTarget: details }, id) {
+	function handle_queue(event: Event, id: number) {
+		const details = event.currentTarget as HTMLDetailsElement
 		if (details.open) {
 			retrieval_queue = [...retrieval_queue, id]
 		} else {
@@ -49,10 +47,14 @@
 		<span class="loading loading-spinner text-warning"></span>
 		loading the examples...
 	{:then}
-		<Filters {concept} examples={all_examples} on:data-filtered={({ detail }) => filtered_examples = detail} />
+		<Filters {concept} examples={all_examples} ondatafiltered={detail => filtered_examples = detail} />
 
-		{#each filtered_examples.sort(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED) as { reference, context, book_status }, i}
-			<details on:toggle={event => handle_queue(event, i)} transition:fade={FADE_CHARACTERISTICS} class="collapse collapse-arrow bg-base-100 overflow-visible">
+		{#each displayed_examples as { reference, context, book_status }, i}
+			<details
+				ontoggle={event => handle_queue(event, i)}
+				transition:fade={FADE_CHARACTERISTICS}
+				class="collapse collapse-arrow bg-base-100 overflow-visible"
+			>
 				<summary class="collapse-title border border-base-200">
 					<ExampleSummary {reference} {context} {book_status} />
 				</summary>
