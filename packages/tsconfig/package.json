@@ -5,5 +5,9 @@
   "files": [
     "base.json",
     "svelte.json"
-  ]
+  ],
+  "exports": {
+    "./base.json": "./base.json",
+    "./svelte.json": "./svelte.json"
+  }
 }
