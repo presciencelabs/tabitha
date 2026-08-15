@@ -1,6 +1,9 @@
-# Targets API
+# Targets API & Explorer
 
-Available at [https://targets.tabitha.bible](https://targets.tabitha.bible)
+- **Live URL**: [https://targets.tabitha.bible](https://targets.tabitha.bible)
+- **Local Dev URL**: [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788) (Port `8788`)
+
+---
 
 ## API
 
@@ -28,51 +31,38 @@ Available at [https://targets.tabitha.bible](https://targets.tabitha.bible)
   - **Query Params:** `word` (`string`, required) — Word or pattern (supports wildcards `*`, `#`, `%`).
   - **Example:** `/English/lookup/forms?word=followed`
 
-## Local development
+---
 
-`pnpm i`
+## Local Development
 
-### Running locally
+From the **monorepo root**:
+```bash
+# Run Targets dev server only
+pnpm dev:targets
 
-#### 1. Load the database
+# Or run all apps concurrently
+pnpm dev
+```
 
-Dump files can be found under the "Artifacts" section of the workflow runs of the databases repo:  https://github.com/presciencelabs/tabitha-databases/actions/workflows/deploy.yml
-
-Running the following command will load the data locally:
-
-`wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file=<DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
-
-#### 2. Start the app
-
-> `pnpm build` will need to be run the first time only.
-
+Or from within `apps/targets`:
 ```bash
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788)
+---
 
-## Static analysis
+## Testing & Verification
 
 ```bash
+# Run typechecking and linting
 pnpm check
-```
-### Testing locally
 
-> `pnpm exec playwright install` will need to be run at least once to get the headless browsers for testing.
+# Run unit tests
+pnpm test:unit
 
-```bash
+# Run end-to-end tests
 pnpm test:e2e
-```
 
-🐛 debugging tests can be done with `pnpm test:e2e:dev`.
-
-## Contributing
-
-Always start your work in a new branch.
-
-Run the following command as a last check before opening a PR
-
-```bash
-pnpm precommit
+# Build for Cloudflare
+pnpm build
 ```

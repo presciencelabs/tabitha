@@ -1,6 +1,9 @@
-# Ontology web app
+# Ontology Web App
 
-Available at [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
+- **Live URL**: [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
+- **Local Dev URL**: [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173) (Port `5173`, `strictPort: true` for OAuth redirects)
+
+---
 
 ## API
 
@@ -30,77 +33,60 @@ Available at [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
     - `source` (`string`, optional) — Source reference filter.
   - **Example:** `/examples?concept=love-01&part_of_speech=Noun`
 
-## Local development
+---
 
-`pnpm i`
+## Local Development & Setup
 
-### Running locally
+### 1. Configure Local Auth
+Grab relevant Google / GitHub OAuth credentials from `.env` and add them to your local `.env.local` file. The OAuth callback redirects to `http://localhost.tabitha.bible:5173/auth/callback`.
 
-#### 1. Load the database
+### 2. Running Locally
+From the **monorepo root**:
+```bash
+# Run Ontology dev server only
+pnpm dev:ontology
 
-Running the following command will load the data locally:
+# Or run all apps concurrently
+pnpm dev
+```
 
-`pnpx wrangler d1 execute <DB_NAME_FROM_WRANGLER_TOML_FILE> --file=<DB_NAME_FROM_WRANGLER_TOML_FILE>.tabitha.sqlite.sql`
-
-> dump files can be found in https://github.com/presciencelabs/tabitha-databases/tree/main/databases
-
-🚨 If wanting to test downloads locally, files will need to be loaded into the local R2.  For example:
-
-`pnpx wrangler r2 object put db-backups/Ontology.9493.2025-08-15.tabitha.sqlite --file ../tabitha-databases/databases/Ontology.9493.2025-08-15.tabitha.sqlite`
-
-#### 2. Configure local auth
-
-Grab relevant OAuth keys from a teammate's `.env.local` file and add them to your local `.env.local` file.
-
-#### 3. Start the app
-
-> `pnpm build` will need to be run the first time only.
-
+Or from within `apps/ontology`:
 ```bash
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173)
+### 3. Loading Local Database
+To load a local D1 SQLite database dump:
+```bash
+npx wrangler d1 execute <DB_NAME> --file=<DUMP_FILE>.sql
+```
 
-#### 4. Complex Terms Synchronization
-
+### 4. Complex Terms Synchronization
 Complex terms and simplification hints are synchronized from Google Sheets every 12 hours via Cloudflare Cron Triggers, or manually on demand.
-
 - **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"**.
 - **Testing Cron Trigger locally**:
-
   ```bash
   npx wrangler dev --test-scheduled
   ```
-
-  In a separate terminal, trigger the scheduled execution:
-
+  In a separate terminal:
   ```bash
   curl "http://localhost.tabitha.bible:8787/__scheduled"
   ```
 
-### Static analysis
+---
+
+## Testing & Verification
 
 ```bash
+# Run typechecking and linting
 pnpm check
-```
 
-### Testing locally
+# Run unit tests
+pnpm test:unit
 
-> `pnpm exec playwright install` will need to be run at least once to get the headless browsers for testing.
-
-```bash
+# Run end-to-end tests
 pnpm test:e2e
-```
 
-🐛 debugging tests can be done with `pnpm test:e2e:dev`.
-
-### Contributing
-
-Always start your work in a new branch.
-
-Run the following command as a last check before opening a PR
-
-```bash
-pnpm precommit
+# Build for Cloudflare
+pnpm build
 ```

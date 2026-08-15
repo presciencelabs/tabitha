@@ -1,6 +1,9 @@
 # Tabitha Copilot
 
-Available at [https://copilot.tabitha.bible](https://copilot.tabitha.bible)
+- **Live URL**: [https://copilot.tabitha.bible](https://copilot.tabitha.bible)
+- **Local Dev URL**: [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793) (Port `8793`)
+
+---
 
 ## API
 
@@ -18,35 +21,42 @@ Available at [https://copilot.tabitha.bible](https://copilot.tabitha.bible)
   - **Query Params:** `settings` (`string`, optional JSON string of `CopilotSettings`)
   - **Example:** `/Acts/10` (returns `.sfm` file download)
 
-## Prerequisites
+---
 
-- **pnpm** - used for package management
+## Environment Setup
 
-## Setup
-
-Copy `.env` to `.env.local` and supply the required tokens (you can get them from another team member):
+Copy `.env` to `.env.local` and supply the required API keys:
 
 ```sh
 cp .env .env.local
 ```
 
-## Developing
+---
 
-Install dependencies with `pnpm install` and start a development server:
+## Local Development
 
-```sh
-pnpm install
+From the **monorepo root**:
+```bash
+# Run Copilot dev server only
+pnpm dev:copilot
 
-pnpm run dev
+# Or run all apps concurrently
+pnpm dev
 ```
 
-## Building
-
-To create a production version of your app:
-
-```sh
-pnpm run build
+Or from within `apps/copilot`:
+```bash
+pnpm dev
 ```
 
-You can preview the production build with `pnpm run preview`.
-app available at [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793)
+---
+
+## Testing & Verification
+
+```bash
+# Run typechecking and linting
+pnpm check
+
+# Build for Cloudflare
+pnpm build
+```

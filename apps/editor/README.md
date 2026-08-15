@@ -1,6 +1,9 @@
-# Editor web app
+# Editor Web App
 
-Available at [https://editor.tabitha.bible](https://editor.tabitha.bible)
+- **Live URL**: [https://editor.tabitha.bible](https://editor.tabitha.bible)
+- **Local Dev URL**: [http://localhost.tabitha.bible:8790](http://localhost.tabitha.bible:8790) (Port `8790`)
+
+---
 
 ## API
 
@@ -32,52 +35,35 @@ Available at [https://editor.tabitha.bible](https://editor.tabitha.bible)
 
   - **Response:** `{ "finish_reason": "stop", "message": "Generated response..." }`
 
-## Local development
+---
 
-`pnpm i`
+## Local Development
 
-## Running locally
+From the **monorepo root**:
+```bash
+# Run Editor dev server only
+pnpm dev:editor
 
+# Or run all apps concurrently
+pnpm dev
+```
+
+Or from within `apps/editor`:
 ```bash
 pnpm dev
 ```
 
-## Static analysis
+---
+
+## Testing & Verification
 
 ```bash
+# Run typechecking and linting
 pnpm check
-```
 
-## Testing locally
-
-### Unit tests
-
-```bash
+# Run unit tests
 pnpm test:unit
-```
 
-### Coverage
-
-```bash
-pnpm test:unit:coverage
-```
-
-## Building
-
-> Deployed as a Cloudflare Worker using `wrangler.jsonc`.
-
-Creates a production version of the app:
-
-```bash
+# Build for Cloudflare
 pnpm build
-```
-
-## Contributing
-
-Always start your work in a new branch.
-
-Run the following command as a last check before opening a PR
-
-```bash
-pnpm precommit
 ```

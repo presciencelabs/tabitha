@@ -1,6 +1,9 @@
-# Sources API
+# Sources API & Explorer
 
-Available at [https://sources.tabitha.bible](https://sources.tabitha.bible)
+- **Live URL**: [https://sources.tabitha.bible](https://sources.tabitha.bible)
+- **Local Dev URL**: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789) (Port `8789`)
+
+---
 
 ## API
 
@@ -33,66 +36,38 @@ Available at [https://sources.tabitha.bible](https://sources.tabitha.bible)
 - `GET /lookup/status/[type]/[id_primary]` — Returns translation/completion status for an entire book.
 - `POST /lookup/status` — Batch lookup for verse statuses. Expects a JSON array of reference objects `[{ type, id_primary, id_secondary, id_tertiary }]`.
 
-## Local development
+---
 
-`pnpm i`
+## Local Development
 
-### Running locally
+From the **monorepo root**:
+```bash
+# Run Sources dev server only
+pnpm dev:sources
 
-#### 1. Load the database
+# Or run all apps concurrently
+pnpm dev
+```
 
-Dump files can be found under the 'databases' folder within the databases repo: https://github.com/presciencelabs/tabitha-databases/tree/main/databases 
-
-Running the following command will load the data locally:
-
-`pnpm wrangler d1 execute <DB_NAME_FROM_WRANGLER_JSONC_FILE> --file <DB_NAME_FROM_WRANGLER_JSONC_FILE>.tabitha.sqlite.sql`
-
-#### 2. Start the app
-
-> `pnpm build` will need to be run the first time only.
-
+Or from within `apps/sources`:
 ```bash
 pnpm dev
 ```
 
-The site should then be available here: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789)
+---
 
-## Static analysis & Testing
-
-### Static analysis
+## Testing & Verification
 
 ```bash
+# Run typechecking and linting
 pnpm check
-```
 
-### Unit testing (Vitest)
-
-Runs pure logic tests for reference parsing, feature decoding, semantic encoding, and API lookups:
-
-```bash
+# Run unit tests
 pnpm test:unit
-```
 
-### End-to-end testing (Playwright)
-
-> `pnpm exec playwright install chromium` will need to be run at least once to get headless browsers for testing.
-
-```bash
+# Run end-to-end tests
 pnpm test:e2e
-```
 
-🐛 Debugging E2E tests interactively:
-
-```bash
-pnpm test:e2e:dev
-```
-
-## Contributing
-
-Always start your work in a new branch.
-
-Run the following command as a last check before opening a PR
-
-```bash
-pnpm precommit
+# Build for Cloudflare
+pnpm build
 ```
