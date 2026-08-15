@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "svelte.svelte-vscode",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "oven.bun-vscode",
+    "vitest.explorer",
+    "ms-playwright.playwright",
+    "qwtel.sqlite-viewer",
+    "github.vscode-github-actions",
+    "antfu.iconify"
+  ]
+}
