@@ -56,6 +56,8 @@ jobs:
         run: |
           pnpm check
           pnpm check:philosophies
+          pnpm check:secrets
+          pnpm check:cloudflare
           pnpm check:md
         continue-on-error: true
 

@@ -1,0 +1,211 @@
+import { readdir, readFile } from 'node:fs/promises'
+import { join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const script_dir = fileURLToPath(new URL('.', import.meta.url))
+const root_dir = resolve(script_dir, '../../..')
+
+interface SecretFinding {
+	rule_name: string
+	file_path: string
+	line_number: number
+	snippet: string
+	message: string
+}
+
+const findings: SecretFinding[] = []
+
+const secret_patterns: Array<{ name: string; regex: RegExp; message: string }> = [
+	{
+		name: 'Private Key',
+		regex: /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+		message: 'Cryptographic private key detected.',
+	},
+	{
+		name: 'OpenAI API Key',
+		regex: /\b(sk-[a-zA-Z0-9_-]{20,}|sk-proj-[a-zA-Z0-9_-]{20,})\b/,
+		message: 'Potential hardcoded OpenAI API key detected.',
+	},
+	{
+		name: 'Google / Gemini API Key',
+		regex: /\bAIza[0-9A-Za-z-_]{35}\b/,
+		message: 'Potential hardcoded Google / Gemini API key detected.',
+	},
+	{
+		name: 'Anthropic API Key',
+		regex: /\bsk-ant-[a-zA-Z0-9_-]{20,}\b/,
+		message: 'Potential hardcoded Anthropic API key detected.',
+	},
+	{
+		name: 'GitHub Token',
+		regex: /\b(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{50,})\b/,
+		message: 'Potential GitHub Personal Access Token detected.',
+	},
+	{
+		name: 'AWS Access Key',
+		regex: /\b(AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}\b/,
+		message: 'Potential AWS Access Key ID detected.',
+	},
+	{
+		name: 'Google Service Account',
+		regex: /"type":\s*"service_account"/,
+		message: 'Google Cloud service account JSON file or credentials detected.',
+	},
+]
+
+const sensitive_env_keys = [
+	'AUTH_SECRET',
+	'API_KEY_OPENAI',
+	'API_KEY_GEMINI',
+	'API_KEY_AQUIFER',
+	'PHASE1_AI_ASSIST_API_KEY',
+	'GEMINI_PRIVATE_KEY',
+	'GOOGLE_OAUTH_CLIENT_SECRET',
+]
+
+async function get_scannable_files(dir: string): Promise<string[]> {
+	const files: string[] = []
+	try {
+		const entries = await readdir(dir, { withFileTypes: true })
+		for (const entry of entries) {
+			const full_path = join(dir, entry.name)
+			if (entry.isDirectory()) {
+				if (
+					entry.name === 'node_modules' ||
+					entry.name === '.svelte-kit' ||
+					entry.name === 'dist' ||
+					entry.name === '.wrangler' ||
+					entry.name === '.turbo' ||
+					entry.name === '.git'
+				) {
+					continue
+				}
+				files.push(...(await get_scannable_files(full_path)))
+			} else {
+				// Scan source files, env files, config files, workflows
+				// Skip gitignored local env files (.env.local, .env.*.local)
+				if (entry.name.endsWith('.local') || entry.name.endsWith('.sqlite') || entry.name.endsWith('.sqlite-wal')) {
+					continue
+				}
+				files.push(full_path)
+			}
+		}
+	} catch {
+		// Directory might not exist
+	}
+	return files
+}
+
+function mask_secret(str: string): string {
+	if (str.length <= 8) return '****'
+	return str.slice(0, 4) + '****' + str.slice(-4)
+}
+
+function check_line_secrets(file_path: string, line: string, line_num: number) {
+	const trimmed = line.trim()
+	if (!trimmed) return
+
+	for (const pattern of secret_patterns) {
+		const match = line.match(pattern.regex)
+		if (match) {
+			findings.push({
+				rule_name: pattern.name,
+				file_path,
+				line_number: line_num,
+				snippet: mask_secret(match[0]),
+				message: pattern.message,
+			})
+		}
+	}
+}
+
+function check_env_template_sanitization(file_path: string, lines: string[]) {
+	// Base .env files committed to git must have empty values for sensitive secrets
+	const file_name = file_path.split('/').pop() ?? ''
+	if (file_name !== '.env') return
+
+	lines.forEach((line, idx) => {
+		const trimmed = line.trim()
+		if (!trimmed || trimmed.startsWith('#')) return
+
+		const eq_idx = trimmed.indexOf('=')
+		if (eq_idx === -1) return
+
+		const key = trimmed.slice(0, eq_idx).trim()
+		const val = trimmed.slice(eq_idx + 1).trim()
+
+		if (sensitive_env_keys.includes(key) && val !== '') {
+			findings.push({
+				rule_name: 'Committed .env Secret',
+				file_path,
+				line_number: idx + 1,
+				snippet: `${key}=${mask_secret(val)}`,
+				message: `Committed base .env file has populated value for sensitive key "${key}". Base .env must be an empty template.`,
+			})
+		}
+	})
+}
+
+async function audit_secrets() {
+	console.log(`
+============================================================
+       🛡️ TaBiThA Secret & Credential Security Scanner      
+============================================================
+`)
+
+	const search_dirs = [
+		join(root_dir, 'apps'),
+		join(root_dir, 'packages'),
+		join(root_dir, 'tools'),
+		join(root_dir, '.github'),
+	]
+
+	const all_files: string[] = []
+	for (const dir of search_dirs) {
+		all_files.push(...(await get_scannable_files(dir)))
+	}
+
+	console.log(`🔍 Scanning ${all_files.length} tracked file(s) for exposed credentials & secrets...\n`)
+
+	for (const file_path of all_files) {
+		try {
+			const content = await readFile(file_path, 'utf-8')
+			const lines = content.split('\n')
+
+			lines.forEach((line, idx) => {
+				check_line_secrets(file_path, line, idx + 1)
+			})
+
+			check_env_template_sanitization(file_path, lines)
+		} catch {
+			// Binary file or unreadable, ignore
+		}
+	}
+
+	if (findings.length === 0) {
+		console.log('✅ 100% Clean! No exposed secrets, private keys, or credentials detected.\n')
+		return
+	}
+
+	console.log(`⚠️  Detected ${findings.length} potential security observation(s):\n`)
+
+	const is_ci = process.env.GITHUB_ACTIONS === 'true'
+
+	for (const f of findings) {
+		const rel_path = relative(root_dir, f.file_path)
+		console.log(`[Security Alert: ${f.rule_name}]`)
+		console.log(`  📄 ${rel_path}:${f.line_number}`)
+		console.log(`  💡 ${f.message}`)
+		console.log(`  🔒 Masked Preview: "${f.snippet}"\n`)
+
+		if (is_ci) {
+			console.log(`::warning file=${rel_path},line=${f.line_number},title=Security Alert (${f.rule_name})::${f.message}`)
+		}
+	}
+
+	console.log(`📋 Summary: ${findings.length} security observation(s) reported across ${all_files.length} files.\n`)
+}
+
+if (import.meta.main) {
+	await audit_secrets()
+}

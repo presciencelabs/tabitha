@@ -20,6 +20,8 @@
     "build": "turbo run build",
     "check": "turbo run check",
     "check:philosophies": "bun tools/databases/scripts/check_philosophies.ts",
+    "check:secrets": "bun tools/databases/scripts/check_secrets.ts",
+    "check:cloudflare": "bun tools/databases/scripts/check_cloudflare.ts",
     "check:md": "markdownlint-cli2 '**/*.md'",
     "check:svelte": "turbo run check:svelte",
     "check:lint": "turbo run check:lint",

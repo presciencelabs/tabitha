@@ -127,6 +127,12 @@ pnpm check:lint:fix
 # Audit codebase compliance against Development Philosophies
 pnpm check:philosophies
 
+# Scan codebase for exposed secrets and credentials
+pnpm check:secrets
+
+# Validate Cloudflare Workers wrangler.jsonc configurations
+pnpm check:cloudflare
+
 # Run Markdown linting across all documentation
 pnpm check:md
 
