@@ -56,6 +56,11 @@ jobs:
         run: pnpm check
         continue-on-error: true
 
+      - name: Development Philosophy Compliance Audit
+        id: check_philosophies
+        run: pnpm check:philosophies
+        continue-on-error: true
+
       - name: Unit Test Suites
         id: test_unit
         run: pnpm test:unit

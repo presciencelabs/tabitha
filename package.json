@@ -19,6 +19,7 @@
     "db:load:targets": "bun tools/databases/scripts/load_d1.ts targets",
     "build": "turbo run build",
     "check": "turbo run check",
+    "check:philosophies": "bun tools/databases/scripts/check_philosophies.ts",
     "check:svelte": "turbo run check:svelte",
     "check:lint": "turbo run check:lint",
     "check:lint:fix": "turbo run check:lint:fix",

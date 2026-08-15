@@ -95,6 +95,9 @@ pnpm check
 # Run ESLint with auto-fix across all apps
 pnpm check:lint:fix
 
+# Audit codebase compliance against Development Philosophies
+pnpm check:philosophies
+
 # Run unit test suites in parallel (Vitest)
 pnpm test:unit
 
