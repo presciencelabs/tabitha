@@ -8,5 +8,9 @@
     "siblings_only": true
   },
   // Allow inline HTML tags like <br/> or <sub>
-  "MD033": false
+  "MD033": false,
+  // Allow hard tabs inside code blocks to adhere to tab indentation philosophy
+  "MD010": {
+    "code_blocks": false
+  }
 }

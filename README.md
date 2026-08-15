@@ -296,28 +296,28 @@ graph TD;
 Parents manage layout, positioning, and context; components encapsulate their own behavior and styling.
 
 ```svelte
-<!-- Parent.svelte: Handles grid/layout and passes down data -->
+<!-- Page.svelte: Layout and structure -->
 <div class="grid grid-cols-3 gap-4">
-   <ConceptCard concept="{active_concept}"/>
+	<ConceptCard {concept} />
 </div>
 
 <!-- ConceptCard.svelte: Self-contained styling & local state -->
 <script lang="ts">
-   let { concept }: { concept: Concept } = $props();
-   let is_expanded = $state(false);
+	let { concept }: { concept: Concept } = $props()
+	let is_expanded = $state(false)
 </script>
 
 <article class="card bg-base-100 shadow-sm border border-base-200">
-   <div class="card-body">
-      <h2 class="card-title">{concept.label}</h2>
-      <button
-         type="button"
-         onclick={() => (is_expanded = !is_expanded)}
-         class="btn btn-sm btn-ghost"
-      >
-         {is_expanded ? 'Show Less' : 'Show More'}
-      </button>
-   </div>
+	<div class="card-body">
+		<h2 class="card-title">{concept.label}</h2>
+		<button
+			type="button"
+			onclick={() => (is_expanded = !is_expanded)}
+			class="btn btn-sm btn-ghost"
+		>
+			{is_expanded ? 'Show Less' : 'Show More'}
+		</button>
+	</div>
 </article>
 ```
 
@@ -330,15 +330,15 @@ Keep data normalized as close to the source as possible with deterministic, side
 ```typescript
 // Normalized entities by unique ID
 interface EntityState {
-   by_id: Record<string, Word>;
-   all_ids: string[];
+	by_id: Record<string, Word>
+	all_ids: string[]
 }
 
 // Deterministic, pure updater
 const normalize_words = (raw_words: Word[]): EntityState => ({
-   by_id: Object.fromEntries(raw_words.map((w) => [w.id, w])),
-   all_ids: raw_words.map((w) => w.id)
-});
+	by_id: Object.fromEntries(raw_words.map(w => [w.id, w])),
+	all_ids: raw_words.map(w => w.id)
+})
 ```
 
 ---
@@ -349,9 +349,9 @@ Indent code using `tab` characters (spaces per tab width is individual developer
 
 ```typescript
 export const get_entity_id = (entity: SourceEntity): string => {
-   const sanitized_id = entity.id.trim().toLowerCase();
-   return sanitized_id;
-};
+	const sanitized_id = entity.id.trim().toLowerCase()
+	return sanitized_id
+}
 ```
 
 ---
@@ -363,14 +363,14 @@ Self-documenting code with descriptive naming is preferred over excessive commen
 ```typescript
 // ❌ Avoid: Vague names patched with comments
 // Check if word is valid and not expired
-const check = (w: Word) => w.s === 'active' && w.exp > Date.now();
+const check = (w: Word) => w.s === 'active' && w.exp > Date.now()
 
 // ✅ Preferred: Intention revealed directly by naming
 const is_word_active_and_unexpired = (word: Word): boolean => {
-   const is_active = word.status === 'active';
-   const is_not_expired = word.expires_at > Date.now();
-   return is_active && is_not_expired;
-};
+	const is_active = word.status === 'active'
+	const is_not_expired = word.expires_at > Date.now()
+	return is_active && is_not_expired
+}
 ```
 
 ---
@@ -382,17 +382,17 @@ Place `class="..."` after functional attributes and event handlers to prioritize
 ```svelte
 <!-- ❌ Avoid -->
 <button class="btn btn-primary btn-sm" type="submit" disabled={is_loading} onclick={handle_save}>
-   Save
+	Save
 </button>
 
 <!-- ✅ Preferred -->
 <button
-   type="submit"
-   disabled={is_loading}
-   onclick={handle_save}
-   class="btn btn-primary btn-sm"
+	type="submit"
+	disabled={is_loading}
+	onclick={handle_save}
+	class="btn btn-primary btn-sm"
 >
-   Save
+	Save
 </button>
 ```
 
@@ -405,21 +405,21 @@ Favor early returns to keep control flow flat and readable.
 ```typescript
 // ❌ Avoid nested pyramid
 const process_concept = (concept: Concept | null) => {
-   if (concept) {
-      if (concept.is_verified) {
-         return concept.label.toUpperCase();
-      }
-   }
-   return null;
-};
+	if (concept) {
+		if (concept.is_verified) {
+			return concept.label.toUpperCase()
+		}
+	}
+	return null
+}
 
 // ✅ Flat flow with guard clauses
 const process_concept = (concept: Concept | null): string | null => {
-   if (!concept) return null;
-   if (!concept.is_verified) return null;
+	if (!concept) return null
+	if (!concept.is_verified) return null
 
-   return concept.label.toUpperCase();
-};
+	return concept.label.toUpperCase()
+}
 ```
 
 ---
@@ -430,25 +430,25 @@ Model linguistic entities (`Concept`, `SourceEntity`, `Word`) with explicit type
 
 ```typescript
 interface BaseEntity {
-   readonly id: string;
-   readonly created_at: number;
+	readonly id: string
+	readonly created_at: number
 }
 
 export type LinguisticEntity =
-   | ({ readonly kind: 'concept'; readonly label: string } & BaseEntity)
-   | ({ readonly kind: 'word'; readonly lemma: string; readonly pos: string } & BaseEntity)
-   | ({ readonly kind: 'source_entity'; readonly source_uri: string } & BaseEntity);
+	| ({ readonly kind: 'concept'; readonly label: string } & BaseEntity)
+	| ({ readonly kind: 'word'; readonly lemma: string; readonly pos: string } & BaseEntity)
+	| ({ readonly kind: 'source_entity'; readonly source_uri: string } & BaseEntity)
 
 export const resolve_display_label = (entity: LinguisticEntity): string => {
-   switch (entity.kind) {
-      case 'concept':
-         return entity.label;
-      case 'word':
-         return `${entity.lemma} (${entity.pos})`;
-      case 'source_entity':
-         return entity.source_uri;
-   }
-};
+	switch (entity.kind) {
+		case 'concept':
+			return entity.label
+		case 'word':
+			return `${entity.lemma} (${entity.pos})`
+		case 'source_entity':
+			return entity.source_uri
+	}
+}
 ```
 
 ---
@@ -459,16 +459,16 @@ Leverage native HTML elements and semantic markup styled via daisyUI utility com
 
 ```svelte
 <dialog open class="modal modal-bottom sm:modal-middle">
-   <div class="modal-box">
-      <h3 class="font-bold text-lg">Confirm Action</h3>
-      <p class="py-4">Are you sure you want to delete this entity?</p>
-      <div class="modal-action">
-         <form method="dialog" class="flex gap-2">
-            <button value="cancel" class="btn btn-ghost">Cancel</button>
-            <button value="confirm" class="btn btn-error">Confirm</button>
-         </form>
-      </div>
-   </div>
+	<div class="modal-box">
+		<h3 class="font-bold text-lg">Confirm Action</h3>
+		<p class="py-4">Are you sure you want to delete this entity?</p>
+		<div class="modal-action">
+			<form method="dialog" class="flex gap-2">
+				<button value="cancel" class="btn btn-ghost">Cancel</button>
+				<button value="confirm" class="btn btn-error">Confirm</button>
+			</form>
+		</div>
+	</div>
 </dialog>
 ```
 
@@ -481,21 +481,21 @@ Consider more elegant solutions (lookup tables, pattern matching, polymorphism, 
 ```typescript
 // ❌ Avoid multiple if/else branches
 const get_badge_class = (status: string) => {
-   if (status === 'active') return 'badge-success';
-   if (status === 'pending') return 'badge-warning';
-   if (status === 'archived') return 'badge-neutral';
-   return 'badge-ghost';
-};
+	if (status === 'active') return 'badge-success'
+	if (status === 'pending') return 'badge-warning'
+	if (status === 'archived') return 'badge-neutral'
+	return 'badge-ghost'
+}
 
 // ✅ Preferred: Object map / dictionary lookup
 const STATUS_BADGE_MAP: Record<string, string> = {
-   active: 'badge-success',
-   pending: 'badge-warning',
-   archived: 'badge-neutral'
-} as const;
+	active: 'badge-success',
+	pending: 'badge-warning',
+	archived: 'badge-neutral',
+} as const
 
 const get_badge_class = (status: string): string =>
-   STATUS_BADGE_MAP[status] ?? 'badge-ghost';
+	STATUS_BADGE_MAP[status] ?? 'badge-ghost'
 ```
 
 ---
@@ -507,20 +507,20 @@ Use `snake_case` for all function, method, and variable names. Reserve `PascalCa
 ```typescript
 // Types/Interfaces in PascalCase
 interface ConceptPayload {
-   concept_id: string;
-   root_term: string;
+	concept_id: string
+	root_term: string
 }
 
 // Variables and functions in snake_case
 const default_payload: ConceptPayload = {
-   concept_id: 'c_101',
-   root_term: 'lexicon'
-};
+	concept_id: 'c_101',
+	root_term: 'lexicon',
+}
 
 export const fetch_concept_data = async (payload: ConceptPayload): Promise<Concept> => {
-   const response_data = await fetch(`/api/concepts/${payload.concept_id}`);
-   return response_data.json();
-};
+	const response_data = await fetch(`/api/concepts/${payload.concept_id}`)
+	return response_data.json()
+}
 ```
 
 ---
@@ -531,16 +531,16 @@ Functions should be pure and free of side effects. Strive to receive one argumen
 
 ```typescript
 interface FormatWordOptions {
-   readonly word: Word;
-   readonly prefix?: string;
+	readonly word: Word
+	readonly prefix?: string
 }
 
 // Pure: depends only on its input, single argument object, no external mutation
 export const format_word_label = ({
-   word,
-   prefix = ''
+	word,
+	prefix = '',
 }: FormatWordOptions): string => {
-   const cleaned_lemma = word.lemma.trim().toLowerCase();
-   return prefix ? `${prefix}:${cleaned_lemma}` : cleaned_lemma;
-};
+	const cleaned_lemma = word.lemma.trim().toLowerCase()
+	return prefix ? `${prefix}:${cleaned_lemma}` : cleaned_lemma
+}
 ```
