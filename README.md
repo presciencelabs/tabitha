@@ -199,5 +199,5 @@ graph TD;
 
 1. **Self-contained components**: Parents manage layout and positioning; components encapsulate their own behavior.
 2. **Pure functions & normalized data**: Keep data normalized as close to source as possible.
-3. **Tabs for indentation**: Indent code using <kbd>tab</kbd>.
+3. **Tabs for indentation**: Indent code using `tab` characters.
 4. **Svelte 5 Runes**: Use modern Svelte 5 `$props()`, `$state()`, and `$derived()` conventions.
