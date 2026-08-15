@@ -1,21 +1,21 @@
 import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
-import { createSourcesClient, createTargetsClient } from '@tabitha/api-client'
+import { create_sources_client, create_targets_client } from '@tabitha/api-client'
 
-const sourcesClient = createSourcesClient({ baseUrl: PUBLIC_SOURCES_API_HOST })
-const targetsClient = createTargetsClient({ baseUrl: PUBLIC_TARGETS_API_HOST })
+const sources_client = create_sources_client({ baseUrl: PUBLIC_SOURCES_API_HOST })
+const targets_client = create_targets_client({ baseUrl: PUBLIC_TARGETS_API_HOST })
 
 export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult | undefined> {
-	const res = await sourcesClient.getSimplifiedJson<SourceApiResult>(verse_ref, 'Bible', true)
+	const res = await sources_client.get_simplified_json<SourceApiResult>(verse_ref, 'Bible', true)
 	return res ?? undefined
 }
 
 export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult | undefined> {
-	const res = await targetsClient.getTargetText(verse_ref, project, preferred_audience)
+	const res = await targets_client.get_target_text(verse_ref, project, preferred_audience)
 	return (res as TargetApiResult) ?? undefined
 }
 
 export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number | undefined> {
-	return await sourcesClient.getChapterVersesCount({ book, chapter }, 'Bible')
+	return await sources_client.get_chapter_verses_count({ book, chapter }, 'Bible')
 }
 
 export const polished_books = [

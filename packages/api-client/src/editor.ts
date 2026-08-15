@@ -5,13 +5,13 @@ export interface EditorClientOptions {
 	fetch?: typeof fetch
 }
 
-export function createEditorClient(options: EditorClientOptions) {
+export function create_editor_client(options: EditorClientOptions) {
 	const { baseUrl } = options
 	const cleanBase = baseUrl.replace(/\/$/, '')
 	const getFetch = () => options.fetch ?? globalThis.fetch
 
 	return {
-		async checkText(text: string): Promise<CheckApiResponse | null> {
+		async check_text(text: string): Promise<CheckApiResponse | null> {
 			const res = await getFetch()(`${cleanBase}/check`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -23,4 +23,4 @@ export function createEditorClient(options: EditorClientOptions) {
 	}
 }
 
-export type EditorClient = ReturnType<typeof createEditorClient>
+export type EditorClient = ReturnType<typeof create_editor_client>
