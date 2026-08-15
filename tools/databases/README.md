@@ -1,6 +1,6 @@
 # TaBiThA Database Tools
 
-This package houses database utilities, schemas, and SQLite/D1 database dump workflows for the TaBiThA platform.
+This package houses database utilities, schemas, snapshots, and SQLite/D1 database dump workflows for the TaBiThA platform.
 
 ---
 
@@ -17,14 +17,39 @@ The TaBiThA platform utilizes Cloudflare D1 (SQLite at the edge) for each core s
 
 ---
 
-## 🛠️ Local Database Operations
+## 📸 Snapshots Directory
 
-### 1. Applying Database Dumps Locally
-To populate your local D1 SQLite database for an app:
+Point-in-time SQL snapshot dumps are stored in `tools/databases/snapshots/`:
+
+- `Auth.tabitha.sqlite.sql`
+- `Ontology_9494_YYYY-MM-DD.tabitha.sqlite.sql`
+- `Sources_YYYY-MM-DD.tabitha.sqlite.sql`
+- `Targets_YYYY-MM-DD.tabitha.sqlite.sql`
+
+---
+
+## 🛠️ Automated Database Loading (Bun)
+
+From the monorepo root:
 
 ```bash
-npx wrangler d1 execute <DB_NAME> --file=<DUMP_FILE>.sql
+# Load all databases into local Wrangler environments
+pnpm db:load
+
+# Load a specific app's databases
+pnpm db:load:ontology
+pnpm db:load:sources
+pnpm db:load:targets
 ```
 
-### 2. Backups and R2 Storage
-Production snapshots are periodically exported and archived in Cloudflare R2 object storage (`db-backups/`).
+---
+
+## 🚀 One-Command Developer Setup
+
+```bash
+# Complete developer bootstrap (environment scaffolding + DB loading + verification)
+pnpm setup
+
+# Scaffold local .env.local files only
+pnpm setup:env
+```

@@ -54,8 +54,26 @@ tabitha/
 # 1. Install all dependencies across workspace
 pnpm install
 
-# 2. Run all dev servers in parallel
+# 2. Automated developer onboarding (environment scaffolding + DB loading + verification)
+pnpm setup
+
+# 3. Run all dev servers in parallel
 pnpm dev
+```
+
+### Database & Environment Workflows
+
+```bash
+# Load all SQLite/D1 databases from snapshots into local Wrangler environments
+pnpm db:load
+
+# Load database for a specific app
+pnpm db:load:ontology
+pnpm db:load:sources
+pnpm db:load:targets
+
+# Scaffold .env.local files from .env templates
+pnpm setup:env
 ```
 
 ### Running Specific Dev Servers
@@ -123,9 +141,11 @@ graph TD;
 
         subgraph SharedPackages ["Shared Workspace Packages"]
             direction LR
+            TypesPkg["@tabitha/types"];
+            UIPkg["@tabitha/ui"];
+            APIClientPkg["@tabitha/api-client"];
             ESLintPkg["@tabitha/eslint-config"];
             TSConfigPkg["@tabitha/tsconfig"];
-            UIPkg["@tabitha/ui"];
         end
 
         subgraph DataLayer ["Data & Storage Layer"]
