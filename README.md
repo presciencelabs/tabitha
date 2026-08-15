@@ -9,7 +9,7 @@ Welcome to the **TaBiThA** monorepo. This repository houses all core deployable 
 All applications are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers. Each app has a dedicated, non-overlapping local port configured for seamless multi-app development.
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | **Ontology** | `apps/ontology` | `http://localhost.tabitha.bible:5173` | `5173` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
 | **Targets** | `apps/targets` | `http://localhost.tabitha.bible:8788` | `8788` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
 | **Sources** | `apps/sources` | `http://localhost.tabitha.bible:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
@@ -166,17 +166,21 @@ graph TD;
 ### What Does TBTA Do?
 
 #### 1. Source Text (Mark 1:2 NIV)
+
 > *"as it is written in Isaiah the prophet: 'I will send my messenger ahead of you, who will prepare your way'"*
 
 #### 2. Phase 1 Encoded Form
+
 > *Isaiah [who told God's messages to people] wrote, ["You(Christ) (imp) listen to me(God)]. I(God) (primary) will send my(God's) person [who takes messages to people] [before I(God) send you(Christ)]. I(God) (meaning-1) will send my(God's) person [who takes messages to people] in-front-of you(Christ). (literal) And that person/messenger will prepare-B your(Christ's) path." (dynamic) And that person/messenger will say/announce [you(Christ) are coming]."*
 
 #### 3. Simplified Semantic Form
+
 ```text
 [C [NP Isaiah(N) [C [NP Isaiah(N) ] [VP tell-D(V) ] [NP message(N) [NP -Generic Genitive(Adp) God(N) ] ] [NP person(N) ] ] ] [VP write-C(V) ] [C -QuoteBegin(Par) [NP Christ(N) ] [VP listen(V) ] [NP God(N) ] ] . ]
 ```
 
 #### 4. Generation to Target Language
+
 > *Isaiah, who was a prophet, wrote, “Listen to me. Before I send you, I'll send my messenger. And that messenger will prepare your path."*
 
 ---
