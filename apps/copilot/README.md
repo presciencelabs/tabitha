@@ -36,6 +36,7 @@ cp .env .env.local
 ## Local Development
 
 From the **monorepo root**:
+
 ```bash
 # Run Copilot dev server only
 pnpm dev:copilot
@@ -45,6 +46,7 @@ pnpm dev
 ```
 
 Or from within `apps/copilot`:
+
 ```bash
 pnpm dev
 ```

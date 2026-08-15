@@ -3,6 +3,8 @@
     "svelte.svelte-vscode",
     "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
+    "DavidAnson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
     "oven.bun-vscode",
     "vitest.explorer",
     "ms-playwright.playwright",

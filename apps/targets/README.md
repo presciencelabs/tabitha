@@ -36,6 +36,7 @@
 ## Local Development
 
 From the **monorepo root**:
+
 ```bash
 # Run Targets dev server only
 pnpm dev:targets
@@ -45,6 +46,7 @@ pnpm dev
 ```
 
 Or from within `apps/targets`:
+
 ```bash
 pnpm dev
 ```

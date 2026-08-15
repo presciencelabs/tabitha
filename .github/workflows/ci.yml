@@ -51,14 +51,12 @@ jobs:
       - name: Scaffold environment configuration
         run: pnpm setup:env
 
-      - name: Typecheck & Static Analysis
-        id: check
-        run: pnpm check
-        continue-on-error: true
-
-      - name: Development Philosophy Compliance Audit
-        id: check_philosophies
-        run: pnpm check:philosophies
+      - name: Static Analysis & Quality Diagnostics
+        id: static_analysis
+        run: |
+          pnpm check
+          pnpm check:philosophies
+          pnpm check:md
         continue-on-error: true
 
       - name: Unit Test Suites

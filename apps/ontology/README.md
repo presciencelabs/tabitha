@@ -38,10 +38,13 @@
 ## Local Development & Setup
 
 ### 1. Configure Local Auth
+
 Grab relevant Google / GitHub OAuth credentials from `.env` and add them to your local `.env.local` file. The OAuth callback redirects to `http://localhost.tabitha.bible:5173/auth/callback`.
 
 ### 2. Running Locally
+
 From the **monorepo root**:
+
 ```bash
 # Run Ontology dev server only
 pnpm dev:ontology
@@ -51,24 +54,32 @@ pnpm dev
 ```
 
 Or from within `apps/ontology`:
+
 ```bash
 pnpm dev
 ```
 
 ### 3. Loading Local Database
+
 To load a local D1 SQLite database dump:
+
 ```bash
 npx wrangler d1 execute <DB_NAME> --file=<DUMP_FILE>.sql
 ```
 
 ### 4. Complex Terms Synchronization
+
 Complex terms and simplification hints are synchronized from Google Sheets every 12 hours via Cloudflare Cron Triggers, or manually on demand.
+
 - **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"**.
 - **Testing Cron Trigger locally**:
+
   ```bash
   npx wrangler dev --test-scheduled
   ```
+
   In a separate terminal:
+
   ```bash
   curl "http://localhost.tabitha.bible:8787/__scheduled"
   ```

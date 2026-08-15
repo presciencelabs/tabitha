@@ -41,6 +41,7 @@
 ## Local Development
 
 From the **monorepo root**:
+
 ```bash
 # Run Sources dev server only
 pnpm dev:sources
@@ -50,6 +51,7 @@ pnpm dev
 ```
 
 Or from within `apps/sources`:
+
 ```bash
 pnpm dev
 ```

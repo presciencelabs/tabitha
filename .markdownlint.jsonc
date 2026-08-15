@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint/v0.37.0/schema/markdownlint-config-schema.json",
+  "default": true,
+  // Disable 80-character line length limit for long sentences, links, and code blocks
+  "MD013": false,
+  // Allow duplicate headings if in different parent sections
+  "MD024": {
+    "siblings_only": true
+  },
+  // Allow inline HTML tags like <br/> or <sub>
+  "MD033": false
+}

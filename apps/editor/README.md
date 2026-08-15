@@ -40,6 +40,7 @@
 ## Local Development
 
 From the **monorepo root**:
+
 ```bash
 # Run Editor dev server only
 pnpm dev:editor
@@ -49,6 +50,7 @@ pnpm dev
 ```
 
 Or from within `apps/editor`:
+
 ```bash
 pnpm dev
 ```
