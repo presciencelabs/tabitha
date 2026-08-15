@@ -100,7 +100,7 @@ graph TD;
         GrammarDeveloper[Grammar Developer];
     end
 
-    subgraph Platform ["The Cloud (Cloudflare Workers)"]
+    subgraph Platform ["The Internet"]
         direction TB
 
         subgraph UILayer ["User Interface Layer"]
@@ -197,7 +197,12 @@ graph TD;
 
 ### Development Philosophies
 
-1. **Self-contained components**: Parents manage layout and positioning; components encapsulate their own behavior.
-2. **Pure functions & normalized data**: Keep data normalized as close to source as possible.
-3. **Tabs for indentation**: Indent code using `tab` characters.
-4. **Svelte 5 Runes**: Use modern Svelte 5 `$props()`, `$state()`, and `$derived()` conventions.
+1. **Self-contained components**: Parents manage layout, positioning, and context; components encapsulate their own behavior and styling.
+2. **Pure functions & normalized data**: Keep data normalized as close to the source as possible with deterministic, side-effect-free transformations.
+3. **Tabs for indentation**: Indent code using `tab` characters. You may determine how spaces are used for each tab.
+4. **Code over comments**: Self-documenting code with descriptive naming is preferred over excessive commenting.
+5. **Classes at the end of elements**: Place `class="..."` after functional attributes and event handlers to prioritize behavior readability.
+6. **Guard clauses over nested logic**: Favor early returns to keep control flow flat and readable.
+7. **Strict domain typing**: Model linguistic entities (`Concept`, `SourceEntity`, `Word`) with explicit types and discriminating unions—never `any`.
+8. **Semantic HTML & daisyUI**: Leverage native HTML elements and semantic markup styled via daisyUI utility components.
+9. **Limit use of `if`**: Consider more elegant solutions before resorting to `if` statements.
