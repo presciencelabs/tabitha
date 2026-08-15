@@ -9,7 +9,7 @@ This package houses database utilities, schemas, snapshots, and SQLite/D1 databa
 The TaBiThA platform utilizes Cloudflare D1 (SQLite at the edge) for each core service:
 
 | Database | Primary Service | Contents |
-|---|---|---|
+| --- | --- | --- |
 | **Ontology** | `apps/ontology` | Concepts, stems, glosses, grammatical categories, complexity hints, and pending changes |
 | **Sources** | `apps/sources` | Source texts (e.g. Bible), verse records, parsed semantic encodings, and feature codes |
 | **Targets** | `apps/targets` | Target language grammars, lexical entries, translation texts, and inflectional forms |
