@@ -73,6 +73,14 @@ Useful Commands:
   • pnpm test:unit        Run all unit test suites
   • pnpm test:e2e         Run Playwright end-to-end tests
   • pnpm db:load          Reload all D1 databases from snapshots
+
+🧪 60-Second Golden Path Smoke Test:
+  1. Start all dev servers: \`pnpm dev\`
+  2. Open Editor: http://localhost.tabitha.bible:8790/?text=Paul+write-01
+  3. Click the 'write-01' concept card (navigates to Ontology at :5173)
+  4. Expand any 'Usage Example' accordion in Ontology:
+     • Verifies Sources (:8789) -> Fetches semantic tree
+     • Verifies Targets (:8788) -> Fetches generated English text
 ============================================================
 `)
 }

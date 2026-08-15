@@ -102,6 +102,19 @@ pnpm dev:editor     # http://localhost.tabitha.bible:8790
 pnpm dev:copilot    # http://localhost.tabitha.bible:8793
 ```
 
+### 🧪 Local Smoke Test ("Golden Path")
+
+To verify that all local applications, databases, and inter-app APIs are working together:
+
+1. **Start all dev servers**: `pnpm dev`
+2. **Open the Editor**: [http://localhost.tabitha.bible:8790/?text=Paul+write-01](http://localhost.tabitha.bible:8790/?text=Paul+write-01)
+   - *Verifies Editor (`:8790`)*: Parses tokens and renders a clickable concept card for `write-01`.
+3. **Click the `write-01` concept card**:
+   - *Verifies Ontology (`:5173`)*: Navigates to [http://localhost.tabitha.bible:5173/?q=write-01](http://localhost.tabitha.bible:5173/?q=write-01) and loads definitions from the local D1 database.
+4. **Expand any "Usage Example" accordion in Ontology**:
+   - *Verifies Sources (`:8789`)*: Fetches and displays the semantic clause parse tree.
+   - *Verifies Targets (`:8788`)*: Fetches and displays the generated English translation text.
+
 ### Verification & Testing
 
 ```bash
