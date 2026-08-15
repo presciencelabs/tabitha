@@ -3,5 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tabitha SQLite databases and dump utilities"
+  "description": "Tabitha SQLite databases and dump utilities",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tabitha/tsconfig": "workspace:*",
+    "@types/bun": "^1.2.4",
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.3"
+  }
 }

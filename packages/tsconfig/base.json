@@ -12,6 +12,7 @@
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "noEmit": true
   }
 }
