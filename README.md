@@ -1,12 +1,12 @@
 # TaBiThA Monorepo
 
-Welcome to the **TaBiThA** (Translation Assistant for Bible Translators Everywhere) monorepo. This repository houses all core deployable web applications, developer tools, shared libraries, and linguistic pipelines for the TaBiThA translation platform.
+Welcome to the **TaBiThA** monorepo. This repository houses all core deployable web applications, developer tools, shared libraries, and linguistic pipelines for the TaBiThA translation platform.
 
 ---
 
 ## 🚀 Applications & Dedicated Ports
 
-All applications are built with **Svelte 5**, **SvelteKit 2**, **Tailwind CSS 4**, and **daisyUI 5**, deployed as Cloudflare Workers. Each app has a dedicated, non-overlapping local port configured for seamless multi-app development.
+All applications are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers. Each app has a dedicated, non-overlapping local port configured for seamless multi-app development.
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
 |---|---|---|---|---|---|
@@ -20,7 +20,7 @@ All applications are built with **Svelte 5**, **SvelteKit 2**, **Tailwind CSS 4*
 
 ## 📦 Monorepo Structure
 
-```
+```text
 tabitha/
 ├── apps/
 │   ├── copilot/     # AI Copilot & translation notes generator
@@ -44,8 +44,9 @@ tabitha/
 ## 🛠️ Getting Started & Commands
 
 ### Prerequisites
-- **Node.js**: `>= 22.0.0`
-- **pnpm**: `>= 10.0.0` (pnpm 11 recommended)
+
+- **Node.js**
+- **pnpm**
 
 ### Quick Start
 
