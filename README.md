@@ -122,6 +122,26 @@ pnpm build
 pnpm clean:powerwash
 ```
 
+### Local CI/CD Workflow Testing (Optional)
+
+For developers developing or testing GitHub Actions workflows in `.github/workflows/` locally, you can use [`act`](https://github.com/nektos/act) to run workflows in local Docker containers:
+
+```bash
+# Installation:
+# macOS:   brew install act
+# Windows: winget install nektos.act
+# Linux:   https://github.com/nektos/act#installation
+
+# List available workflow jobs:
+act -l
+
+# Run the CI verification job locally:
+act -j verify
+
+# Simulate a pull request event:
+act pull_request
+```
+
 ---
 
 ## 🧩 Architecture Overview
