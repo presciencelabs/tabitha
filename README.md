@@ -146,6 +146,16 @@ pnpm build
 pnpm clean:powerwash
 ```
 
+### Dependency Maintenance & Upgrades
+
+```bash
+# Safely update dependencies within declared SemVer ranges, check Cloudflare compat dates, and run verification gate
+pnpm update:safe
+
+# Interactively review and upgrade to latest major releases
+pnpm update:interactive
+```
+
 ### Local CI/CD Workflow Testing (Optional)
 
 For developers developing or testing GitHub Actions workflows in `.github/workflows/` locally, you can use [`act`](https://github.com/nektos/act) to run workflows in local Docker containers:
