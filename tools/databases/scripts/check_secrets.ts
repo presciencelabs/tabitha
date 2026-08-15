@@ -146,13 +146,8 @@ function check_env_template_sanitization(file_path: string, lines: string[]) {
 	})
 }
 
-async function audit_secrets() {
-	console.log(`
-============================================================
-       🛡️ TaBiThA Secret & Credential Security Scanner      
-============================================================
-`)
-
+export async function scan_secrets(): Promise<{ scanned: number; found: number; findings: SecretFinding[] }> {
+	const local_findings: SecretFinding[] = []
 	const search_dirs = [
 		join(root_dir, 'apps'),
 		join(root_dir, 'packages'),
@@ -165,33 +160,83 @@ async function audit_secrets() {
 		all_files.push(...(await get_scannable_files(dir)))
 	}
 
-	console.log(`🔍 Scanning ${all_files.length} tracked file(s) for exposed credentials & secrets...\n`)
-
 	for (const file_path of all_files) {
 		try {
 			const content = await readFile(file_path, 'utf-8')
 			const lines = content.split('\n')
 
 			lines.forEach((line, idx) => {
-				check_line_secrets(file_path, line, idx + 1)
+				const trimmed = line.trim()
+				if (!trimmed) return
+
+				for (const pattern of secret_patterns) {
+					const match = line.match(pattern.regex)
+					if (match) {
+						local_findings.push({
+							rule_name: pattern.name,
+							file_path,
+							line_number: idx + 1,
+							snippet: mask_secret(match[0]),
+							message: pattern.message,
+						})
+					}
+				}
 			})
 
-			check_env_template_sanitization(file_path, lines)
+			// Check template
+			const file_name = file_path.split('/').pop() ?? ''
+			if (file_name === '.env') {
+				lines.forEach((line, idx) => {
+					const trimmed = line.trim()
+					if (!trimmed || trimmed.startsWith('#')) return
+					const eq_idx = trimmed.indexOf('=')
+					if (eq_idx === -1) return
+					const key = trimmed.slice(0, eq_idx).trim()
+					const val = trimmed.slice(eq_idx + 1).trim()
+					if (sensitive_env_keys.includes(key) && val !== '') {
+						local_findings.push({
+							rule_name: 'Committed .env Secret',
+							file_path,
+							line_number: idx + 1,
+							snippet: `${key}=${mask_secret(val)}`,
+							message: `Committed base .env file has populated value for sensitive key "${key}". Base .env must be an empty template.`,
+						})
+					}
+				})
+			}
 		} catch {
 			// Binary file or unreadable, ignore
 		}
 	}
 
-	if (findings.length === 0) {
+	return {
+		scanned: all_files.length,
+		found: local_findings.length,
+		findings: local_findings,
+	}
+}
+
+async function audit_secrets() {
+	console.log(`
+============================================================
+       🛡️ TaBiThA Secret & Credential Security Scanner      
+============================================================
+`)
+
+	const result = await scan_secrets()
+
+	console.log(`🔍 Scanning ${result.scanned} tracked file(s) for exposed credentials & secrets...\n`)
+
+	if (result.found === 0) {
 		console.log('✅ 100% Clean! No exposed secrets, private keys, or credentials detected.\n')
 		return
 	}
 
-	console.log(`⚠️  Detected ${findings.length} potential security observation(s):\n`)
+	console.log(`⚠️  Detected ${result.found} potential security observation(s):\n`)
 
 	const is_ci = process.env.GITHUB_ACTIONS === 'true'
 
-	for (const f of findings) {
+	for (const f of result.findings) {
 		const rel_path = relative(root_dir, f.file_path)
 		console.log(`[Security Alert: ${f.rule_name}]`)
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
@@ -203,7 +248,7 @@ async function audit_secrets() {
 		}
 	}
 
-	console.log(`📋 Summary: ${findings.length} security observation(s) reported across ${all_files.length} files.\n`)
+	console.log(`📋 Summary: ${result.found} security observation(s) reported across ${result.scanned} files.\n`)
 }
 
 if (import.meta.main) {

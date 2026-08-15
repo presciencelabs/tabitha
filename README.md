@@ -124,6 +124,9 @@ pnpm check
 # Run ESLint with auto-fix across all apps
 pnpm check:lint:fix
 
+# Run full workspace environment and health diagnostics
+pnpm check:doctor
+
 # Audit codebase compliance against Development Philosophies
 pnpm check:philosophies
 
