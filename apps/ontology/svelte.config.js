@@ -1,14 +1,3 @@
-//https://kit.svelte.dev/docs/adapter-cloudflare
-import adapter from '@sveltejs/adapter-cloudflare'
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import { create_app_svelte_config } from '@tabitha/vite-config/svelte'
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	kit: {
-		adapter: adapter(),
-	},
-
-	preprocess: vitePreprocess(),
-}
-
-export default config
+export default create_app_svelte_config()

@@ -80,7 +80,27 @@ export const svelteConfig = [
 	},
 ]
 
+// Shared ignores for build artifacts, cache, and vendor directories
+export const ignoreConfig = [
+	{
+		ignores: [
+			'**/node_modules/**',
+			'**/.svelte-kit/**',
+			'**/.turbo/**',
+			'**/.wrangler/**',
+			'**/dist/**',
+			'**/build/**',
+			'**/coverage/**',
+			'**/test-results/**',
+			'**/playwright-report/**',
+			'**/blob-report/**',
+			'**/.vite-temp/**',
+		],
+	},
+]
+
 export default [
+	...ignoreConfig,
 	...baseConfig,
 	...svelteConfig,
 ]

@@ -1,6 +1,3 @@
-import adapter from '@sveltejs/adapter-cloudflare'
+import { create_app_svelte_config } from '@tabitha/vite-config/svelte'
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = { kit: { adapter: adapter() } }
-
-export default config
+export default create_app_svelte_config()

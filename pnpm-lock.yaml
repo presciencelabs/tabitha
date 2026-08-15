@@ -530,9 +530,15 @@ importers:
       '@playwright/test':
         specifier: ^1.62.1
         version: 1.62.1
+      '@sveltejs/adapter-cloudflare':
+        specifier: ^7.2.9
+        version: 7.2.9(@sveltejs/kit@2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)))(wrangler@4.123.0(@cloudflare/workers-types@5.20260814.1))
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0))
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^7.3.0
+        version: 7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0))
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0))

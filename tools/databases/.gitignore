@@ -1,7 +1,0 @@
-.env
-.wrangler
-node_modules
-*.sqlite
-*.sqlite-shm
-*.sqlite-wal
-.DS_Store

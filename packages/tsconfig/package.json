@@ -2,12 +2,17 @@
   "name": "@tabitha/tsconfig",
   "version": "1.0.0",
   "private": true,
+  "main": "./base.json",
+  "tsconfig": "./base.json",
   "files": [
     "base.json",
     "svelte.json"
   ],
   "exports": {
+    ".": "./base.json",
+    "./base": "./base.json",
     "./base.json": "./base.json",
+    "./svelte": "./svelte.json",
     "./svelte.json": "./svelte.json"
   }
 }
