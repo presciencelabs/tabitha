@@ -9,6 +9,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "module": "esnext",
+    "target": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true
   }
