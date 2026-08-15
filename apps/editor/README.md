@@ -66,6 +66,9 @@ pnpm check
 # Run unit tests
 pnpm test:unit
 
+# Run end-to-end tests
+pnpm test:e2e
+
 # Build for Cloudflare
 pnpm build
 ```

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { perform_form_lookups, perform_ontology_lookups } from './index'
+import { perform_form_lookups, perform_ontology_lookups } from '$lib/lookups'
 import { TOKEN_TYPE, create_token } from '$lib/token'
 
 describe('lookups module', () => {

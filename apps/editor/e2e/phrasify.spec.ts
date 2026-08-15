@@ -1,14 +1,9 @@
 import { describe, expect, test } from 'vitest'
-import { phrasify } from './phrasify'
+import { phrasify } from '$lib/parser/phrasify'
 import { parse } from '$lib/parser'
 import { flatten_sentences } from '$lib/parser/clausify'
 
-/**
- * @param {Object} param
- * @param {string} [param.input_text]
- * @param {string} [param.expected_text]
- */
-async function test_phrasify({ input_text='', expected_text='' }) {
+async function test_phrasify({ input_text = '', expected_text = '' }: { input_text?: string, expected_text?: string }) {
 	const test_sentences = await parse(input_text)
 	const expected_tokens = expected_text.split(' ')
 
