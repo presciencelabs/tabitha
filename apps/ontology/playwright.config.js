@@ -1,24 +1,3 @@
-// @ts-check
-import { defineConfig, devices } from '@playwright/test'
+import { create_app_playwright_config } from '@tabitha/vite-config/playwright'
 
-// https://playwright.dev/docs/test-configuration
-export default defineConfig({
-	testDir: 'e2e',
-	fullyParallel: true, // https://playwright.dev/docs/test-parallel
-	reporter: 'list', // https://playwright.dev/docs/test-reporters
-
-	// https://playwright.dev/docs/test-projects
-	projects: [
-		{
-			name: 'chromium',
-			use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost.tabitha.bible:5173' },
-		},
-	],
-
-	webServer: {
-		command: 'pnpm build && pnpm dev',
-		url: 'http://localhost.tabitha.bible:5173',
-		// Reuse active dev server locally to prevent port conflicts; start fresh server in CI
-		reuseExistingServer: !process.env.CI,
-	},
-})
+export default create_app_playwright_config({ port: 5173 })
