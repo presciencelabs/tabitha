@@ -61,6 +61,20 @@ pnpm setup
 pnpm dev
 ```
 
+### Local Domain Setup (`localhost.tabitha.bible`)
+
+To support OAuth callbacks and cross-app communication, all apps run under `*.tabitha.bible`. Map this domain to `127.0.0.1`:
+
+- **macOS / Linux (Terminal)**:
+  ```bash
+  echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
+  ```
+
+- **Windows (Run PowerShell as Administrator)**:
+  ```powershell
+  Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "127.0.0.1 localhost.tabitha.bible"
+  ```
+
 ### Database & Environment Workflows
 
 ```bash
