@@ -98,6 +98,10 @@ pnpm setup:env
 ### Running Specific Dev Servers
 
 ```bash
+# Interactive app selector & preset menu
+pnpm dev:menu
+
+# Or start a specific application directly
 pnpm dev:ontology   # http://localhost.tabitha.bible:5173
 pnpm dev:targets    # http://localhost.tabitha.bible:8788
 pnpm dev:sources    # http://localhost.tabitha.bible:8789

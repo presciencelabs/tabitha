@@ -23,6 +23,13 @@
 			}
 		},
 		{
+			"label": "🎯 Interactive Dev Launcher (pnpm dev:menu)",
+			"type": "shell",
+			"command": "pnpm dev:menu",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
 			"label": "🔍 Run Workspace Check (Typecheck & Lint)",
 			"type": "shell",
 			"command": "pnpm check",

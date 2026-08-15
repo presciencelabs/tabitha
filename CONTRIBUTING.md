@@ -123,6 +123,9 @@ pnpm check:doctor
 # Start all 5 apps concurrently
 pnpm dev
 
+# Interactive launcher (choose presets e.g. Editor + Ontology)
+pnpm dev:menu
+
 # Or start an individual app
 pnpm dev:editor
 pnpm dev:ontology

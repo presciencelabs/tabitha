@@ -6,6 +6,7 @@
   "packageManager": "pnpm@11.20.0",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:menu": "bun tools/databases/scripts/dev_menu.ts",
     "dev:copilot": "pnpm --filter tabitha-copilot dev",
     "dev:editor": "pnpm --filter tabitha-editor dev",
     "dev:ontology": "pnpm --filter tabitha-ontology dev",
