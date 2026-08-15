@@ -10,6 +10,6 @@ export default defineConfig({
 
 	server: {
 		host: 'localhost.tabitha.bible',
-		port: 5173,
+		port: 8790,
 	},
 })
