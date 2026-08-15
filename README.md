@@ -271,11 +271,10 @@ const normalize_words = (raw_words: Word[]): EntityState => ({
 
 #### 3. Tabs for indentation
 
-Indent code using `tab` characters (configured to 3 spaces per tab width).
+Indent code using `tab` characters (spaces per tab width is individual developer preference).
 
 ```typescript
 export const get_entity_id = (entity: SourceEntity): string => {
-   // 1 tab (3 spaces)
    const sanitized_id = entity.id.trim().toLowerCase();
    return sanitized_id;
 };

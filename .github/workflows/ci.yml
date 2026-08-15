@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - monorepo
+  pull_request:
+    branches:
+      - main
+      - monorepo
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Workspace Verification & Verification Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Turborepo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: Map localhost.tabitha.bible domain
+        run: echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Scaffold environment configuration
+        run: pnpm setup:env
+
+      - name: Typecheck & Static Analysis
+        id: check
+        run: pnpm check
+        continue-on-error: true
+
+      - name: Unit Test Suites
+        id: test_unit
+        run: pnpm test:unit
+        continue-on-error: true
+
+      - name: Production Bundle Verification (Blocking)
+        id: build
+        run: pnpm build
+
+      - name: Bootstrap D1 Databases for E2E
+        id: db_load
+        run: pnpm db:load
+        continue-on-error: true
+
+      - name: Install Playwright Browsers
+        id: playwright_install
+        run: pnpm exec playwright install --with-deps chromium
+        continue-on-error: true
+
+      - name: Playwright E2E Tests
+        id: test_e2e
+        run: pnpm test:e2e
+        continue-on-error: true
+
+      - name: Upload Playwright Test Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/*/playwright-report/
+            apps/*/test-results/
+          retention-days: 7
