@@ -33,6 +33,11 @@ export function create_app_vite_config({
 			strictPort: true,
 			...server,
 		},
+		// @ts-ignore - Vitest inline test configuration
+		test: {
+			include: ['src/**/*.test.ts'],
+			environment: 'node',
+		},
 		...rest,
 	})
 }

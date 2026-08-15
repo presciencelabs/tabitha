@@ -1,7 +1,14 @@
 {
-  "extends": "../../packages/tsconfig/base.json",
-  "compilerOptions": {
-    "types": ["node", "bun"]
-  },
-  "include": ["scripts/**/*.ts", "**/*.ts", "**/*.js"]
+	"extends": "@tabitha/tsconfig/base.json",
+	"compilerOptions": {
+		"types": [
+			"node",
+			"bun"
+		]
+	},
+	"include": [
+		"scripts/**/*.ts",
+		"**/*.ts",
+		"**/*.js"
+	]
 }

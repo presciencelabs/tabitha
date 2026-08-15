@@ -14,8 +14,11 @@
     "preview": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173",
     "test": "pnpm test:unit && pnpm test:e2e",
     "test:unit": "vitest run src --passWithNoTests",
+    "test:unit:watch": "vitest watch",
     "test:e2e": "playwright test",
+    "test:e2e:dev": "playwright test --ui",
     "gen": "wrangler types",
+    "precommit": "pnpm check && pnpm build && pnpm test",
     "clean:svelte": "rimraf .svelte-kit",
     "clean:node": "rimraf node_modules",
     "clean:powerwash": "(pnpm clean:svelte & pnpm clean:node) && pnpm install"
