@@ -229,10 +229,10 @@ async function audit_secrets() {
 
 	if (result.found === 0) {
 		console.log('✅ 100% Clean! No exposed secrets, private keys, or credentials detected.\n')
-		return
+		return true
 	}
 
-	console.log(`⚠️  Detected ${result.found} potential security observation(s):\n`)
+	console.log(`❌ Detected ${result.found} potential security observation(s):\n`)
 
 	const is_ci = process.env.GITHUB_ACTIONS === 'true'
 
@@ -244,13 +244,17 @@ async function audit_secrets() {
 		console.log(`  🔒 Masked Preview: "${f.snippet}"\n`)
 
 		if (is_ci) {
-			console.log(`::warning file=${rel_path},line=${f.line_number},title=Security Alert (${f.rule_name})::${f.message}`)
+			console.log(`::error file=${rel_path},line=${f.line_number},title=Security Alert (${f.rule_name})::${f.message}`)
 		}
 	}
 
 	console.log(`📋 Summary: ${result.found} security observation(s) reported across ${result.scanned} files.\n`)
+	return false
 }
 
 if (import.meta.main) {
-	await audit_secrets()
+	const clean = await audit_secrets()
+	if (!clean) {
+		process.exit(1)
+	}
 }

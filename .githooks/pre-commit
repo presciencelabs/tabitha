@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# TaBiThA Secret & Credential Pre-Commit Gate
+# Runs in ~100ms. Strictly blocks commits containing unmasked API keys or secrets.
+# Never blocks for formatting or linting.
+
+bun tools/databases/scripts/check_secrets.ts

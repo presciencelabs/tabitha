@@ -42,7 +42,15 @@ async function setup_workspace() {
 	// 2. Verify local domain mapping
 	await check_local_domain()
 
-	// 3. Load latest SQLite / D1 databases
+	// 3. Configure Git pre-commit security hook
+	try {
+		await $`git config core.hooksPath .githooks`.quiet()
+		console.log('🔒 Configured Git pre-commit security hook (.githooks)\n')
+	} catch {
+		// Non-git environment
+	}
+
+	// 4. Load latest SQLite / D1 databases
 	console.log('📦 Bootstrapping local D1 databases...')
 	await load_database('all')
 
