@@ -217,13 +217,257 @@ graph TD;
 
 ### Development Philosophies
 
-1. **Self-contained components**: Parents manage layout, positioning, and context; components encapsulate their own behavior and styling.
-2. **Pure functions & normalized data**: Keep data normalized as close to the source as possible with deterministic, side-effect-free transformations.
-3. **Tabs for indentation**: Indent code using `tab` characters. You may determine how spaces are used for each tab.
-4. **Code over comments**: Self-documenting code with descriptive naming is preferred over excessive commenting.
-5. **Classes at the end of elements**: Place `class="..."` after functional attributes and event handlers to prioritize behavior readability.
-6. **Guard clauses over nested logic**: Favor early returns to keep control flow flat and readable.
-7. **Strict domain typing**: Model linguistic entities (`Concept`, `SourceEntity`, `Word`) with explicit types and discriminating unions—never `any`.
-8. **Semantic HTML & daisyUI**: Leverage native HTML elements and semantic markup styled via daisyUI utility components.
-9. **Limit use of `if`**: Consider more elegant solutions before resorting to `if` statements.
-10. **`snake_case` for functions and variables**: Use `snake_case` for all function, method, and variable names (e.g. `create_ontology_client`, `fetch_concept_data`). Reserve `PascalCase` strictly for Svelte components and TypeScript types/interfaces.
+#### 1. Self-contained components
+
+Parents manage layout, positioning, and context; components encapsulate their own behavior and styling.
+
+```svelte
+<!-- Parent.svelte: Handles grid/layout and passes down data -->
+<div class="grid grid-cols-3 gap-4">
+   <ConceptCard concept="{active_concept}"/>
+</div>
+
+<!-- ConceptCard.svelte: Self-contained styling & local state -->
+<script lang="ts">
+   let { concept }: { concept: Concept } = $props();
+   let is_expanded = $state(false);
+</script>
+
+<article class="card bg-base-100 shadow-sm border border-base-200">
+   <div class="card-body">
+      <h2 class="card-title">{concept.label}</h2>
+      <button
+         type="button"
+         onclick={() => (is_expanded = !is_expanded)}
+         class="btn btn-sm btn-ghost"
+      >
+         {is_expanded ? 'Show Less' : 'Show More'}
+      </button>
+   </div>
+</article>
+```
+
+---
+
+#### 2. Normalized data
+
+Keep data normalized as close to the source as possible with deterministic, side-effect-free transformations.
+
+```typescript
+// Normalized entities by unique ID
+interface EntityState {
+   by_id: Record<string, Word>;
+   all_ids: string[];
+}
+
+// Deterministic, pure updater
+const normalize_words = (raw_words: Word[]): EntityState => ({
+   by_id: Object.fromEntries(raw_words.map((w) => [w.id, w])),
+   all_ids: raw_words.map((w) => w.id)
+});
+```
+
+---
+
+#### 3. Tabs for indentation
+
+Indent code using `tab` characters (configured to 3 spaces per tab width).
+
+```typescript
+export const get_entity_id = (entity: SourceEntity): string => {
+   // 1 tab (3 spaces)
+   const sanitized_id = entity.id.trim().toLowerCase();
+   return sanitized_id;
+};
+```
+
+---
+
+#### 4. Code over comments
+
+Self-documenting code with descriptive naming is preferred over excessive commenting.
+
+```typescript
+// ❌ Avoid: Vague names patched with comments
+// Check if word is valid and not expired
+const check = (w: Word) => w.s === 'active' && w.exp > Date.now();
+
+// ✅ Preferred: Intention revealed directly by naming
+const is_word_active_and_unexpired = (word: Word): boolean => {
+   const is_active = word.status === 'active';
+   const is_not_expired = word.expires_at > Date.now();
+   return is_active && is_not_expired;
+};
+```
+
+---
+
+#### 5. Classes at the end of elements
+
+Place `class="..."` after functional attributes and event handlers to prioritize behavior readability.
+
+```svelte
+<!-- ❌ Avoid -->
+<button class="btn btn-primary btn-sm" type="submit" disabled={is_loading} onclick={handle_save}>
+   Save
+</button>
+
+<!-- ✅ Preferred -->
+<button
+   type="submit"
+   disabled={is_loading}
+   onclick={handle_save}
+   class="btn btn-primary btn-sm"
+>
+   Save
+</button>
+```
+
+---
+
+#### 6. Guard clauses over nested logic
+
+Favor early returns to keep control flow flat and readable.
+
+```typescript
+// ❌ Avoid nested pyramid
+const process_concept = (concept: Concept | null) => {
+   if (concept) {
+      if (concept.is_verified) {
+         return concept.label.toUpperCase();
+      }
+   }
+   return null;
+};
+
+// ✅ Flat flow with guard clauses
+const process_concept = (concept: Concept | null): string | null => {
+   if (!concept) return null;
+   if (!concept.is_verified) return null;
+
+   return concept.label.toUpperCase();
+};
+```
+
+---
+
+#### 7. Strict domain typing
+
+Model linguistic entities (`Concept`, `SourceEntity`, `Word`) with explicit types and discriminating unions—avoid `any` if possible.
+
+```typescript
+interface BaseEntity {
+   readonly id: string;
+   readonly created_at: number;
+}
+
+export type LinguisticEntity =
+   | ({ readonly kind: 'concept'; readonly label: string } & BaseEntity)
+   | ({ readonly kind: 'word'; readonly lemma: string; readonly pos: string } & BaseEntity)
+   | ({ readonly kind: 'source_entity'; readonly source_uri: string } & BaseEntity);
+
+export const resolve_display_label = (entity: LinguisticEntity): string => {
+   switch (entity.kind) {
+      case 'concept':
+         return entity.label;
+      case 'word':
+         return `${entity.lemma} (${entity.pos})`;
+      case 'source_entity':
+         return entity.source_uri;
+   }
+};
+```
+
+---
+
+#### 8. Semantic HTML & daisyUI
+
+Leverage native HTML elements and semantic markup styled via daisyUI utility components.
+
+```svelte
+<dialog open class="modal modal-bottom sm:modal-middle">
+   <div class="modal-box">
+      <h3 class="font-bold text-lg">Confirm Action</h3>
+      <p class="py-4">Are you sure you want to delete this entity?</p>
+      <div class="modal-action">
+         <form method="dialog" class="flex gap-2">
+            <button value="cancel" class="btn btn-ghost">Cancel</button>
+            <button value="confirm" class="btn btn-error">Confirm</button>
+         </form>
+      </div>
+   </div>
+</dialog>
+```
+
+---
+
+#### 9. Limit use of `if`
+
+Consider more elegant solutions (lookup tables, pattern matching, polymorphism, or logical chaining) before resorting to `if` statements.
+
+```typescript
+// ❌ Avoid multiple if/else branches
+const get_badge_class = (status: string) => {
+   if (status === 'active') return 'badge-success';
+   if (status === 'pending') return 'badge-warning';
+   if (status === 'archived') return 'badge-neutral';
+   return 'badge-ghost';
+};
+
+// ✅ Preferred: Object map / dictionary lookup
+const STATUS_BADGE_MAP: Record<string, string> = {
+   active: 'badge-success',
+   pending: 'badge-warning',
+   archived: 'badge-neutral'
+} as const;
+
+const get_badge_class = (status: string): string =>
+   STATUS_BADGE_MAP[status] ?? 'badge-ghost';
+```
+
+---
+
+#### 10. `snake_case` for functions and variables
+
+Use `snake_case` for all function, method, and variable names. Reserve `PascalCase` strictly for Svelte components and TypeScript types/interfaces.
+
+```typescript
+// Types/Interfaces in PascalCase
+interface ConceptPayload {
+   concept_id: string;
+   root_term: string;
+}
+
+// Variables and functions in snake_case
+const default_payload: ConceptPayload = {
+   concept_id: 'c_101',
+   root_term: 'lexicon'
+};
+
+export const fetch_concept_data = async (payload: ConceptPayload): Promise<Concept> => {
+   const response_data = await fetch(`/api/concepts/${payload.concept_id}`);
+   return response_data.json();
+};
+```
+
+---
+
+#### 11. Pure functions
+
+Functions should be pure and free of side effects. Strive to receive one argument (destructuring an options object if multiple inputs are required) and return one value.
+
+```typescript
+interface FormatWordOptions {
+   readonly word: Word;
+   readonly prefix?: string;
+}
+
+// Pure: depends only on its input, single argument object, no external mutation
+export const format_word_label = ({
+   word,
+   prefix = ''
+}: FormatWordOptions): string => {
+   const cleaned_lemma = word.lemma.trim().toLowerCase();
+   return prefix ? `${prefix}:${cleaned_lemma}` : cleaned_lemma;
+};
+```
