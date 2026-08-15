@@ -1,97 +1,49 @@
-type SourceEntity = {
-	category: CategoryName
-	category_abbr: string
-	value: string
-} & SourceFeatures & SourceConceptData
+import type {
+	CategoryName as _CategoryName,
+	FeatureName as _FeatureName,
+	FeatureValue as _FeatureValue,
+	EntityFeature as _EntityFeature,
+	OntologyResult as _OntologyResult,
+	SourceConcept as _SourceConcept,
+	SourceFeatures as _SourceFeatures,
+	SourceConceptData as _SourceConceptData,
+	SourceEntity as _SourceEntity,
+	TargetEntity as _TargetEntity,
+	EncodingEntity as _EncodingEntity,
+	SimpleEncodingEntity as _SimpleEncodingEntity,
+	NounListEntry as _NounListEntry,
+	PageSourceEntity as _PageSourceEntity,
+	DbFeature as _DbFeature,
+	ApiFeature as _ApiFeature,
+	FeatureValueInfo as _FeatureValueInfo,
+	FeatureInfo as _FeatureInfo,
+	FeatureMap as _FeatureMap,
+	TargetApiFeatureResult as _TargetApiFeatureResult,
+} from '@tabitha/types'
 
-type SourceFeatures = {
-	feature_codes: string
-	features: EntityFeature[]
-	noun_list_index: string|null
+declare global {
+	type CategoryName = _CategoryName
+	type FeatureName = _FeatureName
+	type FeatureValue = _FeatureValue
+	type EntityFeature = _EntityFeature
+	type OntologyResult = _OntologyResult
+	type SourceConcept = _SourceConcept
+	type SourceFeatures = _SourceFeatures
+	type SourceConceptData = _SourceConceptData
+	type SourceEntity = _SourceEntity
+	type TargetEntity = _TargetEntity
+	type EncodingEntity = _EncodingEntity
+	type SimpleEncodingEntity = _SimpleEncodingEntity
+	type NounListEntry = _NounListEntry
+	type PageSourceEntity = _PageSourceEntity
+	type DbFeature = _DbFeature
+	type ApiFeature = _ApiFeature
+	type FeatureValueInfo = _FeatureValueInfo
+	type FeatureInfo = _FeatureInfo
+	type FeatureMap = _FeatureMap
+	type TargetApiFeature = _DbFeature
+	type TargetApiFeatureResult = _TargetApiFeatureResult
+	type EntityFilter = (entity: SourceEntity) => boolean
 }
 
-type SourceConceptData = {
-	concept: SourceConcept|null
-	pairing_concept: SourceConcept|null
-	pairing_type: string
-}
-
-type SourceConcept = {
-	stem: string
-	sense: string
-	part_of_speech: string
-	ontology_data?: OntologyResult
-}
-
-type EntityFilter = (entity: SourceEntity) => boolean
-
-type CategoryName = string
-type FeatureName = string
-type FeatureValue = string
-
-type DbFeature = {
-	category: CategoryName
-	position: number
-	code: string
-	feature: FeatureName
-	value: FeatureValue
-	example?: string
-}
-
-type EntityFeature = {
-	name: FeatureName,
-	value: FeatureValue,
-}
-
-type TargetApiFeature = DbFeature
-type TargetApiFeatureResult = {
-	source: TargetApiFeature[]
-	lexical: TargetApiFeature[]
-}
-
-type FeatureValueInfo = {
-	value: FeatureValue
-	code: string
-	example?: string
-}
-type FeatureInfo = { name: FeatureName, values: FeatureValueInfo[] }
-type FeatureMap = Map<CategoryName, FeatureInfo[]>
-
-type ApiFeature = DbFeature
-
-type OntologyResult = {
-	stem: string
-	sense: string
-	part_of_speech: string
-	level: string
-	gloss: string
-	categories: string[]
-	status: string
-}
-
-type TargetEntity = {
-	category: CategoryName
-	category_abbr: string
-	value: string
-	concept: SourceConcept|null
-	target: string
-} & SourceFeatures
-
-// This is a combination of SourceEntity and TargetEntity
-type EncodingEntity = {
-	category: string
-	category_abbr: string
-	value: string
-	concept: SourceConcept|null
-	pairing_concept?: SourceConcept|null
-	target?: string
-} & SourceFeatures
-
-type SimpleEncodingEntity = {
-	category: string
-	concept?: string
-	pairing_concept?: string
-	target?: string
-	features?: Record<FeatureName, FeatureValue>
-	children?: SimpleEncodingEntity[]
-}
+export {}

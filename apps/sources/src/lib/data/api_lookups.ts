@@ -1,4 +1,8 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+import { createOntologyClient } from '@tabitha/api-client'
+import type { OntologyResult, SourceConcept } from '@tabitha/types'
+
+const client = createOntologyClient({ baseUrl: PUBLIC_ONTOLOGY_API_HOST })
 
 export function create_fallback_ontology_data(concept: SourceConcept): OntologyResult {
 	return {
@@ -21,15 +25,8 @@ export async function fetch_concept_ontology_data(concept: SourceConcept): Promi
 	const fallback = create_fallback_ontology_data(concept)
 
 	try {
-		const { stem, sense, part_of_speech } = concept
-		const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=${stem}-${sense}&category=${part_of_speech}`)
-
-		if (!response.ok) {
-			return fallback
-		}
-
-		const results: OntologyResult[] = await response.json()
-		return results.find(r => r.stem === stem) ?? fallback
+		const res = await client.getConcept(concept.stem, concept.sense, concept.part_of_speech)
+		return res ?? fallback
 	} catch {
 		return fallback
 	}
@@ -44,10 +41,7 @@ export async function fetch_all_concepts_for_part_of_speech(part_of_speech: stri
 	}
 
 	try {
-		const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=*&category=${part_of_speech}`)
-		if (!response.ok) return []
-
-		const results: OntologyResult[] = await response.json()
+		const results = await client.getAllForCategory(part_of_speech)
 		const filtered = results.filter(result => result.status === 'in ontology')
 		category_cache.set(part_of_speech, filtered)
 		return filtered
@@ -65,10 +59,7 @@ export async function fetch_ontology_data_for_all_senses(concept: SourceConcept)
 	}
 
 	try {
-		const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=${stem}&category=${part_of_speech}`)
-		if (!response.ok) return []
-
-		const results: OntologyResult[] = await response.json()
+		const results = await client.searchConcepts({ q: stem, category: part_of_speech })
 		const filtered = results.filter(result => result.stem === stem && result.status === 'in ontology')
 		all_senses_cache.set(cache_key, filtered)
 		return filtered

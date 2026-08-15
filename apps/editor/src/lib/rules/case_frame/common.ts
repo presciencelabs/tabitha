@@ -296,7 +296,7 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 		yield { [severity]: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
 
 		// flag any extra roles common to all lookup results
-		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }) => role_is_extra_for_all(role_tag, token))
+		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }: RoleMatchResult) => role_is_extra_for_all(role_tag, token))
 		for (const extra_argument of extra_roles_for_all) {
 			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.get(extra_argument.role_tag)
 				|| extra_argument.rule.extra_message.replaceAll('{sense}', "'{stem}'")
@@ -327,7 +327,7 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 		['beneficiary', 'G'],
 	]
 	for (const [role_tag, categorization_letter] of roles_to_check) {
-		const role_argument = case_frame.valid_arguments.find(({ role_tag: tag }) => tag === role_tag)
+		const role_argument = case_frame.valid_arguments.find(({ role_tag: tag }: RoleMatchResult) => tag === role_tag)
 		if (role_argument && !selected_result.categorization.toUpperCase().includes(categorization_letter)) {
 			yield {
 				token_to_flag: role_argument.trigger_context.trigger_token,

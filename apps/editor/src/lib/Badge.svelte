@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Badge } from '@tabitha/ui'
 	import type { Snippet } from 'svelte'
 
 	interface Props {
@@ -9,8 +10,8 @@
 	let { children, classes = '' }: Props = $props()
 </script>
 
-<span class="badge badge-lg border-base-content {classes}">
+<Badge {classes}>
 	{#if children}
 		{@render children()}
 	{/if}
-</span>
+</Badge>

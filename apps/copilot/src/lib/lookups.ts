@@ -1,38 +1,21 @@
-import { PUBLIC_TARGETS_API_HOST, PUBLIC_SOURCES_API_HOST } from '$env/static/public'
+import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+import { createSourcesClient, createTargetsClient } from '@tabitha/api-client'
 
-export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult|undefined> {
-	const { book, chapter, verse } = verse_ref
-	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}/${verse}/simple-json?glosses=true`)
-	if (!response.ok) {
-		console.error(await response.text())
-		return undefined
-	}
-	return await response.json() as SourceApiResult
+const sourcesClient = createSourcesClient({ baseUrl: PUBLIC_SOURCES_API_HOST })
+const targetsClient = createTargetsClient({ baseUrl: PUBLIC_TARGETS_API_HOST })
+
+export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult | undefined> {
+	const res = await sourcesClient.getSimplifiedJson<SourceApiResult>(verse_ref, 'Bible', true)
+	return res ?? undefined
 }
 
-export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult|undefined> {
-	const { book, chapter, verse } = verse_ref
-	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/${project}/${book}/${chapter}/${verse}`)
-	if (!response.ok) {
-		console.error(await response.text())
-		return undefined
-	}
-	const results = await response.json() as TargetApiResult[]
-	return results.find(res => res.audience === preferred_audience) || results.at(0)
+export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult | undefined> {
+	const res = await targetsClient.getTargetText(verse_ref, project, preferred_audience)
+	return (res as TargetApiResult) ?? undefined
 }
 
-export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number|undefined> {
-	const response = await fetch(`${PUBLIC_SOURCES_API_HOST}/Bible/${book}/${chapter}`)
-	if (!response.ok) {
-		console.error(await response.text())
-		return undefined
-	}
-	const result = await response.json() as { id_tertiary: string }[]
-	if (result.length === 0) {
-		return 0
-	}
-	const last_verse = Math.max(...result.map(i => parseInt(i.id_tertiary)))
-	return last_verse
+export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number | undefined> {
+	return await sourcesClient.getChapterVersesCount({ book, chapter }, 'Bible')
 }
 
 export const polished_books = [

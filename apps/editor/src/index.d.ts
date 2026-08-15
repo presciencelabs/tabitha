@@ -1,79 +1,50 @@
-type TokenType = 'Punctuation' | 'Note' | 'FunctionWord' | 'Word' | 'Clause' | 'Added' | 'Phrase' | 'Gap'
+import type {
+	TokenType as _TokenType,
+	TokenBase as _TokenBase,
+	Token as _Token,
+	PairingType as _PairingType,
+	Tag as _Tag,
+	Clause as _Clause,
+	Phrase as _Phrase,
+	Sentence as _Sentence,
+	MessageLabel as _MessageLabel,
+	MessageType as _MessageType,
+	Message as _Message,
+	MessageInfo as _MessageInfo,
+	LookupTerm as _LookupTerm,
+	LookupWord as _LookupWord,
+	OntologyStatus as _OntologyStatus,
+	HowToEntry as _HowToEntry,
+} from '@tabitha/types'
 
-type TokenBase = {
-	token: string
-	type: TokenType
-	tag: Tag
-	messages: Message[]
-	applied_rules: string[]
+declare global {
+	type TokenType = _TokenType
+	type TokenBase = _TokenBase
+	type Token = _Token
+	type PairingType = _PairingType
+	type Tag = _Tag
+	type Clause = _Clause
+	type Phrase = _Phrase
+	type Sentence = _Sentence
+	type MessageLabel = _MessageLabel
+	type MessageType = _MessageType
+	type Message = _Message
+	type MessageInfo = _MessageInfo
+	type LookupTerm = _LookupTerm
+	type LookupWord = _LookupWord
+	type OntologyStatus = _OntologyStatus
+	type HowToEntry = _HowToEntry
+
+	type LookupResult = LookupWord & {
+		form: string
+		sense: string
+		level: number
+		gloss: string
+		categorization: string
+		ontology_status: OntologyStatus
+		how_to_entries: HowToEntry[]
+		case_frame: CaseFrame
+	}
 }
 
-type Token = TokenBase & {
-	specified_sense: string
-	lookup_terms: LookupTerm[]
-	lookup_results: LookupResult[]
-	pairing: Token | null
-	pairing_type: PairingType
-	pronoun: Token | null
-	sub_tokens: Token[]
-}
-
-type PairingType = 'none' | 'complex' | 'literal'
-
-type Tag = { [tag: string]: string }
-
-type Clause = Token
-type Phrase = Token
-
-type Sentence = {
-	clause: Clause
-}
-
-// Messages
-type MessageLabel = 'error' | 'warning' | 'suggest' | 'info'
-
-type MessageType = {
-	label: MessageLabel
-	severity: number
-}
-
-type Message = MessageType & {
-	message: string
-	rule_id: string
-	// TODO #101 add optional fix_action structure
-}
-
-type MessageInfo = {
-	token_to_flag?: Token
-	plain?: boolean
-} & {
-	[key in MessageLabel]?: string
-}
-
-// Lookup values
-type LookupTerm = string
-
-type LookupWord = {
-	stem: string
-	part_of_speech: string
-}
-
-type OntologyStatus = 'in ontology' | 'approved' | 'suggested' | 'not used' | 'unknown'
-
-type LookupResult = LookupWord & {
-	form: string
-	// TODO include features
-	sense: string
-	level: number
-	gloss: string
-	categorization: string
-	ontology_status: OntologyStatus
-	how_to_entries: HowToEntry[]
-	case_frame: CaseFrame
-}
-
-type HowToEntry = {
-	structure: string
-	pairing: string
-	explication: string
-}
+export {}

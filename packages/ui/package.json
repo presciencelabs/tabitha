@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "svelte": "./src/index.ts",
   "exports": {
     ".": {
-      "svelte": "./src/index.js",
-      "default": "./src/index.js"
+      "types": "./src/index.ts",
+      "svelte": "./src/index.ts",
+      "default": "./src/index.ts"
     }
   },
   "scripts": {
@@ -25,5 +29,8 @@
     "svelte": "^5.56.4",
     "svelte-check": "^4.7.2",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@tabitha/types": "workspace:*"
   }
 }

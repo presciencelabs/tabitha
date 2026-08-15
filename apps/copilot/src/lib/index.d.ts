@@ -1,177 +1,77 @@
-type CopilotMode = 'discern' | 'brief'
+import type {
+	CopilotMode as _CopilotMode,
+	MttLevel as _MttLevel,
+	ProfileCustomCombination as _ProfileCustomCombination,
+	LanguageProfile as _LanguageProfile,
+	CopilotNoteSettings as _CopilotNoteSettings,
+	CopilotDisplaySettings as _CopilotDisplaySettings,
+	CopilotSettings as _CopilotSettings,
+	EncodingAnchor as _EncodingAnchor,
+	CopilotTriggerFlag as _CopilotTriggerFlag,
+	CopilotWeightedFlag as _CopilotWeightedFlag,
+	TriggerIdData as _TriggerIdData,
+	TriggerData as _TriggerData,
+	CopilotLlmInput as _CopilotLlmInput,
+	CopilotLlmNote as _CopilotLlmNote,
+	CopilotLlmOutput as _CopilotLlmOutput,
+	CopilotNote as _CopilotNote,
+	CopilotApiResult as _CopilotApiResult,
+	IndexStack as _IndexStack,
+	CopilotEncodingEntity as _CopilotEncodingEntity,
+	EntityMatchCapture as _EntityMatchCapture,
+	EntityMatch as _EntityMatch,
+	FlagExtractionLayer as _FlagExtractionLayer,
+	FlagExtractionRule as _FlagExtractionRule,
+	PatternEntity as _PatternEntity,
+	EntityMatchResult as _EntityMatchResult,
+	ChapterReference as _ChapterReference,
+	VerseReference as _VerseReference,
+	FeatureName as _FeatureName,
+	FeatureValue as _FeatureValue,
+} from '@tabitha/types'
 
-type CopilotSettings = CopilotNoteSettings & CopilotDisplaySettings
+declare global {
+	type CopilotMode = _CopilotMode
+	type MttLevel = _MttLevel
+	type ProfileCustomCombination = _ProfileCustomCombination
+	type LanguageProfile = _LanguageProfile
+	type CopilotNoteSettings = _CopilotNoteSettings
+	type CopilotDisplaySettings = _CopilotDisplaySettings
+	type CopilotSettings = _CopilotSettings
+	type EncodingAnchor = _EncodingAnchor
+	type CopilotTriggerFlag = _CopilotTriggerFlag
+	type CopilotWeightedFlag = _CopilotWeightedFlag
+	type TriggerIdData = _TriggerIdData
+	type TriggerData = _TriggerData
+	type CopilotLlmInput = _CopilotLlmInput
+	type CopilotLlmNote = _CopilotLlmNote
+	type CopilotLlmOutput = _CopilotLlmOutput
+	type CopilotNote = _CopilotNote
+	type CopilotApiResult = _CopilotApiResult
+	type IndexStack = _IndexStack
+	type EncodingEntity = _CopilotEncodingEntity
+	type EntityMatchCapture = _EntityMatchCapture
+	type EntityMatch = _EntityMatch
+	type FlagExtractionLayer = _FlagExtractionLayer
+	type FlagExtractionRule = _FlagExtractionRule
+	type PatternEntity = _PatternEntity
+	type EntityMatchResult = _EntityMatchResult
+	type ChapterReference = _ChapterReference
+	type VerseReference = _VerseReference
+	type FeatureName = _FeatureName
+	type FeatureValue = _FeatureValue
+	type EntityFeatures = Record<FeatureName, FeatureValue>
 
-type CopilotNoteSettings = {
-	language_profile: LanguageProfile
-	lwc: string
-	mtt_level: MttLevel
-	sensitivity: number
-	mode: CopilotMode
+	type SourceApiResult = {
+		encoding: EncodingEntity[]
+		glosses: Record<string, string>
+	}
+
+	type TargetApiResult = {
+		text: string
+		audience: string
+		ideal?: string
+	}
 }
 
-type CopilotDisplaySettings = {
-	show_note_sources: boolean
-	show_english: boolean
-}
-
-type LanguageProfile = {
-	multiple_past: boolean
-	multiple_future: boolean
-	noun_number: string[]
-	noun_proximity: string[]
-	noun_clusivity: boolean
-	as_third_handling: 'third' | 'first_second' | 'apposition'
-
-	passive: 'none' | 'agent_forbidden' | 'agent_allowed' | 'other'
-	rhetorical_questions: boolean
-	honorifics: boolean
-	speech_formula_position: 'before' | 'after' | 'both' | 'either'
-
-	custom_weights: Record<string, Record<string, number>>
-	custom_combinations: ProfileCustomCombination[]
-}
-
-type ProfileCustomCombination = {
-	name: string
-	flags: Record<string, string[]>
-	weight: number
-	prompt: string
-}
-
-type ChapterReference = {
-	book: string
-	chapter: number
-}
-
-type VerseReference = {
-	book: string
-	chapter: number
-	verse: number
-}
-
-type FeatureName = string
-type FeatureValue = string
-type EntityFeatures = Record<FeatureName, FeatureValue>
-
-type EncodingEntity = {
-	category: string
-	concept?: string
-	pairing_concept?: string
-	features?: EntityFeatures
-	children?: EncodingEntity[]
-	node_id?: string
-}
-
-type FlagExtractionRule = {
-	flag: string
-	rules: FlagExtractionLayer[]
-}
-
-type FlagExtractionLayer = {
-	value: string | ((match: EntityMatch) => string | undefined) | undefined
-	pattern: PatternEntity
-	anchor_extra?: (match: EntityMatch) => Record<string, string>
-	comment?: string
-}
-
-type PatternEntity = EncodingEntity & {
-	name?: string
-	optional?: boolean
-	category?: string
-	children?: PatternEntity[]
-}
-
-type SourceApiResult = {
-	encoding: EncodingEntity[]
-	glosses: Record<string, string>
-}
-
-type TargetApiResult = {
-	text: string
-	audience: string
-	ideal?: string
-}
-
-type MttLevel = 'grade5' | 'high_school' | 'undergraduate'
-
-type CopilotLlmInput = {
-	verse: string
-	output_language: string
-	prose_level: MttLevel
-	tbta_encoding: string
-	english_text: string
-	lwc_text?: string
-	triggers: TriggerData[]
-}
-
-type TriggerIdData = {
-	name: string
-	node_id: string
-}
-
-type TriggerData = TriggerIdData & {
-	flags: CopilotWeightedFlag[]
-	weight: number
-	prompt?: string
-}
-
-type CopilotLlmNote = {
-	meaning: string
-	check: string
-	quoted_text: string
-	trigger: TriggerIdData
-}
-
-type CopilotLlmOutput = {
-	notes: CopilotLlmNote[]
-	lwc_text?: string
-}
-
-type CopilotNote = {
-	meaning: string
-	check: string
-	quoted_text: string
-	trigger: TriggerData
-}
-
-type CopilotApiResult = {
-	verse: VerseReference
-	english_text: string
-	lwc_text?: string
-	notes: CopilotNote[]
-	error?: string
-}
-
-type EncodingAnchor = {
-	[key: string]: string
-	node_id: string
-}
-
-type CopilotTriggerFlag = {
-	name: string
-	value: string
-	encoding_anchor: EncodingAnchor
-}
-
-type CopilotWeightedFlag = CopilotTriggerFlag & {
-	weight: number
-}
-
-type IndexStack = number[]
-
-type EntityMatchCapture = {
-	node: EncodingEntity
-	indexStack: IndexStack
-}
-
-type EntityMatch = {
-	success: boolean
-	bindings: Record<string, unknown>
-	captures: Record<string, EntityMatchCapture>
-}
-
-type EntityMatchResult = EntityMatch & {
-	flag: string
-	rule: FlagExtractionLayer
-}
+export {}

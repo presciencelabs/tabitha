@@ -26,6 +26,15 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0))
+      '@tabitha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@tabitha/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -105,6 +114,15 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0))
+      '@tabitha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@tabitha/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -172,6 +190,15 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0))
+      '@tabitha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@tabitha/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -245,6 +272,15 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0))
+      '@tabitha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@tabitha/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -312,6 +348,15 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0))
+      '@tabitha/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@tabitha/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -377,6 +422,19 @@ importers:
         specifier: ^4.119.0
         version: 4.123.0(@cloudflare/workers-types@5.20260813.1)
 
+  packages/api-client:
+    dependencies:
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@tabitha/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/eslint-config:
     dependencies:
       '@eslint/compat':
@@ -406,8 +464,20 @@ importers:
 
   packages/tsconfig: {}
 
+  packages/types:
+    devDependencies:
+      '@tabitha/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/ui:
     dependencies:
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../types
       daisyui:
         specifier: ^5.7.16
         version: 5.7.16
