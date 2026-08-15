@@ -10,11 +10,11 @@
 
 	let { children, classes = '', variant, size = 'lg' }: Props = $props()
 
-	const variantClass = $derived(variant ? `badge-${variant}` : 'border-base-content')
-	const sizeClass = $derived(`badge-${size}`)
+	const variant_class = $derived(variant ? `badge-${variant}` : 'border-base-content')
+	const size_class = $derived(`badge-${size}`)
 </script>
 
-<span class="badge {sizeClass} {variantClass} {classes}">
+<span class="badge {size_class} {variant_class} {classes}">
 	{#if children}
 		{@render children()}
 	{/if}

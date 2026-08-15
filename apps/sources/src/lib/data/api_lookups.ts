@@ -2,7 +2,7 @@ import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import { create_ontology_client } from '@tabitha/api-client'
 import type { OntologyResult, SourceConcept } from '@tabitha/types'
 
-const client = create_ontology_client({ baseUrl: PUBLIC_ONTOLOGY_API_HOST })
+const client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST })
 
 export function create_fallback_ontology_data(concept: SourceConcept): OntologyResult {
 	return {

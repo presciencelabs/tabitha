@@ -1,31 +1,31 @@
 import type { ChapterReference, Reference, SourceData, SourceStatus, VerseReference } from '@tabitha/types'
 
 export interface SourcesClientOptions {
-	baseUrl: string
+	base_url: string
 	fetch?: typeof fetch
 }
 
 export function create_sources_client(options: SourcesClientOptions) {
-	const { baseUrl } = options
-	const cleanBase = baseUrl.replace(/\/$/, '')
-	const getFetch = () => options.fetch ?? globalThis.fetch
+	const { base_url } = options
+	const clean_base = base_url.replace(/\/$/, '')
+	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {
 		async get_verse_source(ref: VerseReference, type = 'Bible'): Promise<SourceData | null> {
-			const res = await getFetch()(`${cleanBase}/${type}/${ref.book}/${ref.chapter}/${ref.verse}`)
+			const res = await get_fetch()(`${clean_base}/${type}/${ref.book}/${ref.chapter}/${ref.verse}`)
 			if (!res.ok) return null
 			return (await res.json()) as SourceData
 		},
 
-		async get_simplified_json<T = unknown>(ref: VerseReference, type = 'Bible', includeGlosses = false): Promise<T | null> {
-			const url = `${cleanBase}/${type}/${ref.book}/${ref.chapter}/${ref.verse}/simple-json${includeGlosses ? '?glosses=true' : ''}`
-			const res = await getFetch()(url)
+		async get_simplified_json<T = unknown>(ref: VerseReference, type = 'Bible', include_glosses = false): Promise<T | null> {
+			const url = `${clean_base}/${type}/${ref.book}/${ref.chapter}/${ref.verse}/simple-json${include_glosses ? '?glosses=true' : ''}`
+			const res = await get_fetch()(url)
 			if (!res.ok) return null
 			return (await res.json()) as T
 		},
 
 		async get_chapter_verses_count(ref: ChapterReference, type = 'Bible'): Promise<number> {
-			const res = await getFetch()(`${cleanBase}/${type}/${ref.book}/${ref.chapter}`)
+			const res = await get_fetch()(`${clean_base}/${type}/${ref.book}/${ref.chapter}`)
 			if (!res.ok) return 0
 			const entries = (await res.json()) as { id_tertiary: string }[]
 			if (!entries || entries.length === 0) return 0
@@ -33,7 +33,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		},
 
 		async get_verse_status(ref: Reference): Promise<SourceStatus | null> {
-			const res = await getFetch()(`${cleanBase}/lookup/status?type=${ref.type}&id_primary=${ref.id_primary}&id_secondary=${ref.id_secondary}&id_tertiary=${ref.id_tertiary}`)
+			const res = await get_fetch()(`${clean_base}/lookup/status?type=${ref.type}&id_primary=${ref.id_primary}&id_secondary=${ref.id_secondary}&id_tertiary=${ref.id_tertiary}`)
 			if (!res.ok) return null
 			const data = (await res.json()) as { status: SourceStatus }
 			return data.status ?? null

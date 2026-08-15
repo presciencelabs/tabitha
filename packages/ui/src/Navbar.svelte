@@ -10,14 +10,14 @@
 	}
 
 	interface Props {
-		currentApp: 'Ontology' | 'Sources' | 'Targets' | 'Editor' | 'Copilot'
+		current_app: 'Ontology' | 'Sources' | 'Targets' | 'Editor' | 'Copilot'
 		links?: AppLink[]
 		children?: Snippet
 		actions?: Snippet
 	}
 
 	let {
-		currentApp,
+		current_app,
 		links = [
 			{ name: 'Ontology', href: 'http://localhost.tabitha.bible:5173' },
 			{ name: 'Sources', href: 'http://localhost.tabitha.bible:8789' },
@@ -32,7 +32,7 @@
 
 <header class="navbar bg-base-100 border-b border-base-300 px-4">
 	<div class="navbar-start gap-2">
-		<Brand app={currentApp} />
+		<Brand app={current_app} />
 	</div>
 
 	<div class="navbar-center hidden lg:flex">
@@ -41,7 +41,7 @@
 				<li>
 					<a
 						href={link.href}
-						class="text-sm font-medium {link.name === currentApp ? 'active font-bold' : ''}"
+						class="text-sm font-medium {link.name === current_app ? 'active font-bold' : ''}"
 					>
 						{link.name}
 					</a>

@@ -1,18 +1,18 @@
 import type { CheckApiResponse } from '@tabitha/types'
 
 export interface EditorClientOptions {
-	baseUrl: string
+	base_url: string
 	fetch?: typeof fetch
 }
 
 export function create_editor_client(options: EditorClientOptions) {
-	const { baseUrl } = options
-	const cleanBase = baseUrl.replace(/\/$/, '')
-	const getFetch = () => options.fetch ?? globalThis.fetch
+	const { base_url } = options
+	const clean_base = base_url.replace(/\/$/, '')
+	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {
 		async check_text(text: string): Promise<CheckApiResponse | null> {
-			const res = await getFetch()(`${cleanBase}/check`, {
+			const res = await get_fetch()(`${clean_base}/check`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ text }),

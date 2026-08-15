@@ -1,14 +1,14 @@
 import type { ConceptSearchFilter, OntologyResult, SourceConcept } from '@tabitha/types'
 
 export interface OntologyClientOptions {
-	baseUrl: string
+	base_url: string
 	fetch?: typeof fetch
 }
 
 export function create_ontology_client(options: OntologyClientOptions) {
-	const { baseUrl } = options
-	const cleanBase = baseUrl.replace(/\/$/, '')
-	const getFetch = () => options.fetch ?? globalThis.fetch
+	const { base_url } = options
+	const clean_base = base_url.replace(/\/$/, '')
+	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {
 		async search_concepts(filter: Partial<ConceptSearchFilter>): Promise<OntologyResult[]> {
@@ -17,14 +17,14 @@ export function create_ontology_client(options: OntologyClientOptions) {
 			if (filter.category) params.set('category', filter.category)
 			if (filter.scope) params.set('scope', filter.scope)
 
-			const res = await getFetch()(`${cleanBase}/search?${params.toString()}`)
+			const res = await get_fetch()(`${clean_base}/search?${params.toString()}`)
 			if (!res.ok) return []
 			return (await res.json()) as OntologyResult[]
 		},
 
-		async get_concept(stem: string, sense: string, partOfSpeech?: string): Promise<OntologyResult | null> {
+		async get_concept(stem: string, sense: string, part_of_speech?: string): Promise<OntologyResult | null> {
 			const query = `${stem}-${sense}`
-			const results = await this.search_concepts({ q: query, category: partOfSpeech })
+			const results = await this.search_concepts({ q: query, category: part_of_speech })
 			return results.find(r => r.stem === stem && r.sense === sense) ?? null
 		},
 
@@ -33,8 +33,8 @@ export function create_ontology_client(options: OntologyClientOptions) {
 			return this.get_concept(concept.stem, concept.sense, concept.part_of_speech)
 		},
 
-		async get_all_for_category(partOfSpeech: string): Promise<OntologyResult[]> {
-			return this.search_concepts({ q: '*', category: partOfSpeech })
+		async get_all_for_category(part_of_speech: string): Promise<OntologyResult[]> {
+			return this.search_concepts({ q: '*', category: part_of_speech })
 		},
 	}
 }

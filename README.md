@@ -206,3 +206,4 @@ graph TD;
 7. **Strict domain typing**: Model linguistic entities (`Concept`, `SourceEntity`, `Word`) with explicit types and discriminating unions—never `any`.
 8. **Semantic HTML & daisyUI**: Leverage native HTML elements and semantic markup styled via daisyUI utility components.
 9. **Limit use of `if`**: Consider more elegant solutions before resorting to `if` statements.
+10. **`snake_case` for functions and variables**: Use `snake_case` for all function, method, and variable names (e.g. `create_ontology_client`, `fetch_concept_data`). Reserve `PascalCase` strictly for Svelte components and TypeScript types/interfaces.

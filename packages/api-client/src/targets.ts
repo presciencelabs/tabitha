@@ -1,26 +1,26 @@
 import type { TargetApiFeatureResult, TargetTextResult, VerseReference } from '@tabitha/types'
 
 export interface TargetsClientOptions {
-	baseUrl: string
+	base_url: string
 	fetch?: typeof fetch
 }
 
 export function create_targets_client(options: TargetsClientOptions) {
-	const { baseUrl } = options
-	const cleanBase = baseUrl.replace(/\/$/, '')
-	const getFetch = () => options.fetch ?? globalThis.fetch
+	const { base_url } = options
+	const clean_base = base_url.replace(/\/$/, '')
+	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {
-		async get_target_text(ref: VerseReference, project = 'English', preferredAudience = 'Unchurched Adults'): Promise<TargetTextResult | null> {
-			const res = await getFetch()(`${cleanBase}/${project}/${ref.book}/${ref.chapter}/${ref.verse}`)
+		async get_target_text(ref: VerseReference, project = 'English', preferred_audience = 'Unchurched Adults'): Promise<TargetTextResult | null> {
+			const res = await get_fetch()(`${clean_base}/${project}/${ref.book}/${ref.chapter}/${ref.verse}`)
 			if (!res.ok) return null
 			const results = (await res.json()) as TargetTextResult[]
-			return results.find(r => r.audience === preferredAudience) ?? results.at(0) ?? null
+			return results.find(r => r.audience === preferred_audience) ?? results.at(0) ?? null
 		},
 
 		async get_features(category?: string): Promise<TargetApiFeatureResult | null> {
-			const url = category ? `${cleanBase}/features/${category}` : `${cleanBase}/features`
-			const res = await getFetch()(url)
+			const url = category ? `${clean_base}/features/${category}` : `${clean_base}/features`
+			const res = await get_fetch()(url)
 			if (!res.ok) return null
 			return (await res.json()) as TargetApiFeatureResult
 		},
