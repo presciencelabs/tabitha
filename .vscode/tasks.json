@@ -1,0 +1,53 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "🩺 Run TaBiThA Doctor",
+			"type": "shell",
+			"command": "pnpm check:doctor",
+			"problemMatcher": [],
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "🚀 Start All Dev Servers (pnpm dev)",
+			"type": "shell",
+			"command": "pnpm dev",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "🔍 Run Workspace Check (Typecheck & Lint)",
+			"type": "shell",
+			"command": "pnpm check",
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "🧪 Run Unit Tests (Vitest)",
+			"type": "shell",
+			"command": "pnpm test:unit",
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "🎭 Run End-to-End Tests (Playwright)",
+			"type": "shell",
+			"command": "pnpm test:e2e",
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "📦 Reload D1 SQLite Databases",
+			"type": "shell",
+			"command": "pnpm db:load",
+			"problemMatcher": []
+		}
+	]
+}

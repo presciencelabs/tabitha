@@ -1,26 +1,32 @@
 {
-  "editor.insertSpaces": false,
-  "editor.tabSize": 3,
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "svelte"
-  ],
-  "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "files.associations": {
-    "*.jsonc": "jsonc",
-    "wrangler.json": "jsonc"
-  }
+	"editor.insertSpaces": false,
+	"editor.tabSize": 3,
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit"
+	},
+	"eslint.validate": [
+		"javascript",
+		"typescript",
+		"svelte"
+	],
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"files.associations": {
+		"*.jsonc": "jsonc",
+		"wrangler.json": "jsonc"
+	},
+	"tailwindCSS.includeLanguages": {
+		"svelte": "html"
+	},
+	"tailwindCSS.experimental.classRegex": [
+		["class:\\s*[\"']([^\"']*)[\"']", "([a-zA-Z0-9_-]+)"]
+	]
 }
