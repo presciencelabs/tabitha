@@ -21,6 +21,7 @@
     "db:load:sources": "bun tools/databases/scripts/load_d1.ts sources",
     "db:load:targets": "bun tools/databases/scripts/load_d1.ts targets",
     "build": "turbo run build",
+    "precommit": "pnpm check && pnpm test:unit && pnpm check:secrets && pnpm check:cloudflare && pnpm check:md && pnpm build",
     "check": "turbo run check",
     "check:doctor": "bun tools/databases/scripts/doctor.ts",
     "check:philosophies": "bun tools/databases/scripts/check_philosophies.ts",

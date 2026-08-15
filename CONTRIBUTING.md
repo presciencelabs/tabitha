@@ -222,29 +222,17 @@ All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to elim
 
 ---
 
-## 🧪 Pre-Commit Verification Gate
+## 🧪 Pre-Commit / Pre-PR Verification Gate
 
-Before submitting a Pull Request, run the full verification gate:
+Before submitting a Pull Request, run the automated 1-command verification gate:
 
 ```bash
-# 1. Typecheck and lint all packages
-pnpm check
-
-# 2. Run all unit test suites (421+ tests)
-pnpm test:unit
-
-# 3. Verify workspace health & database status
-pnpm check:doctor
-
-# 4. Scan for secrets and credential leaks
-pnpm check:secrets
-
-# 5. Validate Cloudflare Worker configurations
-pnpm check:cloudflare
-
-# 6. Verify Markdown documentation linting
-pnpm check:md
-
-# 7. Verify production builds
-pnpm build
+# Runs the full verification pipeline:
+# 1. Typecheck & lint all 15 packages (pnpm check)
+# 2. Run all 421 unit test suites (pnpm test:unit)
+# 3. Scan for secrets & credential leaks (pnpm check:secrets)
+# 4. Validate Cloudflare Worker configurations (pnpm check:cloudflare)
+# 5. Verify Markdown documentation linting (pnpm check:md)
+# 6. Verify production Cloudflare Worker builds (pnpm build)
+pnpm precommit
 ```

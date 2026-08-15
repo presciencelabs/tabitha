@@ -61,6 +61,13 @@
 			"type": "shell",
 			"command": "pnpm db:status",
 			"problemMatcher": []
+		},
+		{
+			"label": "🛡️ Run Full Pre-PR Verification Gate (pnpm precommit)",
+			"type": "shell",
+			"command": "pnpm precommit",
+			"problemMatcher": [],
+			"group": "test"
 		}
 	]
 }
