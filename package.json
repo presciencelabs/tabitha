@@ -14,6 +14,7 @@
     "doctor": "bun tools/databases/scripts/doctor.ts",
     "setup": "bun tools/databases/scripts/setup.ts",
     "setup:env": "bun tools/databases/scripts/setup_env.ts",
+    "db:status": "bun tools/databases/scripts/status_d1.ts",
     "db:load": "bun tools/databases/scripts/load_d1.ts all",
     "db:load:ontology": "bun tools/databases/scripts/load_d1.ts ontology",
     "db:load:sources": "bun tools/databases/scripts/load_d1.ts sources",

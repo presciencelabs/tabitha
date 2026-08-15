@@ -40,6 +40,9 @@ pnpm db:load
 pnpm db:load:ontology
 pnpm db:load:sources
 pnpm db:load:targets
+
+# Inspect local database health, tables, row counts, and file sizes
+pnpm db:status
 ```
 
 ---

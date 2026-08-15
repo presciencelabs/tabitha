@@ -48,6 +48,12 @@
 			"type": "shell",
 			"command": "pnpm db:load",
 			"problemMatcher": []
+		},
+		{
+			"label": "📊 Inspect D1 Database Status",
+			"type": "shell",
+			"command": "pnpm db:status",
+			"problemMatcher": []
 		}
 	]
 }

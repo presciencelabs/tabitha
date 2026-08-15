@@ -88,6 +88,9 @@ pnpm db:load:ontology
 pnpm db:load:sources
 pnpm db:load:targets
 
+# Inspect local D1 database tables, row counts, and snapshot status
+pnpm db:status
+
 # Scaffold .env.local files from .env templates
 pnpm setup:env
 ```
