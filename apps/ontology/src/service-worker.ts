@@ -15,11 +15,11 @@ const ASSETS = [
 ]
 
 sw.addEventListener('install', event => {
-	event.waitUntil(addFilesToCache())
+	event.waitUntil(add_files_to_cache())
 })
 
 sw.addEventListener('activate', event => {
-	event.waitUntil(deleteOldCaches())
+	event.waitUntil(delete_old_caches())
 })
 
 sw.addEventListener('fetch', event => {
@@ -30,13 +30,13 @@ sw.addEventListener('fetch', event => {
 })
 
 // Create a new cache and add all files to it
-async function addFilesToCache(): Promise<void> {
+async function add_files_to_cache(): Promise<void> {
 	const cache = await caches.open(CACHE)
 	await cache.addAll(ASSETS)
 }
 
 // Remove previous cached data from disk
-async function deleteOldCaches(): Promise<void> {
+async function delete_old_caches(): Promise<void> {
 	for (const key of await caches.keys()) {
 		if (key !== CACHE) await caches.delete(key)
 	}
