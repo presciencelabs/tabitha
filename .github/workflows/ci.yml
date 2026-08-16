@@ -94,8 +94,20 @@ jobs:
       - name: Bootstrap Local D1 SQLite Snapshots
         run: pnpm db:load
 
-      - name: Install Playwright Chromium
+      - name: Cache Playwright Chromium
+        id: playwright_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright Chromium & System Dependencies
+        if: steps.playwright_cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Install Playwright OS Dependencies on Cache Hit
+        if: steps.playwright_cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
 
       - name: Execute Playwright End-to-End Suite
         run: pnpm test:e2e

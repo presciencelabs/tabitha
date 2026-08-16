@@ -1,8 +1,19 @@
-import { describe, test, expect } from 'vitest'
-import { perform_form_lookups, perform_ontology_lookups } from '$lib/lookups'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { perform_form_lookups, perform_ontology_lookups } from './index'
 import { TOKEN_TYPE, create_token } from '$lib/token'
 
 describe('lookups module', () => {
+	beforeEach(() => {
+		vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+			ok: true,
+			json: async () => [],
+		}))
+	})
+
+	afterEach(() => {
+		vi.unstubAllGlobals()
+	})
+
 	test('perform_form_lookups on empty sentence returns empty array', async () => {
 		const result = await perform_form_lookups([])
 		expect(result).toEqual([])
