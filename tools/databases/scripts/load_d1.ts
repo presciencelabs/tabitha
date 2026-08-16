@@ -125,20 +125,33 @@ export async function load_database(target_app: string = 'all') {
 
 				import_sqlite_snapshot(snapshot_file, target_db)
 
-				// Mirror database file to all possible hash formats (id, name, binding, prefix, historical)
+				// Mirror database file to all possible hash formats (id, name, binding, prefix)
 				const alternate_keys = [
 					db_name,
 					d1.binding || '',
 					db_name.split('_')[0],
-					'Targets_2026-04-29',
-					'Sources_2026-04-29',
-					'Ontology_9494_2026-04-29',
 				].filter(k => Boolean(k && k !== db_id))
 
 				for (const key of alternate_keys) {
 					const alt_hash = createHash('sha256').update(key).digest('hex')
 					const alt_db_path = join(d1_state_dir, `${alt_hash}.sqlite`)
 					copyFileSync(target_db, alt_db_path)
+				}
+
+				// Known workerd Durable Object ID hashes for Miniflare D1 bindings
+				const known_workerd_hashes: Record<string, string[]> = {
+					'Targets_2026-07-31': ['2d5f513e6b9e5b68d83ec617ff25803295d2a2106bd2a797052b5b82015a040a'],
+					'Sources_2026-07-27': ['7ffa3fdd72032bbd696dd3d8682a80bbf4f3c9c03c71d125a2238239e2fe6bce'],
+					'Ontology_9494_2026-06-25': [
+						'7f0590b8bc24ed7dd19340f22195c999e7128818bf7529ba1b9a0c0dad3c0a34',
+						'81c562e827d1d0232fdf5e68ed6b3e2aa51159b8bc813151c2bb36f63989ffb3',
+					],
+					'Auth': ['181ea28918b1425c38047bc6e0c62f50d16f238f1931aa5b25ebaf6e085a4c5b'],
+				}
+
+				for (const hash of known_workerd_hashes[db_name] || []) {
+					const workerd_db_path = join(d1_state_dir, `${hash}.sqlite`)
+					copyFileSync(target_db, workerd_db_path)
 				}
 
 				// Also overwrite any other non-metadata sqlite databases currently in state dir
