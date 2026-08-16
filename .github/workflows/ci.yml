@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
-      - monorepo
   pull_request:
     branches:
-      - main
-      - monorepo
+      - '**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -63,9 +65,9 @@ jobs:
           pnpm check:md
         continue-on-error: true
 
-      - name: Unit Test Suites
+      - name: Unit Test Suites & Coverage Report
         id: test_unit
-        run: pnpm test:unit
+        run: pnpm test:coverage
         continue-on-error: true
 
       - name: Production Bundle Verification (Blocking)

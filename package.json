@@ -33,6 +33,7 @@
     "check:lint:fix": "turbo run check:lint:fix",
     "test": "turbo run test",
     "test:unit": "turbo run test:unit",
+    "test:coverage": "bun tools/databases/scripts/report_coverage.ts",
     "test:e2e": "turbo run test:e2e",
     "clean:svelte": "turbo run clean:svelte",
     "clean:node": "turbo run clean:node && rimraf node_modules",

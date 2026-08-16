@@ -13,13 +13,16 @@
     "./editor": "./src/editor.ts"
   },
   "scripts": {
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "test": "pnpm test:unit",
+    "test:unit": "vitest run src"
   },
   "dependencies": {
     "@tabitha/types": "workspace:*"
   },
   "devDependencies": {
     "@tabitha/tsconfig": "workspace:*",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^3.2.7"
   }
 }
