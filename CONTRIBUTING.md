@@ -137,33 +137,20 @@ pnpm dev:copilot
 
 ---
 
-## 📐 Development Guidelines & Conventions
+## 📐 Development Guidelines & Philosophies
 
-All contributions must adhere to the **Tabitha Development Philosophies**:
+All contributions must adhere to the **12 TaBiThA Development Philosophies** and coding standards defined in [**`AGENTS.md`**](AGENTS.md).
 
-1. **Tabs for Indentation**: Use literal `tab` characters for all indentation.
-2. **No Semicolons & Single Quotes**: Code without trailing semicolons; use `'single'` quotes for strings.
-3. **Naming Conventions**:
-   - `snake_case` for functions, methods, variables, file names, and directories (`process_concept_data()`, `user_profile.ts`).
-   - `PascalCase` strictly for Svelte component names and TypeScript interfaces/types (`ConceptCard.svelte`, `type LinguisticEntity`).
-4. **daisyUI 5 & Semantic HTML**:
-   - Use semantic HTML tags (`<article>`, `<dialog>`, `<nav>`) styled with daisyUI 5 component classes (`card`, `btn`, `modal`, `badge`).
-   - Place `class="..."` at the end of element attributes to prioritize functional behavior:
+### Core Standards Quick Summary
 
-     ```svelte
-     <button
-     	type="submit"
-     	disabled={is_loading}
-     	onclick={handle_save}
-     	class="btn btn-primary btn-sm"
-     >
-     	Save
-     </button>
-     ```
+- **The 12 Philosophies**: Self-contained components, normalized data, tabs for indentation, code over comments, classes at element end, guard clauses, strict domain typing, daisyUI 5, limit `if`, `snake_case`, pure functions, and **YAGNI & Minimal Surface Area**.
+- **Indentation & Formatting**: Literal `tab` characters for all indentation; `'single'` quotes; **no trailing semicolons**.
+- **Naming**: `snake_case` for functions/methods/variables/files; `PascalCase` strictly for Svelte components and TS types.
+- **Testing Standard**:
+  - **Unit Tests (`*.test.ts`)**: 100% pure, fast in-memory Vitest tests without network or database dependencies.
+  - **E2E Tests (`*.spec.ts`)**: Multi-service browser integration tests executed via Playwright.
 
-5. **Pure In-Memory Unit Tests vs. End-to-End Tests**:
-   - **Unit Tests (`apps/*/src/**/*.test.ts`)**: Must be 100% pure, fast, in-memory Vitest tests with zero network dependencies or live database requirements.
-   - **E2E / Integration Tests (`apps/*/e2e/*.spec.ts`)**: Cross-service network tests and browser flows executed with Playwright.
+👉 **Complete Definitions & Code Examples**: See the canonical [**`AGENTS.md`**](AGENTS.md) at the repository root.
 
 ---
 
@@ -177,6 +164,7 @@ Git diffs show *what* code changed; commit messages should explain **why** the c
 <type>(<scope>): <short summary of WHAT changed (max 50-72 chars)>
 
 [WHY]: Explain the problem, root cause, or missing capability that required this change.
+
 
 [HOW/SOLUTION]: Key technical decisions, trade-offs, and architectural choices.
 

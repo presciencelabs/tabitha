@@ -55,10 +55,4 @@ pnpm dev
 
 ## Testing & Verification
 
-```bash
-# Run typechecking and linting
-pnpm check
-
-# Build for Cloudflare
-pnpm build
-```
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

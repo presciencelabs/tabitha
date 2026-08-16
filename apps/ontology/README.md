@@ -61,11 +61,13 @@ pnpm dev
 
 ### 3. Loading Local Database
 
-To load a local D1 SQLite database dump:
+To load the local D1 SQLite database dump into Miniflare state:
 
 ```bash
-npx wrangler d1 execute <DB_NAME> --file=<DUMP_FILE>.sql
+pnpm db:load:ontology
 ```
+
+For complete database tooling and snapshots documentation, see [tools/databases/README.md](../../tools/databases/README.md).
 
 ### 4. Complex Terms Synchronization
 
@@ -88,16 +90,4 @@ Complex terms and simplification hints are synchronized from Google Sheets every
 
 ## Testing & Verification
 
-```bash
-# Run typechecking and linting
-pnpm check
-
-# Run unit tests
-pnpm test:unit
-
-# Run end-to-end tests
-pnpm test:e2e
-
-# Build for Cloudflare
-pnpm build
-```
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.
