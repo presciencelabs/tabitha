@@ -1,4 +1,4 @@
-import type { CheckApiResponse } from '@tabitha/types'
+import { clean_trailing_slash, type CheckApiResponse } from '@tabitha/types'
 
 export interface EditorClientOptions {
 	base_url: string
@@ -7,7 +7,7 @@ export interface EditorClientOptions {
 
 export function create_editor_client(options: EditorClientOptions) {
 	const { base_url } = options
-	const clean_base = base_url.replace(/\/$/, '')
+	const clean_base = clean_trailing_slash(base_url)
 	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {

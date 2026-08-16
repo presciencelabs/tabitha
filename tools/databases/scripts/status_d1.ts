@@ -3,6 +3,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
+import { strip_jsonc_comments } from '@tabitha/types'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../../..')
@@ -33,17 +34,6 @@ interface D1Config {
 }
 
 const APP_NAMES = ['ontology', 'sources', 'targets', 'editor', 'copilot']
-
-const BLOCK_COMMENT_REGEX = /\/\*[\s\S]*?\*\//g
-const LINE_COMMENT_REGEX = /\/\/.*$/gm
-const TRAILING_COMMAS_REGEX = /,(\s*[}\]])/g
-
-function strip_jsonc_comments(jsonc: string): string {
-	return jsonc
-		.replace(BLOCK_COMMENT_REGEX, '')
-		.replace(LINE_COMMENT_REGEX, '')
-		.replace(TRAILING_COMMAS_REGEX, '$1')
-}
 
 function parse_wrangler_d1_configs(app_name: string): D1Config[] {
 	const wrangler_path = join(root_dir, 'apps', app_name, 'wrangler.jsonc')

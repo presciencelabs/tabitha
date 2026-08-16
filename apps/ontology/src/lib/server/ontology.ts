@@ -1,4 +1,5 @@
 import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
+import { normalize_wildcards, parse_concept_sense } from '@tabitha/types'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 import { get_pending_changes } from './changes/changes'
 import type {
@@ -35,13 +36,11 @@ export const get_concepts = (db: D1Database) => async (concept_filter: ConceptSe
 		query_builder.add_filter('part_of_speech = ?', [concept_filter.category])
 	}
 
-	// senses follow the form word-A, /^(.*)-([A-Z])$/
-	const matches = concept_filter.q.match(/^(.*)-([A-Z])$/)
-	if (matches) {
-		const [, stem, sense] = matches
+	const parsed_concept = parse_concept_sense(concept_filter.q)
+	if (parsed_concept) {
 		query_builder
-			.add_filter('stem LIKE ?', [stem])
-			.add_filter('sense = ?', [sense])
+			.add_filter('stem LIKE ?', [parsed_concept.stem])
+			.add_filter('sense = ?', [parsed_concept.sense])
 	} else {
 		const normalized_q = normalize_wildcards(concept_filter.q)
 
@@ -106,12 +105,11 @@ export const get_simplification_hints = (db: D1Database) => async (filter: Conce
 		query_builder.add_filter('part_of_speech = ?', [filter.category])
 	}
 
-	const matches = filter.q.match(/^(.*)-([A-Z])$/)
-	if (matches) {
-		const [, stem, sense] = matches
+	const parsed_filter = parse_concept_sense(filter.q)
+	if (parsed_filter) {
 		query_builder
-			.add_filter('stem LIKE ?', [stem])
-			.add_filter('sense = ?', [sense])
+			.add_filter('stem LIKE ?', [parsed_filter.stem])
+			.add_filter('sense = ?', [parsed_filter.sense])
 	} else {
 		const normalized_q = normalize_wildcards(filter.q)
 		query_builder.add_filter('stem LIKE ?', [normalized_q])
@@ -145,9 +143,9 @@ export const get_examples = (db: D1Database) => async (
 	part_of_speech: string,
 	source: string,
 ): Promise<Example[]> => {
-	const sense_match = concept.match(/^(.*)-([A-Z])$/)
-	const stem = sense_match ? sense_match[1] : concept
-	const sense = sense_match ? sense_match[2] : 'A'
+	const parsed_concept = parse_concept_sense(concept)
+	const stem = parsed_concept ? parsed_concept.stem : concept
+	const sense = parsed_concept ? parsed_concept.sense : 'A'
 
 	const { results } = await db.prepare(`
 		SELECT E.ref_type, RPL.name AS ref_id_primary, E.ref_id_secondary, E.ref_id_tertiary, E.context_json
@@ -166,14 +164,6 @@ export const get_examples = (db: D1Database) => async (
 		context: JSON.parse(context_json),
 		book_status: 'Ready to Translate', // this will be updated after the API call to Sources
 	}))
-}
-
-/**
- * @param possible_wildcard – a string that may contain wildcards, e.g., '*' or '#' or '%'
- * @returns SQL-ready string, i.e., `%` for wildcards
- */
-function normalize_wildcards(possible_wildcard: string): string {
-	return possible_wildcard.replace(/[*#]/g, '%')
 }
 
 function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {

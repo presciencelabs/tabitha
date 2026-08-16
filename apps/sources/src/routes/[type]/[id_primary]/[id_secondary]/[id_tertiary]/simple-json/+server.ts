@@ -1,6 +1,7 @@
 import { get_source_data } from '$lib/data/read'
 import { transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { simplify_encoding } from '$lib/encoding/simplify'
+import { strip_gloss_classifiers } from '@tabitha/types'
 import { error, json } from '@sveltejs/kit'
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import type { RequestHandler } from './$types'
@@ -44,5 +45,5 @@ async function fetch_concept_gloss(concept: string, category: string): Promise<s
 	}
 	const result: OntologyResult[] = await response.json()
 	const gloss = result.length ? result[0].gloss : ''
-	return gloss.replace(/\((universal primitive|LDV|complex|complex alternate|inexplicable)\) /, '')
+	return strip_gloss_classifiers(gloss)
 }

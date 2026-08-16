@@ -1,4 +1,4 @@
-import type { TargetApiFeatureResult, TargetTextResult, VerseReference } from '@tabitha/types'
+import { clean_trailing_slash, type TargetApiFeatureResult, type TargetTextResult, type VerseReference } from '@tabitha/types'
 
 export interface TargetsClientOptions {
 	base_url: string
@@ -7,7 +7,7 @@ export interface TargetsClientOptions {
 
 export function create_targets_client(options: TargetsClientOptions) {
 	const { base_url } = options
-	const clean_base = base_url.replace(/\/$/, '')
+	const clean_base = clean_trailing_slash(base_url)
 	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { USFM_VERSE_MARKER_REGEX } from '@tabitha/types'
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
@@ -58,7 +59,7 @@
 				const chunk_text = decoder.decode(value, { stream: true })
 				sfm_text += chunk_text
 
-				const matches = chunk_text.match(/\\v\s+\d+/g)
+				const matches = chunk_text.match(USFM_VERSE_MARKER_REGEX)
 				if (matches) {
 					completed_verses += matches.length
 				}

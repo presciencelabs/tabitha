@@ -1,4 +1,4 @@
-import type { ConceptSearchFilter, OntologyResult, SourceConcept } from '@tabitha/types'
+import { clean_trailing_slash, type ConceptSearchFilter, type OntologyResult, type SourceConcept } from '@tabitha/types'
 
 export interface OntologyClientOptions {
 	base_url: string
@@ -7,7 +7,7 @@ export interface OntologyClientOptions {
 
 export function create_ontology_client(options: OntologyClientOptions) {
 	const { base_url } = options
-	const clean_base = base_url.replace(/\/$/, '')
+	const clean_base = clean_trailing_slash(base_url)
 	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {

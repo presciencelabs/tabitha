@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { ISO_DATE_REGEX, strip_jsonc_comments } from '@tabitha/types'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../../..')
@@ -24,18 +25,6 @@ const forbidden_var_keys = [
 	'GEMINI_PRIVATE_KEY',
 	'GOOGLE_OAUTH_CLIENT_SECRET',
 ]
-
-const BLOCK_COMMENT_REGEX = /\/\*[\s\S]*?\*\//g
-const LINE_COMMENT_REGEX = /\/\/.*$/gm
-const TRAILING_COMMAS_REGEX = /,(\s*[}\]])/g
-const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
-
-function strip_jsonc_comments(jsonc: string): string {
-	return jsonc
-		.replace(BLOCK_COMMENT_REGEX, '')
-		.replace(LINE_COMMENT_REGEX, '')
-		.replace(TRAILING_COMMAS_REGEX, '$1')
-}
 
 export async function check_cloudflare_configs(): Promise<{ valid: boolean; errors: CloudflareFinding[]; warnings: CloudflareFinding[] }> {
 	const local_findings: CloudflareFinding[] = []

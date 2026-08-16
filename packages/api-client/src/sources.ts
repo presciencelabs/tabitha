@@ -1,4 +1,4 @@
-import type { ChapterReference, Reference, SourceData, SourceStatus, VerseReference } from '@tabitha/types'
+import { clean_trailing_slash, type ChapterReference, type Reference, type SourceData, type SourceStatus, type VerseReference } from '@tabitha/types'
 
 export interface SourcesClientOptions {
 	base_url: string
@@ -7,7 +7,7 @@ export interface SourcesClientOptions {
 
 export function create_sources_client(options: SourcesClientOptions) {
 	const { base_url } = options
-	const clean_base = base_url.replace(/\/$/, '')
+	const clean_base = clean_trailing_slash(base_url)
 	const get_fetch = () => options.fetch ?? globalThis.fetch
 
 	return {

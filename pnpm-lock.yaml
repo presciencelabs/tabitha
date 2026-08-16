@@ -511,6 +511,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      vitest:
+        specifier: ^3.2.7
+        version: 3.2.7(@types/debug@4.1.13)(@types/node@26.2.0)(jiti@2.7.0)(lightningcss@1.33.0)(supports-color@10.2.2)
 
   packages/ui:
     dependencies:
@@ -569,6 +572,9 @@ importers:
       '@tabitha/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@types/bun':
         specifier: ^1.3.14
         version: 1.3.14

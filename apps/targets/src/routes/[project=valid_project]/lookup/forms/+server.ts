@@ -1,5 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 import type { D1Database } from '@cloudflare/workers-types'
+import { normalize_wildcards } from '@tabitha/types'
 import type { DbRowLexicon, LexicalForm } from '$lib/types'
 
 export const GET: RequestHandler = async ({ locals: { db }, params: { project }, url: { searchParams } }) => {
@@ -98,9 +99,5 @@ export const GET: RequestHandler = async ({ locals: { db }, params: { project },
 
 			return await db.prepare(sql).bind(project, part_of_speech, position).first<string>('name') ?? ''
 		}
-	}
-
-	function normalize_wildcards(possible_wildcard: string): string {
-		return possible_wildcard.replace(/[*#]/g, '%')
 	}
 }
