@@ -105,8 +105,12 @@ function check_classes_at_end(file_path: string, content: string, lines: string[
 	}
 }
 
+const SVELTEKIT_FRAMEWORK_EXEMPTIONS = new Set(['handleError', 'handleFetch', 'handle', 'reroute', 'load'])
+
 function check_strict_domain_typing(file_path: string, lines: string[]) {
-	// Philosophy 7: Strict domain typing (avoid : any or as any)
+	// Philosophy 7: Strict domain typing (avoid : any or as any in TypeScript files)
+	if (!file_path.endsWith('.ts') && !file_path.endsWith('.svelte')) return
+
 	lines.forEach((line, idx) => {
 		const trimmed = line.trim()
 		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
@@ -139,6 +143,7 @@ function check_snake_case_functions(file_path: string, lines: string[]) {
 
 		const camel_name = func_decl_match?.[1] || const_fn_match?.[1]
 		if (camel_name) {
+			if (SVELTEKIT_FRAMEWORK_EXEMPTIONS.has(camel_name)) return
 			findings.push({
 				rule_id: 10,
 				rule_title: 'snake_case for functions and variables',
@@ -149,6 +154,31 @@ function check_snake_case_functions(file_path: string, lines: string[]) {
 			})
 		}
 	})
+}
+
+function get_changed_files(): Set<string> {
+	const changed = new Set<string>()
+	try {
+		const { execSync } = require('node:child_process')
+		const base_ref = process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : 'origin/main'
+		let output = ''
+		try {
+			output = execSync(`git diff --name-only ${base_ref}...HEAD`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
+		} catch {
+			try {
+				output = execSync('git diff --name-only HEAD~1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
+			} catch {
+				output = execSync('git status --porcelain', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
+			}
+		}
+		for (const line of output.split('\n')) {
+			const file = line.trim().replace(/^[ MADRCU?!]{1,2}\s+/, '')
+			if (file) changed.add(resolve(root_dir, file))
+		}
+	} catch {
+		// Ignore git errors in environments without git history
+	}
+	return changed
 }
 
 async function audit_codebase() {
@@ -175,7 +205,15 @@ async function audit_codebase() {
 		all_files.push(...files)
 	}
 
-	console.log(`🔍 Auditing ${all_files.length} source file(s) against Development Philosophies...\n`)
+	const changed_files = get_changed_files()
+	const is_ci = process.env.GITHUB_ACTIONS === 'true'
+
+	console.log(`🔍 Auditing ${all_files.length} source file(s) against Development Philosophies...`)
+	if (changed_files.size > 0) {
+		console.log(`📌 Detected ${changed_files.size} modified/updated file(s) in change set.\n`)
+	} else {
+		console.log('\n')
+	}
 
 	for (const file_path of all_files) {
 		const content = await readFile(file_path, 'utf-8')
@@ -194,18 +232,19 @@ async function audit_codebase() {
 
 	console.log(`⚠️  Found ${findings.length} philosophy observation(s):\n`)
 
-	const is_ci = process.env.GITHUB_ACTIONS === 'true'
-
 	for (const f of findings) {
 		const rel_path = relative(root_dir, f.file_path)
-		console.log(`[Philosophy #${f.rule_id}: ${f.rule_title}]`)
+		const is_updated_in_pr = changed_files.has(f.file_path)
+		const pr_tag = is_updated_in_pr ? ' [PR MODIFIED]' : ''
+
+		console.log(`[Philosophy #${f.rule_id}: ${f.rule_title}]${pr_tag}`)
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
 		console.log(`  💡 ${f.message}`)
 		console.log(`  🔎 "${f.snippet}"\n`)
 
 		if (is_ci) {
-			// GitHub Actions inline annotation
-			console.log(`::warning file=${rel_path},line=${f.line_number},title=Philosophy #${f.rule_id} (${f.rule_title})::${f.message}`)
+			// GitHub Actions inline annotation (prioritizes changed files or annotates all non-blocking)
+			console.log(`::warning file=${rel_path},line=${f.line_number},title=Philosophy #${f.rule_id} (${f.rule_title})${pr_tag}::${f.message}`)
 		}
 	}
 
@@ -218,12 +257,25 @@ async function audit_codebase() {
 		if (findings.length === 0) {
 			markdown += `✨ **100% Compliance!** All ${all_files.length} inspected source files adhere to the Development Philosophies.\n\n`
 		} else {
-			markdown += `⚠️ **${findings.length} Non-Blocking Philosophy Observation(s)** detected across ${all_files.length} source files:\n\n`
-			markdown += `| Rule | Location | Observation |\n`
-			markdown += `| :--- | :--- | :--- |\n`
+			const pr_findings = findings.filter(f => changed_files.has(f.file_path))
+			if (pr_findings.length > 0) {
+				markdown += `### ✏️ Observations in PR-Modified Files (${pr_findings.length})\n\n`
+				markdown += `| Rule | Location | Observation |\n`
+				markdown += `| :--- | :--- | :--- |\n`
+				for (const f of pr_findings) {
+					const rel_path = relative(root_dir, f.file_path)
+					markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
+				}
+				markdown += `\n`
+			}
+
+			markdown += `### 🌐 All Workspace Observations (${findings.length})\n\n`
+			markdown += `| Scope | Rule | Location | Observation |\n`
+			markdown += `| :--- | :--- | :--- | :--- |\n`
 			for (const f of findings) {
 				const rel_path = relative(root_dir, f.file_path)
-				markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
+				const scope = changed_files.has(f.file_path) ? '✏️ **PR File**' : '📄 Workspace'
+				markdown += `| ${scope} | **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
 			}
 			markdown += `\n`
 		}

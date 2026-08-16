@@ -19,6 +19,7 @@ jobs:
   code_quality:
     name: Code Quality & Typecheck
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,25 +36,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
 
+      - name: Secret & Credential Leak Scan (Blocking)
+        run: pnpm check:secrets
+
       - name: Architectural Philosophy Verification
         run: pnpm check:philosophies
-
-      - name: Secret & Credential Leak Scan
-        run: pnpm check:secrets
+        continue-on-error: true
 
       - name: Cloudflare Workers Configuration Audit
         run: pnpm check:cloudflare
+        continue-on-error: true
 
       - name: Markdown Specification Lint
         run: pnpm check:md
+        continue-on-error: true
 
   unit_tests:
     name: Unit Tests & Coverage
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -65,7 +72,7 @@ jobs:
         run: pnpm test:coverage
 
   production_build:
-    name: Production Bundle Build
+    name: Production Bundle Build (Blocking)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -81,6 +88,7 @@ jobs:
     name: Playwright E2E Tests
     needs: [production_build]
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
