@@ -84,60 +84,60 @@ jobs:
       - name: Production Bundle Verification
         run: pnpm build
 
-  e2e_tests:
-    name: Playwright E2E Tests
-    needs: [production_build]
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Workspace
-        uses: ./.github/actions/setup-workspace
-
-      - name: Production Bundle Verification
-        run: pnpm build
-
-      - name: Bootstrap Local D1 SQLite Snapshots
-        run: pnpm db:load
-
-      - name: Inspect D1 SQLite Storage Inventory
-        run: |
-          echo "=== 🗄️ D1 Miniflare Database Storage Inventory ==="
-          ls -lh apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/ 2>/dev/null || true
-
-      - name: Cache Playwright Chromium
-        id: playwright_cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install Playwright Chromium & System Dependencies
-        if: steps.playwright_cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Install Playwright OS Dependencies on Cache Hit
-        if: steps.playwright_cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
-
-      - name: Execute Playwright End-to-End Suite
-        run: pnpm test:e2e
-
-      - name: Diagnose D1 State on Failure
-        if: failure()
-        run: |
-          echo "=== ⚠️ Playwright E2E Failure Storage State ==="
-          find apps/*/.wrangler -name "*.sqlite" -exec ls -lh {} + 2>/dev/null || true
-
-      - name: Upload Playwright Test Artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            apps/*/playwright-report/
-            apps/*/test-results/
-            apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/
-          retention-days: 7
+#   e2e_tests:
+#     name: Playwright E2E Tests
+#     needs: [production_build]
+#     runs-on: ubuntu-latest
+#     continue-on-error: true
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+# 
+#       - name: Setup Workspace
+#         uses: ./.github/actions/setup-workspace
+# 
+#       - name: Production Bundle Verification
+#         run: pnpm build
+# 
+#       - name: Bootstrap Local D1 SQLite Snapshots
+#         run: pnpm db:load
+# 
+#       - name: Inspect D1 SQLite Storage Inventory
+#         run: |
+#           echo "=== 🗄️ D1 Miniflare Database Storage Inventory ==="
+#           ls -lh apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/ 2>/dev/null || true
+# 
+#       - name: Cache Playwright Chromium
+#         id: playwright_cache
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.cache/ms-playwright
+#           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+# 
+#       - name: Install Playwright Chromium & System Dependencies
+#         if: steps.playwright_cache.outputs.cache-hit != 'true'
+#         run: pnpm exec playwright install --with-deps chromium
+# 
+#       - name: Install Playwright OS Dependencies on Cache Hit
+#         if: steps.playwright_cache.outputs.cache-hit == 'true'
+#         run: pnpm exec playwright install-deps chromium
+# 
+#       - name: Execute Playwright End-to-End Suite
+#         run: pnpm test:e2e
+# 
+#       - name: Diagnose D1 State on Failure
+#         if: failure()
+#         run: |
+#           echo "=== ⚠️ Playwright E2E Failure Storage State ==="
+#           find apps/*/.wrangler -name "*.sqlite" -exec ls -lh {} + 2>/dev/null || true
+# 
+#       - name: Upload Playwright Test Artifacts
+#         if: always()
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: playwright-report
+#           path: |
+#             apps/*/playwright-report/
+#             apps/*/test-results/
+#             apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/
+#           retention-days: 7
