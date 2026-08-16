@@ -1,5 +1,4 @@
 <script lang="ts">
-	<<<< INTENTIONAL_BLOCKING_BUILD_ERROR >>>>
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
