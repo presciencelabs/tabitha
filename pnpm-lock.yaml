@@ -114,6 +114,9 @@ importers:
 
   apps/editor:
     dependencies:
+      '@google/genai':
+        specifier: ^1.52.0
+        version: 1.52.0(supports-color@10.2.2)
       '@iconify/svelte':
         specifier: ^5.2.2
         version: 5.2.2(svelte@5.56.9(@typescript-eslint/types@8.67.0))
@@ -135,9 +138,6 @@ importers:
       daisyui:
         specifier: ^5.7.17
         version: 5.7.17
-      openai:
-        specifier: ^7.4.0
-        version: 7.4.0(ws@8.21.3)
       svelte:
         specifier: ^5.56.9
         version: 5.56.9(@typescript-eslint/types@8.67.0)
@@ -2819,27 +2819,6 @@ packages:
     resolution: {integrity: sha512-4a+OsYv9UktOJKE+l1A4OufDgdRF9PifWj+tJnHURo/P+WOxpG4GzUFL9qCalmWauao6ogiG+QvnCovwPoyAWA==}
     engines: {node: '>=12.20.0'}
 
-  openai@7.4.0:
-    resolution: {integrity: sha512-+C9Muit5x8j9R8ej8ZzVgKcrVDtqFqTy9gxFdov0EItLgU68zrJtF9ZeT0cyqJQW9S3PCJkdFgADtRGquRBtew==}
-    engines: {node: '>=22.0.0'}
-    peerDependencies:
-      '@aws-sdk/credential-provider-node': '>=3.972.0 <4'
-      '@smithy/hash-node': '>=4.3.0 <5'
-      '@smithy/signature-v4': '>=5.4.0 <6'
-      ws: ^8.18.0
-      zod: ^3.25 || ^4.0
-    peerDependenciesMeta:
-      '@aws-sdk/credential-provider-node':
-        optional: true
-      '@smithy/hash-node':
-        optional: true
-      '@smithy/signature-v4':
-        optional: true
-      ws:
-        optional: true
-      zod:
-        optional: true
-
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -5416,10 +5395,6 @@ snapshots:
   oauth4webapi@3.8.7: {}
 
   obug@2.1.4: {}
-
-  openai@7.4.0(ws@8.21.3):
-    optionalDependencies:
-      ws: 8.21.3
 
   optionator@0.9.4:
     dependencies:

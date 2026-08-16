@@ -21,7 +21,7 @@
 
 ### 3. AI Assist Generation API
 
-- `POST /ai-assist/generate` — Generates AI completions for semantic encoding assistance using fine-tuned models.
+- `POST /ai-assist/generate` — Generates AI completions for semantic encoding assistance.
   - **Request Body:**
 
     ```json

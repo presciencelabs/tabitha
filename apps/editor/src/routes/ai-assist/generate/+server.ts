@@ -1,33 +1,42 @@
+import { env } from '$env/dynamic/private'
 import { json } from '@sveltejs/kit'
-import OpenAI from 'openai'
-import { PHASE1_AI_ASSIST_API_KEY } from '$env/static/private'
-
-
+import { GoogleGenAI } from '@google/genai'
 import type { RequestEvent } from './$types'
 
 export async function POST({ request }: RequestEvent) {
 	const { message, temperature, frequency_penalty, presence_penalty } = await request.json()
 
-	const openai = new OpenAI({ apiKey: PHASE1_AI_ASSIST_API_KEY })
+	const api_key = env.GEMINI_API_KEY
+	if (!api_key) {
+		return json({
+			finish_reason: 'error',
+			message: 'Missing GEMINI_API_KEY secret in environment.',
+		}, { status: 500 })
+	}
 
-	const chat_response = await openai.chat.completions.create({
-		messages: [
-			{ 'role': 'system', 'content': 'You are a helpful assistant.' },
-			{ 'role': 'user', 'content': message },
-		],
-		model: 'ft:gpt-3.5-turbo-0125:personal::9UjdoEtZ',
-		max_tokens: 2048,
-		temperature,
-		frequency_penalty,
-		presence_penalty,
-	})
+	const ai = new GoogleGenAI({ apiKey: api_key })
 
-	return response({
-		finish_reason: chat_response.choices[0].finish_reason,
-		message: chat_response.choices[0].message.content ?? '',
-	})
+	try {
+		const chat_response = await ai.models.generateContent({
+			model: 'gemini-2.5-flash',
+			contents: message,
+			config: {
+				systemInstruction: 'You are a helpful assistant for biblical linguistic translation and semantic encoding.',
+				temperature: typeof temperature === 'number' ? temperature : 0.0,
+				frequencyPenalty: typeof frequency_penalty === 'number' ? frequency_penalty : 0.0,
+				presencePenalty: typeof presence_penalty === 'number' ? presence_penalty : 0.0,
+			},
+		})
 
-	function response(result: { finish_reason: string, message: string }) {
-		return json(result)
+		return json({
+			finish_reason: 'stop',
+			message: chat_response.text ?? '',
+		})
+	} catch (err: unknown) {
+		const error_message = err instanceof Error ? err.message : 'Failed to generate content with Gemini.'
+		return json({
+			finish_reason: 'error',
+			message: error_message,
+		}, { status: 500 })
 	}
 }
