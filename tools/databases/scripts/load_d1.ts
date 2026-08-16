@@ -125,16 +125,29 @@ export async function load_database(target_app: string = 'all') {
 
 				import_sqlite_snapshot(snapshot_file, target_db)
 
-				// Mirror database file to database_name and binding hashes to guarantee Miniflare resolution
+				// Mirror database file to all possible hash formats (id, name, binding, prefix, historical)
 				const alternate_keys = [
 					db_name,
 					d1.binding || '',
+					db_name.split('_')[0],
+					'Targets_2026-04-29',
+					'Sources_2026-04-29',
+					'Ontology_9494_2026-04-29',
 				].filter(k => Boolean(k && k !== db_id))
 
 				for (const key of alternate_keys) {
 					const alt_hash = createHash('sha256').update(key).digest('hex')
 					const alt_db_path = join(d1_state_dir, `${alt_hash}.sqlite`)
 					copyFileSync(target_db, alt_db_path)
+				}
+
+				// Also overwrite any other non-metadata sqlite databases currently in state dir
+				const existing_sqlite_files = (await readdir(d1_state_dir)).filter(f => f.endsWith('.sqlite') && f !== 'metadata.sqlite')
+				for (const existing_f of existing_sqlite_files) {
+					const existing_path = join(d1_state_dir, existing_f)
+					if (existing_path !== target_db) {
+						copyFileSync(target_db, existing_path)
+					}
 				}
 
 				// Verify table count
