@@ -1,17 +1,14 @@
 import { TOKEN_TYPE } from '$lib/token'
-import { pipe } from '$lib/pipeline'
 import { rules_applier } from '$lib/rules'
 import { phrasify } from '$lib/parser/phrasify'
 import { BT_STRUCTURAL_RULES } from './structural_rules'
 
 export function backtranslate(sentences: Sentence[]): string {
-	return pipe(
-		remove_some_gap_tokens,
-		phrasify,
-		rules_applier(BT_STRUCTURAL_RULES),
-		textify,
-		find_replace,
-	)(sentences)
+	const cleaned = remove_some_gap_tokens(sentences)
+	const phrasified = phrasify(cleaned)
+	const structured = rules_applier(BT_STRUCTURAL_RULES)(phrasified)
+	const text = textify(structured)
+	return find_replace(text)
 }
 
 export function remove_some_gap_tokens(sentences: Sentence[]): Sentence[] {

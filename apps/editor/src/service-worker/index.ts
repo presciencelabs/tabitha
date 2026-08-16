@@ -16,8 +16,8 @@ const ASSETS = [
 	...files, // everything in `static`
 ]
 
-self.addEventListener('install', (event: ExtendableEvent) => event.waitUntil(addFilesToCache()))
-self.addEventListener('activate', (event: ExtendableEvent) => event.waitUntil(deleteOldCaches()))
+self.addEventListener('install', (event: ExtendableEvent) => event.waitUntil(add_files_to_cache()))
+self.addEventListener('activate', (event: ExtendableEvent) => event.waitUntil(delete_old_caches()))
 self.addEventListener('fetch', (event: FetchEvent) => {
 	// ignore POST requests etc
 	if (event.request.method !== 'GET') return
@@ -26,13 +26,13 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 })
 
 // Create a new cache and add all files to it
-async function addFilesToCache() {
+async function add_files_to_cache() {
 	const cache = await caches.open(CACHE)
 	await cache.addAll(ASSETS)
 }
 
 // Remove previous cached data from disk
-async function deleteOldCaches() {
+async function delete_old_caches() {
 	for (const key of await caches.keys()) {
 		if (key !== CACHE) await caches.delete(key)
 	}

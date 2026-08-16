@@ -1,36 +1,29 @@
-import { pipe, pipe_async } from '$lib/pipeline'
 import { tokenize_input } from './tokenize'
 import { perform_form_lookups, perform_ontology_lookups } from '$lib/lookups'
 import { clausify, flatten_sentences } from './clausify'
 import { RULES, rules_applier } from '$lib/rules'
 
 export async function parse(text: string): Promise<Sentence[]> {
-	return await pipe_async(
-		tokenize_input,
-		clausify,
-		rules_applier(RULES.SYNTAX),
-		perform_form_lookups,
-		rules_applier(RULES.LOOKUP),
-		perform_ontology_lookups,
-		rules_applier(RULES.PART_OF_SPEECH),
-		rules_applier(RULES.TRANSFORM),
-		rules_applier(RULES.ARGUMENT_AND_SENSE),
-	)(text)
+	let sentences = clausify(tokenize_input(text))
+	sentences = rules_applier(RULES.SYNTAX)(sentences)
+	sentences = await perform_form_lookups(sentences)
+	sentences = rules_applier(RULES.LOOKUP)(sentences)
+	sentences = await perform_ontology_lookups(sentences)
+	sentences = rules_applier(RULES.PART_OF_SPEECH)(sentences)
+	sentences = rules_applier(RULES.TRANSFORM)(sentences)
+	return rules_applier(RULES.ARGUMENT_AND_SENSE)(sentences)
 }
 
 /**
  * TODO: temporary... need to build e2e testing infrastructure
  */
 export function parse_for_test(text: string): Token[] {
-	return pipe(
-		tokenize_input,
-		clausify,
-		rules_applier(RULES.SYNTAX),
-		rules_applier(RULES.LOOKUP),
-		rules_applier(RULES.PART_OF_SPEECH),
-		rules_applier(RULES.TRANSFORM),
-		rules_applier(RULES.ARGUMENT_AND_SENSE),
-		rules_applier(RULES.CHECKER.slice(0, 5)),	// TODO remove slice when e2e testing is set up (skips the 'no lookup' check)
-		flatten_sentences,
-	)(text)
+	let sentences = clausify(tokenize_input(text))
+	sentences = rules_applier(RULES.SYNTAX)(sentences)
+	sentences = rules_applier(RULES.LOOKUP)(sentences)
+	sentences = rules_applier(RULES.PART_OF_SPEECH)(sentences)
+	sentences = rules_applier(RULES.TRANSFORM)(sentences)
+	sentences = rules_applier(RULES.ARGUMENT_AND_SENSE)(sentences)
+	sentences = rules_applier(RULES.CHECKER.slice(0, 5))(sentences)
+	return flatten_sentences(sentences)
 }
