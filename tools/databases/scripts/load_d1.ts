@@ -1,5 +1,5 @@
 import { readdir } from 'node:fs/promises'
-import { existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -124,6 +124,18 @@ export async function load_database(target_app: string = 'all') {
 				const target_db = join(d1_state_dir, `${db_hash}.sqlite`)
 
 				import_sqlite_snapshot(snapshot_file, target_db)
+
+				// Mirror database file to database_name and binding hashes to guarantee Miniflare resolution
+				const alternate_keys = [
+					db_name,
+					d1.binding || '',
+				].filter(k => Boolean(k && k !== db_id))
+
+				for (const key of alternate_keys) {
+					const alt_hash = createHash('sha256').update(key).digest('hex')
+					const alt_db_path = join(d1_state_dir, `${alt_hash}.sqlite`)
+					copyFileSync(target_db, alt_db_path)
+				}
 
 				const duration = ((Date.now() - start_time) / 1000).toFixed(2)
 				console.log(`   ⚡ Loaded "${db_name}" in ${duration}s (-> ${db_hash.slice(0, 12)}...sqlite)!\n`)
