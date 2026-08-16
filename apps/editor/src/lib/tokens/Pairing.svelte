@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Message from './Message.svelte'
+	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
