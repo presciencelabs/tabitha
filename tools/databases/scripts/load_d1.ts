@@ -132,10 +132,19 @@ export async function load_database(target_app: string = 'all') {
 					db_name.split('_')[0],
 				].filter(k => Boolean(k && k !== db_id))
 
+				function copy_database_safely(src: string, dest: string) {
+					if (src === dest) return
+					for (const ext of ['', '-wal', '-shm']) {
+						const p = `${dest}${ext}`
+						if (existsSync(p)) unlinkSync(p)
+					}
+					copyFileSync(src, dest)
+				}
+
 				for (const key of alternate_keys) {
 					const alt_hash = createHash('sha256').update(key).digest('hex')
 					const alt_db_path = join(d1_state_dir, `${alt_hash}.sqlite`)
-					copyFileSync(target_db, alt_db_path)
+					copy_database_safely(target_db, alt_db_path)
 				}
 
 				// Known workerd Durable Object ID hashes for Miniflare D1 bindings
@@ -151,16 +160,7 @@ export async function load_database(target_app: string = 'all') {
 
 				for (const hash of known_workerd_hashes[db_name] || []) {
 					const workerd_db_path = join(d1_state_dir, `${hash}.sqlite`)
-					copyFileSync(target_db, workerd_db_path)
-				}
-
-				// Also overwrite any other non-metadata sqlite databases currently in state dir
-				const existing_sqlite_files = (await readdir(d1_state_dir)).filter(f => f.endsWith('.sqlite') && f !== 'metadata.sqlite')
-				for (const existing_f of existing_sqlite_files) {
-					const existing_path = join(d1_state_dir, existing_f)
-					if (existing_path !== target_db) {
-						copyFileSync(target_db, existing_path)
-					}
+					copy_database_safely(target_db, workerd_db_path)
 				}
 
 				// Verify table count

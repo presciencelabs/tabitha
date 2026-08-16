@@ -54,7 +54,7 @@ test('selecting word concept opens Constituent Inspector and loads ontology deta
 
 	await page.goto('/Bible/Genesis/1/1')
 
-	const conceptBadge = page.locator('.cursor-pointer', { hasText: 'God' }).first()
+	const conceptBadge = page.locator('.entity-N', { hasText: 'God' }).first()
 	await conceptBadge.click()
 
 	const sidebarHeading = page.locator('h3:has-text("Constituent Inspector")')
