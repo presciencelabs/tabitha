@@ -210,6 +210,25 @@ async function audit_codebase() {
 	}
 
 	console.log(`📋 Summary: ${findings.length} non-blocking observation(s) reported across ${all_files.length} files.\n`)
+
+	const summary_file = process.env.GITHUB_STEP_SUMMARY
+	if (is_ci && summary_file) {
+		const { appendFile } = await import('node:fs/promises')
+		let markdown = `## 🏛️ Architectural Philosophy & Compliance\n\n`
+		if (findings.length === 0) {
+			markdown += `✨ **100% Compliance!** All ${all_files.length} inspected source files adhere to the Development Philosophies.\n\n`
+		} else {
+			markdown += `⚠️ **${findings.length} Non-Blocking Philosophy Observation(s)** detected across ${all_files.length} source files:\n\n`
+			markdown += `| Rule | Location | Observation |\n`
+			markdown += `| :--- | :--- | :--- |\n`
+			for (const f of findings) {
+				const rel_path = relative(root_dir, f.file_path)
+				markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
+			}
+			markdown += `\n`
+		}
+		await appendFile(summary_file, markdown, 'utf-8')
+	}
 }
 
 if (import.meta.main) {
