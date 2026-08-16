@@ -145,6 +145,9 @@ pnpm check:secrets
 # Validate Cloudflare Workers wrangler.jsonc configurations
 pnpm check:cloudflare
 
+# Audit client storage hygiene and cookie security
+pnpm check:storage
+
 # Run Markdown linting across all documentation
 pnpm check:md
 

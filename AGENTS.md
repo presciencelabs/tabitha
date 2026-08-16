@@ -319,5 +319,5 @@ Before submitting any code changes, ensure the entire repository passes the stan
 
 ```bash
 cd tabitha && pnpm precommit
-# Runs: pnpm check && pnpm test:unit && pnpm check:secrets && pnpm check:cloudflare && pnpm check:md && pnpm build
+# Runs: pnpm check && pnpm test:unit && pnpm check:secrets && pnpm check:cloudflare && pnpm check:storage && pnpm check:md && pnpm build
 ```

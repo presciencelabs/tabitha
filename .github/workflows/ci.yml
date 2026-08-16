@@ -53,6 +53,10 @@ jobs:
         run: pnpm check:cloudflare
         continue-on-error: true
 
+      - name: Storage Hygiene & Cookie Security Audit
+        run: pnpm check:storage
+        continue-on-error: true
+
       - name: Markdown Specification Lint
         run: pnpm check:md
         continue-on-error: true
