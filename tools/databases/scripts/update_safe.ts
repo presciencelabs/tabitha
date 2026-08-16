@@ -55,6 +55,18 @@ async function audit_and_update_cloudflare_compat_dates() {
 	}
 }
 
+async function audit_workspace_skills() {
+	console.log('🧠 Auditing workspace AI skills (.agents/skills)...')
+	const skills_dir = resolve(root_dir, '../.agents/skills')
+	try {
+		const entries = await readdir(skills_dir, { withFileTypes: true })
+		const skill_names = entries.filter(e => e.isDirectory()).map(e => e.name)
+		console.log(`   ✓ Active skills (${skill_names.length}): ${skill_names.join(', ')}\n`)
+	} catch {
+		// Directory not present
+	}
+}
+
 async function run_safe_update() {
 	console.log(`
 ============================================================
@@ -76,10 +88,13 @@ async function run_safe_update() {
 		console.warn('   ⚠️  Could not determine toolchain versions:', err?.message || err)
 	}
 
-	// 2. Cloudflare Compatibility Date Maintenance
+	// 2. Workspace Skills Audit
+	await audit_workspace_skills()
+
+	// 3. Cloudflare Compatibility Date Maintenance
 	await audit_and_update_cloudflare_compat_dates()
 
-	// 3. Non-Breaking SemVer Dependency Update
+	// 4. Non-Breaking SemVer Dependency Update
 	console.log('📦 Updating workspace dependencies within declared SemVer ranges (non-breaking)...')
 	try {
 		await $`pnpm update --recursive`

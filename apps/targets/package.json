@@ -27,12 +27,12 @@
     "@tabitha/types": "workspace:*",
     "@tabitha/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.20",
-    "daisyui": "^5.7.16",
+    "daisyui": "^5.7.17",
     "svelte": "^5.56.9",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260814.1",
+    "@cloudflare/workers-types": "^5.20260815.1",
     "@eslint/compat": "^2.1.0",
     "@iconify/svelte": "^5.2.2",
     "@playwright/test": "^1.62.1",
