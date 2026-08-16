@@ -1,6 +1,9 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+import { create_targets_client } from '@tabitha/api-client'
 import { GRAMMAR_ONLY_FEATURES, WORD_ENTITY_CATEGORIES } from './lookups'
+
+const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 
 export async function get_source_features(db: D1Database): Promise<DbFeature[]> {
 	const sql = 'SELECT * FROM Features'
@@ -21,12 +24,11 @@ export async function load_target_feature_map(project: string): Promise<FeatureM
 	if (!project.length) {
 		return undefined
 	}
-	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/${project}/lookup/features`)
-	if (!response.ok) {
-		console.error(`Failed to load target features for project ${project}: ${response.status} ${response.statusText}`)
+	const results = await targets_client.lookup_features(project)
+	if (!results) {
+		console.error(`Failed to load target features for project ${project}`)
 		return undefined
 	}
-	const results = await response.json() as TargetApiFeatureResult
 
 	const combined_results = [
 		...results.source,

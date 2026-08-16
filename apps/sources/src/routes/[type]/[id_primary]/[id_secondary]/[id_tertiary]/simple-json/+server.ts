@@ -2,9 +2,12 @@ import { get_source_data } from '$lib/data/read'
 import { transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { simplify_encoding } from '$lib/encoding/simplify'
 import { strip_gloss_classifiers } from '@tabitha/types'
+import { create_ontology_client } from '@tabitha/api-client'
 import { error, json } from '@sveltejs/kit'
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import type { RequestHandler } from './$types'
+
+const ontology_client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
 export const GET: RequestHandler = async ({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary }, url: { searchParams } }) => {
 	const include_glosses = searchParams.get('glosses') === 'true'
@@ -39,11 +42,7 @@ async function fetch_glosses(entities: SourceEntity[]): Promise<Record<string, s
 }
 
 async function fetch_concept_gloss(concept: string, category: string): Promise<string> {
-	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=${concept}&category=${category}`)
-	if (!response.ok) {
-		return ''
-	}
-	const result: OntologyResult[] = await response.json()
+	const result = await ontology_client.search_concepts({ q: concept, category })
 	const gloss = result.length ? result[0].gloss : ''
 	return strip_gloss_classifiers(gloss)
 }

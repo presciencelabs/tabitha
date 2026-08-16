@@ -1,26 +1,32 @@
-import { clean_trailing_slash, type CheckApiResponse } from '@tabitha/types'
+import { type CheckApiResponse } from '@tabitha/types'
+import { create_http_client, type ClientOptions } from './http'
 
-export interface EditorClientOptions {
-	base_url: string
-	fetch?: typeof fetch
-}
+export type EditorClient = ReturnType<typeof create_editor_client>
+export type EditorClientOptions = ClientOptions
 
+/**
+ * Creates a typed HTTP client for communicating with the Editor service (`apps/editor`).
+ *
+ * @example
+ * ```typescript
+ * import { create_editor_client } from '@tabitha/api-client'
+ *
+ * const editor = create_editor_client({
+ *   base_url: PUBLIC_EDITOR_API_HOST,
+ * })
+ *
+ * const check = await editor.check_text('Paul write-01 a letter.')
+ * ```
+ */
 export function create_editor_client(options: EditorClientOptions) {
-	const { base_url } = options
-	const clean_base = clean_trailing_slash(base_url)
-	const get_fetch = () => options.fetch ?? globalThis.fetch
+	const http = create_http_client(options)
 
 	return {
+		/**
+		 * Check, analyze, and generate backtranslation tokens for a given source text.
+		 */
 		async check_text(text: string): Promise<CheckApiResponse | null> {
-			const res = await get_fetch()(`${clean_base}/check`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ text }),
-			})
-			if (!res.ok) return null
-			return (await res.json()) as CheckApiResponse
+			return http.post<CheckApiResponse>('/check', { text })
 		},
 	}
 }
-
-export type EditorClient = ReturnType<typeof create_editor_client>

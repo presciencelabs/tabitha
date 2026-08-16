@@ -1,6 +1,9 @@
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+import { create_targets_client } from '@tabitha/api-client'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/token'
+
+const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 
 export async function check_forms(lookup_token: Token) {
 	// At this point there is always just one lookup term
@@ -65,11 +68,7 @@ export async function check_forms(lookup_token: Token) {
 }
 
 async function get_matches_from_form_lookup(lookup_term: string): Promise<LexicalFormResult[]> {
-	const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/English/lookup/forms?word=${lookup_term}`)
-
-	if (!response.ok) return []
-
-	return response.json()
+	return targets_client.lookup_forms<LexicalFormResult>(lookup_term)
 }
 
 const MISSING_FORMS: Map<string, { stem: string; part_of_speech: string; forms: string }> = new Map([

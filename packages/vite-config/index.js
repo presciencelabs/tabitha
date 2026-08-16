@@ -11,6 +11,7 @@ import { defineConfig } from 'vite'
  * @param {string} [options.host] Hostname (defaults to 'localhost.tabitha.bible')
  * @param {any[]} [options.plugins] Additional Vite plugins
  * @param {Record<string, any>} [options.server] Server configuration overrides
+ * @param {Record<string, any>} [options.ssr] SSR configuration overrides
  * @param {Record<string, any>} [options.rest] Additional Vite configuration options
  * @returns {import('vite').UserConfig}
  */
@@ -19,6 +20,7 @@ export function create_app_vite_config({
 	host = 'localhost.tabitha.bible',
 	plugins = [],
 	server = {},
+	ssr = {},
 	...rest
 }) {
 	return defineConfig({
@@ -32,6 +34,10 @@ export function create_app_vite_config({
 			port,
 			strictPort: true,
 			...server,
+		},
+		ssr: {
+			noExternal: ['@tabitha/types', '@tabitha/api-client', '@tabitha/ui'],
+			...ssr,
 		},
 		// @ts-ignore - Vitest inline test configuration
 		test: {

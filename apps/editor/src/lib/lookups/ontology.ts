@@ -1,6 +1,9 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+import { create_ontology_client } from '@tabitha/api-client'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/token'
+
+const ontology_client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
 export async function check_ontology(lookup_token: Token) {
 	const results = (await Promise.all(lookup_token.lookup_terms.map(get_matches_from_ontology))).flat()
@@ -45,9 +48,5 @@ export async function check_ontology(lookup_token: Token) {
 }
 
 async function get_matches_from_ontology(lookup_term: string): Promise<OntologyResult[]> {
-	const response = await fetch(`${PUBLIC_ONTOLOGY_API_HOST}/search?q=${lookup_term}`)
-
-	if (!response.ok) return []
-
-	return response.json()
+	return ontology_client.search_concepts<OntologyResult>({ q: lookup_term })
 }

@@ -1,9 +1,29 @@
 import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 import { error } from '@sveltejs/kit'
-import { cached_json } from '$lib/server/response_helpers'
+import { cached_json, create_sources_client } from '@tabitha/api-client'
 import { get_examples } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
-import type { Example, SourceStatus, StatusApiResult } from '$lib/types'
+import type { Example, SourceStatus } from '$lib/types'
+
+/**
+ * In-memory Worker isolate cache for book statuses.
+ *
+ * Why this is here:
+ * Resolving book statuses across all example references can require multiple sub-requests
+ * to the Sources service. By caching resolved book statuses in isolate memory with a short TTL,
+ * subsequent requests within the same Worker isolate return in sub-milliseconds without network hops.
+ *
+ * When a new deployment is published, Cloudflare recycles the Worker isolate, automatically
+ * dropping this memory cache and fetching fresh data immediately.
+ */
+interface CachedStatus {
+	status: SourceStatus
+	cached_at: number
+}
+
+const ISOLATE_STATUS_CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
+const book_status_isolate_cache = new Map<string, CachedStatus>()
+const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST, cache: true })
 
 export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
 	const concept = searchParams.get('concept') ?? error(400, 'Missing "concept" parameter')
@@ -18,19 +38,21 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 
 async function fetch_statuses_by_book(examples: Example[]): Promise<Example[]> {
 	const book_refs = Array.from(new Set(examples.map(({ reference }) => reference.id_primary)))
+	const now = Date.now()
 
-	// Fetch the status for each book to reduce the number of API calls compared to checking each verse.
-	// Also rely on caching to reduce the time it takes to fetch the statuses.
-	// Without the caching, the whole process can take ~10 seconds.
+	// Fetch the status for each book using isolate-level caching to avoid redundant sub-requests.
 	const book_statuses: [string, SourceStatus][] = await Promise.all(
-		book_refs.map(async book => {
+		book_refs.map(async (book): Promise<[string, SourceStatus]> => {
+			const cached = book_status_isolate_cache.get(book)
+			if (cached && now - cached.cached_at < ISOLATE_STATUS_CACHE_TTL_MS) {
+				return [book, cached.status]
+			}
+
 			try {
-				const res = await fetch(`${PUBLIC_SOURCES_API_HOST}/lookup/status/Bible/${book}`)
-				if (!res.ok) {
-					return [book, 'Ready to Translate' as SourceStatus]
-				}
-				const { status }: StatusApiResult = await res.json()
-				return [book, status]
+				const status = await sources_client.get_book_status(book)
+				const resolved_status = status ?? ('Ready to Translate' as SourceStatus)
+				book_status_isolate_cache.set(book, { status: resolved_status, cached_at: now })
+				return [book, resolved_status]
 			} catch {
 				return [book, 'Ready to Translate' as SourceStatus]
 			}

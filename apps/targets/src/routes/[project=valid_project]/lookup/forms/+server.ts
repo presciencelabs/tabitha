@@ -1,4 +1,5 @@
-import { json, type RequestHandler } from '@sveltejs/kit'
+import { type RequestHandler } from '@sveltejs/kit'
+import { cached_json } from '@tabitha/api-client'
 import type { D1Database } from '@cloudflare/workers-types'
 import { normalize_wildcards } from '@tabitha/types'
 import type { DbRowLexicon, LexicalForm } from '$lib/types'
@@ -24,13 +25,7 @@ export const GET: RequestHandler = async ({ locals: { db }, params: { project },
 
 	const forms: LexicalForm[] = await transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
 
-	const TWELVE_HOUR_CACHE = {
-		'cache-control': `max-age=${12 * 60 * 60}`,
-	}
-
-	return json(forms, {
-		headers: TWELVE_HOUR_CACHE,
-	})
+	return cached_json(forms)
 
 	async function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): Promise<LexicalForm[]> {
 		const forms: LexicalForm[] = []

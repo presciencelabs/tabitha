@@ -1,4 +1,4 @@
-import { cached_json } from '$lib/server/response_helpers'
+import { cached_json } from '@tabitha/api-client'
 import { get_concepts } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
