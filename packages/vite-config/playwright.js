@@ -29,7 +29,7 @@ export function create_app_playwright_config({
 			},
 		],
 		webServer: {
-			command: 'pnpm build && pnpm dev',
+			command: 'pnpm dev',
 			port,
 			reuseExistingServer: !process.env.CI,
 		},

@@ -97,6 +97,33 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 		})
 	}
 
+	// 4. SQLite3 CLI
+	try {
+		const sqlite_proc = await $`sqlite3 --version`.quiet()
+		const sqlite_version = sqlite_proc.text().trim().split(' ')[0]
+		results.push({
+			category: 'Runtimes',
+			name: 'SQLite3 Engine',
+			status: 'PASS',
+			message: `v${sqlite_version}`,
+		})
+	} catch {
+		const os_type = platform()
+		const sqlite_fix = os_type === 'win32'
+			? 'Install SQLite via winget (`winget install sqlite.sqlite`) or chocolatey (`choco install sqlite`)'
+			: os_type === 'darwin'
+				? 'Install SQLite via Homebrew (`brew install sqlite`) or Xcode Command Line Tools'
+				: 'Install SQLite via apt (`sudo apt-get install sqlite3`)'
+
+		results.push({
+			category: 'Runtimes',
+			name: 'SQLite3 Engine',
+			status: 'FAIL',
+			message: 'Not found in PATH',
+			fix: sqlite_fix,
+		})
+	}
+
 	return results
 }
 

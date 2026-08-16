@@ -84,9 +84,10 @@ graph TD
 
 ### 1. Prerequisites
 
-- **Node.js**: `v22+`
-- **Bun**: `v1.2+`
-- **pnpm**: `v10+` or `v11+`
+- **Node.js**
+- **Bun**
+- **pnpm**
+- **SQLite3 CLI** (`sqlite3`)
 
 ### 2. Local Domain Setup
 

@@ -46,7 +46,9 @@ tabitha/
 ### Prerequisites
 
 - **Node.js**
+- **Bun**
 - **pnpm**
+- **SQLite3 CLI** (`sqlite3`)
 
 ### Quick Start
 

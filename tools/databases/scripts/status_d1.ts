@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
@@ -129,7 +130,13 @@ export async function inspect_databases(): Promise<DbStatus[]> {
 			let last_mod: Date | null = null
 			let tables: TableInfo[] = []
 
-			for (const file_path of sqlite_files) {
+			const expected_hash = createHash('sha256').update(d1.database_id).digest('hex')
+			const expected_file = join(d1_dir, 'miniflare-D1DatabaseObject', `${expected_hash}.sqlite`)
+			const files_to_check = existsSync(expected_file)
+				? [expected_file, ...sqlite_files.filter(f => f !== expected_file)]
+				: sqlite_files
+
+			for (const file_path of files_to_check) {
 				try {
 					const db = new Database(file_path)
 					const table_names = (db.query("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]).map(t => t.name)

@@ -29,6 +29,26 @@ async function check_local_domain() {
 	}
 }
 
+async function check_sqlite_prerequisite(): Promise<boolean> {
+	try {
+		const sqlite_proc = await $`sqlite3 --version`.quiet()
+		const sqlite_version = sqlite_proc.text().trim().split(' ')[0]
+		console.log(`🗄️  SQLite3 Engine: v${sqlite_version} (verified!)\n`)
+		return true
+	} catch {
+		const os_type = platform()
+		console.error('\n❌ SQLite3 CLI (`sqlite3`) is required for local database bootstrapping but was not found in your PATH.')
+		if (os_type === 'win32') {
+			console.error('   👉 Install on Windows: winget install sqlite.sqlite (or choco install sqlite)\n')
+		} else if (os_type === 'darwin') {
+			console.error('   👉 Install on macOS: brew install sqlite\n')
+		} else {
+			console.error('   👉 Install on Linux: sudo apt-get install -y sqlite3\n')
+		}
+		return false
+	}
+}
+
 async function setup_workspace() {
 	console.log(`
 ============================================================
@@ -42,7 +62,13 @@ async function setup_workspace() {
 	// 2. Verify local domain mapping
 	await check_local_domain()
 
-	// 3. Configure Git pre-commit security hook
+	// 3. Verify SQLite3 CLI prerequisite
+	const sqlite_ready = await check_sqlite_prerequisite()
+	if (!sqlite_ready) {
+		console.warn('⚠️  Skipping database bootstrapping until SQLite3 CLI is installed.\n')
+	}
+
+	// 4. Configure Git pre-commit security hook
 	try {
 		await $`git config core.hooksPath .githooks`.quiet()
 		console.log('🔒 Configured Git pre-commit security hook (.githooks)\n')
@@ -50,11 +76,13 @@ async function setup_workspace() {
 		// Non-git environment
 	}
 
-	// 4. Load latest SQLite / D1 databases
-	console.log('📦 Bootstrapping local D1 databases...')
-	await load_database('all')
+	// 5. Load latest SQLite / D1 databases
+	if (sqlite_ready) {
+		console.log('📦 Bootstrapping local D1 databases...')
+		await load_database('all')
+	}
 
-	// 4. Run workspace verification
+	// 6. Run workspace verification
 	console.log('🔍 Running initial workspace verification check...')
 	try {
 		await $`pnpm check`
