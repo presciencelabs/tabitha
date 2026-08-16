@@ -42,6 +42,7 @@
     "update:interactive": "pnpm update --interactive --latest -r"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "markdownlint-cli2": "^0.17.2",
     "rimraf": "^6.1.3",
     "turbo": "^2.10.10"

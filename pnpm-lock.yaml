@@ -11,6 +11,9 @@ importers:
 
   .:
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.62.1
+        version: 1.62.1
       markdownlint-cli2:
         specifier: ^0.17.2
         version: 0.17.2(supports-color@10.2.2)
