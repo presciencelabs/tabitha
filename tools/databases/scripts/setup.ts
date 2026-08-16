@@ -68,10 +68,11 @@ async function setup_workspace() {
 		console.warn('⚠️  Skipping database bootstrapping until SQLite3 CLI is installed.\n')
 	}
 
-	// 4. Configure Git pre-commit security hook
+	// 4. Configure Git pre-commit security hook & commit template
 	try {
 		await $`git config core.hooksPath .githooks`.quiet()
-		console.log('🔒 Configured Git pre-commit security hook (.githooks)\n')
+		await $`git config commit.template .gitmessage`.quiet()
+		console.log('🔒 Configured Git pre-commit hook (.githooks) & commit template (.gitmessage)\n')
 	} catch {
 		// Non-git environment
 	}

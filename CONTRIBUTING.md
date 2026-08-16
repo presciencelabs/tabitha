@@ -167,6 +167,38 @@ All contributions must adhere to the **Tabitha Development Philosophies**:
 
 ---
 
+## ✍️ Commit Message Guidelines ("Why-First" Philosophy)
+
+Git diffs show *what* code changed; commit messages should explain **why** the change was made and the technical decisions behind it.
+
+### Standard Structure
+
+```git
+<type>(<scope>): <short summary of WHAT changed (max 50-72 chars)>
+
+[WHY]: Explain the problem, root cause, or missing capability that required this change.
+
+[HOW/SOLUTION]: Key technical decisions, trade-offs, and architectural choices.
+
+[IMPACT/VERIFICATION]: (Optional) Benchmarks, test coverage metrics, or side effects.
+```
+
+### Common Types
+
+- `feat`: New user or system capability
+- `fix`: Bug fix or error resolution
+- `perf`: Performance optimization or speedup
+- `refactor`: Code restructuring with no behavior changes
+- `test`: Adding or updating test suites
+- `docs`: Documentation or comment updates
+- `chore`: Tooling, dependency updates, or configuration
+
+### Convenient Git Commit Template (`.gitmessage`)
+
+Running `pnpm setup` automatically registers the repository's `.gitmessage` template (`git config commit.template .gitmessage`). When you run `git commit` (or commit via your IDE), your editor will open pre-populated with prompts and type reminders. Lines starting with `#` are automatically stripped out by Git.
+
+---
+
 ## 🛠️ Common Contributor Workflows
 
 ### How to Add a New Shared Component

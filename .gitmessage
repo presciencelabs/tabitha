@@ -1,0 +1,22 @@
+# <type>(<scope>): <short summary of WHAT changed (max 50-72 chars)>
+#
+# [WHY]: What problem does this solve, or why was this change necessary?
+# (e.g. root cause, performance bottleneck, bug context, or missing capability)
+#
+#
+# [HOW/SOLUTION]: Key technical decisions, trade-offs, and changes made.
+#
+#
+# [IMPACT/VERIFICATION]: (Optional) Benchmarks, test coverage, or side effects.
+#
+# ----------------------------------------------------------------------
+# Common types:
+#   feat:     New user/system feature or capability
+#   fix:      Bug fix or error resolution
+#   perf:     Performance optimization or speedup
+#   refactor: Code restructuring without behavior changes
+#   test:     Adding or updating test suites
+#   docs:     Documentation or comment updates
+#   chore:    Tooling, dependency updates, or maintenance
+# ----------------------------------------------------------------------
+# Note: Lines starting with '#' are ignored and will not appear in the commit.
