@@ -197,6 +197,14 @@ Git diffs show *what* code changed; commit messages should explain **why** the c
 
 Running `pnpm setup` automatically registers the repository's `.gitmessage` template (`git config commit.template .gitmessage`). When you run `git commit` (or commit via your IDE), your editor will open pre-populated with prompts and type reminders. Lines starting with `#` are automatically stripped out by Git.
 
+### ✨ AI Commit "Easy Button" in IDE
+
+If you use the **Generate ✨** button in the VS Code / IDE Source Control panel, the workspace settings (`.vscode/settings.json`) are already pre-wired to feed `.gitmessage` and the "Why-First" instructions into the AI generator:
+
+1. Stage your changes in Git / Source Control.
+2. Click **Generate ✨** in the commit message box.
+3. The AI reads your staged diff and automatically drafts a structured `<type>(<scope>)`, `[WHY]`, and `[HOW/SOLUTION]` commit message.
+
 ---
 
 ## 🛠️ Common Contributor Workflows

@@ -28,5 +28,13 @@
 	},
 	"tailwindCSS.experimental.classRegex": [
 		["class:\\s*[\"']([^\"']*)[\"']", "([a-zA-Z0-9_-]+)"]
+	],
+	"github.copilot.chat.commitMessageGeneration.instructions": [
+		{
+			"file": ".gitmessage"
+		},
+		{
+			"text": "Focus primarily on the 'Why' (root cause, context, business/technical problem) followed by 'How/Solution', rather than simply restating which files changed."
+		}
 	]
 }
