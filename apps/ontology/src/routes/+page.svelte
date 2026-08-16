@@ -26,7 +26,7 @@
 
 {#if data.can_add}
 	<section>
-		<a class="btn" href="/protected/concept/create">
+		<a href="/protected/concept/create" class="btn">
 			<Icon icon="material-symbols:add" class="w-5 h-5" />
 			Add Concept
 		</a>

@@ -7,7 +7,7 @@
 </script>
 
 <span class="text-sm tracking-tight">
-	<a target="_blank" class="link-hover not-prose" href="{PUBLIC_ONTOLOGY_API_HOST}/?q={concept}">
+	<a href="{PUBLIC_ONTOLOGY_API_HOST}/?q={concept}" target="_blank" class="link-hover not-prose">
 		{concept}
 	</a>
 </span>

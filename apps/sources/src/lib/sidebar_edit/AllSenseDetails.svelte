@@ -38,7 +38,7 @@
 </script>
 
 <div class="flex justify-end">
-	<a class="link link-accent text-xs flex items-end" href={get_ontology_url_for_link(data)} target="_blank">
+	<a href={get_ontology_url_for_link(data)} target="_blank" class="link link-accent text-xs flex items-end">
 		Compare in Ontology
 		<Icon icon="fe:link-external" class="h-4 w-4" />
 	</a>
@@ -58,7 +58,7 @@
 				<td>
 					{#if !is_selected}
 						<div class="invisible group-hover:visible transition-opacity opacity-0 group-hover:opacity-100">
-							<button class="btn btn-xs" onclick={() => set_sense(sense)}>
+							<button onclick={() => set_sense(sense)} class="btn btn-xs">
 								Set
 							</button>
 						</div>

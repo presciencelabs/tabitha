@@ -33,7 +33,7 @@
 				<td>
 					{#if !is_selected}
 						<div class="invisible group-hover:visible transition-opacity opacity-0 group-hover:opacity-100">
-							<button class="btn btn-xs" onclick={() => set_index(noun_list_entry.index)}>
+							<button onclick={() => set_index(noun_list_entry.index)} class="btn btn-xs">
 								Set index
 							</button>
 						</div>
@@ -46,7 +46,7 @@
 			<td></td>
 			<td>
 				<div class="invisible group-hover:visible transition-opacity opacity-0 group-hover:opacity-100">
-					<button class="btn btn-xs" onclick={add_and_set_index}>
+					<button onclick={add_and_set_index} class="btn btn-xs">
 						Set index
 					</button>
 				</div>

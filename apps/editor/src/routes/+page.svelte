@@ -44,7 +44,7 @@
 		</div>
 
 		<div class="justify-self-end">
-			<button onclick={ check_text } class="btn btn-primary" type="submit" disabled={checking}>
+			<button onclick={ check_text } type="submit" disabled={checking} class="btn btn-primary">
 				Check
 
 				<Icon icon="mdi:format-list-checks" class="h-6 w-6" />

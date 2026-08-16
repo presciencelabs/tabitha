@@ -20,7 +20,7 @@
 
 <div class="my-3">
 	Status
-	<select class="select" bind:value={selected_status}>
+	<select bind:value={selected_status} class="select">
 		<option value="All" selected>All</option>
 		{#each status_list.toReversed() as status}
 			<option value={status}>{status}</option>

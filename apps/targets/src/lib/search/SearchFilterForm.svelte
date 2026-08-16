@@ -45,7 +45,7 @@
 		<form class="flex flex-wrap items-center gap-4 bg-base-200 p-4 rounded-box border border-base-300">
 			{#if return_to?.app === 'ontology'}
 				<div>
-					<a class="btn btn-primary btn-sm" href="{PUBLIC_ONTOLOGY_API_HOST}{return_to.q ? `?q=${return_to.q}&scope=stems` : '/'}">
+					<a href="{PUBLIC_ONTOLOGY_API_HOST}{return_to.q ? `?q=${return_to.q}&scope=stems` : '/'}" class="btn btn-primary btn-sm">
 						<Icon icon="mdi:arrow-left-thin" class="h-5 w-5" />
 						Return to Ontology
 					</a>

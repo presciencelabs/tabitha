@@ -84,7 +84,7 @@
 					Create and manage ontology concepts.
 				</p>
 				<div>
-					<a class="btn btn-accent" href="/protected/concept/create">
+					<a href="/protected/concept/create" class="btn btn-accent">
 						<Icon icon="material-symbols:add" class="w-4 h-4" />
 						Add Concept
 					</a>

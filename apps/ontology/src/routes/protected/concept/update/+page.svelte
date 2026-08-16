@@ -76,7 +76,7 @@
 			</section>
 
 			<div class="flex gap-2">
-				<button class="btn btn-primary" type="submit" disabled={!is_dirty}>Save</button>
+				<button type="submit" disabled={!is_dirty} class="btn btn-primary">Save</button>
 				<a href="/?q={concept_data.stem}" class="btn btn-ghost">Cancel</a>
 			</div>
 		</form>

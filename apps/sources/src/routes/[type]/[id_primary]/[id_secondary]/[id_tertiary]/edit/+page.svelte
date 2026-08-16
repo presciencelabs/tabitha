@@ -120,7 +120,7 @@
 <div class="flex flex-row flex-wrap max-w-full">
 	<Navigation nav_data={data.nav_data} url_end="/edit" />
 
-	<button onclick={ check_text } class="btn btn-primary ml-8" type="submit" disabled={checking}>
+	<button onclick={ check_text } type="submit" disabled={checking} class="btn btn-primary ml-8">
 		Check
 		{#if checking}
 			<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
@@ -131,7 +131,7 @@
 		{/if}
 	</button>
 
-	<button onclick={ analyze_text } class="btn btn-secondary ml-4" type="submit" disabled={analyzing}>
+	<button onclick={ analyze_text } type="submit" disabled={analyzing} class="btn btn-secondary ml-4">
 		Analyze
 		{#if analyzing}
 			<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
@@ -149,7 +149,7 @@
 	<div role="alert" class="alert alert-error my-3">
 		<Icon icon="mdi:alert-circle-outline" class="h-6 w-6" />
 		<span>API Request Failed: {api_error}</span>
-		<button class="btn btn-xs btn-ghost" onclick={() => api_error = null}>Dismiss</button>
+		<button onclick={() => api_error = null} class="btn btn-xs btn-ghost">Dismiss</button>
 	</div>
 {/if}
 

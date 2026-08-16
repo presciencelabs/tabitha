@@ -26,7 +26,7 @@
 	<div class="collapse-content text-sm">
 		<div class="mb-2">
 			Sensitivity
-			<select class="select" bind:value={settings.sensitivity}>
+			<select bind:value={settings.sensitivity} class="select">
 				{#each [1, 2, 3, 4, 5] as sentitivity_level}
 					<option value={sentitivity_level}>{sentitivity_level}</option>
 				{/each}
@@ -34,7 +34,7 @@
 		</div>
 		<div class="mb-2">
 			Detail Level
-			<select class="select" bind:value={settings.mtt_level}>
+			<select bind:value={settings.mtt_level} class="select">
 				{#each Object.entries(mtt_level_info) as [mtt_level, info]}
 					<option value={mtt_level}>{info.label}</option>
 				{/each}
@@ -42,7 +42,7 @@
 		</div>
 		<div class="mb-2">
 			LWC
-			<select class="select pl-1" bind:value={settings.lwc}>
+			<select bind:value={settings.lwc} class="select pl-1">
 				{#each Object.keys(lwc_info) as lwc}
 					<option value={lwc}>{lwc}</option>
 				{/each}
@@ -57,7 +57,7 @@
 		</div>
 		<div class="mb-2">
 			Mode
-			<select class="select" bind:value={settings.mode}>
+			<select bind:value={settings.mode} class="select">
 				{#each copilot_modes as mode}
 					<option value={mode}>{mode[0].toUpperCase()}{mode.slice(1)}</option>
 				{/each}
@@ -101,11 +101,11 @@
 						<td>
 							<div class="flex flex-col gap-1">
 								<label>
-									<input type="checkbox" class="checkbox checkbox-sm" bind:checked={settings.language_profile.multiple_past} />
+									<input type="checkbox" bind:checked={settings.language_profile.multiple_past} class="checkbox checkbox-sm" />
 									Multiple levels of past
 								</label>
 								<label>
-									<input type="checkbox" class="checkbox checkbox-sm" bind:checked={settings.language_profile.multiple_future} />
+									<input type="checkbox" bind:checked={settings.language_profile.multiple_future} class="checkbox checkbox-sm" />
 									Multiple levels of future
 								</label>
 							</div>
@@ -120,7 +120,7 @@
 							<div class="flex flex-col gap-1">
 								{#each noun_number_options as value}
 									<label>
-										<input type="checkbox" class="checkbox checkbox-sm" value={value} bind:group={settings.language_profile.noun_number} />
+										<input type="checkbox" value={value} bind:group={settings.language_profile.noun_number} class="checkbox checkbox-sm" />
 										{value}
 									</label>
 								{/each}
@@ -136,7 +136,7 @@
 							<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
 								{#each noun_proximity_options as value}
 									<label>
-										<input type="checkbox" class="checkbox checkbox-sm" value={value} bind:group={settings.language_profile.noun_proximity} />
+										<input type="checkbox" value={value} bind:group={settings.language_profile.noun_proximity} class="checkbox checkbox-sm" />
 										{value}
 									</label>
 								{/each}
@@ -150,7 +150,7 @@
 						</td>
 						<td>
 							<label>
-								<input type="checkbox" class="checkbox checkbox-sm" bind:checked={settings.language_profile.noun_clusivity} />
+								<input type="checkbox" bind:checked={settings.language_profile.noun_clusivity} class="checkbox checkbox-sm" />
 								Inclusive and exclusive "we"
 							</label>
 						</td>
@@ -161,7 +161,7 @@
 							{@render info_popup('TaBiThA can show notes related to how your language handles passive verbs, if at all.')}
 						</td>
 						<td>
-							<select class="select select-sm" bind:value={settings.language_profile.passive}>
+							<select bind:value={settings.language_profile.passive} class="select select-sm">
 								<option value="none">None</option>
 								<option value="agent_forbidden">Yes, but never with an agent</option>
 								<option value="agent_allowed">Yes, and an agent may be included</option>
@@ -175,7 +175,7 @@
 							{@render info_popup('If your language does not use or understand rhetorical questions, TaBiThA can show notes for a rhetorical question to explain its purpose and suggest an equivalent statement.')}
 						</td>
 						<td>
-							<select class="select select-sm" bind:value={settings.language_profile.rhetorical_questions}>
+							<select bind:value={settings.language_profile.rhetorical_questions} class="select select-sm">
 								<option value={true}>Rhetorical questions are understood</option>
 								<option value={false}>Statements are preferred</option>
 							</select>
@@ -187,7 +187,7 @@
 							{@render info_popup('If your language puts or repeats the speech formula (eg. "John said to Mary") at the end of the quote, TaBiThA can show reminders about the speaker and listener of longer quotes.')}
 						</td>
 						<td>
-							<select class="select select-sm" bind:value={settings.language_profile.speech_formula_position}>
+							<select bind:value={settings.language_profile.speech_formula_position} class="select select-sm">
 								<option value="before">Before</option>
 								<option value="after">After</option>
 								<option value="either">Either</option>
@@ -203,11 +203,11 @@
 						<td>
 							<div class="flex flex-col gap-1">
 								<label>
-									<input type="radio" class="radio radio-xs" value={false} bind:group={settings.language_profile.honorifics} />
+									<input type="radio" value={false} bind:group={settings.language_profile.honorifics} class="radio radio-xs" />
 									None
 								</label>
 								<label>
-									<input type="radio" class="radio radio-xs" value={true} bind:group={settings.language_profile.honorifics} />
+									<input type="radio" value={true} bind:group={settings.language_profile.honorifics} class="radio radio-xs" />
 									Yes, some honorifics
 								</label>
 							</div>

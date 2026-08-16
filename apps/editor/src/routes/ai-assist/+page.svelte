@@ -67,7 +67,7 @@
 		</div>
 
 		<div class="justify-self-end">
-			<button onclick={ generate_phase1 } class="btn btn-primary" type="submit" disabled={generating}>
+			<button onclick={ generate_phase1 } type="submit" disabled={generating} class="btn btn-primary">
 				Generate
 
 				<Icon icon="mdi:robot" class="h-6 w-6" />

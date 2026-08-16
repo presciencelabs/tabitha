@@ -56,7 +56,7 @@
 		{/if}
 
 		<div class="flex justify-end flex-auto">
-			<a class="link link-accent text-xs flex items-end" href={get_ontology_url_for_link(data)} target="_blank">
+			<a href={get_ontology_url_for_link(data)} target="_blank" class="link link-accent text-xs flex items-end">
 				View in Ontology
 				<Icon icon="fe:link-external" class="h-4 w-4" />
 			</a>

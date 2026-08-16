@@ -129,7 +129,7 @@
 			</section>
 
 			<div class="flex gap-2">
-				<button class="btn btn-primary" type="submit" disabled={!can_save}>Save</button>
+				<button type="submit" disabled={!can_save} class="btn btn-primary">Save</button>
 				<a href="/" class="btn btn-ghost">Cancel</a>
 			</div>
 		</form>

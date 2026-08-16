@@ -14,7 +14,7 @@
 
 <div class="my-3">
 	Category
-	<select class="select" bind:value={chosen_category}>
+	<select bind:value={chosen_category} class="select">
 		{#each features_by_category.keys() as category}
 			<option value={category}>{category}</option>
 		{/each}

@@ -25,7 +25,7 @@
 	{#if statuses_present.size > 1}
 		<div class="my-3">
 			Status
-			<select class="select" bind:value={selected_status}>
+			<select bind:value={selected_status} class="select">
 				<option value="All" selected>All</option>
 				{#each statuses_present as status}
 					<option value={status}>{status}</option>

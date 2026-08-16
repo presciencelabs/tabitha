@@ -16,7 +16,7 @@
 
 <div class="flex join">
 	{#if nav_data.previous}
-		<a class="btn btn-md join-item text-xl" href="{create_url(nav_data.previous)}" title="{create_reference_string(nav_data.previous)}" target="_self" >
+		<a href="{create_url(nav_data.previous)}" title="{create_reference_string(nav_data.previous)}" target="_self" class="btn btn-md join-item text-xl">
 			«
 		</a>
 	{/if}
@@ -27,7 +27,7 @@
 	</div>
 
 	{#if nav_data.next}
-		<a class="btn btn-md join-item text-xl" href="{create_url(nav_data.next)}" title="{create_reference_string(nav_data.next)}" target="_self">
+		<a href="{create_url(nav_data.next)}" title="{create_reference_string(nav_data.next)}" target="_self" class="btn btn-md join-item text-xl">
 			»
 		</a>
 	{/if}

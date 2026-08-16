@@ -94,7 +94,7 @@
 		<div class="prose"><h3>Chapter</h3></div>
 		
 		<BookSelect bind:book={reference.book} disabled={fetching_cautions} />
-		<input bind:value={reference.chapter} class="input w-20" type="number" disabled={fetching_cautions} />
+		<input type="number" bind:value={reference.chapter} disabled={fetching_cautions} class="input w-20" />
 
 		{#if !verse_count}
 			<div class="prose mt-1">
@@ -104,9 +104,9 @@
 			<div class="divider divider-horizontal"></div>
 			<div class="flex gap-4">
 				<div class="prose"><h3>Verses</h3></div>
-				<input bind:value={start_verse} class="input w-20" type="number" disabled={fetching_cautions} />
+				<input type="number" bind:value={start_verse} disabled={fetching_cautions} class="input w-20" />
 				<div class="mt-1">to</div>
-				<input bind:value={end_verse} class="input w-20" type="number" disabled={fetching_cautions} />
+				<input type="number" bind:value={end_verse} disabled={fetching_cautions} class="input w-20" />
 				<div class="mt-1">({verse_count} verses in chapter)</div>
 			</div>
 		{/if}
@@ -114,7 +114,7 @@
 
 	<Settings bind:settings={settings} />
 
-	<button type="button" class="btn btn-md my-4" onclick={download_cautions} disabled={fetching_cautions || fetching_verse_count}>
+	<button type="button" onclick={download_cautions} disabled={fetching_cautions || fetching_verse_count} class="btn btn-md my-4">
 		Get notes
 	</button>
 </form>

@@ -50,7 +50,7 @@
 				</section>
 
 				<section class="prose max-w-none">
-					<select class="select w-full" bind:value={selected_index}>
+					<select bind:value={selected_index} class="select w-full">
 						{#each concept_list as { stem, sense, gloss }, i}
 							<option value={i}>
 								{stem}-{sense} - {gloss}
@@ -60,7 +60,7 @@
 				</section>
 
 				<section class="card-actions mt-4 justify-end">
-					<button onclick={set_concept} class="btn btn-primary btn-md" disabled={!is_selected}>
+					<button onclick={set_concept} disabled={!is_selected} class="btn btn-primary btn-md">
 						SELECT
 					</button>
 					<form method="dialog">

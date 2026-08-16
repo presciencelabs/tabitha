@@ -60,9 +60,12 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="card shadow-lg bg-base-100 min-w-50" style="position: fixed; left: {data.x}px; top: {data.y}px; z-index: 60;"
-		onclick={e => e.stopPropagation()}
-		onmouseleave={() => onclose(false)}>
+<div
+	onclick={e => e.stopPropagation()}
+	onmouseleave={() => onclose(false)}
+	style="position: fixed; left: {data.x}px; top: {data.y}px; z-index: 60;"
+	class="card shadow-lg bg-base-100 min-w-50"
+>
 	<ul class="menu w-full">
 		{#if entity_clipboard.has_value()}
 			<li><button onclick={paste_before}>Paste before</button></li>

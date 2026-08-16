@@ -59,7 +59,7 @@
 
 		<section class="card-actions mt-4 justify-end">
 			{#if CONCEPT_FILTERS.IS_IN_ONTOLOGY(concept) && page.data.can_update}
-				<a class="btn btn-sm" title="Edit" href="protected/concept/update?concept={concept.stem}-{concept.sense}-{concept.part_of_speech}">
+				<a title="Edit" href="protected/concept/update?concept={concept.stem}-{concept.sense}-{concept.part_of_speech}" class="btn btn-sm">
 					<Icon icon="mdi:edit-outline" class="h-5 w-5" />
 				</a>
 			{/if}

@@ -52,9 +52,9 @@
 	<section class="py-4 flex gap-4 prose">
 		<h3>Verse</h3>
 		<BookSelect bind:book={reference.book} />
-		<input bind:value={reference.chapter} class="input w-20" type="number" />
-		<input bind:value={reference.verse} class="input w-20" type="number" />
-		<button type="button" class="btn btn-md" onclick={get_english_text}>
+		<input type="number" bind:value={reference.chapter} class="input w-20" />
+		<input type="number" bind:value={reference.verse} class="input w-20" />
+		<button type="button" onclick={get_english_text} class="btn btn-md">
 			Preview English
 		</button>
 	</section>
@@ -73,7 +73,7 @@
 	
 	<Settings bind:settings={settings} />
 
-	<button type="button" class="btn btn-md my-4" onclick={get_notes} disabled={fetching_notes}>
+	<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-md my-4">
 		Get notes
 	</button>
 </form>

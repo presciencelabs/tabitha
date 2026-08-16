@@ -31,7 +31,7 @@
 					<tr>
 						<td class="whitespace-nowrap">
 							<span>
-								<a class="link not-prose" href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank">
+								<a href={`${PUBLIC_ONTOLOGY_API_HOST}/?q=${concept}`} target="_blank" class="link not-prose">
 									{concept}
 								</a>
 								{#if entry.case_frame.status === 'valid'}

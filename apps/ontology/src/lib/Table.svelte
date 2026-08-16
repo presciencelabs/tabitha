@@ -35,7 +35,7 @@
 	<tbody>
 		{#each concepts as concept (`${concept.stem}-${concept.sense}-${concept.part_of_speech}`)}
 			{@const pending_level_change = concept.pending_changes.find(change => change.data.level)}
-			<tr class="hover cursor-pointer" onclick={() => open(concept)}>
+			<tr onclick={() => open(concept)} class="hover cursor-pointer">
 				<td>
 					{concept.stem}
 				</td>

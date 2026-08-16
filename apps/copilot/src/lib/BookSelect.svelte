@@ -9,7 +9,7 @@
 	const NT_books = polished_books.slice(NT_index_start)
 </script>
 
-<select class="select w-60" bind:value={book} {disabled}>
+<select bind:value={book} {disabled} class="select w-60">
 	<optgroup label="Old Testament">
 		{#each OT_books as book}
 			<option value={book}>{book}</option>
