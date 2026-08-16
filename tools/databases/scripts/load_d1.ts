@@ -35,10 +35,17 @@ const apps_config: Record<string, AppConfig> = {
 	},
 }
 
+const BLOCK_COMMENT_REGEX = /\/\*[\s\S]*?\*\//g
+const LINE_COMMENT_REGEX = /\/\/.*$/gm
+const TRAILING_COMMAS_REGEX = /,(\s*[}\]])/g
+
 function parse_wrangler_jsonc(file_path: string): { d1_databases?: D1DatabaseEntry[] } | null {
 	if (!existsSync(file_path)) return null
 	const content = readFileSync(file_path, 'utf-8')
-	const cleaned = content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '')
+	const cleaned = content
+		.replace(BLOCK_COMMENT_REGEX, '')
+		.replace(LINE_COMMENT_REGEX, '')
+		.replace(TRAILING_COMMAS_REGEX, '$1')
 	return JSON.parse(cleaned)
 }
 

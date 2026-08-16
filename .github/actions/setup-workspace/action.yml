@@ -4,7 +4,7 @@ description: 'Shared checkout, toolchain setup, caching, host mapping, and depen
 inputs:
   node-version:
     description: 'Node.js version'
-    default: '22'
+    default: '24'
     required: false
 
 runs:

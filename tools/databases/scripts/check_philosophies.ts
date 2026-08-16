@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -17,34 +18,31 @@ interface PhilosophyFinding {
 const findings: PhilosophyFinding[] = []
 
 async function get_source_files(dir: string): Promise<string[]> {
+	if (!existsSync(dir)) return []
 	const files: string[] = []
-	try {
-		const entries = await readdir(dir, { withFileTypes: true })
-		for (const entry of entries) {
-			const full_path = join(dir, entry.name)
-			if (entry.isDirectory()) {
-				if (
-					entry.name === 'node_modules' ||
-					entry.name === '.svelte-kit' ||
-					entry.name === 'dist' ||
-					entry.name === '.wrangler' ||
-					entry.name === '.turbo'
-				) {
-					continue
-				}
-				files.push(...(await get_source_files(full_path)))
-			} else if (
-				(entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name.endsWith('.svelte')) &&
-				!entry.name.endsWith('.d.ts') &&
-				!entry.name.endsWith('.test.ts') &&
-				!entry.name.endsWith('.spec.ts') &&
-				!entry.name.endsWith('.spec.js')
+	const entries = await readdir(dir, { withFileTypes: true })
+	for (const entry of entries) {
+		const full_path = join(dir, entry.name)
+		if (entry.isDirectory()) {
+			if (
+				entry.name === 'node_modules' ||
+				entry.name === '.svelte-kit' ||
+				entry.name === 'dist' ||
+				entry.name === '.wrangler' ||
+				entry.name === '.turbo'
 			) {
-				files.push(full_path)
+				continue
 			}
+			files.push(...(await get_source_files(full_path)))
+		} else if (
+			(entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name.endsWith('.svelte')) &&
+			!entry.name.endsWith('.d.ts') &&
+			!entry.name.endsWith('.test.ts') &&
+			!entry.name.endsWith('.spec.ts') &&
+			!entry.name.endsWith('.spec.js')
+		) {
+			files.push(full_path)
 		}
-	} catch {
-		// Directory might not exist
 	}
 	return files
 }

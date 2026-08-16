@@ -1,4 +1,5 @@
 import { $ } from 'bun'
+import { existsSync } from 'node:fs'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -25,26 +26,24 @@ async function audit_and_update_cloudflare_compat_dates() {
 
 	for (const app_name of app_dirs) {
 		const wrangler_path = join(apps_dir, app_name, 'wrangler.jsonc')
-		try {
-			const content = await readFile(wrangler_path, 'utf-8')
-			const date_match = content.match(/"compatibility_date":\s*"(\d{4}-\d{2}-\d{2})"/)
+		if (!existsSync(wrangler_path)) continue
 
-			if (!date_match) continue
+		const content = await readFile(wrangler_path, 'utf-8')
+		const date_match = content.match(/"compatibility_date":\s*"(\d{4}-\d{2}-\d{2})"/)
 
-			const current_date = date_match[1]
-			if (current_date < today_date) {
-				const updated_content = content.replace(
-					`"compatibility_date": "${current_date}"`,
-					`"compatibility_date": "${today_date}"`,
-				)
-				await writeFile(wrangler_path, updated_content, 'utf-8')
-				console.log(`   ✨ ${app_name}: Advanced compatibility_date from ${current_date} -> ${today_date}`)
-				updated_count++
-			} else {
-				console.log(`   ✓ ${app_name}: compatibility_date is up to date (${current_date})`)
-			}
-		} catch {
-			// File doesn't exist
+		if (!date_match) continue
+
+		const current_date = date_match[1]
+		if (current_date < today_date) {
+			const updated_content = content.replace(
+				`"compatibility_date": "${current_date}"`,
+				`"compatibility_date": "${today_date}"`,
+			)
+			await writeFile(wrangler_path, updated_content, 'utf-8')
+			console.log(`   ✨ ${app_name}: Advanced compatibility_date from ${current_date} -> ${today_date}`)
+			updated_count++
+		} else {
+			console.log(`   ✓ ${app_name}: compatibility_date is up to date (${current_date})`)
 		}
 	}
 
@@ -58,12 +57,37 @@ async function audit_and_update_cloudflare_compat_dates() {
 async function audit_workspace_skills() {
 	console.log('🧠 Auditing workspace AI skills (.agents/skills)...')
 	const skills_dir = resolve(root_dir, '../.agents/skills')
+	if (!existsSync(skills_dir)) return
+
+	const entries = await readdir(skills_dir, { withFileTypes: true })
+	const skill_names = entries.filter(e => e.isDirectory()).map(e => e.name)
+	console.log(`   ✓ Active skills (${skill_names.length}): ${skill_names.join(', ')}\n`)
+}
+
+async function sync_ci_node_version() {
+	console.log('🤖 Synchronizing CI Node.js version with local runtime...')
 	try {
-		const entries = await readdir(skills_dir, { withFileTypes: true })
-		const skill_names = entries.filter(e => e.isDirectory()).map(e => e.name)
-		console.log(`   ✓ Active skills (${skill_names.length}): ${skill_names.join(', ')}\n`)
-	} catch {
-		// Directory not present
+		const node_proc = (await $`node -v`.text()).trim()
+		const major = node_proc.replace(/^v/, '').split('.')[0]
+		const action_path = join(root_dir, '.github/actions/setup-workspace/action.yml')
+		const content = await readFile(action_path, 'utf-8')
+		const match = content.match(/default:\s*['"]?(\d+)['"]?/)
+
+		if (match) {
+			const current_ci_node = match[1]
+			if (current_ci_node !== major) {
+				const updated = content.replace(
+					/default:\s*['"]?\d+['"]?/,
+					`default: '${major}'`,
+				)
+				await writeFile(action_path, updated, 'utf-8')
+				console.log(`   ✨ Aligned CI Node.js version: ${current_ci_node} -> ${major}\n`)
+			} else {
+				console.log(`   ✓ CI Node.js version is in sync (${current_ci_node})\n`)
+			}
+		}
+	} catch (err: any) {
+		console.warn('   ⚠️  Could not sync CI Node version:', err?.message || err)
 	}
 }
 
@@ -104,7 +128,10 @@ async function run_safe_update() {
 	// 3. Cloudflare Compatibility Date Maintenance
 	await audit_and_update_cloudflare_compat_dates()
 
-	// 4. Non-Breaking SemVer Dependency Update
+	// 4. CI Workflow & Node.js Version Alignment
+	await sync_ci_node_version()
+
+	// 5. Non-Breaking SemVer Dependency Update
 	console.log('📦 Updating workspace dependencies within declared SemVer ranges (non-breaking)...')
 	try {
 		await $`pnpm update --recursive`
@@ -114,10 +141,10 @@ async function run_safe_update() {
 		process.exit(1)
 	}
 
-	// 5. Regenerate Worker & Framework Types
+	// 6. Regenerate Worker & Framework Types
 	await regenerate_worker_and_framework_types()
 
-	// 6. Automated Post-Update Health Verification Gate
+	// 7. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
 	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')

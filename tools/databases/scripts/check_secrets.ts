@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -64,34 +65,31 @@ const sensitive_env_keys = [
 ]
 
 async function get_scannable_files(dir: string): Promise<string[]> {
+	if (!existsSync(dir)) return []
 	const files: string[] = []
-	try {
-		const entries = await readdir(dir, { withFileTypes: true })
-		for (const entry of entries) {
-			const full_path = join(dir, entry.name)
-			if (entry.isDirectory()) {
-				if (
-					entry.name === 'node_modules' ||
-					entry.name === '.svelte-kit' ||
-					entry.name === 'dist' ||
-					entry.name === '.wrangler' ||
-					entry.name === '.turbo' ||
-					entry.name === '.git'
-				) {
-					continue
-				}
-				files.push(...(await get_scannable_files(full_path)))
-			} else {
-				// Scan source files, env files, config files, workflows
-				// Skip gitignored local env files (.env.local, .env.*.local)
-				if (entry.name.endsWith('.local') || entry.name.endsWith('.sqlite') || entry.name.endsWith('.sqlite-wal')) {
-					continue
-				}
-				files.push(full_path)
+	const entries = await readdir(dir, { withFileTypes: true })
+	for (const entry of entries) {
+		const full_path = join(dir, entry.name)
+		if (entry.isDirectory()) {
+			if (
+				entry.name === 'node_modules' ||
+				entry.name === '.svelte-kit' ||
+				entry.name === 'dist' ||
+				entry.name === '.wrangler' ||
+				entry.name === '.turbo' ||
+				entry.name === '.git'
+			) {
+				continue
 			}
+			files.push(...(await get_scannable_files(full_path)))
+		} else {
+			// Scan source files, env files, config files, workflows
+			// Skip gitignored local env files (.env.local, .env.*.local)
+			if (entry.name.endsWith('.local') || entry.name.endsWith('.sqlite') || entry.name.endsWith('.sqlite-wal')) {
+				continue
+			}
+			files.push(full_path)
 		}
-	} catch {
-		// Directory might not exist
 	}
 	return files
 }

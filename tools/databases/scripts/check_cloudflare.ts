@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,8 +15,6 @@ interface CloudflareFinding {
 	severity: 'warning' | 'error'
 }
 
-const findings: CloudflareFinding[] = []
-
 const forbidden_var_keys = [
 	'AUTH_SECRET',
 	'API_KEY_OPENAI',
@@ -26,78 +25,16 @@ const forbidden_var_keys = [
 	'GOOGLE_OAUTH_CLIENT_SECRET',
 ]
 
+const BLOCK_COMMENT_REGEX = /\/\*[\s\S]*?\*\//g
+const LINE_COMMENT_REGEX = /\/\/.*$/gm
+const TRAILING_COMMAS_REGEX = /,(\s*[}\]])/g
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+
 function strip_jsonc_comments(jsonc: string): string {
-	// Removes line comments // ... and block comments /* ... */
 	return jsonc
-		.replace(/\/\*[\s\S]*?\*\//g, '')
-		.replace(/\/\/.*$/gm, '')
-		.replace(/,(\s*[}\]])/g, '$1') // trailing commas
-}
-
-async function validate_wrangler_config(app_name: string, file_path: string) {
-	const raw_content = await readFile(file_path, 'utf-8')
-	let config: Record<string, any>
-
-	try {
-		const cleaned = strip_jsonc_comments(raw_content)
-		config = JSON.parse(cleaned)
-	} catch (err: any) {
-		findings.push({
-			app_name,
-			file_path,
-			message: `Failed to parse wrangler.jsonc as valid JSONC: ${err?.message || err}`,
-			severity: 'error',
-		})
-		return
-	}
-
-	// 1. Check compatibility_flags has nodejs_compat
-	const flags: string[] = config.compatibility_flags || []
-	if (!flags.includes('nodejs_compat')) {
-		findings.push({
-			app_name,
-			file_path,
-			message: 'Missing "nodejs_compat" in compatibility_flags.',
-			severity: 'warning',
-		})
-	}
-
-	// 2. Check compatibility_date is present
-	if (!config.compatibility_date) {
-		findings.push({
-			app_name,
-			file_path,
-			message: 'Missing "compatibility_date" in wrangler.jsonc.',
-			severity: 'warning',
-		})
-	}
-
-	// 3. Check vars do not contain raw secrets
-	const vars: Record<string, any> = config.vars || {}
-	for (const key of Object.keys(vars)) {
-		if (forbidden_var_keys.includes(key)) {
-			findings.push({
-				app_name,
-				file_path,
-				message: `Public vars in wrangler.jsonc contains sensitive secret key "${key}". Secrets must be provided via .env.local / Cloudflare dashboard secrets.`,
-				severity: 'error',
-			})
-		}
-	}
-
-	// 4. Check D1 bindings structure if defined
-	if (config.d1_databases && Array.isArray(config.d1_databases)) {
-		for (const db of config.d1_databases) {
-			if (!db.binding || !db.database_name || !db.database_id) {
-				findings.push({
-					app_name,
-					file_path,
-					message: `D1 database definition missing required fields (binding, database_name, or database_id): ${JSON.stringify(db)}`,
-					severity: 'warning',
-				})
-			}
-		}
-	}
+		.replace(BLOCK_COMMENT_REGEX, '')
+		.replace(LINE_COMMENT_REGEX, '')
+		.replace(TRAILING_COMMAS_REGEX, '$1')
 }
 
 export async function check_cloudflare_configs(): Promise<{ valid: boolean; errors: CloudflareFinding[]; warnings: CloudflareFinding[] }> {
@@ -108,68 +45,73 @@ export async function check_cloudflare_configs(): Promise<{ valid: boolean; erro
 
 	for (const app_name of app_dirs) {
 		const wrangler_path = join(apps_dir, app_name, 'wrangler.jsonc')
-		try {
-			const raw_content = await readFile(wrangler_path, 'utf-8')
-			let config: Record<string, any>
+		if (!existsSync(wrangler_path)) continue
 
-			try {
-				const cleaned = strip_jsonc_comments(raw_content)
-				config = JSON.parse(cleaned)
-			} catch (err: any) {
+		const raw_content = await readFile(wrangler_path, 'utf-8')
+		let config: Record<string, any>
+
+		try {
+			const cleaned = strip_jsonc_comments(raw_content)
+			config = JSON.parse(cleaned)
+		} catch (err: any) {
+			local_findings.push({
+				app_name,
+				file_path: wrangler_path,
+				message: `Failed to parse wrangler.jsonc as valid JSONC: ${err?.message || err}`,
+				severity: 'error',
+			})
+			continue
+		}
+
+		const flags: string[] = config.compatibility_flags || []
+		if (!flags.includes('nodejs_compat')) {
+			local_findings.push({
+				app_name,
+				file_path: wrangler_path,
+				message: 'Missing "nodejs_compat" in compatibility_flags.',
+				severity: 'warning',
+			})
+		}
+
+		if (!config.compatibility_date) {
+			local_findings.push({
+				app_name,
+				file_path: wrangler_path,
+				message: 'Missing "compatibility_date" property in wrangler.jsonc',
+				severity: 'error',
+			})
+		} else if (!ISO_DATE_REGEX.test(config.compatibility_date)) {
+			local_findings.push({
+				app_name,
+				file_path: wrangler_path,
+				message: `Invalid "compatibility_date" format: "${config.compatibility_date}". Expected YYYY-MM-DD.`,
+				severity: 'error',
+			})
+		}
+
+		const vars: Record<string, any> = config.vars || {}
+		for (const key of Object.keys(vars)) {
+			if (forbidden_var_keys.includes(key)) {
 				local_findings.push({
 					app_name,
 					file_path: wrangler_path,
-					message: `Failed to parse wrangler.jsonc as valid JSONC: ${err?.message || err}`,
+					message: `Public vars in wrangler.jsonc contains sensitive secret key "${key}". Secrets must be provided via .env.local / Cloudflare dashboard secrets.`,
 					severity: 'error',
 				})
-				continue
 			}
+		}
 
-			const flags: string[] = config.compatibility_flags || []
-			if (!flags.includes('nodejs_compat')) {
-				local_findings.push({
-					app_name,
-					file_path: wrangler_path,
-					message: 'Missing "nodejs_compat" in compatibility_flags.',
-					severity: 'warning',
-				})
-			}
-
-			if (!config.compatibility_date) {
-				local_findings.push({
-					app_name,
-					file_path: wrangler_path,
-					message: 'Missing "compatibility_date" in wrangler.jsonc.',
-					severity: 'warning',
-				})
-			}
-
-			const vars: Record<string, any> = config.vars || {}
-			for (const key of Object.keys(vars)) {
-				if (forbidden_var_keys.includes(key)) {
+		if (config.d1_databases && Array.isArray(config.d1_databases)) {
+			for (const db of config.d1_databases) {
+				if (!db.binding || !db.database_name || !db.database_id) {
 					local_findings.push({
 						app_name,
 						file_path: wrangler_path,
-						message: `Public vars in wrangler.jsonc contains sensitive secret key "${key}". Secrets must be provided via .env.local / Cloudflare dashboard secrets.`,
-						severity: 'error',
+						message: `D1 database definition missing required fields (binding, database_name, or database_id): ${JSON.stringify(db)}`,
+						severity: 'warning',
 					})
 				}
 			}
-
-			if (config.d1_databases && Array.isArray(config.d1_databases)) {
-				for (const db of config.d1_databases) {
-					if (!db.binding || !db.database_name || !db.database_id) {
-						local_findings.push({
-							app_name,
-							file_path: wrangler_path,
-							message: `D1 database definition missing required fields (binding, database_name, or database_id): ${JSON.stringify(db)}`,
-							severity: 'warning',
-						})
-					}
-				}
-			}
-		} catch {
-			// File doesn't exist
 		}
 	}
 

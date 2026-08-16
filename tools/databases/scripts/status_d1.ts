@@ -34,11 +34,15 @@ interface D1Config {
 
 const APP_NAMES = ['ontology', 'sources', 'targets', 'editor', 'copilot']
 
+const BLOCK_COMMENT_REGEX = /\/\*[\s\S]*?\*\//g
+const LINE_COMMENT_REGEX = /\/\/.*$/gm
+const TRAILING_COMMAS_REGEX = /,(\s*[}\]])/g
+
 function strip_jsonc_comments(jsonc: string): string {
 	return jsonc
-		.replace(/\/\*[\s\S]*?\*\//g, '')
-		.replace(/\/\/.*$/gm, '')
-		.replace(/,(\s*[}\]])/g, '$1')
+		.replace(BLOCK_COMMENT_REGEX, '')
+		.replace(LINE_COMMENT_REGEX, '')
+		.replace(TRAILING_COMMAS_REGEX, '$1')
 }
 
 function parse_wrangler_d1_configs(app_name: string): D1Config[] {
