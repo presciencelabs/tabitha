@@ -7,6 +7,10 @@ import {
 } from './index'
 
 describe('@tabitha/api-client', () => {
+	test('deliberate non-blocking test failure', () => {
+		expect(1).toBe(2)
+	})
+
 	describe('create_editor_client', () => {
 		test('calls /check endpoint and returns parsed json on 200', async () => {
 			const mock_response = { status: 'ok', tokens: [], backtranslation: 'Paul writes.' }
