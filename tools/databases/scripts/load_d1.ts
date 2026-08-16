@@ -137,8 +137,15 @@ export async function load_database(target_app: string = 'all') {
 					copyFileSync(target_db, alt_db_path)
 				}
 
+				// Verify table count
+				const table_count_str = execSync(`sqlite3 "${target_db}" "SELECT count(*) FROM sqlite_master WHERE type='table';"`, { encoding: 'utf-8' }).trim()
+				const table_count = parseInt(table_count_str, 10) || 0
+				if (table_count === 0) {
+					throw new Error(`Database imported with 0 tables: ${target_db}`)
+				}
+
 				const duration = ((Date.now() - start_time) / 1000).toFixed(2)
-				console.log(`   ⚡ Loaded "${db_name}" in ${duration}s (-> ${db_hash.slice(0, 12)}...sqlite)!\n`)
+				console.log(`   ⚡ Loaded "${db_name}" (${table_count} tables) in ${duration}s (-> ${db_hash.slice(0, 12)}...sqlite)!\n`)
 				success_count++
 			} catch (err: any) {
 				console.error(`   ❌ Failed to load "${db_name}":`, err?.message || err)
