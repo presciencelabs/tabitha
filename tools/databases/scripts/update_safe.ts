@@ -67,6 +67,16 @@ async function audit_workspace_skills() {
 	}
 }
 
+async function regenerate_worker_and_framework_types() {
+	console.log('🔄 Regenerating SvelteKit & Cloudflare Worker type artifacts...')
+	try {
+		await $`pnpm --filter tabitha-ontology exec wrangler types ./worker-configuration.d.ts`.quiet()
+		console.log('   ✓ Regenerated Cloudflare Worker types for ontology.\n')
+	} catch (err: any) {
+		console.warn('   ⚠️  Could not regenerate wrangler types:', err?.message || err)
+	}
+}
+
 async function run_safe_update() {
 	console.log(`
 ============================================================
@@ -104,7 +114,10 @@ async function run_safe_update() {
 		process.exit(1)
 	}
 
-	// 4. Automated Post-Update Health Verification Gate
+	// 5. Regenerate Worker & Framework Types
+	await regenerate_worker_and_framework_types()
+
+	// 6. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
 	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')

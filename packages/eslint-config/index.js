@@ -95,6 +95,9 @@ export const ignoreConfig = [
 			'**/playwright-report/**',
 			'**/blob-report/**',
 			'**/.vite-temp/**',
+			'**/worker-configuration.d.ts',
+			'**/*.generated.*',
+			'**/ambient.d.ts',
 		],
 	},
 ]
