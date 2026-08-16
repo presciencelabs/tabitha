@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { randomBytes } from 'node:crypto'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../../..')
@@ -67,7 +68,14 @@ function generate_local_env_content(template_content: string, existing_content?:
 			continue
 		}
 
-		// Priority 3: Fall back to the template line
+		// Priority 3: If AUTH_SECRET is blank, generate a dedicated random secret for local dev & testing
+		if (key === 'AUTH_SECRET') {
+			const dev_secret = randomBytes(32).toString('hex')
+			output_lines.push(`AUTH_SECRET=${dev_secret}`)
+			continue
+		}
+
+		// Priority 4: Fall back to the template line
 		output_lines.push(line)
 	}
 

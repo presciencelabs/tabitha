@@ -135,6 +135,11 @@ export async function load_database(target_app: string = 'all') {
 	}
 
 	console.log(`🎉 Finished loading ${success_count}/${total_databases} database(s) into local Wrangler environment.\n`)
+
+	if (success_count < total_databases) {
+		console.error(`❌ Failed to load all databases (${success_count}/${total_databases} succeeded).`)
+		process.exit(1)
+	}
 }
 
 if (import.meta.main) {
