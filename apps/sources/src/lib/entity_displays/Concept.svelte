@@ -23,7 +23,7 @@
 	</HoverPopup>
 
 	<div class="py-4">
-		{#if source_entity.pairing_concept === null && source_entity.concept}
+		{#if !source_entity.pairing_concept && source_entity.concept}
 			<OntologyResult data={source_entity.concept} />
 		{:else if source_entity.concept && source_entity.pairing_concept}
 			<div class="join">

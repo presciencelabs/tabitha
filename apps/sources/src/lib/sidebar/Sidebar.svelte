@@ -33,7 +33,7 @@
 
 			<section>
 				{#snippet concept_sections(concept: SourceConcept, suffix: string)}
-					<SidebarDetail summary_title="Concept Details{suffix}">
+					<SidebarDetail summary_title="Concept Details{suffix}" start_open={true}>
 						{#snippet details_content()}
 							<ConceptDetails data={concept} />
 						{/snippet}
@@ -46,12 +46,12 @@
 				{/snippet}
 
 				<!--Ontology Details (if present)-->
-				{#if entity.concept !== null}
+				{#if entity.concept}
 					{@render concept_sections(entity.concept, '')}
 				{/if}
 
 				<!--Ontology Details for Pairing (if present)-->
-				{#if entity.pairing_concept !== null}
+				{#if entity.pairing_concept}
 					{@render concept_sections(entity.pairing_concept, ' - Pairing')}
 				{/if}
 

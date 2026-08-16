@@ -14,7 +14,7 @@
 			<span class="mx-2 tracking-widest">...</span>
 			<Punctuation source_entity={{ ...entity, value: ']' }} classes={is_main_clause ? 'text-7xl' : ''} />
 		</div>
-	{:else if entity.concept !== null}
+	{:else if entity.concept}
 		<div class="badge badge-lg rounded-full border-base-content badge-outline mx-1 py-5 text-md entity-{entity.category_abbr}">
 			<span class="pe-2 py-4">
 				{entity.category_abbr}
@@ -24,7 +24,7 @@
 			</span>
 
 			<div class="py-4">
-				{#if entity.pairing_concept === null}
+				{#if !entity.pairing_concept}
 					<span>{entity.concept.stem}-{entity.concept.sense}</span>
 				{:else}
 					<div class="join">
