@@ -95,7 +95,7 @@ async function sync_ci_node_version() {
 async function regenerate_worker_and_framework_types() {
 	console.log('🔄 Regenerating SvelteKit & Cloudflare Worker type artifacts...')
 	try {
-		await $`pnpm --filter tabitha-ontology exec wrangler types ./worker-configuration.d.ts`.quiet()
+		await $`pnpm --filter @tabitha/ontology exec wrangler types ./worker-configuration.d.ts`.quiet()
 		console.log('   ✓ Regenerated Cloudflare Worker types for ontology.\n')
 	} catch (err: any) {
 		console.warn('   ⚠️  Could not regenerate wrangler types:', err?.message || err)

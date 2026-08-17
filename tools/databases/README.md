@@ -1,4 +1,4 @@
-# TaBiThA Databases (`tabitha-databases`)
+# TaBiThA Databases (`@tabitha/databases`)
 
 This package contains the TBTA-to-TaBiThA ETL migration engine, reference datasets, and canonical SQL snapshot dumps for the TaBiThA translation platform.
 

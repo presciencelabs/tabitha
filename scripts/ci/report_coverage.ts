@@ -13,10 +13,10 @@ interface CoverageMetrics {
 }
 
 const PACKAGES_TO_COVER = [
-	{ name: 'apps/editor (Linguistic Core)', pkg: 'tabitha-editor', fileCount: 14, testCount: 338 },
-	{ name: 'apps/sources (Source Text & Encoding)', pkg: 'tabitha-sources', fileCount: 6, testCount: 46 },
-	{ name: 'apps/ontology (Semantic Concepts)', pkg: 'tabitha-ontology', fileCount: 6, testCount: 29 },
-	{ name: 'apps/targets (Target Language Forms)', pkg: 'tabitha-targets', fileCount: 7, testCount: 22 },
+	{ name: 'apps/editor (Linguistic Core)', pkg: '@tabitha/editor', fileCount: 14, testCount: 338 },
+	{ name: 'apps/sources (Source Text & Encoding)', pkg: '@tabitha/sources', fileCount: 6, testCount: 46 },
+	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', fileCount: 6, testCount: 29 },
+	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', fileCount: 7, testCount: 22 },
 	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', fileCount: 1, testCount: 7 },
 ]
 

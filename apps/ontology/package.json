@@ -1,5 +1,5 @@
 {
-  "name": "tabitha-ontology",
+  "name": "@tabitha/ontology",
   "version": "1.0.0",
   "private": true,
   "type": "module",

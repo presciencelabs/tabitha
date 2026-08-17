@@ -1,5 +1,5 @@
 {
-  "name": "tabitha-targets",
+  "name": "@tabitha/targets",
   "version": "1.0.0",
   "private": true,
   "type": "module",
