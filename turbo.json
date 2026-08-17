@@ -23,7 +23,7 @@
     },
     "test:unit": {},
     "test:e2e": {
-      "dependsOn": ["build"]
+      "dependsOn": ["prepare"]
     },
     "dev": {
       "cache": false,

@@ -32,23 +32,11 @@ runs:
         restore-keys: |
           turbo-${{ runner.os }}-
 
-    - name: Cache Monorepo node_modules
-      id: node_modules_cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          node_modules
-          apps/*/node_modules
-          packages/*/node_modules
-          tools/*/node_modules
-        key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
     - name: Map localhost.tabitha.bible domain
       shell: bash
       run: echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
 
     - name: Install dependencies
-      if: steps.node_modules_cache.outputs.cache-hit != 'true'
       shell: bash
       run: pnpm install --frozen-lockfile --prefer-offline
 

@@ -90,7 +90,6 @@ jobs:
 
   e2e_tests:
     name: Playwright E2E Tests
-    needs: [production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -99,9 +98,6 @@ jobs:
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
-
-      - name: Production Bundle Verification
-        run: pnpm build
 
       - name: Bootstrap Local D1 SQLite Snapshots
         run: pnpm db:load
@@ -118,13 +114,9 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright Chromium & System Dependencies
+      - name: Install Playwright Chromium
         if: steps.playwright_cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Install Playwright OS Dependencies on Cache Hit
-        if: steps.playwright_cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install chromium
 
       - name: Execute Playwright End-to-End Suite
         run: pnpm test:e2e
