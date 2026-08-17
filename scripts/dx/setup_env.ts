@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { randomBytes } from 'node:crypto'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
 const local_hosts: Record<string, string> = {

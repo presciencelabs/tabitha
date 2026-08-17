@@ -2,10 +2,10 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { ISO_DATE_REGEX, strip_jsonc_comments } from '@tabitha/types'
+import { ISO_DATE_REGEX, strip_jsonc_comments } from '../../packages/types/src/index'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
 interface CloudflareFinding {

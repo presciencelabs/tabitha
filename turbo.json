@@ -59,6 +59,7 @@
     "check:secrets": {
       "inputs": [
         "src/**",
+        "scripts/**",
         "tools/**",
         "apps/**",
         "packages/**",
@@ -70,21 +71,21 @@
     "check:cloudflare": {
       "inputs": [
         "apps/**/wrangler.jsonc",
-        "tools/databases/scripts/check_cloudflare.ts"
+        "scripts/audits/check_cloudflare.ts"
       ]
     },
     "check:storage": {
       "inputs": [
         "apps/**/src/**",
         "packages/**/src/**",
-        "tools/databases/scripts/check_storage.ts"
+        "scripts/audits/check_storage.ts"
       ]
     },
     "check:badges": {
       "inputs": [
         "README.md",
         "package.json",
-        "tools/databases/scripts/check_readme_badges.ts"
+        "scripts/audits/check_readme_badges.ts"
       ]
     },
     "check:md": {

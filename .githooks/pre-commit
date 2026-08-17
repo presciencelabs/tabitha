@@ -3,4 +3,4 @@
 # Runs in ~100ms. Strictly blocks commits containing unmasked API keys or secrets.
 # Never blocks for formatting or linting.
 
-bun tools/databases/scripts/check_secrets.ts
+bun scripts/audits/check_secrets.ts

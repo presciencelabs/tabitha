@@ -4,7 +4,7 @@ import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 
 interface SecretFinding {
 	rule_name: string
@@ -150,6 +150,7 @@ export async function scan_secrets(): Promise<{ scanned: number; found: number; 
 		join(root_dir, 'apps'),
 		join(root_dir, 'packages'),
 		join(root_dir, 'tools'),
+		join(root_dir, 'scripts'),
 		join(root_dir, '.github'),
 	]
 

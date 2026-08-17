@@ -46,8 +46,12 @@ tabitha/
 │   ├── eslint-config/  # Shared ESLint 9 configuration (@tabitha/eslint-config)
 │   ├── tsconfig/       # Base TypeScript configurations (@tabitha/tsconfig)
 │   └── ui/             # Shared Svelte 5 / daisyUI components (@tabitha/ui)
+├── scripts/         # Monorepo maintenance, DX tooling & CI audit scripts
+│   ├── audits/      # Quality, philosophy, secret & storage linters (+ colocated tests)
+│   ├── ci/          # CI test coverage reporting
+│   └── dx/          # Setup wizard, doctor, dev server menu, D1 loaders & safe updater
 ├── tools/
-│   └── databases/   # SQLite database backups, schema dumps & sync tools
+│   └── databases/   # SQLite snapshots, ETL migration pipeline & reference datasets
 ├── pnpm-workspace.yaml
 ├── turbo.json
 └── package.json

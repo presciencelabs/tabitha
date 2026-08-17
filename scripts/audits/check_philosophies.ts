@@ -4,7 +4,7 @@ import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 
 interface PhilosophyFinding {
 	rule_id: number

@@ -4,10 +4,10 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { execSync } from 'node:child_process'
-import { strip_jsonc_comments } from '@tabitha/types'
+import { strip_jsonc_comments } from '../../packages/types/src/index'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 const snapshots_dir = join(root_dir, 'tools/databases/snapshots')
 
 interface D1DatabaseEntry {
@@ -148,33 +148,6 @@ export async function load_database(target_app: string = 'all') {
 					copy_database_safely(target_db, alt_db_path)
 				}
 
-				/**
-				 * ARCHITECTURAL CONTEXT, RISKS & TRADE-OFFS:
-				 *
-				 * 1. The Core Trade-off (Snapshots vs. Synthetic Seed Fixtures):
-				 *    - Direct SQLite file mapping is an inherently higher-risk approach because
-				 *      it relies on Miniflare/workerd internal state paths rather than a public JS API.
-				 *    - However, this approach won out over synthetic fixtures because TaBiThA E2E tests
-				 *      validate complex grammatical encodings, Hebrew/Greek lexicons, and queries spanning
-				 *      all 66 Bible books and 20+ ontology tables. Hand-crafted mock seeds would rot quickly,
-				 *      require constant manual updates whenever schemas or query shapes change, and lack
-				 *      real-world edge cases.
-				 *    - Snapshot loading is also orders of magnitude faster (1.4s vs multi-second IPC queries).
-				 *
-				 * 2. Miniflare / workerd Durable Object ID Resolution:
-				 *    Cloudflare's `workerd` runtime assigns a deterministic DO ID for each D1 binding via
-				 *    `idFromName(binding_name)`. Since binding names ('DB_Targets', 'DB_Sources',
-				 *    'DB_Ontology', 'DB_Auth') remain constant across database snapshot updates, these
-				 *    hashes are stable and mapped below by binding prefix ('Targets', 'Sources', etc.).
-				 *    `copy_database_safely` unlinks any pre-existing `-wal` and `-shm` lock files on copy
-				 *    to prevent `SQLITE_BUSY` transaction header mismatches.
-				 *
-				 * 3. Risk Mitigation via Automated CI Pre-Flight Verification:
-				 *    To protect against potential future Wrangler/Miniflare internal changes, CI runs an
-				 *    explicit pre-flight validation check (`SELECT count(*) FROM sqlite_master WHERE type='table'`)
-				 *    asserting that all `.wrangler/state` SQLite databases contain active tables before
-				 *    Playwright boots. Any breaking change in Miniflare's storage scheme fails fast in CI.
-				 */
 				const known_workerd_hashes: Record<string, string> = {
 					'Targets': '2d5f513e6b9e5b68d83ec617ff25803295d2a2106bd2a797052b5b82015a040a',
 					'Sources': '7ffa3fdd72032bbd696dd3d8682a80bbf4f3c9c03c71d125a2238239e2fe6bce',

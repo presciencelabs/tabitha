@@ -4,9 +4,9 @@ import { platform } from 'node:os'
 import { join } from 'node:path'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
-import { check_cloudflare_configs } from './check_cloudflare'
-import { sync_readme_badges } from './check_readme_badges'
-import { scan_secrets } from './check_secrets'
+import { check_cloudflare_configs } from '../audits/check_cloudflare'
+import { sync_readme_badges } from '../audits/check_readme_badges'
+import { scan_secrets } from '../audits/check_secrets'
 
 interface DiagnosticResult {
 	category: string
@@ -228,7 +228,7 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 				name: `D1 Database (${app.name})`,
 				status: 'WARN',
 				message: 'No local SQLite database found in .wrangler state',
-				fix: `Run \`pnpm db:load\` or \`bun tools/databases/scripts/load_d1.ts ${app.name}\``,
+				fix: `Run \`pnpm db:load\` or \`bun tools/databases/src/load_d1.ts ${app.name}\``,
 			})
 			continue
 		}
@@ -344,7 +344,7 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				name: 'README Badges Sync',
 				status: 'FAIL',
 				message: `${badge_res.findings.length} badge(s) out of sync with package.json`,
-				fix: 'Run `bun tools/databases/scripts/check_readme_badges.ts --fix` to sync badges',
+				fix: 'Run `bun scripts/audits/check_readme_badges.ts --fix` to sync badges',
 			})
 		}
 	} catch (err: any) {

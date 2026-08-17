@@ -1,7 +1,6 @@
 import { lookup } from 'node:dns/promises'
 import { platform } from 'node:os'
-import { $ } from 'bun'
-import { load_database } from './load_d1'
+import { load_database } from './db_load'
 import { setup_env } from './setup_env'
 
 async function check_local_domain() {

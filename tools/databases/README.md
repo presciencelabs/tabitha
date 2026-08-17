@@ -17,14 +17,12 @@ The TaBiThA platform utilizes Cloudflare D1 (SQLite at the edge) for each core s
 
 ---
 
-## 📸 Snapshots Directory
+## 📸 Snapshots, Migrations & Data
 
-Point-in-time SQL snapshot dumps are stored in `tools/databases/snapshots/`:
-
-- `Auth.tabitha.sqlite.sql`
-- `Ontology_9494_YYYY-MM-DD.tabitha.sqlite.sql`
-- `Sources_YYYY-MM-DD.tabitha.sqlite.sql`
-- `Targets_YYYY-MM-DD.tabitha.sqlite.sql`
+- SQL Snapshot dumps: `tools/databases/snapshots/`
+- TBTA -> TaBiThA ETL migration pipeline: `tools/databases/migrations/`
+- Reference datasets, inflections & status CSVs: `tools/databases/data/`
+- Runtime DB loaders & inspectors: `scripts/dx/db_load.ts`, `scripts/dx/db_status.ts`
 
 ---
 

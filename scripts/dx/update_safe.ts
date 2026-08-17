@@ -3,10 +3,10 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { sync_readme_badges } from './check_readme_badges'
+import { sync_readme_badges } from '../audits/check_readme_badges'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
 function get_today_iso_date(): string {

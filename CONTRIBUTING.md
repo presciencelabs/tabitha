@@ -72,11 +72,14 @@ graph TD
 | **`@tabitha/eslint-config`** | Centralized ESLint flat configuration ensuring consistent formatting and quality rules. |
 | **`@tabitha/tsconfig`** | Base TypeScript configurations (`base.json`, `svelte.json`). |
 
-### Tooling & Database Scripts (`tools/`)
+### Tooling & Scripts (`tools/` & `scripts/`)
 
 | Directory | Purpose |
 | --- | --- |
-| **`tools/databases`** | Database bootstrapping scripts, SQLite snapshot loaders, diagnostic utilities (`doctor.ts`), and security linters. |
+| **`tools/databases`** | Point-in-time SQLite snapshot dumps (`snapshots/`), source datasets (`data/`), and TBTA-to-TaBiThA ETL migrations (`migrations/`). |
+| **`scripts/dx`** | Developer experience, database loading, and maintenance scripts: setup wizard (`setup.ts`), environment generator (`setup_env.ts`), doctor (`doctor.ts`), server menu (`dev_menu.ts`), D1 snapshot loader (`db_load.ts`), D1 inspector (`db_status.ts`), and safe updater (`update_safe.ts`). |
+| **`scripts/audits`** | Automated security scanners (`check_secrets.ts`), Cloudflare linters (`check_cloudflare.ts`), cookie & storage linters (`check_storage.ts`), philosophy rules (`check_philosophies.ts`), and badge sync (`check_readme_badges.ts`) along with colocated unit tests (`*.test.ts`). |
+| **`scripts/ci`** | CI/CD test coverage reporting (`report_coverage.ts`). |
 
 ---
 

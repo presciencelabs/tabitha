@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
-const root_dir = resolve(script_dir, '../../..')
+const root_dir = resolve(script_dir, '../..')
 
 export interface BadgeVersionInfo {
 	readonly pnpm: string
@@ -267,7 +267,7 @@ async function run_cli() {
 	for (const finding of result.findings) {
 		console.error(`   • [${finding.badge_name}] ${finding.message}`)
 	}
-	console.error('\n💡 To automatically synchronize badges, run: bun tools/databases/scripts/check_readme_badges.ts --fix\n')
+	console.error('\n💡 To automatically synchronize badges, run: bun scripts/audits/check_readme_badges.ts --fix\n')
 	process.exit(1)
 }
 
