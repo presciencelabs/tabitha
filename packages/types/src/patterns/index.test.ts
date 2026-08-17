@@ -7,10 +7,11 @@ import {
 	ISO_DATE_REGEX,
 	is_iso_date,
 	CONCEPT_SENSE_REGEX,
-	CONCEPT_UPDATE_KEY_REGEX,
+	CONCEPT_KEY_REGEX,
 	SQL_WILDCARD_CHAR_REGEX,
 	normalize_wildcards,
 	parse_concept_sense,
+	parse_concept_key,
 	USFM_VERSE_MARKER_REGEX,
 	GLOSS_CLASSIFIER_REGEX,
 	strip_gloss_classifiers,
@@ -77,10 +78,19 @@ describe('@tabitha/types/patterns', () => {
 			expect(normalize_wildcards('plain')).toBe('plain')
 		})
 
-		test('CONCEPT_UPDATE_KEY_REGEX matches concept form field updates', () => {
-			expect(CONCEPT_UPDATE_KEY_REGEX.test('love-A-gloss')).toBe(true)
-			expect(CONCEPT_UPDATE_KEY_REGEX.test('grace-B-definition')).toBe(true)
-			expect(CONCEPT_UPDATE_KEY_REGEX.test('love-A')).toBe(false)
+		test('CONCEPT_KEY_REGEX matches composite concept keys', () => {
+			expect(CONCEPT_KEY_REGEX.test('love-A-Verb')).toBe(true)
+			expect(CONCEPT_KEY_REGEX.test('grace-B-Noun')).toBe(true)
+			expect(CONCEPT_KEY_REGEX.test('holy_spirit-A-Noun')).toBe(true)
+			expect(CONCEPT_KEY_REGEX.test('love-A')).toBe(false)
+			expect(CONCEPT_KEY_REGEX.test('love')).toBe(false)
+		})
+
+		test('parse_concept_key extracts stem, sense, and part of speech', () => {
+			expect(parse_concept_key('love-A-Verb')).toEqual({ stem: 'love', sense: 'A', part_of_speech: 'Verb' })
+			expect(parse_concept_key('holy_spirit-Z-Noun')).toEqual({ stem: 'holy_spirit', sense: 'Z', part_of_speech: 'Noun' })
+			expect(parse_concept_key('love-A')).toBeNull()
+			expect(parse_concept_key('invalid')).toBeNull()
 		})
 	})
 

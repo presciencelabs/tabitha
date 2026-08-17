@@ -2,6 +2,7 @@ import { is_authorized } from '$lib/server/auth'
 import { record_update_concept } from '$lib/server/changes/changes'
 import { get_concept_for_update } from '$lib/server/changes/concepts'
 import { error, fail, redirect } from '@sveltejs/kit'
+import { parse_concept_key } from '@tabitha/types'
 import type { Actions, PageServerLoad } from './$types'
 import type { ConceptKey } from '$lib/types'
 import type { ConceptUpdateData } from '$lib/server/types'
@@ -63,13 +64,4 @@ function get_concept_from_url(searchParams: URLSearchParams): ConceptKey {
 		throw error(400, "Expected 'concept' parameter in the form 'love-A-Verb'")
 	}
 	return concept_key
-}
-
-function parse_concept_key(key: string): ConceptKey | null {
-	const concept_match = key.match(/^(.+?)-([A-Z])-(.+)$/)
-	if (!concept_match) {
-		return null
-	}
-	const [, stem, sense, part_of_speech] = concept_match
-	return { stem, sense, part_of_speech }
 }

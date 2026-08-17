@@ -1,3 +1,5 @@
+import type { ConceptKey } from '../ontology'
+
 /**
  * Matches linguistic concept-sense identifiers formatted as `<stem>-<SENSE_LETTER>`.
  *
@@ -8,13 +10,13 @@
 export const CONCEPT_SENSE_REGEX = /^(.*)-([A-Z])$/
 
 /**
- * Matches concept form update keys formatted as `<stem>-<SENSE_LETTER>-<field>`.
+ * Matches composite concept keys formatted as `<stem>-<SENSE_LETTER>-<part_of_speech>`.
  *
  * @example
- * Positive: "love-A-gloss", "grace-B-definition"
+ * Positive: "love-A-Verb", "grace-B-Noun", "holy_spirit-A-Noun"
  * Negative: "love-A", "love"
  */
-export const CONCEPT_UPDATE_KEY_REGEX = /^(.+?)-([A-Z])-(.+)$/
+export const CONCEPT_KEY_REGEX = /^(.+?)-([A-Z])-(.+)$/
 
 /**
  * Matches UI search wildcard characters (`*` and `#`).
@@ -55,5 +57,25 @@ export function parse_concept_sense(key: string): { stem: string; sense: string 
 	return {
 		stem: match[1],
 		sense: match[2],
+	}
+}
+
+/**
+ * Parses a composite concept key into its constituent stem, sense, and part of speech.
+ *
+ * @param key Potential composite concept identifier (e.g. "love-A-Verb")
+ * @returns Parsed ConceptKey object, or null if key does not match
+ *
+ * @example
+ * parse_concept_key("love-A-Verb") -> { stem: "love", sense: "A", part_of_speech: "Verb" }
+ * parse_concept_key("invalid") -> null
+ */
+export function parse_concept_key(key: string): ConceptKey | null {
+	const match = key.trim().match(CONCEPT_KEY_REGEX)
+	if (!match) return null
+	return {
+		stem: match[1],
+		sense: match[2],
+		part_of_speech: match[3],
 	}
 }
