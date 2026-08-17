@@ -257,12 +257,8 @@ Before submitting a Pull Request, run the automated 1-command verification gate:
 
 ```bash
 # Runs the full verification pipeline:
-# 1. Typecheck & lint all 15 packages (pnpm check)
-# 2. Run all 421 unit test suites (pnpm test:unit)
-# 3. Scan for secrets & credential leaks (pnpm check:secrets)
-# 4. Validate Cloudflare Worker configurations (pnpm check:cloudflare)
-# 5. Audit storage hygiene & cookie security (pnpm check:storage)
-# 6. Verify Markdown documentation linting (pnpm check:md)
-# 7. Verify production Cloudflare Worker builds (pnpm build)
+# 1. Typecheck, lint, and security/audit scan all packages (pnpm check)
+# 2. Run all in-memory unit test suites (pnpm test)
+# 3. Verify production Cloudflare Worker builds (pnpm build)
 pnpm precommit
 ```

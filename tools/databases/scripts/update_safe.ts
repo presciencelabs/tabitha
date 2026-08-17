@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { sync_readme_badges } from './check_readme_badges'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../../..')
@@ -144,7 +145,20 @@ async function run_safe_update() {
 	// 6. Regenerate Worker & Framework Types
 	await regenerate_worker_and_framework_types()
 
-	// 7. Automated Post-Update Health Verification Gate
+	// 7. Synchronize README.md Badges with package.json
+	console.log('🏷️  Synchronizing README.md badges with package.json versions...')
+	try {
+		const badge_res = await sync_readme_badges({ base_dir: root_dir, should_write: true })
+		if (badge_res.is_synced) {
+			console.log('   ✓ README badges are already in sync.\n')
+		} else {
+			console.log(`   ✨ Updated ${badge_res.findings.length} badge(s) in README.md.\n`)
+		}
+	} catch (err: any) {
+		console.warn('   ⚠️  Could not synchronize README badges:', err?.message || err)
+	}
+
+	// 8. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
 	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')

@@ -46,6 +46,10 @@ jobs:
         run: pnpm check:storage
         continue-on-error: true
 
+      - name: README Badge & Version Sync Audit
+        run: pnpm check:badges
+        continue-on-error: true
+
       - name: Markdown Specification Lint
         run: pnpm check:md
         continue-on-error: true

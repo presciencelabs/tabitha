@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
 import { check_cloudflare_configs } from './check_cloudflare'
+import { sync_readme_badges } from './check_readme_badges'
 import { scan_secrets } from './check_secrets'
 
 interface DiagnosticResult {
@@ -324,6 +325,34 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 			name: 'Cloudflare Wrangler Configs',
 			status: 'WARN',
 			message: `Could not check Cloudflare configs: ${err?.message || err}`,
+		})
+	}
+
+	// 3. README Badges Sync
+	try {
+		const badge_res = await sync_readme_badges({ should_write: false })
+		if (badge_res.is_synced) {
+			results.push({
+				category: 'Quality & Security',
+				name: 'README Badges Sync',
+				status: 'PASS',
+				message: 'All README badges in sync with package.json',
+			})
+		} else {
+			results.push({
+				category: 'Quality & Security',
+				name: 'README Badges Sync',
+				status: 'FAIL',
+				message: `${badge_res.findings.length} badge(s) out of sync with package.json`,
+				fix: 'Run `bun tools/databases/scripts/check_readme_badges.ts --fix` to sync badges',
+			})
+		}
+	} catch (err: any) {
+		results.push({
+			category: 'Quality & Security',
+			name: 'README Badges Sync',
+			status: 'WARN',
+			message: `Could not check README badges: ${err?.message || err}`,
 		})
 	}
 
