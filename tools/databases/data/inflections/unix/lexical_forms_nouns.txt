@@ -1,0 +1,10293 @@
+1.   
+	Plural:  
+
+2.  12 pm
+	Plural: 12 pm
+
+3.  1453 AD
+	Plural: 1453 AD
+
+4.  146 BC
+	Plural: 146 BC
+
+5.  164 BC
+	Plural: 164 BC
+
+6.  167 BC
+	Plural: 167 BC
+
+7.  168 BC
+	Plural: 168 BC
+
+8.  170 BC
+	Plural: 170 BC
+
+9.  171 BC
+	Plural: 171 BC
+
+10.  175 BC
+	Plural: 175 BC
+
+11.  187 BC
+	Plural: 187 BC
+
+12.  190 BC
+	Plural: 190 BC
+
+13.  192 BC
+	Plural: 192 BC
+
+14.  193 BC
+	Plural: 193 BC
+
+15.  198 BC
+	Plural: 198 BC
+
+16.  1 John
+	Plural: 1 John
+
+17.  1 Kings
+	Plural: 1 Kings
+
+18.  1 Peter
+	Plural: 1s Peter
+
+19.  1 pm
+	Plural: 1 pm
+
+20.  200 BC
+	Plural: 200 BC
+
+21.  203 BC
+	Plural: 203 BC
+
+22.  217 BC
+	Plural: 217 BC
+
+23.  222 BC
+	Plural: 222 BC
+
+24.  223 BC
+	Plural: 223 BC
+
+25.  225 BC
+	Plural: 225 BC
+
+26.  240 BC
+	Plural: 240 BC
+
+27.  246 BC
+	Plural: 246 BC
+
+28.  261 BC
+	Plural: 261 BC
+
+29.  27 BC
+	Plural: 27 BC
+
+30.  281 BC
+	Plural: 281 BC
+
+31.  285 BC
+	Plural: 285 BC
+
+32.  2 John
+	Plural: 2 John
+
+33.  2 Kings
+	Plural: 2 Kings
+
+34.  2 Peter
+	Plural: 2 Peter
+
+35.  312 BC
+	Plural: 312 BC
+
+36.  323 BC
+	Plural: 323 BC
+
+37.  330 AD
+	Plural: 330 AD
+
+38.  330 BC
+	Plural: 330 BC
+
+39.  336 BC
+	Plural: 336 BC
+
+40.  3 am
+	Plural: 3 am
+
+41.  3 John
+	Plural: 3 John
+
+42.  424 BC
+	Plural: 424 BC
+
+43.  465 BC
+	Plural: 465s BC
+
+44.  474 BC
+	Plural: 474s BC
+
+45.  476 AD
+	Plural: 476 AD
+
+46.  479 BC
+	Plural: 479s BC
+
+47.  480 BC
+	Plural: 480s BC
+
+48.  481 BC
+	Plural: 481s BC
+
+49.  483 BC
+	Plural: 483s BC
+
+50.  484 BC
+	Plural: 484s BC
+
+51.  486 BC
+	Plural: 486s BC
+
+52.  521 BC
+	Plural: 521 BC
+
+53.  522 BC
+	Plural: 522 BC
+
+54.  529 BC
+	Plural: 529 BC
+
+55.  530 BC
+	Plural: 530 BC
+
+56.  539 BC
+	Plural: 539 BC
+
+57.  550 BC
+	Plural: 550 BC
+
+58.  605 BC
+	Plural: 605 BC
+
+59.  612 BC
+	Plural: 612 BC
+
+60.  660 BC
+	Plural: 660s BC
+
+61.  6 am
+	Plural: 6 am
+
+62.  701 BC
+	Plural: 701 BC
+
+63.  9 pm
+	Plural: 9 pm
+
+64.  Aaron
+	Plural: Aarons
+
+65.  Abaddon
+	Plural: Abaddons
+
+66.  Abagtha
+	Plural: Abagthas
+
+67.  abba
+	Plural: abbas
+
+68.  Abda
+	Plural: Abdas
+
+69.  Abdon
+	Plural: Abdons
+
+70.  Abdon
+	Plural: Abdons
+
+71.  Abednego
+	Plural: Abednegos
+
+72.  Abel
+	Plural: Abels
+
+73.  Abel-Meholah
+	Plural: Abel-Meholahs
+
+74.  Abel Beth Maakah
+	Plural: Abels Beth Maakah
+
+75.  Abel Keramim
+	Plural: Abels Keramim
+
+76.  Abel Mizraim
+	Plural: Abels Mizraim
+
+77.  Abi-Albon
+	Plural: Abi-Albons
+
+78.  Abiasaph
+	Plural: Abiasaphs
+
+79.  Abiathar
+	Plural: Abiathars
+
+80.  Abib
+	Plural: Abibs
+
+81.  Abida
+	Plural: Abidas
+
+82.  Abiel
+	Plural: Abiels
+
+83.  Abiezer
+	Plural: Abiezers
+
+84.  Abiezrite
+	Plural: Abiezrites
+
+85.  Abigail
+	Plural: Abigails
+
+86.  Abihail
+	Plural: Abihails
+
+87.  Abihu
+	Plural: Abihus
+
+88.  Abihud
+	Plural: Abihuds
+
+89.  Abijah
+	Plural: Abijahs
+
+90.  Abilene
+	Plural: Abilenes
+
+91.  Abimael
+	Plural: Abimaels
+
+92.  Abimelech
+	Plural: Abimeleches
+
+93.  Abimelek
+	Plural: Abimeleks
+
+94.  Abinadab
+	Plural: Abinadabs
+
+95.  Abinoam
+	Plural: Abinoams
+
+96.  Abishag
+	Plural: Abishags
+
+97.  Abishai
+	Plural: Abishais
+
+98.  Abital
+	Plural: Abitals
+
+99.  Abner
+	Plural: Abners
+
+100.  Abraham
+	Plural: Abrahams
+
+101.  Abram
+	Plural: Abrams
+
+102.  Absalom
+	Plural: Absaloms
+
+103.  Acacia
+	Plural: Acacias
+
+104.  Acbor
+	Plural: Acbors
+
+105.  Achaia
+	Plural: Achaias
+
+106.  Achan
+	Plural: Achans
+
+107.  Achim
+	Plural: Achims
+
+108.  Achish
+	Plural: Achishes
+
+109.  Achor
+	Plural: Achors
+
+110.  acre
+	Plural: acres
+
+111.  Acsah
+	Plural: Acsahs
+
+112.  action
+	Plural: actions
+
+113.  activity
+	Plural: activities
+
+114.  Acts
+	Plural: Acts
+
+115.  Aczib
+	Plural: Aczibs
+
+116.  Adadah
+	Plural: Adadahs
+
+117.  Adah
+	Plural: Adahs
+
+118.  Adaiah
+	Plural: Adaiahs
+
+119.  Adalia
+	Plural: Adalias
+
+120.  Adam
+	Plural: Adams
+
+121.  Adam
+	Plural: Adams
+
+122.  Adamah
+	Plural: Adamahs
+
+123.  Adami Nekeb
+	Plural: Adamis Nekeb
+
+124.  Adar
+	Plural: Adars
+
+125.  Adbeel
+	Plural: Adbeels
+
+126.  Addar
+	Plural: Addars
+
+127.  Addi
+	Plural: Addis
+
+128.  Addon
+	Plural: Addons
+
+129.  Adin
+	Plural: Adins
+
+130.  Adin
+	Plural: Adins
+
+131.  Adithaim
+	Plural: Adithaims
+
+132.  Admah
+	Plural: Admahs
+
+133.  Admatha
+	Plural: Admathas
+
+134.  Admin
+	Plural: Admins
+
+135.  Adna
+	Plural: Adnas
+
+136.  Adoni-Bezek
+	Plural: Adoni-Bezeks
+
+137.  Adoni-Zedek
+	Plural: Adoni-Zedeks
+
+138.  Adonijah
+	Plural: Adonijahs
+
+139.  Adonikam
+	Plural: Adonikams
+
+140.  Adoniram
+	Plural: Adonirams
+
+141.  Adramyttium
+	Plural: Adramyttiums
+
+142.  Adriel
+	Plural: Adriels
+
+143.  Adullam
+	Plural: Adullams
+
+144.  adult
+	Plural: adults
+
+145.  adultery
+	Plural: adultery
+
+146.  advice
+	Plural: advice
+
+147.  adviser
+	Plural: advisers
+
+148.  Aeneas
+	Plural: Aeneases
+
+149.  Aenon
+	Plural: Aenons
+
+150.  Africa
+	Plural: Africas
+
+151.  afternoon
+	Plural: afternoons
+
+152.  Agabus
+	Plural: Agabuses
+
+153.  Agag
+	Plural: Agags
+
+154.  Agagite
+	Plural: Agagites
+
+155.  age
+	Plural: ages
+
+156.  Agee
+	Plural: Agees
+
+157.  agreement
+	Plural: agreements
+
+158.  Agrippa
+	Plural: Agrippas
+
+159.  Agur
+	Plural: Agurs
+
+160.  Agus
+	Plural: Aguses
+
+161.  Ahab
+	Plural: Ahabs
+
+162.  Ahasbai
+	Plural: Ahasbais
+
+163.  Ahaz
+	Plural: Ahazs
+
+164.  Ahiah
+	Plural: Ahiahs
+
+165.  Ahiam
+	Plural: Ahiams
+
+166.  Ahijah
+	Plural: Ahijahs
+
+167.  Ahilud
+	Plural: Ahiluds
+
+168.  Ahimaaz
+	Plural: Ahimaazs
+
+169.  Ahiman
+	Plural: Ahimans
+
+170.  Ahimelek
+	Plural: Ahimeleks
+
+171.  Ahinadab
+	Plural: Ahinadabs
+
+172.  Ahinoam
+	Plural: Ahinoams
+
+173.  Ahio
+	Plural: Ahios
+
+174.  Ahishar
+	Plural: Ahishars
+
+175.  Ahithophel
+	Plural: Ahithophels
+
+176.  Ahitub
+	Plural: Ahitubs
+
+177.  Ahlab
+	Plural: Ahlabs
+
+178.  Ahoh
+	Plural: Ahohs
+
+179.  Ahohi
+	Plural: Ahohis
+
+180.  Ahuzzath
+	Plural: Ahuzzaths
+
+181.  Ahzai
+	Plural: Ahzais
+
+182.  Ai
+	Plural: Ais
+
+183.  Aiah
+	Plural: Aiahs
+
+184.  AIDS
+	Plural: AIDS
+
+185.  Aija
+	Plural: Aijas
+
+186.  Aijalon
+	Plural: Aijalons
+
+187.  Ain
+	Plural: Ains
+
+188.  air
+	Plural: air
+
+189.  Ajani
+	Plural: Ajanis
+
+190.  Akan
+	Plural: Akans
+
+191.  Akbor
+	Plural: Akbors
+
+192.  Akeldama
+	Plural: Akeldamas
+
+193.  Akim
+	Plural: Akims
+
+194.  Akkad
+	Plural: Akkads
+
+195.  Akko
+	Plural: Akkos
+
+196.  Akkub
+	Plural: Akkubs
+
+197.  Aksah
+	Plural: Aksahs
+
+198.  Akshaph
+	Plural: Akshaphs
+
+199.  Akzib
+	Plural: Akzibs
+
+200.  alabaster
+	Plural: alabaster
+
+201.  alcohol
+	Plural: alcohol
+
+202.  Alex
+	Plural: Alexes
+
+203.  Alexander
+	Plural: Alexanders
+
+204.  Alexander the Great
+	Plural: Alexanders the Great
+
+205.  Alexandria
+	Plural: Alexandrias
+
+206.  Allammelek
+	Plural: Allammeleks
+
+207.  Allon Bakuth
+	Plural: Allons Bakuth
+
+208.  Almodad
+	Plural: Almodads
+
+209.  Almon
+	Plural: Almons
+
+210.  almond
+	Plural: almonds
+
+211.  aloe
+	Plural: aloes
+
+212.  Aloth
+	Plural: Aloths
+
+213.  Alphaeus
+	Plural: Alphaeuses
+
+214.  altar
+	Plural: altars
+
+215.  Alvah
+	Plural: Alvahs
+
+216.  Alvan
+	Plural: Alvans
+
+217.  Amad
+	Plural: Amads
+
+218.  Amalek
+	Plural: Amaleks
+
+219.  Amalek
+	Plural: Amaleks
+
+220.  Amalekite
+	Plural: Amalekites
+
+221.  Amam
+	Plural: Amams
+
+222.  Amariah
+	Plural: Amariahs
+
+223.  Amasa
+	Plural: Amasas
+
+224.  Amashsai
+	Plural: Amashsais
+
+225.  Amen
+	Plural: Amens
+
+226.  Amittai
+	Plural: Amittais
+
+227.  Ammah
+	Plural: Ammahs
+
+228.  Ammiel
+	Plural: Ammiels
+
+229.  Ammihud
+	Plural: Ammihuds
+
+230.  Amminadab
+	Plural: Amminadabs
+
+231.  Ammon
+	Plural: Ammons
+
+232.  Ammonite
+	Plural: Ammonites
+
+233.  Amnon
+	Plural: Amnons
+
+234.  Amok
+	Plural: Amoks
+
+235.  Amon
+	Plural: Amons
+
+236.  Amorite
+	Plural: Amorites
+
+237.  Amos
+	Plural: Amoses
+
+238.  Amos
+	Plural: Amoses
+
+239.  amount
+	Plural: amounts
+
+240.  Amphipolis
+	Plural: Amphipolises
+
+241.  Amram
+	Plural: Amrams
+
+242.  Amraphel
+	Plural: Amraphels
+
+243.  Amzi
+	Plural: Amzis
+
+244.  Anab
+	Plural: Anabs
+
+245.  Anah
+	Plural: Anahs
+
+246.  Anah
+	Plural: Anahs
+
+247.  Anaharath
+	Plural: Anaharaths
+
+248.  Anaiah
+	Plural: Anaiahs
+
+249.  Anak
+	Plural: Anaks
+
+250.  Anakite
+	Plural: Anakites
+
+251.  Anamite
+	Plural: Anamites
+
+252.  Anan
+	Plural: Anans
+
+253.  Ananiah
+	Plural: Ananiahs
+
+254.  Ananiah
+	Plural: Ananiahs
+
+255.  Ananias
+	Plural: Ananiases
+
+256.  Anath
+	Plural: Anaths
+
+257.  Anathoth
+	Plural: Anathoths
+
+258.  ancestor
+	Plural: ancestors
+
+259.  anchor
+	Plural: anchors
+
+260.  Ancient of Days
+	Plural: Ancient of Days
+
+261.  Andrew
+	Plural: Andrews
+
+262.  Aner
+	Plural: Aners
+
+263.  angel
+	Plural: angels
+
+264.  anger
+	Plural: anger
+
+265.  Anim
+	Plural: Anims
+
+266.  animal
+	Plural: animals
+
+267.  ankle
+	Plural: ankles
+
+268.  Anna
+	Plural: Annas
+
+269.  Annas
+	Plural: Annases
+
+270.  Anointed One
+	Plural: Anointeds One
+
+271.  answer
+	Plural: answers
+
+272.  ant
+	Plural: ants
+
+273.  antichrist
+	Plural: antichrists
+
+274.  Antioch
+	Plural: Antioches
+
+275.  Antiochus III the Great
+	Plural: Antiochuses
+
+276.  Antiochus II Theos
+	Plural: Antiochuses
+
+277.  Antiochus IV Epiphanes
+	Plural: Antiochuses
+
+278.  Antiochus the Great
+	Plural: Antiochuses
+
+279.  Antiochus Theos
+	Plural: Antiochuses
+
+280.  Antipas
+	Plural: Antipases
+
+281.  Antipatris
+	Plural: Antipatrises
+
+282.  ape
+	Plural: apes
+
+283.  Aphek
+	Plural: Apheks
+
+284.  Aphekah
+	Plural: Aphekahs
+
+285.  Aphekk
+	Plural: Aphekks
+
+286.  Aphiah
+	Plural: Aphiahs
+
+287.  Apollonia
+	Plural: Apollonias
+
+288.  Apollos
+	Plural: Apolloses
+
+289.  apostle
+	Plural: apostles
+
+290.  Apphia
+	Plural: Apphias
+
+291.  Appius
+	Plural: Appiuses
+
+292.  apple
+	Plural: apples
+
+293.  April
+	Plural: Aprils
+
+294.  Aquila
+	Plural: Aquilas
+
+295.  Arab
+	Plural: Arabs
+
+296.  Arabah
+	Plural: Arabahs
+
+297.  Arabia
+	Plural: Arabias
+
+298.  Arad
+	Plural: Arads
+
+299.  Arah
+	Plural: Arahs
+
+300.  Aram
+	Plural: Arams
+
+301.  Aram
+	Plural: Arams
+
+302.  Aram
+	Plural: Arams
+
+303.  Aramaic
+	Plural: Aramaics
+
+304.  Aramean
+	Plural: Arameans
+
+305.  Aram Naharaim
+	Plural: Arams Naharaim
+
+306.  Aran
+	Plural: Arans
+
+307.  Ararat
+	Plural: Ararats
+
+308.  Araunah
+	Plural: Araunahs
+
+309.  Arba
+	Plural: Arbas
+
+310.  Arbah
+	Plural: Arbahs
+
+311.  Archelaus
+	Plural: Archelauses
+
+312.  Archippus
+	Plural: Archippuses
+
+313.  Ard
+	Plural: Ards
+
+314.  area
+	Plural: areas
+
+315.  Areli
+	Plural: Arelis
+
+316.  Areopagus
+	Plural: Areopagus
+
+317.  Argob
+	Plural: Argobs
+
+318.  argument
+	Plural: arguments
+
+319.  Aridai
+	Plural: Aridais
+
+320.  Aridatha
+	Plural: Aridathas
+
+321.  Arimathea
+	Plural: Arimatheas
+
+322.  Arioch
+	Plural: Arioches
+
+323.  Arisai
+	Plural: Arisais
+
+324.  Aristarchus
+	Plural: Aristarchuses
+
+325.  ark
+	Plural: arks
+
+326.  Arkite
+	Plural: Arkites
+
+327.  ark of the covenant
+	Plural: arks of the covenant
+
+328.  arm
+	Plural: arms
+
+329.  Armageddon
+	Plural: Armageddons
+
+330.  Armoni
+	Plural: Armonis
+
+331.  armor
+	Plural: armor
+
+332.  army
+	Plural: armies
+
+333.  Arni
+	Plural: Arnis
+
+334.  Arnon
+	Plural: Arnons
+
+335.  Arnon Valley
+	Plural: Arnons Valley
+
+336.  Arodi
+	Plural: Arodis
+
+337.  Aroer
+	Plural: Aroers
+
+338.  Arphaxad
+	Plural: Arphaxads
+
+339.  arrow
+	Plural: arrows
+
+340.  Artabanus
+	Plural: Artabanuses
+
+341.  Artaxerxes
+	Plural: Artaxerxeses
+
+342.  Artemas
+	Plural: Artemases
+
+343.  Artemis
+	Plural: Artemises
+
+344.  Arubboth
+	Plural: Arubboths
+
+345.  Arumah
+	Plural: Arumahs
+
+346.  Arvadite
+	Plural: Arvadites
+
+347.  Asa
+	Plural: Asas
+
+348.  Asahel
+	Plural: Asahels
+
+349.  Asaph
+	Plural: Asaphs
+
+350.  Asenath
+	Plural: Asenaths
+
+351.  ash
+	Plural: ashes
+
+352.  Ashan
+	Plural: Ashans
+
+353.  Ashbel
+	Plural: Ashbels
+
+354.  Ashdod
+	Plural: Ashdods
+
+355.  Asher
+	Plural: Ashers
+
+356.  Asher
+	Plural: Ashers
+
+357.  Asherah
+	Plural: Asherahs
+
+358.  Ashkelon
+	Plural: Ashkelons
+
+359.  Ashkenaz
+	Plural: Ashkenazs
+
+360.  Ashnah
+	Plural: Ashnahs
+
+361.  Ashpenaz
+	Plural: Ashpenazs
+
+362.  Ashtaroth
+	Plural: Ashtaroths
+
+363.  Ashteroth Karnaim
+	Plural: Ashteroths Karnaim
+
+364.  Ashtoreth
+	Plural: Ashtoreths
+
+365.  Ashuri
+	Plural: Ashuris
+
+366.  Ashurite
+	Plural: Ashurites
+
+367.  Asia
+	Plural: Asias
+
+368.  Asia Minor
+	Plural: Asias Minor
+
+369.  Aspatha
+	Plural: Aspathas
+
+370.  Asriel
+	Plural: Asriels
+
+371.  Asshur
+	Plural: Asshurs
+
+372.  Assir
+	Plural: Assirs
+
+373.  Assos
+	Plural: Assoses
+
+374.  Assyria
+	Plural: Assyrias
+
+375.  astrologer
+	Plural: astrologers
+
+376.  Atad
+	Plural: Atads
+
+377.  Ataroth
+	Plural: Ataroths
+
+378.  Ataroth Addar
+	Plural: Ataroths Addar
+
+379.  Ater
+	Plural: Aters
+
+380.  Ater
+	Plural: Aters
+
+381.  Athaiah
+	Plural: Athaiahs
+
+382.  Athak
+	Plural: Athaks
+
+383.  Athens
+	Plural: Athenses
+
+384.  Attalia
+	Plural: Attalias
+
+385.  Augustus
+	Plural: Augustuses
+
+386.  authority
+	Plural: authority
+
+387.  Avian Influenza
+	Plural: Avian Influenza
+
+388.  Avith
+	Plural: Aviths
+
+389.  Aviv
+	Plural: Avivs
+
+390.  Avvim
+	Plural: Avvims
+
+391.  Avvite
+	Plural: Avvites
+
+392.  axe
+	Plural: axes
+
+393.  Azaniah
+	Plural: Azaniahs
+
+394.  Azarel
+	Plural: Azarels
+
+395.  Azariah
+	Plural: Azariahs
+
+396.  Azbuk
+	Plural: Azbuks
+
+397.  Azekah
+	Plural: Azekahs
+
+398.  Azgad
+	Plural: Azgads
+
+399.  Azgad
+	Plural: Azgads
+
+400.  Azmaveth
+	Plural: Azmaveths
+
+401.  Azmon
+	Plural: Azmons
+
+402.  Aznoth Tabor
+	Plural: Aznoths Tabor
+
+403.  Azor
+	Plural: Azors
+
+404.  Azotus
+	Plural: Azotuses
+
+405.  Azrikam
+	Plural: Azrikams
+
+406.  Azzur
+	Plural: Azzurs
+
+407.  Baal
+	Plural: Baals
+
+408.  Baal-Hanan
+	Plural: Baal-Hanans
+
+409.  Baalah
+	Plural: Baalahs
+
+410.  Baalath
+	Plural: Baalaths
+
+411.  Baalath Beer
+	Plural: Baalaths Beer
+
+412.  Baal Berith
+	Plural: Baals Berith
+
+413.  Baal Gad
+	Plural: Baals Gad
+
+414.  Baal Hazor
+	Plural: Baals Hazor
+
+415.  Baal Perazim
+	Plural: Baals Perazim
+
+416.  Baal Tamar
+	Plural: Baals Tamar
+
+417.  Baal Zephon
+	Plural: Baals Zephon
+
+418.  Baana
+	Plural: Baanas
+
+419.  Baanah
+	Plural: Baanahs
+
+420.  Babel
+	Plural: Babels
+
+421.  baby
+	Plural: babies
+
+422.  baby
+	Plural: babies
+
+423.  Babylon
+	Plural: Babylons
+
+424.  Babylonia
+	Plural: Babylonias
+
+425.  Babylonian
+	Plural: Babylonians
+
+426.  back
+	Plural: backs
+
+427.  badger rock
+	Plural: badgers
+
+428.  bag
+	Plural: bags
+
+429.  Bahurim
+	Plural: Bahurims
+
+430.  Bakbuk
+	Plural: Bakbuks
+
+431.  Bakbukiah
+	Plural: Bakbukiahs
+
+432.  Balaam
+	Plural: Balaams
+
+433.  Balah
+	Plural: Balahs
+
+434.  Balak
+	Plural: Balaks
+
+435.  bamboo
+	Plural: bamboo
+
+436.  Bamoth Baal
+	Plural: Bamoths Baal
+
+437.  bandage
+	Plural: bandages
+
+438.  Bani
+	Plural: Banis
+
+439.  bank
+	Plural: banks
+
+440.  Baptist
+	Plural: Baptists
+
+441.  bar
+	Plural: bars
+
+442.  Bar-Jesus
+	Plural: Bar-Jesuses
+
+443.  Barabbas
+	Plural: Barabbases
+
+444.  Barak
+	Plural: Baraks
+
+445.  Barhum
+	Plural: Barhums
+
+446.  bark
+	Plural: bark
+
+447.  Barkos
+	Plural: Barkoses
+
+448.  barley
+	Plural: barley
+
+449.  barn
+	Plural: barns
+
+450.  Barnabas
+	Plural: Barnabases
+
+451.  Barsabbas
+	Plural: Barsabbases
+
+452.  Bartholomew
+	Plural: Bartholomews
+
+453.  Bartimaeus
+	Plural: Bartimaeuses
+
+454.  Baruch
+	Plural: Baruches
+
+455.  Barzillai
+	Plural: Barzillais
+
+456.  base
+	Plural: bases
+
+457.  Basemath
+	Plural: Basemaths
+
+458.  Bashan
+	Plural: Bashans
+
+459.  basket
+	Plural: baskets
+
+460.  bathroom
+	Plural: bathrooms
+
+461.  Bathsheba
+	Plural: Bathshebas
+
+462.  battle
+	Plural: battles
+
+463.  battlefield
+	Plural: battlefields
+
+464.  bay
+	Plural: bays   (suppletive)
+
+465.  Bazluth
+	Plural: Bazluths
+
+466.  beak
+	Plural: beaks
+
+467.  Bealoth
+	Plural: Bealoths
+
+468.  beam
+	Plural: beams
+
+469.  bean
+	Plural: beans
+
+470.  bear
+	Plural: bears
+
+471.  beard
+	Plural: beards
+
+472.  beast
+	Plural: beasts
+
+473.  Beautiful
+	Plural: Beautifuls
+
+474.  Beautiful Land
+	Plural: Beautifuls Land
+
+475.  beauty
+	Plural: beauty
+
+476.  Bebai
+	Plural: Bebais
+
+477.  Bebai
+	Plural: Bebais
+
+478.  Becorath
+	Plural: Becoraths
+
+479.  bed
+	Plural: beds
+
+480.  Bedad
+	Plural: Bedads
+
+481.  bedroom
+	Plural: bedrooms
+
+482.  bee
+	Plural: bees
+
+483.  Beelzebul
+	Plural: Beelzebuls
+
+484.  beer
+	Plural: beer
+
+485.  Beer
+	Plural: Beers
+
+486.  Beer-Lahai-Roi
+	Plural: Beer-Lahai-Rois
+
+487.  Beeri
+	Plural: Beeris
+
+488.  Beeroth
+	Plural: Beeroths
+
+489.  Beersheba
+	Plural: Beershebas
+
+490.  Be Eshtarah
+	Plural: Bes Eshtarah
+
+491.  beginning
+	Plural: beginnings
+
+492.  beka
+	Plural: bekas
+
+493.  Beker
+	Plural: Bekers
+
+494.  Bekorath
+	Plural: Bekoraths
+
+495.  Bela
+	Plural: Belas
+
+496.  Bela
+	Plural: Belas
+
+497.  believer
+	Plural: believers
+
+498.  Belshazzar
+	Plural: Belshazzars
+
+499.  belt
+	Plural: belts
+
+500.  Belteshazzar
+	Plural: Belteshazzars
+
+501.  Ben-Abinadab
+	Plural: Ben-Abinadabs
+
+502.  Ben-Ammi
+	Plural: Ben-Ammis
+
+503.  Ben-Deker
+	Plural: Ben-Dekers
+
+504.  Ben-Geber
+	Plural: Ben-Gebers
+
+505.  Ben-Hesed
+	Plural: Ben-Heseds
+
+506.  Ben-Hur
+	Plural: Ben-Hurs
+
+507.  Ben-Oni
+	Plural: Ben-Onis
+
+508.  Benaiah
+	Plural: Benaiahs
+
+509.  Bene Berak
+	Plural: Benes Berak
+
+510.  Ben Hinnom
+	Plural: Bens Hinnom
+
+511.  Beninu
+	Plural: Beninus
+
+512.  Benjamin
+	Plural: Benjamins
+
+513.  Benjamite
+	Plural: Benjamites
+
+514.  Beor
+	Plural: Beors
+
+515.  Bera
+	Plural: Beras
+
+516.  Berea
+	Plural: Bereas
+
+517.  Bered
+	Plural: Bereds
+
+518.  Berekiah
+	Plural: Berekiahs
+
+519.  Berenice
+	Plural: Berenices
+
+520.  Beriah
+	Plural: Beriahs
+
+521.  Berite
+	Plural: Berites
+
+522.  Bernice
+	Plural: Bernices
+
+523.  Beroth
+	Plural: Beroths
+
+524.  Berothai
+	Plural: Berothais
+
+525.  berry
+	Plural: berries
+
+526.  Besai
+	Plural: Besais
+
+527.  Besodeiah
+	Plural: Besodeiahs
+
+528.  Besor
+	Plural: Besors
+
+529.  Beten
+	Plural: Betens
+
+530.  Beth-Anath
+	Plural: Beth-Anaths
+
+531.  Beth-Barah
+	Plural: Beth-Barahs
+
+532.  Beth-Shan
+	Plural: Beth-Shans
+
+533.  Beth-Shemesh
+	Plural: Beth-Shemeshes
+
+534.  Beth-Shittah
+	Plural: Beth-Shittahs
+
+535.  Beth Anoth
+	Plural: Beths Anoth
+
+536.  Bethany
+	Plural: Bethanies
+
+537.  Beth Arabah
+	Plural: Beths Arabah
+
+538.  Beth Aven
+	Plural: Beths Aven
+
+539.  Beth Azmaveth
+	Plural: Beths Azmaveth
+
+540.  Beth Baal Meon
+	Plural: Beths Baal Meon
+
+541.  Beth Dagon
+	Plural: Beths Dagon
+
+542.  Bethel
+	Plural: Bethels
+
+543.  Beth Emek
+	Plural: Beths Emek
+
+544.  Bethesda
+	Plural: Bethesdas
+
+545.  Beth Gilgal
+	Plural: Beths Gilgal
+
+546.  Beth Hakkerem
+	Plural: Beths Hakkerem
+
+547.  Beth Haram
+	Plural: Beths Haram
+
+548.  Beth Hoglah
+	Plural: Beths Hoglah
+
+549.  Beth Horon
+	Plural: Beths Horon
+
+550.  Beth Jeshimoth
+	Plural: Beths Jeshimoth
+
+551.  Beth Kar
+	Plural: Beths Kar
+
+552.  Beth Lebaoth
+	Plural: Beths Lebaoth
+
+553.  Bethlehem
+	Plural: Bethlehems
+
+554.  Beth Markaboth
+	Plural: Beths Markaboth
+
+555.  Beth Millo
+	Plural: Beths Millo
+
+556.  Beth Nimrah
+	Plural: Beths Nimrah
+
+557.  Beth Pazzez
+	Plural: Beths Pazzez
+
+558.  Beth Pelet
+	Plural: Beths Pelet
+
+559.  Beth Peor
+	Plural: Beths Peor
+
+560.  Bethphage
+	Plural: Bethphages
+
+561.  Beth Rehob
+	Plural: Beths Rehob
+
+562.  Bethsaida
+	Plural: Bethsaidas
+
+563.  Beth Tappuah
+	Plural: Beths Tappuah
+
+564.  Bethuel
+	Plural: Bethuels
+
+565.  Bethul
+	Plural: Bethuls
+
+566.  Beth Zur
+	Plural: Beths Zur
+
+567.  Betonim
+	Plural: Betonims
+
+568.  Bezai
+	Plural: Bezais
+
+569.  Bezai
+	Plural: Bezais
+
+570.  Bezek
+	Plural: Bezeks
+
+571.  Bezer
+	Plural: Bezers
+
+572.  Bigtha
+	Plural: Bigthas
+
+573.  Bigthana
+	Plural: Bigthanas
+
+574.  Bigvai
+	Plural: Bigvais
+
+575.  Bikri
+	Plural: Bikris
+
+576.  Bilgah
+	Plural: Bilgahs
+
+577.  Bilgai
+	Plural: Bilgais
+
+578.  Bilhah
+	Plural: Bilhahs
+
+579.  Bilhan
+	Plural: Bilhans
+
+580.  bill
+	Plural: bills
+
+581.  Bilshan
+	Plural: Bilshans
+
+582.  Binnui
+	Plural: Binnuis
+
+583.  bird
+	Plural: birds
+
+584.  Birsha
+	Plural: Birshas
+
+585.  birth
+	Plural: births
+
+586.  birthday
+	Plural: birthdays   (suppletive)
+
+587.  Bithynia
+	Plural: Bithynias
+
+588.  Biziothiah
+	Plural: Biziothiahs
+
+589.  Biztha
+	Plural: Bizthas
+
+590.  blade
+	Plural: blades
+
+591.  blanket
+	Plural: blankets
+
+592.  Blastus
+	Plural: Blastuses
+
+593.  bleach
+	Plural: bleach
+
+594.  blessing
+	Plural: blessings
+
+595.  block
+	Plural: blocks
+
+596.  blood
+	Plural: blood
+
+597.  Boanerges
+	Plural: Boanergeses
+
+598.  board
+	Plural: boards
+
+599.  boat
+	Plural: boats
+
+600.  Boaz
+	Plural: Boazs
+
+601.  body
+	Plural: bodies
+
+602.  Bohan
+	Plural: Bohans
+
+603.  boil
+	Plural: boils
+
+604.  Bokim
+	Plural: Bokims
+
+605.  bone
+	Plural: bones
+
+606.  book
+	Plural: books
+
+607.  Book of Life
+	Plural: Books of Life
+
+608.  Book of Moses
+	Plural: Books of Moses
+
+609.  book of the annals
+	Plural: books of the annals
+
+610.  Book of the Law
+	Plural: Books of the Law
+
+611.  Book of the Law of God
+	Plural: Books of the Law of God
+
+612.  Book of the Law of Moses
+	Plural: Books of the Law of Moses
+
+613.  Book of Truth
+	Plural: Books of Truth
+
+614.  Bor Ashan
+	Plural: Bors Ashan
+
+615.  border
+	Plural: borders
+
+616.  boss
+	Plural: bosses
+
+617.  bottom
+	Plural: bottoms
+
+618.  bow
+	Plural: bows
+
+619.  bowl
+	Plural: bowls
+
+620.  box
+	Plural: boxes
+
+621.  box treasury
+	Plural: boxes
+
+622.  boy
+	Plural: boys   (suppletive)
+
+623.  Bozez
+	Plural: Bozezs
+
+624.  Bozkath
+	Plural: Bozkaths
+
+625.  Bozrah
+	Plural: Bozrahs
+
+626.  bracelet
+	Plural: bracelets
+
+627.  branch
+	Plural: branches
+
+628.  bread
+	Plural: bread
+
+629.  breast
+	Plural: breasts
+
+630.  breast-milk
+	Plural: breast-milk
+
+631.  breastplate
+	Plural: breastplates
+
+632.  bribe
+	Plural: bribes
+
+633.  brick
+	Plural: bricks
+
+634.  bride
+	Plural: brides
+
+635.  bridle
+	Plural: bridles
+
+636.  bronze
+	Plural: bronze
+
+637.  brother
+	Plural: brothers
+
+638.  brother
+	Plural: brothers
+
+639.  brother
+	Plural: brothers
+
+640.  brother-in-law
+	Plural: brother-in-laws
+
+641.  bucket
+	Plural: buckets
+
+642.  building
+	Plural: buildings
+
+643.  Bul
+	Plural: Buls
+
+644.  bull
+	Plural: bulls
+
+645.  Bunni
+	Plural: Bunnis
+
+646.  bush
+	Plural: bushes
+
+647.  butter
+	Plural: butter
+
+648.  Buz
+	Plural: Buzs
+
+649.  Byblos
+	Plural: Bybloses
+
+650.  Cabbon
+	Plural: Cabbons
+
+651.  Caesar
+	Plural: Caesars
+
+652.  Caesarea
+	Plural: Caesareas
+
+653.  Caesarea Philippi
+	Plural: Caesareas Philippi
+
+654.  cage
+	Plural: cages
+
+655.  Caiaphas
+	Plural: Caiaphases
+
+656.  Cain
+	Plural: Cains
+
+657.  Cainan
+	Plural: Cainans
+
+658.  cake
+	Plural: cakes
+
+659.  Calah
+	Plural: Calahs
+
+660.  Caleb
+	Plural: Calebs
+
+661.  calf
+	Plural: calves   (suppletive)
+
+662.  Callinicus
+	Plural: Callinicuses
+
+663.  Calneh
+	Plural: Calnehs
+
+664.  Cambyses
+	Plural: Cambyseses
+
+665.  camel
+	Plural: camels
+
+666.  camp
+	Plural: camps
+
+667.  Cana
+	Plural: Canas
+
+668.  Canaan
+	Plural: Canaans
+
+669.  Canaan
+	Plural: Canaans
+
+670.  Canaanite
+	Plural: Canaanites
+
+671.  Candace
+	Plural: Candaces
+
+672.  candle
+	Plural: candles
+
+673.  Capernaum
+	Plural: Capernaums
+
+674.  Caphtorite
+	Plural: Caphtorites
+
+675.  capital
+	Plural: capitals
+
+676.  Cappadocia
+	Plural: Cappadocias
+
+677.  captain
+	Plural: captains
+
+678.  Carcas
+	Plural: Carcases
+
+679.  Carmel
+	Plural: Carmels
+
+680.  Carmi
+	Plural: Carmis
+
+681.  carpenter
+	Plural: carpenters
+
+682.  Carshena
+	Plural: Carshenas
+
+683.  Casluhite
+	Plural: Casluhites
+
+684.  castanet
+	Plural: castanets
+
+685.  cat
+	Plural: cats
+
+686.  cattle
+	Plural: cattle   (suppletive)
+
+687.  Cauda
+	Plural: Caudas
+
+688.  cave
+	Plural: caves
+
+689.  cave of Adullam
+	Plural: caves of Adullam
+
+690.  cedar
+	Plural: cedar
+
+691.  cemetery
+	Plural: cemeteries
+
+692.  Cenchreae
+	Plural: Cenchreaes
+
+693.  center
+	Plural: centers
+
+694.  centimeter
+	Plural: centimeters
+
+695.  centurion
+	Plural: centurions
+
+696.  Cephas
+	Plural: Cephases
+
+697.  Ceraunus
+	Plural: Ceraunuses
+
+698.  chaff
+	Plural: chaff
+
+699.  chain
+	Plural: chains
+
+700.  chair
+	Plural: chairs
+
+701.  Chaldea
+	Plural: Chaldeas
+
+702.  Chaldean
+	Plural: Chaldeans
+
+703.  chapter
+	Plural: chapters
+
+704.  characteristic
+	Plural: characteristics
+
+705.  chariot
+	Plural: chariots
+
+706.  chasm
+	Plural: chasms
+
+707.  cheek
+	Plural: cheeks
+
+708.  cheese
+	Plural: cheese
+
+709.  Chemosh
+	Plural: Chemoshes
+
+710.  cherub
+	Plural: cherubim   (suppletive)
+
+711.  chest
+	Plural: chests
+
+712.  chicken
+	Plural: chickens
+
+713.  chief
+	Plural: chiefs
+
+714.  Chief
+	Plural: Chiefs
+
+715.  child
+	Plural: children   (suppletive)
+
+716.  Chios
+	Plural: Chioses
+
+717.  choice
+	Plural: choices
+
+718.  choir
+	Plural: choirs
+
+719.  Chorazin
+	Plural: Chorazins
+
+720.  Christ
+	Plural: Christs
+
+721.  Christ
+	Plural: Christs
+
+722.  Christian
+	Plural: Christians
+
+723.  church
+	Plural: churches
+
+724.  Chuza
+	Plural: Chuzas
+
+725.  Cilicia
+	Plural: Cilicias
+
+726.  cinnamon
+	Plural: cinnamon
+
+727.  circle
+	Plural: circles
+
+728.  cistern
+	Plural: cisterns
+
+729.  citizen
+	Plural: citizens
+
+730.  City of David
+	Plural: Cities
+
+731.  city
+	Plural: cities
+
+732.  City of Palms
+	Plural: Cities
+
+733.  City of Salt
+	Plural: Cities
+
+734.  clan
+	Plural: clans
+
+735.  Claudius
+	Plural: Claudiuses
+
+736.  claw
+	Plural: claws
+
+737.  clay
+	Plural: clay
+
+738.  Clement
+	Plural: Clements
+
+739.  Cleopas
+	Plural: Cleopases
+
+740.  Cleopatra
+	Plural: Cleopatras
+
+741.  Cleopatra I Syra
+	Plural: Cleopatras I Syra
+
+742.  cliff
+	Plural: cliffs
+
+743.  clinic
+	Plural: clinics
+
+744.  cloth
+	Plural: cloths
+
+745.  clothes
+	Plural: clothes   (suppletive)
+
+746.  cloud
+	Plural: clouds
+
+747.  club
+	Plural: clubs
+
+748.  Cnidus
+	Plural: Cniduses
+
+749.  coal
+	Plural: coal
+
+750.  coast
+	Plural: coasts
+
+751.  coat
+	Plural: coats
+
+752.  coffin
+	Plural: coffins
+
+753.  coin
+	Plural: coins
+
+754.  cold
+	Plural: colds
+
+755.  collector tax
+	Plural: collectors
+
+756.  color
+	Plural: colors
+
+757.  Colossae
+	Plural: Colossaes
+
+758.  Colossians
+	Plural: Colossians
+
+759.  colt
+	Plural: colts
+
+760.  comb
+	Plural: combs
+
+761.  command
+	Plural: commands
+
+762.  commander
+	Plural: commanders
+
+763.  commandment
+	Plural: commandments
+
+764.  companion
+	Plural: companions
+
+765.  compassion
+	Plural: compassion
+
+766.  concubine
+	Plural: concubines
+
+767.  condom
+	Plural: condoms
+
+768.  conscience
+	Plural: consciences
+
+769.  container
+	Plural: containers
+
+770.  conversation
+	Plural: conversations
+
+771.  copper
+	Plural: copper
+
+772.  copy
+	Plural: copies
+
+773.  cor
+	Plural: cors
+
+774.  Corban
+	Plural: Corbans
+
+775.  Corinth
+	Plural: Corinths
+
+776.  Cornelius
+	Plural: Corneliuses
+
+777.  corner
+	Plural: corners
+
+778.  corpse
+	Plural: corpses
+
+779.  Cos
+	Plural: Coses
+
+780.  Cosam
+	Plural: Cosams
+
+781.  couch
+	Plural: couches
+
+782.  council
+	Plural: councils
+
+783.  country
+	Plural: countries
+
+784.  courage
+	Plural: courage
+
+785.  court
+	Plural: courts
+
+786.  courtyard
+	Plural: courtyards
+
+787.  cousin
+	Plural: cousins
+
+788.  covenant
+	Plural: covenants
+
+789.  cover
+	Plural: covers
+
+790.  cow
+	Plural: cows
+
+791.  creature
+	Plural: creatures
+
+792.  Crete
+	Plural: Cretes
+
+793.  crime
+	Plural: crimes
+
+794.  criminal
+	Plural: criminals
+
+795.  Crispus
+	Plural: Crispuses
+
+796.  crop
+	Plural: crops
+
+797.  cross
+	Plural: crosses
+
+798.  crowd
+	Plural: crowds
+
+799.  crown
+	Plural: crowns
+
+800.  cub
+	Plural: cubs
+
+801.  cubit
+	Plural: cubits
+
+802.  cumin
+	Plural: cumin
+
+803.  cup
+	Plural: cups
+
+804.  curtain
+	Plural: curtains
+
+805.  curve
+	Plural: curves
+
+806.  Cush
+	Plural: Cushes
+
+807.  Cush
+	Plural: Cushes
+
+808.  Cushan
+	Plural: Cushans
+
+809.  Cushan-Rishathaim
+	Plural: Cushan-Rishathaims
+
+810.  cushion
+	Plural: cushions
+
+811.  custom
+	Plural: customs
+
+812.  cymbal
+	Plural: cymbals
+
+813.  Cyprus
+	Plural: Cypruses
+
+814.  Cyrene
+	Plural: Cyrenes
+
+815.  Cyrus
+	Plural: Cyruses
+
+816.  Cyrus II
+	Plural: Cyruses
+
+817.  Dabbesheth
+	Plural: Dabbesheths
+
+818.  Daberath
+	Plural: Daberaths
+
+819.  Dagon
+	Plural: Dagons
+
+820.  Dalmanutha
+	Plural: Dalmanuthas
+
+821.  Dalphon
+	Plural: Dalphons
+
+822.  damage
+	Plural: damages
+
+823.  Damaris
+	Plural: Damarises
+
+824.  Damascus
+	Plural: Damascuses
+
+825.  Dan
+	Plural: Dans
+
+826.  Dan
+	Plural: Dans
+
+827.  Dan
+	Plural: Dans
+
+828.  danger
+	Plural: danger
+
+829.  Daniel
+	Plural: Daniels
+
+830.  Danite
+	Plural: Danites
+
+831.  Dan Jaan
+	Plural: Dans Jaan
+
+832.  Dannah
+	Plural: Dannahs
+
+833.  Darda
+	Plural: Dardas
+
+834.  Darius
+	Plural: Dariuses
+
+835.  Darius I Hystaspes
+	Plural: Dariuses
+
+836.  darkness
+	Plural: darkness
+
+837.  Darkon
+	Plural: Darkons
+
+838.  date
+	Plural: dates
+
+839.  daughter
+	Plural: daughters
+
+840.  daughter-in-law
+	Plural: daughters-in-law   (suppletive)
+
+841.  David
+	Plural: Davids
+
+842.  day
+	Plural: days   (suppletive)
+
+843.  Day of Atonement
+	Plural: Daies
+
+844.  deacon
+	Plural: deacons
+
+845.  dead
+	Plural: dead
+
+846.  death
+	Plural: death
+
+847.  Debir
+	Plural: Debirs
+
+848.  Debir
+	Plural: Debirs
+
+849.  Deborah
+	Plural: Deborahs
+
+850.  debt
+	Plural: debts
+
+851.  Decapolis
+	Plural: Decapolises
+
+852.  decision
+	Plural: decisions
+
+853.  decree
+	Plural: decrees
+
+854.  Dedan
+	Plural: Dedans
+
+855.  deer
+	Plural: deer   (suppletive)
+
+856.  Delaiah
+	Plural: Delaiahs
+
+857.  Delilah
+	Plural: Delilahs
+
+858.  Demas
+	Plural: Demases
+
+859.  Demetrius
+	Plural: Demetriuses
+
+860.  demon
+	Plural: demons
+
+861.  den
+	Plural: dens
+
+862.  denarius
+	Plural: denarii   (suppletive)
+
+863.  depth
+	Plural: depths
+
+864.  Derbe
+	Plural: Derbes
+
+865.  descendant
+	Plural: descendants
+
+866.  desert
+	Plural: deserts
+
+867.  desert Sinai
+	Plural: deserts
+
+868.  Desert of Beersheba
+	Plural: Deserts of Beersheba
+
+869.  Desert of Beth Aven
+	Plural: Deserts of Beth Aven
+
+870.  Desert of En Gedi
+	Plural: Deserts of En Gedi
+
+871.  Desert of Negev
+	Plural: Deserts of Negev
+
+872.  Desert of Paran
+	Plural: Deserts of Paran
+
+873.  Desert of Sin
+	Plural: Deserts of Sin
+
+874.  Desert of Zin
+	Plural: Deserts of Zin
+
+875.  Desert of Ziph
+	Plural: Deserts of Ziph
+
+876.  desire
+	Plural: desires
+
+877.  Deuteronomy
+	Plural: Deuteronomies
+
+878.  device
+	Plural: devices
+
+879.  devil
+	Plural: devils
+
+880.  dew
+	Plural: dew
+
+881.  Dibon
+	Plural: Dibons
+
+882.  Didymus
+	Plural: Didymuses
+
+883.  Diklah
+	Plural: Diklahs
+
+884.  Dilean
+	Plural: Dileans
+
+885.  dill
+	Plural: dill
+
+886.  Dimnah
+	Plural: Dimnahs
+
+887.  Dimonah
+	Plural: Dimonahs
+
+888.  Dinah
+	Plural: Dinahs
+
+889.  Dinhabah
+	Plural: Dinhabahs
+
+890.  dinner
+	Plural: dinners
+
+891.  Dionysius
+	Plural: Dionysiuses
+
+892.  Diotrephes
+	Plural: Diotrepheses
+
+893.  direction
+	Plural: directions
+
+894.  director
+	Plural: directors
+
+895.  dirt
+	Plural: dirt
+
+896.  disaster
+	Plural: disasters
+
+897.  disciple
+	Plural: disciples
+
+898.  disease
+	Plural: diseases
+
+899.  Dishan
+	Plural: Dishans
+
+900.  Dishon
+	Plural: Dishons
+
+901.  distance
+	Plural: distances
+
+902.  diviner
+	Plural: diviners
+
+903.  doctor
+	Plural: doctors
+
+904.  document
+	Plural: documents
+
+905.  Dodai
+	Plural: Dodais
+
+906.  Dodo
+	Plural: Dodos
+
+907.  Doeg
+	Plural: Doegs
+
+908.  dog
+	Plural: dogs
+
+909.  donkey
+	Plural: donkeys   (suppletive)
+
+910.  door
+	Plural: doors
+
+911.  Dor
+	Plural: Dors
+
+912.  Dorcas
+	Plural: Dorcases
+
+913.  Dothan
+	Plural: Dothans
+
+914.  dough
+	Plural: dough
+
+915.  dove
+	Plural: doves
+
+916.  drachma
+	Plural: drachmas
+
+917.  dream
+	Plural: dreams
+
+918.  dress
+	Plural: dresses
+
+919.  drink
+	Plural: drinks
+
+920.  drop
+	Plural: drops
+
+921.  drug
+	Plural: drugs
+
+922.  Drusilla
+	Plural: Drusillas
+
+923.  duck
+	Plural: ducks
+
+924.  Dumah
+	Plural: Dumahs
+
+925.  dung
+	Plural: dung
+
+926.  Dura
+	Plural: Duras
+
+927.  dust
+	Plural: dust
+
+928.  eagle
+	Plural: eagles
+
+929.  ear
+	Plural: ears
+
+930.  earring
+	Plural: earrings
+
+931.  earth
+	Plural: earths
+
+932.  earthquake
+	Plural: earthquakes
+
+933.  east
+	Plural: east
+
+934.  Ebal
+	Plural: Ebals
+
+935.  Ebed
+	Plural: Ebeds
+
+936.  Ebenezer
+	Plural: Ebenezers
+
+937.  Eber
+	Plural: Ebers
+
+938.  Ebez
+	Plural: Ebezs
+
+939.  Eden
+	Plural: Edens
+
+940.  Eder
+	Plural: Eders
+
+941.  edge
+	Plural: edges
+
+942.  Edom
+	Plural: Edoms
+
+943.  Edom
+	Plural: Edoms
+
+944.  Edomite
+	Plural: Edomites
+
+945.  Edrei
+	Plural: Edreis
+
+946.  egg
+	Plural: eggs
+
+947.  Eglah
+	Plural: Eglahs
+
+948.  Eglon
+	Plural: Eglons
+
+949.  Eglon
+	Plural: Eglons
+
+950.  Egypt
+	Plural: Egypts
+
+951.  Egyptian
+	Plural: Egyptians
+
+952.  Ehi
+	Plural: Ehis
+
+953.  Ehud
+	Plural: Ehuds
+
+954.  Ekron
+	Plural: Ekrons
+
+955.  El-Bethel
+	Plural: El-Bethels
+
+956.  El-Elohe-Israel
+	Plural: El-Elohe-Israels
+
+957.  Ela
+	Plural: Elas
+
+958.  Elah
+	Plural: Elahs
+
+959.  Elam
+	Plural: Elams
+
+960.  Elam
+	Plural: Elams
+
+961.  Elam
+	Plural: Elams
+
+962.  Elath
+	Plural: Elaths
+
+963.  El Berith
+	Plural: Els Berith
+
+964.  Eldaah
+	Plural: Eldaahs
+
+965.  elder
+	Plural: elders
+
+966.  Eleazar
+	Plural: Eleazars
+
+967.  elephant
+	Plural: elephants
+
+968.  Elhanan
+	Plural: Elhanans
+
+969.  Eli
+	Plural: Elis
+
+970.  Eliab
+	Plural: Eliabs
+
+971.  Eliada
+	Plural: Eliadas
+
+972.  Eliahba
+	Plural: Eliahbas
+
+973.  Eliakim
+	Plural: Eliakims
+
+974.  Eliam
+	Plural: Eliams
+
+975.  Eliashib
+	Plural: Eliashibs
+
+976.  Eliezer
+	Plural: Eliezers
+
+977.  Elihoreph
+	Plural: Elihorephs
+
+978.  Elihu
+	Plural: Elihus
+
+979.  Elihud
+	Plural: Elihuds
+
+980.  Elijah
+	Plural: Elijahs
+
+981.  Elika
+	Plural: Elikas
+
+982.  Elim
+	Plural: Elims
+
+983.  Elimelech
+	Plural: Elimeleches
+
+984.  Elioenai
+	Plural: Elioenais
+
+985.  Eliphaz
+	Plural: Eliphazs
+
+986.  Eliphelet
+	Plural: Eliphelets
+
+987.  Elisha
+	Plural: Elishas
+
+988.  Elishah
+	Plural: Elishahs
+
+989.  Elishama
+	Plural: Elishamas
+
+990.  Elisheba
+	Plural: Elishebas
+
+991.  Elishua
+	Plural: Elishuas
+
+992.  Eliud
+	Plural: Eliuds
+
+993.  Elizabeth
+	Plural: Elizabeths
+
+994.  Elkanah
+	Plural: Elkanahs
+
+995.  Elkosh
+	Plural: Elkoshes
+
+996.  Ellasar
+	Plural: Ellasars
+
+997.  Elmadam
+	Plural: Elmadams
+
+998.  Eloi
+	Plural: Elois
+
+999.  Elon
+	Plural: Elons
+
+1000.  Elon
+	Plural: Elons
+
+1001.  Elon-Bethhanan
+	Plural: Elon-Bethhanans
+
+1002.  El Paran
+	Plural: Els Paran
+
+1003.  Eltekeh
+	Plural: Eltekehs
+
+1004.  Eltekon
+	Plural: Eltekons
+
+1005.  Eltolad
+	Plural: Eltolads
+
+1006.  Elul
+	Plural: Eluls
+
+1007.  Elymais
+	Plural: Elymaises
+
+1008.  Elymas
+	Plural: Elymases
+
+1009.  Elzaphan
+	Plural: Elzaphans
+
+1010.  Emek Keziz
+	Plural: Emeks Keziz
+
+1011.  Emite
+	Plural: Emites
+
+1012.  Emmaus
+	Plural: Emmauses
+
+1013.  emperor
+	Plural: emperors
+
+1014.  empire
+	Plural: empires
+
+1015.  Enaim
+	Plural: Enaims
+
+1016.  Enam
+	Plural: Enams
+
+1017.  enchanter
+	Plural: enchanters
+
+1018.  end
+	Plural: ends
+
+1019.  Endor
+	Plural: Endors
+
+1020.  enemy
+	Plural: enemies
+
+1021.  En Gannim
+	Plural: Ens Gannim
+
+1022.  En Gedi
+	Plural: Ens Gedi
+
+1023.  En Haddah
+	Plural: Ens Haddah
+
+1024.  En Hakkore
+	Plural: Ens Hakkore
+
+1025.  En Hazor
+	Plural: Ens Hazor
+
+1026.  En Mishpat
+	Plural: Ens Mishpat
+
+1027.  Enoch
+	Plural: Enoches
+
+1028.  Enosh
+	Plural: Enoshes
+
+1029.  En Rimmon
+	Plural: Ens Rimmon
+
+1030.  En Rogel
+	Plural: Ens Rogel
+
+1031.  En Shemesh
+	Plural: Ens Shemesh
+
+1032.  En Tappuah
+	Plural: Ens Tappuah
+
+1033.  entrance
+	Plural: entrances
+
+1034.  Epaphras
+	Plural: Epaphrases
+
+1035.  Epaphroditus
+	Plural: Epaphrodituses
+
+1036.  Ephah
+	Plural: Ephahs
+
+1037.  ephah
+	Plural: ephahs
+
+1038.  Epher
+	Plural: Ephers
+
+1039.  Ephes Dammim
+	Plural: Epheses
+
+1040.  Ephesians
+	Plural: Ephesians
+
+1041.  Ephesus
+	Plural: Ephesuses
+
+1042.  ephod
+	Plural: ephods
+
+1043.  Ephrah
+	Plural: Ephrahs
+
+1044.  Ephraim
+	Plural: Ephraims
+
+1045.  Ephraimite
+	Plural: Ephraimites
+
+1046.  Ephrath
+	Plural: Ephraths
+
+1047.  Ephrathah
+	Plural: Ephrathahs
+
+1048.  Ephrathite
+	Plural: Ephrathites
+
+1049.  Ephron
+	Plural: Ephrons
+
+1050.  Epicurus
+	Plural: Epicuruses
+
+1051.  Epiphanes
+	Plural: Epiphaneses
+
+1052.  Er
+	Plural: Ers
+
+1053.  Erastus
+	Plural: Erastuses
+
+1054.  Erech
+	Plural: Ereches
+
+1055.  Eri
+	Plural: Eris
+
+1056.  Esarhaddon
+	Plural: Esarhaddons
+
+1057.  Esau
+	Plural: Esaus
+
+1058.  Esek
+	Plural: Eseks
+
+1059.  Eshan
+	Plural: Eshans
+
+1060.  Eshban
+	Plural: Eshbans
+
+1061.  Eshcol
+	Plural: Eshcols
+
+1062.  Eshtaol
+	Plural: Eshtaols
+
+1063.  Eshtemoa
+	Plural: Eshtemoas
+
+1064.  Eshtemoh
+	Plural: Eshtemohs
+
+1065.  Esli
+	Plural: Eslis
+
+1066.  Esther
+	Plural: Esthers
+
+1067.  Etham
+	Plural: Ethams
+
+1068.  Ethan
+	Plural: Ethans
+
+1069.  Ethanim
+	Plural: Ethanims
+
+1070.  Ether
+	Plural: Ethers
+
+1071.  Ethiopia
+	Plural: Ethiopias
+
+1072.  Eth Kazin
+	Plural: Eths Kazin
+
+1073.  Euergetes
+	Plural: Euergeteses
+
+1074.  eunuch
+	Plural: eunuchs   (suppletive)
+
+1075.  Euodia
+	Plural: Euodias
+
+1076.  Euphrates
+	Plural: Euphrateses
+
+1077.  Europe
+	Plural: Europes
+
+1078.  Eutychus
+	Plural: Eutychuses
+
+1079.  Eve
+	Plural: Eves
+
+1080.  evening
+	Plural: evenings
+
+1081.  event
+	Plural: events
+
+1082.  Evi
+	Plural: Evis
+
+1083.  ewe
+	Plural: ewes
+
+1084.  example
+	Plural: examples
+
+1085.  Exodus
+	Plural: Exoduses
+
+1086.  expression
+	Plural: expressions
+
+1087.  eye
+	Plural: eyes
+
+1088.  Ezbon
+	Plural: Ezbons
+
+1089.  Ezekiel
+	Plural: Ezekiels
+
+1090.  Ezel
+	Plural: Ezels
+
+1091.  Ezem
+	Plural: Ezems
+
+1092.  Ezer
+	Plural: Ezers
+
+1093.  Ezion Geber
+	Plural: Ezions Geber
+
+1094.  Ezra
+	Plural: Ezras
+
+1095.  Ezrahite
+	Plural: Ezrahites
+
+1096.  face
+	Plural: faces
+
+1097.  Fair Havens
+	Plural: Fairs Havens
+
+1098.  faith
+	Plural: faith
+
+1099.  faithfulness
+	Plural: faithfulness
+
+1100.  Falala
+	Plural: Falalas
+
+1101.  fall
+	Plural: falls
+
+1102.  family
+	Plural: families
+
+1103.  famine
+	Plural: famines
+
+1104.  fare
+	Plural: fares
+
+1105.  farm
+	Plural: farms
+
+1106.  farmer
+	Plural: farmers
+
+1107.  fat
+	Plural: fat
+
+1108.  father
+	Plural: fathers
+
+1109.  Father
+	Plural: Fathers
+
+1110.  father-in-law
+	Plural: father-in-laws
+
+1111.  fear
+	Plural: fears
+
+1112.  feast
+	Plural: feasts
+
+1113.  Feast of Booths
+	Plural: Feasts of Booths
+
+1114.  Feast of Harvest
+	Plural: Feasts of Harvest
+
+1115.  Feast of Ingathering
+	Plural: Feasts of Ingathering
+
+1116.  Feast of Tabernacles
+	Plural: Feast of Tabernacles
+
+1117.  Feast of the New Moon
+	Plural: Feasts of the New Moon
+
+1118.  Feast of Unleavened Bread
+	Plural: Feasts of Unleavened Bread
+
+1119.  Feast of Weeks
+	Plural: Feast of Weeks
+
+1120.  feather
+	Plural: feathers
+
+1121.  feeling
+	Plural: feelings
+
+1122.  Felix
+	Plural: Felixes
+
+1123.  fellowship
+	Plural: fellowship
+
+1124.  fence
+	Plural: fences
+
+1125.  Festus
+	Plural: Festuses
+
+1126.  fever
+	Plural: fevers
+
+1127.  field
+	Plural: fields
+
+1128.  fig
+	Plural: figs
+
+1129.  finger
+	Plural: fingers
+
+1130.  fire
+	Plural: fires
+
+1131.  fish
+	Plural: fish   (suppletive)
+
+1132.  fisherman
+	Plural: fishermen   (suppletive)
+
+1133.  fist
+	Plural: fists
+
+1134.  flag
+	Plural: flags
+
+1135.  flake
+	Plural: flakes
+
+1136.  flax
+	Plural: flax
+
+1137.  flea
+	Plural: fleas
+
+1138.  flesh
+	Plural: flesh
+
+1139.  flock
+	Plural: flocks
+
+1140.  flood
+	Plural: floods
+
+1141.  floor threshing
+	Plural: floors
+
+1142.  floor
+	Plural: floors
+
+1143.  flour
+	Plural: flour   (suppletive)
+
+1144.  flower
+	Plural: flowers
+
+1145.  flute
+	Plural: flutes
+
+1146.  fly
+	Plural: flies
+
+1147.  follower
+	Plural: followers
+
+1148.  Folly
+	Plural: Follies
+
+1149.  food
+	Plural: food
+
+1150.  fool
+	Plural: fools
+
+1151.  foot
+	Plural: feet   (suppletive)
+
+1152.  forehead
+	Plural: foreheads
+
+1153.  foreigner
+	Plural: foreigners
+
+1154.  foreskin
+	Plural: foreskins
+
+1155.  forest
+	Plural: forests
+
+1156.  fork
+	Plural: forks
+
+1157.  form
+	Plural: forms
+
+1158.  foundation
+	Plural: foundations
+
+1159.  fox
+	Plural: foxes
+
+1160.  frame
+	Plural: frames
+
+1161.  frankincense
+	Plural: frankincense
+
+1162.  freedom
+	Plural: freedom
+
+1163.  friend
+	Plural: friends
+
+1164.  frog
+	Plural: frogs
+
+1165.  front
+	Plural: fronts
+
+1166.  frost
+	Plural: frost
+
+1167.  fruit
+	Plural: fruit
+
+1168.  fur
+	Plural: fur
+
+1169.  furnace
+	Plural: furnaces
+
+1170.  future
+	Plural: future
+
+1171.  Gaal
+	Plural: Gaals
+
+1172.  Gaash
+	Plural: Gaashes
+
+1173.  Gabbai
+	Plural: Gabbais
+
+1174.  Gabriel
+	Plural: Gabriels
+
+1175.  Gad
+	Plural: Gads
+
+1176.  Gad
+	Plural: Gads
+
+1177.  Gadara
+	Plural: Gadaras
+
+1178.  Gaham
+	Plural: Gahams
+
+1179.  Gahar
+	Plural: Gahars
+
+1180.  Gaius
+	Plural: Gaiuses
+
+1181.  Gaius Popillius Laenas
+	Plural: Gaiuses
+
+1182.  Galal
+	Plural: Galals
+
+1183.  Galatia
+	Plural: Galatias
+
+1184.  Galeed
+	Plural: Galeeds
+
+1185.  Galilee
+	Plural: Galilees
+
+1186.  gall
+	Plural: gall
+
+1187.  Gallim
+	Plural: Gallims
+
+1188.  Gallio
+	Plural: Gallios
+
+1189.  Gamaliel
+	Plural: Gamaliels
+
+1190.  garbage
+	Plural: garbage
+
+1191.  garden
+	Plural: gardens
+
+1192.  Gareb
+	Plural: Garebs
+
+1193.  Gatam
+	Plural: Gatams
+
+1194.  Gate Dung
+	Plural: Gates
+
+1195.  Gate Fish
+	Plural: Gates
+
+1196.  Gate Fountain
+	Plural: Gates
+
+1197.  Gate Garbage
+	Plural: Gates
+
+1198.  Gate Guard
+	Plural: Gates
+
+1199.  Gate Horse
+	Plural: Gates
+
+1200.  Gate Inspection
+	Plural: Gates
+
+1201.  Gate Ishtar
+	Plural: Gates
+
+1202.  Gate Jeshanah
+	Plural: Gates
+
+1203.  Gate of Ephraim
+	Plural: Gates
+
+1204.  Gate Sheep
+	Plural: Gates
+
+1205.  Gate Valley
+	Plural: Gates
+
+1206.  Gate Water
+	Plural: Gates
+
+1207.  gate
+	Plural: gates
+
+1208.  Gath
+	Plural: Gaths
+
+1209.  Gath Hepher
+	Plural: Gaths Hepher
+
+1210.  Gath Rimmon
+	Plural: Gaths Rimmon
+
+1211.  Gaza
+	Plural: Gazas
+
+1212.  gazelle
+	Plural: gazelles
+
+1213.  Gazzam
+	Plural: Gazzams
+
+1214.  Geba
+	Plural: Gebas
+
+1215.  Gebalite
+	Plural: Gebalites
+
+1216.  Geber
+	Plural: Gebers
+
+1217.  Geder
+	Plural: Geders
+
+1218.  Gederah
+	Plural: Gederahs
+
+1219.  Gederoth
+	Plural: Gederoths
+
+1220.  Gederothaim
+	Plural: Gederothaims
+
+1221.  Gedor
+	Plural: Gedors
+
+1222.  Ge Harashim
+	Plural: Ges Harashim
+
+1223.  Geliloth
+	Plural: Geliloths
+
+1224.  gem
+	Plural: gems
+
+1225.  genealogy
+	Plural: genealogies
+
+1226.  generation
+	Plural: generations
+
+1227.  Genesis
+	Plural: Genesises
+
+1228.  Gennesaret
+	Plural: Gennesarets
+
+1229.  Gentile
+	Plural: Gentiles
+
+1230.  Gera
+	Plural: Geras
+
+1231.  Gerar
+	Plural: Gerars
+
+1232.  Gerasa
+	Plural: Gerasas
+
+1233.  Gerasene
+	Plural: Gerasenes
+
+1234.  Gergesene
+	Plural: Gergesenes
+
+1235.  germ
+	Plural: germs
+
+1236.  Gershom
+	Plural: Gershoms
+
+1237.  Gershon
+	Plural: Gershons
+
+1238.  Geshem
+	Plural: Geshems
+
+1239.  Geshur
+	Plural: Geshurs
+
+1240.  Geshurite
+	Plural: Geshurites
+
+1241.  Gether
+	Plural: Gethers
+
+1242.  Gethsemane
+	Plural: Gethsemanes
+
+1243.  Gezer
+	Plural: Gezers
+
+1244.  ghost
+	Plural: ghosts
+
+1245.  Giah
+	Plural: Giahs
+
+1246.  giant
+	Plural: giants
+
+1247.  Gibbethon
+	Plural: Gibbethons
+
+1248.  Gibeah
+	Plural: Gibeahs
+
+1249.  Gibeah of God
+	Plural: Gibeahs of God
+
+1250.  Gibeath Haaraloth
+	Plural: Gibeaths Haaraloth
+
+1251.  Gibeon
+	Plural: Gibeons
+
+1252.  Gibeonite
+	Plural: Gibeonites
+
+1253.  Giddel
+	Plural: Giddels
+
+1254.  Gideon
+	Plural: Gideons
+
+1255.  Gidom
+	Plural: Gidoms
+
+1256.  gift
+	Plural: gifts
+
+1257.  Gihon
+	Plural: Gihons
+
+1258.  Gilalai
+	Plural: Gilalais
+
+1259.  Gilboa
+	Plural: Gilboas
+
+1260.  Gilead
+	Plural: Gileads
+
+1261.  Gilead
+	Plural: Gileads
+
+1262.  Gilgal
+	Plural: Gilgals
+
+1263.  Giloh
+	Plural: Gilohs
+
+1264.  Ginnethon
+	Plural: Ginnethons
+
+1265.  Girgashite
+	Plural: Girgashites
+
+1266.  girl
+	Plural: girls
+
+1267.  Girzi
+	Plural: Girzis
+
+1268.  Girzite
+	Plural: Girzites
+
+1269.  Gishpa
+	Plural: Gishpas
+
+1270.  Gittaim
+	Plural: Gittaims
+
+1271.  Gittite
+	Plural: Gittites
+
+1272.  gladness
+	Plural: gladness
+
+1273.  glass
+	Plural: glass
+
+1274.  glory
+	Plural: glory
+
+1275.  Glory of Israel
+	Plural: Glories
+
+1276.  glove
+	Plural: gloves
+
+1277.  gnat
+	Plural: gnats
+
+1278.  goad
+	Plural: goads
+
+1279.  goal
+	Plural: goals
+
+1280.  goat
+	Plural: goats
+
+1281.  Gob
+	Plural: Gobs
+
+1282.  goblet
+	Plural: goblets
+
+1283.  God
+	Plural: Gods
+
+1284.  God Eternal
+	Plural: Gods
+
+1285.  God highest
+	Plural: Gods
+
+1286.  god
+	Plural: gods
+
+1287.  God Almighty
+	Plural: Gods Almighty
+
+1288.  God Most High
+	Plural: Gods Most High
+
+1289.  Goiim
+	Plural: Goiims
+
+1290.  Golan
+	Plural: Golans
+
+1291.  gold
+	Plural: gold
+
+1292.  Golgotha
+	Plural: Golgothas
+
+1293.  Goliath
+	Plural: Goliaths
+
+1294.  Gomer
+	Plural: Gomers
+
+1295.  Gomorrah
+	Plural: Gomorrahs
+
+1296.  goodness
+	Plural: goodness
+
+1297.  Good News
+	Plural: Good News
+
+1298.  goods
+	Plural: goods
+
+1299.  Goshen
+	Plural: Goshens
+
+1300.  gospel
+	Plural: gospels
+
+1301.  government
+	Plural: governments
+
+1302.  governor
+	Plural: governors
+
+1303.  Goyim
+	Plural: Goyims
+
+1304.  grace
+	Plural: grace
+
+1305.  grain
+	Plural: grains
+
+1306.  grain
+	Plural: grain
+
+1307.  gram
+	Plural: grams
+
+1308.  grandchild
+	Plural: grandchildren   (suppletive)
+
+1309.  granddaughter
+	Plural: granddaughters
+
+1310.  grandfather
+	Plural: grandfathers
+
+1311.  grandson
+	Plural: grandsons
+
+1312.  grape
+	Plural: grapes
+
+1313.  grass
+	Plural: grass
+
+1314.  grasshopper
+	Plural: grasshoppers
+
+1315.  grave
+	Plural: graves
+
+1316.  Greater Sidon
+	Plural: Greaters Sidon
+
+1317.  Greece
+	Plural: Greeces
+
+1318.  Greek
+	Plural: Greek
+
+1319.  groom
+	Plural: grooms
+
+1320.  ground
+	Plural: grounds
+
+1321.  group
+	Plural: groups
+
+1322.  grove olive
+	Plural: groves
+
+1323.  guard
+	Plural: guards
+
+1324.  guardian-redeemer
+	Plural: guardian-redeemers
+
+1325.  guest
+	Plural: guests
+
+1326.  guide
+	Plural: guides
+
+1327.  Guni
+	Plural: Gunis
+
+1328.  Habakkuk
+	Plural: Habakkuks
+
+1329.  Habakkuk
+	Plural: Habakkuks
+
+1330.  Hachmon
+	Plural: Hachmons
+
+1331.  Hadad
+	Plural: Hadads
+
+1332.  Hadadezer
+	Plural: Hadadezers
+
+1333.  Hadashah
+	Plural: Hadashahs
+
+1334.  Hadassah
+	Plural: Hadassahs
+
+1335.  Hades
+	Plural: Hadeses
+
+1336.  Hadid
+	Plural: Hadids
+
+1337.  Hadoram
+	Plural: Hadorams
+
+1338.  Haeleph
+	Plural: Haelephs
+
+1339.  Hagaba
+	Plural: Hagabas
+
+1340.  Hagar
+	Plural: Hagars
+
+1341.  Haggai
+	Plural: Haggais
+
+1342.  Haggedolim
+	Plural: Haggedolims
+
+1343.  Haggi
+	Plural: Haggis
+
+1344.  Haggith
+	Plural: Haggiths
+
+1345.  Hagri
+	Plural: Hagris
+
+1346.  hail
+	Plural: hail
+
+1347.  hair
+	Plural: hairs
+
+1348.  Hakaliah
+	Plural: Hakaliahs
+
+1349.  Hakilah
+	Plural: Hakilahs
+
+1350.  Hakkoz
+	Plural: Hakkozs
+
+1351.  Hakmon
+	Plural: Hakmons
+
+1352.  Hakupha
+	Plural: Hakuphas
+
+1353.  Halhul
+	Plural: Halhuls
+
+1354.  Hali
+	Plural: Halis
+
+1355.  Hall of Justice
+	Plural: Halls of Justice
+
+1356.  Hallohesh
+	Plural: Halloheshes
+
+1357.  Ham
+	Plural: Hams
+
+1358.  Ham
+	Plural: Hams
+
+1359.  Haman
+	Plural: Hamans
+
+1360.  Hamath
+	Plural: Hamaths
+
+1361.  Hamathite
+	Plural: Hamathites
+
+1362.  Hammath
+	Plural: Hammaths
+
+1363.  Hammedatha
+	Plural: Hammedathas
+
+1364.  hammer
+	Plural: hammers
+
+1365.  Hammon
+	Plural: Hammons
+
+1366.  Hammoth Dor
+	Plural: Hammoths Dor
+
+1367.  Hamor
+	Plural: Hamors
+
+1368.  Hamul
+	Plural: Hamuls
+
+1369.  Hanan
+	Plural: Hanans
+
+1370.  Hanani
+	Plural: Hananis
+
+1371.  Hananiah
+	Plural: Hananiahs
+
+1372.  hand
+	Plural: hands
+
+1373.  handle
+	Plural: handles
+
+1374.  Hannah
+	Plural: Hannahs
+
+1375.  Hannathon
+	Plural: Hannathons
+
+1376.  Hanok
+	Plural: Hanoks
+
+1377.  Hanun
+	Plural: Hanuns
+
+1378.  Hapharaim
+	Plural: Hapharaims
+
+1379.  Haran
+	Plural: Harans
+
+1380.  Haran
+	Plural: Harans
+
+1381.  Harar
+	Plural: Harars
+
+1382.  Harbona
+	Plural: Harbonas
+
+1383.  harbor
+	Plural: harbors
+
+1384.  Harhaiah
+	Plural: Harhaiahs
+
+1385.  Harhur
+	Plural: Harhurs
+
+1386.  Harim
+	Plural: Harims
+
+1387.  Hariph
+	Plural: Hariphs
+
+1388.  Hariph
+	Plural: Hariphs
+
+1389.  Harod
+	Plural: Harods
+
+1390.  Harosheth-Haggoyim
+	Plural: Harosheth-Haggoyims
+
+1391.  harp
+	Plural: harps
+
+1392.  Harsha
+	Plural: Harshas
+
+1393.  Harumaph
+	Plural: Harumaphs
+
+1394.  Hashabiah
+	Plural: Hashabiahs
+
+1395.  Hashabnah
+	Plural: Hashabnahs
+
+1396.  Hashabneiah
+	Plural: Hashabneiahs
+
+1397.  Hashbaddanah
+	Plural: Hashbaddanahs
+
+1398.  Hashum
+	Plural: Hashums
+
+1399.  Hashum
+	Plural: Hashums
+
+1400.  Hassenaah
+	Plural: Hassenaahs
+
+1401.  Hassenuah
+	Plural: Hassenuahs
+
+1402.  Hasshub
+	Plural: Hasshubs
+
+1403.  Hasupha
+	Plural: Hasuphas
+
+1404.  hat
+	Plural: hats
+
+1405.  Hathak
+	Plural: Hathaks
+
+1406.  Hatipha
+	Plural: Hatiphas
+
+1407.  Hatita
+	Plural: Hatitas
+
+1408.  Hattil
+	Plural: Hattils
+
+1409.  Hattush
+	Plural: Hattushes
+
+1410.  Havilah
+	Plural: Havilahs
+
+1411.  Havvoth Jair
+	Plural: Havvoths Jair
+
+1412.  Hazaiah
+	Plural: Hazaiahs
+
+1413.  Hazar Gaddah
+	Plural: Hazars Gaddah
+
+1414.  Hazarmaveth
+	Plural: Hazarmaveths
+
+1415.  Hazar Shual
+	Plural: Hazars Shual
+
+1416.  Hazar Susah
+	Plural: Hazars Susah
+
+1417.  Hazezon Tamar
+	Plural: Hazezons Tamar
+
+1418.  Hazo
+	Plural: Hazos
+
+1419.  Hazor
+	Plural: Hazors
+
+1420.  Hazor
+	Plural: Hazors
+
+1421.  Hazor Hadattah
+	Plural: Hazors Hadattah
+
+1422.  head
+	Plural: heads
+
+1423.  heart
+	Plural: hearts
+
+1424.  heat
+	Plural: heat
+
+1425.  heaven
+	Plural: heavens
+
+1426.  heaven
+	Plural: heavens
+
+1427.  Heber
+	Plural: Hebers
+
+1428.  Hebrew
+	Plural: Hebrews
+
+1429.  Hebrew
+	Plural: Hebrews
+
+1430.  Hebrews
+	Plural: Hebrewses
+
+1431.  Hebron
+	Plural: Hebrons
+
+1432.  hectare
+	Plural: hectares
+
+1433.  heel
+	Plural: heels
+
+1434.  Hegai
+	Plural: Hegais
+
+1435.  height
+	Plural: heights
+
+1436.  Helam
+	Plural: Helams
+
+1437.  Helbah
+	Plural: Helbahs
+
+1438.  Heled
+	Plural: Heleds
+
+1439.  Helek
+	Plural: Heleks
+
+1440.  Heleph
+	Plural: Helephs
+
+1441.  Helez
+	Plural: Helezs
+
+1442.  Heli
+	Plural: Helis
+
+1443.  Heliodorus
+	Plural: Heliodoruses
+
+1444.  Helkai
+	Plural: Helkais
+
+1445.  Helkath
+	Plural: Helkaths
+
+1446.  Helkath Hazzurim
+	Plural: Helkaths Hazzurim
+
+1447.  hell
+	Plural: hells
+
+1448.  helmet
+	Plural: helmets
+
+1449.  Heman
+	Plural: Hemans
+
+1450.  Hemdan
+	Plural: Hemdans
+
+1451.  Henadad
+	Plural: Henadads
+
+1452.  Hepher
+	Plural: Hephers
+
+1453.  Hepher
+	Plural: Hephers
+
+1454.  herald
+	Plural: heralds
+
+1455.  herb
+	Plural: herbs
+
+1456.  herd
+	Plural: herds
+
+1457.  Heres
+	Plural: Hereses
+
+1458.  Hereth
+	Plural: Hereths
+
+1459.  Hermes
+	Plural: Hermeses
+
+1460.  Herod
+	Plural: Herods
+
+1461.  Herodias
+	Plural: Herodiases
+
+1462.  Heshbon
+	Plural: Heshbons
+
+1463.  Heshmon
+	Plural: Heshmons
+
+1464.  Heth
+	Plural: Heths
+
+1465.  Heth
+	Plural: Heths
+
+1466.  Hezekiah
+	Plural: Hezekiahs
+
+1467.  Hezir
+	Plural: Hezirs
+
+1468.  Hezro
+	Plural: Hezros
+
+1469.  Hezron
+	Plural: Hezrons
+
+1470.  Hezron
+	Plural: Hezrons
+
+1471.  Hiddai
+	Plural: Hiddais
+
+1472.  Hierapolis
+	Plural: Hierapolises
+
+1473.  Hilkiah
+	Plural: Hilkiahs
+
+1474.  Hill of Ophel
+	Plural: Hills
+
+1475.  hill
+	Plural: hills
+
+1476.  Hillel
+	Plural: Hillels
+
+1477.  hip
+	Plural: hips
+
+1478.  Hirah
+	Plural: Hirahs
+
+1479.  Hiram
+	Plural: Hirams
+
+1480.  history
+	Plural: histories
+
+1481.  Hittite
+	Plural: Hittites
+
+1482.  HIV
+	Plural: HIV
+
+1483.  Hivite
+	Plural: Hivites
+
+1484.  Hobab
+	Plural: Hobabs
+
+1485.  Hobah
+	Plural: Hobahs
+
+1486.  Hobaiah
+	Plural: Hobaiahs
+
+1487.  Hodaviah
+	Plural: Hodaviahs
+
+1488.  Hodiah
+	Plural: Hodiahs
+
+1489.  Hoglah
+	Plural: Hoglahs
+
+1490.  Hoham
+	Plural: Hohams
+
+1491.  hole
+	Plural: holes
+
+1492.  holiday
+	Plural: holidays   (suppletive)
+
+1493.  Holon
+	Plural: Holons
+
+1494.  Holy Place
+	Plural: Holies
+
+1495.  Holy Spirit
+	Plural: Holies
+
+1496.  Homam
+	Plural: Homams
+
+1497.  honey
+	Plural: honey
+
+1498.  honor
+	Plural: honor
+
+1499.  hook
+	Plural: hooks
+
+1500.  hope
+	Plural: hope
+
+1501.  Hophni
+	Plural: Hophnis
+
+1502.  Horam
+	Plural: Horams
+
+1503.  Horeb
+	Plural: Horebs
+
+1504.  Horem
+	Plural: Horems
+
+1505.  Horesh
+	Plural: Horeshes
+
+1506.  Hori
+	Plural: Horis
+
+1507.  Horite
+	Plural: Horites
+
+1508.  Hormah
+	Plural: Hormahs
+
+1509.  horn
+	Plural: horns
+
+1510.  hornet
+	Plural: hornets
+
+1511.  Horon
+	Plural: Horons
+
+1512.  Horonaim
+	Plural: Horonaims
+
+1513.  horse
+	Plural: horses
+
+1514.  Hosah
+	Plural: Hosahs
+
+1515.  Hosanna
+	Plural: Hosannas
+
+1516.  Hosea
+	Plural: Hoseas
+
+1517.  Hoshaiah
+	Plural: Hoshaiahs
+
+1518.  Hoshea
+	Plural: Hosheas
+
+1519.  hour
+	Plural: hours
+
+1520.  house
+	Plural: houses
+
+1521.  House of the Forest of Lebanon
+	Plural: Houses of the Forest of Lebanon
+
+1522.  Hukkok
+	Plural: Hukkoks
+
+1523.  Hul
+	Plural: Huls
+
+1524.  human
+	Plural: humans
+
+1525.  Humtah
+	Plural: Humtahs
+
+1526.  Huppim
+	Plural: Huppims
+
+1527.  Hur
+	Plural: Hurs
+
+1528.  husband
+	Plural: husbands
+
+1529.  Hushah
+	Plural: Hushahs
+
+1530.  Hushai
+	Plural: Hushais
+
+1531.  Husham
+	Plural: Hushams
+
+1532.  Hushath
+	Plural: Hushaths
+
+1533.  Hushim
+	Plural: Hushims
+
+1534.  hymn
+	Plural: hymns
+
+1535.  hypocrite
+	Plural: hypocrites
+
+1536.  I AM
+	Plural: Is AM
+
+1537.  Ibhar
+	Plural: Ibhars
+
+1538.  Ibleam
+	Plural: Ibleams
+
+1539.  Ibzan
+	Plural: Ibzans
+
+1540.  ice
+	Plural: ice
+
+1541.  Ichabod
+	Plural: Ichabods
+
+1542.  Iconium
+	Plural: Iconiums
+
+1543.  Idalah
+	Plural: Idalahs
+
+1544.  Iddo
+	Plural: Iddos
+
+1545.  idea
+	Plural: ideas
+
+1546.  idol
+	Plural: idols
+
+1547.  Idumea
+	Plural: Idumeas
+
+1548.  Igal
+	Plural: Igals
+
+1549.  Iim
+	Plural: Iims
+
+1550.  Ikkesh
+	Plural: Ikkeshes
+
+1551.  illness
+	Plural: illnesses
+
+1552.  Ilym
+	Plural: Ilyms
+
+1553.  image
+	Plural: images
+
+1554.  Immanuel
+	Plural: Immanuels
+
+1555.  Immer
+	Plural: Immers
+
+1556.  Immer
+	Plural: Immers
+
+1557.  Imnah
+	Plural: Imnahs
+
+1558.  Imri
+	Plural: Imris
+
+1559.  incense
+	Plural: incense
+
+1560.  inch
+	Plural: inches
+
+1561.  India
+	Plural: Indias
+
+1562.  information
+	Plural: information
+
+1563.  Iniko
+	Plural: Inikos
+
+1564.  injury
+	Plural: injuries
+
+1565.  inn
+	Plural: inns
+
+1566.  insect
+	Plural: insects
+
+1567.  inside
+	Plural: insides
+
+1568.  instruction
+	Plural: instructions
+
+1569.  instrument
+	Plural: instruments
+
+1570.  interest
+	Plural: interest
+
+1571.  intestine
+	Plural: intestines
+
+1572.  Iphtah
+	Plural: Iphtahs
+
+1573.  Ira
+	Plural: Iras
+
+1574.  Irad
+	Plural: Irads
+
+1575.  Iram
+	Plural: Irams
+
+1576.  iron
+	Plural: iron
+
+1577.  Iron
+	Plural: Irons
+
+1578.  Irpeel
+	Plural: Irpeels
+
+1579.  Ir Shemesh
+	Plural: Irs Shemesh
+
+1580.  Isaac
+	Plural: Isaacs
+
+1581.  Isaiah
+	Plural: Isaiahs
+
+1582.  Isak
+	Plural: Isaks
+
+1583.  Iscah
+	Plural: Iscahs
+
+1584.  Ish-Bosheth
+	Plural: Ish-Bosheths
+
+1585.  Ishbak
+	Plural: Ishbaks
+
+1586.  Ishbi-Benob
+	Plural: Ishbi-Benobs
+
+1587.  Ishmael
+	Plural: Ishmaels
+
+1588.  Ishmaelite
+	Plural: Ishmaelites
+
+1589.  Ishvah
+	Plural: Ishvahs
+
+1590.  Ishvi
+	Plural: Ishvis
+
+1591.  island
+	Plural: islands
+
+1592.  Israel
+	Plural: Israels
+
+1593.  Israel
+	Plural: Israels
+
+1594.  Israelite
+	Plural: Israelites
+
+1595.  Issachar
+	Plural: Issachars
+
+1596.  it
+	Plural: its
+
+1597.  Italy
+	Plural: Italies
+
+1598.  Ithai
+	Plural: Ithais
+
+1599.  Ithamar
+	Plural: Ithamars
+
+1600.  Ithiel
+	Plural: Ithiels
+
+1601.  Ithlah
+	Plural: Ithlahs
+
+1602.  Ithnan
+	Plural: Ithnans
+
+1603.  Ithran
+	Plural: Ithrans
+
+1604.  Ithream
+	Plural: Ithreams
+
+1605.  Ittai
+	Plural: Ittais
+
+1606.  Iturea
+	Plural: Itureas
+
+1607.  ivory
+	Plural: ivory
+
+1608.  Izhar
+	Plural: Izhars
+
+1609.  Jaala
+	Plural: Jaalas
+
+1610.  Jabal
+	Plural: Jabals
+
+1611.  Jabbok
+	Plural: Jabboks
+
+1612.  Jabesh
+	Plural: Jabeshes
+
+1613.  Jabesh Gilead
+	Plural: Jabeshes
+
+1614.  Jabin
+	Plural: Jabins
+
+1615.  Jabneel
+	Plural: Jabneels
+
+1616.  jackal
+	Plural: jackals
+
+1617.  Jacob
+	Plural: Jacobs
+
+1618.  Jaddu
+	Plural: Jaddus
+
+1619.  Jaddua
+	Plural: Jadduas
+
+1620.  Jadon
+	Plural: Jadons
+
+1621.  Jael
+	Plural: Jaels
+
+1622.  Jagur
+	Plural: Jagurs
+
+1623.  Jahaz
+	Plural: Jahazs
+
+1624.  Jahleel
+	Plural: Jahleels
+
+1625.  Jahziel
+	Plural: Jahziels
+
+1626.  Jair
+	Plural: Jairs
+
+1627.  Jair
+	Plural: Jairs
+
+1628.  Jairus
+	Plural: Jairuses
+
+1629.  Jakeh
+	Plural: Jakehs
+
+1630.  Jakin
+	Plural: Jakins
+
+1631.  Jalam
+	Plural: Jalams
+
+1632.  James
+	Plural: Jameses
+
+1633.  Jamin
+	Plural: Jamins
+
+1634.  Janet
+	Plural: Janets
+
+1635.  Janim
+	Plural: Janims
+
+1636.  Jannai
+	Plural: Jannais
+
+1637.  Janoah
+	Plural: Janoahs
+
+1638.  Japheth
+	Plural: Japheths
+
+1639.  Japhia
+	Plural: Japhias
+
+1640.  Japhia
+	Plural: Japhias
+
+1641.  Japhletite
+	Plural: Japhletites
+
+1642.  jar
+	Plural: jars
+
+1643.  Jared
+	Plural: Jareds
+
+1644.  Jarmuth
+	Plural: Jarmuths
+
+1645.  Jashar
+	Plural: Jashars
+
+1646.  Jashen
+	Plural: Jashens
+
+1647.  Jashub
+	Plural: Jashubs
+
+1648.  Jason
+	Plural: Jasons
+
+1649.  Jattir
+	Plural: Jattirs
+
+1650.  Javan
+	Plural: Javans
+
+1651.  jaw
+	Plural: jaws
+
+1652.  Jazar
+	Plural: Jazars
+
+1653.  Jazer
+	Plural: Jazers
+
+1654.  Jebusite
+	Plural: Jebusites
+
+1655.  Jeconiah
+	Plural: Jeconiahs
+
+1656.  Jedaiah
+	Plural: Jedaiahs
+
+1657.  Jedidiah
+	Plural: Jedidiahs
+
+1658.  Jeduthun
+	Plural: Jeduthuns
+
+1659.  Jegar Sahadutha
+	Plural: Jegars Sahadutha
+
+1660.  Jehohanan
+	Plural: Jehohanans
+
+1661.  Jehoiachin
+	Plural: Jehoiachins
+
+1662.  Jehoiada
+	Plural: Jehoiadas
+
+1663.  Jehoiakim
+	Plural: Jehoiakims
+
+1664.  Jehonathan
+	Plural: Jehonathans
+
+1665.  Jehoram
+	Plural: Jehorams
+
+1666.  Jehoshaphat
+	Plural: Jehoshaphats
+
+1667.  Jehovah Jireh
+	Plural: Jehovah Jireh
+
+1668.  Jehovah Nissi
+	Plural: Jehovahs Nissi
+
+1669.  Jehud
+	Plural: Jehuds
+
+1670.  Jekabzeel
+	Plural: Jekabzeels
+
+1671.  Jemuel
+	Plural: Jemuels
+
+1672.  Jephthah
+	Plural: Jephthahs
+
+1673.  Jephunneh
+	Plural: Jephunnehs
+
+1674.  Jerah
+	Plural: Jerahs
+
+1675.  Jerahmeel
+	Plural: Jerahmeels
+
+1676.  Jerahmeelite
+	Plural: Jerahmeelites
+
+1677.  Jeremiah
+	Plural: Jeremiahs
+
+1678.  Jericho
+	Plural: Jerichos
+
+1679.  Jeroboam
+	Plural: Jeroboams
+
+1680.  Jeroham
+	Plural: Jerohams
+
+1681.  Jerub-Baal
+	Plural: Jerub-Baals
+
+1682.  Jerub-Besheth
+	Plural: Jerub-Besheths
+
+1683.  Jerusalem
+	Plural: Jerusalems
+
+1684.  Jeshaiah
+	Plural: Jeshaiahs
+
+1685.  Jeshimon
+	Plural: Jeshimons
+
+1686.  Jeshua
+	Plural: Jeshuas
+
+1687.  Jeshua
+	Plural: Jeshuas
+
+1688.  Jesse
+	Plural: Jesses
+
+1689.  Jesus
+	Plural: Jesuses
+
+1690.  Jesus-Barabbas
+	Plural: Jesus-Barabbases
+
+1691.  Jether
+	Plural: Jethers
+
+1692.  Jetheth
+	Plural: Jetheths
+
+1693.  Jethro
+	Plural: Jethros
+
+1694.  Jetur
+	Plural: Jeturs
+
+1695.  Jeush
+	Plural: Jeushes
+
+1696.  Jew
+	Plural: Jews
+
+1697.  jewel
+	Plural: jewels
+
+1698.  jewelry
+	Plural: jewelry
+
+1699.  Jezebel
+	Plural: Jezebels
+
+1700.  Jezer
+	Plural: Jezers
+
+1701.  Jezrahiah
+	Plural: Jezrahiahs
+
+1702.  Jezreel
+	Plural: Jezreels
+
+1703.  Jidlaph
+	Plural: Jidlaphs
+
+1704.  Joab
+	Plural: Joabs
+
+1705.  Joanan
+	Plural: Joanans
+
+1706.  Joanna
+	Plural: Joannas
+
+1707.  Joash
+	Plural: Joashes
+
+1708.  job
+	Plural: jobs
+
+1709.  Jobab
+	Plural: Jobabs
+
+1710.  Jochebed
+	Plural: Jochebeds
+
+1711.  Joda
+	Plural: Jodas
+
+1712.  Joed
+	Plural: Joeds
+
+1713.  Joel
+	Plural: Joels
+
+1714.  Jogbehah
+	Plural: Jogbehahs
+
+1715.  Johanan
+	Plural: Johanans
+
+1716.  John
+	Plural: Johns
+
+1717.  Joiada
+	Plural: Joiadas
+
+1718.  Joiakim
+	Plural: Joiakims
+
+1719.  Joiarib
+	Plural: Joiaribs
+
+1720.  Jokdeam
+	Plural: Jokdeams
+
+1721.  joke
+	Plural: jokes
+
+1722.  Jokmeam
+	Plural: Jokmeams
+
+1723.  Jokneam
+	Plural: Jokneams
+
+1724.  Jokshan
+	Plural: Jokshans
+
+1725.  Joktan
+	Plural: Joktans
+
+1726.  Joktheel
+	Plural: Joktheels
+
+1727.  Jonadab
+	Plural: Jonadabs
+
+1728.  Jonah
+	Plural: Jonahs
+
+1729.  Jonam
+	Plural: Jonams
+
+1730.  Jonathan
+	Plural: Jonathans
+
+1731.  Joppa
+	Plural: Joppas
+
+1732.  Joram
+	Plural: Jorams
+
+1733.  Jordan
+	Plural: Jordans
+
+1734.  Jordan Valley
+	Plural: Jordans Valley
+
+1735.  Jorim
+	Plural: Jorims
+
+1736.  Josech
+	Plural: Joseches
+
+1737.  Joseph
+	Plural: Josephs
+
+1738.  Josheb-Basshebeth
+	Plural: Josheb-Basshebeths
+
+1739.  Joshua
+	Plural: Joshuas
+
+1740.  Josiah
+	Plural: Josiahs
+
+1741.  Jotham
+	Plural: Jothams
+
+1742.  joy
+	Plural: joy
+
+1743.  Jozabad
+	Plural: Jozabads
+
+1744.  Jozadak
+	Plural: Jozadaks
+
+1745.  Jubal
+	Plural: Jubals
+
+1746.  Judah
+	Plural: Judahs
+
+1747.  Judah
+	Plural: Judahs
+
+1748.  Judas
+	Plural: Judases
+
+1749.  Judas Iscariot
+	Plural: Judases
+
+1750.  Jude
+	Plural: Judes
+
+1751.  Jude
+	Plural: Jude
+
+1752.  Judea
+	Plural: Judeas
+
+1753.  judge
+	Plural: judges
+
+1754.  Judges
+	Plural: Judgeses
+
+1755.  Judith
+	Plural: Judiths
+
+1756.  Julius
+	Plural: Juliuses
+
+1757.  Jumoke
+	Plural: Jumokes
+
+1758.  June
+	Plural: Junes
+
+1759.  justice
+	Plural: justice
+
+1760.  Justus
+	Plural: Justuses
+
+1761.  Juttah
+	Plural: Juttahs
+
+1762.  Kabbon
+	Plural: Kabbons
+
+1763.  Kabul
+	Plural: Kabuls
+
+1764.  Kabzeel
+	Plural: Kabzeels
+
+1765.  Kadesh
+	Plural: Kadeshes
+
+1766.  Kadesh Barnea
+	Plural: Kadeshes
+
+1767.  Kadmiel
+	Plural: Kadmiels
+
+1768.  Kadmonite
+	Plural: Kadmonites
+
+1769.  Kain
+	Plural: Kains
+
+1770.  Kalkol
+	Plural: Kalkols
+
+1771.  Kallai
+	Plural: Kallais
+
+1772.  Kamon
+	Plural: Kamons
+
+1773.  Kanah
+	Plural: Kanahs
+
+1774.  Kande
+	Plural: Kandes
+
+1775.  Karka
+	Plural: Karkas
+
+1776.  Karkor
+	Plural: Karkors
+
+1777.  Karmi
+	Plural: Karmis
+
+1778.  Karshena
+	Plural: Karshenas
+
+1779.  Kartah
+	Plural: Kartahs
+
+1780.  Kartan
+	Plural: Kartans
+
+1781.  Kattath
+	Plural: Kattaths
+
+1782.  Kedar
+	Plural: Kedars
+
+1783.  Kedar
+	Plural: Kedars
+
+1784.  Kedemah
+	Plural: Kedemahs
+
+1785.  Kedemoth
+	Plural: Kedemoths
+
+1786.  Kedesh
+	Plural: Kedeshes
+
+1787.  Kedorlaomer
+	Plural: Kedorlaomers
+
+1788.  Keilah
+	Plural: Keilahs
+
+1789.  Kelita
+	Plural: Kelitas
+
+1790.  Kemuel
+	Plural: Kemuels
+
+1791.  Kenan
+	Plural: Kenans
+
+1792.  Kenani
+	Plural: Kenanis
+
+1793.  Kenaz
+	Plural: Kenazs
+
+1794.  Kenite
+	Plural: Kenites
+
+1795.  Kenizzite
+	Plural: Kenizzites
+
+1796.  Kephar Ammoni
+	Plural: Kephars Ammoni
+
+1797.  Kephirah
+	Plural: Kephirahs
+
+1798.  Keran
+	Plural: Kerans
+
+1799.  Kereth
+	Plural: Kereths
+
+1800.  Kerethite
+	Plural: Kerethites
+
+1801.  Kerioth Hezron
+	Plural: Kerioths Hezron
+
+1802.  Keros
+	Plural: Keroses
+
+1803.  Kerub
+	Plural: Kerubs
+
+1804.  Kesed
+	Plural: Keseds
+
+1805.  Kesil
+	Plural: Kesils
+
+1806.  Kesulloth
+	Plural: Kesulloths
+
+1807.  Keturah
+	Plural: Keturahs
+
+1808.  key
+	Plural: keys   (suppletive)
+
+1809.  Kezib
+	Plural: Kezibs
+
+1810.  Kibzaim
+	Plural: Kibzaims
+
+1811.  kidney
+	Plural: kidneys   (suppletive)
+
+1812.  Kileab
+	Plural: Kileabs
+
+1813.  Kilion
+	Plural: Kilions
+
+1814.  kilogram
+	Plural: kilograms
+
+1815.  kilometer
+	Plural: kilometers
+
+1816.  Kimham
+	Plural: Kimhams
+
+1817.  Kinah
+	Plural: Kinahs
+
+1818.  kind
+	Plural: kinds
+
+1819.  king
+	Plural: kings
+
+1820.  King
+	Plural: Kings
+
+1821.  kingdom
+	Plural: kingdoms
+
+1822.  Kinnereth
+	Plural: Kinnereths
+
+1823.  Kiriath
+	Plural: Kiriaths
+
+1824.  Kiriath-Arba
+	Plural: Kiriath-Arbas
+
+1825.  Kiriath-Sepher
+	Plural: Kiriath-Sephers
+
+1826.  Kiriathaim
+	Plural: Kiriathaims
+
+1827.  Kiriath Baal
+	Plural: Kiriaths Baal
+
+1828.  Kiriath Jearim
+	Plural: Kiriaths Jearim
+
+1829.  Kiriath Sannah
+	Plural: Kiriaths Sannah
+
+1830.  Kish
+	Plural: Kishes
+
+1831.  Kishion
+	Plural: Kishions
+
+1832.  Kishon
+	Plural: Kishons
+
+1833.  Kislev
+	Plural: Kislevs
+
+1834.  Kisloth Tabor
+	Plural: Kisloths Tabor
+
+1835.  Kitlish
+	Plural: Kitlishes
+
+1836.  Kitron
+	Plural: Kitrons
+
+1837.  Kittite
+	Plural: Kittites
+
+1838.  knee
+	Plural: knees
+
+1839.  knife
+	Plural: knives   (suppletive)
+
+1840.  knowledge
+	Plural: knowledge
+
+1841.  Kohath
+	Plural: Kohaths
+
+1842.  Kol-Hozeh
+	Plural: Kol-Hozehs
+
+1843.  Kolaiah
+	Plural: Kolaiahs
+
+1844.  Korah
+	Plural: Korahs
+
+1845.  Korazin
+	Plural: Korazins
+
+1846.  Kos
+	Plural: Koses
+
+1847.  Kue
+	Plural: Kues
+
+1848.  Laban
+	Plural: Labans
+
+1849.  Lachish
+	Plural: Lachishes
+
+1850.  ladder
+	Plural: ladders
+
+1851.  Lahmas
+	Plural: Lahmases
+
+1852.  Laish
+	Plural: Laishes
+
+1853.  lake
+	Plural: lakes
+
+1854.  Lake Galilee
+	Plural: Lakes Galilee
+
+1855.  Lake Gennesaret
+	Plural: Lakes Gennesaret
+
+1856.  Lakkum
+	Plural: Lakkums
+
+1857.  lamb
+	Plural: lambs
+
+1858.  Lamech
+	Plural: Lameches
+
+1859.  lamp
+	Plural: lamps
+
+1860.  land
+	Plural: land
+
+1861.  language
+	Plural: languages
+
+1862.  Laodice
+	Plural: Laodices
+
+1863.  Laodicea
+	Plural: Laodiceas
+
+1864.  Lappidoth
+	Plural: Lappidoths
+
+1865.  Lasea
+	Plural: Laseas
+
+1866.  Lasha
+	Plural: Lashas
+
+1867.  Lasharon
+	Plural: Lasharons
+
+1868.  law
+	Plural: laws
+
+1869.  Law
+	Plural: Laws
+
+1870.  lawyer
+	Plural: lawyers
+
+1871.  layer
+	Plural: layers
+
+1872.  Lazarus
+	Plural: Lazaruses
+
+1873.  lead
+	Plural: lead
+
+1874.  leader
+	Plural: leaders
+
+1875.  leaf
+	Plural: leaves   (suppletive)
+
+1876.  Leah
+	Plural: Leahs
+
+1877.  leather
+	Plural: leather
+
+1878.  Lebana
+	Plural: Lebanas
+
+1879.  Lebanon
+	Plural: Lebanons
+
+1880.  Lebanon Valley
+	Plural: Lebanons Valley
+
+1881.  Lebaoth
+	Plural: Lebaoths
+
+1882.  Lebo-Hamath
+	Plural: Lebo-Hamaths
+
+1883.  Lebonah
+	Plural: Lebonahs
+
+1884.  leg
+	Plural: legs
+
+1885.  Legion
+	Plural: Legions
+
+1886.  Lehabite
+	Plural: Lehabites
+
+1887.  Lehi
+	Plural: Lehis
+
+1888.  Lemuel
+	Plural: Lemuels
+
+1889.  length
+	Plural: lengths
+
+1890.  lentil
+	Plural: lentils
+
+1891.  leopard
+	Plural: leopards
+
+1892.  leprosy
+	Plural: leprosy
+
+1893.  Leshem
+	Plural: Leshems
+
+1894.  lesson
+	Plural: lessons
+
+1895.  letter
+	Plural: letters
+
+1896.  Letush
+	Plural: Letushes
+
+1897.  Letushite
+	Plural: Letushites
+
+1898.  Leum
+	Plural: Leums
+
+1899.  Leummite
+	Plural: Leummites
+
+1900.  Levi
+	Plural: Levis
+
+1901.  Levi
+	Plural: Levis
+
+1902.  Levite
+	Plural: Levites
+
+1903.  Leviticus
+	Plural: Leviticuses
+
+1904.  liar
+	Plural: liars
+
+1905.  Libnah
+	Plural: Libnahs
+
+1906.  Libni
+	Plural: Libnis
+
+1907.  Libya
+	Plural: Libyas
+
+1908.  lie
+	Plural: lies
+
+1909.  life
+	Plural: lives   (suppletive)
+
+1910.  ligament
+	Plural: ligaments
+
+1911.  light
+	Plural: light
+
+1912.  light
+	Plural: lights
+
+1913.  lightning
+	Plural: lightning
+
+1914.  lily
+	Plural: lilies
+
+1915.  line
+	Plural: lines
+
+1916.  linen
+	Plural: linen
+
+1917.  lion
+	Plural: lions
+
+1918.  lip
+	Plural: lips
+
+1919.  liquid
+	Plural: liquids
+
+1920.  list
+	Plural: lists
+
+1921.  liter
+	Plural: liters
+
+1922.  liver
+	Plural: livers
+
+1923.  livestock
+	Plural: livestock
+
+1924.  load
+	Plural: loads
+
+1925.  loaf
+	Plural: loaves   (suppletive)
+
+1926.  locust
+	Plural: locusts
+
+1927.  Lod
+	Plural: Lods
+
+1928.  Lo Debar
+	Plural: Los Debar
+
+1929.  Lord
+	Plural: Lords
+
+1930.  Lord
+	Plural: Lords
+
+1931.  LORD
+	Plural: LORDs
+
+1932.  lord
+	Plural: lords
+
+1933.  LORD Almighty
+	Plural: LORDs Almighty
+
+1934.  Lord Almighty
+	Plural: Lord Almighty
+
+1935.  Lord Jesus Christ
+	Plural: Lords Jesus Christ
+
+1936.  lot
+	Plural: lots
+
+1937.  Lot
+	Plural: Lots
+
+1938.  Lotan
+	Plural: Lotans
+
+1939.  love
+	Plural: love
+
+1940.  Lower Beth Horon
+	Plural: Lowers Beth Horon
+
+1941.  Lucius
+	Plural: Luciuses
+
+1942.  Lucius Cornelius Scipio Asiaticus
+	Plural: Luciuses
+
+1943.  Lud
+	Plural: Luds
+
+1944.  Ludite
+	Plural: Ludites
+
+1945.  Luke
+	Plural: Lukes
+
+1946.  Luz
+	Plural: Luzs
+
+1947.  Lycaonia
+	Plural: Lycaonias
+
+1948.  Lycia
+	Plural: Lycias
+
+1949.  Lydda
+	Plural: Lyddas
+
+1950.  Lydia
+	Plural: Lydias
+
+1951.  lyre
+	Plural: lyres
+
+1952.  Lysanias
+	Plural: Lysaniases
+
+1953.  Lysias
+	Plural: Lysiases
+
+1954.  Lystra
+	Plural: Lystras
+
+1955.  Maacah
+	Plural: Maacahs
+
+1956.  Maai
+	Plural: Maais
+
+1957.  Maakah
+	Plural: Maakahs
+
+1958.  Maakah
+	Plural: Maakahs
+
+1959.  Maarath
+	Plural: Maaraths
+
+1960.  Maaseiah
+	Plural: Maaseiahs
+
+1961.  Maath
+	Plural: Maaths
+
+1962.  Maaziah
+	Plural: Maaziahs
+
+1963.  Macedonia
+	Plural: Macedonias
+
+1964.  machine
+	Plural: machines
+
+1965.  Machpelah
+	Plural: Machpelahs
+
+1966.  Madai
+	Plural: Madais
+
+1967.  Madmannah
+	Plural: Madmannahs
+
+1968.  Madon
+	Plural: Madons
+
+1969.  Magadan
+	Plural: Magadans
+
+1970.  Magdalene
+	Plural: Magdalenes
+
+1971.  Magdiel
+	Plural: Magdiels
+
+1972.  maggot
+	Plural: maggots
+
+1973.  magic
+	Plural: magic
+
+1974.  magician
+	Plural: magicians
+
+1975.  Magog
+	Plural: Magogs
+
+1976.  Magpiash
+	Plural: Magpiashes
+
+1977.  Mahalalel
+	Plural: Mahalalels
+
+1978.  Mahalath
+	Plural: Mahalaths
+
+1979.  Mahanaim
+	Plural: Mahanaims
+
+1980.  Mahaneh Dan
+	Plural: Mahanehs Dan
+
+1981.  Maharai
+	Plural: Maharais
+
+1982.  Mahlah
+	Plural: Mahlahs
+
+1983.  Mahli
+	Plural: Mahlis
+
+1984.  Mahlon
+	Plural: Mahlons
+
+1985.  Mahol
+	Plural: Mahols
+
+1986.  Makaz
+	Plural: Makazs
+
+1987.  Makir
+	Plural: Makirs
+
+1988.  Makkedah
+	Plural: Makkedahs
+
+1989.  Malachi
+	Plural: Malachis
+
+1990.  Malachi
+	Plural: Malachis
+
+1991.  Malkiel
+	Plural: Malkiels
+
+1992.  Malkijah
+	Plural: Malkijahs
+
+1993.  Malki Shua
+	Plural: Malkis Shua
+
+1994.  Malluk
+	Plural: Malluks
+
+1995.  Malta
+	Plural: Maltas
+
+1996.  Mamre
+	Plural: Mamres
+
+1997.  Mamre
+	Plural: Mamres
+
+1998.  man
+	Plural: men   (suppletive)
+
+1999.  Manaen
+	Plural: Manaens
+
+2000.  manager
+	Plural: managers
+
+2001.  Manahath
+	Plural: Manahaths
+
+2002.  Manasseh
+	Plural: Manassehs
+
+2003.  manger
+	Plural: mangers
+
+2004.  manna
+	Plural: manna
+
+2005.  Manoah
+	Plural: Manoahs
+
+2006.  manure
+	Plural: manure
+
+2007.  manuscript
+	Plural: manuscripts
+
+2008.  Maok
+	Plural: Maoks
+
+2009.  Maon
+	Plural: Maons
+
+2010.  Maonite
+	Plural: Maonites
+
+2011.  Mara
+	Plural: Maras
+
+2012.  Marah
+	Plural: Marahs
+
+2013.  Maralah
+	Plural: Maralahs
+
+2014.  marble
+	Plural: marble
+
+2015.  March
+	Plural: Marches
+
+2016.  Mareshah
+	Plural: Mareshahs
+
+2017.  mark
+	Plural: marks
+
+2018.  Mark
+	Plural: Marks
+
+2019.  market
+	Plural: markets
+
+2020.  Market of Appius
+	Plural: Market of Appius
+
+2021.  marriage
+	Plural: marriages
+
+2022.  Marsena
+	Plural: Marsenas
+
+2023.  Martha
+	Plural: Marthas
+
+2024.  Mary
+	Plural: Maries
+
+2025.  Mary Magdalene
+	Plural: Maries
+
+2026.  mason
+	Plural: masons
+
+2027.  Masrekah
+	Plural: Masrekahs
+
+2028.  Massa
+	Plural: Massas
+
+2029.  Massah
+	Plural: Massahs
+
+2030.  master
+	Plural: masters
+
+2031.  mat
+	Plural: mats
+
+2032.  mate
+	Plural: mates
+
+2033.  Matred
+	Plural: Matreds
+
+2034.  Matri
+	Plural: Matris
+
+2035.  Mattaniah
+	Plural: Mattaniahs
+
+2036.  Mattatha
+	Plural: Mattathas
+
+2037.  Mattathias
+	Plural: Mattathiases
+
+2038.  Mattenai
+	Plural: Mattenais
+
+2039.  Matthan
+	Plural: Matthans
+
+2040.  Matthat
+	Plural: Matthats
+
+2041.  Matthew
+	Plural: Matthews
+
+2042.  Matthias
+	Plural: Matthiases
+
+2043.  Mattithiah
+	Plural: Mattithiahs
+
+2044.  Me-Zahab
+	Plural: Me-Zahabs
+
+2045.  meal
+	Plural: meals
+
+2046.  meaning
+	Plural: meanings
+
+2047.  meat
+	Plural: meat
+
+2048.  Medan
+	Plural: Medans
+
+2049.  Medeba
+	Plural: Medebas
+
+2050.  Media
+	Plural: Medias
+
+2051.  medicine
+	Plural: medicine
+
+2052.  Mediterranean
+	Plural: Mediterraneans
+
+2053.  meeting
+	Plural: meetings
+
+2054.  Megiddo
+	Plural: Megiddos
+
+2055.  Mehetabel
+	Plural: Mehetabels
+
+2056.  Mehida
+	Plural: Mehidas
+
+2057.  Meholah
+	Plural: Meholahs
+
+2058.  Meholah
+	Plural: Meholahs
+
+2059.  Mehujael
+	Plural: Mehujaels
+
+2060.  Mehuman
+	Plural: Mehumans
+
+2061.  Me Jarkon
+	Plural: Mes Jarkon
+
+2062.  Mekonah
+	Plural: Mekonahs
+
+2063.  Melatiah
+	Plural: Melatiahs
+
+2064.  Melchi
+	Plural: Melchis
+
+2065.  Melchizedek
+	Plural: Melchizedeks
+
+2066.  Melea
+	Plural: Meleas
+
+2067.  Melissa
+	Plural: Melissas
+
+2068.  Melki
+	Plural: Melkis
+
+2069.  member
+	Plural: members
+
+2070.  Memukan
+	Plural: Memukans
+
+2071.  Mene
+	Plural: Mene
+
+2072.  Menna
+	Plural: Mennas
+
+2073.  Mephaath
+	Plural: Mephaaths
+
+2074.  Mephibosheth
+	Plural: Mephibosheths
+
+2075.  Merab
+	Plural: Merabs
+
+2076.  Meraiah
+	Plural: Meraiahs
+
+2077.  Meraioth
+	Plural: Meraioths
+
+2078.  Merar
+	Plural: Merars
+
+2079.  Merari
+	Plural: Meraris
+
+2080.  merchandise
+	Plural: merchandise
+
+2081.  merchant
+	Plural: merchants
+
+2082.  mercy
+	Plural: mercy
+
+2083.  Meremoth
+	Plural: Meremoths
+
+2084.  Meres
+	Plural: Mereses
+
+2085.  Meribah
+	Plural: Meribahs
+
+2086.  Meronoth
+	Plural: Meronoths
+
+2087.  Meroz
+	Plural: Merozs
+
+2088.  Mesha
+	Plural: Meshas
+
+2089.  Meshach
+	Plural: Meshaches
+
+2090.  Meshech
+	Plural: Mesheches
+
+2091.  Meshech
+	Plural: Mesheches
+
+2092.  Meshezabel
+	Plural: Meshezabels
+
+2093.  Meshillemoth
+	Plural: Meshillemoths
+
+2094.  Meshullam
+	Plural: Meshullams
+
+2095.  Mesopotamia
+	Plural: Mesopotamias
+
+2096.  message
+	Plural: messages
+
+2097.  messenger
+	Plural: messengers
+
+2098.  Messiah
+	Plural: Messiahs
+
+2099.  metal
+	Plural: metal
+
+2100.  meter
+	Plural: meters
+
+2101.  Metheg Ammah
+	Plural: Methegs Ammah
+
+2102.  Methuselah
+	Plural: Methuselahs
+
+2103.  Methushael
+	Plural: Methushaels
+
+2104.  Meunim
+	Plural: Meunims
+
+2105.  Mibsam
+	Plural: Mibsams
+
+2106.  Mibzar
+	Plural: Mibzars
+
+2107.  Micah
+	Plural: Micahs
+
+2108.  Micaiah
+	Plural: Micaiahs
+
+2109.  Michael
+	Plural: Michaels
+
+2110.  Michal
+	Plural: Michals
+
+2111.  Middin
+	Plural: Middins
+
+2112.  middle
+	Plural: middles
+
+2113.  Middle East
+	Plural: Middles East
+
+2114.  Midian
+	Plural: Midians
+
+2115.  Midian
+	Plural: Midians
+
+2116.  Midianite
+	Plural: Midianites
+
+2117.  midnight
+	Plural: midnight
+
+2118.  midwife
+	Plural: midwives   (suppletive)
+
+2119.  Migdal-Eder
+	Plural: Migdal-Eders
+
+2120.  Migdal El
+	Plural: Migdals El
+
+2121.  Migdal Gad
+	Plural: Migdals Gad
+
+2122.  Migdol
+	Plural: Migdols
+
+2123.  Migron
+	Plural: Migrons
+
+2124.  Mijamin
+	Plural: Mijamins
+
+2125.  Mika
+	Plural: Mikas
+
+2126.  Mikmash
+	Plural: Mikmashes
+
+2127.  Mikmethath
+	Plural: Mikmethaths
+
+2128.  Milalai
+	Plural: Milalais
+
+2129.  Milcah
+	Plural: Milcahs
+
+2130.  mile
+	Plural: miles
+
+2131.  Miletus
+	Plural: Miletuses
+
+2132.  milk
+	Plural: milk
+
+2133.  Milkah
+	Plural: Milkahs
+
+2134.  Millo
+	Plural: Millos
+
+2135.  mina
+	Plural: minas
+
+2136.  mind
+	Plural: minds
+
+2137.  Miniamin
+	Plural: Miniamins
+
+2138.  Minnith
+	Plural: Minniths
+
+2139.  mint
+	Plural: mint
+
+2140.  minute
+	Plural: minutes
+
+2141.  miracle
+	Plural: miracles
+
+2142.  Miriam
+	Plural: Miriams
+
+2143.  Mishael
+	Plural: Mishaels
+
+2144.  Mishal
+	Plural: Mishals
+
+2145.  Mishma
+	Plural: Mishmas
+
+2146.  Mispereth
+	Plural: Mispereths
+
+2147.  Misrephoth Maim
+	Plural: Misrephoths Maim
+
+2148.  mistake
+	Plural: mistakes
+
+2149.  Mitylene
+	Plural: Mitylenes
+
+2150.  Mizpah
+	Plural: Mizpahs
+
+2151.  Mizraim
+	Plural: Mizraims
+
+2152.  Mizzah
+	Plural: Mizzahs
+
+2153.  Mnason
+	Plural: Mnasons
+
+2154.  Moab
+	Plural: Moabs
+
+2155.  Moabite
+	Plural: Moabites
+
+2156.  Moadiah
+	Plural: Moadiahs
+
+2157.  moat
+	Plural: moats
+
+2158.  model
+	Plural: models
+
+2159.  Moladah
+	Plural: Moladahs
+
+2160.  mold
+	Plural: mold
+
+2161.  Molech
+	Plural: Moleches
+
+2162.  money
+	Plural: money
+
+2163.  month
+	Plural: months
+
+2164.  moon
+	Plural: moons
+
+2165.  Mordecai
+	Plural: Mordecais
+
+2166.  Moreh
+	Plural: Morehs
+
+2167.  Moriah
+	Plural: Moriahs
+
+2168.  morning
+	Plural: mornings
+
+2169.  mortar
+	Plural: mortar
+
+2170.  Moses
+	Plural: Moseses
+
+2171.  Most Holy Place
+	Plural: Mosts Holy Place
+
+2172.  moth
+	Plural: moths
+
+2173.  mother
+	Plural: mothers
+
+2174.  mother-in-law
+	Plural: mothers-in-law   (suppletive)
+
+2175.  motive
+	Plural: motives
+
+2176.  Mount Adummim
+	Plural: Mounts Adummim
+
+2177.  mountain
+	Plural: mountains
+
+2178.  Mount Baal-Hermon
+	Plural: Mounts Baal-Hermon
+
+2179.  Mount Baalah
+	Plural: Mounts Baalah
+
+2180.  Mount Carmel
+	Plural: Mounts Carmel
+
+2181.  Mount Ebal
+	Plural: Mounts Ebal
+
+2182.  Mount Edom
+	Plural: Mounts Edom
+
+2183.  Mount Ephron
+	Plural: Mounts Ephron
+
+2184.  Mount Gaash
+	Plural: Mounts Gaash
+
+2185.  Mount Gerizim
+	Plural: Mounts Gerizim
+
+2186.  Mount Gilboa
+	Plural: Mounts Gilboa
+
+2187.  Mount Gilead
+	Plural: Mounts Gilead
+
+2188.  Mount Halak
+	Plural: Mounts Halak
+
+2189.  Mount Heres
+	Plural: Mounts Heres
+
+2190.  Mount Hermon
+	Plural: Mounts Hermon
+
+2191.  Mount Horeb
+	Plural: Mounts Horeb
+
+2192.  Mount Jearim
+	Plural: Mounts Jearim
+
+2193.  Mount Kesalon
+	Plural: Mounts Kesalon
+
+2194.  Mount of Olives
+	Plural: Mounts of Olives
+
+2195.  Mount Paran
+	Plural: Mounts Paran
+
+2196.  Mount Pisgah
+	Plural: Mounts Pisgah
+
+2197.  Mount Seir
+	Plural: Mounts Seir
+
+2198.  Mount Sinai
+	Plural: Mounts Sinai
+
+2199.  Mount Tabor
+	Plural: Mounts Tabor
+
+2200.  Mount Zalmon
+	Plural: Mounts Zalmon
+
+2201.  Mount Zion
+	Plural: Mounts Zion
+
+2202.  mouth
+	Plural: mouths
+
+2203.  Mozah
+	Plural: Mozahs
+
+2204.  mud
+	Plural: mud
+
+2205.  mule
+	Plural: mules
+
+2206.  Muppim
+	Plural: Muppims
+
+2207.  muscle
+	Plural: muscles
+
+2208.  Mushi
+	Plural: Mushis
+
+2209.  music
+	Plural: music
+
+2210.  Myra
+	Plural: Myras
+
+2211.  myrrh
+	Plural: myrrh
+
+2212.  Mysia
+	Plural: Mysias
+
+2213.  mystery
+	Plural: mysteries
+
+2214.  Naamah
+	Plural: Naamahs
+
+2215.  Naaman
+	Plural: Naamans
+
+2216.  Naarah
+	Plural: Naarahs
+
+2217.  Nabal
+	Plural: Nabals
+
+2218.  Nadab
+	Plural: Nadabs
+
+2219.  Naggai
+	Plural: Naggais
+
+2220.  Nahalal
+	Plural: Nahalals
+
+2221.  Nahalol
+	Plural: Nahalols
+
+2222.  Nahamani
+	Plural: Nahamanis
+
+2223.  Naharai
+	Plural: Naharais
+
+2224.  Nahash
+	Plural: Nahashes
+
+2225.  Nahath
+	Plural: Nahaths
+
+2226.  Nahor
+	Plural: Nahors
+
+2227.  Nahshon
+	Plural: Nahshons
+
+2228.  Nahum
+	Plural: Nahums
+
+2229.  nail
+	Plural: nails
+
+2230.  Nain
+	Plural: Nains
+
+2231.  Naioth
+	Plural: Naioths
+
+2232.  Nakon
+	Plural: Nakons
+
+2233.  name
+	Plural: names
+
+2234.  Name
+	Plural: Names
+
+2235.  Nano
+	Plural: Nanos
+
+2236.  Naomi
+	Plural: Naomis
+
+2237.  Naphish
+	Plural: Naphishes
+
+2238.  Naphoth
+	Plural: Naphoths
+
+2239.  Naphoth Dor
+	Plural: Naphoths Dor
+
+2240.  Naphtali
+	Plural: Naphtalis
+
+2241.  Naphtuhite
+	Plural: Naphtuhites
+
+2242.  nard
+	Plural: nards
+
+2243.  Nathan
+	Plural: Nathans
+
+2244.  Nathanael
+	Plural: Nathanaels
+
+2245.  nation
+	Plural: nations
+
+2246.  Nazareth
+	Plural: Nazareths
+
+2247.  Nazirite
+	Plural: Nazirites
+
+2248.  Neah
+	Plural: Neahs
+
+2249.  Neapolis
+	Plural: Neapolises
+
+2250.  Nebai
+	Plural: Nebais
+
+2251.  Nebaioth
+	Plural: Nebaioths
+
+2252.  Neballat
+	Plural: Neballats
+
+2253.  Nebo
+	Plural: Nebos
+
+2254.  Nebuchadnezzar
+	Plural: Nebuchadnezzars
+
+2255.  neck
+	Plural: necks
+
+2256.  necklace
+	Plural: necklaces
+
+2257.  needle
+	Plural: needles
+
+2258.  Negev
+	Plural: Negevs
+
+2259.  Nehemiah
+	Plural: Nehemiahs
+
+2260.  Nehum
+	Plural: Nehums
+
+2261.  Neiel
+	Plural: Neiels
+
+2262.  neighbor
+	Plural: neighbors
+
+2263.  Nekoda
+	Plural: Nekodas
+
+2264.  Nepheg
+	Plural: Nephegs
+
+2265.  nephew
+	Plural: nephews
+
+2266.  Nephilim
+	Plural: Nephilim   (suppletive)
+
+2267.  Nephtoah
+	Plural: Nephtoahs
+
+2268.  Nephusim
+	Plural: Nephusims
+
+2269.  Ner
+	Plural: Ners
+
+2270.  Neri
+	Plural: Neris
+
+2271.  nerve
+	Plural: nerves
+
+2272.  nest
+	Plural: nests
+
+2273.  net
+	Plural: nets
+
+2274.  Nethanel
+	Plural: Nethanels
+
+2275.  Netophah
+	Plural: Netophahs
+
+2276.  Netophath
+	Plural: Netophaths
+
+2277.  Netty
+	Plural: Netties
+
+2278.  New Moon
+	Plural: New Moon
+
+2279.  news
+	Plural: news
+
+2280.  Neziah
+	Plural: Neziahs
+
+2281.  Nezib
+	Plural: Nezibs
+
+2282.  Nibshan
+	Plural: Nibshans
+
+2283.  Nicanor
+	Plural: Nicanors
+
+2284.  Nicator
+	Plural: Nicators
+
+2285.  Nicodemus
+	Plural: Nicodemuses
+
+2286.  Nicolas
+	Plural: Nicolases
+
+2287.  Nicopolis
+	Plural: Nicopolises
+
+2288.  Niger
+	Plural: Nigers
+
+2289.  night
+	Plural: nights
+
+2290.  Nile
+	Plural: Niles
+
+2291.  Nimrod
+	Plural: Nimrods
+
+2292.  Nina
+	Plural: Ninas
+
+2293.  Nineveh
+	Plural: Ninevehs
+
+2294.  Nisan
+	Plural: Nisans
+
+2295.  Noadiah
+	Plural: Noadiahs
+
+2296.  Noah
+	Plural: Noahs
+
+2297.  Nob
+	Plural: Nobs
+
+2298.  Nobah
+	Plural: Nobahs
+
+2299.  noble
+	Plural: nobles
+
+2300.  Nod
+	Plural: Nods
+
+2301.  noise
+	Plural: noises
+
+2302.  noon
+	Plural: noon
+
+2303.  North
+	Plural: North
+
+2304.  north
+	Plural: north
+
+2305.  nose
+	Plural: noses
+
+2306.  November
+	Plural: Novembers
+
+2307.  number
+	Plural: numbers
+
+2308.  Numbers
+	Plural: Numbers
+
+2309.  Nun
+	Plural: Nuns
+
+2310.  nurse
+	Plural: nurses
+
+2311.  Nympha
+	Plural: Nymphas
+
+2312.  oath
+	Plural: oaths
+
+2313.  Obadiah
+	Plural: Obadiahs
+
+2314.  Obal
+	Plural: Obals
+
+2315.  Obed
+	Plural: Obeds
+
+2316.  Obed-Edom
+	Plural: Obed-Edoms
+
+2317.  object
+	Plural: objects
+
+2318.  ocean
+	Plural: oceans
+
+2319.  offering
+	Plural: offerings
+
+2320.  offering burnt
+	Plural: offerings
+
+2321.  offering drink
+	Plural: offerings
+
+2322.  offering fellowship
+	Plural: offerings
+
+2323.  offering food
+	Plural: offerings
+
+2324.  offering Freewill
+	Plural: offerings
+
+2325.  offering grain
+	Plural: offerings
+
+2326.  offering guilt
+	Plural: offerings
+
+2327.  offering sin
+	Plural: offerings
+
+2328.  office
+	Plural: offices
+
+2329.  officer
+	Plural: officers
+
+2330.  official
+	Plural: officials
+
+2331.  Og
+	Plural: Ogs
+
+2332.  Ohad
+	Plural: Ohads
+
+2333.  Oholibamah
+	Plural: Oholibamahs
+
+2334.  oil
+	Plural: oil
+
+2335.  oil olive
+	Plural: oil
+
+2336.  olive
+	Plural: olives
+
+2337.  Omar
+	Plural: Omars
+
+2338.  omer
+	Plural: omers
+
+2339.  On
+	Plural: Ons
+
+2340.  Onam
+	Plural: Onams
+
+2341.  Onan
+	Plural: Onans
+
+2342.  one
+	Plural: ones
+
+2343.  One Holy
+	Plural: Ones
+
+2344.  Onesimus
+	Plural: Onesimuses
+
+2345.  Onias III
+	Plural: Oniases
+
+2346.  Ono
+	Plural: Onos
+
+2347.  onyx
+	Plural: onyx
+
+2348.  Ophel
+	Plural: Ophels
+
+2349.  Ophir
+	Plural: Ophirs
+
+2350.  Ophni
+	Plural: Ophnis
+
+2351.  Ophrah
+	Plural: Ophrahs
+
+2352.  opinion
+	Plural: opinions
+
+2353.  opponent
+	Plural: opponents
+
+2354.  Oreb
+	Plural: Orebs
+
+2355.  organ
+	Plural: organs
+
+2356.  organization
+	Plural: organizations
+
+2357.  Orpah
+	Plural: Orpahs
+
+2358.  orphan
+	Plural: orphans
+
+2359.  Othniel
+	Plural: Othniels
+
+2360.  ounce
+	Plural: ounces
+
+2361.  outside
+	Plural: outsides
+
+2362.  oven
+	Plural: ovens
+
+2363.  overseer
+	Plural: overseers
+
+2364.  owner
+	Plural: owners
+
+2365.  ox
+	Plural: oxen   (suppletive)
+
+2366.  Paarai
+	Plural: Paarais
+
+2367.  Paddan Aram
+	Plural: Paddans Aram
+
+2368.  Padon
+	Plural: Padons
+
+2369.  Pahath-Moab
+	Plural: Pahath-Moabs
+
+2370.  pain
+	Plural: pain
+
+2371.  paint
+	Plural: paint
+
+2372.  palace
+	Plural: palaces
+
+2373.  Palace of the Forest of Lebanon
+	Plural: Palaces of the Forest of Lebanon
+
+2374.  Palal
+	Plural: Palals
+
+2375.  Pallu
+	Plural: Pallus
+
+2376.  palm
+	Plural: palms
+
+2377.  Palti
+	Plural: Paltis
+
+2378.  Paltiel
+	Plural: Paltiels
+
+2379.  Pamphylia
+	Plural: Pamphylias
+
+2380.  pan
+	Plural: pans
+
+2381.  Paphos
+	Plural: Paphoses
+
+2382.  parable
+	Plural: parables
+
+2383.  Parah
+	Plural: Parahs
+
+2384.  Paran
+	Plural: Parans
+
+2385.  parent
+	Plural: parents
+
+2386.  Parmashta
+	Plural: Parmashtas
+
+2387.  Parmenas
+	Plural: Parmenases
+
+2388.  Parosh
+	Plural: Paroshes
+
+2389.  Parshandatha
+	Plural: Parshandathas
+
+2390.  Parsin
+	Plural: Parsin
+
+2391.  part
+	Plural: parts
+
+2392.  Parthia
+	Plural: Parthias
+
+2393.  party
+	Plural: parties
+
+2394.  Paruah
+	Plural: Paruahs
+
+2395.  Pas Dammim
+	Plural: Pases
+
+2396.  Paseah
+	Plural: Paseahs
+
+2397.  Pashhur
+	Plural: Pashhurs
+
+2398.  Pashhur
+	Plural: Pashhurs
+
+2399.  Pass Scorpion
+	Plural: Passes
+
+2400.  Passhur
+	Plural: Passhurs
+
+2401.  Pass of Adummim
+	Plural: Passes
+
+2402.  Passover
+	Plural: Passovers
+
+2403.  past
+	Plural: past
+
+2404.  pastor
+	Plural: pastors
+
+2405.  pasture
+	Plural: pastures
+
+2406.  Patara
+	Plural: Pataras
+
+2407.  path
+	Plural: paths
+
+2408.  Pathrusite
+	Plural: Pathrusites
+
+2409.  Patmos
+	Plural: Patmoses
+
+2410.  pattern
+	Plural: patterns
+
+2411.  Pau
+	Plural: Paus
+
+2412.  Paul
+	Plural: Pauls
+
+2413.  Paulus
+	Plural: Pauluses
+
+2414.  payment
+	Plural: payments
+
+2415.  pea
+	Plural: peas
+
+2416.  peace
+	Plural: peace
+
+2417.  peacock
+	Plural: peacocks
+
+2418.  pearl
+	Plural: pearls
+
+2419.  Pedaiah
+	Plural: Pedaiahs
+
+2420.  Pelaiah
+	Plural: Pelaiahs
+
+2421.  Pelaliah
+	Plural: Pelaliahs
+
+2422.  Pelatiah
+	Plural: Pelatiahs
+
+2423.  Peleg
+	Plural: Pelegs
+
+2424.  Pelet
+	Plural: Pelets
+
+2425.  Peleth
+	Plural: Peleths
+
+2426.  Pelethite
+	Plural: Pelethites
+
+2427.  pen
+	Plural: pens
+
+2428.  Peniel
+	Plural: Peniels
+
+2429.  Peninnah
+	Plural: Peninnahs
+
+2430.  penis
+	Plural: penises
+
+2431.  penny
+	Plural: pennies
+
+2432.  Pentecost
+	Plural: Pentecosts
+
+2433.  Penual
+	Plural: Penuals
+
+2434.  Peor
+	Plural: Peors
+
+2435.  Peres
+	Plural: Peres
+
+2436.  Perez
+	Plural: Perezs
+
+2437.  Perez Uzzah
+	Plural: Perezs Uzzah
+
+2438.  perfume
+	Plural: perfumes
+
+2439.  Perga
+	Plural: Pergas
+
+2440.  Pergamum
+	Plural: Pergamums
+
+2441.  Perida
+	Plural: Peridas
+
+2442.  period
+	Plural: periods
+
+2443.  Perizzite
+	Plural: Perizzites
+
+2444.  Persia
+	Plural: Persias
+
+2445.  person
+	Plural: people   (suppletive)
+
+2446.  Peter
+	Plural: Peters
+
+2447.  Pethahiah
+	Plural: Pethahiahs
+
+2448.  Pethuel
+	Plural: Pethuels
+
+2449.  Phanuel
+	Plural: Phanuels
+
+2450.  Pharaoh
+	Plural: Pharaohs
+
+2451.  Pharisee
+	Plural: Pharisees
+
+2452.  Phicol
+	Plural: Phicols
+
+2453.  Philadelphia
+	Plural: Philadelphias
+
+2454.  Philadelphus
+	Plural: Philadelphuses
+
+2455.  Philemon
+	Plural: Philemons
+
+2456.  Philip
+	Plural: Philips
+
+2457.  Philippi
+	Plural: Philippis
+
+2458.  Philippians
+	Plural: Philippians
+
+2459.  Philistia
+	Plural: Philistias
+
+2460.  Philistine
+	Plural: Philistines
+
+2461.  Philometor
+	Plural: Philometors
+
+2462.  Philopator
+	Plural: Philopators
+
+2463.  Phinehas
+	Plural: Phinehases
+
+2464.  Phoenicia
+	Plural: Phoenicias
+
+2465.  Phoenician
+	Plural: Phoenicians
+
+2466.  Phoenix
+	Plural: Phoenixes
+
+2467.  Phrygia
+	Plural: Phrygias
+
+2468.  pick
+	Plural: picks
+
+2469.  picture
+	Plural: pictures
+
+2470.  piece
+	Plural: pieces
+
+2471.  pig
+	Plural: pigs
+
+2472.  pigeon
+	Plural: pigeons
+
+2473.  Pi Hahiroth
+	Plural: Pis Hahiroth
+
+2474.  Pilate
+	Plural: Pilates
+
+2475.  Pildash
+	Plural: Pildashes
+
+2476.  pile
+	Plural: piles
+
+2477.  Pilha
+	Plural: Pilhas
+
+2478.  pillar
+	Plural: pillars
+
+2479.  Pillar of Absalom
+	Plural: Pillars of Absalom
+
+2480.  Piltai
+	Plural: Piltais
+
+2481.  Pinon
+	Plural: Pinons
+
+2482.  Piram
+	Plural: Pirams
+
+2483.  Pirathon
+	Plural: Pirathons
+
+2484.  Pisgah
+	Plural: Pisgahs
+
+2485.  Pishon
+	Plural: Pishons
+
+2486.  Pisidia
+	Plural: Pisidias
+
+2487.  Pisidian Antioch
+	Plural: Pisidians Antioch
+
+2488.  pistachio
+	Plural: pistachios
+
+2489.  pit
+	Plural: pits
+
+2490.  pitcher
+	Plural: pitchers
+
+2491.  pitchfork
+	Plural: pitchforks
+
+2492.  Pithom
+	Plural: Pithoms
+
+2493.  pity
+	Plural: pity
+
+2494.  place
+	Plural: places
+
+2495.  plague
+	Plural: plagues
+
+2496.  plain
+	Plural: plains
+
+2497.  plain of Ono
+	Plural: plains
+
+2498.  plan
+	Plural: plans
+
+2499.  plant
+	Plural: plants
+
+2500.  plant hyssop
+	Plural: plants
+
+2501.  plant mandrake
+	Plural: plants
+
+2502.  plastic
+	Plural: plastic
+
+2503.  plate
+	Plural: plates
+
+2504.  platter
+	Plural: platters
+
+2505.  pleasure
+	Plural: pleasures
+
+2506.  plow
+	Plural: plows
+
+2507.  pocket
+	Plural: pockets
+
+2508.  poem
+	Plural: poems
+
+2509.  point
+	Plural: points
+
+2510.  poison
+	Plural: poison
+
+2511.  Pokereth-Hazzebaim
+	Plural: Pokereth-Hazzebaims
+
+2512.  pole
+	Plural: poles
+
+2513.  pomegranate
+	Plural: pomegranates
+
+2514.  pond
+	Plural: ponds
+
+2515.  Pontius Pilate
+	Plural: Pontiuses
+
+2516.  Pontus
+	Plural: Pontuses
+
+2517.  Pool of Siloam
+	Plural: Pools
+
+2518.  pool
+	Plural: pools
+
+2519.  Poratha
+	Plural: Porathas
+
+2520.  porch
+	Plural: porches
+
+2521.  Porcius Festus
+	Plural: Porciuses
+
+2522.  portion
+	Plural: portions
+
+2523.  possession
+	Plural: possessions
+
+2524.  post
+	Plural: posts
+
+2525.  pot
+	Plural: pots
+
+2526.  Potiphar
+	Plural: Potiphars
+
+2527.  Potiphera
+	Plural: Potipheras
+
+2528.  pound
+	Plural: pounds
+
+2529.  power
+	Plural: power
+
+2530.  Praetorium
+	Plural: Praetoriums
+
+2531.  prayer
+	Plural: prayers
+
+2532.  present
+	Plural: present
+
+2533.  price
+	Plural: prices
+
+2534.  priest
+	Plural: priests
+
+2535.  prince
+	Plural: princes
+
+2536.  Prince of princes
+	Plural: Princes of princes
+
+2537.  princess
+	Plural: princesses
+
+2538.  Priscilla
+	Plural: Priscillas
+
+2539.  prison
+	Plural: prisons
+
+2540.  prisoner
+	Plural: prisoners
+
+2541.  prize
+	Plural: prizes
+
+2542.  problem
+	Plural: problems
+
+2543.  Procorus
+	Plural: Procoruses
+
+2544.  profit
+	Plural: profit
+
+2545.  promise
+	Plural: promises
+
+2546.  property
+	Plural: properties
+
+2547.  prophecy
+	Plural: prophecies
+
+2548.  prophet
+	Plural: prophets
+
+2549.  prophetess
+	Plural: prophetesses
+
+2550.  prostitute
+	Plural: prostitutes
+
+2551.  proverb
+	Plural: proverbs
+
+2552.  Proverbs
+	Plural: Proverbs
+
+2553.  province
+	Plural: provinces
+
+2554.  Psalm
+	Plural: Psalms
+
+2555.  Psalms
+	Plural: Psalmses
+
+2556.  Ptolemais
+	Plural: Ptolemaises
+
+2557.  Ptolemy III Euergetes
+	Plural: Ptolemies
+
+2558.  Ptolemy II Philadelphus
+	Plural: Ptolemies
+
+2559.  Ptolemy I Soter
+	Plural: Ptolemies
+
+2560.  Ptolemy IV Philopator
+	Plural: Ptolemies
+
+2561.  Ptolemy V Epiphanes
+	Plural: Ptolemies
+
+2562.  Ptolemy VI Philometor
+	Plural: Ptolemies
+
+2563.  Puah
+	Plural: Puahs
+
+2564.  Publius
+	Plural: Publiuses
+
+2565.  punishment
+	Plural: punishments
+
+2566.  Pur
+	Plural: Purs
+
+2567.  Purah
+	Plural: Purahs
+
+2568.  Purim
+	Plural: Purims
+
+2569.  purpose
+	Plural: purposes
+
+2570.  purse
+	Plural: purses
+
+2571.  pus
+	Plural: pus
+
+2572.  Put
+	Plural: Puts
+
+2573.  Put
+	Plural: Puts
+
+2574.  Puteoli
+	Plural: Puteolis
+
+2575.  Putiel
+	Plural: Putiels
+
+2576.  Pyrrhus
+	Plural: Pyrrhuses
+
+2577.  quail
+	Plural: quails
+
+2578.  quality
+	Plural: qualities
+
+2579.  quart
+	Plural: quarts
+
+2580.  queen
+	Plural: queens
+
+2581.  Queen
+	Plural: Queens
+
+2582.  question
+	Plural: questions
+
+2583.  Quirinius
+	Plural: Quiriniuses
+
+2584.  Raamah
+	Plural: Raamahs
+
+2585.  Raamiah
+	Plural: Raamiahs
+
+2586.  Rabbah
+	Plural: Rabbahs
+
+2587.  rabbi
+	Plural: rabbis
+
+2588.  Rabbith
+	Plural: Rabbiths
+
+2589.  raca
+	Plural: racas
+
+2590.  race
+	Plural: races
+
+2591.  Rachel
+	Plural: Rachels
+
+2592.  rage
+	Plural: rage
+
+2593.  Rahab
+	Plural: Rahabs
+
+2594.  rain
+	Plural: rain
+
+2595.  rainbow
+	Plural: rainbows
+
+2596.  raisin
+	Plural: raisins
+
+2597.  Rakal
+	Plural: Rakals
+
+2598.  Rakkath
+	Plural: Rakkaths
+
+2599.  Rakkon
+	Plural: Rakkons
+
+2600.  Ram
+	Plural: Rams
+
+2601.  ram
+	Plural: rams
+
+2602.  Ramah
+	Plural: Ramahs
+
+2603.  Ramathaim
+	Plural: Ramathaims
+
+2604.  Ramath Lehi
+	Plural: Ramaths Lehi
+
+2605.  Ramath Mizpah
+	Plural: Ramaths Mizpah
+
+2606.  Rameses
+	Plural: Rameseses
+
+2607.  Ramoth
+	Plural: Ramoths
+
+2608.  Ramoth Negev
+	Plural: Ramoths Negev
+
+2609.  Rapha
+	Plural: Raphas
+
+2610.  Raphia
+	Plural: Raphias
+
+2611.  rat
+	Plural: rats
+
+2612.  rattle
+	Plural: rattles
+
+2613.  raven
+	Plural: ravens
+
+2614.  Reaiah
+	Plural: Reaiahs
+
+2615.  reason
+	Plural: reasons
+
+2616.  Reba
+	Plural: Rebas
+
+2617.  Rebekah
+	Plural: Rebekahs
+
+2618.  rebel
+	Plural: rebels
+
+2619.  reed
+	Plural: reeds
+
+2620.  refuge
+	Plural: refuges
+
+2621.  region
+	Plural: regions
+
+2622.  region of Akzib
+	Plural: regions of Akzib
+
+2623.  Rehob
+	Plural: Rehobs
+
+2624.  Rehoboam
+	Plural: Rehoboams
+
+2625.  Rehoboth
+	Plural: Rehoboths
+
+2626.  Rehoboth Ir
+	Plural: Rehoboths Ir
+
+2627.  Rehum
+	Plural: Rehums
+
+2628.  Rei
+	Plural: Reis
+
+2629.  Rekab
+	Plural: Rekabs
+
+2630.  Rekem
+	Plural: Rekems
+
+2631.  Rekem
+	Plural: Rekems
+
+2632.  relationship
+	Plural: relationships
+
+2633.  relative
+	Plural: relatives
+
+2634.  religion
+	Plural: religions
+
+2635.  Remeth
+	Plural: Remeths
+
+2636.  Rephaiah
+	Plural: Rephaiahs
+
+2637.  Rephaite
+	Plural: Rephaites
+
+2638.  Rephan
+	Plural: Rephans
+
+2639.  Rephidim
+	Plural: Rephidims
+
+2640.  report
+	Plural: reports
+
+2641.  representative
+	Plural: representatives
+
+2642.  reptile
+	Plural: reptiles
+
+2643.  Resen
+	Plural: Resens
+
+2644.  rest
+	Plural: rest
+
+2645.  result
+	Plural: results
+
+2646.  resurrection
+	Plural: resurrections
+
+2647.  Reu
+	Plural: Reus
+
+2648.  Reuben
+	Plural: Reubens
+
+2649.  Reuel
+	Plural: Reuels
+
+2650.  Reumah
+	Plural: Reumahs
+
+2651.  Revelation
+	Plural: Revelations
+
+2652.  reward
+	Plural: rewards
+
+2653.  Rezin
+	Plural: Rezins
+
+2654.  Rhegium
+	Plural: Rhegiums
+
+2655.  Rhesa
+	Plural: Rhesas
+
+2656.  Rhoda
+	Plural: Rhodas
+
+2657.  Rhodes
+	Plural: Rhodeses
+
+2658.  rib
+	Plural: ribs
+
+2659.  Ribai
+	Plural: Ribais
+
+2660.  riddle
+	Plural: riddles
+
+2661.  right
+	Plural: rights
+
+2662.  righteousness
+	Plural: righteousness
+
+2663.  Rimmon
+	Plural: Rimmons
+
+2664.  Rimmon
+	Plural: Rimmons
+
+2665.  ring
+	Plural: rings
+
+2666.  ring nose
+	Plural: rings
+
+2667.  Riphath
+	Plural: Riphaths
+
+2668.  River Arnon
+	Plural: Rivers
+
+2669.  River Euphrates
+	Plural: Rivers
+
+2670.  River Jabbok
+	Plural: Rivers
+
+2671.  River Jordan
+	Plural: Rivers
+
+2672.  River Kishon
+	Plural: Rivers
+
+2673.  River Shihor
+	Plural: Rivers
+
+2674.  river
+	Plural: rivers
+
+2675.  River Nile
+	Plural: Rivers
+
+2676.  Rizpah
+	Plural: Rizpahs
+
+2677.  road
+	Plural: roads
+
+2678.  robe
+	Plural: robes
+
+2679.  Rock
+	Plural: Rocks
+
+2680.  rod
+	Plural: rods
+
+2681.  Rodanite
+	Plural: Rodanites
+
+2682.  Rogelim
+	Plural: Rogelims
+
+2683.  Roman
+	Plural: Romans
+
+2684.  Romans
+	Plural: Romanses
+
+2685.  Rome
+	Plural: Romes
+
+2686.  roof
+	Plural: roofs
+
+2687.  room
+	Plural: rooms
+
+2688.  room banquet
+	Plural: rooms
+
+2689.  rooster
+	Plural: roosters
+
+2690.  root
+	Plural: roots
+
+2691.  rope
+	Plural: ropes
+
+2692.  Rosh
+	Plural: Roshes
+
+2693.  row
+	Plural: rows
+
+2694.  rudder
+	Plural: rudders
+
+2695.  Rufus
+	Plural: Rufuses
+
+2696.  rule
+	Plural: rules
+
+2697.  ruler
+	Plural: rulers
+
+2698.  rumor
+	Plural: rumors
+
+2699.  Russia
+	Plural: Russias
+
+2700.  rust
+	Plural: rust
+
+2701.  Ruth
+	Plural: Ruths
+
+2702.  Sabbath
+	Plural: Sabbaths
+
+2703.  Sabean
+	Plural: Sabeans
+
+2704.  Sabtah
+	Plural: Sabtahs
+
+2705.  Sabteca
+	Plural: Sabtecas
+
+2706.  sackcloth
+	Plural: sackcloth
+
+2707.  sacrifice
+	Plural: sacrifices
+
+2708.  sacrifice New Moon
+	Plural: sacrifices
+
+2709.  saddle
+	Plural: saddles
+
+2710.  Sadducee
+	Plural: Sadducees
+
+2711.  sail
+	Plural: sails
+
+2712.  sailor
+	Plural: sailors
+
+2713.  saint
+	Plural: saints
+
+2714.  Salamis
+	Plural: Salamises
+
+2715.  Salekah
+	Plural: Salekahs
+
+2716.  Salem
+	Plural: Salems
+
+2717.  Salim
+	Plural: Salims
+
+2718.  saliva
+	Plural: saliva
+
+2719.  Sallei
+	Plural: Salleis
+
+2720.  Sallu
+	Plural: Sallus
+
+2721.  Salmon
+	Plural: Salmons
+
+2722.  Salmone
+	Plural: Salmones
+
+2723.  Salome
+	Plural: Salomes
+
+2724.  salt
+	Plural: salt
+
+2725.  salvation
+	Plural: salvation
+
+2726.  Samaria
+	Plural: Samarias
+
+2727.  Samaritan
+	Plural: Samaritans
+
+2728.  Samlah
+	Plural: Samlahs
+
+2729.  Samos
+	Plural: Samoses
+
+2730.  Samothrace
+	Plural: Samothraces
+
+2731.  Samson
+	Plural: Samsons
+
+2732.  Samuel
+	Plural: Samuels
+
+2733.  Sanballat
+	Plural: Sanballats
+
+2734.  sand
+	Plural: sand
+
+2735.  sandal
+	Plural: sandals
+
+2736.  Sanhedrin
+	Plural: Sanhedrins
+
+2737.  Sansannah
+	Plural: Sansannahs
+
+2738.  Saph
+	Plural: Saphs
+
+2739.  Sapphira
+	Plural: Sapphiras
+
+2740.  Sarah
+	Plural: Sarahs
+
+2741.  Sarai
+	Plural: Sarais
+
+2742.  Sardis
+	Plural: Sardises
+
+2743.  Sarid
+	Plural: Sarids
+
+2744.  Satan
+	Plural: Satans
+
+2745.  Saul
+	Plural: Sauls
+
+2746.  Savior
+	Plural: Saviors
+
+2747.  saw
+	Plural: saws
+
+2748.  saying
+	Plural: sayings
+
+2749.  scale
+	Plural: scales
+
+2750.  scepter
+	Plural: scepters
+
+2751.  Sceva
+	Plural: Scevas
+
+2752.  school
+	Plural: schools
+
+2753.  scorpion
+	Plural: scorpions
+
+2754.  Scribe
+	Plural: Scribes
+
+2755.  scripture
+	Plural: scriptures
+
+2756.  scroll
+	Plural: scrolls
+
+2757.  sea Adriatic
+	Plural: seas
+
+2758.  Sea Aegean
+	Plural: Seas
+
+2759.  Sea Dead
+	Plural: Seas
+
+2760.  Sea Mediterranean
+	Plural: Seas
+
+2761.  Sea Red
+	Plural: Seas
+
+2762.  sea
+	Plural: seas
+
+2763.  seah
+	Plural: seahs
+
+2764.  seal
+	Plural: seals
+
+2765.  Sea of Arabah
+	Plural: Seas of Arabah
+
+2766.  Sea of Galilee
+	Plural: Seas of Galilee
+
+2767.  season
+	Plural: seasons
+
+2768.  seat
+	Plural: seats
+
+2769.  Seba
+	Plural: Sebas
+
+2770.  second
+	Plural: seconds
+
+2771.  secret
+	Plural: secrets
+
+2772.  secretary
+	Plural: secretaries
+
+2773.  Secundus
+	Plural: Secunduses
+
+2774.  seed
+	Plural: seeds
+
+2775.  seed coriander
+	Plural: seeds
+
+2776.  seed mustard
+	Plural: seeds
+
+2777.  Seir
+	Plural: Seirs
+
+2778.  Seir
+	Plural: Seirs
+
+2779.  Seirah
+	Plural: Seirahs
+
+2780.  seizure
+	Plural: seizures
+
+2781.  Sekakah
+	Plural: Sekakahs
+
+2782.  Seku
+	Plural: Sekus
+
+2783.  Sela
+	Plural: Selas
+
+2784.  Sela Hammahlekoth
+	Plural: Selas Hammahlekoth
+
+2785.  Seleucia
+	Plural: Seleucias
+
+2786.  Seleucus II Callinicus
+	Plural: Seleucuses
+
+2787.  Seleucus III Ceraunus
+	Plural: Seleucuses
+
+2788.  Seleucus I Nicator
+	Plural: Seleucuses
+
+2789.  Seleucus IV Philopator
+	Plural: Seleucuses
+
+2790.  Semein
+	Plural: Semeins
+
+2791.  semen
+	Plural: semen
+
+2792.  Senaah
+	Plural: Senaahs
+
+2793.  Seneh
+	Plural: Senehs
+
+2794.  sentence
+	Plural: sentences
+
+2795.  Sephar
+	Plural: Sephars
+
+2796.  Serah
+	Plural: Serahs
+
+2797.  Seraiah
+	Plural: Seraiahs
+
+2798.  Sered
+	Plural: Sereds
+
+2799.  Sergius Paulus
+	Plural: Sergiuses
+
+2800.  Serug
+	Plural: Serugs
+
+2801.  servant
+	Plural: servants
+
+2802.  set
+	Plural: sets
+
+2803.  Seth
+	Plural: Seths
+
+2804.  Shaalabbin
+	Plural: Shaalabbins
+
+2805.  Shaalbim
+	Plural: Shaalbims
+
+2806.  Shaalbon
+	Plural: Shaalbons
+
+2807.  Shaalim
+	Plural: Shaalims
+
+2808.  Shaaraim
+	Plural: Shaaraims
+
+2809.  Shaashgaz
+	Plural: Shaashgazs
+
+2810.  Shabbethai
+	Plural: Shabbethais
+
+2811.  shade
+	Plural: shade
+
+2812.  shadow
+	Plural: shadows
+
+2813.  Shadrach
+	Plural: Shadraches
+
+2814.  Shahazumah
+	Plural: Shahazumahs
+
+2815.  Shalisha
+	Plural: Shalishas
+
+2816.  Shallum
+	Plural: Shallums
+
+2817.  Shallun
+	Plural: Shalluns
+
+2818.  Shalmai
+	Plural: Shalmais
+
+2819.  shame
+	Plural: shame
+
+2820.  Shamgar
+	Plural: Shamgars
+
+2821.  Shamir
+	Plural: Shamirs
+
+2822.  Shammah
+	Plural: Shammahs
+
+2823.  Shammua
+	Plural: Shammuas
+
+2824.  shape
+	Plural: shapes
+
+2825.  Sharar
+	Plural: Sharars
+
+2826.  Sharon
+	Plural: Sharons
+
+2827.  Sharuhen
+	Plural: Sharuhens
+
+2828.  Shaul
+	Plural: Shauls
+
+2829.  Shaveh
+	Plural: Shavehs
+
+2830.  Shaveh Kiriathaim
+	Plural: Shavehs Kiriathaim
+
+2831.  shawl
+	Plural: shawls
+
+2832.  sheaf
+	Plural: sheaves   (suppletive)
+
+2833.  Shealtiel
+	Plural: Shealtiels
+
+2834.  sheath
+	Plural: sheaths
+
+2835.  Sheba
+	Plural: Shebas
+
+2836.  Shebaniah
+	Plural: Shebaniahs
+
+2837.  Shechem
+	Plural: Shechems
+
+2838.  Shechem
+	Plural: Shechems
+
+2839.  sheep
+	Plural: sheep   (suppletive)
+
+2840.  sheet
+	Plural: sheets
+
+2841.  Shekaniah
+	Plural: Shekaniahs
+
+2842.  shekel
+	Plural: shekels
+
+2843.  Shelah
+	Plural: Shelahs
+
+2844.  Shelemiah
+	Plural: Shelemiahs
+
+2845.  Sheleph
+	Plural: Shelephs
+
+2846.  shell
+	Plural: shells
+
+2847.  Shell Publishing
+	Plural: Shells Publishing
+
+2848.  shelter
+	Plural: shelters
+
+2849.  Shem
+	Plural: Shems
+
+2850.  Shema
+	Plural: Shemas
+
+2851.  Shemaiah
+	Plural: Shemaiahs
+
+2852.  Shemeber
+	Plural: Shemebers
+
+2853.  Shemida
+	Plural: Shemidas
+
+2854.  Shen
+	Plural: Shens
+
+2855.  Sheol
+	Plural: Sheols
+
+2856.  Shephatiah
+	Plural: Shephatiahs
+
+2857.  shepherd
+	Plural: shepherds
+
+2858.  Shepho
+	Plural: Shephos
+
+2859.  Sherebiah
+	Plural: Sherebiahs
+
+2860.  Sheshai
+	Plural: Sheshais
+
+2861.  Shethar
+	Plural: Shethars
+
+2862.  Sheva
+	Plural: Shevas
+
+2863.  Shibah
+	Plural: Shibahs
+
+2864.  Shibboleth
+	Plural: Shibboleths
+
+2865.  shield
+	Plural: shields
+
+2866.  shigionoth
+	Plural: shigionoths
+
+2867.  Shihor Libnath
+	Plural: Shihors Libnath
+
+2868.  Shikkeron
+	Plural: Shikkerons
+
+2869.  Shilhim
+	Plural: Shilhims
+
+2870.  Shillem
+	Plural: Shillems
+
+2871.  Shiloh
+	Plural: Shilohs
+
+2872.  Shiloh
+	Plural: Shilohs
+
+2873.  Shimeah
+	Plural: Shimeahs
+
+2874.  Shimei
+	Plural: Shimeis
+
+2875.  Shimron
+	Plural: Shimrons
+
+2876.  Shimron Meron
+	Plural: Shimrons Meron
+
+2877.  Shinab
+	Plural: Shinabs
+
+2878.  Shinar
+	Plural: Shinars
+
+2879.  Shion
+	Plural: Shions
+
+2880.  ship
+	Plural: ships
+
+2881.  Shiphrah
+	Plural: Shiphrahs
+
+2882.  shirt
+	Plural: shirts
+
+2883.  Shisha
+	Plural: Shishas
+
+2884.  Shittim
+	Plural: Shittims
+
+2885.  Shobab
+	Plural: Shobabs
+
+2886.  Shobai
+	Plural: Shobais
+
+2887.  Shobak
+	Plural: Shobaks
+
+2888.  Shobal
+	Plural: Shobals
+
+2889.  Shobek
+	Plural: Shobeks
+
+2890.  Shobi
+	Plural: Shobis
+
+2891.  shoe
+	Plural: shoes
+
+2892.  shore
+	Plural: shores
+
+2893.  shoulder
+	Plural: shoulders
+
+2894.  Shua
+	Plural: Shuas
+
+2895.  Shuah
+	Plural: Shuahs
+
+2896.  Shual
+	Plural: Shuals
+
+2897.  Shunem
+	Plural: Shunems
+
+2898.  Shuni
+	Plural: Shunis
+
+2899.  Shur
+	Plural: Shurs
+
+2900.  Sia
+	Plural: Sias
+
+2901.  Sibbekai
+	Plural: Sibbekais
+
+2902.  Sibboleth
+	Plural: Sibboleths
+
+2903.  Sibmah
+	Plural: Sibmahs
+
+2904.  sickle
+	Plural: sickles
+
+2905.  Siddim
+	Plural: Siddims
+
+2906.  side
+	Plural: sides
+
+2907.  Sidon
+	Plural: Sidons
+
+2908.  Sidon
+	Plural: Sidons
+
+2909.  Sidonian
+	Plural: Sidonians
+
+2910.  sign
+	Plural: signs
+
+2911.  Sihon
+	Plural: Sihons
+
+2912.  Silas
+	Plural: Silases
+
+2913.  Siloam
+	Plural: Siloams
+
+2914.  Silvanus
+	Plural: Silvanuses
+
+2915.  silver
+	Plural: silver
+
+2916.  Simeon
+	Plural: Simeons
+
+2917.  Simon
+	Plural: Simons
+
+2918.  sin
+	Plural: sins
+
+2919.  Sin
+	Plural: Sins
+
+2920.  Sinai
+	Plural: Sinais
+
+2921.  singer
+	Plural: singers
+
+2922.  Sinite
+	Plural: Sinites
+
+2923.  sinner
+	Plural: sinners
+
+2924.  Siphmoth
+	Plural: Siphmoths
+
+2925.  Sirah
+	Plural: Sirahs
+
+2926.  Sisera
+	Plural: Siseras
+
+2927.  sister
+	Plural: sisters
+
+2928.  sister
+	Plural: sisters
+
+2929.  sister
+	Plural: sisters
+
+2930.  Sithri
+	Plural: Sithris
+
+2931.  Sitnah
+	Plural: Sitnahs
+
+2932.  Sivan
+	Plural: Sivans
+
+2933.  size
+	Plural: sizes
+
+2934.  skill
+	Plural: skills
+
+2935.  skin
+	Plural: skins
+
+2936.  skull
+	Plural: skulls
+
+2937.  sky
+	Plural: skies
+
+2938.  slave
+	Plural: slaves
+
+2939.  sleep
+	Plural: sleep
+
+2940.  sling
+	Plural: slings
+
+2941.  smell
+	Plural: smells
+
+2942.  smoke
+	Plural: smoke
+
+2943.  Smyrna
+	Plural: Smyrnas
+
+2944.  snake
+	Plural: snakes
+
+2945.  snare
+	Plural: snares
+
+2946.  snow
+	Plural: snow
+
+2947.  soap
+	Plural: soap
+
+2948.  Socoh
+	Plural: Socohs
+
+2949.  Sodom
+	Plural: Sodoms
+
+2950.  soil
+	Plural: soil
+
+2951.  Sokoh
+	Plural: Sokohs
+
+2952.  soldier
+	Plural: soldiers
+
+2953.  Solomon
+	Plural: Solomons
+
+2954.  son
+	Plural: sons
+
+2955.  Son
+	Plural: Sons
+
+2956.  son-in-law
+	Plural: sons-in-law   (suppletive)
+
+2957.  song
+	Plural: songs
+
+2958.  Son of David
+	Plural: Sons of David
+
+2959.  Son of God
+	Plural: Sons of God
+
+2960.  Son of Man
+	Plural: Sons of Man
+
+2961.  Sopater
+	Plural: Sopaters
+
+2962.  Sophereth
+	Plural: Sophereths
+
+2963.  sorcerer
+	Plural: sorcerers
+
+2964.  sore
+	Plural: sores
+
+2965.  Sorek
+	Plural: Soreks
+
+2966.  Sosthenes
+	Plural: Sostheneses
+
+2967.  Sotai
+	Plural: Sotais
+
+2968.  Soter
+	Plural: Soters
+
+2969.  soul
+	Plural: souls
+
+2970.  sound
+	Plural: sounds
+
+2971.  South
+	Plural: South
+
+2972.  south
+	Plural: south
+
+2973.  space
+	Plural: spaces
+
+2974.  sparrow
+	Plural: sparrows
+
+2975.  spear
+	Plural: spears
+
+2976.  speech
+	Plural: speeches
+
+2977.  spice
+	Plural: spices
+
+2978.  spirit
+	Plural: spirits
+
+2979.  Spirit
+	Plural: Spirits
+
+2980.  sponge
+	Plural: sponges
+
+2981.  spouse
+	Plural: spouses
+
+2982.  spring
+	Plural: springs
+
+2983.  spring
+	Plural: springs
+
+2984.  spy
+	Plural: spies
+
+2985.  square
+	Plural: squares
+
+2986.  stable
+	Plural: stables
+
+2987.  staff
+	Plural: staffs
+
+2988.  stair
+	Plural: stairs
+
+2989.  stalk
+	Plural: stalks
+
+2990.  star
+	Plural: stars
+
+2991.  statue
+	Plural: statues
+
+2992.  step
+	Plural: steps
+
+2993.  Stephen
+	Plural: Stephens
+
+2994.  stew
+	Plural: stew
+
+2995.  stick
+	Plural: sticks
+
+2996.  stocks
+	Plural: stocks   (suppletive)
+
+2997.  stomach
+	Plural: stomachs   (suppletive)
+
+2998.  stone
+	Plural: stone
+
+2999.  stone
+	Plural: stones
+
+3000.  Stone of Bohan
+	Plural: Stones of Bohan
+
+3001.  Stone of Zoheleth
+	Plural: Stones of Zoheleth
+
+3002.  store
+	Plural: stores
+
+3003.  storeroom
+	Plural: storerooms
+
+3004.  storm
+	Plural: storms
+
+3005.  story
+	Plural: stories
+
+3006.  Straight
+	Plural: Straights
+
+3007.  stranger
+	Plural: strangers
+
+3008.  strap
+	Plural: straps
+
+3009.  straw
+	Plural: straw
+
+3010.  stream
+	Plural: streams
+
+3011.  Stream of Egypt
+	Plural: Streams of Egypt
+
+3012.  street
+	Plural: streets
+
+3013.  strength
+	Plural: strength
+
+3014.  string
+	Plural: strings
+
+3015.  string bow
+	Plural: strings
+
+3016.  stripe
+	Plural: stripes
+
+3017.  structure
+	Plural: structures
+
+3018.  student
+	Plural: students
+
+3019.  substance
+	Plural: substances
+
+3020.  Succoth
+	Plural: Succoths
+
+3021.  Sukkoth
+	Plural: Sukkoths
+
+3022.  sulfur
+	Plural: sulfur
+
+3023.  summer
+	Plural: summers
+
+3024.  sun
+	Plural: suns
+
+3025.  Sunday
+	Plural: Sundaies
+
+3026.  sunrise
+	Plural: sunrises
+
+3027.  surface
+	Plural: surfaces
+
+3028.  Susa
+	Plural: Susas
+
+3029.  Susanna
+	Plural: Susannas
+
+3030.  swarm
+	Plural: swarms
+
+3031.  sword
+	Plural: swords
+
+3032.  Sychar
+	Plural: Sychars
+
+3033.  synagogue
+	Plural: synagogues
+
+3034.  Syntyche
+	Plural: Syntyches
+
+3035.  Syracuse
+	Plural: Syracuses
+
+3036.  Syria
+	Plural: Syrias
+
+3037.  Syrtis
+	Plural: Syrtises
+
+3038.  Taanach
+	Plural: Taanaches
+
+3039.  Taanath Shiloh
+	Plural: Taanaths Shiloh
+
+3040.  Tabbaoth
+	Plural: Tabbaoths
+
+3041.  Tabbath
+	Plural: Tabbaths
+
+3042.  tabernacle
+	Plural: tabernacles
+
+3043.  Tabitha
+	Plural: Tabithas
+
+3044.  table
+	Plural: tables
+
+3045.  tablet
+	Plural: tablets
+
+3046.  Tabor
+	Plural: Tabors
+
+3047.  Tahash
+	Plural: Tahashes
+
+3048.  Tahtim Hodshi
+	Plural: Tahtims Hodshi
+
+3049.  tail
+	Plural: tails
+
+3050.  talent
+	Plural: talents
+
+3051.  Talmai
+	Plural: Talmais
+
+3052.  Talmon
+	Plural: Talmons
+
+3053.  Tamar
+	Plural: Tamars
+
+3054.  tambourine
+	Plural: tambourines
+
+3055.  Taphath
+	Plural: Taphaths
+
+3056.  Tappuah
+	Plural: Tappuahs
+
+3057.  tar
+	Plural: tar
+
+3058.  Taralah
+	Plural: Taralahs
+
+3059.  Tarshish
+	Plural: Tarshishes
+
+3060.  Tarshish
+	Plural: Tarshishes
+
+3061.  Tarsus
+	Plural: Tarsuses
+
+3062.  tax
+	Plural: taxes
+
+3063.  teacher
+	Plural: teachers
+
+3064.  teaching
+	Plural: teachings
+
+3065.  tear
+	Plural: tears
+
+3066.  teaspoon
+	Plural: teaspoons
+
+3067.  Tebah
+	Plural: Tebahs
+
+3068.  Tebah
+	Plural: Tebahs
+
+3069.  Tebeth
+	Plural: Tebeths
+
+3070.  Tekel
+	Plural: Tekel
+
+3071.  Tekoa
+	Plural: Tekoas
+
+3072.  Telaim
+	Plural: Telaims
+
+3073.  Telem
+	Plural: Telems
+
+3074.  Tel Harsha
+	Plural: Tels Harsha
+
+3075.  Tel Melah
+	Plural: Tels Melah
+
+3076.  Tema
+	Plural: Temas
+
+3077.  Temah
+	Plural: Temahs
+
+3078.  Teman
+	Plural: Temans
+
+3079.  Teman
+	Plural: Temans
+
+3080.  Temanite
+	Plural: Temanites
+
+3081.  temple
+	Plural: temples
+
+3082.  temple
+	Plural: temples
+
+3083.  tendon
+	Plural: tendons
+
+3084.  tent
+	Plural: tents
+
+3085.  tenth
+	Plural: tenths
+
+3086.  Terah
+	Plural: Terahs
+
+3087.  Teresh
+	Plural: Tereshes
+
+3088.  Terpen
+	Plural: Terpens
+
+3089.  Tertullus
+	Plural: Tertulluses
+
+3090.  Teshi
+	Plural: Teshis
+
+3091.  test
+	Plural: tests
+
+3092.  testicle
+	Plural: testicles
+
+3093.  Thaddaeus
+	Plural: Thaddaeuses
+
+3094.  Thebes
+	Plural: Thebeses
+
+3095.  Thebez
+	Plural: Thebezs
+
+3096.  Theophilus
+	Plural: Theophiluses
+
+3097.  there
+	Plural: theres
+
+3098.  Thessalonica
+	Plural: Thessalonicas
+
+3099.  The Summer Institute of Linguistics
+	Plural: Thes Summer Institute of Linguistics
+
+3100.  Theudas
+	Plural: Theudases
+
+3101.  thief
+	Plural: thieves   (suppletive)
+
+3102.  thigh
+	Plural: thighs
+
+3103.  thing
+	Plural: things
+
+3104.  Thomas
+	Plural: Thomases
+
+3105.  thorn
+	Plural: thorns
+
+3106.  thought
+	Plural: thoughts
+
+3107.  Thrace
+	Plural: Thraces
+
+3108.  thread
+	Plural: threads
+
+3109.  Three Inns
+	Plural: Three Inns
+
+3110.  throat
+	Plural: throats
+
+3111.  throne
+	Plural: thrones
+
+3112.  thumb
+	Plural: thumbs
+
+3113.  Thummim
+	Plural: Thummims
+
+3114.  thunder
+	Plural: thunder
+
+3115.  Thyatira
+	Plural: Thyatiras
+
+3116.  Tiberias
+	Plural: Tiberiases
+
+3117.  Tidal
+	Plural: Tidals
+
+3118.  Tigris
+	Plural: Tigrises
+
+3119.  Timaeus
+	Plural: Timaeuses
+
+3120.  time
+	Plural: times
+
+3121.  time long
+	Plural: times
+
+3122.  time short
+	Plural: times
+
+3123.  Timna
+	Plural: Timnas
+
+3124.  Timnah
+	Plural: Timnahs
+
+3125.  Timnath-Heres
+	Plural: Timnath-Hereses
+
+3126.  Timnath Serah
+	Plural: Timnaths Serah
+
+3127.  Timon
+	Plural: Timons
+
+3128.  Timothy
+	Plural: Timothies
+
+3129.  tip
+	Plural: tips
+
+3130.  Tiphsah
+	Plural: Tiphsahs
+
+3131.  Tiras
+	Plural: Tirases
+
+3132.  Tirzah
+	Plural: Tirzahs
+
+3133.  tithe
+	Plural: tithes
+
+3134.  Titius Justus
+	Plural: Titiuses
+
+3135.  Titus
+	Plural: Tituses
+
+3136.  Tob
+	Plural: Tobs
+
+3137.  Tobiah
+	Plural: Tobiahs
+
+3138.  today
+	Plural: today
+
+3139.  toe
+	Plural: toes
+
+3140.  Togarmah
+	Plural: Togarmahs
+
+3141.  Tohu
+	Plural: Tohus
+
+3142.  Tola
+	Plural: Tolas
+
+3143.  tomb
+	Plural: tombs
+
+3144.  tomorrow
+	Plural: tomorrows
+
+3145.  ton
+	Plural: tons
+
+3146.  tongue
+	Plural: tongues
+
+3147.  tool
+	Plural: tools
+
+3148.  tooth
+	Plural: teeth   (suppletive)
+
+3149.  top
+	Plural: tops
+
+3150.  topaz
+	Plural: topaz
+
+3151.  torch
+	Plural: torches
+
+3152.  Tou
+	Plural: Tous
+
+3153.  towel
+	Plural: towels
+
+3154.  Tower of Hananel
+	Plural: Towers
+
+3155.  Tower of the Hundred
+	Plural: Towers
+
+3156.  Tower of the Ovens
+	Plural: Towers
+
+3157.  tower
+	Plural: towers
+
+3158.  town
+	Plural: towns
+
+3159.  Traconitis
+	Plural: Traconitises
+
+3160.  tradition
+	Plural: traditions
+
+3161.  transgression
+	Plural: transgressions
+
+3162.  trap
+	Plural: traps
+
+3163.  treasure
+	Plural: treasures
+
+3164.  treasurer
+	Plural: treasurers
+
+3165.  treasury
+	Plural: treasuries
+
+3166.  treaty
+	Plural: treaties
+
+3167.  tree acacia
+	Plural: trees
+
+3168.  tree almond
+	Plural: trees
+
+3169.  tree apple
+	Plural: trees
+
+3170.  tree cedar
+	Plural: trees
+
+3171.  tree cypress
+	Plural: trees
+
+3172.  tree mulberry
+	Plural: trees
+
+3173.  tree mustard
+	Plural: trees
+
+3174.  tree myrtle
+	Plural: trees
+
+3175.  tree oak
+	Plural: trees
+
+3176.  tree
+	Plural: trees
+
+3177.  tree fig
+	Plural: trees
+
+3178.  tree olive
+	Plural: trees
+
+3179.  tree palm
+	Plural: trees
+
+3180.  tree pomegranate
+	Plural: trees
+
+3181.  tree poplar
+	Plural: trees
+
+3182.  tree sycamore
+	Plural: trees
+
+3183.  tree tamarisk
+	Plural: trees
+
+3184.  tree of life
+	Plural: trees of life
+
+3185.  tree of the knowledge of good and evil
+	Plural: trees of the knowledge of good and evil
+
+3186.  trench
+	Plural: trenches
+
+3187.  tribe
+	Plural: tribes
+
+3188.  Troas
+	Plural: Troases
+
+3189.  Trophimus
+	Plural: Trophimuses
+
+3190.  trouble
+	Plural: trouble
+
+3191.  trough
+	Plural: troughs
+
+3192.  trumpet
+	Plural: trumpets
+
+3193.  trunk
+	Plural: trunks
+
+3194.  truth
+	Plural: truth
+
+3195.  Tubal
+	Plural: Tubals
+
+3196.  Tubal-Cain
+	Plural: Tubal-Cains
+
+3197.  tumor
+	Plural: tumors
+
+3198.  tunnel
+	Plural: tunnels
+
+3199.  Turkey
+	Plural: Turkeies
+
+3200.  twin
+	Plural: twins
+
+3201.  Tychicus
+	Plural: Tychicuses
+
+3202.  Tyrannus
+	Plural: Tyrannuses
+
+3203.  Tyre
+	Plural: Tyres
+
+3204.  Ulai
+	Plural: Ulais
+
+3205.  Ummah
+	Plural: Ummahs
+
+3206.  uncle
+	Plural: uncles
+
+3207.  universe
+	Plural: universes
+
+3208.  Unni
+	Plural: Unnis
+
+3209.  Uphaz
+	Plural: Uphazs
+
+3210.  Upper Beth Horon
+	Plural: Uppers Beth Horon
+
+3211.  Ur
+	Plural: Urs
+
+3212.  Uri
+	Plural: Uris
+
+3213.  Uriah
+	Plural: Uriahs
+
+3214.  Urim
+	Plural: Urims
+
+3215.  Uz
+	Plural: Uzs
+
+3216.  Uzai
+	Plural: Uzais
+
+3217.  Uzal
+	Plural: Uzals
+
+3218.  Uzza
+	Plural: Uzzas
+
+3219.  Uzzah
+	Plural: Uzzahs
+
+3220.  Uzzi
+	Plural: Uzzis
+
+3221.  Uzziah
+	Plural: Uzziahs
+
+3222.  Uzziel
+	Plural: Uzziels
+
+3223.  vaccine
+	Plural: vaccines
+
+3224.  Vaizatha
+	Plural: Vaizathas
+
+3225.  Valley King`s
+	Plural: Valleies
+
+3226.  valley
+	Plural: valleys   (suppletive)
+
+3227.  valley Dead Sea
+	Plural: valleys   (suppletive)
+
+3228.  valley Hebron
+	Plural: valleys   (suppletive)
+
+3229.  valley Shaveh
+	Plural: valleys   (suppletive)
+
+3230.  valley Siddim
+	Plural: valleys   (suppletive)
+
+3231.  Valley of Achor
+	Plural: Valleies
+
+3232.  Valley of Aijalon
+	Plural: Valleies
+
+3233.  Valley of Arabah
+	Plural: Valleies
+
+3234.  Valley of Ben Hinnom
+	Plural: Valleies
+
+3235.  Valley of Besor
+	Plural: Valleies
+
+3236.  Valley of Elah
+	Plural: Valleies
+
+3237.  Valley of Gerar
+	Plural: Valleies
+
+3238.  Valley of Giants
+	Plural: Valleies
+
+3239.  Valley of Hinnom
+	Plural: Valleies
+
+3240.  Valley of Iphtah El
+	Plural: Valleies
+
+3241.  Valley of Jehoshaphat
+	Plural: Valleies
+
+3242.  Valley of Jezreel
+	Plural: Valleies
+
+3243.  Valley of Kanah
+	Plural: Valleies
+
+3244.  Valley of Kidron
+	Plural: Valleies
+
+3245.  Valley of Mizpah
+	Plural: Valleies
+
+3246.  Valley of Rephaim
+	Plural: Valleies
+
+3247.  Valley of Salt
+	Plural: Valleies
+
+3248.  Valley of Zeboyim
+	Plural: Valleies
+
+3249.  value
+	Plural: values
+
+3250.  Vashti
+	Plural: Vashtis
+
+3251.  vault
+	Plural: vaults
+
+3252.  vegetable
+	Plural: vegetables
+
+3253.  vehicle
+	Plural: vehicles
+
+3254.  veil
+	Plural: veils
+
+3255.  verse
+	Plural: verses
+
+3256.  veterinarian
+	Plural: veterinarians
+
+3257.  village
+	Plural: villages
+
+3258.  vine
+	Plural: vines
+
+3259.  vinegar
+	Plural: vinegar
+
+3260.  vineyard
+	Plural: vineyards
+
+3261.  violence
+	Plural: violence
+
+3262.  viper
+	Plural: vipers
+
+3263.  virgin
+	Plural: virgins
+
+3264.  vision
+	Plural: visions
+
+3265.  voice
+	Plural: voices
+
+3266.  vow
+	Plural: vows
+
+3267.  vulture
+	Plural: vultures
+
+3268.  Wadi of Egypt
+	Plural: Wadis of Egypt
+
+3269.  wage
+	Plural: wages
+
+3270.  wagon
+	Plural: wagons
+
+3271.  waist
+	Plural: waists
+
+3272.  Wall Broad
+	Plural: Walls
+
+3273.  Wall of Ophel
+	Plural: Walls
+
+3274.  wall
+	Plural: walls
+
+3275.  war
+	Plural: wars
+
+3276.  warrior
+	Plural: warriors
+
+3277.  water
+	Plural: water
+
+3278.  Waters of Merom
+	Plural: Waterses
+
+3279.  Waters of Nephtoah
+	Plural: Waterses
+
+3280.  wave
+	Plural: waves
+
+3281.  way
+	Plural: ways   (suppletive)
+
+3282.  Way
+	Plural: Way
+
+3283.  wealth
+	Plural: wealth
+
+3284.  weapon
+	Plural: weapons
+
+3285.  weather
+	Plural: weather
+
+3286.  wedding
+	Plural: weddings
+
+3287.  weed
+	Plural: weeds
+
+3288.  week
+	Plural: weeks
+
+3289.  weight
+	Plural: weights
+
+3290.  Well Jackal
+	Plural: Wells
+
+3291.  well
+	Plural: wells
+
+3292.  west
+	Plural: west
+
+3293.  wheat
+	Plural: wheat
+
+3294.  wheel
+	Plural: wheels
+
+3295.  whip
+	Plural: whips
+
+3296.  whirlwind
+	Plural: whirlwinds
+
+3297.  widow
+	Plural: widows
+
+3298.  width
+	Plural: widths
+
+3299.  wife
+	Plural: wives   (suppletive)
+
+3300.  wilderness
+	Plural: wildernesses
+
+3301.  will
+	Plural: wills
+
+3302.  wind
+	Plural: winds
+
+3303.  wind
+	Plural: wind
+
+3304.  window
+	Plural: windows
+
+3305.  wine
+	Plural: wine
+
+3306.  winepress
+	Plural: winepresses
+
+3307.  wineskin
+	Plural: wineskins
+
+3308.  wing
+	Plural: wings
+
+3309.  winter
+	Plural: winters
+
+3310.  wire
+	Plural: wires
+
+3311.  wisdom
+	Plural: wisdom
+
+3312.  witchcraft
+	Plural: witchcraft
+
+3313.  witness
+	Plural: witnesses
+
+3314.  wolf
+	Plural: wolves   (suppletive)
+
+3315.  woman
+	Plural: women   (suppletive)
+
+3316.  womb
+	Plural: wombs
+
+3317.  wonder
+	Plural: wonders
+
+3318.  wood
+	Plural: wood
+
+3319.  wood acacia
+	Plural: wood
+
+3320.  wood almug
+	Plural: wood
+
+3321.  wood cedar
+	Plural: wood
+
+3322.  wood cypress
+	Plural: wood
+
+3323.  wood juniper
+	Plural: wood
+
+3324.  wool
+	Plural: wool
+
+3325.  word
+	Plural: words
+
+3326.  Word
+	Plural: Words
+
+3327.  word of life
+	Plural: words of life
+
+3328.  work
+	Plural: work
+
+3329.  worker
+	Plural: workers
+
+3330.  world
+	Plural: worlds
+
+3331.  World Vision
+	Plural: Worlds Vision
+
+3332.  worm
+	Plural: worms
+
+3333.  wormwood
+	Plural: wormwood
+
+3334.  wound
+	Plural: wounds
+
+3335.  wrath
+	Plural: wrath
+
+3336.  wreath
+	Plural: wreaths
+
+3337.  Xerxes
+	Plural: Xerxeses
+
+3338.  Yahweh
+	Plural: Yahwehs
+
+3339.  Yahweh Almighty
+	Plural: Yahwehs Almighty
+
+3340.  yard
+	Plural: yards
+
+3341.  Yatima
+	Plural: Yatimas
+
+3342.  year
+	Plural: years
+
+3343.  yeast
+	Plural: yeast
+
+3344.  yoke
+	Plural: yokes
+
+3345.  Yom Kippur
+	Plural: Yoms Kippur
+
+3346.  Zaanannim
+	Plural: Zaanannims
+
+3347.  Zaavan
+	Plural: Zaavans
+
+3348.  Zabbai
+	Plural: Zabbais
+
+3349.  Zabdi
+	Plural: Zabdis
+
+3350.  Zabdiel
+	Plural: Zabdiels
+
+3351.  Zabud
+	Plural: Zabuds
+
+3352.  Zacchaeus
+	Plural: Zacchaeuses
+
+3353.  Zadok
+	Plural: Zadoks
+
+3354.  Zakkai
+	Plural: Zakkais
+
+3355.  Zakkur
+	Plural: Zakkurs
+
+3356.  Zalaph
+	Plural: Zalaphs
+
+3357.  Zalmon
+	Plural: Zalmons
+
+3358.  Zalmunna
+	Plural: Zalmunnas
+
+3359.  Zanoah
+	Plural: Zanoahs
+
+3360.  Zaphenath-Panea
+	Plural: Zaphenath-Paneas
+
+3361.  Zaphon
+	Plural: Zaphons
+
+3362.  Zarephath
+	Plural: Zarephaths
+
+3363.  Zarethan
+	Plural: Zarethans
+
+3364.  Zattu
+	Plural: Zattus
+
+3365.  Zealot
+	Plural: Zealots
+
+3366.  Zebah
+	Plural: Zebahs
+
+3367.  Zebedee
+	Plural: Zebedees
+
+3368.  Zeboiim
+	Plural: Zeboiims
+
+3369.  Zeboim
+	Plural: Zeboims
+
+3370.  Zebul
+	Plural: Zebuls
+
+3371.  Zebulun
+	Plural: Zebuluns
+
+3372.  Zechariah
+	Plural: Zechariahs
+
+3373.  Zedekiah
+	Plural: Zedekiahs
+
+3374.  Zeeb
+	Plural: Zeebs
+
+3375.  Zela
+	Plural: Zelas
+
+3376.  Zelah
+	Plural: Zelahs
+
+3377.  Zelek
+	Plural: Zeleks
+
+3378.  Zelophehad
+	Plural: Zelophehads
+
+3379.  Zelzah
+	Plural: Zelzahs
+
+3380.  Zemaraim
+	Plural: Zemaraims
+
+3381.  Zemarite
+	Plural: Zemarites
+
+3382.  Zenan
+	Plural: Zenans
+
+3383.  Zenas
+	Plural: Zenases
+
+3384.  Zeno
+	Plural: Zenos
+
+3385.  Zephath
+	Plural: Zephaths
+
+3386.  Zepho
+	Plural: Zephos
+
+3387.  Zephon
+	Plural: Zephons
+
+3388.  Zer
+	Plural: Zers
+
+3389.  Zerah
+	Plural: Zerahs
+
+3390.  Zerephath
+	Plural: Zerephaths
+
+3391.  Zererah
+	Plural: Zererahs
+
+3392.  Zeresh
+	Plural: Zereshes
+
+3393.  Zereth Shahar
+	Plural: Zereths Shahar
+
+3394.  Zeror
+	Plural: Zerors
+
+3395.  Zerubbabel
+	Plural: Zerubbabels
+
+3396.  Zeruiah
+	Plural: Zeruiahs
+
+3397.  Zethar
+	Plural: Zethars
+
+3398.  Zeus
+	Plural: Zeuses
+
+3399.  Ziba
+	Plural: Zibas
+
+3400.  Zibeon
+	Plural: Zibeons
+
+3401.  Ziddim
+	Plural: Ziddims
+
+3402.  Ziha
+	Plural: Zihas
+
+3403.  Ziklag
+	Plural: Ziklags
+
+3404.  Zikri
+	Plural: Zikris
+
+3405.  Zillah
+	Plural: Zillahs
+
+3406.  Zilpah
+	Plural: Zilpahs
+
+3407.  Zimran
+	Plural: Zimrans
+
+3408.  Zimri
+	Plural: Zimris
+
+3409.  Zin
+	Plural: Zins
+
+3410.  Zion
+	Plural: Zions
+
+3411.  Zior
+	Plural: Ziors
+
+3412.  Ziph
+	Plural: Ziphs
+
+3413.  Zippor
+	Plural: Zippors
+
+3414.  Zipporah
+	Plural: Zipporahs
+
+3415.  Ziv
+	Plural: Zivs
+
+3416.  Zoar
+	Plural: Zoars
+
+3417.  Zobah
+	Plural: Zobahs
+
+3418.  Zohar
+	Plural: Zohars
+
+3419.  Zorah
+	Plural: Zorahs
+
+3420.  Zuph
+	Plural: Zuphs
+
+3421.  Zur
+	Plural: Zurs
+
+3422.  Zuzite
+	Plural: Zuzites
+
+3423.  1 Samuel
+	Plural: 1 Samuel
+
+3424.  1 Thessalonians
+	Plural: 1 Thessalonians
+
+3425.  2 pm
+	Plural: 2s pm
+
+3426.  2 Samuel
+	Plural: 2s Samuel
+
+3427.  2 Thessalonians
+	Plural: 2 Thessalonians
+
+3428.  3 pm
+	Plural: 3s pm
+
+3429.  4 pm
+	Plural: 4s pm
+
+3430.  5 pm
+	Plural: 5s pm
+
+3431.  9 am
+	Plural: 9 am
+

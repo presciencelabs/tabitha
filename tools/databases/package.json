@@ -3,9 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tabitha SQLite databases and dump utilities",
+  "description": "Tabitha SQLite databases, ETL migrations, and dump utilities",
   "scripts": {
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "migrate": "bun migrations/orchestrator.ts",
+    "migrate:auth": "bun migrations/auth/create.ts",
+    "migrate:ontology": "bun migrations/ontology/migrate.ts",
+    "migrate:sources": "bun migrations/sources/migrate.ts",
+    "migrate:targets": "bun migrations/targets/migrate.ts"
+  },
+  "dependencies": {
+    "comment-json": "^5.0.0",
+    "officeparser": "^7.5.1"
   },
   "devDependencies": {
     "@tabitha/tsconfig": "workspace:*",

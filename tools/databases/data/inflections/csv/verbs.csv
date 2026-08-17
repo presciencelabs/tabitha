@@ -1,0 +1,707 @@
+1,abandon,Verb,|abandoned|abandoned|abandoning|abandons|
+2,accept,Verb,|accepted|accepted|accepting|accepts|
+3,accomplish,Verb,|accomplished|accomplished|accomplishing|accomplishes|
+4,accuse,Verb,|accused|accused|accusing|accuses|
+5,acknowledge,Verb,|acknowledged|acknowledged|acknowledging|acknowledges|
+6,act,Verb,|acted|acted|acting|acts|
+7,add,Verb,|added|added|adding|adds|
+8,admire,Verb,|admired|admired|admiring|admires|
+9,admit,Verb,|admitted|admitted|admitting|admits|
+10,advise,Verb,|advised|advised|advising|advises|
+11,affect,Verb,|affected|affected|affecting|affects|
+12,agree,Verb,|agreed|agreed|agreeing|agrees|
+13,allow,Verb,|allowed|allowed|allowing|allows|
+14,amaze,Verb,|amazed|amazed|amazing|amazes|
+15,ambush,Verb,|ambushed|ambushed|ambushing|ambushes|
+16,announce,Verb,|announced|announced|announcing|announces|
+17,annoy,Verb,|annoyed|annoyed|annoying|annoys|
+18,anoint,Verb,|anointed|anointed|anointing|anoints|
+19,answer,Verb,|answered|answered|answering|answers|
+20,appear,Verb,|appeared|appeared|appearing|appears|
+21,appoint,Verb,|appointed|appointed|appointing|appoints|
+22,approach,Verb,|approached|approached|approaching|approaches|
+23,approve,Verb,|approved|approved|approving|approves|
+24,argue,Verb,|argued|argued|arguing|argues|
+25,arrest,Verb,|arrested|arrested|arresting|arrests|
+26,arrive,Verb,|arrived|arrived|arriving|arrives|
+27,ascend,Verb,|ascended|ascended|ascending|ascends|
+28,ask,Verb,|asked|asked|asking|asks|
+29,assist,Verb,|assisted|assisted|assisting|assists|
+30,attach,Verb,|attached|attached|attaching|attaches|
+31,attack,Verb,|attacked|attacked|attacking|attacks|
+32,attend,Verb,|attended|attended|attending|attends|
+33,attract,Verb,|attracted|attracted|attracting|attracts|
+34,avoid,Verb,|avoided|avoided|avoiding|avoids|
+35,bake,Verb,|baked|baked|baking|bakes|
+36,baptize,Verb,|baptized|baptized|baptizing|baptizes|
+37,bark,Verb,|barked|barked|barking|barks|
+38,be,Verb,|was|been|being|is|
+39,be born,Verb,|was|been|being|is|
+40,be concerned,Verb,|bed|bed|bing|bes|
+41,be determined,Verb,|was|been|being|is|
+42,be fulfilled,Verb,|bed|bed|bing|bes|
+43,be locked,Verb,|bed|bed|bing|bes|
+44,be married,Verb,|was|been|being|is|
+45,be tied,Verb,|was|been|being|is|
+46,be worried,Verb,|was|been|being|is|
+47,be hurt,Verb,|bed|bed|bing|bes|
+48,beat,Verb,|beat|beaten|beating|beats|
+49,become,Verb,|became|become|becoming|becomes|
+50,beg,Verb,|begged|begged|begging|begs|
+51,begin,Verb,|began|begun|beginning|begins|
+52,behave,Verb,|behaved|behaved|behaving|behaves|
+53,behold,Verb,|beheld|beheld|beholding|beholds|
+54,believe,Verb,|believed|believed|believing|believes|
+55,belong,Verb,|belonged|belonged|belonging|belongs|
+56,bend,Verb,|bent|bent|bending|bends|
+57,bend over,Verb,|bent|bent|bending|bends|
+58,besiege,Verb,|besieged|besieged|besieging|besieges|
+59,betray,Verb,|betrayed|betrayed|betraying|betrays|
+60,bind,Verb,|bound|bound|binding|binds|
+61,birth,Verb,|birthed|birthed|birthing|births|
+62,bite,Verb,|bit|bitten|biting|bites|
+63,blame,Verb,|blamed|blamed|blaming|blames|
+64,blaspheme,Verb,|blasphemed|blasphemed|blaspheming|blasphemes|
+65,bleat,Verb,|bleated|bleated|bleating|bleats|
+66,bleed,Verb,|bled|bled|bleeding|bleeds|
+67,bless,Verb,|blessed|blessed|blessing|blesses|
+68,blot out,Verb,|blotted|blotted|blotting|blots|
+69,blow,Verb,|blew|blown|blowing|blows|
+70,board,Verb,|boarded|boarded|boarding|boards|
+71,boast,Verb,|boasted|boasted|boasting|boasts|
+72,boil,Verb,|boiled|boiled|boiling|boils|
+73,borrow,Verb,|borrowed|borrowed|borrowing|borrows|
+74,bother,Verb,|bothered|bothered|bothering|bothers|
+75,bow,Verb,|bowed|bowed|bowing|bows|
+76,break,Verb,|broke|broken|breaking|breaks|
+77,breathe,Verb,|breathed|breathed|breathing|breathes|
+78,bring,Verb,|brought|brought|bringing|brings|
+79,build,Verb,|built|built|building|builds|
+80,burn,Verb,|burned|burned|burning|burns|
+81,burst,Verb,|burst|burst|bursting|bursts|
+82,bury,Verb,|buried|buried|burying|buries|
+83,buy,Verb,|bought|bought|buying|buys|
+84,calculate,Verb,|calculated|calculated|calculating|calculates|
+85,call,Verb,|called|called|calling|calls|
+86,camp,Verb,|camped|camped|camping|camps|
+87,cancel,Verb,|cancelled|cancelled|cancelling|cancels|
+88,capture,Verb,|captured|captured|capturing|captures|
+89,care,Verb,|cared|cared|caring|cares|
+90,carry,Verb,|carried|carried|carrying|carries|
+91,carve,Verb,|carved|carved|carving|carves|
+92,cast,Verb,|cast|cast|casting|casts|
+93,cast out,Verb,|cast|cast|casting|casts|
+94,catch,Verb,|caught|caught|catching|catches|
+95,catch up,Verb,|caught|caught|catching|catches|
+96,cause,Verb,|caused|caused|causing|causes|
+97,celebrate,Verb,|celebrated|celebrated|celebrating|celebrates|
+98,change,Verb,|changed|changed|changing|changes|
+99,charge,Verb,|charged|charged|charging|charges|
+100,chase,Verb,|chased|chased|chasing|chases|
+101,chase away,Verb,|chased|chased|chasing|chases|
+102,cheat,Verb,|cheated|cheated|cheating|cheats|
+103,check,Verb,|checked|checked|checking|checks|
+104,chew,Verb,|chewed|chewed|chewing|chews|
+105,choke,Verb,|choked|choked|choking|chokes|
+106,choose,Verb,|chose|chosen|choosing|chooses|
+107,circumcise,Verb,|circumcised|circumcised|circumcising|circumcises|
+108,claim,Verb,|claimed|claimed|claiming|claims|
+109,clean,Verb,|cleaned|cleaned|cleaning|cleans|
+110,climb,Verb,|climbed|climbed|climbing|climbs|
+111,close,Verb,|closed|closed|closing|closes|
+112,collect,Verb,|collected|collected|collecting|collects|
+113,comb,Verb,|combed|combed|combing|combs|
+114,combine,Verb,|combined|combined|combining|combines|
+115,come up,Verb,|came|come|coming|comes|
+116,come,Verb,|came|come|coming|comes|
+117,come down,Verb,|came|come|coming|comes|
+118,come out,Verb,|came|come|coming|comes|
+119,comfort,Verb,|comforted|comforted|comforting|comforts|
+120,command,Verb,|commanded|commanded|commanding|commands|
+121,commit,Verb,|committed|committed|committing|commits|
+122,compare,Verb,|compared|compared|comparing|compares|
+123,complain,Verb,|complained|complained|complaining|complains|
+124,complete,Verb,|completed|completed|completing|completes|
+125,condemn,Verb,|condemned|condemned|condemning|condemns|
+126,confess,Verb,|confessed|confessed|confessing|confesses|
+127,confuse,Verb,|confused|confused|confusing|confuses|
+128,conquer,Verb,|conquered|conquered|conquering|conquers|
+129,consecrate,Verb,|consecrated|consecrated|consecrating|consecrates|
+130,consider,Verb,|considered|considered|considering|considers|
+131,consist,Verb,|consisted|consisted|consisting|consists|
+132,conspire,Verb,|conspired|conspired|conspiring|conspires|
+133,contain,Verb,|contained|contained|containing|contains|
+134,continue,Verb,|continued|continued|continuing|continues|
+135,control,Verb,|controlled|controlled|controlling|controls|
+136,cook,Verb,|cooked|cooked|cooking|cooks|
+137,copy,Verb,|copied|copied|copying|copies|
+138,correct,Verb,|corrected|corrected|correcting|corrects|
+139,cost,Verb,|cost|cost|costing|costs|
+140,cough,Verb,|coughed|coughed|coughing|coughs|
+141,count,Verb,|counted|counted|counting|counts|
+142,cover,Verb,|covered|covered|covering|covers|
+143,covet,Verb,|coveted|coveted|coveting|covets|
+144,crash,Verb,|crashed|crashed|crashing|crashes|
+145,crawl,Verb,|crawled|crawled|crawling|crawls|
+146,create,Verb,|created|created|creating|creates|
+147,criticize,Verb,|criticized|criticized|criticizing|criticizes|
+148,cross,Verb,|crossed|crossed|crossing|crosses|
+149,crow,Verb,|crowed|crowed|crowing|crows|
+150,crowd,Verb,|crowded|crowded|crowding|crowds|
+151,crucify,Verb,|crucified|crucified|crucifying|crucifies|
+152,crush,Verb,|crushed|crushed|crushing|crushes|
+153,cry,Verb,|cried|cried|crying|cries|
+154,cry out,Verb,|cried|cried|crying|cries|
+155,curse,Verb,|cursed|cursed|cursing|curses|
+156,cut,Verb,|cut|cut|cutting|cuts|
+157,cut down,Verb,|cut|cut|cutting|cuts|
+158,cut off,Verb,|cut|cut|cutting|cuts|
+159,damage,Verb,|damaged|damaged|damaging|damages|
+160,dance,Verb,|danced|danced|dancing|dances|
+161,debate,Verb,|debated|debated|debating|debates|
+162,decay,Verb,|decayed|decayed|decaying|decays|
+163,deceive,Verb,|deceived|deceived|deceiving|deceives|
+164,decide,Verb,|decided|decided|deciding|decides|
+165,declare,Verb,|declared|declared|declaring|declares|
+166,dedicate,Verb,|dedicated|dedicated|dedicating|dedicates|
+167,defeat,Verb,|defeated|defeated|defeating|defeats|
+168,defend,Verb,|defended|defended|defending|defends|
+169,defile,Verb,|defiled|defiled|defiling|defiles|
+170,delight,Verb,|delighted|delighted|delighting|delights|
+171,deliver,Verb,|delivered|delivered|delivering|delivers|
+172,demand,Verb,|demanded|demanded|demanding|demands|
+173,depend,Verb,|depended|depended|depending|depends|
+174,describe,Verb,|described|described|describing|describes|
+175,deserve,Verb,|deserved|deserved|deserving|deserves|
+176,design,Verb,|designed|designed|designing|designs|
+177,desire,Verb,|desired|desired|desiring|desires|
+178,despise,Verb,|despised|despised|despising|despises|
+179,destroy,Verb,|destroyed|destroyed|destroying|destroys|
+180,determine,Verb,|determined|determined|determining|determines|
+181,detest,Verb,|detested|detested|detesting|detests|
+182,devour,Verb,|devoured|devoured|devouring|devours|
+183,die,Verb,|died|died|dying|dies|
+184,dig,Verb,|dug|dug|digging|digs|
+185,dip,Verb,|dipped|dipped|dipping|dips|
+186,disagree,Verb,|disagreed|disagreed|disagreeing|disagrees|
+187,discipline,Verb,|disciplined|disciplined|disciplining|disciplines|
+188,discover,Verb,|discovered|discovered|discovering|discovers|
+189,discuss,Verb,|discussed|discussed|discussing|discusses|
+190,distribute,Verb,|distributed|distributed|distributing|distributes|
+191,divide,Verb,|divided|divided|dividing|divides|
+192,divorce,Verb,|divorced|divorced|divorcing|divorces|
+193,do,Verb,|did|done|doing|does|
+194,doubt,Verb,|doubted|doubted|doubting|doubts|
+195,drag,Verb,|dragged|drug|dragging|drags|
+196,draw,Verb,|drew|drawn|drawing|draws|
+197,draw,Verb,|drew|drawn|drawing|draws|
+198,dream,Verb,|dreamed|dreamed|dreaming|dreams|
+199,dress,Verb,|dressed|dressed|dressing|dresses|
+200,drink,Verb,|drank|drunk|drinking|drinks|
+201,drop,Verb,|dropped|dropped|dropping|drops|
+202,drown,Verb,|drowned|drowned|drowning|drowns|
+203,dry,Verb,|dried|dried|drying|dries|
+204,dwell,Verb,|dwelled|dwelled|dwelling|dwells|
+205,dye,Verb,|dyed|dyed|dying|dyes|
+206,earn,Verb,|earned|earned|earning|earns|
+207,eat,Verb,|ate|eaten|eating|eats|
+208,embalm,Verb,|embalmed|embalmed|embalming|embalms|
+209,embarrass,Verb,|embarrassed|embarrassed|embarrassing|embarrasses|
+210,employ,Verb,|employed|employed|employing|employs|
+211,empty,Verb,|emptied|emptied|emptying|empties|
+212,enable,Verb,|enabled|enabled|enabling|enables|
+213,encourage,Verb,|encouraged|encouraged|encouraging|encourages|
+214,end,Verb,|ended|ended|ending|ends|
+215,endure,Verb,|endured|endured|enduring|endures|
+216,enjoy,Verb,|enjoyed|enjoyed|enjoying|enjoys|
+217,enter,Verb,|entered|entered|entering|enters|
+218,entertain,Verb,|entertained|entertained|entertaining|entertains|
+219,entrust,Verb,|entrusted|entrusted|entrusting|entrusts|
+220,envy,Verb,|envied|envied|envying|envies|
+221,erase,Verb,|erased|erased|erasing|erases|
+222,escape,Verb,|escaped|escaped|escaping|escapes|
+223,establish,Verb,|established|established|establishing|establishes|
+224,exalt,Verb,|exalted|exalted|exalting|exalts|
+225,examine,Verb,|examined|examined|examining|examines|
+226,exile,Verb,|exiled|exiled|exiling|exiles|
+227,exist,Verb,|existed|existed|existing|exists|
+228,expect,Verb,|expected|expected|expecting|expects|
+229,explain,Verb,|explained|explained|explaining|explains|
+230,explore,Verb,|explored|explored|exploring|explores|
+231,fail,Verb,|failed|failed|failing|fails|
+232,faint,Verb,|fainted|fainted|fainting|faints|
+233,fall,Verb,|fell|fallen|falling|falls|
+234,fall dead,Verb,|fell|fallen|falling|falls|
+235,fall prostrate,Verb,|fell|fallen|falling|falls|
+236,fast,Verb,|fasted|fasted|fasting|fasts|
+237,fear,Verb,|feared|feared|fearing|fears|
+238,feed,Verb,|fed|fed|feeding|feeds|
+239,feel,Verb,|felt|felt|feeling|feels|
+240,fight,Verb,|fought|fought|fighting|fights|
+241,fill,Verb,|filled|filled|filling|fills|
+242,find out,Verb,|found|found|finding|finds|
+243,find,Verb,|found|found|finding|finds|
+244,finish,Verb,|finished|finished|finishing|finishes|
+245,float,Verb,|floated|floated|floating|floats|
+246,flourish,Verb,|flourished|flourished|flourishing|flourishes|
+247,flow,Verb,|flowed|flowed|flowing|flows|
+248,fly,Verb,|flew|flown|flying|flies|
+249,follow,Verb,|followed|followed|following|follows|
+250,forbid,Verb,|forbade|forbidden|forbidding|forbids|
+251,force,Verb,|forced|forced|forcing|forces|
+252,forget,Verb,|forgot|forgotten|forgetting|forgets|
+253,forgive,Verb,|forgave|forgiven|forgiving|forgives|
+254,forsake,Verb,|forsook|forsaken|forsaking|forsakes|
+255,free,Verb,|freed|freed|freeing|frees|
+256,frighten,Verb,|frightened|frightened|frightening|frightens|
+257,frown,Verb,|frowned|frowned|frowning|frowns|
+258,fulfill,Verb,|fulfilled|fulfilled|fulfilling|fulfills|
+259,gain,Verb,|gained|gained|gaining|gains|
+260,gather,Verb,|gathered|gathered|gathering|gathers|
+261,get,Verb,|got|gotten|getting|gets|
+262,get off,Verb,|got|gotten|getting|gets|
+263,get up,Verb,|got|gotten|getting|gets|
+264,get on,Verb,|got|gotten|getting|gets|
+265,give,Verb,|gave|given|giving|gives|
+266,glean,Verb,|gleaned|gleaned|gleaning|gleans|
+267,glorify,Verb,|glorified|glorified|glorifying|glorifies|
+268,gnash,Verb,|gnashed|gnashed|gnashing|gnashes|
+269,go,Verb,|went|gone|going|goes|
+270,go down,Verb,|went|gone|going|goes|
+271,go out,Verb,|went|gone|going|goes|
+272,go up,Verb,|went|gone|going|goes|
+273,gore,Verb,|gored|gored|goring|gores|
+274,gouge out,Verb,|gouged|gouged|gouging|gouges|
+275,govern,Verb,|governed|governed|governing|governs|
+276,grab,Verb,|grabbed|grabbed|grabbing|grabs|
+277,grasp,Verb,|grasped|grasped|grasping|grasps|
+278,greet,Verb,|greeted|greeted|greeting|greets|
+279,grieve,Verb,|grieved|grieved|grieving|grieves|
+280,grind,Verb,|ground|ground|grinding|grinds|
+281,groan,Verb,|groaned|groaned|groaning|groans|
+282,grow,Verb,|grew|grown|growing|grows|
+283,grow up,Verb,|grew|grown|growing|grows|
+284,guard,Verb,|guarded|guarded|guarding|guards|
+285,guide,Verb,|guided|guided|guiding|guides|
+286,hamstring,Verb,|hamstrung|hamstrung|hamstringing|hamstrings|
+287,hand over,Verb,|handed|handed|handing|hands|
+288,hang,Verb,|hung|hung|hanging|hangs|
+289,happen,Verb,|happened|happened|happening|happens|
+290,harm,Verb,|harmed|harmed|harming|harms|
+291,harvest,Verb,|harvested|harvested|harvesting|harvests|
+292,hate,Verb,|hated|hated|hating|hates|
+293,have,Verb,|had|had|having|has|
+294,heal,Verb,|healed|healed|healing|heals|
+295,hear,Verb,|heard|heard|hearing|hears|
+296,heat,Verb,|heated|heated|heating|heats|
+297,help,Verb,|helped|helped|helping|helps|
+298,hide,Verb,|hid|hidden|hiding|hides|
+299,hire,Verb,|hired|hired|hiring|hires|
+300,hit,Verb,|hit|hit|hitting|hits|
+301,hold,Verb,|held|held|holding|holds|
+302,honor,Verb,|honored|honored|honoring|honors|
+303,hope,Verb,|hoped|hoped|hoping|hopes|
+304,hover,Verb,|hovered|hovered|hovering|hovers|
+305,hug,Verb,|hugged|hugged|hugging|hugs|
+306,hunt,Verb,|hunted|hunted|hunting|hunts|
+307,hurt,Verb,|hurt|hurt|hurting|hurts|
+308,ignore,Verb,|ignored|ignored|ignoring|ignores|
+309,imagine,Verb,|imagined|imagined|imagining|imagines|
+310,improve,Verb,|improved|improved|improving|improves|
+311,include,Verb,|included|included|including|includes|
+312,increase,Verb,|increased|increased|increasing|increases|
+313,influence,Verb,|influenced|influenced|influencing|influences|
+314,inherit,Verb,|inherited|inherited|inheriting|inherits|
+315,injure,Verb,|injured|injured|injuring|injures|
+316,insist,Verb,|insisted|insisted|insisting|insists|
+317,inspect,Verb,|inspected|inspected|inspecting|inspects|
+318,inspire,Verb,|inspired|inspired|inspiring|inspires|
+319,instruct,Verb,|instructed|instructed|instructing|instructs|
+320,insult,Verb,|insulted|insulted|insulting|insults|
+321,introduce,Verb,|introduced|introduced|introducing|introduces|
+322,invade,Verb,|invaded|invaded|invading|invades|
+323,invite,Verb,|invited|invited|inviting|invites|
+324,join,Verb,|joined|joined|joining|joins|
+325,judge,Verb,|judged|judged|judging|judges|
+326,jump,Verb,|jumped|jumped|jumping|jumps|
+327,jump down,Verb,|jumped|jumped|jumping|jumps|
+328,keep,Verb,|kept|kept|keeping|keeps|
+329,kick,Verb,|kicked|kicked|kicking|kicks|
+330,kidnap,Verb,|kidnapped|kidnapped|kidnapping|kidnaps|
+331,kill,Verb,|killed|killed|killing|kills|
+332,kiss,Verb,|kissed|kissed|kissing|kisses|
+333,kneel,Verb,|knelt|knelt|kneeling|kneels|
+334,knock,Verb,|knocked|knocked|knocking|knocks|
+335,knock down,Verb,|knocked|knocked|knocking|knocks|
+336,knock over,Verb,|knocked|knocked|knocking|knocks|
+337,know,Verb,|knew|known|knowing|knows|
+338,lack,Verb,|lacked|lacked|lacking|lacks|
+339,laugh,Verb,|laughed|laughed|laughing|laughs|
+340,lay,Verb,|laid|laid|laying|lays|
+341,lead,Verb,|led|led|leading|leads|
+342,lean,Verb,|leaned|leaned|leaning|leans|
+343,learn,Verb,|learned|learned|learning|learns|
+344,learn,Verb,|learned|learned|learning|learns|
+345,leave,Verb,|left|left|leaving|leaves|
+346,lend,Verb,|lent|lent|lending|lends|
+347,let,Verb,|let|let|letting|lets|
+348,let go,Verb,|let|let|letting|lets|
+349,lick,Verb,|licked|licked|licking|licks|
+350,lie,Verb,|lied|lied|lying|lies|
+351,lie,Verb,|lay|lain|lying|lies|
+352,lie down,Verb,|lay|lain|lying|lies|
+353,lift,Verb,|lifted|lifted|lifting|lifts|
+354,light,Verb,|lit|lit|lighting|lights|
+355,like,Verb,|liked|liked|liking|likes|
+356,limp,Verb,|limped|limped|limping|limps|
+357,listen,Verb,|listened|listened|listening|listens|
+358,live,Verb,|lived|lived|living|lives|
+359,loan,Verb,|loaned|loaned|loaning|loans|
+360,lock,Verb,|locked|locked|locking|locks|
+361,long,Verb,|longed|longed|longing|longs|
+362,look,Verb,|looked|looked|looking|looks|
+363,look like,Verb,|looked|looked|looking|looks|
+364,look up,Verb,|looked|looked|looking|looks|
+365,lose,Verb,|lost|lost|losing|loses|
+366,love,Verb,|loved|loved|loving|loves|
+367,low,Verb,|lowed|lowed|lowing|lows|
+368,lower,Verb,|lowered|lowered|lowering|lowers|
+369,lust,Verb,|lusted|lusted|lusting|lusts|
+370,make,Verb,|made|made|making|makes|
+371,make up,Verb,|made|made|making|makes|
+372,manage,Verb,|managed|managed|managing|manages|
+373,march,Verb,|marched|marched|marching|marches|
+374,mark,Verb,|marked|marked|marking|marks|
+375,marry,Verb,|married|married|marrying|marries|
+376,mate,Verb,|mated|mated|mating|mates|
+377,mean,Verb,|meant|meant|meaning|means|
+378,measure,Verb,|measured|measured|measuring|measures|
+379,meditate,Verb,|meditated|meditated|meditating|meditates|
+380,meet,Verb,|met|met|meeting|meets|
+381,melt,Verb,|melted|melted|melting|melts|
+382,menstruate,Verb,|menstruated|menstruated|menstruating|menstruates|
+383,miss,Verb,|missed|missed|missing|misses|
+384,mix,Verb,|mixed|mixed|mixing|mixes|
+385,mock,Verb,|mocked|mocked|mocking|mocks|
+386,molest,Verb,|molested|molested|molesting|molests|
+387,mourn,Verb,|mourned|mourned|mourning|mourns|
+388,move,Verb,|moved|moved|moving|moves|
+389,move aside,Verb,|moved|moved|moving|moves|
+390,multiply,Verb,|multiplied|multiplied|multiplying|multiplies|
+391,murder,Verb,|murdered|murdered|murdering|murders|
+392,name,Verb,|named|named|naming|names|
+393,need,Verb,|needed|needed|needing|needs|
+394,notice,Verb,|noticed|noticed|noticing|notices|
+395,nurse,Verb,|nursed|nursed|nursing|nurses|
+396,obey,Verb,|obeyed|obeyed|obeying|obeys|
+397,obtain,Verb,|obtained|obtained|obtaining|obtains|
+398,offend,Verb,|offended|offended|offending|offends|
+399,offer,Verb,|offered|offered|offering|offers|
+400,open,Verb,|opened|opened|opening|opens|
+401,oppose,Verb,|opposed|opposed|opposing|opposes|
+402,oppress,Verb,|oppressed|oppressed|oppressing|oppresses|
+403,order,Verb,|ordered|ordered|ordering|orders|
+404,overflow,Verb,|overflowed|overflowed|overflowing|overflows|
+405,overlay,Verb,|overlayed|overlayed|overlaying|overlays|
+406,oversee,Verb,|oversaw|overseen|overseeing|oversees|
+407,overwhelm,Verb,|overwhelmed|overwhelmed|overwhelming|overwhelms|
+408,owe,Verb,|owed|owed|owing|owes|
+409,own,Verb,|owned|owned|owning|owns|
+410,paint,Verb,|painted|painted|painting|paints|
+411,pass,Verb,|passed|passed|passing|passes|
+412,pay,Verb,|paid|paid|paying|pays|
+413,perform,Verb,|performed|performed|performing|performs|
+414,perish,Verb,|perished|perished|perishing|perishes|
+415,persecute,Verb,|persecuted|persecuted|persecuting|persecutes|
+416,persuade,Verb,|persuaded|persuaded|persuading|persuades|
+417,pick up,Verb,|picked|picked|picking|picks|
+418,pick,Verb,|picked|picked|picking|picks|
+419,pierce,Verb,|pierced|pierced|piercing|pierces|
+420,plan,Verb,|planned|planned|planning|plans|
+421,plant,Verb,|planted|planted|planting|plants|
+422,play,Verb,|played|played|playing|plays|
+423,plead,Verb,|pleaded|pleaded|pleading|pleads|
+424,please,Verb,|pleased|pleased|pleasing|pleases|
+425,plot,Verb,|plotted|plotted|plotting|plots|
+426,plow,Verb,|plowed|plowed|plowing|plows|
+427,point,Verb,|pointed|pointed|pointing|points|
+428,possess,Verb,|possessed|possessed|possessing|possesses|
+429,pour,Verb,|poured|poured|pouring|pours|
+430,pour out,Verb,|poured|poured|pouring|pours|
+431,practice,Verb,|practiced|practiced|practicing|practices|
+432,praise,Verb,|praised|praised|praising|praises|
+433,pray,Verb,|prayed|prayed|praying|prays|
+434,preach,Verb,|preached|preached|preaching|preaches|
+435,predict,Verb,|predicted|predicted|predicting|predicts|
+436,prepare,Verb,|prepared|prepared|preparing|prepares|
+437,preserve,Verb,|preserved|preserved|preserving|preserves|
+438,press,Verb,|pressed|pressed|pressing|presses|
+439,pretend,Verb,|pretended|pretended|pretending|pretends|
+440,prevent,Verb,|prevented|prevented|preventing|prevents|
+441,proclaim,Verb,|proclaimed|proclaimed|proclaiming|proclaims|
+442,produce,Verb,|produced|produced|producing|produces|
+443,promise,Verb,|promised|promised|promising|promises|
+444,prophesy,Verb,|prophesied|prophesied|prophesying|prophesies|
+445,prosper,Verb,|prospered|prospered|prospering|prospers|
+446,protect,Verb,|protected|protected|protecting|protects|
+447,prove,Verb,|proved|proven|proving|proves|
+448,provide,Verb,|provided|provided|providing|provides|
+449,pull,Verb,|pulled|pulled|pulling|pulls|
+450,pull off,Verb,|pulled|pulled|pulling|pulls|
+451,pull out,Verb,|pulled|pulled|pulling|pulls|
+452,pull out of,Verb,|pulled|pulled|pulling|pulls|
+453,punish,Verb,|punished|punished|punishing|punishes|
+454,purify,Verb,|purified|purified|purifying|purifies|
+455,pursue,Verb,|pursued|pursued|pursuing|pursues|
+456,push,Verb,|pushed|pushed|pushing|pushes|
+457,push away,Verb,|pushed|pushed|pushing|pushes|
+458,put,Verb,|put|put|putting|puts|
+459,put down,Verb,|put|put|putting|puts|
+460,put on,Verb,|put|put|putting|puts|
+461,quarrel,Verb,|quarrelled|quarrelled|quarrelling|quarrels|
+462,race,Verb,|raced|raced|racing|races|
+463,raid,Verb,|raided|raided|raiding|raids|
+464,rain,Verb,|rained|rained|raining|rains|
+465,raise,Verb,|raised|raised|raising|raises|
+466,rape,Verb,|raped|raped|raping|rapes|
+467,reach,Verb,|reached|reached|reaching|reaches|
+468,reach out,Verb,|reached|reached|reaching|reaches|
+469,read,Verb,|read|read|reading|reads|
+470,realize,Verb,|realized|realized|realizing|realizes|
+471,rebel,Verb,|rebelled|rebelled|rebelling|rebels|
+472,rebuke,Verb,|rebuked|rebuked|rebuking|rebukes|
+473,recede,Verb,|receded|receded|receding|recedes|
+474,receive,Verb,|received|received|receiving|receives|
+475,recline,Verb,|reclined|reclined|reclining|reclines|
+476,recognize,Verb,|recognized|recognized|recognizing|recognizes|
+477,reconcile,Verb,|reconciled|reconciled|reconciling|reconciles|
+478,redeem,Verb,|redeemed|redeemed|redeeming|redeems|
+479,refuse,Verb,|refused|refused|refusing|refuses|
+480,regret,Verb,|regretted|regretted|regretting|regrets|
+481,reign,Verb,|reigned|reigned|reigning|reigns|
+482,reject,Verb,|rejected|rejected|rejecting|rejects|
+483,rejoice,Verb,|rejoiced|rejoiced|rejoicing|rejoices|
+484,release,Verb,|released|released|releasing|releases|
+485,remember,Verb,|remembered|remembered|remembering|remembers|
+486,remind,Verb,|reminded|reminded|reminding|reminds|
+487,rent,Verb,|rented|rented|renting|rents|
+488,repair,Verb,|repaired|repaired|repairing|repairs|
+489,repeat,Verb,|repeated|repeated|repeating|repeats|
+490,repent,Verb,|repented|repented|repenting|repents|
+491,replace,Verb,|replaced|replaced|replacing|replaces|
+492,reply,Verb,|replied|replied|replying|replies|
+493,report,Verb,|reported|reported|reporting|reports|
+494,represent,Verb,|represented|represented|representing|represents|
+495,require,Verb,|required|required|requiring|requires|
+496,rescue,Verb,|rescued|rescued|rescuing|rescues|
+497,respect,Verb,|respected|respected|respecting|respects|
+498,rest,Verb,|rested|rested|resting|rests|
+499,restore,Verb,|restored|restored|restoring|restores|
+500,retreat,Verb,|retreated|retreated|retreating|retreats|
+501,return,Verb,|returned|returned|returning|returns|
+502,reveal,Verb,|revealed|revealed|revealing|reveals|
+503,reward,Verb,|rewarded|rewarded|rewarding|rewards|
+504,ride,Verb,|rode|ridden|riding|rides|
+505,riot,Verb,|rioted|rioted|rioting|riots|
+506,rise,Verb,|rose|risen|rising|rises|
+507,risk,Verb,|risked|risked|risking|risks|
+508,roar,Verb,|roared|roared|roaring|roars|
+509,roast,Verb,|roasted|roasted|roasting|roasts|
+510,roll,Verb,|rolled|rolled|rolling|rolls|
+511,roll up,Verb,|rolled|rolled|rolling|rolls|
+512,row,Verb,|rowed|rowed|rowing|rows|
+513,rub,Verb,|rubbed|rubbed|rubbing|rubs|
+514,ruin,Verb,|ruined|ruined|ruining|ruins|
+515,rule,Verb,|ruled|ruled|ruling|rules|
+516,run out,Verb,|ran|run|running|runs|
+517,run,Verb,|ran|run|running|runs|
+518,run away,Verb,|ran|run|running|runs|
+519,run down,Verb,|ran|run|running|runs|
+520,rush,Verb,|rushed|rushed|rushing|rushes|
+521,sacrifice,Verb,|sacrificed|sacrificed|sacrificing|sacrifices|
+522,sail,Verb,|sailed|sailed|sailing|sails|
+523,satisfy,Verb,|satisfied|satisfied|satisfying|satisfies|
+524,save,Verb,|saved|saved|saving|saves|
+525,say,Verb,|said|said|saying|says|
+526,scare,Verb,|scared|scared|scaring|scares|
+527,scatter,Verb,|scattered|scattered|scattering|scatters|
+528,scold,Verb,|scolded|scolded|scolding|scolds|
+529,scorn,Verb,|scorned|scorned|scorning|scorns|
+530,scout,Verb,|scouted|scouted|scouting|scouts|
+531,scream,Verb,|screamed|screamed|screaming|screams|
+532,seal,Verb,|sealed|sealed|sealing|seals|
+533,search,Verb,|searched|searched|searching|searches|
+534,seduce,Verb,|seduced|seduced|seducing|seduces|
+535,see,Verb,|saw|seen|seeing|sees|
+536,seek,Verb,|sought|sought|seeking|seeks|
+537,seem,Verb,|seemed|seemed|seeming|seems|
+538,seize,Verb,|seized|seized|seizing|seizes|
+539,sell,Verb,|sold|sold|selling|sells|
+540,send,Verb,|sent|sent|sending|sends|
+541,separate,Verb,|separated|separated|separating|separates|
+542,serve,Verb,|served|served|serving|serves|
+543,set,Verb,|set|set|setting|sets|
+544,set up,Verb,|set|set|setting|sets|
+545,sew,Verb,|sewed|sewn|sewing|sews|
+546,shake,Verb,|shook|shaken|shaking|shakes|
+547,share,Verb,|shared|shared|sharing|shares|
+548,shave,Verb,|shaved|shaved|shaving|shaves|
+549,shear,Verb,|sheared|sheared|shearing|shears|
+550,shepherd,Verb,|shepherded|shepherded|shepherding|shepherds|
+551,shine,Verb,|shined|shined|shining|shines|
+552,shoot,Verb,|shot|shot|shooting|shoots|
+553,shout,Verb,|shouted|shouted|shouting|shouts|
+554,show,Verb,|showed|shown|showing|shows|
+555,shriek,Verb,|shrieked|shrieked|shrieking|shrieks|
+556,sigh,Verb,|sighed|sighed|sighing|sighs|
+557,sign,Verb,|signed|signed|signing|signs|
+558,sin,Verb,|sinned|sinned|sinning|sins|
+559,sing,Verb,|sang|sung|singing|sings|
+560,sink,Verb,|sank|sunk|sinking|sinks|
+561,sit,Verb,|sat|sat|sitting|sits|
+562,sit down,Verb,|sat|sat|sitting|sits|
+563,sit up,Verb,|sat|sat|sitting|sits|
+564,slander,Verb,|slandered|slandered|slandering|slanders|
+565,slaughter,Verb,|slaughtered|slaughtered|slaughtering|slaughters|
+566,sleep,Verb,|slept|slept|sleeping|sleeps|
+567,sling,Verb,|slung|slung|slinging|slings|
+568,slip,Verb,|slipped|slipped|slipping|slips|
+569,smell,Verb,|smelled|smelled|smelling|smells|
+570,smile,Verb,|smiled|smiled|smiling|smiles|
+571,sneeze,Verb,|sneezed|sneezed|sneezing|sneezes|
+572,snow,Verb,|snowed|snowed|snowing|snows|
+573,sound like,Verb,|sounded|sounded|sounding|sounds|
+574,speak,Verb,|spoke|spoken|speaking|speaks|
+575,spend,Verb,|spent|spent|spending|spends|
+576,spill,Verb,|spilled|spilled|spilling|spills|
+577,spit,Verb,|spit|spit|spitting|spits|
+578,spread,Verb,|spread|spread|spreading|spreads|
+579,sprinkle,Verb,|sprinkled|sprinkled|sprinkling|sprinkles|
+580,sprout,Verb,|sprouted|sprouted|sprouting|sprouts|
+581,squeeze,Verb,|squeezed|squeezed|squeezing|squeezes|
+582,stab,Verb,|stabbed|stabbed|stabbing|stabs|
+583,stand,Verb,|stood|stood|standing|stands|
+584,stand up,Verb,|stood|stood|standing|stands|
+585,stare,Verb,|stared|stared|staring|stares|
+586,start,Verb,|started|started|starting|starts|
+587,starve,Verb,|starved|starved|starving|starves|
+588,stay,Verb,|stayed|stayed|staying|stays|
+589,stay away,Verb,|stayed|stayed|staying|stays|
+590,steal,Verb,|stole|stolen|stealing|steals|
+591,step,Verb,|stepped|stepped|stepping|steps|
+592,step aside,Verb,|stepped|stepped|stepping|steps|
+593,sting,Verb,|stung|stung|stinging|stings|
+594,stir,Verb,|stirred|stirred|stirring|stirs|
+595,stone,Verb,|stoned|stoned|stoning|stones|
+596,stop,Verb,|stopped|stopped|stopping|stops|
+597,store,Verb,|stored|stored|storing|stores|
+598,stretch,Verb,|stretched|stretched|stretching|stretches|
+599,struggle,Verb,|struggled|struggled|struggling|struggles|
+600,study,Verb,|studied|studied|studying|studies|
+601,stumble,Verb,|stumbled|stumbled|stumbling|stumbles|
+602,submit,Verb,|submitted|submitted|submitting|submits|
+603,succeed,Verb,|succeeded|succeeded|succeeding|succeeds|
+604,suffer,Verb,|suffered|suffered|suffering|suffers|
+605,suggest,Verb,|suggested|suggested|suggesting|suggests|
+606,support,Verb,|supported|supported|supporting|supports|
+607,surprise,Verb,|surprised|surprised|surprising|surprises|
+608,surrender,Verb,|surrendered|surrendered|surrendering|surrenders|
+609,surround,Verb,|surrounded|surrounded|surrounding|surrounds|
+610,swallow,Verb,|swallowed|swallowed|swallowing|swallows|
+611,swear,Verb,|swore|sworn|swearing|swears|
+612,sweat,Verb,|sweated|sweated|sweating|sweats|
+613,sweep,Verb,|swept|swept|sweeping|sweeps|
+614,swell,Verb,|swelled|swollen|swelling|swells|
+615,swim,Verb,|swam|swum|swimming|swims|
+616,take,Verb,|took|taken|taking|takes|
+617,take away,Verb,|took|taken|taking|takes|
+618,take care,Verb,|took|taken|taking|takes|
+619,take off,Verb,|took|taken|taking|takes|
+620,take out,Verb,|took|taken|taking|takes|
+621,take revenge,Verb,|took|taken|taking|takes|
+622,talk,Verb,|talked|talked|talking|talks|
+623,taste,Verb,|tasted|tasted|tasting|tastes|
+624,teach,Verb,|taught|taught|teaching|teaches|
+625,tear,Verb,|tore|torn|tearing|tears|
+626,tell,Verb,|told|told|telling|tells|
+627,tempt,Verb,|tempted|tempted|tempting|tempts|
+628,terrify,Verb,|terrified|terrified|terrifying|terrifies|
+629,test,Verb,|tested|tested|testing|tests|
+630,testify,Verb,|testified|testified|testifying|testifies|
+631,thank,Verb,|thanked|thanked|thanking|thanks|
+632,think,Verb,|thought|thought|thinking|thinks|
+633,threaten,Verb,|threatened|threatened|threatening|threatens|
+634,thresh,Verb,|threshed|threshed|threshing|threshes|
+635,throw,Verb,|threw|thrown|throwing|throws|
+636,throw away,Verb,|threw|thrown|throwing|throws|
+637,tie,Verb,|tied|tied|tying|ties|
+638,tie up,Verb,|tied|tied|tying|ties|
+639,torture,Verb,|tortured|tortured|torturing|tortures|
+640,touch,Verb,|touched|touched|touching|touches|
+641,trade,Verb,|traded|traded|trading|trades|
+642,train,Verb,|trained|trained|training|trains|
+643,trample,Verb,|trampled|trampled|trampling|tramples|
+644,transform,Verb,|transformed|transformed|transforming|transforms|
+645,trap,Verb,|trapped|trapped|trapping|traps|
+646,travel,Verb,|traveled|traveled|traveling|travels|
+647,treat,Verb,|treated|treated|treating|treats|
+648,tremble,Verb,|trembled|trembled|trembling|trembles|
+649,trick,Verb,|tricked|tricked|tricking|tricks|
+650,trip,Verb,|tripped|tripped|tripping|trips|
+651,trust,Verb,|trusted|trusted|trusting|trusts|
+652,try,Verb,|tried|tried|trying|tries|
+653,turn,Verb,|turned|turned|turning|turns|
+654,turn around,Verb,|turned|turned|turning|turns|
+655,turn away,Verb,|turned|turned|turning|turns|
+656,twist,Verb,|twisted|twisted|twisting|twists|
+657,understand,Verb,|understood|understood|understanding|understands|
+658,unite,Verb,|united|united|uniting|unites|
+659,unlock,Verb,|unlocked|unlocked|unlocking|unlocks|
+660,untie,Verb,|untied|untied|untying|unties|
+661,upset,Verb,|upset|upset|upsetting|upsets|
+662,urge,Verb,|urged|urged|urging|urges|
+663,urinate,Verb,|urinated|urinated|urinating|urinates|
+664,use,Verb,|used|used|using|uses|
+665,visit,Verb,|visited|visited|visiting|visits|
+666,vomit,Verb,|vomited|vomited|vomiting|vomits|
+667,vote,Verb,|voted|voted|voting|votes|
+668,vow,Verb,|vowed|vowed|vowing|vows|
+669,wage,Verb,|waged|waged|waging|wages|
+670,wail,Verb,|wailed|wailed|wailing|wails|
+671,wait,Verb,|waited|waited|waiting|waits|
+672,wake up,Verb,|woke|woken|waking|wakes|
+673,walk,Verb,|walked|walked|walking|walks|
+674,walk away,Verb,|walked|walked|walking|walks|
+675,walk down,Verb,|walked|walked|walking|walks|
+676,walk up,Verb,|walked|walked|walking|walks|
+677,wander,Verb,|wandered|wandered|wandering|wanders|
+678,want,Verb,|wanted|wanted|wanting|wants|
+679,warn,Verb,|warned|warned|warning|warns|
+680,wash,Verb,|washed|washed|washing|washes|
+681,waste,Verb,|wasted|wasted|wasting|wastes|
+682,watch,Verb,|watched|watched|watching|watches|
+683,watch out,Verb,|watched|watched|watching|watches|
+684,wave,Verb,|waved|waved|waving|waves|
+685,wear,Verb,|wore|worn|wearing|wears|
+686,weep,Verb,|wept|wept|weeping|weeps|
+687,weigh,Verb,|weighed|weighed|weighing|weighs|
+688,welcome,Verb,|welcomed|welcomed|welcoming|welcomes|
+689,whip,Verb,|whipped|whipped|whipping|whips|
+690,whisper,Verb,|whispered|whispered|whispering|whispers|
+691,win,Verb,|won|won|winning|wins|
+692,wink,Verb,|winked|winked|winking|winks|
+693,winnow,Verb,|winnowed|winnowed|winnowing|winnows|
+694,wipe,Verb,|wiped|wiped|wiping|wipes|
+695,wish,Verb,|wished|wished|wishing|wishes|
+696,wither,Verb,|withered|withered|withering|withers|
+697,witness,Verb,|witnessed|witnessed|witnessing|witnesses|
+698,wonder,Verb,|wondered|wondered|wondering|wonders|
+699,work,Verb,|worked|worked|working|works|
+700,work out,Verb,|worked|worked|working|works|
+701,worry,Verb,|worried|worried|worrying|worries|
+702,worship,Verb,|worshiped|worshiped|worshiping|worships|
+703,wound,Verb,|wounded|wounded|wounding|wounds|
+704,wrap,Verb,|wrapped|wrapped|wrapping|wraps|
+705,wrestle,Verb,|wrestled|wrestled|wrestling|wrestles|
+706,write,Verb,|wrote|written|writing|writes|
+707,write down,Verb,|wrote|written|writing|writes|

@@ -1,56 +1,91 @@
-# TaBiThA Database Tools
+# TaBiThA Databases (`tabitha-databases`)
 
-This package houses database utilities, schemas, snapshots, and SQLite/D1 database dump workflows for the TaBiThA platform.
+This package contains the TBTA-to-TaBiThA ETL migration engine, reference datasets, and canonical SQL snapshot dumps for the TaBiThA translation platform.
 
 ---
 
 ## 🗄️ Managed Databases
 
-The TaBiThA platform utilizes Cloudflare D1 (SQLite at the edge) for each core service:
-
-| Database | Primary Service | Contents |
-| --- | --- | --- |
+| Database | Primary App | Description |
+| :--- | :--- | :--- |
 | **Ontology** | `apps/ontology` | Concepts, stems, glosses, grammatical categories, complexity hints, and pending changes |
-| **Sources** | `apps/sources` | Source texts (e.g. Bible), verse records, parsed semantic encodings, and feature codes |
+| **Sources** | `apps/sources` | Source texts (Bible, Community Development, Grammar Intro), verse records, and semantic encodings |
 | **Targets** | `apps/targets` | Target language grammars, lexical entries, translation texts, and inflectional forms |
-| **Auth** | `apps/ontology` | User profiles, sessions, and OAuth authentication credentials |
+| **Auth** | `apps/ontology` | User profiles, permissions, and OAuth credentials |
 
 ---
 
-## 📸 Snapshots, Migrations & Data
+## 📦 Package Contents
 
-- SQL Snapshot dumps: `tools/databases/snapshots/`
-- TBTA -> TaBiThA ETL migration pipeline: `tools/databases/migrations/`
-- Reference datasets, inflections & status CSVs: `tools/databases/data/`
-- Runtime DB loaders & inspectors: `scripts/dx/db_load.ts`, `scripts/dx/db_status.ts`
+- **`snapshots/`**: Point-in-time SQL snapshot dumps used to seed local and production D1 databases.
+- **`migrations/`**: Bun/TypeScript ETL scripts that ingest legacy TBTA SQLite databases and transform them into normalized TaBiThA SQLite schemas.
+- **`data/`**: Linguistic data assets feeding the migration pipelines:
+  - `data/ideal_texts/`: Reference translation documents (`.docx`, `.SFM`) for target languages (Indonesian, Swahili, etc.).
+  - `data/inflections/`: Inflection transformation scripts, source rules, and generated CSV tables.
+  - `data/status/`: Historical and current verse translation status CSVs.
 
 ---
 
-## 🛠️ Automated Database Loading (Bun)
+## 🔄 Running ETL Migrations
 
-From the monorepo root:
+All migration commands are run from within this package directory (`cd tools/databases`):
+
+### 1. Full Migration (Orchestrator)
+
+Runs all migrations sequentially against a directory of TBTA database exports:
 
 ```bash
-# Load all databases into local Wrangler environments
-pnpm db:load
-
-# Load a specific app's databases
-pnpm db:load:ontology
-pnpm db:load:sources
-pnpm db:load:targets
-
-# Inspect local database health, tables, row counts, and file sizes
-pnpm db:status
+cd tools/databases
+bun run migrate "<path_to_tbta_dbs_dir>" YYYY-MM-DD
 ```
 
----
+### 2. Individual Database Migrations
 
-## 🚀 One-Command Developer Setup
+Each migration pipeline can also be run independently:
+
+#### Targets Migration (Multi-Language)
+
+Accepts the base English database and any number of additional target language databases:
 
 ```bash
-# Complete developer bootstrap (environment scaffolding + DB loading + verification)
-pnpm setup
+cd tools/databases
+bun run migrate:targets \
+  databases/English_YYYY-MM-DD.tbta.sqlite \
+  databases/Swahili_YYYY-MM-DD.tbta.sqlite \
+  databases/Indonesian_YYYY-MM-DD.tbta.sqlite \
+  databases/Targets_YYYY-MM-DD.tabitha.sqlite
+```
 
-# Scaffold local .env.local files only
-pnpm setup:env
+#### Sources Migration (Multi-Source)
+
+Accepts any combination of source text databases:
+
+```bash
+cd tools/databases
+bun run migrate:sources \
+  databases/Bible_YYYY-MM-DD.tbta.sqlite \
+  databases/CommunityDevelopmentTexts_YYYY-MM-DD.tbta.sqlite \
+  databases/GrammarIntroduction_YYYY-MM-DD.tbta.sqlite \
+  databases/Sources_YYYY-MM-DD.tabitha.sqlite
+```
+
+#### Ontology Migration
+
+Ingests legacy Ontology and Sample databases and generates exhaustive concept examples:
+
+```bash
+cd tools/databases
+bun run migrate:ontology \
+  databases/Ontology_YYYY-MM-DD.tbta.sqlite \
+  databases/Sample_YYYY-MM-DD.tbta.sqlite \
+  databases/Ontology_9494_YYYY-MM-DD.tabitha.sqlite
+```
+
+#### Auth Initialization
+
+Creates default Auth permissions and role structures:
+
+```bash
+cd tools/databases
+bun run migrate:auth databases/Auth.tabitha.sqlite
 ```

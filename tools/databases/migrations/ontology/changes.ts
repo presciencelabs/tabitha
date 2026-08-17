@@ -1,0 +1,24 @@
+import type { Database } from 'bun:sqlite'
+
+export function create_changes_table(tabitha_db: Database) {
+	console.log(`Creating Changes table in ${tabitha_db.filename}...`)
+
+	tabitha_db.run(`
+		CREATE TABLE IF NOT EXISTS Changes (
+			'id'								INTEGER PRIMARY KEY,
+			'concept_stem'					TEXT,
+			'concept_sense' 				TEXT,
+			'concept_part_of_speech'	TEXT,
+			'action'							TEXT,
+			'data'							TEXT,
+			'suggested_by_email'			TEXT,
+			'suggested_date'				TEXT,
+			'approved_by_email'			TEXT,
+			'approved_date'				TEXT,
+			'applied_date'					TEXT,
+			'version'						TEXT
+		)
+	`)
+
+	console.log('done.')
+}
