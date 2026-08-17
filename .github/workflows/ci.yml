@@ -16,22 +16,11 @@ permissions:
   contents: read
 
 jobs:
-  code_quality:
-    name: Code Quality & Typecheck
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Workspace
-        uses: ./.github/actions/setup-workspace
-
-      - name: Typecheck & Svelte Diagnostics
-        run: pnpm check
-
+  # ============================================================================
+  # STAGE 1: HARD BLOCKERS (Fast-Fail Gates)
+  # ============================================================================
   security_compliance:
-    name: Security & Compliance
+    name: 🛡️ Security & Compliance (Blocking)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -61,8 +50,40 @@ jobs:
         run: pnpm check:md
         continue-on-error: true
 
+  production_build:
+    name: 📦 Production Bundle Build (Blocking)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Production Bundle Verification
+        run: pnpm build
+
+  # ============================================================================
+  # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
+  # ============================================================================
+  code_quality:
+    name: 🔍 Code Quality & Typecheck
+    needs: [security_compliance, production_build]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Typecheck & Svelte Diagnostics
+        run: pnpm check
+
   unit_tests:
-    name: Unit Tests & Coverage
+    name: 🧪 Unit Tests & Coverage
+    needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -75,26 +96,16 @@ jobs:
       - name: In-Memory Unit Tests & Coverage Report
         run: pnpm test:coverage
 
-  production_build:
-    name: Production Bundle Build (Blocking)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Workspace
-        uses: ./.github/actions/setup-workspace
-
-      - name: Production Bundle Verification
-        run: pnpm build
-
   e2e_tests:
-    name: Playwright E2E Tests
+    name: 🎭 Playwright E2E Tests
+    needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
@@ -114,9 +125,13 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright Chromium
+      - name: Install Playwright Chromium & System Dependencies
         if: steps.playwright_cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Install Playwright OS Dependencies on Cache Hit
+        if: steps.playwright_cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
 
       - name: Execute Playwright End-to-End Suite
         run: pnpm test:e2e
