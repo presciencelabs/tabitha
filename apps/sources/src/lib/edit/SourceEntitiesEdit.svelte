@@ -8,6 +8,8 @@
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 	import { structure_entities } from '$lib/encoding/structured'
 	import { view_settings, set_settings } from '$lib/settings/settings.svelte.js'
+	import type { PageSourceEntity } from '@tabitha/types'
+	import type { EntityContextMenuData } from '$lib/types'
 
 	type IndexRange = [number, number]
 

@@ -1,19 +1,22 @@
 <script lang="ts">
 	import { is_used_in_source } from '$lib/encoding/features'
 	import { page } from '$app/state'
+	import type { PageSourceEntity, FeatureMap, EntityFeature, FeatureInfo, FeatureValueInfo } from '@tabitha/types'
 
 	const { data = $bindable() }: { data: PageSourceEntity } = $props()
 
 	let filtered_features = $derived(data.features.filter(is_used_in_source(data.category)))
-	let category_features = $derived((page.data.features as FeatureMap).get(data.category) ?? [])
+	let category_features = $derived<FeatureInfo[]>((page.data.features as FeatureMap).get(data.category) ?? [])
 
 	$effect(() => {
 		if (data.category === 'Noun Phrase') {
 			// Update the semantic role feature code.
 			// We only care about the semantic role code because it's the only one that is currently displayed.
 			// If we end up displaying more, we can use the feature_structure_to_codes() function in encoding/features.ts
-			const semantic_role_value = data.features.find(f => f.name === 'Semantic Role')?.value
-			const semantic_role_code = category_features.find(f => f.name === 'Semantic Role')?.values.find(v => v.value === semantic_role_value)?.code
+			const semantic_role_value = data.features.find((f: EntityFeature) => f.name === 'Semantic Role')?.value
+			const semantic_role_code = category_features
+				.find((f: FeatureInfo) => f.name === 'Semantic Role')
+				?.values.find((v: FeatureValueInfo) => v.value === semantic_role_value)?.code
 			if (semantic_role_code) {
 				data.feature_codes = data.feature_codes.slice(0, 1) + semantic_role_code + data.feature_codes.slice(2)
 			}
@@ -28,7 +31,7 @@
 		<tbody>
 			{#each data.features as feature}
 				{#if is_used_in_source(data.category)(feature)}
-					{@const possible_values = category_features.find(f => f.name === feature.name)?.values || []}
+					{@const possible_values = category_features.find((f: FeatureInfo) => f.name === feature.name)?.values || []}
 					<tr>
 						<td class="w-2/5">{feature.name}</td>
 						<td class="w-3/5">
