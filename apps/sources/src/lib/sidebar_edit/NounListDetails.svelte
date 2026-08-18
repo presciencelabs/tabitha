@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { data = $bindable(), noun_list }: { data: PageSourceEntity, noun_list: NounListEntry[] } = $props()
+	let { data = $bindable(), noun_list = $bindable() }: { data: PageSourceEntity, noun_list: NounListEntry[] } = $props()
 
 	const next_index = $derived(calculate_next_index())
 

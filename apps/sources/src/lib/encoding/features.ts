@@ -116,15 +116,20 @@ function feature_structure_to_codes(category: CategoryName, features: EntityFeat
 	return codes.join('')
 }
 
+export function fill_in_features(source_entity: SourceEntity, all_features: FeatureMap): { feature_codes: string, features: EntityFeature[] } {
+	const { category, features } = source_entity
+	const feature_codes = feature_structure_to_codes(category, features, all_features)
+	// fill in any missing features in the structure
+	const new_features = feature_codes_to_structure(category, feature_codes, all_features)
+	return { feature_codes, features: new_features }
+}
+
 export async function transform_features_to_codes(db: D1Database, source_entities: SourceEntity[]): Promise<SourceEntity[]> {
 	const all_features = await load_source_feature_map(db)
 
 	return source_entities.map(entity => {
-		const { category, features } = entity
-		const feature_codes = feature_structure_to_codes(category, features, all_features)
-		// fill in any missing features in the structure
-		const new_features = feature_codes_to_structure(category, feature_codes, all_features)
-		return { ...entity, feature_codes, features: new_features }
+		const { feature_codes, features } =	fill_in_features(entity, all_features)
+		return { ...entity, feature_codes, features }
 	})
 }
 

@@ -12,7 +12,6 @@
 	let phase1_text = $state('')
 	let source_entities = $state<PageSourceEntity[]>([])
 	let noun_list = $state<NounListEntry[]>([])
-	let all_features = $derived(data.features)
 
 	$effect(() => {
 		phase1_text = data.source.phase_1_encoding
@@ -22,8 +21,8 @@
 
 	let is_checked = $state(false)
 	let checking = $state(false)
-	let check_result: CheckerResult|null = $state(null)
-	let errors_and_warnings: [CheckerMessage, number][] = $state([])
+	let check_result = $state<CheckerResult | null>(null)
+	let errors_and_warnings = $state<[CheckerMessage, number][]>([])
 
 	let analyzing = $state(false)
 	let api_error = $state<string | null>(null)
@@ -196,10 +195,10 @@
 	<div class="divider my-2"></div>
 	<div class="flex h-screen">
 		<div class="overflow-y-auto transition-all duration-300 flex-[1_1_auto]" style="margin-right: {sidebar_open ? '24rem' : '0'};">
-			<SourceEntitiesEdit bind:source_entities={source_entities} {selected_entity} {on_entity_select} />
+			<SourceEntitiesEdit bind:source_entities {selected_entity} {on_entity_select} />
 		</div>
 		{#if sidebar_open}
-			<Sidebar bind:entity={selected_entity} onclose={on_sidebar_close} {noun_list} {all_features} />
+			<Sidebar bind:entity={selected_entity} onclose={on_sidebar_close} bind:noun_list />
 		{/if}
 	</div>
 {/if}

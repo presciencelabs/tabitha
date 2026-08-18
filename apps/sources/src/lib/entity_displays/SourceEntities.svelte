@@ -92,7 +92,7 @@
 			onfocus={() => entity_focus(i)}
 			onmouseleave={entity_mouseout}
 			onblur={() => {}}
-			class="cursor-pointer content-center h-20 {entity_highlights[i]}"
+			class="cursor-pointer content-center px-1 h-20 {entity_highlights[i]}"
 		>
 			<Component source_entity={entity} />
 		</div>
