@@ -3,6 +3,6 @@
 	let { source_entity, classes='' } = $props()
 </script>
 
-<span class="px-1 -mt-4 text-6xl font-thin {classes}">
-	{source_entity.category === 'Paragraph' || source_entity.value === 'Paragraph' ? '¶' : source_entity.value}
+<span class="-mt-4 text-6xl font-thin {classes}">
+	{source_entity.category === 'Paragraph' ? '¶' : source_entity.value}
 </span>

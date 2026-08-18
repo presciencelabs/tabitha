@@ -1,6 +1,6 @@
 <script>
 	/** @type {{ data: PageSourceEntity, noun_list: NounListEntry[] }}*/
-	const { data = $bindable(), noun_list } = $props()
+	const { data = $bindable(), noun_list = $bindable() } = $props()
 
 	const next_index = $derived(calculate_next_index())
 

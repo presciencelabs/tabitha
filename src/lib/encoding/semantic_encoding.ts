@@ -35,7 +35,7 @@ export async function transform_semantic_encoding(db: D1Database, semantic_encod
 	function decode_entity(entity_match: RegExpMatchArray): SourceEntity {
 		const category_code = entity_match[1] ?? ''
 		const feature_codes = entity_match[2] ?? ''
-		const value = entity_match[3]
+		const value = entity_match[3] === 'Paragraph' ? '|' : entity_match[3]
 
 		const category = CATEGORY_NAME_LOOKUP.get(category_code) || ''
 		const category_abbr = CATEGORY_ABBREVIATIONS.get(category) || ''
@@ -73,7 +73,7 @@ export async function transform_target_encoding(db: D1Database, semantic_encodin
 
 		const value = entity_match[2]
 		const concept = decode_concept_data(value, category, raw_feature_codes).concept
-		const target = entity_match[3] || ''
+		const target = entity_match[3] === 'Paragraph' ? '|' : entity_match[3] || ''
 
 		return {
 			category,

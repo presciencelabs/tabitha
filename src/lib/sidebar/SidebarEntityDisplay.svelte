@@ -35,5 +35,7 @@
 				{/if}
 			</div>
 		</div>
+	{:else}
+		<Punctuation source_entity={entity} />
 	{/if}
 </div>

@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
 	import { is_used_in_source } from '$lib/encoding/features'
+	import { page } from '$app/state'
 
-	/** @type {{ data: PageSourceEntity, all_features: FeatureMap }} */
-	const { data = $bindable(), all_features } = $props()
+	const { data = $bindable() }: { data: PageSourceEntity } = $props()
 
 	let filtered_features = $derived(data.features.filter(is_used_in_source(data.category)))
-	let category_features = $derived(all_features.get(data.category) ?? [])
+	let category_features = $derived((page.data.features as FeatureMap).get(data.category) ?? [])
 
 	$effect(() => {
 		if (data.category === 'Noun Phrase') {
@@ -19,14 +19,6 @@
 			}
 		}
 	})
-
-	/**
-	 * @param {EntityFeature} feature
-	 * @returns {boolean}
-	 */
-	function can_be_dulled({ value }) {
-		return value === 'No' || ['Un', 'No ', 'Not '].some(prefix => value.startsWith(prefix))
-	}
 </script>
 
 {#if filtered_features.length === 0}
@@ -37,7 +29,7 @@
 			{#each data.features as feature}
 				{#if is_used_in_source(data.category)(feature)}
 					{@const possible_values = category_features.find(f => f.name === feature.name)?.values || []}
-					<tr class="{can_be_dulled(feature) ? 'opacity-50' : ''}">
+					<tr>
 						<td class="w-2/5">{feature.name}</td>
 						<td class="w-3/5">
 							<select bind:value={feature.value} class="select select-sm">

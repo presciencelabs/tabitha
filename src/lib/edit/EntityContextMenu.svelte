@@ -11,26 +11,6 @@
 
 	let entity = $derived(source_entities[data.entity_id])
 
-	function paste_before() {
-		const new_entities = entity_clipboard.paste()
-		if (new_entities !== null) {
-			source_entities.splice(data.entity_id, 0, ...new_entities)
-			onclose(true, data.entity_id)
-		} else {
-			onclose(false)
-		}
-	}
-
-	function paste_after() {
-		const new_entities = entity_clipboard.paste()
-		if (new_entities !== null) {
-			source_entities.splice(data.entity_id + 1, 0, ...new_entities)
-			onclose(true, data.entity_id + 1)
-		} else {
-			onclose(false)
-		}
-	}
-
 	function cut_entity() {
 		const entity_range = source_entities.splice(data.entity_id, get_range_length())
 		entity_clipboard.copy(entity_range)
@@ -60,14 +40,10 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="card shadow-lg bg-base-100 min-w-50" style="position: fixed; left: {data.x}px; top: {data.y}px; z-index: 60;"
+<div class="card shadow-lg bg-base-100 min-w-40" style="position: fixed; left: {data.x}px; top: {data.y}px; z-index: 60;"
 		onclick={e => e.stopPropagation()}
 		onmouseleave={() => onclose(false)}>
 	<ul class="menu w-full">
-		{#if entity_clipboard.has_value()}
-			<li><button onclick={paste_before}>Paste before</button></li>
-			<li><button onclick={paste_after}>Paste after</button></li>
-		{/if}
 		<li><button onclick={copy_entity}>Copy</button></li>
 		<li><button onclick={cut_entity}>Move</button></li>
 		<li><button onclick={delete_entity}>Delete</button></li>
