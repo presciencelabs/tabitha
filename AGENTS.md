@@ -4,9 +4,9 @@ Welcome to the **TaBiThA** engineering workspace. This document serves as the **
 
 ---
 
-## 🏛️ 12 Core Development Philosophies
+## 🏛️ 13 Core Development Philosophies
 
-All code written in this repository must adhere to the following 12 foundational philosophies:
+All code written in this repository should adhere to the following 13 foundational philosophies:
 
 ### 1. Self-contained components
 
@@ -285,6 +285,34 @@ interface FetchConceptOptions {
 	readonly concept_id: string
 	readonly include_glosses?: boolean
 }
+```
+
+---
+
+### 13. Scope `prose` to content; escape with `not-prose`
+
+`@tailwindcss/typography`'s `prose` class exists to give raw, long-form content (descriptions, glosses, definitions, markdown-rendered text) sensible heading/paragraph/list rhythm without hand-tuning every element. It is **not** a general-purpose styling utility. Apply it only to an element that wraps genuine textual content — never to a layout wrapper, a card title row, or anything carrying flex/grid utilities or daisyUI structural classes (`card-title`, `card-actions`, `btn`, `navbar`, `modal-action`), since `prose`'s descendant selectors will override daisyUI component and layout styling on anything nested inside it. When a `prose` block must contain a daisyUI component or interactive element, add `not-prose` to that nested element to opt it back out.
+
+```svelte
+<!-- ❌ Avoid: "prose" applied to a layout/component region, not content -->
+<section class="prose card-title max-w-none justify-between">
+	<Header {concept} />
+</section>
+
+<!-- ✅ Preferred: layout on the wrapper, "prose" scoped to the text block only -->
+<div class="card-title flex justify-between">
+	<Header {concept} />
+</div>
+
+<section class="prose max-w-none">
+	<Meaning {concept} />
+</section>
+
+<!-- ✅ A daisyUI component nested inside real content escapes via not-prose -->
+<section class="prose max-w-none">
+	<p>{concept.definition}</p>
+	<button class="btn btn-sm not-prose">Show more</button>
+</section>
 ```
 
 ---
