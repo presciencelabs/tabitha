@@ -113,7 +113,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 
 		type Category = string
 		type Features = Set<string>
-		const position_tracker: Map<Category, Features> = new Map()
+		const position_tracker = new Map<Category, Features>()
 		for (const { category_id, feature, encoded_values, encoded_examples } of extracted_data) {
 			const category = CATEGORIES[category_id]
 			const features = position_tracker.get(category) ?? new Set()

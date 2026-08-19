@@ -185,7 +185,7 @@ const community_development_text_books: Book = {
  *
  * ReferenceUtils.cpp CReferenceUtils::GetSourceTextName
  */
-export const sources: Map<string, Book> = new Map<string, Book>([
+export const sources = new Map<string, Book>([
 	['Hebrew Old Testament', {}],
 	['Greek New Testament', {}],
 	['Greek Grammar Introduction', {}],
@@ -196,7 +196,7 @@ export const sources: Map<string, Book> = new Map<string, Book>([
 	['Community Development Texts', community_development_text_books],
 ])
 
-export const levels: Map<string, string> = new Map([
+export const levels = new Map<string, string>([
 	['0', 'Semantic Primitive'],
 	['1', 'Semantic Molecule'],
 	['2', 'Complex - usually explicated'],

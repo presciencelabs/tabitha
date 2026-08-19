@@ -88,7 +88,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 
 		type PartOfSpeech = string
 		type Features = Set<string>
-		const position_tracker: Map<PartOfSpeech, Features> = new Map()
+		const position_tracker = new Map<PartOfSpeech, Features>()
 		for (const { category, feature, encoded_values, notes } of extracted_data) {
 			const features = position_tracker.get(category) ?? new Set()
 			position_tracker.set(category, features.add(feature))

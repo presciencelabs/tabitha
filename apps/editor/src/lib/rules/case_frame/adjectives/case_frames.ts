@@ -28,7 +28,7 @@ const default_adjective_case_frame_json: RoleRuleJson<AdjectiveRoleTag> = {
  * These rules allow each adjective sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
  */
-const adjective_case_frames: Map<WordStem, [WordSense, SenseRuleJson<AdjectiveRoleTag>][]> = new Map([
+const adjective_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<AdjectiveRoleTag>][]>([
 	['afraid', [
 		['afraid-B', { 'nominal_argument': by_adposition('of') }],
 	]],

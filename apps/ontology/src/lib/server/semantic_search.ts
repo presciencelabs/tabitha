@@ -104,7 +104,7 @@ function concept_key({ stem, sense, part_of_speech }: Concept): string {
 	return `${stem}-${sense}-${part_of_speech}`
 }
 
-const related_concept_cache: Map<string, [string[], Date]> = new Map()
+const related_concept_cache = new Map<string, [string[], Date]>()
 
 function get_from_cache(search_term: string): string[] | undefined {
 	const cached_value = related_concept_cache.get(search_term)

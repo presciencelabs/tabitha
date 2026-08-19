@@ -23,7 +23,7 @@ const default_adposition_usage_json: RoleRuleJson<AdpositionRoleTag> = {
  * These rules allow each adposition sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
  */
-const adposition_case_frames: Map<WordStem, [WordSense, SenseRuleJson<AdpositionRoleTag>][]> = new Map([
+const adposition_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<AdpositionRoleTag>][]>([
 	['ago', [
 		['ago-A', {
 			'in_noun_phrase': head_noun_post(),

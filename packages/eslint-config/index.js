@@ -23,6 +23,7 @@ export const baseConfig = [
 		},
 
 		rules: {
+			'@typescript-eslint/consistent-generic-constructors': ['error', 'constructor'],
 			'@stylistic/semi': ['error', 'never'],
 			'@stylistic/indent': ['error', 'tab'],
 			'@stylistic/quotes': [

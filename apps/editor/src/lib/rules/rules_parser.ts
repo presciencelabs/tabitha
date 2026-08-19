@@ -335,7 +335,7 @@ export function from_built_in_rule(group_name: string): (rule: BuiltInRule, inde
 	})
 }
 
-const SKIP_GROUPS: Map<SkipGroup, SkipJsonSingle[]> = new Map([
+const SKIP_GROUPS = new Map<SkipGroup, SkipJsonSingle[]>([
 	['clause_start', [
 		{ 'token': '[' },
 		{ 'token': '"' },

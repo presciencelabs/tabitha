@@ -1,4 +1,4 @@
-export const FUNCTION_WORDS: Map<string, Record<string, string>> = new Map<string, Record<string, string>>([
+export const FUNCTION_WORDS = new Map<string, Record<string, string>>([
 	['a', { 'determiner': 'indefinite_article' }],
 	['an', { 'determiner': 'indefinite_article' }],
 	['certainly', { 'verb_polarity': 'emphatic_affirmative' }],

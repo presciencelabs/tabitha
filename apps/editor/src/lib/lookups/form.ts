@@ -74,7 +74,7 @@ async function get_matches_from_form_lookup(lookup_term: string): Promise<Lexica
 	return targets_client.lookup_forms<LexicalFormResult>(lookup_term)
 }
 
-const MISSING_FORMS: Map<string, { stem: string; part_of_speech: string; forms: string }> = new Map([
+const MISSING_FORMS = new Map<string, { stem: string; part_of_speech: string; forms: string }>([
 	// TODO add more or remove some when we include Analyzer inflections as well
 	// see https://github.com/presciencelabs/tabitha-editor/issues/37
 	['chiefer', { stem: 'chief', part_of_speech: 'Adjective', forms: 'comparative' }],

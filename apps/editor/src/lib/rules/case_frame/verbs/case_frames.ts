@@ -66,7 +66,7 @@ const default_verb_case_frame_json: RoleRuleJson<VerbRoleTag> = {
  * These rules allow each verb sense to specify rules for each argument that is different from the default.
  * Only senses that differ from the default structure need to be included here.
  */
-const verb_case_frames: Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]> = new Map([
+const verb_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag>][]>([
 	['accept', []],
 	['act', []],
 	['admit', []],
