@@ -1,6 +1,16 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { add_tag_to_token, set_message, split_stem_and_sense } from '$lib/token'
 import { create_context_filter, create_token_filter } from '../rules_parser'
+import type { Token } from '@tabitha/types'
+import type {
+	ArgumentMatchFilter,
+	PriorityOverrideRule,
+	RoleFilterRuleJson,
+	WordSense,
+	WordStem,
+	WordStemPriorityOverrides,
+} from '$lib/rules/case_frame/types'
+import type { RuleTriggerContext } from '$lib/rules/types'
 
 /**
  * By default, senses with valid case frames are prioritized by letter (eg. -A is selected over -B).

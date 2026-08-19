@@ -3,6 +3,7 @@ import { FUNCTION_WORDS } from './function_words'
 import { REGEXES } from '$lib/regexes'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { ERRORS } from './error_messages'
+import type { PairingType, Token, TokenType } from '@tabitha/types'
 
 function normalize_input(text: string): string {
 	return text

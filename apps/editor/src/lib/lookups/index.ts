@@ -4,6 +4,8 @@ import { create_context_filter, create_token_filter, from_built_in_rule, simple_
 import { apply_rule_to_tokens } from '../rules/rules_processor'
 import { check_forms } from './form'
 import { check_ontology } from './ontology'
+import type { Sentence, Token } from '@tabitha/types'
+import type { BuiltInRule } from '$lib/rules/types'
 
 export async function perform_form_lookups(sentences: Sentence[]): Promise<Sentence[]> {
 	const lookup_tokens = sentences.flatMap(flatten_for_lookup).filter(is_lookup_token)

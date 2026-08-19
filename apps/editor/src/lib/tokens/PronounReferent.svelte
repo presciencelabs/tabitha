@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'

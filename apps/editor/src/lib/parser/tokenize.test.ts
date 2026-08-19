@@ -4,6 +4,7 @@ import { ERRORS } from './error_messages'
 import { FUNCTION_WORDS } from './function_words'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { tokenize_input } from './tokenize'
+import type { PairingType, Token } from '@tabitha/types'
 
 function create_word_token(token: string, { lookup_term = null, sense = '' }: { lookup_term?: string | null; sense?: string } = {}): Token {
 	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: lookup_term || token, specified_sense: sense })

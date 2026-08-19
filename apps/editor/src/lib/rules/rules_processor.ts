@@ -1,3 +1,5 @@
+import type { Sentence, Token } from '@tabitha/types'
+import type { TokenRule } from '$lib/rules/types'
 export function rules_applier(rules: TokenRule[]): (sentences: Sentence[]) => Sentence[] {
 	return sentences => apply_rules(sentences, rules)
 }

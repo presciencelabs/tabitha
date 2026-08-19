@@ -6,6 +6,9 @@ import { parse_transform_rule } from './transform_rules'
 import { parse_checker_rule } from './checker_rules'
 import { parse_part_of_speech_rule } from './part_of_speech_rules'
 import { expect_error } from '$lib/test_helps'
+import type { OntologyStatus, Sentence, Token } from '@tabitha/types'
+import type { CheckerRuleJson } from '$lib/rules/types'
+import type { LookupResult } from '$lib/types'
 
 function create_sentence(tokens: Token[]): Sentence {
 	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }

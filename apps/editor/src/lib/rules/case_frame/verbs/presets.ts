@@ -1,4 +1,6 @@
 import { TOKEN_TYPE } from '$lib/token'
+import type { CaseFrameRuleJson, RoleRuleValueJson } from '$lib/rules/case_frame/types'
+import type { TokenContextFilterJson, TokenFilterJsonBase } from '$lib/rules/types'
 
 /**
  * 

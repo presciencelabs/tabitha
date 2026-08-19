@@ -1,5 +1,7 @@
 import { add_tag_to_token, create_gap_token, TOKEN_TYPE } from '$lib/token'
 import { create_context_filter, create_skip_filter, create_token_filter, simple_rule_action } from '../rules_parser'
+import type { Token } from '@tabitha/types'
+import type { RuleTriggerContext, TokenFilter, TokenRuleCore } from '$lib/rules/types'
 
 /**
  * @param {Token[]} tokens

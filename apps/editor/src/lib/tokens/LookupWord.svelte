@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import Pairing from './Pairing.svelte'
 	import PronounReferent from './PronounReferent.svelte'
 	import SingleToken from './SingleToken.svelte'

@@ -1,4 +1,15 @@
 import { create_context_filter, create_token_filter } from '$lib/rules/rules_parser'
+import type { Token } from '@tabitha/types'
+import type {
+	CategoryName,
+	EntityFeature,
+	FeatureName,
+	FeatureRuleJson,
+	FeatureRulesByCategory,
+	FeatureRulesByCategoryJson,
+	FeatureValue,
+} from '$lib/analyzer/types'
+import type { TokenRule } from '$lib/rules/types'
 
 const feature_rules_json: FeatureRulesByCategoryJson = {
 	'Noun': [

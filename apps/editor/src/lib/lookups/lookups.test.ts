@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { perform_form_lookups, perform_ontology_lookups } from './index'
 import { TOKEN_TYPE, create_token } from '$lib/token'
+import type { Sentence } from '@tabitha/types'
 
 describe('lookups module', () => {
 	beforeEach(() => {

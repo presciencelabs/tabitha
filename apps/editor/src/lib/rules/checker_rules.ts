@@ -4,6 +4,17 @@ import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, from_built_in_rule, message_set_action } from './rules_parser'
+import type { Message, MessageInfo, MessageType, Token } from '@tabitha/types'
+import type {
+	BuiltInRule,
+	CheckerActionJson,
+	CheckerRuleJson,
+	LookupFilter,
+	RuleAction,
+	RuleTriggerContext,
+	TokenFilter,
+	TokenRule,
+} from '$lib/rules/types'
 
 const checker_rules_json: CheckerRuleJson[] = [
 	{

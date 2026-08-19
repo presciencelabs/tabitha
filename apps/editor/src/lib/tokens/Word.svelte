@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'

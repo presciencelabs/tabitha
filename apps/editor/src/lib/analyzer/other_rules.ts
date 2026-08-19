@@ -1,5 +1,8 @@
 import { create_token_filter } from '$lib/rules/rules_parser'
 import { create_lookup_result, TOKEN_TYPE } from '$lib/token'
+import type { Sentence, Token } from '@tabitha/types'
+import type { NounListEntry, NounListIndex, SimpleSourceEntity } from '$lib/analyzer/types'
+import type { TokenFilter } from '$lib/rules/types'
 
 const PUNCTUATION_PARTICLES: Array<[string, TokenFilter]> = [
 	['exclamation', create_token_filter({ 'token': '!' })],

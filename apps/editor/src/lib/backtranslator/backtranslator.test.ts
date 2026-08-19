@@ -4,6 +4,7 @@ import { MESSAGE_TYPE, TOKEN_TYPE, create_token, create_added_token, create_gap_
 import { tokenize_input } from '$lib/parser/tokenize'
 import { clausify } from '$lib/parser/clausify'
 import { RULES, rules_applier } from '$lib/rules'
+import type { Sentence } from '@tabitha/types'
 
 /**
  * textify simply produces the plain text equivalent for each token, joined by a space.

@@ -1,3 +1,5 @@
+import type { CaseFrameRuleJson } from '$lib/rules/case_frame/types'
+import type { TokenContextFilterJson } from '$lib/rules/types'
 /**
  * 
  * @returns {CaseFrameRuleJson}

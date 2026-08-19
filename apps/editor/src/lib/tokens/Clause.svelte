@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import Tokens from './Tokens.svelte'
 
 	interface Props {

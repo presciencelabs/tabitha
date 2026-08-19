@@ -1,5 +1,13 @@
 import { add_tag_to_token, TOKEN_TYPE } from '$lib/token'
 import { create_context_filter, create_token_filter, create_token_transform, create_token_transforms, from_built_in_rule, simple_rule_action } from './rules_parser'
+import type { Tag, Token } from '@tabitha/types'
+import type {
+	BuiltInRule,
+	RuleTriggerContext,
+	TokenRule,
+	TokenTransform,
+	TransformRuleJson,
+} from '$lib/rules/types'
 
 /**
  * These are words that may change their underlying data based on the context around them.

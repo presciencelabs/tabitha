@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { TOKEN_TYPE, create_token } from '../token'
 import { create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
+import type { TokenFilterJson } from '$lib/rules/types'
 
 describe('token filters', () => {
 	test('all', () => {

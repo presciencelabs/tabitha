@@ -1,3 +1,5 @@
+import type { OntologyStatus } from '@tabitha/types'
+import type { CaseFrame } from '$lib/rules/case_frame/types'
 function IS_IN_ONTOLOGY(lookup: { ontology_status: OntologyStatus }): boolean {
 	return lookup.ontology_status === 'in ontology'
 }

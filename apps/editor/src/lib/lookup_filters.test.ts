@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest'
 import { LOOKUP_FILTERS } from './lookup_filters'
+import type { LookupResult } from '$lib/types'
 
 describe('LOOKUP_FILTERS', () => {
 	test('IS_IN_ONTOLOGY', () => {

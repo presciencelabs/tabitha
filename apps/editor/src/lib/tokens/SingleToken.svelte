@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import type { Component as SvelteComponent } from 'svelte'
 	import FunctionWord from './FunctionWord.svelte'
 	import Note from './Note.svelte'

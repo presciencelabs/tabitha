@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimpleToken } from '$lib/types'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import PopupMenu from './PopupMenu.svelte'

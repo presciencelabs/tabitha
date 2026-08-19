@@ -1,6 +1,21 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message, token_has_tag } from '$lib/token'
 import { parse_transform_rule } from '../transform_rules'
+import type { MessageInfo, MessageLabel, Token } from '@tabitha/types'
+import type {
+	ArgumentRoleRule,
+	ArgumentRulesForSense,
+	CaseFrameResult,
+	CaseFrameRuleInfo,
+	DefaultRuleGetter,
+	RoleMatchResult,
+	RoleRuleValueJson,
+	RoleTag,
+	SenseRuleJson,
+	WordSense,
+} from '$lib/rules/case_frame/types'
+import type { RuleTriggerContext } from '$lib/rules/types'
+import type { LookupResult } from '$lib/types'
 
 /**
  * 
