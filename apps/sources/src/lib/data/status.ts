@@ -1,4 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
+import type { StatusRequestReference, StatusResult } from '../../routes/lookup/status/types'
+import type { Reference, SourceStatus } from '@tabitha/types'
 
 export async function get_all_book_statuses(db: D1Database, type: string): Promise<StatusResult[]> {
 	const sql = `

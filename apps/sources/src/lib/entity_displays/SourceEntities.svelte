@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageSourceEntity } from '$lib/types'
 	import Concept from './Concept.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'

@@ -1,16 +1,13 @@
-<script>
+<script lang="ts">
+	import type { EntityFeature } from '@tabitha/types'
+	import type { PageSourceEntity } from '$lib/types'
 	import { is_used_in_source } from '$lib/encoding/features'
 
-	/** @type {{ data: PageSourceEntity }} */
-	const { data } = $props()
+	const { data }: { data: PageSourceEntity } = $props()
 
 	let filtered_features = $derived(data.features.filter(is_used_in_source(data.category)))
 
-	/**
-	 * @param {EntityFeature} feature
-	 * @returns {boolean}
-	 */
-	function can_be_dulled({ value }) {
+	function can_be_dulled({ value }: EntityFeature): boolean {
 		return value === 'No' || ['Un', 'No ', 'Not '].some(prefix => value.startsWith(prefix))
 	}
 </script>

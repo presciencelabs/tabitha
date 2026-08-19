@@ -1,7 +1,6 @@
 import { create_token_filter } from '$lib/rules/rules_parser'
 import { create_lookup_result, TOKEN_TYPE } from '$lib/token'
-import type { Sentence, Token } from '@tabitha/types'
-import type { NounListEntry, NounListIndex, SimpleSourceEntity } from '$lib/analyzer/types'
+import type { NounListEntry, Sentence, SimpleSourceEntity, Token } from '@tabitha/types'
 import type { TokenFilter } from '$lib/rules/types'
 
 const PUNCTUATION_PARTICLES: Array<[string, TokenFilter]> = [
@@ -70,7 +69,7 @@ export function populate_noun_list(entities: SimpleSourceEntity[]): NounListEntr
 
 	return noun_list
 
-	function next_noun_index(): NounListIndex {
+	function next_noun_index(): string {
 		const next = noun_list.length + 1
 		if (next >= 10) {
 			// index 10 and up use capital letters starting with A (ascii 65)

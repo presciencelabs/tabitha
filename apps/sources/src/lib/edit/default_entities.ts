@@ -1,3 +1,4 @@
+import type { PageSourceEntity } from '$lib/types'
 
 const defaults: PageSourceEntity = {
 	category: '',

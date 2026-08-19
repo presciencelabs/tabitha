@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type { AnalysisResult } from '../../../../../analyze/types'
+	import type { PageSourceEntity } from '$lib/types'
 	import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
 	import { create_editor_client } from '@tabitha/api-client'
-	import type { CheckResponse, Message, SimpleToken } from '@tabitha/types'
+	import type { CheckResponse, Message, NounListEntry, SimpleToken } from '@tabitha/types'
 	import { Navigation } from '$lib'
 	import type { PageProps } from './$types'
 	import Settings from '$lib/settings/Settings.svelte'

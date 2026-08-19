@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageSourceEntity } from '$lib/types'
 	import { is_boundary_start } from '$lib/encoding/entity_filters'
 	import Punctuation from '$lib/entity_displays/Punctuation.svelte'
 

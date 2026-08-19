@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageSourceEntity } from '$lib/types'
 	import { Navigation, SourceEntities } from '$lib'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar/Sidebar.svelte'

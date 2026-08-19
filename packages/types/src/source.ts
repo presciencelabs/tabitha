@@ -85,10 +85,6 @@ export type NounListEntry = {
 	noun: string
 }
 
-export type PageSourceEntity = SourceEntity & {
-	noun_list_index?: string | null
-}
-
 export type SourceData = {
 	type: string
 	id_primary: string

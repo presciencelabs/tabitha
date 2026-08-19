@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { is_used_in_source } from '$lib/encoding/features'
 	import { page } from '$app/state'
-	import type { PageSourceEntity, FeatureMap, EntityFeature, FeatureInfo, FeatureValueInfo } from '@tabitha/types'
+	import type { FeatureMap, EntityFeature, FeatureInfo, FeatureValueInfo } from '@tabitha/types'
+	import type { PageSourceEntity } from '$lib/types'
 
 	const { data = $bindable() }: { data: PageSourceEntity } = $props()
 

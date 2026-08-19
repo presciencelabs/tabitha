@@ -1,0 +1,59 @@
+import type { NounListEntry, Reference, SourceEntity, SourceStatus } from '@tabitha/types'
+
+export type SourceType = {
+	type: string
+}
+
+export type ViewSettings = {
+	show_hover_popups: boolean
+}
+
+export type PrimaryId = {
+	id_primary: string
+}
+
+export type SecondaryId = {
+	id_secondary: string
+}
+
+export type TertiaryId = {
+	id_tertiary: string
+}
+
+export type Source = {
+	type: string
+	id_primary: string
+	id_secondary: string
+	id_tertiary: string
+	phase_1_encoding: string
+	semantic_encoding: string
+	comments: string
+	status: SourceStatus
+	notes: string
+}
+
+export type ApiSource = Source & {
+	parsed_semantic_encoding: SourceEntity[]
+}
+
+export type NavData = {
+	previous: Reference | null
+	current: Reference
+	next: Reference | null
+}
+
+export type PageData = {
+	source: PageSource
+	nav_data: NavData
+}
+
+export type PageSource = Source & {
+	parsed_semantic_encoding: PageSourceEntity[]
+	noun_list: NounListEntry[]
+}
+
+export type PageSourceEntity = SourceEntity & {
+	id: number
+	parent_id: number
+	boundary_category: string
+}

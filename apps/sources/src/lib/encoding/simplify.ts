@@ -1,3 +1,4 @@
+import type { EncodingEntity, EntityFeature, SimpleEncodingEntity } from '@tabitha/types'
 
 export function simplify_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
 	const cleaned = clean_encoding(entities)

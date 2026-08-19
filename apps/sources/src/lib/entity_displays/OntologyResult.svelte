@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { OntologyResult, SourceConcept } from '@tabitha/types'
 	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'
 	import HoverPopup from './HoverPopup.svelte'
 

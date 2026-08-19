@@ -1,7 +1,7 @@
 import { get_source_data } from '$lib/data/read'
 import { transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { simplify_encoding } from '$lib/encoding/simplify'
-import { strip_gloss_classifiers } from '@tabitha/types'
+import { strip_gloss_classifiers, type Reference, type SourceEntity } from '@tabitha/types'
 import { create_ontology_client } from '@tabitha/api-client'
 import { error, json } from '@sveltejs/kit'
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'

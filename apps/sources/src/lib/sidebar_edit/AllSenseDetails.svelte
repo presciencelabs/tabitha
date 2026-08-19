@@ -1,13 +1,12 @@
-<script>
+<script lang="ts">
+	import type { OntologyResult, SourceConcept } from '@tabitha/types'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { fetch_ontology_data_for_all_senses } from '$lib/data/api_lookups'
 	import Icon from '@iconify/svelte'
 
-	/** @type {{ data: SourceConcept }} */
-	const { data = $bindable() } = $props()
+	const { data = $bindable() }: { data: SourceConcept } = $props()
 
-	/** @type {OntologyResult[]} */
-	let all_senses = $state([])
+	let all_senses = $state<OntologyResult[]>([])
 
 	$effect(() => {
 		fetch_ontology_data_for_all_senses(data).then(fetched_senses => {
@@ -15,18 +14,11 @@
 		})
 	})
 
-	/**
-	 * @param {SourceConcept} concept
-	 * @returns {string} fully-qualified URL to the ontology API
-	 */
-	function get_ontology_url_for_link({ stem, part_of_speech }) {
+	function get_ontology_url_for_link({ stem, part_of_speech }: SourceConcept): string {
 		return `${PUBLIC_ONTOLOGY_API_HOST}/?q=${stem}&category=${part_of_speech}`
 	}
 
-	/**
-	 * @param {string} sense
-	 */
-	function set_sense(sense) {
+	function set_sense(sense: string) {
 		const new_sense_data = all_senses.find(s => s.sense === sense)
 		if (!new_sense_data) {
 			console.error(`Could not find sense ${sense} in all_senses`, all_senses)

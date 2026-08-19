@@ -1,7 +1,14 @@
 import { token_has_tag, TOKEN_TYPE } from '$lib/token'
 import { get_features_for_token } from './features'
-import type { PairingType, Sentence, Token } from '@tabitha/types'
-import type { CategoryName, EntityFeature, SimpleSourceEntity, SourceConcept } from '$lib/analyzer/types'
+import type {
+	CategoryName,
+	EntityFeature,
+	PairingType,
+	Sentence,
+	SimpleSourceEntity,
+	SourceConcept,
+	Token,
+} from '@tabitha/types'
 
 export function entityfy(sentences: Sentence[]): SimpleSourceEntity[] {
 	return entityfy_tokens(sentences.map(sentence => sentence.clause))

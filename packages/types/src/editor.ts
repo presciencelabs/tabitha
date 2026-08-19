@@ -1,4 +1,5 @@
 import type { HowToEntry, LookupResult, LookupTerm, LookupWord, OntologyStatus } from './ontology'
+import type { CategoryName, EntityFeature, NounListEntry, SourceConcept } from './source'
 
 export type TokenType =
 	| 'Punctuation'
@@ -101,4 +102,23 @@ export type CheckResponse = {
 	status: CheckStatus
 	tokens: SimpleToken[]
 	back_translation: string
+}
+
+export type AnalysisNote = string
+
+export type SimpleSourceEntity = {
+	category: CategoryName
+	value: string
+	features: EntityFeature[]
+	noun_list_index: string | null
+	concept: SourceConcept | null
+	pairing_concept: SourceConcept | null
+	pairing_type: PairingType
+}
+
+/** The response shape of editor's `GET /analyze` endpoint, consumed by both `apps/editor` and `apps/sources`. */
+export type SimpleSourceData = {
+	notes: AnalysisNote[]
+	source_entities: SimpleSourceEntity[]
+	noun_list: NounListEntry[]
 }

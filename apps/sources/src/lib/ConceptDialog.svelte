@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { OntologyResult, SourceConcept } from '@tabitha/types'
 	import { fetch_all_concepts_for_part_of_speech } from '$lib/data/api_lookups'
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'

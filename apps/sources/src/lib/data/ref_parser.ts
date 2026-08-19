@@ -1,3 +1,4 @@
+import type { Reference } from '@tabitha/types'
 /**
  * Parses a Bible verse reference string into a Reference object.
  * Examples of accepted formats:

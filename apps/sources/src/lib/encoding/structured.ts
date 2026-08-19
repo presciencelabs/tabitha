@@ -1,4 +1,5 @@
 import { is_boundary_end, is_boundary_start } from './entity_filters'
+import type { PageSourceEntity } from '$lib/types'
 
 export function structure_entities(entities: PageSourceEntity[]) {
 	const parent_id_stack: number[] = []

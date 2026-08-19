@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { EntityContextMenuData } from '$lib/edit/types'
+	import type { PageSourceEntity } from '$lib/types'
 	import { is_boundary_start } from '$lib/encoding/entity_filters'
 	import { entity_clipboard } from './clipboard.svelte'
 

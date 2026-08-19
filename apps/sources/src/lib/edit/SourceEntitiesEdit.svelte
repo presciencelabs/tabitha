@@ -8,8 +8,8 @@
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 	import { structure_entities } from '$lib/encoding/structured'
 	import { view_settings, set_settings } from '$lib/settings/settings.svelte.js'
-	import type { PageSourceEntity } from '@tabitha/types'
-	import type { EntityContextMenuData } from '$lib/types'
+	import type { PageSourceEntity } from '$lib/types'
+	import type { EntityContextMenuData } from '$lib/edit/types'
 
 	type IndexRange = [number, number]
 
@@ -195,7 +195,7 @@
 		function get_insert_position(drop_index: number, drag_index: number, range_length: number) {
 			if (drop_index < drag_index) {
 				return drop_index
-			} else if (drop_index < (drag_index + range_length)) {
+			} else if (drop_index < drag_index + range_length) {
 				return drag_index
 			} else {
 				return drop_index - range_length

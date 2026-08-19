@@ -1,4 +1,7 @@
 <script lang="ts">
+	import type { FeatureMap } from '@tabitha/types'
+	import type { EntityContextMenuData } from '$lib/edit/types'
+	import type { PageSourceEntity } from '$lib/types'
 	import ConceptDialog from '$lib/ConceptDialog.svelte'
 	import { entity_clipboard } from './clipboard.svelte'
 	import { DEFAULTS } from './default_entities'
@@ -39,7 +42,7 @@
 	function insert_clause(clause: PageSourceEntity) {
 		insert_entities([
 			clause,
-			...(clause.value === '{' ? [DEFAULTS.PERIOD] : []),
+			...clause.value === '{' ? [DEFAULTS.PERIOD] : [],
 			boundary_end(clause),
 		])
 	}
@@ -47,7 +50,7 @@
 	function insert_phrase(phrase: PageSourceEntity, concept: PageSourceEntity) {
 		insert_entities([
 			phrase,
-			...(concept?.concept?.stem ? [concept] : []),
+			...concept?.concept?.stem ? [concept] : [],
 			boundary_end(phrase),
 		])
 	}

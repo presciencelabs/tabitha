@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { NounListEntry } from '@tabitha/types'
+	import type { PageSourceEntity } from '$lib/types'
 	import Icon from '@iconify/svelte'
 	import SidebarDetail from '$lib/sidebar/SidebarDetail.svelte'
 	import SidebarEntityDisplay from '$lib/sidebar/SidebarEntityDisplay.svelte'

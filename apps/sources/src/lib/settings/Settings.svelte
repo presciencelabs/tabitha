@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
 	import { view_settings, set_settings } from './settings.svelte.js'

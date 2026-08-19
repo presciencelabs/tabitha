@@ -2,6 +2,7 @@ import { transform_semantic_encoding, transform_target_encoding } from '$lib/enc
 import { simplify_encoding } from '$lib/encoding/simplify'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import type { EncodingEntity } from '@tabitha/types'
 
 export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams } }) => {
 	const raw_encoding = searchParams.get('raw_encoding') ?? ''

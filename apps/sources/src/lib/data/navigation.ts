@@ -1,6 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { get_secondary_ids, get_source_data, get_tertiary_ids } from './read'
 import { ordered_primary_ids } from './lookups'
+import type { Reference } from '@tabitha/types'
 
 export async function get_previous_reference(db: D1Database, reference: Reference): Promise<Reference | null> {
 	// try decrementing id_tertiary

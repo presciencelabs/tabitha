@@ -1,3 +1,4 @@
+import type { SourceStatus } from '@tabitha/types'
 /**
  * TODO add and use an 'order' field in the db
  */

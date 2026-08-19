@@ -1,8 +1,7 @@
 import { phrasify } from '$lib/parser/phrasify'
 import { entityfy } from './entityfy'
 import { populate_noun_list, replace_punctuation } from './other_rules'
-import type { Sentence } from '@tabitha/types'
-import type { SimpleSourceData, SimpleSourceEntity } from '$lib/analyzer/types'
+import type { Sentence, SimpleSourceData, SimpleSourceEntity } from '@tabitha/types'
 
 export function analyze(sentences: Sentence[]): SimpleSourceData {
 	const punctuated = replace_punctuation(sentences)

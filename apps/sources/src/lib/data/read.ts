@@ -1,4 +1,6 @@
 import type { D1Database, D1Result } from '@cloudflare/workers-types'
+import type { Reference } from '@tabitha/types'
+import type { PrimaryId, SecondaryId, Source, SourceType, TertiaryId } from '$lib/types'
 
 export async function get_types(db: D1Database): Promise<SourceType[]> {
 	const sql = `

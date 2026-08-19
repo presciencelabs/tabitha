@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageSourceEntity } from '$lib/types'
 	import Punctuation from './Punctuation.svelte'
 
 	let { source_entity }: { source_entity: PageSourceEntity } = $props()

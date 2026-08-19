@@ -1,9 +1,9 @@
-<script>
-	/** @type {{ status: SourceStatus, classes?: string }}*/
-	let { status, classes='' } = $props()
+<script lang="ts">
+	import type { SourceStatus } from '@tabitha/types'
 
-	/** @type {Map<SourceStatus, string>}*/
-	const class_map = new Map([
+	let { status, classes = '' }: { status: SourceStatus, classes?: string } = $props()
+
+	const class_map = new Map<SourceStatus, string>([
 		['Ready to Translate', 'status-ready'],
 		['Final Review in Progress', 'status-review'],
 		['Initial Analysis Complete', 'status-initial-complete'],

@@ -1,3 +1,4 @@
+import type { ViewSettings } from '$lib/types'
 const defaults: ViewSettings = {
 	show_hover_popups: true,
 }

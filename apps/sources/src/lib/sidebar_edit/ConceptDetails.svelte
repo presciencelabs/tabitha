@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SourceConcept } from '@tabitha/types'
 	import ConceptDetails from '$lib/sidebar/ConceptDetails.svelte'
 	import ConceptDialog from '$lib/ConceptDialog.svelte'
 	import Icon from '@iconify/svelte'

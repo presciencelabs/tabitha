@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { OntologyResult, SourceConcept } from '@tabitha/types'
 	import type { Snippet } from 'svelte'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'

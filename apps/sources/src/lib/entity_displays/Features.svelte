@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { EntityFeature, SourceEntity } from '@tabitha/types'
 	import { is_used_in_source } from '$lib/encoding/features'
 
 	let { source_entity, classes = '' }: { source_entity: SourceEntity, classes?: string } = $props()

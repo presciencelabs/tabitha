@@ -1,6 +1,7 @@
 import { get_source_features } from '$lib/encoding/features'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import type { ApiFeature, DbFeature } from '@tabitha/types'
 
 export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams } }) => {
 	const category = searchParams.get('category')?.toLowerCase() ?? ''

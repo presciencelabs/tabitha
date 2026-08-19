@@ -1,5 +1,6 @@
 import { get_book_status, get_chapter_statuses_for_book } from '$lib/data/status'
 import type { PageServerLoad } from './$types'
+import type { StatusRequestReference } from '../../types'
 
 export const load: PageServerLoad = async ({ locals: { db }, params: { type, id_primary } }) => {
 	const reference: StatusRequestReference = { type, id_primary }

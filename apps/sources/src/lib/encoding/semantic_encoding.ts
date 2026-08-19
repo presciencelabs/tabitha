@@ -2,6 +2,8 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } from './lookups'
 import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
 import { structure_entities } from './structured'
+import type { CategoryName, NounListEntry, SourceConceptData, SourceEntity, TargetEntity } from '@tabitha/types'
+import type { PageSourceEntity, Source } from '$lib/types'
 
 /**
  * The phase_2_encoding looks something like:

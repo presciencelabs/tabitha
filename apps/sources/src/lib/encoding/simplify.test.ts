@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { simplify_encoding } from './simplify'
+import type { EncodingEntity } from '@tabitha/types'
 
 /**
  * Helper to create a minimal EncodingEntity for test fixtures.
