@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
+	import { fade } from 'svelte/transition'
 	import Concept from '../entity_displays/Concept.svelte'
 	import BoundaryEnd from '../entity_displays/BoundaryEnd.svelte'
 	import BoundaryStart from '../entity_displays/BoundaryStart.svelte'
@@ -44,6 +45,13 @@
 		[() => true, Punctuation],
 	]
 
+	let toolbar_entity_id = $state<number | null>(null)
+	$effect(() => {
+		if (selected_entity === null) {
+			toolbar_entity_id = null
+		}
+	})
+
 	let insert_context_menu_data = $state<EntityContextMenuData>({
 		is_open: false,
 		entity_id: -1,
@@ -59,39 +67,35 @@
 			entity_id,
 			...get_menu_location(event),
 		}
+
+		function get_menu_location(event: UIEvent): { x: number, y: number } {
+			if (event instanceof MouseEvent) {
+				return { x: event.clientX, y: event.clientY }
+			}
+			const element_rect = (event.target as HTMLElement).getBoundingClientRect()
+			return { x: element_rect.left, y: element_rect.bottom }
+		}
 	}
 
-	function close_insert_context_menu(recalculate: boolean, id_to_select?: number) {
+	function close_insert_context_menu(recalculate: boolean = false) {
 		insert_context_menu_data.is_open = false
+		if (recalculate) {
+			structure_entities(source_entities)
+			select_entity(insert_context_menu_data.entity_id)
+		}
 		insert_context_menu_data.entity_id = -1
-		close_context_menu(recalculate, id_to_select)
 	}
 
 	function insert_button_in_range(i: number, range: IndexRange|null) {
 		return !!range?.length && (i > range[0] && i <= range[range.length - 1])
 	}
 
-	function close_context_menu(recalculate: boolean, id_to_select?: number) {
-		if (recalculate) {
-			structure_entities(source_entities)
-			if (id_to_select) {
-				entity_focus(id_to_select)
-			} else if (id_to_select === -1) {
-				on_entity_select(null)
-			}
-		}
-	}
-
-	function get_menu_location(event: UIEvent): { x: number, y: number } {
-		if (event instanceof MouseEvent) {
-			return { x: event.clientX, y: event.clientY }
-		}
-		const element_rect = (event.target as HTMLElement).getBoundingClientRect()
-		return { x: element_rect.left, y: element_rect.bottom }
-	}
-
 	function entity_mouseover(i: number) {
 		hover_range = get_boundary_range(i)
+
+		if (toolbar_entity_id !== i) {
+			toolbar_entity_id = null
+		}
 	}
 
 	function entity_mouseout() {
@@ -99,13 +103,24 @@
 	}
 
 	function entity_focus(i: number) {
+		select_entity(i)
+		if (selected_entity) {
+			toolbar_entity_id = selected_entity.id
+		}
+	}
+
+	function select_entity(i: number) {
 		const entity = source_entities[i]
-		if (is_boundary_end(entity)) {
+		if (!entity) {
+			on_entity_select(null)
+		} else if (is_boundary_end(entity)) {
 			// select the boundary start instead
 			on_entity_select(source_entities[entity.parent_id])
 		} else {
 			on_entity_select(entity)
 		}
+
+		toolbar_entity_id = null
 	}
 
 	function get_boundary_range(i: number): IndexRange {
@@ -135,6 +150,8 @@
 		// temporarily hide any hover popup so that the ghost drag item doesn't include it
 		previous_popup_setting = view_settings.show_hover_popups
 		set_settings({ show_hover_popups: false })
+
+		toolbar_entity_id = null
 	}
 
 	function paste_entity(i: number) {
@@ -148,7 +165,7 @@
 		source_entities.splice(insert_pos, 0, ...entities)
 
 		structure_entities(source_entities)
-		entity_focus(insert_pos)
+		select_entity(insert_pos)
 
 		dragged_entity = null
 		set_settings({ show_hover_popups: previous_popup_setting })
@@ -172,7 +189,7 @@
 	function delete_entity(i: number) {
 		source_entities.splice(i, get_action_range_length(i))
 		structure_entities(source_entities)
-		entity_focus(i - 1)
+		select_entity(i - 1)
 	}
 
 	function get_action_range_length(i: number) {
@@ -223,7 +240,7 @@
 				<Component source_entity={entity} />
 			</div>
 
-			{#if selected_entity?.id === i}
+			{#if toolbar_entity_id === i}
 				{#snippet toolbar_item(action: () => void, icon: string, color: string = '')}
 					<li>
 						<button onclick={action} class="p-0">
@@ -231,7 +248,10 @@
 						</button>
 					</li>
 				{/snippet}
-				<ul class="menu menu-horizontal flex-nowrap shadow-lg inset-shadow-sm bg-base-100 rounded-box p-0 absolute left-[65%] top-[-8px] z-50">
+				<ul
+					out:fade={{ duration: 150 }}
+					class="menu menu-horizontal flex-nowrap shadow-lg inset-shadow-sm bg-base-100 rounded-box p-0 absolute left-[65%] top-[-8px] z-40"
+				>
 					{@render toolbar_item(() => copy_entity(i), 'material-symbols:content-copy-outline')}
 					{@render toolbar_item(() => delete_entity(i), 'material-symbols:delete-outline-rounded', 'text-error')}
 				</ul>
