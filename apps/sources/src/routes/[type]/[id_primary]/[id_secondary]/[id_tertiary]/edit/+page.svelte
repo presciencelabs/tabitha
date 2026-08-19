@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
+	import { create_editor_client } from '@tabitha/api-client'
+	import type { CheckResponse, Message, SimpleToken } from '@tabitha/types'
 	import { Navigation } from '$lib'
 	import type { PageProps } from './$types'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar_edit/Sidebar.svelte'
 	import Icon from '@iconify/svelte'
 	import SourceEntitiesEdit from '$lib/edit/SourceEntitiesEdit.svelte'
+
+	const editor_client = create_editor_client({ base_url: PUBLIC_EDITOR_API_HOST })
 
 	let { data }: PageProps = $props()
 
@@ -21,8 +25,8 @@
 
 	let is_checked = $state(false)
 	let checking = $state(false)
-	let check_result = $state<CheckerResult | null>(null)
-	let errors_and_warnings = $state<[CheckerMessage, number][]>([])
+	let check_result = $state<CheckResponse | null>(null)
+	let errors_and_warnings = $state<[Message, number][]>([])
 
 	let analyzing = $state(false)
 	let api_error = $state<string | null>(null)
@@ -38,16 +42,15 @@
 		checking = true
 
 		try {
-			const response = await fetch(`${PUBLIC_EDITOR_API_HOST}/check?text=${sanitize_input(phase1_text)}`)
-			if (!response.ok) {
-				throw new Error(`Checker API returned HTTP ${response.status}`)
+			const check_response = await editor_client.check_text(sanitize_input(phase1_text))
+			if (!check_response) {
+				throw new Error('Checker API request failed')
 			}
 
-			const check_response: CheckerResult = await response.json()
 			check_response.tokens = check_response.tokens.flatMap(flatten_tokens)
 
 			errors_and_warnings = check_response.tokens
-				.flatMap((token, i) => token.messages.map<[CheckerMessage, number]>(msg => [msg, i]))
+				.flatMap((token, i) => token.messages.map<[Message, number]>(msg => [msg, i]))
 				.filter(([msg]) => ['error', 'warning'].includes(msg.label))
 
 			check_result = check_response
@@ -58,7 +61,7 @@
 			checking = false
 		}
 
-		function flatten_tokens(token: CheckerToken): CheckerToken[] {
+		function flatten_tokens(token: SimpleToken): SimpleToken[] {
 			if (token.sub_tokens.length) {
 				return token.sub_tokens.flatMap(flatten_tokens)
 			} else {

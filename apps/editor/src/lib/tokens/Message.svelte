@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '$lib/types'
+	import type { SimpleToken } from '@tabitha/types'
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import { Badge } from '$lib'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '$lib/types'
+	import type { SimpleToken } from '@tabitha/types'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'

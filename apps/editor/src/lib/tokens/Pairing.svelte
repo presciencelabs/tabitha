@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '$lib/types'
+	import type { SimpleToken } from '@tabitha/types'
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'

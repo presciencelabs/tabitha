@@ -216,7 +216,7 @@ describe('@tabitha/api-client', () => {
 
 	describe('create_editor_client', () => {
 		test('calls /check endpoint and returns parsed json on 200', async () => {
-			const mock_response = { status: 'ok', tokens: [], backtranslation: 'Paul writes.' }
+			const mock_response = { status: 'ok', tokens: [], back_translation: 'Paul writes.' }
 			const mock_fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => mock_response,
@@ -228,11 +228,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const result = await client.check_text('Paul write-01')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost.tabitha.bible:8790/check', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ text: 'Paul write-01' }),
-			})
+			expect(mock_fetch).toHaveBeenCalledWith('http://localhost.tabitha.bible:8790/check?text=Paul%20write-01')
 			expect(result).toEqual(mock_response)
 		})
 

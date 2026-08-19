@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '$lib/types'
+	import type { SimpleToken } from '@tabitha/types'
 	import type { Component as SvelteComponent } from 'svelte'
 	import LookupWord from './LookupWord.svelte'
 	import Added from './Added.svelte'

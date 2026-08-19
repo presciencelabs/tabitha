@@ -1,4 +1,4 @@
-import { type CheckApiResponse } from '@tabitha/types'
+import { type CheckResponse } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type EditorClient = ReturnType<typeof create_editor_client>
@@ -25,8 +25,8 @@ export function create_editor_client(options: EditorClientOptions) {
 		/**
 		 * Check, analyze, and generate backtranslation tokens for a given source text.
 		 */
-		async check_text(text: string): Promise<CheckApiResponse | null> {
-			return http.post<CheckApiResponse>('/check', { text })
+		async check_text(text: string): Promise<CheckResponse | null> {
+			return http.get<CheckResponse>(`/check?text=${encodeURIComponent(text)}`)
 		},
 	}
 }

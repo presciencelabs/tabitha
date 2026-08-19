@@ -1,4 +1,4 @@
-import type { LookupResult, LookupTerm } from './ontology'
+import type { HowToEntry, LookupResult, LookupTerm, LookupWord, OntologyStatus } from './ontology'
 
 export type TokenType =
 	| 'Punctuation'
@@ -58,16 +58,47 @@ export type Sentence = {
 	clause: Clause
 }
 
-export type BacktranslationResult = {
-	text: string
-	tokens: Token[]
+export type RoleTag = string
+
+export type CaseFrameStatus = 'unchecked' | 'valid' | 'invalid'
+
+export type CheckStatus = 'ok' | 'error' | 'warning'
+
+export type SimpleRoleArgResult = {
+	[role: RoleTag]: string
 }
 
-export type RuleCheckStatus = 'ok' | 'warning' | 'error'
+export type SimpleCaseFrame = {
+	status: CaseFrameStatus
+	valid_arguments: SimpleRoleArgResult
+	extra_arguments: SimpleRoleArgResult
+	missing_arguments: RoleTag[]
+	possible_roles: RoleTag[]
+	required_roles: RoleTag[]
+}
 
-export type CheckApiResponse = {
-	status: RuleCheckStatus
-	tokens: Token[]
-	backtranslation?: BacktranslationResult
-	messages: Message[]
+export type SimpleLookupResult = LookupWord & {
+	form: string
+	sense: string
+	level: number
+	gloss: string
+	categorization: string
+	ontology_status: OntologyStatus
+	how_to_entries: HowToEntry[]
+	case_frame: SimpleCaseFrame
+}
+
+export type SimpleToken = TokenBase & {
+	lookup_results: SimpleLookupResult[]
+	pairing: SimpleToken | null
+	pairing_type: PairingType
+	pronoun: SimpleToken | null
+	sub_tokens: SimpleToken[]
+}
+
+/** The response shape of editor's `GET /check` endpoint, consumed by both `apps/editor` and `apps/sources`. */
+export type CheckResponse = {
+	status: CheckStatus
+	tokens: SimpleToken[]
+	back_translation: string
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '$lib/types'
+	import type { SimpleToken } from '@tabitha/types'
 	import TokenDisplay from './TokenDisplay.svelte'
 
 	interface Props {

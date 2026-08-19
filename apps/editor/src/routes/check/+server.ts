@@ -5,17 +5,19 @@ import { apply_rules } from '$lib/rules/rules_processor'
 import { json } from '@sveltejs/kit'
 
 import type { RequestEvent } from './$types'
-import type { CheckResponse } from './types'
-import type { Message, Sentence, Token } from '@tabitha/types'
-import type { CaseFrame, RoleMatchResult } from '$lib/rules/case_frame/types'
 import type {
+	CheckResponse,
 	CheckStatus,
-	LookupResult,
+	Message,
+	Sentence,
 	SimpleCaseFrame,
 	SimpleLookupResult,
 	SimpleRoleArgResult,
 	SimpleToken,
-} from '$lib/types'
+	Token,
+} from '@tabitha/types'
+import type { CaseFrame, RoleMatchResult } from '$lib/rules/case_frame/types'
+import type { LookupResult } from '$lib/types'
 
 export async function GET({ url: { searchParams } }: RequestEvent) {
 	const text = searchParams.get('text') ?? ''

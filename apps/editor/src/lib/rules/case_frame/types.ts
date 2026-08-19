@@ -1,4 +1,4 @@
-import type { Tag } from '@tabitha/types'
+import type { CaseFrameStatus, RoleTag, Tag } from '@tabitha/types'
 import type { LookupResult } from '$lib/types'
 import type {
 	RuleTriggerContext,
@@ -8,7 +8,8 @@ import type {
 	TokenContextFilterJson,
 } from '$lib/rules/types'
 
-export type RoleTag = string
+export type { CaseFrameStatus, RoleTag }
+
 export type WordSense = string
 export type WordStem = string
 
@@ -57,8 +58,6 @@ export type RoleMatchResult = {
 	trigger_context: RuleTriggerContext
 	rule: ArgumentRoleRule
 }
-
-export type CaseFrameStatus = 'unchecked' | 'valid' | 'invalid'
 
 export type CaseFrameResult = {
 	status: CaseFrameStatus
