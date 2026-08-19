@@ -5,7 +5,7 @@ create_user_table(auth_db)
 create_permissions_table(auth_db)
 create_user_permissions_table(auth_db)
 
-auth_db.run(`VACUUM`)
+auth_db.run('VACUUM')
 console.log('done.')
 
 function create_user_table(db: Database) {
@@ -31,8 +31,8 @@ function create_permissions_table(db: Database) {
 		)
 	`)
 
-	const insert = db.prepare('INSERT OR REPLACE INTO Permissions (id, app, permission) VALUES (?, ?, ?)');
-	const insertMany = db.transaction((permissions) => {
+	const insert = db.prepare('INSERT OR REPLACE INTO Permissions (id, app, permission) VALUES (?, ?, ?)')
+	const insertMany = db.transaction(permissions => {
 		for (const permission of permissions) {
 			insert.run(...permission)
 		}

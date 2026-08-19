@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_lexicon_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db, project)

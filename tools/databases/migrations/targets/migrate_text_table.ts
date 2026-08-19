@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_text_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -62,7 +62,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 				SELECT Reference, Verse
 				FROM ${table_name}
 				WHERE Reference NOT NULL
-			`).all().map(transform).flat() // array of books
+			`).all().map(transform).flat(), // array of books
 		).flat() // flattens all 66 books into one array of all verses
 
 		console.log('done.')

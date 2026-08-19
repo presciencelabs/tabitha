@@ -85,6 +85,9 @@ jobs:
       - name: Typecheck & Svelte Diagnostics
         run: pnpm check
 
+      - name: ESLint
+        run: pnpm check:lint
+
   unit_tests:
     name: 🧪 Unit Tests & Coverage
     needs: [security_compliance, production_build]

@@ -1,23 +1,16 @@
 import { describe, expect, test } from 'vitest'
 import {
-	BLOCK_COMMENT_REGEX,
-	LINE_COMMENT_REGEX,
-	TRAILING_COMMAS_REGEX,
 	strip_jsonc_comments,
-	ISO_DATE_REGEX,
 	is_iso_date,
 	CONCEPT_SENSE_REGEX,
 	CONCEPT_KEY_REGEX,
-	SQL_WILDCARD_CHAR_REGEX,
 	normalize_wildcards,
 	parse_concept_sense,
 	parse_concept_key,
 	USFM_VERSE_MARKER_REGEX,
-	GLOSS_CLASSIFIER_REGEX,
 	strip_gloss_classifiers,
 	BIBLE_BOOKS,
 	by_book_order,
-	TRAILING_SLASH_REGEX,
 	clean_trailing_slash,
 } from './index'
 

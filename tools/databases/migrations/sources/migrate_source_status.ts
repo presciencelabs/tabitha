@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 import { Glob } from 'bun'
 
 type CommaSeparatedValues = string
@@ -47,7 +47,7 @@ const status_mapping: Record<InputStatus, SourceStatus> = {
 	'Phase 3 (POLISHING)': 'Final Review in Progress',
 	'Polish 2nd Language': 'Final Review in Progress',
 	'Complete': 'Ready to Translate',
-	'Previously Complete': 'Ready to Translate'
+	'Previously Complete': 'Ready to Translate',
 }
 
 export async function migrate_source_status(sources_db: Database, csv_dir: string, date: string): Promise<void> {
@@ -92,7 +92,7 @@ function parse_verse_range(input: string): VerseRange {
 }
 
 async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord[]> {
-	console.log(`Getting verse statuses from the CSV files...`)
+	console.log('Getting verse statuses from the CSV files...')
 
 	async function get_latest_csv(prefix: string): Promise<string> {
 		const exact_file = Bun.file(`${csv_dir}/${prefix}_${date}.csv`)
@@ -115,7 +115,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 
 	const csv_contents_by_file = await Promise.all([
 		get_latest_csv('OT_verse_status'),
-		get_latest_csv('NT_verse_status')
+		get_latest_csv('NT_verse_status'),
 	])
 
 	const normalized_data = csv_contents_by_file.map(normalize).flat()
@@ -126,8 +126,8 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 	 * CSV format from Google Data Studio:
 	 * 
 	 * ProjectStatusDate,StatusDetail,ProjectName,VerseCount
-	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17
-	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:18-25,8
+	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17
+	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:18-25,8
 	 */
 	function normalize(csv_text: string): VerseStatusRecord[] {
 		const lines = csv_text.split(/\r?\n/)
@@ -137,7 +137,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 			.map(row => transform(row))
 
 		function transform(row: CommaSeparatedValues): VerseStatusRecord {
-			const without_date = row.slice(row.indexOf('",') + 2) // "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17 => Complete,Matthew 1:1-17,17
+			const without_date = row.slice(row.indexOf('",') + 2) // "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17 => Complete,Matthew 1:1-17,17
 			const [csv_status, verse_range] = without_date.split(',')
 			const range = parse_verse_range(verse_range ?? '')
 			const status = status_mapping[csv_status as InputStatus] ?? 'Not Started'
@@ -147,7 +147,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 }
 
 async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_db: Database): Promise<void> {
-	console.log(`Loading verse statuses into Sources table...`)
+	console.log('Loading verse statuses into Sources table...')
 
 	for (const { range, status } of verse_statuses) {
 		const { type, id_primary, id_secondary, id_tertiary_start, id_tertiary_end } = range
@@ -200,7 +200,7 @@ function create_chapter_status_table(sources_db: Database) {
 }
 
 async function populate_chapter_status_table(sources_db: Database, verse_statuses: VerseStatusRecord[]) {
-	console.log(`Loading chapter statuses into ChapterStatus table...`)
+	console.log('Loading chapter statuses into ChapterStatus table...')
 
 	const by_chapter = Map.groupBy(verse_statuses, ({ range: { type, id_primary, id_secondary } }) => JSON.stringify({ type, id_primary, id_secondary }))
 

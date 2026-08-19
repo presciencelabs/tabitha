@@ -45,7 +45,7 @@ export function create_targets_client(options: TargetsClientOptions) {
 		 * Search lexical forms and inflections for a word token in a target language project.
 		 */
 		async lookup_forms<T = LexicalForm>(word: string, project = 'English'): Promise<T[]> {
-			return (await http.get<T[]>(`/${project}/lookup/forms?word=${encodeURIComponent(word)}`)) ?? []
+			return await http.get<T[]>(`/${project}/lookup/forms?word=${encodeURIComponent(word)}`) ?? []
 		},
 
 		/**

@@ -40,7 +40,7 @@ const configs: DbConfig[] = [
 					if (latest) console.log(`Source ${name} missing for ${date}, using: ${latest} instead.`)
 
 					return latest || ''
-				})
+				}),
 			)
 
 			return args.filter(Boolean)
@@ -66,7 +66,7 @@ const configs: DbConfig[] = [
 		key: 'Targets',
 		async migration_input_args() {
 			const projects = migration_dbs.filter(db =>
-				['English', 'Swahili', 'Indonesian', 'Tagalog'].some(name => db.includes(name))
+				['English', 'Swahili', 'Indonesian', 'Tagalog'].some(name => db.includes(name)),
 			)
 
 			if (!projects.some(db => db.includes('English'))) {
@@ -176,12 +176,15 @@ function extract_new_db_info(output: string): D1_META {
 	// 🤖 Using fallback value in non - interactive context: no
 	const JSON_OBJECT = /^{.*^}/ms
 
-	return JSON.parse(output.match(JSON_OBJECT)?.[0]!).d1_databases[0]
+	const match = output.match(JSON_OBJECT)
+	if (!match) throw new Error('Could not find D1 database JSON in wrangler output')
+
+	return JSON.parse(match[0]).d1_databases[0]
 }
 
 async function update_deployment_config(config_path: string, new_db_info: D1_META, binding: string) {
 	const raw_cfg = await Bun.file(config_path).text()
-	const wrangler_cfg: any = parse(raw_cfg)
+	const wrangler_cfg = parse(raw_cfg) as unknown as { d1_databases: D1_META[] }
 
 	const index = wrangler_cfg.d1_databases.findIndex((db: D1_META) => db.binding === binding)
 	if (index !== -1) {

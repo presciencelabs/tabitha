@@ -18,7 +18,7 @@ const db_name = await get_latest_database_name('Ontology')
 const dump_filename = `${db_name}.tabitha.sql`
 await $`wrangler d1 export ${db_name} --output ${dump_filename} --remote`
 
-console.log(`creating db from dump...`)
+console.log('creating db from dump...')
 const db_from_dump = await create_db(dump_filename)
 
 console.log(`uploading ${db_from_dump.filename} to R2...`)

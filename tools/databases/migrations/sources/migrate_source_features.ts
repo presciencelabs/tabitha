@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_source_features(tbta_db: Database, sources_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -161,9 +161,9 @@ function create_tabitha_table(tabitha_sources_db: Database) {
 }
 
 function load_data(targets_db: Database, transformed_data: TransformedData[]) {
-	console.log(`Loading data into Features table...`)
+	console.log('Loading data into Features table...')
 
-	transformed_data.map(async ({category, feature, position, code, value, example}) => {
+	transformed_data.map(async ({ category, feature, position, code, value, example }) => {
 		targets_db.run(`
 			INSERT INTO Features (category, feature, position, code, value, example)
 			VALUES (?, ?, ?, ?, ?, ?)

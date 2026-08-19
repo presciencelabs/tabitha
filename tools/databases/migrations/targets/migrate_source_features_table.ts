@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_source_features_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -152,7 +152,7 @@ function create_tabitha_table(tabitha_sources_db: Database, project: string) {
 		)
 	`)
 
-	tabitha_sources_db.run(`DELETE FROM Source_Features WHERE project = ?`, [project])
+	tabitha_sources_db.run('DELETE FROM Source_Features WHERE project = ?', [project])
 
 	console.log('done.')
 

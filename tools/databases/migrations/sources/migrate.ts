@@ -22,5 +22,5 @@ migrate_source_features(tbta_sample_db, tabitha_sources_db)
 await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../data/status'), date || '')
 
 console.log(`Optimizing ${tabitha_db_name}...`)
-tabitha_sources_db.run(`VACUUM`)
+tabitha_sources_db.run('VACUUM')
 console.log('done.')

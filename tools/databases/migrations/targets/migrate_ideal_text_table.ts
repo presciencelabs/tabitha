@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 import { Glob } from 'bun'
 import OfficeParser, { type OfficeContentNode } from 'officeparser'
 import { join, basename, extname } from 'path'

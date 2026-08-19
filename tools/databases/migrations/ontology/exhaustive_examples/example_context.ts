@@ -23,13 +23,13 @@ export function find_word_context(entity_index: number, source_entities: SourceE
 				...context_args,
 				'Pairing': `${entity.pairing.stem}-${entity.pairing.sense}`,
 				// a complex word here is a mistake, but we should still document it if it occurs
-				...(entity.concept.is_complex ? { 'Complex Handling': 'None' } : {}),
+				...entity.concept.is_complex ? { 'Complex Handling': 'None' } : {},
 			}],
 			[entity.pairing, {
 				...context_args,
 				'Pairing': `${entity.concept.stem}-${entity.concept.sense}`,
 				// not all pairings are complex pairings (eg. dynamic\literal and metric/biblical units)
-				...(entity.pairing.is_complex ? { 'Complex Handling': 'Pairing' } : {}),
+				...entity.pairing.is_complex ? { 'Complex Handling': 'Pairing' } : {},
 			}],
 		]
 
@@ -48,7 +48,7 @@ function find_noun_context(entity_index: number, source_entities: SourceEntity[]
 	const np_index = find_containing_phrase(entity_index, source_entities)
 
 	if (np_index === -1) {
-		throw new Error(`Invalid semantic encoding - Noun not in a phrase`)
+		throw new Error('Invalid semantic encoding - Noun not in a phrase')
 	}
 
 	const context_arguments = get_outer_context(np_index, source_entities, 'Outer')
@@ -105,7 +105,7 @@ function find_adjective_context(entity_index: number, source_entities: SourceEnt
 	const adjp_index = find_containing_phrase(entity_index, source_entities)
 
 	if (adjp_index === -1) {
-		throw new Error(`Invalid semantic encoding - Adjective not in a phrase`)
+		throw new Error('Invalid semantic encoding - Adjective not in a phrase')
 	}
 
 	const arguments_finder = find_arguments([
@@ -247,7 +247,7 @@ function get_head_word(phrase_index: number, source_entities: SourceEntity[]): S
 
 	const head_index = find_entity_after(
 		(entity: SourceEntity) => word_type.includes(entity.label),
-		{ skip_phrases: true, skip_clauses: true, break_condition: is_closing_phrase }
+		{ skip_phrases: true, skip_clauses: true, break_condition: is_closing_phrase },
 	)(phrase_index, source_entities)
 
 	if (head_index === -1) {

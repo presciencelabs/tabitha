@@ -33,7 +33,7 @@ export function create_ontology_client(options: OntologyClientOptions) {
 			if (filter.category) params.set('category', filter.category)
 			if (filter.scope) params.set('scope', filter.scope)
 
-			return (await http.get<T[]>(`/search?${params.toString()}`)) ?? []
+			return await http.get<T[]>(`/search?${params.toString()}`) ?? []
 		},
 
 		/**

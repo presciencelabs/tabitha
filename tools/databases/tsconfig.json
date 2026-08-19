@@ -11,5 +11,8 @@
 		"data/**/*.ts",
 		"**/*.ts",
 		"**/*.js"
+	],
+	"exclude": [
+		"eslint.config.js"
 	]
 }

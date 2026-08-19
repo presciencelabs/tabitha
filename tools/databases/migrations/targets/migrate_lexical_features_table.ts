@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_lexical_features_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -128,9 +128,9 @@ function create_tabitha_table(targets_db: Database) {
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log(`Loading data into Lexical_Features table...`)
+	console.log('Loading data into Lexical_Features table...')
 
-	transformed_data.map(async ({category, feature, position, code, value, notes}) => {
+	transformed_data.map(async ({ category, feature, position, code, value, notes }) => {
 		targets_db.run(`
 			INSERT INTO Lexical_Features (project, category, feature, position, code, value, notes)
 			VALUES (?, ?, ?, ?, ?, ?, ?)

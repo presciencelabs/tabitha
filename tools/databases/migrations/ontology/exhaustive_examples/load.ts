@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 import { find_word_context } from './example_context'
 import { transform_semantic_encoding } from './semantic_encoding'
 

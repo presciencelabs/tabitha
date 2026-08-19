@@ -196,7 +196,7 @@ All dependencies have been safely advanced within their
 SemVer minor/patch boundaries, and all tests and builds passed.
 
 To commit the updates:
-  git add pnpm-lock.yaml package.json apps/ packages/
+  git add pnpm-lock.yaml package.json apps/ packages/ tools/
   git commit -m "chore(deps): safe dependency update"
 ============================================================
 `)

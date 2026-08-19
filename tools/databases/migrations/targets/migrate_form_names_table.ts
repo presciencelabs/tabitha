@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 
 export function migrate_form_names_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -79,7 +79,7 @@ function create_tabitha_table(targets_db: Database) {
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log(`Loading data into Form_Names table...`)
+	console.log('Loading data into Form_Names table...')
 
 	for (const { part_of_speech, name, position } of transformed_data) {
 		targets_db.run(`

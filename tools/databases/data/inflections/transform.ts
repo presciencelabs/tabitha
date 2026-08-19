@@ -6,7 +6,7 @@ const parts_of_speech_map: Record<string, string> = {
 	'nouns': 'Noun',
 	'verbs': 'Verb',
 	'adjectives': 'Adjective',
-	'adverbs': 'Adverb'
+	'adverbs': 'Adverb',
 }
 
 export async function transform_inflections(dir: string = '.') {
@@ -29,6 +29,7 @@ export async function transform_inflections(dir: string = '.') {
 		const raw_content = await Bun.file(full_win_file).text()
 		// Sanitize raw TBTA file outputs by stripping out any corrupted bytes or non-printable ASCII characters 
 		// (this regex strictly retains tabs \x09, newlines \x0A, carriage returns \x0D, and visible text \x20-\x7E)
+		// eslint-disable-next-line no-control-regex -- \x09/\x0A/\x0D are deliberately retained, see comment above
 		const cleaned_content = raw_content.replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '')
 		await Bun.write(full_unix_file, cleaned_content)
 

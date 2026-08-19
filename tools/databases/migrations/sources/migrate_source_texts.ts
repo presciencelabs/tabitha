@@ -59,7 +59,7 @@ export function migrate_source_texts(tabitha_sources_db: Database, tbta_sources_
 				const type = Source.replaceAll('_', ' ')
 
 				// Extract Book, Chapter, and Verse integers out of legacy reference strings -> (e.g. "Daniel 3:9" -> ["Daniel", "3", "9"])
-				const [, id_primary, id_secondary, id_tertiary] = /(.*) (\d+):(\d+)/.exec(Reference) ?? [, '', 0, 0]
+				const [, id_primary, id_secondary, id_tertiary] = /(.*) (\d+):(\d+)/.exec(Reference) ?? [undefined, '', 0, 0]
 
 				// As of Jul '26, TBTA is allowing whitespace garbage in, so these defensive techniques are being used to clean the data up before entering Tabitha's tables.
 				const phase_1_encoding = (Verse ?? '').trim()

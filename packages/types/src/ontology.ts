@@ -150,7 +150,7 @@ export type CaseFrame = {
 	[key: string]: unknown
 }
 
-export type LookupResult<TCaseFrame = any> = LookupWord & {
+export type LookupResult<TCaseFrame = CaseFrame> = LookupWord & {
 	form: string
 	sense: string
 	level: number

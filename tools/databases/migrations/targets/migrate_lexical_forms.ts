@@ -1,4 +1,4 @@
-import Database from 'bun:sqlite'
+import type Database from 'bun:sqlite'
 import { readdir } from 'node:fs/promises'
 
 export async function migrate_lexical_forms(project: string, targets_db: Database, csv_dir: string): Promise<void> {
@@ -20,7 +20,7 @@ type WordFormMap = Record<PartOfSpeech, WordFormRecord[]> & {
 }
 
 async function get_word_forms(csv_dir: string): Promise<Record<PartOfSpeech, WordFormRecord[]>> {
-	console.log(`Getting word forms from the CSV files...`)
+	console.log('Getting word forms from the CSV files...')
 
 	const filenames = await readdir(csv_dir)
 	const csv_contents_by_file = await Promise.all(filenames.map(filename => Bun.file(`${csv_dir}/${filename}`).text()))
@@ -60,7 +60,7 @@ async function get_word_forms(csv_dir: string): Promise<Record<PartOfSpeech, Wor
  * of the word in the Lexicon.  Additionally, this is in the context of a single part of speech.
  */
 async function load_data(word_forms: WordFormMap, targets_db: Database, project: string): Promise<void> {
-	console.log(`Loading word forms into Lexicon table...`)
+	console.log('Loading word forms into Lexicon table...')
 
 	type LexiconRecord = {
 		id: number

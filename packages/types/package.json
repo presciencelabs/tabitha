@@ -17,10 +17,14 @@
   },
   "scripts": {
     "check": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:lint:fix": "eslint . --fix",
     "test:unit": "vitest run src"
   },
   "devDependencies": {
+    "@tabitha/eslint-config": "workspace:*",
     "@tabitha/tsconfig": "workspace:*",
+    "eslint": "^10.8.1",
     "typescript": "^6.0.3",
     "vitest": "^3.2.7"
   }

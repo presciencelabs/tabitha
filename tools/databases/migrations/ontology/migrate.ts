@@ -28,7 +28,7 @@ const sources_db_complex = new Database(sources_db_complex_name, { readwrite: tr
 await load_examples(tabitha_db, sources_db, sources_db_complex)
 
 console.log(`Optimizing ${tabitha_db_name}...`)
-tabitha_db.run(`VACUUM`)
+tabitha_db.run('VACUUM')
 console.log('done.')
 tabitha_db.close()
 
