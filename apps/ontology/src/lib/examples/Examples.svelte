@@ -51,8 +51,8 @@
 	}
 </script>
 
-<article class="bg-base-200 p-4 flex flex-col gap-4 prose max-w-none">
-	<h3>Bible</h3>
+<article class="bg-base-200 p-4 flex flex-col gap-4">
+	<h3 class="text-lg font-bold">Bible</h3>
 
 	{#if loading}
 		<span class="loading loading-spinner text-warning"></span>

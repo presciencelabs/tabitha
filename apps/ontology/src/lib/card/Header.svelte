@@ -7,7 +7,9 @@
 	let pending_change = $derived(concept.pending_changes.find(change => change.data.level))
 </script>
 
-<ConceptKey {concept} />
+<div class="prose max-w-none">
+	<ConceptKey {concept} />
+</div>
 
 <aside class="flex flex-col items-center gap-1 self-start">
 	<div class="flex flex-row items-center gap-1">

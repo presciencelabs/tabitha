@@ -77,7 +77,7 @@
 		</div>
 	{/if}
 
-	<section class="prose flex max-w-none flex-wrap items-center justify-center gap-x-4 gap-y-8">
+	<section class="flex flex-wrap items-center justify-center gap-x-4 gap-y-8">
 		<Tokens {tokens} />
 	</section>
 
@@ -86,8 +86,8 @@
 			<h2>English back translation</h2>
 		</div>
 
-		<section class="prose mx-auto flex flex-col text-lg">
-			<p>
+		<section class="mx-auto flex flex-col">
+			<p class="prose text-lg">
 				{back_translation}
 			</p>
 

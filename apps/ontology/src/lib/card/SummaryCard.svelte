@@ -27,7 +27,7 @@
 
 <article class="card card-border grow shadow-md">
 	<div class="card-body">
-		<section class="prose card-title max-w-none justify-between">
+		<section class="card-title justify-between">
 			<Header {concept} />
 		</section>
 

@@ -49,8 +49,8 @@
 </script>
 
 <form>
-	<section class="py-4 flex gap-4 prose">
-		<h3>Verse</h3>
+	<section class="py-4 flex gap-4 items-center">
+		<h3 class="text-lg font-bold">Verse</h3>
 		<BookSelect bind:book={reference.book} />
 		<input type="number" bind:value={reference.chapter} class="input w-20" />
 		<input type="number" bind:value={reference.verse} class="input w-20" />

@@ -39,7 +39,7 @@
 			</aside>
 		{/if}
 
-		<section class="prose card-title max-w-none justify-between">
+		<section class="card-title justify-between">
 			<Header concept={concept_for_header} />
 		</section>
 

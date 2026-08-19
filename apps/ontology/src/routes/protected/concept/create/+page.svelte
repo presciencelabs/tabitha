@@ -67,7 +67,7 @@
 
 		{#if concept_data.sense}
 			{@const concept_for_header = create_fallback_concept(concept_data)}
-			<section class="prose card-title max-w-none justify-between">
+			<section class="card-title justify-between">
 				<Header concept={concept_for_header} />
 			</section>
 		{:else if fetching_sense}

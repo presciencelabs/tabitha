@@ -45,12 +45,16 @@
 		<span>Source data for this verse is still being reviewed, and is {time_note} ready for translation.</span>
 	</div>
 {:else if source.status === 'Not Started'}
-	<div class="flex justify-center prose max-w-full">
-		<p>No source data yet for this verse.</p>
+	<div class="flex justify-center">
+		<div class="prose max-w-full">
+			<p>No source data yet for this verse.</p>
+		</div>
 	</div>
 {:else if source.status !== 'Ready to Translate'}
-	<div class="flex justify-center prose max-w-full">
-		<p>Source data for this verse is currently being developed.</p>
+	<div class="flex justify-center">
+		<div class="prose max-w-full">
+			<p>Source data for this verse is currently being developed.</p>
+		</div>
 	</div>
 {/if}
 

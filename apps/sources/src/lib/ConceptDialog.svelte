@@ -46,9 +46,7 @@
 
 		<article class="card">
 			<main class="card-body">
-				<section class="prose card-title max-w-none justify-between">
-					<h2>Select a {concept.part_of_speech}</h2>
-				</section>
+				<h2 class="card-title">Select a {concept.part_of_speech}</h2>
 
 				<section class="prose max-w-none">
 					<select bind:value={selected_index} class="select w-full">
