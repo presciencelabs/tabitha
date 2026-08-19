@@ -5,7 +5,7 @@
 	import Icon from '@iconify/svelte'
 	import type { Reference, SourceConcept, SourceData } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		reference: Reference
 		selected_concept: SourceConcept
 	}

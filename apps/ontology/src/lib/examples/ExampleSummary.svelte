@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte'
 	import type { ContextArguments, Reference, SourceStatus } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		reference: Reference
 		context: ContextArguments
 		book_status: SourceStatus

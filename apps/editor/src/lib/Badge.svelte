@@ -2,7 +2,7 @@
 	import { Badge } from '@tabitha/ui'
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		children?: Snippet
 		classes?: string
 	}

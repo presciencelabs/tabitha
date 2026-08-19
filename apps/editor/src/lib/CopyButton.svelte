@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte'
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		content: string
 		classes?: string
 		children?: Snippet

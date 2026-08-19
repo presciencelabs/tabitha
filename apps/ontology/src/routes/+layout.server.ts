@@ -3,7 +3,7 @@ import { get_version } from '$lib/server/ontology'
 import type { LayoutServerLoadEvent } from './$types'
 import type { User } from '@auth/sveltekit'
 
-interface LayoutData {
+type LayoutData = {
 	version: string
 	user: User|undefined
 	can_update: boolean

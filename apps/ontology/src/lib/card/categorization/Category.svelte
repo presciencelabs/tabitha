@@ -7,7 +7,7 @@
 	import UsageInfoForAdjective from './UsageInfoForAdjective.svelte'
 	import UsageInfoForParticles from './UsageInfoForParticles.svelte'
 
-	interface Props {
+	type Props = {
 		part_of_speech: PartOfSpeech | string
 		categories: string[]
 	}

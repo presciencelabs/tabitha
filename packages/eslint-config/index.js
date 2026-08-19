@@ -5,6 +5,7 @@ import import_x from 'eslint-plugin-import-x'
 import svelte from 'eslint-plugin-svelte'
 import svelte_parser from 'svelte-eslint-parser'
 import ts from 'typescript-eslint'
+import { plainInterfaceToType } from './rules/plain_interface_to_type.js'
 import { pureTypeTopLevel } from './rules/pure_type_top_level.js'
 
 // Shared base rules for JavaScript & TypeScript
@@ -23,7 +24,12 @@ export const baseConfig = [
 		plugins: {
 			'@stylistic': stylistic,
 			'import-x': import_x,
-			local: { rules: { 'pure-type-top-level': pureTypeTopLevel } },
+			local: {
+				rules: {
+					'plain-interface-to-type': plainInterfaceToType,
+					'pure-type-top-level': pureTypeTopLevel,
+				},
+			},
 		},
 
 		rules: {
@@ -33,6 +39,7 @@ export const baseConfig = [
 				{ prefer: 'type-imports', fixStyle: 'separate-type-imports', disallowTypeAnnotations: false },
 			],
 			'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
+			'local/plain-interface-to-type': 'error',
 			'local/pure-type-top-level': 'error',
 			'@stylistic/semi': ['error', 'never'],
 			'@stylistic/indent': ['error', 'tab'],
@@ -59,6 +66,15 @@ export const baseConfig = [
 			'no-extra-parens': 'error',
 			'@stylistic/object-curly-spacing': ['error', 'always'],
 			'no-undef': 'off',
+		},
+	},
+
+	// SvelteKit's ambient app.d.ts declares its App.Locals/Platform/etc. as `interface` so they
+	// can merge with SvelteKit's own ambient declarations -- `type` can't do that merging.
+	{
+		files: ['**/app.d.ts'],
+		rules: {
+			'local/plain-interface-to-type': 'off',
 		},
 	},
 ]

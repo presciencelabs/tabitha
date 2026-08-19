@@ -2,7 +2,7 @@
 	import { lwc_info, mtt_level_info, copilot_modes } from '$lib/lookups'
 	import Icon from '@iconify/svelte'
 
-	interface Props {
+	type Props = {
 		settings: CopilotSettings
 	}
 	let { settings = $bindable() }: Props = $props()

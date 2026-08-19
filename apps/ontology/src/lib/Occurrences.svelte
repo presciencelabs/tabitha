@@ -2,7 +2,7 @@
 	import { CONCEPT_FILTERS } from './filters'
 	import type { Concept } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 	}
 

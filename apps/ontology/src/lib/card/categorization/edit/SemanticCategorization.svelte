@@ -2,7 +2,7 @@
 	import { semantic_category } from '$lib/lookups'
 	import type { PartOfSpeech } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		part_of_speech: PartOfSpeech | string
 		categories?: string[]
 	}

@@ -7,7 +7,7 @@
 	import Icon from '@iconify/svelte'
 	import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 		classes?: string
 	}

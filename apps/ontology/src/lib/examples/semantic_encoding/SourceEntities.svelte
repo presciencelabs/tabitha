@@ -6,7 +6,7 @@
 	import Punctuation from './Punctuation.svelte'
 	import type { SourceConcept, SourceEntity } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		source_entities: SourceEntity[]
 		selected_concept: SourceConcept
 	}

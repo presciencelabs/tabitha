@@ -2,7 +2,7 @@
 	import SemanticCategorization from './SemanticCategorization.svelte'
 	import UsageInfo from './UsageInfo.svelte'
 
-	interface Props {
+	type Props = {
 		categories?: string[]
 		part_of_speech?: string
 	}

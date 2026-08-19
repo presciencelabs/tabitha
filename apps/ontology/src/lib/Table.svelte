@@ -3,7 +3,7 @@
 	import { DetailedCard, Level, Meaning, Occurrences } from '$lib'
 	import PendingChange from '$lib/PendingChange.svelte'
 
-	interface Props {
+	type Props = {
 		concepts: Concept[]
 	}
 

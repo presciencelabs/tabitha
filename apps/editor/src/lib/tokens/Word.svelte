@@ -4,7 +4,7 @@
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 		classes?: string
 	}

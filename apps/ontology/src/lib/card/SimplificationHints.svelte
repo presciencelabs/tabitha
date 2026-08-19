@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Concept } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 	}
 

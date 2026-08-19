@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SourceConcept } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		data: SourceConcept
 		selected_concept: SourceConcept
 	}

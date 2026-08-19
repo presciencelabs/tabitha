@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Reference } from '@tabitha/types'
 	import type { NavData } from '$lib/types'
-	interface Props {
+	type Props = {
 		nav_data: NavData
 		url_end?: string
 	}

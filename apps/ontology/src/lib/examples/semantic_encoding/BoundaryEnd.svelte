@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SourceEntity } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		source_entity: SourceEntity
 	}
 

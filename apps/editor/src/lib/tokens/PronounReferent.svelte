@@ -4,7 +4,7 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 	}
 

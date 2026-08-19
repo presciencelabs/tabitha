@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 
-export interface StorageFinding {
+export type StorageFinding = {
 	readonly rule_name: string
 	readonly file_path: string
 	readonly line_number: number

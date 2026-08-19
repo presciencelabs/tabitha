@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { levels } from './lookups'
 
-	interface Props {
+	type Props = {
 		level: string
 		tooltip_dir?: string
 	}

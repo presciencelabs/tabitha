@@ -14,7 +14,7 @@
 
 	type IndexRange = [number, number]
 
-	interface Props {
+	type Props = {
 		source_entities: PageSourceEntity[]
 		selected_entity: PageSourceEntity | null
 		on_entity_select: (entity: PageSourceEntity | null) => void

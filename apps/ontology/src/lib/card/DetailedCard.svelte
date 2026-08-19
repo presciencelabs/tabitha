@@ -10,7 +10,7 @@
 	import SimplifiedEntities from '$lib/examples/curated_examples/SimplifiedEntities.svelte'
 	import type { Concept } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 		onclose?: () => void
 	}

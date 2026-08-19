@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SimplifiedEncodingEntity, SimplifiedSemanticEncoding } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		entities: SimplifiedSemanticEncoding
 	}
 

@@ -4,7 +4,7 @@
 	import { Header, Footer } from '@tabitha/ui'
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		children: Snippet
 	}
 

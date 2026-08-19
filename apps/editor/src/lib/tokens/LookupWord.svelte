@@ -4,7 +4,7 @@
 	import PronounReferent from './PronounReferent.svelte'
 	import SingleToken from './SingleToken.svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 	}
 

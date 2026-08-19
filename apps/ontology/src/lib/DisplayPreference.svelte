@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 
-	interface Props {
+	type Props = {
 		preference?: 'grid' | 'table'
 		onpreference?: (preference: 'grid' | 'table') => void
 	}

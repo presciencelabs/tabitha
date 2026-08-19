@@ -4,7 +4,7 @@
 	import { derive_filters } from '.'
 	import type { Concept, ContextArgumentName, Example, FilterMap, Option } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 		examples: Example[]
 		ondatafiltered?: (filtered_examples: Example[]) => void

@@ -2,7 +2,7 @@
 	import { Badge } from '$lib'
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		children: Snippet
 		classes?: string
 	}

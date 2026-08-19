@@ -114,7 +114,7 @@ export const usfm_book_codes: Record<string, string> = {
 	'Revelation': 'REV',
 }
 
-interface LwcInfo {
+type LwcInfo = {
 	code: string
 	no_notes_text?: string
 }
@@ -189,7 +189,7 @@ export const default_target_audience: Record<string, string> = {
 	'Tagalog': 'Unchurched Adults',
 }
 
-interface MttLevelInfo {
+type MttLevelInfo = {
 	label: string
 	code: string
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import UsageList from './UsageList.svelte'
 
-	interface Props {
+	type Props = {
 		categories: string[]
 	}
 

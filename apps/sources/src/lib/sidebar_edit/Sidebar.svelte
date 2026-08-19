@@ -9,7 +9,7 @@
 	import FeaturesDetails from '$lib/sidebar_edit/FeaturesDetails.svelte'
 	import NounListDetails from '$lib/sidebar_edit/NounListDetails.svelte'
 
-	interface Props {
+	type Props = {
 		entity: PageSourceEntity|null
 		onclose: () => void
 		noun_list: NounListEntry[]

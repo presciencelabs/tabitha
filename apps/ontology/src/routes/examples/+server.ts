@@ -16,7 +16,7 @@ import type { Example, SourceStatus } from '$lib/types'
  * When a new deployment is published, Cloudflare recycles the Worker isolate, automatically
  * dropping this memory cache and fetching fresh data immediately.
  */
-interface CachedStatus {
+type CachedStatus = {
 	status: SourceStatus
 	cached_at: number
 }

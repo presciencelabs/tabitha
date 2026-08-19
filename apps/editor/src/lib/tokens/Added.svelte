@@ -4,7 +4,7 @@
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 	}
 

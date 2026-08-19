@@ -5,7 +5,7 @@
 	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'
 	import Icon from '@iconify/svelte'
 
-	interface Props {
+	type Props = {
 		data: SourceConcept
 		actions?: Snippet
 	}

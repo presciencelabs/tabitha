@@ -9,7 +9,7 @@
 	import SidebarEntityDisplay from './SidebarEntityDisplay.svelte'
 	import NounListDetails from './NounListDetails.svelte'
 
-	interface Props {
+	type Props = {
 		entity: PageSourceEntity|null
 		onclose: () => void
 		noun_list: NounListEntry[]

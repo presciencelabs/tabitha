@@ -90,7 +90,7 @@ export async function transform_target_encoding(db: D1Database, semantic_encodin
 	}
 }
 
-interface ConceptPairingMatch {
+type ConceptPairingMatch = {
 	stem: string
 	pairing_type: string
 	pairing_sense: string

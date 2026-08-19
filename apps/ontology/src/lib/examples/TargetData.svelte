@@ -3,7 +3,7 @@
 	import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 	import type { Reference, TargetTextResult } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		reference: Reference
 	}
 

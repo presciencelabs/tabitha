@@ -44,7 +44,7 @@ export type BuiltInRule = {
 // Json structures
 export type TagFilterJson = Tag | string
 
-export interface TokenFilterJsonBase {
+export type TokenFilterJsonBase = {
 	token?: string
 	type?: string
 	tag?: TagFilterJson | TagFilterJson[]
@@ -81,7 +81,7 @@ export type TokenTransformJson = {
 	function?: Tag
 }
 
-export interface TokenRuleJsonBase {
+export type TokenRuleJsonBase = {
 	name?: string
 	trigger?: TokenFilterJson
 	context?: TokenContextFilterJson

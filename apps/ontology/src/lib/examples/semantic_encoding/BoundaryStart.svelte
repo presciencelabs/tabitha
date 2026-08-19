@@ -2,7 +2,7 @@
 	import Features from './Features.svelte'
 	import type { SourceEntity } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		source_entity: SourceEntity
 	}
 

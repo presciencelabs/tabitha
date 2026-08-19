@@ -3,7 +3,7 @@
 	import Concept from './Concept.svelte'
 	import type { SourceConcept, SourceEntity } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		source_entity: SourceEntity
 		selected_concept?: SourceConcept
 	}

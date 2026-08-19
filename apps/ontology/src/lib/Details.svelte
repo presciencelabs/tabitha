@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		colors?: string
 		summary?: Snippet
 		children?: Snippet

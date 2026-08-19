@@ -1,6 +1,6 @@
 export const ONE_DAY_IN_SECONDS = 24 * 60 * 60
 
-export interface CacheControlOptions {
+export type CacheControlOptions = {
 	/**
 	 * Shared cache (CDN / Cloudflare Edge) max-age in seconds.
 	 * Overrides max-age for shared caches.

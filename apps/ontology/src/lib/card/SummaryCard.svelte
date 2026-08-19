@@ -9,7 +9,7 @@
 	import { CONCEPT_FILTERS } from '$lib/filters'
 	import type { Concept } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 		show_how_to?: boolean
 	}

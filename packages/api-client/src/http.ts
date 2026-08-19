@@ -1,13 +1,13 @@
 import { clean_trailing_slash } from '@tabitha/types'
 
-export interface ClientOptions {
+export type ClientOptions = {
 	base_url: string
 	fetch?: typeof fetch
 	/** Enable or disable client caching (defaults to false). */
 	cache?: boolean
 }
 
-export interface HttpClient {
+export type HttpClient = {
 	get: <T>(path: string, init?: RequestInit) => Promise<T | null>
 	post: <T>(path: string, body?: unknown, init?: RequestInit) => Promise<T | null>
 }

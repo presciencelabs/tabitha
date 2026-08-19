@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { theta_grid_arguments } from '$lib/lookups'
 
-	interface Props {
+	type Props = {
 		categories?: string[]
 		part_of_speech?: string
 	}

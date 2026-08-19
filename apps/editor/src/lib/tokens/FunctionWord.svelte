@@ -2,7 +2,7 @@
 	import type { SimpleToken } from '@tabitha/types'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 		classes?: string
 	}

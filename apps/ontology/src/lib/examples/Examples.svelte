@@ -5,7 +5,7 @@
 	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
 	import type { Concept, Example } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		concept: Concept
 	}
 

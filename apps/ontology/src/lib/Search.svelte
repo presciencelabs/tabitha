@@ -4,7 +4,7 @@
 	import Icon from '@iconify/svelte'
 	import { parts_of_speech } from '$lib/lookups'
 
-	interface Props {
+	type Props = {
 		autofocus?: boolean
 	}
 

@@ -7,7 +7,7 @@
 	import { token_has_message, MESSAGE_TYPE } from '$lib/token'
 	import type { Snippet } from 'svelte'
 
-	interface Props {
+	type Props = {
 		token: SimpleToken
 		children?: Snippet
 	}

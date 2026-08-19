@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte'
 	import { save_state } from '.'
 
-	interface Props {
+	type Props = {
 		content: string
 		classes?: string
 	}

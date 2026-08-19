@@ -6,21 +6,21 @@ import { fileURLToPath } from 'node:url'
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 
-export interface BadgeVersionInfo {
+export type BadgeVersionInfo = {
 	readonly pnpm: string
 	readonly svelte: string
 	readonly tailwind: string
 	readonly daisyui: string
 }
 
-export interface BadgeFinding {
+export type BadgeFinding = {
 	readonly badge_name: string
 	readonly expected: string
 	readonly current: string
 	readonly message: string
 }
 
-export interface AuditBadgesResult {
+export type AuditBadgesResult = {
 	readonly is_synced: boolean
 	readonly findings: readonly BadgeFinding[]
 	readonly updated_content: string

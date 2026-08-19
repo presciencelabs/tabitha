@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte'
 	import type { EntityFeature, SourceEntity } from '$lib/types'
 
-	interface Props {
+	type Props = {
 		source_entity: SourceEntity
 		classes?: string
 		children?: Snippet

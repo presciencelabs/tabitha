@@ -8,7 +8,7 @@
 	import { page } from '$app/state'
 	import { fill_in_features } from '$lib/encoding/features'
 
-	interface Props {
+	type Props = {
 		source_entities: PageSourceEntity[]
 		data: EntityContextMenuData
 		onclose: (recalculate: boolean, id_to_select?: number) => void
