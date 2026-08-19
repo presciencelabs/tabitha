@@ -300,6 +300,9 @@ interface FetchConceptOptions {
 
 2. **Shared Packages (`packages/*`)**:
    - `@tabitha/types` — Universal TypeScript interfaces. Must remain free of runtime dependencies.
+     - **Boundary rule**: a type belongs here if it crosses an app boundary — either it is actually imported by 2+ apps, or it is the shape of data one app sends to or receives from another app's API (even with a single consumer today). API/DB contract types get this lower two-party bar because duplicating them risks silent runtime drift, not just repeated code, so the Rule of Three (§12) does not apply to them.
+     - Everything else — route params, UI-only view models, internal helper shapes — stays local to the app, defined in an explicit module (e.g. `$lib/types.ts`) that `import type`s from `@tabitha/types` where needed.
+     - Do not declare domain types as ambient globals (`declare global { type X = ... }`) outside of SvelteKit's own generated `app.d.ts`. Ambient types hide where a type comes from and make accidental duplicates easy to introduce.
    - `@tabitha/ui` — Reusable Svelte 5 components styled with daisyUI 5.
    - `@tabitha/api-client` — Typed HTTP client for inter-service communication.
    - `@tabitha/vite-config` — Shared Vite, SvelteKit, Vitest, and Playwright configurations.
