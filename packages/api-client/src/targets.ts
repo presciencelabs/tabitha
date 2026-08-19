@@ -1,4 +1,4 @@
-import { type LexicalForm, type TargetApiFeatureResult, type TargetTextResult, type VerseReference } from '@tabitha/types'
+import type { LexicalForm, TargetApiFeatureResult, TargetTextResult, VerseReference } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type TargetsClient = ReturnType<typeof create_targets_client>

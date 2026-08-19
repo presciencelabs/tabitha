@@ -1,9 +1,11 @@
 import js from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
 import globals from 'globals'
+import import_x from 'eslint-plugin-import-x'
 import svelte from 'eslint-plugin-svelte'
 import svelte_parser from 'svelte-eslint-parser'
 import ts from 'typescript-eslint'
+import { pureTypeTopLevel } from './rules/pure_type_top_level.js'
 
 // Shared base rules for JavaScript & TypeScript
 export const baseConfig = [
@@ -20,10 +22,18 @@ export const baseConfig = [
 
 		plugins: {
 			'@stylistic': stylistic,
+			'import-x': import_x,
+			local: { rules: { 'pure-type-top-level': pureTypeTopLevel } },
 		},
 
 		rules: {
 			'@typescript-eslint/consistent-generic-constructors': ['error', 'constructor'],
+			'@typescript-eslint/consistent-type-imports': [
+				'error',
+				{ prefer: 'type-imports', fixStyle: 'separate-type-imports', disallowTypeAnnotations: false },
+			],
+			'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
+			'local/pure-type-top-level': 'error',
 			'@stylistic/semi': ['error', 'never'],
 			'@stylistic/indent': ['error', 'tab'],
 			'@stylistic/quotes': [
@@ -46,7 +56,6 @@ export const baseConfig = [
 					],
 				},
 			],
-			'no-duplicate-imports': 'error',
 			'no-extra-parens': 'error',
 			'@stylistic/object-curly-spacing': ['error', 'always'],
 			'no-undef': 'off',

@@ -1,4 +1,4 @@
-import { type ChapterReference, type Reference, type SourceData, type SourceStatus, type VerseReference } from '@tabitha/types'
+import type { ChapterReference, Reference, SourceData, SourceStatus, VerseReference } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type SourcesClient = ReturnType<typeof create_sources_client>

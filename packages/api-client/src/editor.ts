@@ -1,4 +1,4 @@
-import { type CheckResponse, type SimpleSourceData } from '@tabitha/types'
+import type { CheckResponse, SimpleSourceData } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type EditorClient = ReturnType<typeof create_editor_client>

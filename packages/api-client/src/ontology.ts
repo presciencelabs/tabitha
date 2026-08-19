@@ -1,4 +1,4 @@
-import { type ConceptSearchFilter, type OntologyResult, type SourceConcept } from '@tabitha/types'
+import type { ConceptSearchFilter, OntologyResult, SourceConcept } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type OntologyClient = ReturnType<typeof create_ontology_client>

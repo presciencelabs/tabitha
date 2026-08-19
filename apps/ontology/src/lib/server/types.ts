@@ -1,3 +1,4 @@
+import type { D1PreparedStatement } from '@cloudflare/workers-types'
 import type {
 	ConceptKey,
 	OntologyChangeAction,
@@ -32,5 +33,5 @@ export type DbOntologyChange = {
 export type ConceptQueryBuilder = {
 	add_filter: (filter: string, params: (string | number)[]) => ConceptQueryBuilder
 	order_by: (column: string) => ConceptQueryBuilder
-	prepare: () => import('@cloudflare/workers-types').D1PreparedStatement
+	prepare: () => D1PreparedStatement
 }

@@ -1,4 +1,4 @@
-import { type RequestHandler } from '@sveltejs/kit'
+import type { RequestHandler } from '@sveltejs/kit'
 import { cached_json } from '@tabitha/api-client'
 import type { D1Database } from '@cloudflare/workers-types'
 import { normalize_wildcards } from '@tabitha/types'

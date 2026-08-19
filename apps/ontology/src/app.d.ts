@@ -1,5 +1,5 @@
 /// <reference types="svelte" />
-import type { User } from '@auth/sveltekit'
+import type { Auth, User } from '@auth/sveltekit'
 import type { D1Database } from '@cloudflare/workers-types'
 import type {
 	Concept as ConceptType,
@@ -37,7 +37,7 @@ declare global {
 		interface Locals {
 			db_ontology: D1Database
 			db_auth: D1Database
-			auth: import('@auth/sveltekit').Auth
+			auth: Auth
 			user: User | undefined
 		}
 		// interface PageData {}
