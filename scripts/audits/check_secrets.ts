@@ -14,6 +14,9 @@ interface SecretFinding {
 	message: string
 }
 
+// Where this check's rationale and remediation steps are documented.
+const DOC_LINK = 'README.md#verification--testing'
+
 const findings: SecretFinding[] = []
 
 const secret_patterns: Array<{ name: string; regex: RegExp; message: string }> = [
@@ -240,10 +243,11 @@ async function audit_secrets() {
 		console.log(`[Security Alert: ${f.rule_name}]`)
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
 		console.log(`  💡 ${f.message}`)
-		console.log(`  🔒 Masked Preview: "${f.snippet}"\n`)
+		console.log(`  🔒 Masked Preview: "${f.snippet}"`)
+		console.log(`  📚 ${DOC_LINK}\n`)
 
 		if (is_ci) {
-			console.log(`::error file=${rel_path},line=${f.line_number},title=Security Alert (${f.rule_name})::${f.message}`)
+			console.log(`::error file=${rel_path},line=${f.line_number},title=Security Alert (${f.rule_name})::${f.message} (docs: ${DOC_LINK})`)
 		}
 	}
 

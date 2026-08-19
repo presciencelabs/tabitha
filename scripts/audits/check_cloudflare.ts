@@ -16,6 +16,9 @@ interface CloudflareFinding {
 	severity: 'warning' | 'error'
 }
 
+// Where this check's rationale and remediation steps are documented.
+const DOC_LINK = 'README.md#verification--testing'
+
 const forbidden_var_keys = [
 	'AUTH_SECRET',
 	'API_KEY_OPENAI',
@@ -137,10 +140,11 @@ async function audit_cloudflare_configs() {
 		const rel_path = relative(root_dir, f.file_path)
 		console.log(`[Cloudflare ${f.severity.toUpperCase()}: ${f.app_name}]`)
 		console.log(`  📄 ${rel_path}`)
-		console.log(`  💡 ${f.message}\n`)
+		console.log(`  💡 ${f.message}`)
+		console.log(`  📚 ${DOC_LINK}\n`)
 
 		if (is_ci) {
-			console.log(`::warning file=${rel_path},title=Cloudflare Config (${f.app_name})::${f.message}`)
+			console.log(`::warning file=${rel_path},title=Cloudflare Config (${f.app_name})::${f.message} (docs: ${DOC_LINK})`)
 		}
 	}
 

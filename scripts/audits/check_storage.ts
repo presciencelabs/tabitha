@@ -15,6 +15,9 @@ export interface StorageFinding {
 	readonly severity: 'error' | 'warning'
 }
 
+// Where this check's rationale and remediation steps are documented.
+const DOC_LINK = 'README.md#verification--testing'
+
 const DOCUMENT_COOKIE_REGEX = /\bdocument\.cookie\b/
 const SENSITIVE_STORAGE_KEY_REGEX = /(?:localStorage|sessionStorage)\s*\.\s*(?:setItem|getItem|removeItem)\s*\(\s*['"`]([^'"`]*(?:token|secret|jwt|api_?key|auth_?key|password|private_?key|session_?id|access_?token|refresh_?token|id_?token|credential)[^'"`]*)['"`]/i
 const SENSITIVE_PERSISTED_KEY_REGEX = /\bpersisted\s*(?:<[^>]+>)?\s*\(\s*['"`]([^'"`]*(?:token|secret|jwt|api_?key|auth_?key|password|private_?key|session_?id|access_?token|refresh_?token|id_?token|credential)[^'"`]*)['"`]/i
@@ -194,11 +197,12 @@ async function audit_storage() {
 		console.log(`[Storage Security ${f.severity.toUpperCase()}: ${f.rule_name}]`)
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
 		console.log(`  💡 ${f.message}`)
-		console.log(`  🔍 Snippet: "${f.snippet}"\n`)
+		console.log(`  🔍 Snippet: "${f.snippet}"`)
+		console.log(`  📚 ${DOC_LINK}\n`)
 
 		if (is_ci) {
 			const annotation_type = f.severity === 'error' ? 'error' : 'warning'
-			console.log(`::${annotation_type} file=${rel_path},line=${f.line_number},title=Storage Security (${f.rule_name})::${f.message}`)
+			console.log(`::${annotation_type} file=${rel_path},line=${f.line_number},title=Storage Security (${f.rule_name})::${f.message} (docs: ${DOC_LINK})`)
 		}
 	}
 
