@@ -15,6 +15,16 @@ interface PhilosophyFinding {
 	message: string
 }
 
+// Maps each rule to the AGENTS.md section that explains it, so a failing check
+// can point a developer (or AI agent) straight to the "why" instead of just the "what".
+const RULE_DOC_ANCHORS: Record<number, string> = {
+	3: 'AGENTS.md#3-tabs-for-indentation',
+	5: 'AGENTS.md#5-classes-at-the-end-of-elements',
+	7: 'AGENTS.md#7-strict-domain-typing',
+	10: 'AGENTS.md#10-snake_case-for-functions-variables-and-files',
+	13: 'AGENTS.md#13-scope-prose-to-content-escape-with-not-prose',
+}
+
 const findings: PhilosophyFinding[] = []
 
 async function get_source_files(dir: string): Promise<string[]> {
@@ -266,14 +276,19 @@ async function audit_codebase() {
 		const is_updated_in_pr = changed_files.has(f.file_path)
 		const pr_tag = is_updated_in_pr ? ' [PR MODIFIED]' : ''
 
+		const doc_anchor = RULE_DOC_ANCHORS[f.rule_id]
+
 		console.log(`[Philosophy #${f.rule_id}: ${f.rule_title}]${pr_tag}`)
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
 		console.log(`  💡 ${f.message}`)
-		console.log(`  🔎 "${f.snippet}"\n`)
+		console.log(`  🔎 "${f.snippet}"`)
+		if (doc_anchor) console.log(`  📚 ${doc_anchor}`)
+		console.log('')
 
 		if (is_ci) {
 			// GitHub Actions inline annotation (prioritizes changed files or annotates all non-blocking)
-			console.log(`::warning file=${rel_path},line=${f.line_number},title=Philosophy #${f.rule_id} (${f.rule_title})${pr_tag}::${f.message}`)
+			const doc_suffix = doc_anchor ? ` (docs: ${doc_anchor})` : ''
+			console.log(`::warning file=${rel_path},line=${f.line_number},title=Philosophy #${f.rule_id} (${f.rule_title})${pr_tag}::${f.message}${doc_suffix}`)
 		}
 	}
 
@@ -286,25 +301,32 @@ async function audit_codebase() {
 		if (findings.length === 0) {
 			markdown += `✨ **100% Compliance!** All ${all_files.length} inspected source files adhere to the Development Philosophies.\n\n`
 		} else {
+			const repo = process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'
+			const sha = process.env.GITHUB_SHA || 'main'
+			const doc_link = (rule_id: number) => {
+				const anchor = RULE_DOC_ANCHORS[rule_id]
+				return anchor ? `[docs](https://github.com/${repo}/blob/${sha}/${anchor})` : '—'
+			}
+
 			const pr_findings = findings.filter(f => changed_files.has(f.file_path))
 			if (pr_findings.length > 0) {
 				markdown += `### ✏️ Observations in PR-Modified Files (${pr_findings.length})\n\n`
-				markdown += `| Rule | Location | Observation |\n`
-				markdown += `| :--- | :--- | :--- |\n`
+				markdown += `| Rule | Location | Observation | Docs |\n`
+				markdown += `| :--- | :--- | :--- | :--- |\n`
 				for (const f of pr_findings) {
 					const rel_path = relative(root_dir, f.file_path)
-					markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
+					markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 				}
 				markdown += `\n`
 			}
 
 			markdown += `### 🌐 All Workspace Observations (${findings.length})\n\n`
-			markdown += `| Scope | Rule | Location | Observation |\n`
-			markdown += `| :--- | :--- | :--- | :--- |\n`
+			markdown += `| Scope | Rule | Location | Observation | Docs |\n`
+			markdown += `| :--- | :--- | :--- | :--- | :--- |\n`
 			for (const f of findings) {
 				const rel_path = relative(root_dir, f.file_path)
 				const scope = changed_files.has(f.file_path) ? '✏️ **PR File**' : '📄 Workspace'
-				markdown += `| ${scope} | **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${process.env.GITHUB_REPOSITORY || 'presciencelabs/tabitha'}/blob/${process.env.GITHUB_SHA || 'main'}/${rel_path}#L${f.line_number}) | ${f.message} |\n`
+				markdown += `| ${scope} | **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 			}
 			markdown += `\n`
 		}
