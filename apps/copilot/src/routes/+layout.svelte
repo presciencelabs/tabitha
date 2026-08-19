@@ -2,6 +2,7 @@
 	import '$lib/app.css'
 
 	import Brand from '$lib/Brand.svelte'
+	import { Footer } from '@tabitha/ui'
 
 	let { children } = $props()
 </script>
@@ -21,4 +22,6 @@
 	<main class="mx-8 mt-8">
 		{@render children()}
 	</main>
+
+	<Footer />
 </div>

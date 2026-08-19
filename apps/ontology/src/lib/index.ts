@@ -1,4 +1,3 @@
-import Brand from './Brand.svelte'
 import { DetailedCard, SummaryCard } from './card'
 import Details from './Details.svelte'
 import DisplayPreference from './DisplayPreference.svelte'
@@ -11,7 +10,6 @@ import Table from './Table.svelte'
 import ConceptKey from './ConceptKey.svelte'
 
 export {
-	Brand,
 	DetailedCard,
 	Details,
 	DisplayPreference,

@@ -527,6 +527,9 @@ importers:
         specifier: ^4.3.2
         version: 4.3.3
     devDependencies:
+      '@iconify/svelte':
+        specifier: ^5.2.2
+        version: 5.2.2(svelte@5.56.9(@typescript-eslint/types@8.67.0))
       '@tabitha/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config

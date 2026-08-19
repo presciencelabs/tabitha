@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { set_theme, theme_state } from './theme.svelte'
-	import themes from './themes'
+	import themes, { to_daisyui_theme } from './themes'
 
 	interface Props {
 		colors?: string
@@ -33,7 +33,7 @@
 					onclick={() => select_theme(theme)}
 					class="w-full p-0 overflow-hidden rounded-lg border border-base-300 text-left transition-all hover:scale-[1.01] {theme_state.current === theme ? 'ring-2 ring-primary' : ''}"
 				>
-					<div data-theme={theme} class="w-full bg-base-100 text-base-content px-4 py-2.5">
+					<div data-theme={to_daisyui_theme(theme)} class="w-full bg-base-100 text-base-content px-4 py-2.5">
 						<div class="flex items-center justify-between gap-4">
 							<span class="text-sm font-semibold capitalize truncate">{theme}</span>
 							<div class="flex h-4 shrink-0 gap-1.5 items-center">

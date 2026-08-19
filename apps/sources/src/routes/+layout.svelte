@@ -2,7 +2,8 @@
 	import '$lib/app.css'
 	import type { Snippet } from 'svelte'
 	import { onNavigate } from '$app/navigation'
-	import { Brand, Search } from '$lib'
+	import { Search } from '$lib'
+	import { Header, Footer } from '@tabitha/ui'
 
 	let { children }: { children?: Snippet } = $props()
 
@@ -21,11 +22,9 @@
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
 
-<header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
-	<Brand />
-
+<Header app="Sources">
 	<Search />
-</header>
+</Header>
 
 <main class="mx-8 mt-8">
 	{#if children}
@@ -33,9 +32,7 @@
 	{/if}
 </main>
 
-<footer class="footer footer-horizontal mt-10 max-w-none bg-neutral p-10 text-neutral-content">
-	<nav class="justify-self-end">
-		<a href="/lookup/status/Bible" class="link link-hover">Bible encoding status</a>
-		<a href="/lookup/features" class="link link-hover">Source features list</a>
-	</nav>
-</footer>
+<Footer>
+	<a href="/lookup/status/Bible" class="link link-hover">Bible encoding status</a>
+	<a href="/lookup/features" class="link link-hover">Source features list</a>
+</Footer>

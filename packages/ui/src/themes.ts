@@ -15,11 +15,12 @@ export const themes = [
 	'cyberpunk',
 	'dark',
 	'dim',
+	'vespers',
 	'emerald',
 	'fantasy',
 	'forest',
 	'garden',
-	'halloween',
+	'reformation',
 	'lemonade',
 	'light',
 	'lofi',
@@ -30,11 +31,24 @@ export const themes = [
 	'silk',
 	'sunset',
 	'synthwave',
-	'valentin',
+	'valentine',
 	'winter',
 	'wireframe',
 ] as const
 
 export type Theme = (typeof themes)[number]
+
+// daisyUI only ships its themes under their built-in names. 'reformation' and 'vespers'
+// are displayed to users and persisted to storage under those names, but render using
+// daisyUI's built-in 'halloween' and 'abyss' themes, which app.css must still declare
+// by their real names.
+const daisyui_theme_names: Partial<Record<Theme, string>> = {
+	reformation: 'halloween',
+	vespers: 'abyss',
+}
+
+export function to_daisyui_theme(theme: string): string {
+	return daisyui_theme_names[theme as Theme] ?? theme
+}
 
 export default themes

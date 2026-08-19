@@ -1,6 +1,7 @@
 <script>
 	import '$lib/app.css'
-	import { Brand, Search } from '$lib'
+	import { Search } from '$lib'
+	import { Header, Footer } from '@tabitha/ui'
 
 	let { data, children } = $props()
 	let project = $derived(data.project)
@@ -8,12 +9,12 @@
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
 
-<header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
-	<Brand />
-
+<Header app="Targets">
 	<Search {project} />
-</header>
+</Header>
 
 <main class="mx-8 mt-6">
 	{@render children?.()}
 </main>
+
+<Footer />

@@ -1,41 +1,4 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/typography';
-@plugin 'daisyui' {
-	themes:
-		light --default,
-		dark --prefersdark,
-		abyss,
-		acid,
-		aqua,
-		autumn,
-		black,
-		bumblebee,
-		business,
-		caramellatte,
-		cmyk,
-		coffee,
-		corporate,
-		cupcake,
-		cyberpunk,
-		dim,
-		emerald,
-		fantasy,
-		forest,
-		garden,
-		lemonade,
-		lofi,
-		luxury,
-		night,
-		nord,
-		pastel,
-		retro,
-		silk,
-		sunset,
-		synthwave,
-		valentine,
-		winter,
-		wireframe;
-}
+@import '@tabitha/ui/theme.css';
 
 .entity-NP, .entity-N {
 	color: #aa795d;
