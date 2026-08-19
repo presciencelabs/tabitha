@@ -15,6 +15,8 @@ import {
 	USFM_VERSE_MARKER_REGEX,
 	GLOSS_CLASSIFIER_REGEX,
 	strip_gloss_classifiers,
+	BIBLE_BOOKS,
+	by_book_order,
 	TRAILING_SLASH_REGEX,
 	clean_trailing_slash,
 } from './index'
@@ -107,6 +109,33 @@ describe('@tabitha/types/patterns', () => {
 			expect(strip_gloss_classifiers('(LDV) ancient')).toBe('ancient')
 			expect(strip_gloss_classifiers('(inexplicable) unknown token')).toBe('unknown token')
 			expect(strip_gloss_classifiers('regular gloss')).toBe('regular gloss')
+		})
+
+		test('BIBLE_BOOKS maps book numbers to canonical book names', () => {
+			expect(BIBLE_BOOKS[1]).toBe('Genesis')
+			expect(BIBLE_BOOKS[9]).toBe('1 Samuel')
+			expect(BIBLE_BOOKS[40]).toBe('Matthew')
+			expect(BIBLE_BOOKS[66]).toBe('Revelation')
+			expect(Object.keys(BIBLE_BOOKS)).toHaveLength(66)
+		})
+
+		test('by_book_order sorts references in canonical Bible order, not alphabetically', () => {
+			const refs = [
+				{ reference: { id_primary: 'John' } },
+				{ reference: { id_primary: 'Genesis' } },
+				{ reference: { id_primary: 'Amos' } },
+			]
+			expect(refs.toSorted(by_book_order).map(r => r.reference.id_primary))
+				.toEqual(['Genesis', 'Amos', 'John'])
+		})
+
+		test('by_book_order normalizes the legacy "Revelations" misspelling to sort with Revelation', () => {
+			const refs = [
+				{ reference: { id_primary: 'Revelations' } },
+				{ reference: { id_primary: 'Genesis' } },
+			]
+			expect(refs.toSorted(by_book_order).map(r => r.reference.id_primary))
+				.toEqual(['Genesis', 'Revelations'])
 		})
 	})
 

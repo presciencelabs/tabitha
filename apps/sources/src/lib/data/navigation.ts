@@ -1,7 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { get_secondary_ids, get_source_data, get_tertiary_ids } from './read'
-import { ordered_primary_ids } from './lookups'
-import type { Reference } from '@tabitha/types'
+import { BIBLE_BOOKS, type Reference } from '@tabitha/types'
 
 export async function get_previous_reference(db: D1Database, reference: Reference): Promise<Reference | null> {
 	// try decrementing id_tertiary
@@ -32,7 +31,7 @@ export async function get_previous_reference(db: D1Database, reference: Referenc
 		return null
 	}
 
-	const previous_book = ordered_primary_ids[reference.type]?.[book_index - 1]
+	const previous_book = BIBLE_BOOKS[book_index - 1]
 	if (!previous_book) {
 		return null
 	}
@@ -74,7 +73,7 @@ export async function get_next_reference(db: D1Database, reference: Reference): 
 		return null
 	}
 
-	const next_book = ordered_primary_ids[reference.type]?.[book_index + 1]
+	const next_book = BIBLE_BOOKS[book_index + 1]
 	if (!next_book) {
 		return null
 	}
@@ -89,12 +88,8 @@ export async function get_next_reference(db: D1Database, reference: Reference): 
 }
 
 function find_book_index(reference: Reference): number | undefined {
-	const book_names = ordered_primary_ids[reference.type]
-	if (!book_names) {
-		return undefined
-	}
 	const upper_book_name = reference.id_primary.toUpperCase()
-	const index_string = Object.entries(book_names).find(([, name]) => name.toUpperCase() === upper_book_name)?.[0]
+	const index_string = Object.entries(BIBLE_BOOKS).find(([, name]) => name.toUpperCase() === upper_book_name)?.[0]
 	return index_string ? Number(index_string) : undefined
 }
 

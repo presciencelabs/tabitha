@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-	bible_books,
 	default_categories,
 	levels,
 	parts_of_speech,
@@ -39,13 +38,6 @@ describe('lookups', () => {
 		expect(default_categories.Noun).toEqual(['All other objects'])
 		expect(default_categories.Verb?.[0]).toBe('Agent-like')
 		expect(default_categories.Adjective?.[0]).toBe('Generic')
-	})
-
-	it('maps Bible books with 66 canonical books plus TBTA edge cases', () => {
-		expect(bible_books[1]).toBe('Genesis')
-		expect(bible_books[40]).toBe('Matthew')
-		expect(bible_books[66]).toBe('Revelation')
-		expect(bible_books[67]).toBe('Revelations')
 	})
 
 	it('defines sources and level mappings', () => {

@@ -45,4 +45,18 @@ describe('search helpers', () => {
 		const regex = build_search_regex(['david', 'ahimelech'])
 		expect('David went to meet Ahimelech'.split(regex)).toEqual(['', 'David', ' went to meet ', 'Ahimelech', ''])
 	})
+
+	it('sorts the legacy "Revelations" misspelling (seen in real Indonesian project data) to the end, not the front', () => {
+		const resultsWithLegacyMisspelling: SearchTextResult[] = [
+			...mockRealWorldResults,
+			{
+				reference: { type: 'verse', id_primary: 'Revelations', id_secondary: 1, id_tertiary: 1 },
+				texts: [{ audience: 'Unchurched Adults', text: 'This book describes the things that God showed to Jesus Christ.' }],
+			},
+		]
+
+		const sorted = resultsWithLegacyMisspelling.slice().sort(by_book_order)
+
+		expect(sorted.map(r => r.reference.id_primary)).toEqual(['Ruth', '1 Samuel', 'Revelations'])
+	})
 })

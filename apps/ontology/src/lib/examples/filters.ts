@@ -1,4 +1,4 @@
-import { bible_books } from '$lib/lookups'
+import { by_book_order } from '@tabitha/types'
 import type {
 	Concept,
 	ContextArgumentMap,
@@ -8,6 +8,8 @@ import type {
 	FilterRulesMap,
 	Options,
 } from '$lib/types'
+
+export { by_book_order }
 
 export const context_argument_map: ContextArgumentMap = new Map([
 	['Noun', [
@@ -167,17 +169,3 @@ export function derive_filters(concept: Concept, examples: Example[]): FilterMap
 	}
 }
 
-/**
- * Sorts by Bible book order rather than the natural alphabetical order
- */
-export function by_book_order(
-	{ reference: { id_primary: book_name_1 } }: Example,
-	{ reference: { id_primary: book_name_2 } }: Example,
-): number {
-	const books_in_order = Object.values(bible_books)
-
-	const index_1 = books_in_order.indexOf(book_name_1)
-	const index_2 = books_in_order.indexOf(book_name_2)
-
-	return index_1 - index_2
-}

@@ -1,15 +1,7 @@
-import { bible_books } from '../lookups'
+import { by_book_order } from '@tabitha/types'
 import type { FilterMap, SearchTextResult } from '../types'
 
-export function by_book_order(
-	{ reference: { id_primary: book_name_1 } }: SearchTextResult,
-	{ reference: { id_primary: book_name_2 } }: SearchTextResult,
-): number {
-	const books_in_order = Object.values(bible_books)
-	const index_1 = books_in_order.indexOf(book_name_1)
-	const index_2 = books_in_order.indexOf(book_name_2)
-	return index_1 - index_2
-}
+export { by_book_order }
 
 export function build_filter_options(matches: SearchTextResult[]): FilterMap {
 	const filter_map: FilterMap = new Map()
