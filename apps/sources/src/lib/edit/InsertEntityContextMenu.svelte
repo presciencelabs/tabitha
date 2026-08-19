@@ -11,7 +11,7 @@
 	type Props = {
 		source_entities: PageSourceEntity[]
 		data: EntityContextMenuData
-		onclose: (recalculate: boolean, id_to_select?: number) => void
+		onclose: (recalculate?: boolean) => void
 	}
 	let { source_entities = $bindable(), data, onclose }: Props = $props()
 
@@ -30,7 +30,7 @@
 		}))
 		
 		source_entities.splice(data.entity_id, 0, ...new_entities)
-		onclose(true, data.entity_id)
+		onclose(true)
 	}
 
 	function insert_entity(entity: PageSourceEntity) {
@@ -70,9 +70,9 @@
 		const new_entities = entity_clipboard.paste()
 		if (new_entities !== null) {
 			source_entities.splice(data.entity_id, 0, ...new_entities)
-			onclose(true, data.entity_id)
+			onclose(true)
 		} else {
-			onclose(false)
+			onclose()
 		}
 	}
 	
@@ -93,7 +93,7 @@
 		} else if (new_concept_entity?.concept?.stem) {
 			insert_entity(new_concept_entity)
 		} else {
-			onclose(false)
+			onclose()
 		}
 	}
 
@@ -227,7 +227,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div onclick={e => e.stopPropagation()}
 	onkeydown={e => e.stopPropagation()}
-	onmouseleave={() => !dialog_open && onclose(false)}
+	onmouseleave={() => !dialog_open && onclose()}
 	style="left: {data.x}px; top: {data.y}px;"
 	class="card shadow-lg bg-base-100 min-w-40 fixed z-60"
 >
