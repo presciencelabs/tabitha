@@ -19,6 +19,7 @@ import type {
 	FeatureInfo as _FeatureInfo,
 	FeatureMap as _FeatureMap,
 	TargetApiFeatureResult as _TargetApiFeatureResult,
+	SourceStatus as _SourceStatus,
 } from '@tabitha/types'
 
 declare global {
@@ -43,6 +44,7 @@ declare global {
 	type FeatureMap = _FeatureMap
 	type TargetApiFeature = _DbFeature
 	type TargetApiFeatureResult = _TargetApiFeatureResult
+	type SourceStatus = _SourceStatus
 	type EntityFilter = (entity: SourceEntity) => boolean
 }
 

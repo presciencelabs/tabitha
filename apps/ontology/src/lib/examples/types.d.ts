@@ -22,8 +22,6 @@ type SourceData = {
 	notes: string
 }
 
-type SourceStatus = 'Not Started' | 'Initial Analysis in Progress' | 'Initial Analysis Complete' | 'Final Review in Progress' | 'Ready to Translate'
-
 type SourceEntity = {
 	category: CategoryName
 	category_abbr: string
