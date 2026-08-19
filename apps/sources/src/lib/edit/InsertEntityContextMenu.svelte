@@ -15,8 +15,6 @@
 	}
 	let { source_entities = $bindable(), data, onclose }: Props = $props()
 
-	let submenu = $state<string | null>(null)
-
 	let parent_category = $derived.by(() => {
 		const entity = source_entities[data.entity_id]
 		if (!entity || entity.parent_id === -1) {
@@ -230,35 +228,26 @@
 <div onclick={e => e.stopPropagation()}
 	onkeydown={e => e.stopPropagation()}
 	onmouseleave={() => !dialog_open && onclose(false)}
-	class="card shadow-lg bg-base-100 min-w-40" style="position: fixed; left: {data.x}px; top: {data.y}px; z-index: 60;"
+	style="left: {data.x}px; top: {data.y}px;"
+	class="card shadow-lg bg-base-100 min-w-40 fixed z-60"
 >
-	<ul class="menu w-full">
+	<ul class="menu menu-paged menu-vertical w-full min-h-40">
 		{#if entity_clipboard.has_value()}
-			<li>
-				<button onclick={paste_entities} onmouseenter={() => submenu = null}>
-					Paste
-				</button>
-			</li>
+			<li><button onclick={paste_entities}>Paste - {entity_clipboard.peek()?.category_abbr}</button></li>
 			<li></li>
 		{/if}
 		{#each menu_data as [menu_label, items]}
-			{@const visible = items.some(item => item.condition)}
-			{#if visible}
+			{@const subitems_to_show = items.filter(item => item.condition)}
+			{#if subitems_to_show.length}
 				<li>
-					<div class="relative" onmouseenter={() => submenu = menu_label}>
-						<button class="cursor-pointer">{menu_label}</button>
-						{#if submenu === menu_label}
-							<div class="card bg-base-100 min-w-50 ml-2 p-2 shadow absolute left-full top-0">
-								<ul class="ml-0 pl-0 before:hidden">
-									{#each items as { label, action, condition }}
-										{#if condition}
-											<li><button onclick={action}>{label}</button></li>
-										{/if}
-									{/each}
-								</ul>
-							</div>
-						{/if}
-					</div>
+					<details>
+						<summary>{menu_label}</summary>
+						<ul>
+							{#each subitems_to_show as { label, action }}
+								<li><button onclick={action}>{label}</button></li>
+							{/each}
+						</ul>
+					</details>
 				</li>
 			{/if}
 		{/each}

@@ -6,6 +6,10 @@ class EntityClipboard {
 		return !!this.copied_entities
 	}
 
+	peek() {
+		return this.copied_entities?.at(0)
+	}
+
 	copy(entities: PageSourceEntity[]) {
 		this.copied_entities = $state.snapshot(entities)
 	}
