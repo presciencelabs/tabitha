@@ -1,25 +1,26 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte'
 	import Concept from '../entity_displays/Concept.svelte'
 	import BoundaryEnd from '../entity_displays/BoundaryEnd.svelte'
 	import BoundaryStart from '../entity_displays/BoundaryStart.svelte'
 	import Punctuation from '../entity_displays/Punctuation.svelte'
-	import EntityContextMenu from './EntityContextMenu.svelte'
 	import InsertEntityContextMenu from './InsertEntityContextMenu.svelte'
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 	import { structure_entities } from '$lib/encoding/structured'
 	import { view_settings, set_settings } from '$lib/settings/settings.svelte.js'
+	import { entity_clipboard } from './clipboard.svelte'
 
 	type IndexRange = [number, number]
 
 	interface Props {
 		source_entities: PageSourceEntity[]
-		selected_entity: PageSourceEntity|null
-		on_entity_select: (entity: PageSourceEntity|null) => void
+		selected_entity: PageSourceEntity | null
+		on_entity_select: (entity: PageSourceEntity | null) => void
 	}
 	let { source_entities = $bindable(), selected_entity, on_entity_select }: Props = $props()
 
-	let hover_range: IndexRange | null = $state(null)
-	let select_range: IndexRange | null = $derived(
+	let hover_range = $state<IndexRange | null>(null)
+	let select_range = $derived<IndexRange | null>(
 		!selected_entity ? null
 			: is_boundary_start(selected_entity)
 				? get_boundary_range(selected_entity.id)
@@ -43,29 +44,7 @@
 		[() => true, Punctuation],
 	]
 
-	let entity_context_menu_data: EntityContextMenuData = $state({
-		is_open: false,
-		entity_id: -1,
-		x: 0,
-		y: 0,
-	})
-
-	function open_entity_context_menu(event: UIEvent, entity_id: number) {
-		event.stopPropagation()
-		event.preventDefault()
-		entity_context_menu_data = {
-			is_open: true,
-			entity_id,
-			...get_menu_location(event),
-		}
-	}
-
-	function close_entity_context_menu(recalculate: boolean, id_to_select?: number) {
-		entity_context_menu_data.is_open = false
-		close_context_menu(recalculate, id_to_select)
-	}
-
-	let insert_context_menu_data: EntityContextMenuData = $state({
+	let insert_context_menu_data = $state<EntityContextMenuData>({
 		is_open: false,
 		entity_id: -1,
 		x: 0,
@@ -105,17 +84,10 @@
 
 	function get_menu_location(event: UIEvent): { x: number, y: number } {
 		if (event instanceof MouseEvent) {
-			return {
-				x: event.clientX,
-				y: event.clientY,
-			}
+			return { x: event.clientX, y: event.clientY }
 		}
-
 		const element_rect = (event.target as HTMLElement).getBoundingClientRect()
-		return {
-			x: element_rect.left,
-			y: element_rect.bottom,
-		}
+		return { x: element_rect.left, y: element_rect.bottom }
 	}
 
 	function entity_mouseover(i: number) {
@@ -170,7 +142,7 @@
 			return
 		}
 
-		const range_length = get_range_length(dragged_entity)
+		const range_length = get_action_range_length(dragged_entity)
 		const insert_pos = get_insert_position(i, dragged_entity, range_length)
 		const entities = source_entities.splice(dragged_entity, range_length)
 		source_entities.splice(insert_pos, 0, ...entities)
@@ -181,15 +153,6 @@
 		dragged_entity = null
 		set_settings({ show_hover_popups: previous_popup_setting })
 
-		function get_range_length(i: number) {
-			if (is_boundary_start(source_entities[i])) {
-				const last_child_index = source_entities.findLastIndex(entity => entity.parent_id === i)
-				return last_child_index - i + 1
-			} else {
-				return 1
-			}
-		}
-
 		function get_insert_position(drop_index: number, drag_index: number, range_length: number) {
 			if (drop_index < drag_index) {
 				return drop_index
@@ -198,6 +161,26 @@
 			} else {
 				return drop_index - range_length
 			}
+		}
+	}
+
+	function copy_entity(i: number) {
+		const entity_range = source_entities.slice(i, i + get_action_range_length(i))
+		entity_clipboard.copy(entity_range)
+	}
+
+	function delete_entity(i: number) {
+		source_entities.splice(i, get_action_range_length(i))
+		structure_entities(source_entities)
+		entity_focus(i - 1)
+	}
+
+	function get_action_range_length(i: number) {
+		if (is_boundary_start(source_entities[i])) {
+			const last_child_index = source_entities.findLastIndex(entity => entity.parent_id === i)
+			return last_child_index - i + 1
+		} else {
+			return 1
 		}
 	}
 </script>
@@ -225,19 +208,34 @@
 			{@render insert_button(i)}
 		</div>
 
-		<div role="button" tabindex="0"
-			draggable="true"
-			onclick={() => entity_focus(i)}
-			onkeydown={e => e.key === 'Enter' && entity_focus(i)}
-			onmouseenter={() => entity_mouseover(i)}
-			onmouseleave={entity_mouseout}
-			oncontextmenu={e => open_entity_context_menu(e, i)}
-			ondragstart={() => drag_entity(i)}
-			ondragover={e => e.preventDefault()}
-			ondrop={() => paste_entity(i)}
-			class="id-{i} cursor-pointer content-center h-20 {entity_highlights[i]}"
-		>
-			<Component source_entity={entity} />
+		<div class="relative">
+			<div role="button" tabindex="0"
+				draggable="true"
+				onclick={() => entity_focus(i)}
+				onkeydown={e => e.key === 'Enter' && entity_focus(i)}
+				onmouseenter={() => entity_mouseover(i)}
+				onmouseleave={entity_mouseout}
+				ondragstart={() => drag_entity(i)}
+				ondragover={e => e.preventDefault()}
+				ondrop={() => paste_entity(i)}
+				class="cursor-pointer content-center h-20 {entity_highlights[i]}"
+			>
+				<Component source_entity={entity} />
+			</div>
+
+			{#if selected_entity?.id === i}
+				{#snippet toolbar_item(action: () => void, icon: string, color: string = '')}
+					<li>
+						<button onclick={action} class="p-0">
+							<Icon {icon} class="h-4.5 w-4.5 m-2 {color}" />
+						</button>
+					</li>
+				{/snippet}
+				<ul class="menu menu-horizontal flex-nowrap shadow-lg inset-shadow-sm bg-base-100 rounded-box p-0 absolute left-[65%] top-[-8px] z-50">
+					{@render toolbar_item(() => copy_entity(i), 'material-symbols:content-copy-outline')}
+					{@render toolbar_item(() => delete_entity(i), 'material-symbols:delete-outline-rounded', 'text-error')}
+				</ul>
+			{/if}
 		</div>
 	{/each}
 
@@ -250,12 +248,5 @@
 				bind:source_entities
 				data={insert_context_menu_data}
 				onclose={close_insert_context_menu} />
-	{/if}
-
-	{#if entity_context_menu_data.is_open}
-		<EntityContextMenu
-				bind:source_entities
-				data={entity_context_menu_data}
-				onclose={close_entity_context_menu} />
 	{/if}
 </div>
