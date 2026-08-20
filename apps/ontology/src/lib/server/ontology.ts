@@ -166,7 +166,7 @@ export const get_examples = (db: D1Database) => async (
 	}))
 }
 
-function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {
+export function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {
 	const merged_concepts = [...concepts]
 	const concept_map = new Map<string, Concept>()
 

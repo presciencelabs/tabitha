@@ -85,43 +85,45 @@ export async function create_concept(db: D1Database, data: ConceptCreateData) {
 		.run()
 }
 
-async function find_concept_position(db: D1Database, data: ConceptKey): Promise<number> {
-	// TBTA's custom sorting sequence. Characters not in this sequence are ignored in sorting. It is case-insensitive
-	const sorting_sequence = '-0123456789abcdefghijklmnopqrstuvwxyz'
-	const rank = new Map(sorting_sequence.split('').map((char, index) => [char, index]))
+// TBTA's custom sorting sequence. Characters not in this sequence are ignored in sorting. It is case-insensitive
+const SORTING_SEQUENCE = '-0123456789abcdefghijklmnopqrstuvwxyz'
+const SORTING_RANK = new Map(SORTING_SEQUENCE.split('').map((char, index) => [char, index]))
 
+/**
+ * Compares two stems according to TBTA's custom sorting sequence.
+ * Returns a negative number if a < b, positive if a > b, and 0 if equal.
+ */
+export function compare_stems(a: string, b: string): number {
+	let i = 0, j = 0
+
+	while (true) {
+		// advance i to next valid char in a
+		while (i < a.length && !SORTING_RANK.has(a[i])) i++
+
+		// advance j to next valid char in b
+		while (j < b.length && !SORTING_RANK.has(b[j])) j++
+
+		// both exhausted → equal
+		if (i >= a.length && j >= b.length) return 0
+
+		// one exhausted → shorter (in valid chars) first
+		if (i >= a.length) return -1
+		if (j >= b.length) return 1
+
+		const ra = SORTING_RANK.get(a[i])! // already known that a[i] exists in SORTING_RANK
+		const rb = SORTING_RANK.get(b[j])!
+
+		if (ra !== rb) return ra - rb
+
+		i++
+		j++
+	}
+}
+
+async function find_concept_position(db: D1Database, data: ConceptKey): Promise<number> {
 	const concepts = await get_concepts(db)({ q: '*', category: data.part_of_speech, scope: 'stems' })
 
 	const new_stem_lower = data.stem.toLowerCase()
 	const position = concepts.findIndex(({ stem }: Concept) => compare_stems(stem.toLowerCase(), new_stem_lower) > 0)
 	return position >= 0 ? position : concepts.length
-
-	function compare_stems(a: string, b: string): number {
-		// Compare two stems according to the custom sorting sequence.
-		// Return a negative number if a < b, positive if a > b, and 0 if equal.
-		let i = 0, j = 0
-
-		while (true) {
-			// advance i to next valid char in a
-			while (i < a.length && !rank.has(a[i])) i++
-
-			// advance j to next valid char in b
-			while (j < b.length && !rank.has(b[j])) j++
-
-			// both exhausted → equal
-			if (i >= a.length && j >= b.length) return 0
-
-			// one exhausted → shorter (in valid chars) first
-			if (i >= a.length) return -1
-			if (j >= b.length) return 1
-
-			const ra = rank.get(a[i])! // already known that a[i] exists in rank
-			const rb = rank.get(b[j])!
-
-			if (ra !== rb) return ra - rb
-
-			i++
-			j++
-		}
-	}
 }
