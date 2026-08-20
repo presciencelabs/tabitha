@@ -20,6 +20,10 @@ if (!Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))
 	throw new Error(`No staged Ontology database found for ${date}. An Ontology.sqlite (or .new) file must be present in "${dir_w_tbta_dbs}" for every migration run.`)
 }
 
+if (!Array.from(new Glob(`raw/Sources_Complex_${date}.tabitha.sqlite`).scanSync('.'))[0]) {
+	throw new Error(`No staged Sources_Complex database found for ${date}. A raw/Sources_Complex_${date}.tabitha.sqlite file (generated via "tbta_utils export-generated-cci --language English.sqlite ..." against this run's English database) must be manually placed in "raw/" before running this migration -- it is not staged automatically.`)
+}
+
 const migration_dbs = Array.from(new Glob(`raw/*_${date}.tbta.sqlite`).scanSync('.'))
 
 type DbConfig = {
