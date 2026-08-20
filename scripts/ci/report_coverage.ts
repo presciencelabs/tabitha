@@ -1,6 +1,15 @@
 import { $ } from 'bun'
 import { appendFile } from 'node:fs/promises'
 
+interface PackageConfig {
+	name: string
+	pkg: string
+	/** Package has @vitest/coverage-v8 wired up and can run `vitest --coverage`. */
+	hasCoverage: boolean
+	/** Package has a `test:unit` script at all (some packages have none, e.g. packages/ui). */
+	hasTestScript: boolean
+}
+
 interface CoverageMetrics {
 	name: string
 	pkg: string
@@ -10,20 +19,24 @@ interface CoverageMetrics {
 	branches: string
 	functions: string
 	lines: string
+	status: string
 }
 
-const PACKAGES_TO_COVER = [
-	{ name: 'apps/editor (Linguistic Core)', pkg: '@tabitha/editor', fileCount: 14, testCount: 338 },
-	{ name: 'apps/sources (Source Text & Encoding)', pkg: '@tabitha/sources', fileCount: 6, testCount: 46 },
-	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', fileCount: 6, testCount: 29 },
-	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', fileCount: 7, testCount: 22 },
-	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', fileCount: 1, testCount: 7 },
+const PACKAGES_TO_COVER: PackageConfig[] = [
+	{ name: 'apps/editor (Linguistic Core)', pkg: '@tabitha/editor', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/sources (Source Text & Encoding)', pkg: '@tabitha/sources', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/copilot (AI Assist)', pkg: '@tabitha/copilot', hasCoverage: false, hasTestScript: true },
+	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', hasCoverage: true, hasTestScript: true },
+	{ name: 'packages/types (Shared Types)', pkg: '@tabitha/types', hasCoverage: false, hasTestScript: true },
+	{ name: 'packages/ui (Component Library)', pkg: '@tabitha/ui', hasCoverage: false, hasTestScript: false },
 ]
 
 async function run_coverage_report() {
 	console.log(`
 ============================================================
-       📊 TaBiThA Unit Test Coverage & CI Reporter          
+       📊 TaBiThA Unit Test Coverage & CI Reporter
 ============================================================
 `)
 
@@ -40,34 +53,110 @@ async function run_coverage_report() {
 
 	console.log('\n✅ All unit tests passed cleanly across workspace!\n')
 
-	// 2. Generate coverage breakdown for all active packages
+	// 2. Generate coverage breakdown for all active packages, reading real counts
+	//    out of each vitest run rather than trusting stale, hand-maintained numbers.
 	console.log('📊 Calculating code coverage metrics via v8 for all packages...')
 	const results: CoverageMetrics[] = []
 
 	for (const p of PACKAGES_TO_COVER) {
+		if (!p.hasTestScript) {
+			results.push({
+				name: p.name,
+				pkg: p.pkg,
+				fileCount: 0,
+				testCount: 0,
+				statements: 'N/A',
+				branches: 'N/A',
+				functions: 'N/A',
+				lines: 'N/A',
+				status: '⚪ No test script',
+			})
+			continue
+		}
+
 		try {
-			const cov_proc = await $`pnpm --filter ${p.pkg} exec vitest run src --coverage --coverage.reporter=text-summary`.quiet()
+			const vitest_args = p.hasCoverage ? ['--coverage', '--coverage.reporter=text-summary'] : []
+			const cov_proc = await $`pnpm --filter ${p.pkg} exec vitest run src --passWithNoTests ${vitest_args}`.quiet()
 			const output = cov_proc.text()
 
-			const lines_match = output.match(/Lines\s*:\s*([0-9.]+%)/)
-			const stmts_match = output.match(/Statements\s*:\s*([0-9.]+%)/)
-			const branch_match = output.match(/Branches\s*:\s*([0-9.]+%)/)
-			const funcs_match = output.match(/Functions\s*:\s*([0-9.]+%)/)
+			const file_match = output.match(/Test Files\s+.*\((\d+)\)/)
+			const tests_match = output.match(/Tests\s+.*\((\d+)\)/)
+			const fileCount = file_match ? Number(file_match[1]) : 0
+			const testCount = tests_match ? Number(tests_match[1]) : 0
 
-			if (lines_match && stmts_match) {
+			if (fileCount === 0) {
 				results.push({
 					name: p.name,
 					pkg: p.pkg,
-					fileCount: p.fileCount,
-					testCount: p.testCount,
+					fileCount: 0,
+					testCount: 0,
+					statements: 'N/A',
+					branches: 'N/A',
+					functions: 'N/A',
+					lines: 'N/A',
+					status: '🟡 No test files found',
+				})
+				continue
+			}
+
+			if (!p.hasCoverage) {
+				results.push({
+					name: p.name,
+					pkg: p.pkg,
+					fileCount,
+					testCount,
+					statements: 'N/A',
+					branches: 'N/A',
+					functions: 'N/A',
+					lines: 'N/A',
+					status: '🟢 Passing (no coverage config)',
+				})
+				continue
+			}
+
+			const stmts_match = output.match(/Statements\s*:\s*([0-9.]+%)/)
+			const branch_match = output.match(/Branches\s*:\s*([0-9.]+%)/)
+			const funcs_match = output.match(/Functions\s*:\s*([0-9.]+%)/)
+			const lines_match = output.match(/Lines\s*:\s*([0-9.]+%)/)
+
+			if (stmts_match && lines_match) {
+				results.push({
+					name: p.name,
+					pkg: p.pkg,
+					fileCount,
+					testCount,
 					statements: stmts_match[1],
 					branches: branch_match ? branch_match[1] : 'N/A',
 					functions: funcs_match ? funcs_match[1] : 'N/A',
 					lines: lines_match[1],
+					status: '🟢 Passing',
+				})
+			} else {
+				results.push({
+					name: p.name,
+					pkg: p.pkg,
+					fileCount,
+					testCount,
+					statements: 'N/A',
+					branches: 'N/A',
+					functions: 'N/A',
+					lines: 'N/A',
+					status: '⚠️ Coverage unavailable',
 				})
 			}
 		} catch (err: unknown) {
 			console.warn(`⚠️  Could not extract coverage for ${p.pkg}:`, err)
+			results.push({
+				name: p.name,
+				pkg: p.pkg,
+				fileCount: 0,
+				testCount: 0,
+				statements: 'N/A',
+				branches: 'N/A',
+				functions: 'N/A',
+				lines: 'N/A',
+				status: '🔴 Run failed',
+			})
 		}
 	}
 
@@ -93,13 +182,13 @@ async function run_coverage_report() {
 		const total_files = results.reduce((acc, r) => acc + r.fileCount, 0)
 
 		let markdown = `## 📊 Test Suite & Code Coverage Summary\n\n`
-		markdown += `✨ **${total_tests} Unit Tests Executed across ${total_files} Test Suites (~2.5s execution)**\n\n`
+		markdown += `✨ **${total_tests} Unit Tests Executed across ${total_files} Test Suites**\n\n`
 
 		markdown += `### 📈 Code Coverage Metrics\n\n`
 		markdown += `| Subsystem / Package | Statements | Branches | Functions | Lines | Status |\n`
 		markdown += `| :--- | :--- | :--- | :--- | :--- | :--- |\n`
 		for (const r of results) {
-			markdown += `| **${r.name}** | \`${r.statements}\` | \`${r.branches}\` | \`${r.functions}\` | \`${r.lines}\` | 🟢 Passing |\n`
+			markdown += `| **${r.name}** | \`${r.statements}\` | \`${r.branches}\` | \`${r.functions}\` | \`${r.lines}\` | ${r.status} |\n`
 		}
 		markdown += `\n`
 
@@ -107,7 +196,7 @@ async function run_coverage_report() {
 		markdown += `| Workspace Test Suite | Test Files | Total Tests | Status |\n`
 		markdown += `| :--- | :--- | :--- | :--- |\n`
 		for (const r of results) {
-			markdown += `| **${r.pkg}** | ${r.fileCount} files | ${r.testCount} tests | 🟢 Passed |\n`
+			markdown += `| **${r.pkg}** | ${r.fileCount} files | ${r.testCount} tests | ${r.status} |\n`
 		}
 		markdown += `\n`
 		markdown += `> Pure in-memory unit tests with zero network or database dependencies.\n`
