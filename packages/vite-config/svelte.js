@@ -2,6 +2,8 @@
 import adapter from '@sveltejs/adapter-cloudflare'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 
+const POLL_EVERY_30_MINS = 30 * 60 * 1000
+
 /**
  * Creates standardized SvelteKit configuration for Tabitha Cloudflare applications.
  *
@@ -21,6 +23,8 @@ export function create_app_svelte_config({
 	return {
 		kit: {
 			adapter: adapter(adapter_options),
+			// Users might leave a tab open indefinitely, so poll for new deployments (see UpdateToast in @tabitha/ui).
+			version: { pollInterval: POLL_EVERY_30_MINS },
 			...kit,
 		},
 		preprocess,
