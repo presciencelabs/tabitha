@@ -4,18 +4,34 @@ import { cp, mkdir, rename } from 'fs/promises'
 import { existsSync } from 'fs'
 import { basename, join } from 'path'
 import { parse, stringify } from 'comment-json'
+import { create_logger } from './log'
+
+const log = create_logger('Orchestrator')
 
 const AUDIENCE_NAME = 'Unchurched Adults'
+const USAGE = 'Usage: bun migrate.ts "<directory containing all necessary TBTA dbs>" YYYY-MM-DD'
 
 if (!Bun.which('sqlite3')) {
 	throw new Error('sqlite3 is not installed. Please install it and try again.')
 }
 
-if (Bun.argv.length !== 4) {
-	throw new Error('Usage: bun migrate.ts "<directory containing all necessary TBTA dbs>" YYYY-MM-DD')
+const can_prompt = !!process.stdin.isTTY
+
+const dir_w_tbta_dbs = Bun.argv[2] || (can_prompt ? prompt('Directory containing all necessary TBTA dbs:') : null) // "~/Downloads/TBTA 9-25-25"
+if (!dir_w_tbta_dbs) {
+	throw new Error(USAGE)
 }
-const dir_w_tbta_dbs = Bun.argv[2] // "~/Downloads/TBTA 9-25-25"
-const date = Bun.argv[3] // 2025-09-25
+
+const today = new Date().toISOString().slice(0, 10)
+const date = Bun.argv[3] || (can_prompt ? prompt('Date for this migration run (YYYY-MM-DD):', today) : null) || today // 2025-09-25
+if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+	throw new Error(`Invalid date "${date}". Expected format YYYY-MM-DD.`)
+}
+
+if (!process.env.LOG_LEVEL && can_prompt) {
+	const verbose = confirm('Show verbose output (per-item detail and sample data dumps)?')
+	process.env.LOG_LEVEL = verbose ? 'verbose' : 'normal'
+}
 
 await stage_tbta_files(dir_w_tbta_dbs)
 
@@ -50,7 +66,7 @@ const configs: DbConfig[] = [
 					files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
 					const latest = files.pop()
 
-					if (latest) console.warn(`[Orchestrator] Source ${name} missing for ${date}, using: ${latest} instead.`)
+					if (latest) log.warn(`Source ${name} missing for ${date}, using: ${latest} instead.`)
 
 					return latest || ''
 				}),
@@ -98,7 +114,7 @@ const configs: DbConfig[] = [
 					files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
 					const latest = files.pop()
 
-					if (latest) console.warn(`[Orchestrator] Target language ${name} missing for ${date}, using: ${latest} instead.`)
+					if (latest) log.warn(`Target language ${name} missing for ${date}, using: ${latest} instead.`)
 
 					return latest || ''
 				}),
@@ -116,7 +132,7 @@ const configs: DbConfig[] = [
 ]
 
 for (const cfg of configs) {
-	console.log(`[Orchestrator] Migrating ${cfg.key} database...`)
+	log.step(`Migrating ${cfg.key} database...`)
 
 	const input_args = await cfg.migration_input_args()
 	const output_file = await cfg.migration_output_file()
@@ -124,7 +140,7 @@ for (const cfg of configs) {
 
 	await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
 
-	console.log(`[Orchestrator] Creating dump of ${cfg.key} database...`)
+	log.step(`Creating dump of ${cfg.key} database...`)
 	await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
 
 	// TEMPORARILY DISABLED for local verification
@@ -140,6 +156,8 @@ for (const cfg of configs) {
 	// await $`bun wrangler d1 execute ${d1_db_name} --file ${dump_file} --remote`.quiet()
 }
 
+log.summary()
+
 async function stage_tbta_files(working_dir: string) {
 	for await (const file of new Glob('*.new').scan(working_dir)) {
 		await rename(`${working_dir}/${file}`, `${working_dir}/${file.replace('.new', '.sqlite')}`)
@@ -148,7 +166,7 @@ async function stage_tbta_files(working_dir: string) {
 	await run_tbta_utils(working_dir)
 
 	const sqlite_files = Array.from(new Glob('*.sqlite').scanSync(working_dir))
-	console.log('[Orchestrator] attempting to stage the following:', sqlite_files)
+	log.step(`Staging: ${sqlite_files.join(', ')}`)
 	await Promise.all(stage(sqlite_files))
 
 	await stage_win_files(working_dir)
@@ -209,14 +227,14 @@ async function run_tbta_utils(working_dir: string) {
 
 	const has_english = await Bun.file(`${working_dir}/English.sqlite`).exists()
 	if (!has_english) {
-		console.warn('[Orchestrator] No English.sqlite found in the provided directory; skipping tbta_utils steps (Sources_Complex and inflections must already be staged, or this run will fail its upfront checks).')
+		log.warn('No English.sqlite found in the provided directory; skipping tbta_utils steps (Sources_Complex and inflections must already be staged, or this run will fail its upfront checks).')
 		return
 	}
 
-	console.log('[Orchestrator] Running tbta_utils export-lexical-forms...')
+	log.step('Running tbta_utils export-lexical-forms...')
 	await $`${tbta_utils} export-lexical-forms --language English.sqlite --output-path ${working_dir}`.cwd(working_dir)
 
-	console.log('[Orchestrator] Running tbta_utils export-generated-cci (this processes the full Bible and can take ~10 minutes)...')
+	log.step('Running tbta_utils export-generated-cci (this processes the full Bible and can take ~10 minutes)...')
 	await $`${tbta_utils} export-generated-cci --language English.sqlite --audience-name ${AUDIENCE_NAME} --output-path ${working_dir}/Sources_Complex.sqlite`.cwd(working_dir)
 }
 

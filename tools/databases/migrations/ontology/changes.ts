@@ -1,7 +1,10 @@
 import type { Database } from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Ontology migration')
 
 export function create_changes_table(tabitha_db: Database) {
-	console.log(`[Ontology migration] Creating Changes table in ${tabitha_db.filename}...`)
+	log.step(`Creating Changes table in ${tabitha_db.filename}...`)
 
 	tabitha_db.run(`
 		CREATE TABLE IF NOT EXISTS Changes (
@@ -19,6 +22,4 @@ export function create_changes_table(tabitha_db: Database) {
 			'version'						TEXT
 		)
 	`)
-
-	console.log('[Ontology migration] done.')
 }

@@ -4,6 +4,9 @@ import { migrate_source_features } from './migrate_source_features'
 import { migrate_source_texts } from './migrate_source_texts'
 import { basename, join } from 'path'
 import { migrate_source_status } from './migrate_source_status'
+import { create_logger } from '../log'
+
+const log = create_logger('Sources migration')
 
 // usage: `bun sources/migrate.ts raw/Bible_YYYY-MM-DD.tbta.sqlite [raw/CommunityDevelopmentTexts_YYYY-MM-DD.tbta.sqlite] [raw/GrammarIntroduction_YYYY-MM-DD.tbta.sqlite] raw/Sources_YYYY-MM-DD.tabitha.sqlite`
 const args = Bun.argv.slice(2)
@@ -35,9 +38,9 @@ migrate_source_features(tbta_sample_db, tabitha_sources_db)
 
 await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../data/status'), date)
 
-console.log(`[Sources migration] Optimizing ${tabitha_db_name}...`)
+log.step(`Optimizing ${tabitha_db_name}...`)
 tabitha_sources_db.run('VACUUM')
-console.log('[Sources migration] done.')
+log.summary()
 
 async function resolve_sample_db_path(date: string): Promise<string> {
 	const exact_path = `raw/Sample_${date}.tbta.sqlite`
@@ -51,6 +54,6 @@ async function resolve_sample_db_path(date: string): Promise<string> {
 		throw new Error(`No Sample database found for ${date}, and no fallback Sample_*.tbta.sqlite file exists in raw/.`)
 	}
 
-	console.warn(`[Sources migration] ⚠️ Sample database missing for ${date}. Using fallback: ${latest}`)
+	log.warn(`Sample database missing for ${date}. Using fallback: ${latest}`)
 	return latest
 }

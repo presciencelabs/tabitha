@@ -1,5 +1,8 @@
 import { $ } from 'bun'
 import { Database } from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('DB Backup')
 
 type DbInfo = {
 	uuid: string
@@ -18,11 +21,13 @@ const db_name = await get_latest_database_name('Ontology')
 const dump_filename = `${db_name}.tabitha.sql`
 await $`wrangler d1 export ${db_name} --output ${dump_filename} --remote`
 
-console.log('[DB Backup] creating db from dump...')
+log.step('Creating db from dump...')
 const db_from_dump = await create_db(dump_filename)
 
-console.log(`[DB Backup] uploading ${db_from_dump.filename} to R2...`)
+log.step(`Uploading ${db_from_dump.filename} to R2...`)
 await $`wrangler r2 object put db-backups/${db_from_dump.filename} --file ${db_from_dump.filename} --content-disposition 'attachment; filename="Ontology.sqlite.new"' --remote`
+
+log.summary()
 
 async function get_latest_database_name(name: string): Promise<string> {
 	const output = await $`wrangler d1 list`.text()
@@ -58,7 +63,7 @@ async function create_db(sql_filename: string): Promise<Database> {
 	const sql = await Bun.file(sql_filename).text()
 	const statements = sql.split(/;$/gm).filter(s => s.trim() !== '') // "sql-stmt-list" https://www.sqlite.org/lang.html
 
-	console.log(`[DB Backup] Running ${statements.length} statements in ${db.filename}`)
+	log.step(`Running ${statements.length} statements in ${db.filename}`)
 
 	db.run('PRAGMA journal_mode = WAL;')
 	db.run('BEGIN TRANSACTION;')

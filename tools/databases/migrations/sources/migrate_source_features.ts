@@ -1,4 +1,7 @@
 import type Database from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Sources migration')
 
 export function migrate_source_features(tbta_db: Database, sources_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -47,7 +50,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		encoded_examples: string
 	}
 	function extract(): DbRow[] {
-		console.log(`[Sources migration] Extracting features from ${tbta_db.filename}...`)
+		log.step(`Extracting features from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	ID as id,
@@ -64,8 +67,6 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			...row,
 			encoded_examples: row.encoded_examples?.trim() ?? '', // sometimes examples start with non-printable characters, whitespace or may be NULL
 		}))
-
-		console.log('[Sources migration] done.')
 
 		return results
 	}
@@ -107,7 +108,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	* | ...
 	*/
 	function transform(): TransformedData[] {
-		console.log(`[Sources migration] Transforming data from ${tbta_db.filename}...`)
+		log.step(`Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data: TransformedData[] = []
 
@@ -131,14 +132,12 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			}
 		}
 
-		console.log('[Sources migration] done.')
-
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(tabitha_sources_db: Database) {
-	console.log(`[Sources migration] Prepping Features table in ${tabitha_sources_db.filename}...`)
+	log.step(`Prepping Features table in ${tabitha_sources_db.filename}...`)
 
 	tabitha_sources_db.run(`
 		CREATE TABLE IF NOT EXISTS Features (
@@ -155,22 +154,20 @@ function create_tabitha_table(tabitha_sources_db: Database) {
 		DELETE FROM Features
 	`)
 
-	console.log('[Sources migration] done.')
-
 	return tabitha_sources_db
 }
 
 function load_data(targets_db: Database, transformed_data: TransformedData[]) {
-	console.log('[Sources migration] Loading data into Features table...')
+	log.step('Loading data into Features table...')
 
-	transformed_data.map(async ({ category, feature, position, code, value, example }) => {
+	transformed_data.forEach(({ category, feature, position, code, value, example }, index) => {
 		targets_db.run(`
 			INSERT INTO Features (category, feature, position, code, value, example)
 			VALUES (?, ?, ?, ?, ?, ?)
 		`, [category, feature, position, code, value, example])
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${category} / ${feature}`, index + 1, transformed_data.length)
 	})
 
-	console.log('[Sources migration] done.')
+	log.finish_progress()
 }

@@ -1,6 +1,9 @@
 import Database from 'bun:sqlite'
 import { load_examples } from './exhaustive_examples/load'
 import { create_changes_table } from './changes'
+import { create_logger } from '../log'
+
+const log = create_logger('Ontology migration')
 
 // usage: `bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite`
 const USAGE = 'Usage: bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite'
@@ -23,19 +26,20 @@ create_complex_terms_table(tabitha_db)
 
 create_changes_table(tabitha_db)
 
-console.log(`[Ontology migration] Opening Sources database: ${sources_db_name}`)
+log.step(`Opening Sources database: ${sources_db_name}`)
 const sources_db = new Database(sources_db_name, { readwrite: true, create: false })
 
 const sources_db_complex_name = sources_db_name.replace('Sources', 'Sources_Complex')
-console.log(`[Ontology migration] Opening Sources_Complex database: ${sources_db_complex_name}`)
+log.step(`Opening Sources_Complex database: ${sources_db_complex_name}`)
 const sources_db_complex = new Database(sources_db_complex_name, { readwrite: true, create: false })
 
 await load_examples(tabitha_db, sources_db, sources_db_complex)
 
-console.log(`[Ontology migration] Optimizing ${tabitha_db_name}...`)
+log.step(`Optimizing ${tabitha_db_name}...`)
 tabitha_db.run('VACUUM')
-console.log('[Ontology migration] done.')
 tabitha_db.close()
+
+log.summary()
 
 function create_complex_terms_table(tabitha_db: Database) {
 	tabitha_db.run(`

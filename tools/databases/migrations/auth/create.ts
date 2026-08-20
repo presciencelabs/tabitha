@@ -1,4 +1,7 @@
 import Database from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Auth migration')
 
 const auth_db = new Database('./raw/Auth.tabitha.sqlite')
 create_user_table(auth_db)
@@ -6,10 +9,10 @@ create_permissions_table(auth_db)
 create_user_permissions_table(auth_db)
 
 auth_db.run('VACUUM')
-console.log('[Auth migration] done.')
+log.summary()
 
 function create_user_table(db: Database) {
-	console.log('[Auth migration] Creating Users table...')
+	log.step('Creating Users table...')
 	db.run('DROP TABLE IF EXISTS Users')
 
 	db.run(`
@@ -21,7 +24,7 @@ function create_user_table(db: Database) {
 }
 
 function create_permissions_table(db: Database) {
-	console.log('[Auth migration] Creating Permissions table...')
+	log.step('Creating Permissions table...')
 	db.run('DROP TABLE IF EXISTS Permissions')
 	db.run(`
 		CREATE TABLE IF NOT EXISTS Permissions (
@@ -48,7 +51,7 @@ function create_permissions_table(db: Database) {
 }
 
 function create_user_permissions_table(db: Database) {
-	console.log('[Auth migration] Creating User_Permissions table...')
+	log.step('Creating User_Permissions table...')
 	db.run('DROP TABLE IF EXISTS User_Permissions')
 	db.run(`
 		CREATE TABLE IF NOT EXISTS User_Permissions (

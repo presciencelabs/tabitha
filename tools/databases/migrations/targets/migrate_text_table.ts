@@ -1,4 +1,7 @@
 import type Database from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Targets migration')
 
 export function migrate_text_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -23,7 +26,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	return transformed_data
 
 	function extract_table_names() {
-		console.log(`[Targets migration] Extracting relevant table names from ${tbta_db.filename}...`)
+		log.step(`Extracting relevant table names from ${tbta_db.filename}...`)
 
 		// https://bun.sh/docs/api/sqlite#reference
 		const all_table_names = tbta_db.query<{ name: string }, []>(`
@@ -40,13 +43,12 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			!['Target_EB_Revelations', 'Target_EB_Psalm'].includes(table_name)
 		)
 
-		console.log('[Targets migration] done.')
 
 		return tbta_tablenames_for_bible_books
 	}
 
 	function extract_audience_names() {
-		console.log(`[Targets migration] Extracting audience names from ${tbta_db.filename}...`)
+		log.step(`Extracting audience names from ${tbta_db.filename}...`)
 
 		const tbta_audiences = tbta_db.prepare<{ Audiences: string }, []>(`
 			SELECT Audiences
@@ -56,13 +58,12 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 
 		const audience_names = [...tbta_audiences.matchAll(/\^(.+?);/g)].map(m => m[1])
 
-		console.log('[Targets migration] done.')
 
 		return audience_names
 	}
 
 	function transform_data(table_names: string[], audience_names: string[]) {
-		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
+		log.step(`Transforming data from ${tbta_db.filename}...`)
 
 		type DbRow = { Reference: string, Verse: string }
 		const transformed_data = table_names.map(table_name => tbta_db.query<DbRow, []>(`
@@ -72,7 +73,6 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			`).all().map(transform).flat(), // array of books
 		).flat() // flattens all 66 books into one array of all verses
 
-		console.log('[Targets migration] done.')
 
 		return transformed_data
 
@@ -105,7 +105,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`[Targets migration] Creating the "Text" table in ${targets_db.filename} if it does not already exist...`)
+	log.step(`Creating the "Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Text (
@@ -118,22 +118,21 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log(`[Targets migration] Loading ${project} data into the "Text" table...`)
+	log.step(`Loading ${project} data into the "Text" table...`)
 
-	transformed_data.map(async ({ book, chapter, verse, audience, text }) => {
+	transformed_data.forEach(({ book, chapter, verse, audience, text }, index) => {
 		targets_db.run(`
 			INSERT INTO Text (project, book, chapter, verse, audience, text)
 			VALUES (?, ?, ?, ?, ?, ?)
 		`, [project, book, chapter, verse, audience, text])
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${book} ${chapter}:${verse}`, index + 1, transformed_data.length)
 	})
 
-	console.log('[Targets migration] done.')
+	log.finish_progress()
 }

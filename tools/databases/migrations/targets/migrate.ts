@@ -10,6 +10,9 @@ import { transform_inflections } from '../../data/inflections/transform'
 import { basename, join } from 'path'
 import { Glob } from 'bun'
 import { stat } from 'fs/promises'
+import { create_logger } from '../log'
+
+const log = create_logger('Targets migration')
 
 // usage: `bun targets/migrate.ts raw/English_YYYY-MM-DD.tbta.sqlite [raw/[Swahili|Indonesian|Tagalog]_YYYY-MM-DD.tbta.sqlite] raw/Targets_YYYY-MM-DD.tabitha.sqlite`
 const args = Bun.argv.slice(2)
@@ -43,6 +46,7 @@ await warn_if_inflections_stale(join(import.meta.dir, '../../data/inflections/wi
 
 for (const tbta_db_name of tbta_db_names) {
 	const project = basename(tbta_db_name).split('_')[0]
+	log.step(`Migrating ${project}...`)
 
 	const tbta_db = new Database(tbta_db_name, { readwrite: true, create: false })
 
@@ -63,9 +67,9 @@ for (const tbta_db_name of tbta_db_names) {
 	tbta_db.close()
 }
 
-console.log(`[Targets migration] Optimizing ${targets_db_name}...`)
+log.step(`Optimizing ${targets_db_name}...`)
 targets_db.run('VACUUM')
-console.log('[Targets migration] done.')
+log.summary()
 
 async function warn_if_inflections_stale(win_dir: string): Promise<void> {
 	const files = Array.from(new Glob('*.win.txt').scanSync(win_dir))
@@ -75,6 +79,6 @@ async function warn_if_inflections_stale(win_dir: string): Promise<void> {
 	const oldest = new Date(Math.min(...mtimes))
 	const days_old = Math.floor((Date.now() - oldest.getTime()) / (1000 * 60 * 60 * 24))
 
-	console.warn(`[Targets migration] ⚠️ Inflections in ${win_dir} are not date-stamped and cannot be automatically verified against the English database being migrated. Oldest file was last modified ${oldest.toISOString().slice(0, 10)} (${days_old} days ago) -- confirm these were exported via tbta_utils against this run's English database before trusting lexical form data.`)
+	log.warn(`Inflections in ${win_dir} are not date-stamped and cannot be automatically verified against the English database being migrated. Oldest file was last modified ${oldest.toISOString().slice(0, 10)} (${days_old} days ago) -- confirm these were exported via tbta_utils against this run's English database before trusting lexical form data.`)
 }
 

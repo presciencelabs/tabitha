@@ -1,4 +1,7 @@
 import type Database from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Targets migration')
 import { Glob } from 'bun'
 import OfficeParser, { type OfficeContentNode } from 'officeparser'
 import { join, basename, extname } from 'path'
@@ -11,7 +14,7 @@ export async function migrate_ideal_text_table(project: string, targets_db: Data
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`[Targets migration] Creating the "Ideal_Text" table in ${targets_db.filename} if it does not already exist...`)
+	log.step(`Creating the "Ideal_Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Ideal_Text (
@@ -24,22 +27,21 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('[Targets migration] done.')
 }
 
 function load_data(targets_db: Database, project: string, data: IdealTextData[]) {
-	console.log(`[Targets migration] Loading ${data.length} verses for ${project} into the "Ideal_Text" table...`)
+	log.step(`Loading ${data.length} verses for ${project} into the "Ideal_Text" table...`)
 
-	data.map(async ({ book, chapter, verse, audience, text }) => {
+	data.forEach(({ book, chapter, verse, audience, text }, index) => {
 		targets_db.run(`
 			INSERT INTO Ideal_Text (project, book, chapter, verse, audience, ideal_text)
 			VALUES (?, ?, ?, ?, ?, ?)
 		`, [project, book, chapter, verse, audience, text])
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${book} ${chapter}:${verse}`, index + 1, data.length)
 	})
 
-	console.log('[Targets migration] done.')
+	log.finish_progress()
 }
 
 // extract verse text from the documents

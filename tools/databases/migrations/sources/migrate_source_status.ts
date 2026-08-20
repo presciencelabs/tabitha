@@ -1,5 +1,8 @@
 import type Database from 'bun:sqlite'
 import { Glob } from 'bun'
+import { create_logger } from '../log'
+
+const log = create_logger('Sources migration')
 
 type CommaSeparatedValues = string
 
@@ -92,7 +95,7 @@ function parse_verse_range(input: string): VerseRange {
 }
 
 async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord[]> {
-	console.log('[Sources migration] Getting verse statuses from the CSV files...')
+	log.step('Getting verse statuses from the CSV files...')
 
 	async function get_latest_csv(prefix: string): Promise<string> {
 		const exact_file = Bun.file(`${csv_dir}/${prefix}_${date}.csv`)
@@ -100,7 +103,6 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 			return await exact_file.text()
 		}
 
-		console.warn(`[Sources migration] ⚠️ Exact status file ${prefix}_${date}.csv not found. Searching for fallback...`)
 		const files = Array.from(new Glob(`${prefix}_*.csv`).scanSync(csv_dir))
 		files.sort() // Lexicographical sort will correctly order YYYY-MM-DD
 		const latest = files.pop()
@@ -109,7 +111,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 			throw new Error(`Critical Error: No fallback CSV found for ${prefix} in ${csv_dir}.`)
 		}
 
-		console.log(`[Sources migration] Fallback selected: ${latest}`)
+		log.warn(`Exact status file ${prefix}_${date}.csv not found. Using fallback: ${latest}`)
 		return await Bun.file(`${csv_dir}/${latest}`).text()
 	}
 
@@ -147,9 +149,9 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 }
 
 async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_db: Database): Promise<void> {
-	console.log('[Sources migration] Loading verse statuses into Sources table...')
+	log.step('Loading verse statuses into Sources table...')
 
-	for (const { range, status } of verse_statuses) {
+	for (const [index, { range, status }] of verse_statuses.entries()) {
 		const { type, id_primary, id_secondary, id_tertiary_start, id_tertiary_end } = range
 
 		if (id_tertiary_start && id_tertiary_end) {
@@ -172,14 +174,14 @@ async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_
 			`, [status, type, id_primary, id_secondary])
 		}
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${id_primary} ${id_secondary}`, index + 1, verse_statuses.length)
 	}
 
-	console.log('[Sources migration] done.')
+	log.finish_progress()
 }
 
 function create_chapter_status_table(sources_db: Database) {
-	console.log(`[Sources migration] Prepping ChapterStatus table in ${sources_db.filename}...`)
+	log.step(`Prepping ChapterStatus table in ${sources_db.filename}...`)
 
 	sources_db.run(`
 		CREATE TABLE IF NOT EXISTS ChapterStatus (
@@ -194,17 +196,16 @@ function create_chapter_status_table(sources_db: Database) {
 		DELETE FROM ChapterStatus
 	`)
 
-	console.log('[Sources migration] done.')
-
 	return sources_db
 }
 
 async function populate_chapter_status_table(sources_db: Database, verse_statuses: VerseStatusRecord[]) {
-	console.log('[Sources migration] Loading chapter statuses into ChapterStatus table...')
+	log.step('Loading chapter statuses into ChapterStatus table...')
 
 	const by_chapter = Map.groupBy(verse_statuses, ({ range: { type, id_primary, id_secondary } }) => JSON.stringify({ type, id_primary, id_secondary }))
+	const chapters = Array.from(by_chapter.entries())
 
-	for (const [chapter_ref, statuses] of by_chapter.entries()) {
+	for (const [index, [chapter_ref, statuses]] of chapters.entries()) {
 		const status_tally: StatusTally = statuses.reduce(tally_statuses, {
 			not_started_count: 0,
 			in_progress_count: 0,
@@ -221,10 +222,10 @@ async function populate_chapter_status_table(sources_db: Database, verse_statuse
 			VALUES (?, ?, ?, ?)
 		`, [type, id_primary, id_secondary, chapter_status])
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${id_primary} ${id_secondary}`, index + 1, chapters.length)
 	}
 
-	console.log('[Sources migration] done.')
+	log.finish_progress()
 
 	function tally_statuses(tally: StatusTally, { status }: VerseStatusRecord): StatusTally {
 		if (status === 'Not Started') {

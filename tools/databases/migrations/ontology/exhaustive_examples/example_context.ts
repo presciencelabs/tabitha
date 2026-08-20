@@ -1,5 +1,10 @@
 import { FEATURES } from './semantic_encoding'
 
+// Warnings raised while walking a single verse's entities. These have no reference info of their
+// own (the functions below are deep in the call stack and don't carry a SourceReference), so the
+// caller in load.ts drains this after each verse and tags the messages with that verse's reference.
+export const encoding_warnings: string[] = []
+
 const context_argument_finder: FinderLookup = {
 	Noun: find_noun_context,
 	Verb: find_verb_context,
@@ -251,7 +256,7 @@ function get_head_word(phrase_index: number, source_entities: SourceEntity[]): S
 	)(phrase_index, source_entities)
 
 	if (head_index === -1) {
-		console.error(`[Ontology migration] Invalid semantic encoding - missing head ${word_type} in ${phrase_type}`)
+		encoding_warnings.push(`Invalid semantic encoding - missing head ${word_type} in ${phrase_type}`)
 
 		return { type: '', label: word_type[0], features: '......................', value: '', concept: null, pairing: null }
 	}

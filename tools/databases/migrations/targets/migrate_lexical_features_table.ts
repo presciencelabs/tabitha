@@ -1,4 +1,7 @@
 import type Database from 'bun:sqlite'
+import { create_logger } from '../log'
+
+const log = create_logger('Targets migration')
 
 export function migrate_lexical_features_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
@@ -30,7 +33,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		notes: string
 	}
 	function extract(): DbRow[] {
-		console.log(`[Targets migration] Extracting features from ${tbta_db.filename}...`)
+		log.step(`Extracting features from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	SyntacticName as category,
@@ -49,7 +52,6 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			notes: (row.notes ?? '').replace(/\r/g, '').trim(), // sometimes notes start with non-printable characters or whitespace
 		}))
 
-		console.log('[Targets migration] done.')
 
 		return results
 	}
@@ -82,7 +84,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	* | ...
 	*/
 	function transform(): TransformedData[] {
-		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
+		log.step(`Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data: TransformedData[] = []
 
@@ -101,14 +103,13 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			}
 		}
 
-		console.log('[Targets migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`[Targets migration] Creating Lexical_Features table in ${targets_db.filename}...`)
+	log.step(`Creating Lexical_Features table in ${targets_db.filename}...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Lexical_Features (
@@ -122,22 +123,21 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log('[Targets migration] Loading data into Lexical_Features table...')
+	log.step('Loading data into Lexical_Features table...')
 
-	transformed_data.map(async ({ category, feature, position, code, value, notes }) => {
+	transformed_data.forEach(({ category, feature, position, code, value, notes }, index) => {
 		targets_db.run(`
 			INSERT INTO Lexical_Features (project, category, feature, position, code, value, notes)
 			VALUES (?, ?, ?, ?, ?, ?, ?)
 		`, [project, category, feature, position, code, value, notes])
 
-		await Bun.write(Bun.stdout, '.')
+		log.progress(`${category} / ${feature}`, index + 1, transformed_data.length)
 	})
 
-	console.log('[Targets migration] done.')
+	log.finish_progress()
 }
