@@ -5,6 +5,7 @@ import { existsSync } from 'fs'
 import { basename, join } from 'path'
 import { parse, stringify } from 'comment-json'
 import { create_logger } from './log'
+import { load_state, mark_done, clear_state } from './state'
 
 const log = create_logger('Orchestrator')
 
@@ -33,7 +34,22 @@ if (!process.env.LOG_LEVEL && can_prompt) {
 	process.env.LOG_LEVEL = verbose ? 'verbose' : 'normal'
 }
 
-await stage_tbta_files(dir_w_tbta_dbs)
+let completed_steps = await load_state(date)
+if (completed_steps.size > 0) {
+	log.step(`Found an incomplete run for ${date} (${completed_steps.size} step(s) already done).`)
+	const resume = can_prompt ? confirm('Resume from where it left off? (No = start this date over)') : true
+	if (!resume) {
+		await clear_state(date)
+		completed_steps = new Set()
+	}
+}
+
+if (completed_steps.has('staging')) {
+	log.step('Skipping staging (already completed for this run).')
+} else {
+	await stage_tbta_files(dir_w_tbta_dbs)
+	await mark_done(date, 'staging', completed_steps)
+}
 
 if (!Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))[0]) {
 	throw new Error(`No staged Ontology database found for ${date}. An Ontology.sqlite (or .new) file must be present in "${dir_w_tbta_dbs}" for every migration run.`)
@@ -132,16 +148,28 @@ const configs: DbConfig[] = [
 ]
 
 for (const cfg of configs) {
-	log.step(`Migrating ${cfg.key} database...`)
+	const migrated_step = `${cfg.key}:migrated` as const
+	const dumped_step = `${cfg.key}:dumped` as const
 
-	const input_args = await cfg.migration_input_args()
 	const output_file = await cfg.migration_output_file()
 	const dump_file = await cfg.migration_dump_file()
 
-	await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
+	if (completed_steps.has(migrated_step)) {
+		log.step(`Skipping ${cfg.key} migration (already completed for this run).`)
+	} else {
+		log.step(`Migrating ${cfg.key} database...`)
+		const input_args = await cfg.migration_input_args()
+		await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
+		await mark_done(date, migrated_step, completed_steps)
+	}
 
-	log.step(`Creating dump of ${cfg.key} database...`)
-	await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
+	if (completed_steps.has(dumped_step)) {
+		log.step(`Skipping ${cfg.key} dump (already completed for this run).`)
+	} else {
+		log.step(`Creating dump of ${cfg.key} database...`)
+		await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
+		await mark_done(date, dumped_step, completed_steps)
+	}
 
 	// TEMPORARILY DISABLED for local verification
 	// console.log(`[Orchestrator] Creating new D1 database for ${cfg.key}...`)
@@ -155,6 +183,8 @@ for (const cfg of configs) {
 	// console.log(`[Orchestrator] Deploying new ${cfg.key} data to D1...`)
 	// await $`bun wrangler d1 execute ${d1_db_name} --file ${dump_file} --remote`.quiet()
 }
+
+await clear_state(date)
 
 log.summary()
 
