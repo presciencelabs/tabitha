@@ -26,6 +26,14 @@ Getting `editor` building and fully validated — end to end, against a real `vi
 - `@vite-pwa/sveltekit` silently defaults `workbox.navigateFallback` to `/` unless that key is explicitly present in the config (even as `undefined`). For an app that's server-rendered per-route rather than a static SPA shell, that default adds a catch-all navigation route that intercepts every page-level navigation *before* any other runtime-caching rule gets a chance to run — and does so for a fallback (`/`) that isn't meaningfully precached in the first place. Must be explicitly disabled per app unless a real offline app-shell is being built.
 - Not a library bug, but a real testing gotcha worth recording: a tab isn't controlled by the service worker until its *next* navigation after that worker activates. Testing runtime caching against the same tab that just triggered install/activate (with no intervening reload) will look like caching silently doesn't work, when it's actually just standard service-worker lifecycle behavior.
 
+With the pattern validated on `editor`, it was rolled out to the remaining apps, each verified the same way (build, typecheck/lint, a fast regression test, and a real `wrangler dev` + browser pass):
+
+- `sources` — has a real client-side GET (`/analyze`), scoped the same way as `editor`'s `/check`.
+- `targets` — gets asset precaching only. Its Explorer UI still makes no client-side `fetch()` calls to its own API (confirmed unchanged since the original pilot), so a runtime-caching rule here would be untested, dead config — exactly the problem that moved the pilot to `editor` in the first place.
+- `ontology` — has real Google OAuth (`/auth/*`, via `hooks.server.ts`) and `/protected/*` routes serving per-user data, alongside one genuinely public client-side GET (`/examples`). Its runtime-caching rule is a strict **allowlist** matching only `/examples` by exact path, not a denylist of "everything except known-bad paths" — a denylist is one accidental omission away from caching something authenticated, whereas an allowlist excludes anything not deliberately added, protected or not. Verified directly: a same-origin GET to a protected route (`/protected/concept/create/next-sense`) produces no cache entry anywhere, even though it reaches the service worker's fetch handler.
+
+`copilot` is intentionally out of scope for this rollout for now.
+
 ## Alternatives considered
 
 **Hand-rolled, extending SvelteKit's native `$service-worker`** — the pattern already proven in `editor`/`ontology`, generalized into a shared factory each app's own `src/service-worker.ts` would call. This was the initial direction, and was actually implemented and reverted once before landing on this decision. It was set aside because of what it would cost to build and maintain by hand as requirements grow:
@@ -40,6 +48,7 @@ Given the project's longer-term offline-sync ambitions, the ongoing cost of hand
 ## Consequences
 
 - The shared implementation now depends on `vite-plugin-pwa`/`@vite-pwa/sveltekit` and its Workbox internals, with the workarounds above baked into each app's config as the cost of that dependency.
-- `editor`'s old hand-rolled service worker (`src/service-worker/index.ts`) has been removed as part of this migration. `ontology`'s equivalent, `copilot`, `sources`, and `targets` are not yet migrated/added; that's follow-up work, now unblocked by a fully-validated reference implementation and the pitfalls above already known up front.
+- `editor`'s and `ontology`'s old hand-rolled service workers have been removed as part of this migration. `editor`, `ontology`, `sources`, and `targets` are all now on the shared implementation. `copilot` is deliberately not, for now.
+- Each app carries its own small `src/service-worker.test.ts` (a fast, server-less regression test against the compiled `sw.js`) rather than a `wrangler dev`-backed E2E harness — see the test file itself for the full reasoning. It isn't a replacement for the manual `wrangler dev` + browser verification that validated each app; it's a guard against regressing the two config gotchas above once that manual pass has confirmed things work.
 - Update-detection/reload-prompting is unaffected either way: it's already solved independently via SvelteKit's `updated` store and the shared `UpdateToast` component (`packages/ui`) — though `UpdateToast` now also accepts an external `needs_refresh`/`on_refresh` signal so apps on this plugin can drive it from the plugin's own `useRegisterSW().needRefresh` instead.
 - Manifest/installability (`manifest: false` in the pilot) is deferred until the apps have real icons — a small follow-up, not a blocker.

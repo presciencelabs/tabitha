@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-pwa/client" />
+
 import type { D1Database } from '@cloudflare/workers-types'
 
 // See https://kit.svelte.dev/docs/types#app

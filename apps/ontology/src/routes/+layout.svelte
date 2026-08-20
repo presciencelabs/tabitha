@@ -6,12 +6,15 @@
 	import { Header, Footer } from '@tabitha/ui'
 	import { signIn, signOut } from '@auth/sveltekit/client'
 	import Icon from '@iconify/svelte'
+	import { useRegisterSW } from 'virtual:pwa-register/svelte'
 
 	let { data, children } = $props()
 
 	let user = $derived(data.user)
 	let version = $derived(data.version)
 	let show_search_bar = $derived(page.url.pathname === '/')
+
+	const { needRefresh, updateServiceWorker } = useRegisterSW()
 
 	async function sign_out() {
 		// https://next-auth.js.org/getting-started/client#signout
@@ -34,7 +37,7 @@
 </main>
 
 <!-- https://daisyui.com/components/footer -->
-<Footer colors="bg-accent text-accent-content">
+<Footer colors="bg-accent text-accent-content" needs_refresh={$needRefresh} on_refresh={() => updateServiceWorker(true)}>
 	{#if user}
 		<div class="flex items-center justify-between w-full">
 			<span class="font-serif text-lg tracking-widest">{user.name}</span>

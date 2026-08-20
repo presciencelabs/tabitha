@@ -4,8 +4,11 @@
 	import { onNavigate } from '$app/navigation'
 	import { Search } from '$lib'
 	import { Header, Footer } from '@tabitha/ui'
+	import { useRegisterSW } from 'virtual:pwa-register/svelte'
 
 	let { children }: { children?: Snippet } = $props()
+
+	const { needRefresh, updateServiceWorker } = useRegisterSW()
 
 	onNavigate(navigation => {
 		// Skip view transitions for non-supporting browsers, full page unloads (like native GET forms), or non-route navigations
@@ -32,7 +35,7 @@
 	{/if}
 </main>
 
-<Footer>
+<Footer needs_refresh={$needRefresh} on_refresh={() => updateServiceWorker(true)}>
 	<a href="/lookup/status/Bible" class="link link-hover">Bible encoding status</a>
 	<a href="/lookup/features" class="link link-hover">Source features list</a>
 </Footer>
