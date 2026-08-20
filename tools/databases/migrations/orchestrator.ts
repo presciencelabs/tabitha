@@ -6,6 +6,7 @@ import { basename, join } from 'path'
 import { parse, stringify } from 'comment-json'
 import { create_logger } from './log'
 import { load_state, mark_done, clear_state } from './state'
+import { validate_migration_output, type ValidationConfig } from './validate'
 
 const log = create_logger('Orchestrator')
 
@@ -63,6 +64,7 @@ const migration_dbs = Array.from(new Glob(`raw/*_${date}.tbta.sqlite`).scanSync(
 
 type DbConfig = {
 	key: 'Sources' | 'Ontology' | 'Targets'
+	validation: ValidationConfig
 	migration_input_args(): Promise<string[]>
 	migration_output_file(): Promise<string>
 	migration_dump_file(): Promise<string>
@@ -70,6 +72,12 @@ type DbConfig = {
 const configs: DbConfig[] = [
 	{
 		key: 'Sources',
+		validation: {
+			// The source Bible text is expected to be complete, so every canonical book must be present.
+			book_check: { table: 'Sources', book_column: 'id_primary', where: "type = 'Bible'", require_complete: true },
+			duplicate_check: { table: 'Sources', columns: ['type', 'id_primary', 'id_secondary', 'id_tertiary'] },
+			row_count_table: 'Sources',
+		},
 		async migration_input_args() {
 			const sources = ['Bible', 'CommunityDevelopmentTexts', 'GrammarIntroduction']
 
@@ -99,6 +107,12 @@ const configs: DbConfig[] = [
 	},
 	{
 		key: 'Ontology',
+		validation: {
+			// Complex_Terms is the one table this migration step actually populates, so it's the
+			// meaningful signal for row-count sanity here (the rest of Ontology.sqlite is the
+			// untouched TBTA export).
+			row_count_table: 'Complex_Terms',
+		},
 		async migration_input_args() {
 			const sources = await configs.find(cfg => cfg.key === 'Sources')!.migration_output_file()
 
@@ -113,6 +127,13 @@ const configs: DbConfig[] = [
 	},
 	{
 		key: 'Targets',
+		validation: {
+			// Per-language translation output is expected to only partially cover the canon while
+			// in progress, so only unexpected/misspelled book names fail this check, not missing ones.
+			book_check: { table: 'Text', book_column: 'book', require_complete: false },
+			duplicate_check: { table: 'Text', columns: ['project', 'book', 'chapter', 'verse', 'audience'] },
+			row_count_table: 'Text',
+		},
 		async migration_input_args() {
 			const english = migration_dbs.find(db => db.includes('English'))
 			if (!english) {
@@ -170,6 +191,10 @@ for (const cfg of configs) {
 		await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
 		await mark_done(date, dumped_step, completed_steps)
 	}
+
+	// Always re-run validation, even on a resumed run -- this is the last gate before a D1 deploy,
+	// so it must reflect the actual state of output_file every time, not just the first pass.
+	await validate_migration_output(cfg.key, output_file, date, cfg.validation)
 
 	// TEMPORARILY DISABLED for local verification
 	// console.log(`[Orchestrator] Creating new D1 database for ${cfg.key}...`)
