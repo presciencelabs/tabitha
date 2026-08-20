@@ -26,7 +26,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		FieldName: string
 	}
 	function extract(): DbRow[] {
-		console.log(`Extracting form names from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Extracting form names from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	SyntacticName as part_of_speech,
@@ -41,13 +41,13 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	  `
 		const results = tbta_db.prepare<DbRow, []>(sql).all()
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return results
 	}
 
 	function transform(): TransformedData[] {
-		console.log(`Transforming data from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data = extracted_data.map(({ part_of_speech, name, FieldName }) => ({
 			part_of_speech,
@@ -55,14 +55,14 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			position: Number(FieldName.match(/(\d+)/)?.[1] ?? 0), // FieldName pattern:  "Form Name 1", "Form Name 2", etc.
 		}))
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`Creating Form_Names table in ${targets_db.filename}...`)
+	console.log(`[Targets migration] Creating Form_Names table in ${targets_db.filename}...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Form_Names (
@@ -73,13 +73,13 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log('Loading data into Form_Names table...')
+	console.log('[Targets migration] Loading data into Form_Names table...')
 
 	for (const { part_of_speech, name, position } of transformed_data) {
 		targets_db.run(`
@@ -88,5 +88,5 @@ function load_data(targets_db: Database, project: string, transformed_data: Tran
 			`, [project, part_of_speech, name, position])
 	}
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }

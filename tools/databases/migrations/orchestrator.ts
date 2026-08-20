@@ -15,12 +15,18 @@ const dir_w_tbta_dbs = Bun.argv[2] // "~/Downloads/TBTA 9-25-25"
 const date = Bun.argv[3] // 2025-09-25
 
 await stage_tbta_files(dir_w_tbta_dbs)
-const migration_dbs = Array.from(new Glob(`databases/*_${date}.tbta.sqlite`).scanSync('.'))
+
+if (!Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))[0]) {
+	throw new Error(`No staged Ontology database found for ${date}. An Ontology.sqlite (or .new) file must be present in "${dir_w_tbta_dbs}" for every migration run.`)
+}
+
+const migration_dbs = Array.from(new Glob(`raw/*_${date}.tbta.sqlite`).scanSync('.'))
 
 type DbConfig = {
 	key: 'Sources' | 'Ontology' | 'Targets'
 	migration_input_args(): Promise<string[]>
 	migration_output_file(): Promise<string>
+	migration_dump_file(): Promise<string>
 }
 const configs: DbConfig[] = [
 	{
@@ -33,11 +39,11 @@ const configs: DbConfig[] = [
 					const match = migration_dbs.find(db => db.includes(name))
 					if (match) return match
 
-					const files = Array.from(new Glob(`databases/${name}_*.tbta.sqlite`).scanSync('.'))
+					const files = Array.from(new Glob(`raw/${name}_*.tbta.sqlite`).scanSync('.'))
 					files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
 					const latest = files.pop()
 
-					if (latest) console.log(`Source ${name} missing for ${date}, using: ${latest} instead.`)
+					if (latest) console.warn(`[Orchestrator] Source ${name} missing for ${date}, using: ${latest} instead.`)
 
 					return latest || ''
 				}),
@@ -46,7 +52,10 @@ const configs: DbConfig[] = [
 			return args.filter(Boolean)
 		},
 		async migration_output_file() {
-			return `databases/${this.key}_${date}.tabitha.sqlite`
+			return `raw/${this.key}_${date}.tabitha.sqlite`
+		},
+		async migration_dump_file() {
+			return `snapshots/${basename(await this.migration_output_file())}.sql`
 		},
 	},
 	{
@@ -57,9 +66,10 @@ const configs: DbConfig[] = [
 			return [sources]
 		},
 		async migration_output_file() {
-			const ontology_db_name = Array.from(new Glob(`databases/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))[0] || ''
-
-			return ontology_db_name
+			return Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))[0]!
+		},
+		async migration_dump_file() {
+			return `snapshots/${basename(await this.migration_output_file())}.sql`
 		},
 	},
 	{
@@ -76,32 +86,37 @@ const configs: DbConfig[] = [
 			return projects
 		},
 		async migration_output_file() {
-			return `databases/${this.key}_${date}.tabitha.sqlite`
+			return `raw/${this.key}_${date}.tabitha.sqlite`
+		},
+		async migration_dump_file() {
+			return `snapshots/${basename(await this.migration_output_file())}.sql`
 		},
 	},
 ]
 
 for (const cfg of configs) {
-	console.log(`Migrating ${cfg.key} database...`)
+	console.log(`[Orchestrator] Migrating ${cfg.key} database...`)
 
 	const input_args = await cfg.migration_input_args()
 	const output_file = await cfg.migration_output_file()
+	const dump_file = await cfg.migration_dump_file()
 
-	await $`bun ${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
+	await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
 
-	console.log(`Creating dump of ${cfg.key} database...`)
-	await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${output_file}.sql`
+	console.log(`[Orchestrator] Creating dump of ${cfg.key} database...`)
+	await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
 
-	console.log(`Creating new D1 database for ${cfg.key}...`)
-	const d1_db_name = basename(output_file, '.tabitha.sqlite') // => Sources_2025-10-22 or Ontology_9493_2025-10-22
-	const cmd_output_new_db = await $`bun wrangler d1 create ${d1_db_name}`.text()
+	// TEMPORARILY DISABLED for local verification
+	// console.log(`[Orchestrator] Creating new D1 database for ${cfg.key}...`)
+	// const d1_db_name = basename(output_file, '.tabitha.sqlite') // => Sources_2025-10-22 or Ontology_9493_2025-10-22
+	// const cmd_output_new_db = await $`bun wrangler d1 create ${d1_db_name}`.text()
 
-	console.log(`Updating wrangler.jsonc with new ${cfg.key} database info...`)
-	const new_db_info = extract_new_db_info(cmd_output_new_db)
-	await update_deployment_config('./wrangler.jsonc', new_db_info, `DB_${cfg.key}`)
+	// console.log(`[Orchestrator] Updating wrangler.jsonc with new ${cfg.key} database info...`)
+	// const new_db_info = extract_new_db_info(cmd_output_new_db)
+	// await update_deployment_config('./wrangler.jsonc', new_db_info, `DB_${cfg.key}`)
 
-	console.log(`Deploying new ${cfg.key} data to D1...`)
-	await $`bun wrangler d1 execute ${d1_db_name} --file ${output_file}.sql --remote`.quiet()
+	// console.log(`[Orchestrator] Deploying new ${cfg.key} data to D1...`)
+	// await $`bun wrangler d1 execute ${d1_db_name} --file ${dump_file} --remote`.quiet()
 }
 
 async function stage_tbta_files(working_dir: string) {
@@ -110,7 +125,7 @@ async function stage_tbta_files(working_dir: string) {
 	}
 
 	const sqlite_files = Array.from(new Glob('*.sqlite').scanSync(working_dir))
-	console.log('attempting to stage the following:', sqlite_files)
+	console.log('[Orchestrator] attempting to stage the following:', sqlite_files)
 	await Promise.all(stage(sqlite_files))
 
 	function stage(db_names: string[]): Promise<void>[] {
@@ -124,7 +139,7 @@ async function stage_tbta_files(working_dir: string) {
 	function normalize_name(name: string) {
 		const src = `${working_dir}/${name}.sqlite`
 
-		let dest = `./databases/${name}_${date}.tbta.sqlite`
+		let dest = `./raw/${name}_${date}.tbta.sqlite`
 		if (name === 'Ontology') {
 			dest = derive_ontology_name()
 		}
@@ -144,7 +159,7 @@ async function stage_tbta_files(working_dir: string) {
 				throw new Error(`Could not derive minor version from "${row.version}".`)
 			}
 
-			return `./databases/Ontology_${minor_version}_${date}.tabitha.sqlite`
+			return `./raw/Ontology_${minor_version}_${date}.tabitha.sqlite`
 		}
 	}
 }

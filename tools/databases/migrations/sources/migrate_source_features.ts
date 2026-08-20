@@ -47,7 +47,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		encoded_examples: string
 	}
 	function extract(): DbRow[] {
-		console.log(`Extracting features from ${tbta_db.filename}...`)
+		console.log(`[Sources migration] Extracting features from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	ID as id,
@@ -65,7 +65,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			encoded_examples: row.encoded_examples?.trim() ?? '', // sometimes examples start with non-printable characters, whitespace or may be NULL
 		}))
 
-		console.log('done.')
+		console.log('[Sources migration] done.')
 
 		return results
 	}
@@ -107,7 +107,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	* | ...
 	*/
 	function transform(): TransformedData[] {
-		console.log(`Transforming data from ${tbta_db.filename}...`)
+		console.log(`[Sources migration] Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data: TransformedData[] = []
 
@@ -131,14 +131,14 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			}
 		}
 
-		console.log('done.')
+		console.log('[Sources migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(tabitha_sources_db: Database) {
-	console.log(`Prepping Features table in ${tabitha_sources_db.filename}...`)
+	console.log(`[Sources migration] Prepping Features table in ${tabitha_sources_db.filename}...`)
 
 	tabitha_sources_db.run(`
 		CREATE TABLE IF NOT EXISTS Features (
@@ -155,13 +155,13 @@ function create_tabitha_table(tabitha_sources_db: Database) {
 		DELETE FROM Features
 	`)
 
-	console.log('done.')
+	console.log('[Sources migration] done.')
 
 	return tabitha_sources_db
 }
 
 function load_data(targets_db: Database, transformed_data: TransformedData[]) {
-	console.log('Loading data into Features table...')
+	console.log('[Sources migration] Loading data into Features table...')
 
 	transformed_data.map(async ({ category, feature, position, code, value, example }) => {
 		targets_db.run(`
@@ -172,5 +172,5 @@ function load_data(targets_db: Database, transformed_data: TransformedData[]) {
 		await Bun.write(Bun.stdout, '.')
 	})
 
-	console.log('done.')
+	console.log('[Sources migration] done.')
 }

@@ -47,7 +47,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		encoded_examples: string
 	}
 	function extract(): DbRow[] {
-		console.log(`Extracting features from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Extracting features from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	ID as id,
@@ -65,7 +65,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			encoded_examples: row.encoded_examples?.trim() ?? '', // sometimes examples start with non-printable characters, whitespace or may be NULL
 		}))
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return results
 	}
@@ -107,7 +107,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	* | ...
 	*/
 	function transform(): TransformedData[] {
-		console.log(`Transforming data from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data: TransformedData[] = []
 
@@ -131,14 +131,14 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			}
 		}
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(tabitha_sources_db: Database, project: string) {
-	console.log(`Prepping the "Source_Features" table for ${project} in ${tabitha_sources_db.filename}...`)
+	console.log(`[Targets migration] Prepping the "Source_Features" table for ${project} in ${tabitha_sources_db.filename}...`)
 
 	tabitha_sources_db.run(`
 		CREATE TABLE IF NOT EXISTS Source_Features (
@@ -154,13 +154,13 @@ function create_tabitha_table(tabitha_sources_db: Database, project: string) {
 
 	tabitha_sources_db.run('DELETE FROM Source_Features WHERE project = ?', [project])
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return tabitha_sources_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log(`Loading ${project} data into the "Source_Features" table...`)
+	console.log(`[Targets migration] Loading ${project} data into the "Source_Features" table...`)
 
 	transformed_data.map(async ({ category, feature, position, code, value, example }) => {
 		targets_db.run(`
@@ -171,5 +171,5 @@ function load_data(targets_db: Database, project: string, transformed_data: Tran
 		await Bun.write(Bun.stdout, '.')
 	})
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }

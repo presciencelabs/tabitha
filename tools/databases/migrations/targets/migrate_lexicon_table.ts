@@ -34,7 +34,7 @@ function transform_tbta_data(tbta_db: Database, project: string): TransformedDat
 	return transformed_data
 
 	function transform_data(table_names: string[]) {
-		console.log(`Transforming part of speech data from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Transforming part of speech data from ${tbta_db.filename}...`)
 
 		const transformed_data = table_names.map(table_name => {
 			const singular_part_of_speech = table_name.slice(0, -1)
@@ -53,14 +53,14 @@ function transform_tbta_data(tbta_db: Database, project: string): TransformedDat
 			return tbta_db.query<TransformedData, []>(sql).all()
 		}).flat() // flattens data from each parts of speech table into a single array
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`Creating the "Lexicon" table in ${targets_db.filename} if it does not already exist...`)
+	console.log(`[Targets migration] Creating the "Lexicon" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Lexicon (
@@ -75,13 +75,13 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, transformed_data: TransformedData[]) {
-	console.log(`Loading ${transformed_data[0].project} data into the "Lexicon" table...`)
+	console.log(`[Targets migration] Loading ${transformed_data[0].project} data into the "Lexicon" table...`)
 
 	for (const { id, project, stem, part_of_speech, gloss, features, constituents } of transformed_data) {
 		targets_db.run(`
@@ -90,5 +90,5 @@ function load_data(targets_db: Database, transformed_data: TransformedData[]) {
 		`, [id, project, stem, part_of_speech, gloss.trim(), features, constituents])
 	}
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }

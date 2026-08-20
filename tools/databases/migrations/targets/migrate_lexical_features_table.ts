@@ -30,7 +30,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		notes: string
 	}
 	function extract(): DbRow[] {
-		console.log(`Extracting features from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Extracting features from ${tbta_db.filename}...`)
 
 		const sql = `
 		  SELECT	SyntacticName as category,
@@ -49,7 +49,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			notes: (row.notes ?? '').replace(/\r/g, '').trim(), // sometimes notes start with non-printable characters or whitespace
 		}))
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return results
 	}
@@ -82,7 +82,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	* | ...
 	*/
 	function transform(): TransformedData[] {
-		console.log(`Transforming data from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
 
 		const transformed_data: TransformedData[] = []
 
@@ -101,14 +101,14 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			}
 		}
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return transformed_data
 	}
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`Creating Lexical_Features table in ${targets_db.filename}...`)
+	console.log(`[Targets migration] Creating Lexical_Features table in ${targets_db.filename}...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Lexical_Features (
@@ -122,13 +122,13 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log('Loading data into Lexical_Features table...')
+	console.log('[Targets migration] Loading data into Lexical_Features table...')
 
 	transformed_data.map(async ({ category, feature, position, code, value, notes }) => {
 		targets_db.run(`
@@ -139,5 +139,5 @@ function load_data(targets_db: Database, project: string, transformed_data: Tran
 		await Bun.write(Bun.stdout, '.')
 	})
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }

@@ -9,7 +9,7 @@ import { migrate_ideal_text_table } from './migrate_ideal_text_table'
 import { transform_inflections } from '../../data/inflections/transform'
 import { basename, join } from 'path'
 
-// usage: `bun targets/migrate.ts databases/English_YYYY-MM-DD.tbta.sqlite [databases/[Swahili|Indonesian|Tagalog]_YYYY-MM-DD.tbta.sqlite] databases/Targets_YYYY-MM-DD.tabitha.sqlite`
+// usage: `bun targets/migrate.ts raw/English_YYYY-MM-DD.tbta.sqlite [raw/[Swahili|Indonesian|Tagalog]_YYYY-MM-DD.tbta.sqlite] raw/Targets_YYYY-MM-DD.tabitha.sqlite`
 const args = Bun.argv.slice(2)
 if (args.length < 2) {
 	throw new Error('Usage: bun targets/migrate.ts <English_db_path> [Optional_Language_db_paths...] <Targets_db_path>')
@@ -41,7 +41,7 @@ await transform_inflections(join(import.meta.dir, '../../data/inflections'))
 for (const tbta_db_name of tbta_db_names) {
 	const project = basename(tbta_db_name).split('_')[0]
 
-	const tbta_db = new Database(tbta_db_name)
+	const tbta_db = new Database(tbta_db_name, { readwrite: true, create: false })
 
 	migrate_text_table(tbta_db, project, targets_db)
 	migrate_lexicon_table(tbta_db, project, targets_db)
@@ -60,7 +60,7 @@ for (const tbta_db_name of tbta_db_names) {
 	tbta_db.close()
 }
 
-console.log(`Optimizing ${targets_db_name}...`)
+console.log(`[Targets migration] Optimizing ${targets_db_name}...`)
 targets_db.run('VACUUM')
-console.log('done.')
+console.log('[Targets migration] done.')
 

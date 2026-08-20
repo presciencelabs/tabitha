@@ -12,12 +12,12 @@ export async function load_examples(db_ontology: Database, db_sources: Database,
 }
 
 function clear_examples_table(db_ontology: Database) {
-	console.log(`Clearing Exhaustive_Examples table in ${db_ontology.filename}...`)
+	console.log(`[Ontology migration] Clearing Exhaustive_Examples table in ${db_ontology.filename}...`)
 
 	db_ontology.run('DELETE FROM Exhaustive_Examples')
 	db_ontology.run('UPDATE Concepts SET occurrences = 0')
 
-	console.log('done.')
+	console.log('[Ontology migration] done.')
 }
 
 /**
@@ -27,7 +27,7 @@ function clear_examples_table(db_ontology: Database) {
  * @param db_sources_complex The Tabitha sources database after Complex Concept Insertion rules have been applied
  */
 async function find_exhaustive_occurrences(db_ontology: Database, db_sources: Database, db_sources_complex: Database) {
-	console.log('Fetching all source encoding...')
+	console.log('[Ontology migration] Fetching all source encoding...')
 	type Source = {
 		type: string
 		id_primary: string
@@ -41,7 +41,7 @@ async function find_exhaustive_occurrences(db_ontology: Database, db_sources: Da
 		FROM Sources
 		WHERE semantic_encoding <> ''
 	`).all()
-	console.log(`Fetched ${all_sources.length} verses`)
+	console.log(`[Ontology migration] Fetched ${all_sources.length} verses`)
 
 	// For tracking how complex concepts are handled, we need to know which concepts are complex
 	const all_complex_concepts = db_ontology.query<Concept, []>(`
@@ -50,13 +50,13 @@ async function find_exhaustive_occurrences(db_ontology: Database, db_sources: Da
 		WHERE level = 2 OR level = 3
 	`).all()
 	const complex_concept_set = new Set(all_complex_concepts.map(concept_key))
-	console.log(`Found ${complex_concept_set.size} complex concepts`)
+	console.log(`[Ontology migration] Found ${complex_concept_set.size} complex concepts`)
 
 	let current_reference: SourceReference = { type: '', id_primary: '', id_secondary: '', id_tertiary: '' }
 	for (const { semantic_encoding, type, id_primary, id_secondary, id_tertiary } of all_sources) {
 		if (id_primary !== current_reference.id_primary) {
 			console.log()
-			console.log(`Collecting occurrences within ${id_primary}:`)
+			console.log(`[Ontology migration] Collecting occurrences within ${id_primary}:`)
 		}
 
 		if (id_secondary !== current_reference.id_secondary) {
@@ -141,7 +141,7 @@ async function find_exhaustive_occurrences(db_ontology: Database, db_sources: Da
 	}
 
 	console.log()
-	console.log('done!')
+	console.log('[Ontology migration] done!')
 }
 
 function concept_key(concept: Concept): string {
@@ -170,7 +170,7 @@ function record_occurrence(db_ontology: Database, concept: Concept, reference: S
 }
 
 async function update_occurrences(db_ontology: Database) {
-	console.log('Updating occurrences count for each concept...')
+	console.log('[Ontology migration] Updating occurrences count for each concept...')
 
 	db_ontology.run(`
 		UPDATE Concepts
@@ -186,7 +186,7 @@ async function update_occurrences(db_ontology: Database) {
 		WHERE Concepts.stem = Examples.stem AND Concepts.sense = Examples.sense AND Concepts.part_of_speech = Examples.part_of_speech
 	`)
 
-	console.log('done!')
+	console.log('[Ontology migration] done!')
 }
 
 function load_book_map(db_ontology: Database): Map<number, string> {
@@ -203,13 +203,13 @@ function show_examples(db_ontology: Database) {
 	const books = load_book_map(db_ontology)
 
 	console.log()
-	console.log('======= Noun Examples =======')
+	console.log('[Ontology migration] ======= Noun Examples =======')
 	// destination role; outer noun & adposition; destination role & adposition
 	show_examples({ stem: 'Moab', sense: 'A', part_of_speech: 'Noun' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 1 })
 	// outer adjective
 	show_examples({ stem: 'husband', sense: 'A', part_of_speech: 'Noun' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 8 })
 
-	console.log('======= Verb Examples =======')
+	console.log('[Ontology migration] ======= Verb Examples =======')
 	// coordinate agent & source & destination
 	show_examples({ stem: 'move', sense: 'A', part_of_speech: 'Verb' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 1 })
 	// negative polarity & predicate adjective
@@ -224,7 +224,7 @@ function show_examples(db_ontology: Database) {
 	show_examples({ stem: 'cry', sense: 'A', part_of_speech: 'Verb' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 14 })
 	show_examples({ stem: 'weep', sense: 'A', part_of_speech: 'Verb' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 14 })
 
-	console.log('======= Adjective Examples =======')
+	console.log('[Ontology migration] ======= Adjective Examples =======')
 	// modified noun
 	show_examples({ stem: 'much-many', sense: 'A', part_of_speech: 'Adjective' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 1 })
 	// patient noun
@@ -239,7 +239,7 @@ function show_examples(db_ontology: Database) {
 	show_examples({ stem: 'sad', sense: 'A', part_of_speech: 'Adjective' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 13 })
 	show_examples({ stem: 'bitter', sense: 'B', part_of_speech: 'Adjective' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 13 })
 
-	console.log('======= Adverb Examples =======')
+	console.log('[Ontology migration] ======= Adverb Examples =======')
 	// modified noun
 	show_examples({ stem: 'also', sense: 'C', part_of_speech: 'Adverb' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 5 })
 	// intensified degree
@@ -247,7 +247,7 @@ function show_examples(db_ontology: Database) {
 	// comparative degree
 	show_examples({ stem: 'hard', sense: 'A', part_of_speech: 'Adverb' }, { type: 'Bible', ref_id_primary: 32, ref_id_secondary: 1, ref_id_tertiary: 11 })
 
-	console.log('======= Adposition Examples =======')
+	console.log('[Ontology migration] ======= Adposition Examples =======')
 	// no argument
 	show_examples({ stem: 'when', sense: 'C', part_of_speech: 'Adposition' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 1 })
 	// noun & verb
@@ -257,7 +257,7 @@ function show_examples(db_ontology: Database) {
 	// adjective & outer noun
 	show_examples({ stem: '-Subgroup', sense: 'A', part_of_speech: 'Adposition' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 2, ref_id_tertiary: 11 })
 
-	console.log('======= Conjunction Examples =======')
+	console.log('[Ontology migration] ======= Conjunction Examples =======')
 	// no argument (within NP)
 	show_examples({ stem: 'and', sense: 'B', part_of_speech: 'Conjunction' }, { type: 'Bible', ref_id_primary: 8, ref_id_secondary: 1, ref_id_tertiary: 2 })
 	// no argument (within Clause)
@@ -273,7 +273,7 @@ function show_examples(db_ontology: Database) {
 			WHERE concept_stem = ? AND concept_sense = ? AND concept_part_of_speech = ? AND ref_id_primary = ? AND ref_id_secondary = ? AND ref_id_tertiary = ?
 		`).all(stem, sense, part_of_speech, ref_id_primary, ref_id_secondary, ref_id_tertiary)
 
-		console.log(`––– ${stem}-${sense} in ${books.get(ref_id_primary)} ${ref_id_secondary}:${ref_id_tertiary} –––`)
+		console.log(`[Ontology migration] ––– ${stem}-${sense} in ${books.get(ref_id_primary)} ${ref_id_secondary}:${ref_id_tertiary} –––`)
 		for (const { context_json } of examples) {
 			console.log(context_json)
 		}

@@ -78,17 +78,6 @@ export const BIBLE_BOOKS: Book = {
 }
 
 /**
- * Legacy TBTA source data occasionally spells "Revelation" as "Revelations" (a naming quirk
- * traced to the original Bible.mdb export -- see e.g. the Targets database's Indonesian project
- * text). This lets book-order sorting still place that data correctly instead of treating it as
- * an unrecognized book. The proper long-term fix is normalizing this at the TBTA migration
- * pipeline so it never enters the data models in the first place; that's tracked separately.
- */
-const LEGACY_BOOK_NAME_ALIASES: Record<string, string> = {
-	'Revelations': 'Revelation',
-}
-
-/**
  * Sorts by Bible book order rather than the natural alphabetical order.
  */
 export function by_book_order(
@@ -96,10 +85,9 @@ export function by_book_order(
 	b: { reference: { id_primary: string } },
 ): number {
 	const books_in_order = Object.values(BIBLE_BOOKS)
-	const normalize = (book_name: string) => LEGACY_BOOK_NAME_ALIASES[book_name] ?? book_name
 
-	const index_1 = books_in_order.indexOf(normalize(a.reference.id_primary))
-	const index_2 = books_in_order.indexOf(normalize(b.reference.id_primary))
+	const index_1 = books_in_order.indexOf(a.reference.id_primary)
+	const index_2 = books_in_order.indexOf(b.reference.id_primary)
 
 	return index_1 - index_2
 }

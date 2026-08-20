@@ -121,15 +121,6 @@ describe('@tabitha/types/patterns', () => {
 			expect(refs.toSorted(by_book_order).map(r => r.reference.id_primary))
 				.toEqual(['Genesis', 'Amos', 'John'])
 		})
-
-		test('by_book_order normalizes the legacy "Revelations" misspelling to sort with Revelation', () => {
-			const refs = [
-				{ reference: { id_primary: 'Revelations' } },
-				{ reference: { id_primary: 'Genesis' } },
-			]
-			expect(refs.toSorted(by_book_order).map(r => r.reference.id_primary))
-				.toEqual(['Genesis', 'Revelations'])
-		})
 	})
 
 	describe('URL patterns & helpers', () => {

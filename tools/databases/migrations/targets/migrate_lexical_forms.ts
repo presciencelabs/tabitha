@@ -20,7 +20,7 @@ type WordFormMap = Record<PartOfSpeech, WordFormRecord[]> & {
 }
 
 async function get_word_forms(csv_dir: string): Promise<Record<PartOfSpeech, WordFormRecord[]>> {
-	console.log('Getting word forms from the CSV files...')
+	console.log('[Targets migration] Getting word forms from the CSV files...')
 
 	const filenames = await readdir(csv_dir)
 	const csv_contents_by_file = await Promise.all(filenames.map(filename => Bun.file(`${csv_dir}/${filename}`).text()))
@@ -28,7 +28,7 @@ async function get_word_forms(csv_dir: string): Promise<Record<PartOfSpeech, Wor
 
 	const groups_init: Record<PartOfSpeech, WordFormRecord[]> = { Adjective: [], Adverb: [], Noun: [], Verb: [] }
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return normalized_data.reduce(grouper, groups_init)
 
@@ -60,7 +60,7 @@ async function get_word_forms(csv_dir: string): Promise<Record<PartOfSpeech, Wor
  * of the word in the Lexicon.  Additionally, this is in the context of a single part of speech.
  */
 async function load_data(word_forms: WordFormMap, targets_db: Database, project: string): Promise<void> {
-	console.log('Loading word forms into Lexicon table...')
+	console.log('[Targets migration] Loading word forms into Lexicon table...')
 
 	type LexiconRecord = {
 		id: number
@@ -94,14 +94,14 @@ async function load_data(word_forms: WordFormMap, targets_db: Database, project:
 						AND id = ?
 				`, [from_word_forms.forms, project, part_of_speech, from_lexicon.id])
 			} else {
-				console.log(`⚠️ NOT LOADED ⚠️ due to mismatch: ${from_word_forms.stem} (from word forms) vs ${from_lexicon.stem} (from lexicon)`)
+				console.warn(`[Targets migration] ⚠️ NOT LOADED ⚠️ due to mismatch: ${from_word_forms.stem} (from word forms) vs ${from_lexicon.stem} (from lexicon)`)
 			}
 
 			await Bun.write(Bun.stdout, '.')
 		}
 	}
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	type MatchInput = {
 		from_word_forms: WordFormRecord

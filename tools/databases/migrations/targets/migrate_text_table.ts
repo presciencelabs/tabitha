@@ -23,23 +23,30 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	return transformed_data
 
 	function extract_table_names() {
-		console.log(`Extracting relevant table names from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Extracting relevant table names from ${tbta_db.filename}...`)
 
 		// https://bun.sh/docs/api/sqlite#reference
-		const tbta_tablenames_for_bible_books = tbta_db.query<{ name: string }, []>(`
+		const all_table_names = tbta_db.query<{ name: string }, []>(`
 			SELECT *
 			FROM sqlite_master
 			WHERE type = 'table'
 				AND name like 'Target_EB_%'
 		`).all().map(({ name }) => name)
 
-		console.log('done.')
+		// Some TBTA project databases carry both "Target_EB_Revelation" and a legacy-named duplicate
+		// "Target_EB_Revelations" (same for "Target_EB_Psalms" / "Target_EB_Psalm"), with identical verse
+		// content in both. Skip the legacy-named ones so their rows aren't migrated twice under the same book.
+		const tbta_tablenames_for_bible_books = all_table_names.filter(table_name =>
+			!['Target_EB_Revelations', 'Target_EB_Psalm'].includes(table_name)
+		)
+
+		console.log('[Targets migration] done.')
 
 		return tbta_tablenames_for_bible_books
 	}
 
 	function extract_audience_names() {
-		console.log(`Extracting audience names from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Extracting audience names from ${tbta_db.filename}...`)
 
 		const tbta_audiences = tbta_db.prepare<{ Audiences: string }, []>(`
 			SELECT Audiences
@@ -49,13 +56,13 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 
 		const audience_names = [...tbta_audiences.matchAll(/\^(.+?);/g)].map(m => m[1])
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return audience_names
 	}
 
 	function transform_data(table_names: string[], audience_names: string[]) {
-		console.log(`Transforming data from ${tbta_db.filename}...`)
+		console.log(`[Targets migration] Transforming data from ${tbta_db.filename}...`)
 
 		type DbRow = { Reference: string, Verse: string }
 		const transformed_data = table_names.map(table_name => tbta_db.query<DbRow, []>(`
@@ -65,7 +72,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 			`).all().map(transform).flat(), // array of books
 		).flat() // flattens all 66 books into one array of all verses
 
-		console.log('done.')
+		console.log('[Targets migration] done.')
 
 		return transformed_data
 
@@ -98,7 +105,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`Creating the "Text" table in ${targets_db.filename} if it does not already exist...`)
+	console.log(`[Targets migration] Creating the "Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Text (
@@ -111,13 +118,13 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 
 	return targets_db
 }
 
 function load_data(targets_db: Database, project: string, transformed_data: TransformedData[]) {
-	console.log(`Loading ${project} data into the "Text" table...`)
+	console.log(`[Targets migration] Loading ${project} data into the "Text" table...`)
 
 	transformed_data.map(async ({ book, chapter, verse, audience, text }) => {
 		targets_db.run(`
@@ -128,5 +135,5 @@ function load_data(targets_db: Database, project: string, transformed_data: Tran
 		await Bun.write(Bun.stdout, '.')
 	})
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }

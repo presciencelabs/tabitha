@@ -11,7 +11,7 @@ export async function migrate_ideal_text_table(project: string, targets_db: Data
 }
 
 function create_tabitha_table(targets_db: Database) {
-	console.log(`Creating the "Ideal_Text" table in ${targets_db.filename} if it does not already exist...`)
+	console.log(`[Targets migration] Creating the "Ideal_Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
 		CREATE TABLE IF NOT EXISTS Ideal_Text (
@@ -24,11 +24,11 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }
 
 function load_data(targets_db: Database, project: string, data: IdealTextData[]) {
-	console.log(`Loading ${data.length} verses for ${project} into the "Ideal_Text" table...`)
+	console.log(`[Targets migration] Loading ${data.length} verses for ${project} into the "Ideal_Text" table...`)
 
 	data.map(async ({ book, chapter, verse, audience, text }) => {
 		targets_db.run(`
@@ -39,7 +39,7 @@ function load_data(targets_db: Database, project: string, data: IdealTextData[])
 		await Bun.write(Bun.stdout, '.')
 	})
 
-	console.log('done.')
+	console.log('[Targets migration] done.')
 }
 
 // extract verse text from the documents

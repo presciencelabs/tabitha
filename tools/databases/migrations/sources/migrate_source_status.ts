@@ -92,7 +92,7 @@ function parse_verse_range(input: string): VerseRange {
 }
 
 async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord[]> {
-	console.log('Getting verse statuses from the CSV files...')
+	console.log('[Sources migration] Getting verse statuses from the CSV files...')
 
 	async function get_latest_csv(prefix: string): Promise<string> {
 		const exact_file = Bun.file(`${csv_dir}/${prefix}_${date}.csv`)
@@ -100,7 +100,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 			return await exact_file.text()
 		}
 
-		console.warn(`⚠️ Exact status file ${prefix}_${date}.csv not found. Searching for fallback...`)
+		console.warn(`[Sources migration] ⚠️ Exact status file ${prefix}_${date}.csv not found. Searching for fallback...`)
 		const files = Array.from(new Glob(`${prefix}_*.csv`).scanSync(csv_dir))
 		files.sort() // Lexicographical sort will correctly order YYYY-MM-DD
 		const latest = files.pop()
@@ -109,7 +109,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 			throw new Error(`Critical Error: No fallback CSV found for ${prefix} in ${csv_dir}.`)
 		}
 
-		console.log(`Fallback selected: ${latest}`)
+		console.log(`[Sources migration] Fallback selected: ${latest}`)
 		return await Bun.file(`${csv_dir}/${latest}`).text()
 	}
 
@@ -147,7 +147,7 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 }
 
 async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_db: Database): Promise<void> {
-	console.log('Loading verse statuses into Sources table...')
+	console.log('[Sources migration] Loading verse statuses into Sources table...')
 
 	for (const { range, status } of verse_statuses) {
 		const { type, id_primary, id_secondary, id_tertiary_start, id_tertiary_end } = range
@@ -175,11 +175,11 @@ async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_
 		await Bun.write(Bun.stdout, '.')
 	}
 
-	console.log('done.')
+	console.log('[Sources migration] done.')
 }
 
 function create_chapter_status_table(sources_db: Database) {
-	console.log(`Prepping ChapterStatus table in ${sources_db.filename}...`)
+	console.log(`[Sources migration] Prepping ChapterStatus table in ${sources_db.filename}...`)
 
 	sources_db.run(`
 		CREATE TABLE IF NOT EXISTS ChapterStatus (
@@ -194,13 +194,13 @@ function create_chapter_status_table(sources_db: Database) {
 		DELETE FROM ChapterStatus
 	`)
 
-	console.log('done.')
+	console.log('[Sources migration] done.')
 
 	return sources_db
 }
 
 async function populate_chapter_status_table(sources_db: Database, verse_statuses: VerseStatusRecord[]) {
-	console.log('Loading chapter statuses into ChapterStatus table...')
+	console.log('[Sources migration] Loading chapter statuses into ChapterStatus table...')
 
 	const by_chapter = Map.groupBy(verse_statuses, ({ range: { type, id_primary, id_secondary } }) => JSON.stringify({ type, id_primary, id_secondary }))
 
@@ -224,7 +224,7 @@ async function populate_chapter_status_table(sources_db: Database, verse_statuse
 		await Bun.write(Bun.stdout, '.')
 	}
 
-	console.log('done.')
+	console.log('[Sources migration] done.')
 
 	function tally_statuses(tally: StatusTally, { status }: VerseStatusRecord): StatusTally {
 		if (status === 'Not Started') {

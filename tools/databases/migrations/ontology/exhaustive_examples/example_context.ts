@@ -251,7 +251,7 @@ function get_head_word(phrase_index: number, source_entities: SourceEntity[]): S
 	)(phrase_index, source_entities)
 
 	if (head_index === -1) {
-		console.error(`Invalid semantic encoding - missing head ${word_type} in ${phrase_type}`)
+		console.error(`[Ontology migration] Invalid semantic encoding - missing head ${word_type} in ${phrase_type}`)
 
 		return { type: '', label: word_type[0], features: '......................', value: '', concept: null, pairing: null }
 	}

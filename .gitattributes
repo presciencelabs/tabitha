@@ -1,1 +1,5 @@
 tools/databases/snapshots/*.sql filter=lfs diff=lfs merge=lfs -text
+tools/databases/snapshots/*.sqlite filter=lfs diff=lfs merge=lfs -text
+tools/databases/raw/*.tbta.sqlite filter=lfs diff=lfs merge=lfs -text
+tools/databases/raw/*.sqlite filter=lfs diff=lfs merge=lfs -text
+tools/databases/raw/*.sql filter=lfs diff=lfs merge=lfs -text
