@@ -75,15 +75,29 @@ const configs: DbConfig[] = [
 	{
 		key: 'Targets',
 		async migration_input_args() {
-			const projects = migration_dbs.filter(db =>
-				['English', 'Swahili', 'Indonesian', 'Tagalog'].some(name => db.includes(name)),
-			)
-
-			if (!projects.some(db => db.includes('English'))) {
+			const english = migration_dbs.find(db => db.includes('English'))
+			if (!english) {
 				throw new Error(`English database not found for ${this.key} migration.`)
 			}
 
-			return projects
+			const target_languages = ['Swahili', 'Indonesian', 'Tagalog']
+
+			const language_args = await Promise.all(
+				target_languages.map(async name => {
+					const match = migration_dbs.find(db => db.includes(name))
+					if (match) return match
+
+					const files = Array.from(new Glob(`raw/${name}_*.tbta.sqlite`).scanSync('.'))
+					files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
+					const latest = files.pop()
+
+					if (latest) console.warn(`[Orchestrator] Target language ${name} missing for ${date}, using: ${latest} instead.`)
+
+					return latest || ''
+				}),
+			)
+
+			return [english, ...language_args.filter(Boolean)]
 		},
 		async migration_output_file() {
 			return `raw/${this.key}_${date}.tabitha.sqlite`

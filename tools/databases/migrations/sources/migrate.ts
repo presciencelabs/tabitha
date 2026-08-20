@@ -1,3 +1,4 @@
+import { Glob } from 'bun'
 import Database from 'bun:sqlite'
 import { migrate_source_features } from './migrate_source_features'
 import { migrate_source_texts } from './migrate_source_texts'
@@ -29,7 +30,7 @@ tabitha_sources_db.run('PRAGMA journal_mode = WAL')
 
 migrate_source_texts(tabitha_sources_db, tbta_sources_from_input)
 
-const tbta_sample_db = new Database(`raw/Sample_${date}.tbta.sqlite`, { readwrite: true, create: false })
+const tbta_sample_db = new Database(await resolve_sample_db_path(date), { readwrite: true, create: false })
 migrate_source_features(tbta_sample_db, tabitha_sources_db)
 
 await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../data/status'), date)
@@ -37,3 +38,19 @@ await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../dat
 console.log(`[Sources migration] Optimizing ${tabitha_db_name}...`)
 tabitha_sources_db.run('VACUUM')
 console.log('[Sources migration] done.')
+
+async function resolve_sample_db_path(date: string): Promise<string> {
+	const exact_path = `raw/Sample_${date}.tbta.sqlite`
+	if (await Bun.file(exact_path).exists()) return exact_path
+
+	const files = Array.from(new Glob('raw/Sample_*.tbta.sqlite').scanSync('.'))
+	files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
+	const latest = files.pop()
+
+	if (!latest) {
+		throw new Error(`No Sample database found for ${date}, and no fallback Sample_*.tbta.sqlite file exists in raw/.`)
+	}
+
+	console.warn(`[Sources migration] ⚠️ Sample database missing for ${date}. Using fallback: ${latest}`)
+	return latest
+}
