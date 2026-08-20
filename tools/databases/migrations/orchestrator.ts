@@ -1,8 +1,11 @@
 import { $, Glob } from 'bun'
 import Database from 'bun:sqlite'
-import { cp, rename } from 'fs/promises'
-import { basename } from 'path'
+import { cp, mkdir, rename } from 'fs/promises'
+import { existsSync } from 'fs'
+import { basename, join } from 'path'
 import { parse, stringify } from 'comment-json'
+
+const AUDIENCE_NAME = 'Unchurched Adults'
 
 if (!Bun.which('sqlite3')) {
 	throw new Error('sqlite3 is not installed. Please install it and try again.')
@@ -21,7 +24,7 @@ if (!Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))
 }
 
 if (!Array.from(new Glob(`raw/Sources_Complex_${date}.tabitha.sqlite`).scanSync('.'))[0]) {
-	throw new Error(`No staged Sources_Complex database found for ${date}. A raw/Sources_Complex_${date}.tabitha.sqlite file (generated via "tbta_utils export-generated-cci --language English.sqlite ..." against this run's English database) must be manually placed in "raw/" before running this migration -- it is not staged automatically.`)
+	throw new Error(`No staged Sources_Complex database found for ${date}. This is normally generated automatically via "tbta_utils export-generated-cci" during staging -- if it's still missing, check that English.sqlite and Bible.sqlite were present in "${dir_w_tbta_dbs}" and that the tbta_utils step above succeeded.`)
 }
 
 const migration_dbs = Array.from(new Glob(`raw/*_${date}.tbta.sqlite`).scanSync('.'))
@@ -142,9 +145,13 @@ async function stage_tbta_files(working_dir: string) {
 		await rename(`${working_dir}/${file}`, `${working_dir}/${file.replace('.new', '.sqlite')}`)
 	}
 
+	await run_tbta_utils(working_dir)
+
 	const sqlite_files = Array.from(new Glob('*.sqlite').scanSync(working_dir))
 	console.log('[Orchestrator] attempting to stage the following:', sqlite_files)
 	await Promise.all(stage(sqlite_files))
+
+	await stage_win_files(working_dir)
 
 	function stage(db_names: string[]): Promise<void>[] {
 		return db_names
@@ -160,6 +167,9 @@ async function stage_tbta_files(working_dir: string) {
 		let dest = `./raw/${name}_${date}.tbta.sqlite`
 		if (name === 'Ontology') {
 			dest = derive_ontology_name()
+		}
+		if (name === 'Sources_Complex') {
+			dest = `./raw/Sources_Complex_${date}.tabitha.sqlite`
 		}
 
 		return { src, dest }
@@ -180,6 +190,52 @@ async function stage_tbta_files(working_dir: string) {
 			return `./raw/Ontology_${minor_version}_${date}.tabitha.sqlite`
 		}
 	}
+}
+
+async function stage_win_files(working_dir: string) {
+	const win_dest_dir = join(import.meta.dir, '../data/inflections/win')
+	await mkdir(win_dest_dir, { recursive: true })
+
+	const win_files = Array.from(new Glob('*.win.txt').scanSync(working_dir))
+	await Promise.all(win_files.map(async file => await cp(`${working_dir}/${file}`, `${win_dest_dir}/${file}`)))
+}
+
+// tbta_utils requires Sample.sqlite, Ontology.sqlite, and (for export-generated-cci) Bible.sqlite to be
+// present under those exact plain names in its working directory -- which is why this runs against
+// working_dir *before* those files get copied/renamed into raw/, since they're already sitting there
+// under their original TBTA export names at this point.
+async function run_tbta_utils(working_dir: string) {
+	const tbta_utils = resolve_tbta_utils_binary()
+
+	const has_english = await Bun.file(`${working_dir}/English.sqlite`).exists()
+	if (!has_english) {
+		console.warn('[Orchestrator] No English.sqlite found in the provided directory; skipping tbta_utils steps (Sources_Complex and inflections must already be staged, or this run will fail its upfront checks).')
+		return
+	}
+
+	console.log('[Orchestrator] Running tbta_utils export-lexical-forms...')
+	await $`${tbta_utils} export-lexical-forms --language English.sqlite --output-path ${working_dir}`.cwd(working_dir)
+
+	console.log('[Orchestrator] Running tbta_utils export-generated-cci (this processes the full Bible and can take ~10 minutes)...')
+	await $`${tbta_utils} export-generated-cci --language English.sqlite --audience-name ${AUDIENCE_NAME} --output-path ${working_dir}/Sources_Complex.sqlite`.cwd(working_dir)
+}
+
+function resolve_tbta_utils_binary(): string {
+	const platform_dirs: Record<string, string> = {
+		'darwin-arm64': 'darwin-arm64',
+	}
+	const key = `${process.platform}-${process.arch}`
+	const platform_dir = platform_dirs[key]
+	if (!platform_dir) {
+		throw new Error(`No tbta_utils binary is vendored for platform "${key}". Currently available: ${Object.keys(platform_dirs).join(', ')} (see tools/databases/tbta_utils/).`)
+	}
+
+	const binary_path = join(import.meta.dir, '../tbta_utils', platform_dir, 'tbta_utils')
+	if (!existsSync(binary_path)) {
+		throw new Error(`tbta_utils binary not found at ${binary_path}.`)
+	}
+
+	return binary_path
 }
 
 type D1_META = {
