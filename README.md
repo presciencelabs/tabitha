@@ -52,6 +52,8 @@ tabitha/
 │   └── dx/          # Setup wizard, doctor, dev server menu, D1 loaders & safe updater
 ├── tools/
 │   └── databases/   # SQLite snapshots, ETL migration pipeline & reference datasets
+├── docs/
+│   └── decisions/   # Architecture decision records — the "why" behind notable technical choices
 ├── pnpm-workspace.yaml
 ├── turbo.json
 └── package.json

@@ -81,6 +81,12 @@ graph TD
 | **`scripts/audits`** | Automated security scanners (`check_secrets.ts`), Cloudflare linters (`check_cloudflare.ts`), cookie & storage linters (`check_storage.ts`), philosophy rules (`check_philosophies.ts`), and badge sync (`check_readme_badges.ts`) along with colocated unit tests (`*.test.ts`). |
 | **`scripts/ci`** | CI/CD test coverage reporting (`report_coverage.ts`). |
 
+### Documentation (`docs/`)
+
+| Directory | Purpose |
+| --- | --- |
+| **`docs/decisions`** | Architecture Decision Records (ADRs) — the trade-offs considered and why we landed where we did on notable technical choices. See [`docs/decisions/README.md`](docs/decisions/README.md) for the format. |
+
 ---
 
 ## 🚀 Quick Setup for New Contributors
@@ -251,6 +257,13 @@ All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to elim
 
   export default tabithaConfig
   ```
+
+### How to Record an Architecture Decision
+
+When you make a choice where the "why" isn't obvious from the code alone — picking between two viable approaches, deliberately deferring a capability, or a convention a future contributor might second-guess — capture it as an ADR:
+
+1. Add `docs/decisions/NNNN-short-title.md`, numbered sequentially, following the format in [`docs/decisions/README.md`](docs/decisions/README.md) (Status, Context, Decision, Alternatives considered, Consequences).
+2. Link it from any related ADRs, and from PR/commit descriptions where relevant.
 
 ---
 
