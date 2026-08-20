@@ -20,7 +20,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Run Database Backup
-        run: bun run db_backup/index.ts
+        run: bun run migrations/backup/index.ts
         working-directory: tools/databases
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
