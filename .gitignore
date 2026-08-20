@@ -7,6 +7,9 @@ node_modules
 dist
 build
 
+# vite-plugin-pwa dev-mode service worker output
+dev-dist
+
 # Cloudflare
 .wrangler
 
