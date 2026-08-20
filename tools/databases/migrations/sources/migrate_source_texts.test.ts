@@ -78,9 +78,6 @@ describe('migrate_source_texts', () => {
 	})
 
 	it('derives the source type from the first underscore-delimited segment of the filename', () => {
-		// Real source filenames follow orchestrator.ts's `['Bible', 'CommunityDevelopmentTexts', 'GrammarIntroduction']`
-		// naming, i.e. no underscores before the date suffix -- so `Source.replaceAll('_', ' ')` in
-		// migrate_source_texts.ts never actually has anything to replace in practice.
 		const db = new Database(':memory:')
 		const path = make_tbta_source_db('CommunityDevelopmentTexts', [
 			{ table: 'Lesson1', reference: 'Lesson1 1:1', verse: 'Some community text.' },

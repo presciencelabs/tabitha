@@ -54,10 +54,7 @@ export function migrate_source_texts(tabitha_sources_db: Database, tbta_sources_
 			const valid_rows = tbta_data_rows_per_table.filter(({ Reference }) => !!Reference)
 
 			for (const [index, tbta_row] of valid_rows.entries()) {
-				const { Source, Reference, Verse, AnalyzedVerse, Notes } = tbta_row
-
-				// transforms something like "Community_Development_Texts" into "Community Development Texts"
-				const type = Source.replaceAll('_', ' ')
+				const { Source: type, Reference, Verse, AnalyzedVerse, Notes } = tbta_row
 
 				// Extract Book, Chapter, and Verse integers out of legacy reference strings -> (e.g. "Daniel 3:9" -> ["Daniel", "3", "9"])
 				const [, id_primary, id_secondary, id_tertiary] = /(.*) (\d+):(\d+)/.exec(Reference) ?? [undefined, '', 0, 0]
