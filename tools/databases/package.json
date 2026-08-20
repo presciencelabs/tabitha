@@ -8,6 +8,8 @@
     "check": "tsc --noEmit",
     "check:lint": "eslint .",
     "check:lint:fix": "eslint . --fix",
+    "test": "pnpm test:unit",
+    "test:unit": "LOG_LEVEL=quiet bun test migrations",
     "migrate": "bun migrations/orchestrator.ts",
     "migrate:auth": "bun migrations/auth/create.ts",
     "migrate:ontology": "bun migrations/ontology/migrate.ts",
