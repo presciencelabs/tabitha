@@ -33,7 +33,6 @@
 			return
 		}
 		localStorage.setItem('search_scope', scope)
-		console.info('search scope saved: ', scope)
 	}
 </script>
 

@@ -13,8 +13,6 @@
 	function store_settings() {
 		const setting_json = JSON.stringify(view_settings)
 		localStorage.setItem('source_view_settings', setting_json)
-
-		console.info('view settings saved: ', setting_json)
 	}
 </script>
 
