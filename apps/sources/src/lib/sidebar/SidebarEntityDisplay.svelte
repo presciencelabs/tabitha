@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageSourceEntity } from '$lib/types'
 	import { is_boundary_start } from '$lib/encoding/entity_filters'
-	import Punctuation from '$lib/entity_displays/Punctuation.svelte'
+	import { Punctuation } from '@tabitha/ui'
 
 	let { entity }: { entity: PageSourceEntity } = $props()
 </script>
@@ -10,10 +10,10 @@
 	{#if is_boundary_start(entity)}
 		{@const is_main_clause = entity.value === '{'}
 		<div class="inline-flex items-center pe-2">
-			<Punctuation source_entity={{ ...entity, value: '[' }} classes={is_main_clause ? 'text-7xl' : ''} />
+			<Punctuation source_entity={{ ...entity, value: '[' }} size={is_main_clause ? 'lg' : 'md'} />
 			<span class="font-semibold -ms-1">{entity.category_abbr}</span>
 			<span class="mx-2 tracking-widest">...</span>
-			<Punctuation source_entity={{ ...entity, value: ']' }} classes={is_main_clause ? 'text-7xl' : ''} />
+			<Punctuation source_entity={{ ...entity, value: ']' }} size={is_main_clause ? 'lg' : 'md'} />
 		</div>
 	{:else if entity.concept}
 		<div class="badge badge-lg rounded-full border-base-content badge-outline mx-1 py-5 text-md entity-{entity.category_abbr}">

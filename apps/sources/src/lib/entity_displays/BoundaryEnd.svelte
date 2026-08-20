@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageSourceEntity } from '$lib/types'
-	import Punctuation from './Punctuation.svelte'
+	import { Punctuation } from '@tabitha/ui'
 
 	let { source_entity }: { source_entity: PageSourceEntity } = $props()
 
@@ -8,5 +8,5 @@
 </script>
 
 <div class="inline-flex entity-{source_entity.boundary_category}">
-	<Punctuation source_entity={bracket_entity} classes={source_entity.value === '}' ? 'text-7xl' : ''} />
+	<Punctuation source_entity={bracket_entity} size={source_entity.value === '}' ? 'lg' : 'md'} />
 </div>

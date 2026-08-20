@@ -3,7 +3,7 @@
 	import Concept from './Concept.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
-	import Punctuation from './Punctuation.svelte'
+	import { Punctuation } from '@tabitha/ui'
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 
 	type IndexRange = [number, number]

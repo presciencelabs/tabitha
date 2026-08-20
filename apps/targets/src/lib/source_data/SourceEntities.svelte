@@ -3,7 +3,7 @@
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
-	import Punctuation from './Punctuation.svelte'
+	import { Punctuation } from '@tabitha/ui'
 
 	let { source_entities }: { source_entities: SourceEntity[] } = $props()
 
@@ -33,7 +33,11 @@
 	<div class="hover:bg-base-200">
 		{#each main_clause as source_entity}
 			{@const Component = get_component(source_entity)}
-			<Component {source_entity} />
+			{#if Component === Punctuation}
+				<Punctuation {source_entity} size="sm" />
+			{:else}
+				<Component {source_entity} />
+			{/if}
 		{/each}
 	</div>
 {/each}

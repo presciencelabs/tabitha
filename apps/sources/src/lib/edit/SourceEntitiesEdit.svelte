@@ -4,7 +4,7 @@
 	import Concept from '../entity_displays/Concept.svelte'
 	import BoundaryEnd from '../entity_displays/BoundaryEnd.svelte'
 	import BoundaryStart from '../entity_displays/BoundaryStart.svelte'
-	import Punctuation from '../entity_displays/Punctuation.svelte'
+	import { Punctuation } from '@tabitha/ui'
 	import InsertEntityContextMenu from './InsertEntityContextMenu.svelte'
 	import { is_boundary_end, is_boundary_start } from '$lib/encoding/entity_filters'
 	import { structure_entities } from '$lib/encoding/structured'
