@@ -3,6 +3,12 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
+// @sveltejs/adapter-cloudflare emulates platform bindings in dev via wrangler's
+// getPlatformProxy(), which logs "Using vars/secrets defined in .env..." at wrangler's
+// "log" level on every invocation. Quiet that down unless the developer has opted into
+// their own WRANGLER_LOG level (e.g. "debug" while diagnosing a bindings issue).
+process.env.WRANGLER_LOG ??= 'warn'
+
 /**
  * Creates standardized Vite configuration for Tabitha SvelteKit applications.
  *
