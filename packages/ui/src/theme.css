@@ -20,7 +20,7 @@
 		black,
 		bumblebee,
 		business,
-		canil,
+		CanIL,
 		caramellatte,
 		cmyk,
 		coffee,
@@ -55,7 +55,7 @@
 	 "light" theme unchanged, so this reads as "light, but on-brand" rather than a
 	 from-scratch palette. */
 @plugin "daisyui/theme" {
-	name: 'canil';
+	name: 'CanIL';
 	default: false;
 	prefersdark: false;
 	color-scheme: light;
