@@ -14,8 +14,10 @@ type DbInfo = {
 	[key: string]: string
 }
 
+const DB_NAME = 'Ontology'
+
 // get latest Ontology via wrangler
-const db_name = await get_latest_database_name('Ontology')
+const db_name = await get_latest_database_name(DB_NAME)
 
 // get dump (https://developers.cloudflare.com/workers/wrangler/commands/#d1-export)
 const dump_filename = `${db_name}.tabitha.sql`
@@ -25,7 +27,10 @@ log.step('Creating db from dump...')
 const db_from_dump = await create_db(dump_filename)
 
 log.step(`Uploading ${db_from_dump.filename} to R2...`)
-await $`wrangler r2 object put db-backups/${db_from_dump.filename} --file ${db_from_dump.filename} --content-disposition 'attachment; filename="Ontology.sqlite.new"' --remote`
+// content-disposition filename ends in ".new" so that a downloaded backup, dropped into the legacy
+// TBTA app's directory, triggers that app's upgrade cycle (see downloads/+page.svelte for the
+// download-side half of this: the link is cross-origin, so this header controls the saved filename)
+await $`wrangler r2 object put db-backups/${db_from_dump.filename} --file ${db_from_dump.filename} --content-disposition 'attachment; filename="${DB_NAME}.sqlite.new"' --remote`
 
 log.summary()
 
