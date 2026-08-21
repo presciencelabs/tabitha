@@ -8,8 +8,20 @@ export default create_app_vite_config({
 			registerType: 'prompt',
 			scope: '/',
 			base: '/',
-			// No manifest/icons yet, so skip installability for this pilot and scope it to caching.
-			manifest: false,
+			manifest: {
+				name: 'TaBiThA Sources',
+				short_name: 'Sources',
+				description: 'Source text analysis and semantic encoding explorer',
+				theme_color: '#d02031',
+				background_color: '#ffffff',
+				display: 'standalone',
+				start_url: '/',
+				icons: [
+					{ src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+					{ src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+					{ src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+				],
+			},
 			devOptions: {
 				enabled: true,
 				type: 'module',

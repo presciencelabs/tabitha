@@ -1,4 +1,5 @@
 export const themes = [
+	'canil',
 	'cupcake',
 	'nord',
 	'dracula',

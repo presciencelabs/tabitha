@@ -13,6 +13,8 @@
     "dev:sources": "pnpm --filter @tabitha/sources dev",
     "dev:targets": "pnpm --filter @tabitha/targets dev",
     "doctor": "bun scripts/dx/doctor.ts",
+    "gen:favicons": "bun scripts/dx/generate_favicons.ts",
+    "gen:manifest-icons": "bun scripts/dx/generate_manifest_icons.ts",
     "setup": "bun scripts/dx/setup.ts",
     "setup:env": "bun scripts/dx/setup_env.ts",
     "db:status": "bun scripts/dx/db_status.ts",
@@ -49,6 +51,7 @@
     "@playwright/test": "^1.62.1",
     "markdownlint-cli2": "^0.17.2",
     "rimraf": "^6.1.3",
+    "sharp": "^0.35.3",
     "turbo": "^2.10.10"
   }
 }

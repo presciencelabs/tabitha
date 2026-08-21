@@ -4,7 +4,7 @@
 	 classes used only in shared components like Brand.svelte and Header.svelte. Must be
 	 a plain relative path, not the package specifier '@tabitha/ui': that form resolves
 	 through the pnpm workspace symlink and silently fails to pick up new classes added
-	 after the first scan — verified with an isolated marker-class test. 
+	 after the first scan — verified with an isolated marker-class test.
 */
 @source '.';
 
@@ -20,6 +20,7 @@
 		black,
 		bumblebee,
 		business,
+		canil,
 		caramellatte,
 		cmyk,
 		coffee,
@@ -46,6 +47,46 @@
 		valentine,
 		winter,
 		wireframe;
+}
+
+/* TaBiThA's own theme: daisyUI's "light" theme with primary/primary-content swapped
+	 for CANIL's brand red and white (#d02031, sampled from canil.ca's favicon -- see
+	 scripts/dx/lib/brand_mark.ts). Every other token is copied from daisyUI's built-in
+	 "light" theme unchanged, so this reads as "light, but on-brand" rather than a
+	 from-scratch palette. */
+@plugin "daisyui/theme" {
+	name: 'canil';
+	default: false;
+	prefersdark: false;
+	color-scheme: light;
+	--color-base-100: oklch(100% 0 0);
+	--color-base-200: oklch(98% 0 0);
+	--color-base-300: oklch(95% 0 0);
+	--color-base-content: oklch(21% .006 285.885);
+	--color-primary: oklch(55.28% .207 23.5);
+	--color-primary-content: oklch(100% 0 0);
+	--color-secondary: oklch(65% .241 354.308);
+	--color-secondary-content: oklch(94% .028 342.258);
+	--color-accent: oklch(77% .152 181.912);
+	--color-accent-content: oklch(38% .063 188.416);
+	--color-neutral: oklch(14% .005 285.823);
+	--color-neutral-content: oklch(92% .004 286.32);
+	--color-info: oklch(74% .16 232.661);
+	--color-info-content: oklch(29% .066 243.157);
+	--color-success: oklch(76% .177 163.223);
+	--color-success-content: oklch(37% .077 168.94);
+	--color-warning: oklch(82% .189 84.429);
+	--color-warning-content: oklch(41% .112 45.904);
+	--color-error: oklch(71% .194 13.428);
+	--color-error-content: oklch(27% .105 12.094);
+	--radius-selector: .5rem;
+	--radius-field: .25rem;
+	--radius-box: .5rem;
+	--size-selector: .25rem;
+	--size-field: .25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
 }
 
 /* Complexity level colors, matching the legacy TBTA app per user request (commit

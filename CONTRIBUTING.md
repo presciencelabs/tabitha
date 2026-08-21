@@ -77,7 +77,7 @@ graph TD
 | Directory | Purpose |
 | --- | --- |
 | **`tools/databases`** | Point-in-time SQLite snapshot dumps (`snapshots/`), source datasets (`data/`), and TBTA-to-TaBiThA ETL migrations (`migrations/`). |
-| **`scripts/dx`** | Developer experience, database loading, and maintenance scripts: setup wizard (`setup.ts`), environment generator (`setup_env.ts`), doctor (`doctor.ts`), server menu (`dev_menu.ts`), D1 snapshot loader (`db_load.ts`), D1 inspector (`db_status.ts`), and safe updater (`update_safe.ts`). |
+| **`scripts/dx`** | Developer experience, database loading, and maintenance scripts: setup wizard (`setup.ts`), environment generator (`setup_env.ts`), doctor (`doctor.ts`), server menu (`dev_menu.ts`), D1 snapshot loader (`db_load.ts`), D1 inspector (`db_status.ts`), safe updater (`update_safe.ts`), favicon generator (`generate_favicons.ts`), and PWA manifest icon generator (`generate_manifest_icons.ts`). |
 | **`scripts/audits`** | Automated security scanners (`check_secrets.ts`), Cloudflare linters (`check_cloudflare.ts`), cookie & storage linters (`check_storage.ts`), philosophy rules (`check_philosophies.ts`), and badge sync (`check_readme_badges.ts`) along with colocated unit tests (`*.test.ts`). |
 | **`scripts/ci`** | CI/CD test coverage reporting (`report_coverage.ts`). |
 
@@ -257,6 +257,27 @@ All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to elim
 
   export default tabithaConfig
   ```
+
+### How to Generate an App's Icons
+
+Every app's favicon and PWA manifest icons are generated, not hand-drawn: a shared brand mark (CANIL red, the app's initial letter, a small "T" for TaBiThA) is defined once in `scripts/dx/lib/brand_mark.ts` and rendered by two scripts.
+
+1. Add the new app's initial letter to `APP_LETTERS` in `scripts/dx/lib/brand_mark.ts`.
+2. Run `pnpm gen:favicons` to write `apps/<app>/static/favicon.svg`, then reference it from `app.html`:
+
+   ```html
+   <link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
+   ```
+
+3. Run `pnpm gen:manifest-icons` to write `apps/<app>/static/icon-192.png`, `icon-512.png`, and `icon-maskable-512.png`, then reference the 192px one for iOS home-screen installs:
+
+   ```html
+   <link rel="apple-touch-icon" href="%sveltekit.assets%/icon-192.png" />
+   ```
+
+4. If the app is on `@vite-pwa/sveltekit`, point its `manifest.icons` at the three generated files (see `apps/ontology/vite.config.js` for a complete example) instead of leaving `manifest: false`.
+
+Only the letter needs choosing per app — color, shape, and sizing are shared, so the same two commands work for every app added to the monorepo.
 
 ### How to Record an Architecture Decision
 
