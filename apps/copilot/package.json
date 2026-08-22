@@ -24,7 +24,7 @@
     "clean:powerwash": "(pnpm clean:svelte & pnpm clean:node) && pnpm install"
   },
   "dependencies": {
-    "@google/genai": "^1.52.0",
+    "@google/genai": "^2.17.1",
     "@sveltejs/kit": "^2.70.2",
     "@tabitha/api-client": "workspace:*",
     "@tabitha/types": "workspace:*",
