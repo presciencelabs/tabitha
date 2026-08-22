@@ -2,9 +2,8 @@ import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { create_targets_client } from '@tabitha/api-client'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/token'
-import type { Token } from '@tabitha/types'
+import type { Token, LookupResult } from '$lib/types'
 import type { LexicalFormResult } from '$lib/lookups/types'
-import type { LookupResult } from '$lib/types'
 
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 

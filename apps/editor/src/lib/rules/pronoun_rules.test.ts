@@ -3,7 +3,7 @@ import { PRONOUN_TAGS, PRONOUN_RULES } from './pronoun_rules'
 import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '../token'
 import { apply_rules } from './rules_processor'
 import { expect_error_to_match } from '$lib/test_helps'
-import type { Sentence, Token } from '@tabitha/types'
+import type { Sentence, Token } from '$lib/types'
 
 function create_tokens(tokens: string[]): Token[] {
 	return tokens.map(token => create_token(token, TOKEN_TYPE.LOOKUP_WORD))

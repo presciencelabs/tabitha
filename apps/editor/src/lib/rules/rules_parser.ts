@@ -1,5 +1,6 @@
 import { TOKEN_TYPE, set_message, token_has_tag } from '$lib/token'
-import type { MessageInfo, Tag, Token, TokenType } from '@tabitha/types'
+import type { Tag, TokenType } from '@tabitha/types'
+import type { MessageInfo, Token } from '$lib/types'
 import type {
 	BuiltInRule,
 	ContextFilterResult,

@@ -4,11 +4,10 @@ import type {
 	CategoryName,
 	EntityFeature,
 	PairingType,
-	Sentence,
 	SimpleSourceEntity,
 	SourceConcept,
-	Token,
 } from '@tabitha/types'
+import type { Sentence, Token } from '$lib/types'
 
 export function entityfy(sentences: Sentence[]): SimpleSourceEntity[] {
 	return entityfy_tokens(sentences.map(sentence => sentence.clause))

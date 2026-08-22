@@ -2,7 +2,8 @@ import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, simple_rule_action, from_built_in_rule } from './rules_parser'
-import type { Token, TokenType } from '@tabitha/types'
+import type { TokenType } from '@tabitha/types'
+import type { Token } from '$lib/types'
 import type { BuiltInRule } from '$lib/rules/types'
 
 /**

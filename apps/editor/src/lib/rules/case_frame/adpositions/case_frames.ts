@@ -1,6 +1,6 @@
 import { parse_case_frame_rule, parse_sense_rules } from '../common'
 import { by_relative_context, head_noun, head_noun_post, opening_subordinate_clause } from './presets'
-import type { Token } from '@tabitha/types'
+import type { Token, LookupResult } from '$lib/types'
 import type {
 	AdpositionRoleTag,
 	ArgumentRoleRule,
@@ -12,7 +12,6 @@ import type {
 	WordSense,
 	WordStem,
 } from '$lib/rules/case_frame/types'
-import type { LookupResult } from '$lib/types'
 
 const default_adposition_usage_json: RoleRuleJson<AdpositionRoleTag> = {
 	'opening_subordinate_clause': opening_subordinate_clause(),

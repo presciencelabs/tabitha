@@ -134,29 +134,3 @@ export type LookupWord = {
 	stem: string
 	part_of_speech: string
 }
-
-export type CaseFrame = {
-	rules?: unknown[]
-	usage?: {
-		possible_roles: string[]
-		required_roles: string[]
-	}
-	result?: {
-		status: string
-		valid_arguments?: unknown[]
-		extra_arguments?: unknown[]
-		missing_arguments?: string[]
-	}
-	[key: string]: unknown
-}
-
-export type LookupResult<TCaseFrame = CaseFrame> = LookupWord & {
-	form: string
-	sense: string
-	level: number
-	gloss: string
-	categorization: string
-	ontology_status: OntologyStatus
-	how_to_entries: HowToEntry[]
-	case_frame: TCaseFrame
-}

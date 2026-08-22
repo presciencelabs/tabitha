@@ -9,15 +9,13 @@ import type {
 	CheckResponse,
 	CheckStatus,
 	Message,
-	Sentence,
 	SimpleCaseFrame,
 	SimpleLookupResult,
 	SimpleRoleArgResult,
 	SimpleToken,
-	Token,
 } from '@tabitha/types'
 import type { CaseFrame, RoleMatchResult } from '$lib/rules/case_frame/types'
-import type { LookupResult } from '$lib/types'
+import type { LookupResult, Sentence, Token } from '$lib/types'
 
 export async function GET({ url: { searchParams } }: RequestEvent) {
 	const text = searchParams.get('text') ?? ''

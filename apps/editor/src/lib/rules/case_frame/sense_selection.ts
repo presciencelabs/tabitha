@@ -1,7 +1,7 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { add_tag_to_token, set_message, split_stem_and_sense } from '$lib/token'
 import { create_context_filter, create_token_filter } from '../rules_parser'
-import type { Token } from '@tabitha/types'
+import type { Token } from '$lib/types'
 import type {
 	ArgumentMatchFilter,
 	PriorityOverrideRule,

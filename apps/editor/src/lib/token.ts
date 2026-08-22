@@ -3,14 +3,11 @@ import { REGEXES } from '$lib/regexes'
 import type {
 	HowToEntry,
 	Message,
-	MessageInfo,
 	MessageLabel,
 	MessageType,
 	OntologyStatus,
 	PairingType,
-	Sentence,
 	Tag,
-	Token,
 	TokenBase,
 	TokenType,
 } from '@tabitha/types'
@@ -21,7 +18,7 @@ import type {
 	RoleTag,
 } from '$lib/rules/case_frame/types'
 import type { RuleTriggerContext } from '$lib/rules/types'
-import type { LookupResult } from '$lib/types'
+import type { LookupResult, MessageInfo, Sentence, Token } from '$lib/types'
 
 export const TOKEN_TYPE = {
 	PUNCTUATION: 'Punctuation',

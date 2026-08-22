@@ -35,8 +35,6 @@ export type {
 	OntologyChange,
 	LookupTerm,
 	LookupWord,
-	LookupResult,
-	CaseFrame,
 } from '@tabitha/types'
 
 export type DbRowExample = {

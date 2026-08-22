@@ -4,8 +4,8 @@ import { apply_rules } from './rules_processor'
 import { describe, expect, test } from 'vitest'
 import { CHECKER_RULES } from './checker_rules'
 import { expect_error, expect_message_to_match, expect_no_message } from '$lib/test_helps'
-import type { OntologyStatus, PairingType, Sentence, Tag, Token } from '@tabitha/types'
-import type { LookupResult } from '$lib/types'
+import type { OntologyStatus, PairingType, Tag } from '@tabitha/types'
+import type { Sentence, Token, LookupResult } from '$lib/types'
 
 function create_pairing_token(left: Token, right: Token, pairing_type: PairingType = 'complex'): Token {
 	left.pairing = right

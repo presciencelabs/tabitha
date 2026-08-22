@@ -1,4 +1,4 @@
-import type { HowToEntry, LookupResult, LookupTerm, LookupWord, OntologyStatus } from './ontology'
+import type { HowToEntry, LookupWord, OntologyStatus } from './ontology'
 import type { CategoryName, EntityFeature, NounListEntry, SourceConcept } from './source'
 
 export type TokenType =
@@ -27,36 +27,12 @@ export type Message = MessageType & {
 	rule_id: string
 }
 
-export type MessageInfo = {
-	token_to_flag?: Token
-	plain?: boolean
-} & {
-	[key in MessageLabel]?: string
-}
-
 export type TokenBase = {
 	token: string
 	type: TokenType
 	tag: Tag
 	messages: Message[]
 	applied_rules: string[]
-}
-
-export type Token = TokenBase & {
-	specified_sense: string
-	lookup_terms: LookupTerm[]
-	lookup_results: LookupResult[]
-	pairing: Token | null
-	pairing_type: PairingType
-	pronoun: Token | null
-	sub_tokens: Token[]
-}
-
-export type Clause = Token
-export type Phrase = Token
-
-export type Sentence = {
-	clause: Clause
 }
 
 export type RoleTag = string

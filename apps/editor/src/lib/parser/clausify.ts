@@ -1,7 +1,7 @@
 import { REGEXES } from '$lib/regexes'
 import { ERRORS } from './error_messages'
 import { TOKEN_TYPE, create_clause_token, create_added_token, flatten_sentence, MESSAGE_TYPE, set_message_plain } from '../token'
-import type { Clause, Sentence, Token } from '@tabitha/types'
+import type { Clause, Sentence, Token } from '$lib/types'
 
 export function clausify(tokens: Token[]): Sentence[] {
 	if (tokens.length === 0) {

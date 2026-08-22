@@ -2,7 +2,8 @@ import { describe, expect, test } from 'vitest'
 import { TOKEN_TYPE, create_clause_token, create_added_token, create_token, MESSAGE_TYPE } from '../token'
 import { ERRORS } from './error_messages'
 import { clausify, flatten_sentences } from './clausify'
-import type { Sentence, Token, TokenType } from '@tabitha/types'
+import type { TokenType } from '@tabitha/types'
+import type { Sentence, Token } from '$lib/types'
 
 function create_tokens(tokens: string[]): Token[] {
 	const type = (token: string): TokenType => token.length > 1 ? TOKEN_TYPE.LOOKUP_WORD : TOKEN_TYPE.PUNCTUATION

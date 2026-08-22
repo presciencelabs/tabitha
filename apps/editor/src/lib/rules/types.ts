@@ -1,5 +1,5 @@
-import type { Token, TokenType, Tag, MessageLabel } from '@tabitha/types'
-import type { LookupResult } from '$lib/types'
+import type { TokenType, Tag, MessageLabel } from '@tabitha/types'
+import type { Token, LookupResult } from '$lib/types'
 
 export type TokenFilter = (token: Token) => boolean
 export type LookupFilter = (concept: LookupResult) => boolean

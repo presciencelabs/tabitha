@@ -2,7 +2,7 @@ import { TOKEN_TYPE } from '$lib/token'
 import { rules_applier } from '$lib/rules'
 import { phrasify } from '$lib/parser/phrasify'
 import { BT_STRUCTURAL_RULES } from './structural_rules'
-import type { Sentence, Token } from '@tabitha/types'
+import type { Sentence, Token } from '$lib/types'
 
 export function backtranslate(sentences: Sentence[]): string {
 	const cleaned = remove_some_gap_tokens(sentences)

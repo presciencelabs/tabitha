@@ -6,7 +6,7 @@ import { get_verb_case_frame_rules, get_passive_verb_case_frame_rules } from './
 import { get_adposition_case_frame_rules } from './adpositions/case_frames'
 import { initialize_case_frame_rules, check_case_frames, check_pairing_case_frames } from './common'
 import { fill_interrogative_gap, fill_relative_clause_gap, fill_same_subject_gap, handle_be_interrogative, restore_ghost_tokens } from './gap_handling'
-import type { Token } from '@tabitha/types'
+import type { Token } from '$lib/types'
 import type { CaseFrameRuleInfo } from '$lib/rules/case_frame/types'
 import type { BuiltInRule } from '$lib/rules/types'
 
