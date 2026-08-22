@@ -2,6 +2,7 @@ export const themes = [
 	'light',
 	'dark',
 	'CanIL',
+	'CanIL Dark',
 	'cupcake',
 	'nord',
 	'dracula',
@@ -46,6 +47,7 @@ export type Theme = (typeof themes)[number]
 const daisyui_theme_names: Partial<Record<Theme, string>> = {
 	reformation: 'halloween',
 	vespers: 'abyss',
+	'CanIL Dark': 'CanILDark',
 }
 
 export function to_daisyui_theme(theme: string): string {

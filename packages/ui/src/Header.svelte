@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Brand from './Brand.svelte'
-	import Status from './Status.svelte'
+	import Status from './connectivity/Status.svelte'
 
 	interface Props {
 		app: string

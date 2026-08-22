@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Brand from './Brand.svelte'
-	import ThemeSelector from './ThemeSelector.svelte'
+	import ThemeSelector from './themes/ThemeSelector.svelte'
 
 	interface AppLink {
 		name: string

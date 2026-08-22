@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import ThemeSelector from './ThemeSelector.svelte'
+	import ThemeSelector from './themes/ThemeSelector.svelte'
 	import UpdateToast from './UpdateToast.svelte'
 
 	interface Props {
