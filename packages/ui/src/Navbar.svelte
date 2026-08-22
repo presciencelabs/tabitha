@@ -3,13 +3,13 @@
 	import Brand from './Brand.svelte'
 	import ThemeSelector from './themes/ThemeSelector.svelte'
 
-	interface AppLink {
+	type AppLink = {
 		name: string
 		href: string
 		active?: boolean
 	}
 
-	interface Props {
+	type Props = {
 		current_app: 'Ontology' | 'Sources' | 'Targets' | 'Editor' | 'Copilot'
 		links?: AppLink[]
 		children?: Snippet

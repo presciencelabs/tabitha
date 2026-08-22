@@ -3,7 +3,7 @@
 	import Brand from './Brand.svelte'
 	import Status from './connectivity/Status.svelte'
 
-	interface Props {
+	type Props = {
 		app: string
 		children?: Snippet
 	}

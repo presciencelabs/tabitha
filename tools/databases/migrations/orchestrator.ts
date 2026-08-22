@@ -3,7 +3,6 @@ import Database from 'bun:sqlite'
 import { cp, mkdir, rename } from 'fs/promises'
 import { existsSync } from 'fs'
 import { basename, join } from 'path'
-import { parse, stringify } from 'comment-json'
 import { create_logger } from './log'
 import { load_state, mark_done, clear_state } from './state'
 import { validate_migration_output, type ValidationConfig } from './validate'
@@ -311,48 +310,3 @@ function resolve_tbta_utils_binary(): string {
 	return binary_path
 }
 
-type D1_META = {
-	binding: string
-	database_name: string
-	database_id: string
-}
-function extract_new_db_info(output: string): D1_META {
-	// example output:
-	//
-	// ⛅️ wrangler 4.42.0
-	// ───────────────────
-	// ✅ Successfully created DB 'Sources_2025-10-05' in region ENAM
-	// Created your new D1 database.
-	//
-	// To access your new D1 Database in your Worker, add the following snippet to your configuration file:
-	// {
-	// 	"d1_databases": [
-	// 		{
-	// 			"binding": "Sources_2025_10_05",
-	// 			"database_name": "Sources_2025-10-05",
-	// 			"database_id": "90ccd9c5-37ee-4b83-9fca-3811ce0ca010"
-	// 		}
-	// 	]
-	// }
-	// ? Would you like Wrangler to add it on your behalf ?
-	// 🤖 Using fallback value in non - interactive context: no
-	const JSON_OBJECT = /^{.*^}/ms
-
-	const match = output.match(JSON_OBJECT)
-	if (!match) throw new Error('Could not find D1 database JSON in wrangler output')
-
-	return JSON.parse(match[0]).d1_databases[0]
-}
-
-async function update_deployment_config(config_path: string, new_db_info: D1_META, binding: string) {
-	const raw_cfg = await Bun.file(config_path).text()
-	const wrangler_cfg = parse(raw_cfg) as unknown as { d1_databases: D1_META[] }
-
-	const index = wrangler_cfg.d1_databases.findIndex((db: D1_META) => db.binding === binding)
-	if (index !== -1) {
-		wrangler_cfg.d1_databases[index].database_name = new_db_info.database_name
-		wrangler_cfg.d1_databases[index].database_id = new_db_info.database_id
-
-		return Bun.write(config_path, stringify(wrangler_cfg, null, 3))
-	}
-}

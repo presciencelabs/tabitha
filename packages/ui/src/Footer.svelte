@@ -3,7 +3,7 @@
 	import ThemeSelector from './themes/ThemeSelector.svelte'
 	import UpdateToast from './UpdateToast.svelte'
 
-	interface Props {
+	type Props = {
 		colors?: string
 		children?: Snippet
 		needs_refresh?: boolean

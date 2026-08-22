@@ -40,7 +40,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 		// "Target_EB_Revelations" (same for "Target_EB_Psalms" / "Target_EB_Psalm"), with identical verse
 		// content in both. Skip the legacy-named ones so their rows aren't migrated twice under the same book.
 		const tbta_tablenames_for_bible_books = all_table_names.filter(table_name =>
-			!['Target_EB_Revelations', 'Target_EB_Psalm'].includes(table_name)
+			!['Target_EB_Revelations', 'Target_EB_Psalm'].includes(table_name),
 		)
 
 

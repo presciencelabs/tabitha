@@ -2,7 +2,7 @@
 	import { set_theme, theme_state } from './theme.svelte'
 	import themes, { to_daisyui_theme } from './themes'
 
-	interface Props {
+	type Props = {
 		colors?: string
 	}
 
