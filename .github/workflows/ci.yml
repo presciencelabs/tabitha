@@ -54,6 +54,9 @@ jobs:
         run: pnpm check:md
         continue-on-error: true
 
+      - name: Undeclared CLI Dependency Audit (changed packages, Blocking)
+        run: pnpm check:deps
+
   production_build:
     name: 📦 Production Bundle Build (Blocking)
     runs-on: ubuntu-latest

@@ -4,6 +4,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { sync_readme_badges } from '../audits/check_readme_badges'
+import { scan_missing_bin_deps } from '../audits/check_missing_bin_deps'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
@@ -158,7 +159,25 @@ async function run_safe_update() {
 		console.warn('   ⚠️  Could not synchronize README badges:', err?.message || err)
 	}
 
-	// 8. Automated Post-Update Health Verification Gate
+	// 8. Full-Repo Undeclared CLI Dependency Sweep
+	// CI's `check:deps` step only scans packages touched by a given diff, so it never nags a
+	// dev about an unrelated package -- but that also means an existing gap (like a package
+	// that already shells out to a CLI it never declared) can sit undetected until someone
+	// happens to touch that package. This unscoped sweep runs the same check across every
+	// workspace package to catch that class of drift on a maintenance cadence instead.
+	console.log('🔧 Sweeping the full workspace for undeclared CLI dependencies...')
+	try {
+		const { scanned, findings } = await scan_missing_bin_deps({ all: true })
+		if (findings.length === 0) {
+			console.log(`   ✓ All ${scanned.length} workspace package(s) declare every CLI they shell out to.\n`)
+		} else {
+			console.warn(`   ⚠️  Found ${findings.length} undeclared CLI dependenc(y/ies) -- run "pnpm check:deps -- --all" for details.\n`)
+		}
+	} catch (err: any) {
+		console.warn('   ⚠️  Could not complete the undeclared CLI dependency sweep:', err?.message || err)
+	}
+
+	// 9. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
 	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')
