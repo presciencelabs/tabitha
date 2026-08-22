@@ -148,11 +148,18 @@ export async function load_database(target_app: string = 'all') {
 					copy_database_safely(target_db, alt_db_path)
 				}
 
+				// These aren't sha256(database_id) or any other derivable value -- Miniflare's local D1
+				// file-naming for getPlatformProxy() (what vite dev/adapter-cloudflare actually use) doesn't
+				// match wrangler d1 execute's own resolution, and neither is documented. Re-derive a stale
+				// entry by adding a temporary script that calls getPlatformProxy() for the affected app,
+				// queries the binding, and cross-references the returned rows against
+				// `find .wrangler/state/v3/d1/miniflare-D1DatabaseObject/*.sqlite -exec sqlite3 {} "select
+				// name from sqlite_master where type='table'" \;` to find which physical file it's reading.
 				const known_workerd_hashes: Record<string, string> = {
 					'Targets': '2d5f513e6b9e5b68d83ec617ff25803295d2a2106bd2a797052b5b82015a040a',
 					'Sources': '7ffa3fdd72032bbd696dd3d8682a80bbf4f3c9c03c71d125a2238239e2fe6bce',
 					'Ontology': '7f0590b8bc24ed7dd19340f22195c999e7128818bf7529ba1b9a0c0dad3c0a34',
-					'Auth': '181ea28918b1425c38047bc6e0c62f50d16f238f1931aa5b25ebaf6e085a4c5b',
+					'Auth': '81c562e827d1d0232fdf5e68ed6b3e2aa51159b8bc813151c2bb36f63989ffb3',
 				}
 
 				const prefix = db_name.split('_')[0]
