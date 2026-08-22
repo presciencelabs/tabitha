@@ -25,9 +25,9 @@
     "@tabitha/tsconfig": "workspace:*",
     "@tabitha/types": "workspace:*",
     "@types/bun": "^1.3.14",
-    "@types/node": "^22.20.1",
+    "@types/node": "^26.2.0",
     "eslint": "^10.8.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "wrangler": "^4.123.0"
   }
 }
