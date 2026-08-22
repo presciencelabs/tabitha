@@ -19,22 +19,6 @@
   - **Query Params:** `text` (`string`, required) — Raw text or encoding.
   - **Example:** `/analyze?text=Paul+write-01`
 
-### 3. AI Assist Generation API
-
-- `POST /ai-assist/generate` — Generates AI completions for semantic encoding assistance.
-  - **Request Body:**
-
-    ```json
-    {
-      "message": "User prompt or encoding context",
-      "temperature": 0.7,
-      "frequency_penalty": 0,
-      "presence_penalty": 0
-    }
-    ```
-
-  - **Response:** `{ "finish_reason": "stop", "message": "Generated response..." }`
-
 ---
 
 ## Local Development

@@ -120,9 +120,6 @@ importers:
 
   apps/editor:
     dependencies:
-      '@google/genai':
-        specifier: ^1.52.0
-        version: 1.52.0(supports-color@10.2.2)
       '@iconify/svelte':
         specifier: ^5.2.2
         version: 5.2.2(svelte@5.56.9(@typescript-eslint/types@8.67.0))
