@@ -344,6 +344,30 @@ interface FetchConceptOptions {
 
 ---
 
+## 🔐 Reserve Secret Storage for Genuinely Sensitive Values
+
+Repo-wide convention: secret-style storage should hold only genuinely sensitive values. Secrets
+are write-only -- nobody, not even repo/org admins, can ever read one back once set -- so
+storing non-sensitive config there costs auditability for nothing. Two applications in this
+monorepo:
+
+- **GitHub Actions**: secrets (`secrets.NAME`) are for real credentials (API tokens, etc.).
+  Everything else (account IDs, region names, feature flags) belongs in a repository
+  **variable** instead (`vars.NAME`, managed via Settings → Secrets and variables → Actions →
+  Variables, or `gh variable set`).
+- **Local env files**: a workspace package's committed `.env` should declare every var it
+  needs, but only ever hold real values for the non-sensitive ones -- secrets stay as empty
+  stubs there, documenting that the key exists without exposing a value. The real secret
+  values go in `.env.local`, which is gitignored and never committed. Both Vite (`apps/*`) and
+  Bun (`tools/*`, `scripts/*`) natively load `.env` then `.env.local` on top of it, so a
+  non-empty value in `.env.local` overrides the empty stub for the same key with no extra
+  tooling required.
+
+Either way, a developer should be able to tell at a glance -- from the checked-in file alone,
+without needing to open a vault -- which values are actually sensitive.
+
+---
+
 ## ⚡ 1-Command Verification Gate
 
 Before submitting any code changes, ensure the entire repository passes the standard verification gate:

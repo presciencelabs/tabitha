@@ -16,8 +16,8 @@ dev-dist
 # Turborepo
 .turbo
 
-# Environment variables
-.env
+# Environment variables -- .env itself is a committed template (public vars + empty secret
+# stubs); only the .local variants (which hold real secret values) are gitignored.
 .env.local
 .env.*.local
 *.local
