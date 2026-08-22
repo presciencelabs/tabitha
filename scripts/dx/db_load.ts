@@ -1,14 +1,16 @@
 import { readdir } from 'node:fs/promises'
-import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createHash } from 'node:crypto'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { createRequire } from 'node:module'
+import { createHash, randomBytes } from 'node:crypto'
 import { execSync } from 'node:child_process'
 import { strip_jsonc_comments } from '../../packages/types/src/index'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 const snapshots_dir = join(root_dir, 'tools/databases/snapshots')
+const workerd_hash_cache_path = join(root_dir, 'tools/databases/.d1-workerd-hash-cache.json')
 
 interface D1DatabaseEntry {
 	binding?: string
@@ -50,6 +52,75 @@ async function find_latest_snapshot(prefix: string): Promise<string | null> {
 		.filter(f => f.startsWith(prefix) && f.endsWith('.sql'))
 		.sort()
 	return matching.length > 0 ? join(snapshots_dir, matching[matching.length - 1]) : null
+}
+
+function read_workerd_hash_cache(): Record<string, string> {
+	if (!existsSync(workerd_hash_cache_path)) return {}
+	try {
+		return JSON.parse(readFileSync(workerd_hash_cache_path, 'utf-8'))
+	} catch {
+		return {}
+	}
+}
+
+function write_workerd_hash_cache(cache: Record<string, string>) {
+	writeFileSync(workerd_hash_cache_path, JSON.stringify(cache, null, '\t') + '\n')
+}
+
+// Miniflare's local D1 storage is a Durable Object (uniqueKey "miniflare-D1DatabaseObject" for every
+// database) whose on-disk file name comes from workerd's native idFromName(database_id) derivation --
+// an internal, undocumented algorithm with no JS-reachable implementation. Rather than guess it, boot
+// the app's own installed wrangler via getPlatformProxy() (the same mechanism vite dev/adapter-cloudflare
+// use) and write a uniquely-named marker table through each binding, then scan the state dir's existing
+// .sqlite files to see which one picked it up. (A "which file is new" diff doesn't work here: the real
+// file is almost always already sitting in the state dir from a previous `vite dev` run.)
+async function resolve_workerd_hashes(
+	config: AppConfig,
+	entries: D1DatabaseEntry[],
+	d1_state_dir: string,
+): Promise<Record<string, string>> {
+	const require_from_app = createRequire(join(config.app_dir, 'package.json'))
+	const wrangler_entry = require_from_app.resolve('wrangler')
+	const { getPlatformProxy } = await import(pathToFileURL(wrangler_entry).href)
+
+	const proxy = await getPlatformProxy({
+		configPath: config.wrangler_path,
+		// getPlatformProxy()'s default persist path is relative to process.cwd(), not to configPath's
+		// directory -- since this script always runs from the repo root, that default would silently
+		// create/read a separate, wrong `.wrangler/state` at the repo root instead of the app's own.
+		persist: { path: join(config.app_dir, '.wrangler', 'state', 'v3') },
+	})
+	const resolved: Record<string, string> = {}
+	try {
+		for (const d1 of entries) {
+			if (!d1.binding) continue
+			const marker = `_tabitha_resolve_${randomBytes(8).toString('hex')}`
+			await proxy.env[d1.binding].exec(`CREATE TABLE "${marker}" (x INTEGER);`)
+
+			const candidates = existsSync(d1_state_dir)
+				? (await readdir(d1_state_dir)).filter(f => f.endsWith('.sqlite') && f !== 'metadata.sqlite')
+				: []
+			const match = candidates.find(f => {
+				try {
+					const found = execSync(
+						`sqlite3 "${join(d1_state_dir, f)}" "SELECT name FROM sqlite_master WHERE type='table' AND name='${marker}';"`,
+						{ encoding: 'utf-8' },
+					).trim()
+					return found === marker
+				} catch {
+					return false
+				}
+			})
+			if (!match) {
+				console.warn(`   ⚠️  Could not resolve Miniflare storage file for binding "${d1.binding}"`)
+				continue
+			}
+			resolved[d1.database_id] = match.slice(0, -'.sqlite'.length)
+		}
+	} finally {
+		await proxy.dispose()
+	}
+	return resolved
 }
 
 function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
@@ -96,6 +167,18 @@ export async function load_database(target_app: string = 'all') {
 			execSync(`sqlite3 "${metadata_db_path}" "CREATE TABLE IF NOT EXISTS _cf_ALARM (actor_id TEXT PRIMARY KEY, scheduled_time INTEGER, actor_name TEXT) WITHOUT ROWID;"`, {
 				stdio: 'ignore',
 			})
+		}
+
+		const workerd_hash_cache = read_workerd_hash_cache()
+		const needs_resolution = wrangler.d1_databases.filter(d1 => {
+			const cached = workerd_hash_cache[d1.database_id]
+			return !cached || !existsSync(join(d1_state_dir, `${cached}.sqlite`))
+		})
+		if (needs_resolution.length > 0) {
+			console.log(`   🔍 Resolving Miniflare storage file(s) for: ${needs_resolution.map(d => d.binding || d.database_name).join(', ')}...`)
+			const resolved = await resolve_workerd_hashes(config, needs_resolution, d1_state_dir)
+			Object.assign(workerd_hash_cache, resolved)
+			write_workerd_hash_cache(workerd_hash_cache)
 		}
 
 		for (const d1 of wrangler.d1_databases) {
@@ -148,22 +231,7 @@ export async function load_database(target_app: string = 'all') {
 					copy_database_safely(target_db, alt_db_path)
 				}
 
-				// These aren't sha256(database_id) or any other derivable value -- Miniflare's local D1
-				// file-naming for getPlatformProxy() (what vite dev/adapter-cloudflare actually use) doesn't
-				// match wrangler d1 execute's own resolution, and neither is documented. Re-derive a stale
-				// entry by adding a temporary script that calls getPlatformProxy() for the affected app,
-				// queries the binding, and cross-references the returned rows against
-				// `find .wrangler/state/v3/d1/miniflare-D1DatabaseObject/*.sqlite -exec sqlite3 {} "select
-				// name from sqlite_master where type='table'" \;` to find which physical file it's reading.
-				const known_workerd_hashes: Record<string, string> = {
-					'Targets': '2d5f513e6b9e5b68d83ec617ff25803295d2a2106bd2a797052b5b82015a040a',
-					'Sources': '7ffa3fdd72032bbd696dd3d8682a80bbf4f3c9c03c71d125a2238239e2fe6bce',
-					'Ontology': '7f0590b8bc24ed7dd19340f22195c999e7128818bf7529ba1b9a0c0dad3c0a34',
-					'Auth': '81c562e827d1d0232fdf5e68ed6b3e2aa51159b8bc813151c2bb36f63989ffb3',
-				}
-
-				const prefix = db_name.split('_')[0]
-				const workerd_hash = known_workerd_hashes[prefix]
+				const workerd_hash = workerd_hash_cache[db_id]
 				if (workerd_hash) {
 					const workerd_db_path = join(d1_state_dir, `${workerd_hash}.sqlite`)
 					copy_database_safely(target_db, workerd_db_path)
