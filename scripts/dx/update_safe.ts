@@ -143,10 +143,23 @@ async function run_safe_update() {
 		process.exit(1)
 	}
 
-	// 6. Regenerate Worker & Framework Types
+	// 6. Cross-Workspace Dependency Version Consistency
+	// `pnpm update --recursive` above updates each workspace package independently within its
+	// own declared semver range, so two packages can silently drift onto different majors of
+	// the same dependency (each staying "up to date" by its own range) with nothing to catch
+	// it. Syncpack checks that every workspace agrees on one version per dependency.
+	console.log('🔗 Checking cross-workspace dependency version consistency (syncpack)...')
+	try {
+		await $`pnpm exec syncpack lint`
+		console.log('   ✓ All workspace packages agree on dependency versions.\n')
+	} catch {
+		console.warn('   ⚠️  Found cross-workspace version drift -- run "pnpm deps:fix" to align it.\n')
+	}
+
+	// 7. Regenerate Worker & Framework Types
 	await regenerate_worker_and_framework_types()
 
-	// 7. Synchronize README.md Badges with package.json
+	// 8. Synchronize README.md Badges with package.json
 	console.log('🏷️  Synchronizing README.md badges with package.json versions...')
 	try {
 		const badge_res = await sync_readme_badges({ base_dir: root_dir, should_write: true })
@@ -159,7 +172,7 @@ async function run_safe_update() {
 		console.warn('   ⚠️  Could not synchronize README badges:', err?.message || err)
 	}
 
-	// 8. Full-Repo Undeclared CLI Dependency Sweep
+	// 9. Full-Repo Undeclared CLI Dependency Sweep
 	// CI's `check:deps` step only scans packages touched by a given diff, so it never nags a
 	// dev about an unrelated package -- but that also means an existing gap (like a package
 	// that already shells out to a CLI it never declared) can sit undetected until someone
@@ -177,7 +190,7 @@ async function run_safe_update() {
 		console.warn('   ⚠️  Could not complete the undeclared CLI dependency sweep:', err?.message || err)
 	}
 
-	// 9. Automated Post-Update Health Verification Gate
+	// 10. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
 	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')

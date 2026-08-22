@@ -35,6 +35,8 @@
     "check:badges": "bun scripts/audits/check_readme_badges.ts",
     "sync:badges": "bun scripts/audits/check_readme_badges.ts --fix",
     "check:md": "markdownlint-cli2 '**/*.md'",
+    "deps:lint": "syncpack lint",
+    "deps:fix": "syncpack fix",
     "check:svelte": "turbo run check:svelte",
     "check:lint": "turbo run check:lint",
     "check:lint:fix": "turbo run check:lint:fix",
@@ -53,6 +55,7 @@
     "markdownlint-cli2": "^0.17.2",
     "rimraf": "^6.1.3",
     "sharp": "^0.35.3",
+    "syncpack": "^15.3.3",
     "turbo": "^2.10.11"
   }
 }

@@ -1,0 +1,10 @@
+{
+	"$schema": "./node_modules/syncpack/schema.json",
+	"versionGroups": [
+		{
+			"label": "peerDependencies declare a minimum compatible floor, not an exact pin -- don't force them to match whatever the highest installed version happens to be elsewhere in the workspace",
+			"dependencyTypes": ["peer"],
+			"isIgnored": true
+		}
+	]
+}
