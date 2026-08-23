@@ -7,7 +7,7 @@
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
 
-	let { data, form }: PageProps = $props()
+	let { data }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
@@ -17,8 +17,40 @@
 	let debounce_delay = 500
 	let fetching_sense = $state(false)
 
+	let saving = $state(false)
+	let error_message = $state('')
+	let save_result: 'applied' | 'pending' | null = $state(null)
+
 	function focus_alert(node: HTMLElement) {
 		node.focus()
+	}
+
+	async function handle_submit(event: SubmitEvent) {
+		event.preventDefault()
+		saving = true
+		error_message = ''
+		save_result = null
+
+		try {
+			const res = await fetch('create/submit', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(concept_data),
+			})
+
+			if (!res.ok) {
+				const body = await res.json().catch(() => ({}))
+				error_message = body.message || 'Failed to create the concept.'
+				return
+			}
+
+			const { applied } = await res.json()
+			save_result = applied ? 'applied' : 'pending'
+		} catch (err: unknown) {
+			error_message = err instanceof Error ? err.message : 'Failed to create the concept.'
+		} finally {
+			saving = false
+		}
 	}
 
 	$effect(() => {
@@ -58,11 +90,23 @@
 			<h2>Add a new concept</h2>
 		</div>
 
-		{#if form?.error}
+		{#if error_message}
 			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
 				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
-				<span>{form.error}</span>
+				<span>{error_message}</span>
 			</aside>
+		{/if}
+
+		{#if save_result === 'applied'}
+			<div class="alert alert-success mb-4 text-sm">
+				<Icon icon="material-symbols:check-circle-outline" class="h-5 w-5 shrink-0" />
+				<span>Saved — your change is live now.</span>
+			</div>
+		{:else if save_result === 'pending'}
+			<div class="alert alert-info mb-4 text-sm">
+				<Icon icon="material-symbols:info-outline" class="h-5 w-5 shrink-0" />
+				<span>Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.</span>
+			</div>
 		{/if}
 
 		{#if concept_data.sense}
@@ -76,7 +120,7 @@
 			</div>
 		{/if}
 
-		<form method="POST" action="?/create" class="flex flex-col gap-6">
+		<form onsubmit={handle_submit} class="flex flex-col gap-6">
 			<section class="flex flex-wrap gap-4 items-end">
 				<fieldset class="fieldset">
 					<legend class="fieldset-legend font-semibold">Stem</legend>
@@ -129,7 +173,12 @@
 			</section>
 
 			<div class="flex gap-2">
-				<button type="submit" disabled={!can_save} class="btn btn-primary">Save</button>
+				<button type="submit" disabled={!can_save || saving} class="btn btn-primary">
+					{#if saving}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					Save
+				</button>
 				<a href="/" class="btn btn-ghost">Cancel</a>
 			</div>
 		</form>

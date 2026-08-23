@@ -8,7 +8,7 @@
 	import type { Concept } from '$lib/types'
 	import type { ConceptUpdateData } from '$lib/server/types'
 
-	let { data, form }: PageProps = $props()
+	let { data }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
@@ -16,34 +16,74 @@
 	let is_dirty = $derived(!deep_equal(concept_data, initial_data))
 	let concept_for_header: Concept = $derived(create_fallback_concept(concept_data))
 
+	let saving = $state(false)
+	let error_message = $state('')
+	let save_result: 'applied' | 'pending' | null = $state(null)
+
 	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
 		return JSON.stringify(obj1) === JSON.stringify(obj2)
-	}
-
-	function concept_key(): string {
-		const { stem, sense, part_of_speech } = concept_data
-		return `${stem}-${sense}-${part_of_speech}`
 	}
 
 	function focus_alert(node: HTMLElement) {
 		node.focus()
 	}
+
+	async function handle_submit(event: SubmitEvent) {
+		event.preventDefault()
+		saving = true
+		error_message = ''
+		save_result = null
+
+		try {
+			const res = await fetch('update/submit', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(concept_data),
+			})
+
+			if (!res.ok) {
+				const body = await res.json().catch(() => ({}))
+				error_message = body.message || 'Failed to save the concept.'
+				return
+			}
+
+			const { applied } = await res.json()
+			save_result = applied ? 'applied' : 'pending'
+			initial_data = $state.snapshot(concept_data)
+		} catch (err: unknown) {
+			error_message = err instanceof Error ? err.message : 'Failed to save the concept.'
+		} finally {
+			saving = false
+		}
+	}
 </script>
 
 <article class="card bg-base-200 mx-auto w-[80%]">
 	<div class="card-body">
-		{#if form?.error}
+		{#if error_message}
 			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
 				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
-				<span>{form.error}</span>
+				<span>{error_message}</span>
 			</aside>
+		{/if}
+
+		{#if save_result === 'applied'}
+			<div class="alert alert-success mb-4 text-sm">
+				<Icon icon="material-symbols:check-circle-outline" class="h-5 w-5 shrink-0" />
+				<span>Saved — your change is live now.</span>
+			</div>
+		{:else if save_result === 'pending'}
+			<div class="alert alert-info mb-4 text-sm">
+				<Icon icon="material-symbols:info-outline" class="h-5 w-5 shrink-0" />
+				<span>Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.</span>
+			</div>
 		{/if}
 
 		<section class="card-title justify-between">
 			<Header concept={concept_for_header} />
 		</section>
 
-		<form method="POST" action="?/update&concept={encodeURIComponent(concept_key())}" class="flex flex-col gap-6">
+		<form onsubmit={handle_submit} class="flex flex-col gap-6">
 			<section class="flex flex-col gap-4">
 				<fieldset class="fieldset">
 					<legend class="fieldset-legend font-semibold">Level</legend>
@@ -76,7 +116,12 @@
 			</section>
 
 			<div class="flex gap-2">
-				<button type="submit" disabled={!is_dirty} class="btn btn-primary">Save</button>
+				<button type="submit" disabled={!is_dirty || saving} class="btn btn-primary">
+					{#if saving}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					Save
+				</button>
 				<a href="/?q={concept_data.stem}" class="btn btn-ghost">Cancel</a>
 			</div>
 		</form>
