@@ -1,6 +1,6 @@
 import { get_all_mutations, type QueuedMutation } from './queue'
 import type { Concept, ConceptKey, OntologyChange, OntologyChangeDataFields } from '$lib/types'
-import type { ConceptUpdateData } from '$lib/server/types'
+import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
 
 const DIFFED_FIELDS = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples'] as const
 
@@ -33,12 +33,24 @@ function diff(body: ConceptUpdateData, concept: Concept): OntologyChangeDataFiel
 	)
 }
 
-function to_change(mutation: QueuedMutation, concept: Concept): OntologyChange {
-	const body = mutation.body as ConceptUpdateData
+// Mirrors the server's create_change_data (changes.ts) -- a create has no "old" value to diff against.
+function create_change_fields(body: ConceptCreateData): OntologyChangeDataFields {
+	const { level, gloss, brief_gloss, categories } = body
+	return {
+		level: { value: level },
+		gloss: { value: gloss },
+		...brief_gloss ? { brief_gloss: { value: brief_gloss } } : {},
+		categories: { value: categories },
+	}
+}
+
+// concept is only needed (and only available) for an update -- a create has nothing on the server yet to diff against.
+function to_change(mutation: QueuedMutation, concept?: Concept): OntologyChange {
+	const body = mutation.body as ConceptCreateData | ConceptUpdateData
 	return {
 		id: -1,
 		concept: { stem: body.stem, sense: body.sense, part_of_speech: body.part_of_speech },
-		data: diff(body, concept),
+		data: mutation.action === 'create' ? create_change_fields(body) : diff(body, concept!),
 		action: mutation.action,
 		approved_by: null,
 		applied_date: null,
@@ -65,4 +77,11 @@ export async function merge_pending_changes(concepts: Concept[]): Promise<Concep
 export async function check_for_pending_change(a_concept: ConceptKey): Promise<QueuedMutation | undefined> {
 	const mutations = await get_all_mutations()
 	return mutations.find(mutation => mutation.action === 'update' && do_concepts_match(mutation.body, a_concept))
+}
+
+// Queued creates for concepts that don't exist on the server yet -- for the /protected/changes
+// audit table, which already knows how to render a 'create' action's field values.
+export async function check_for_pending_creates(): Promise<OntologyChange[]> {
+	const mutations = (await get_all_mutations()).filter(mutation => mutation.action === 'create')
+	return mutations.map(mutation => to_change(mutation))
 }

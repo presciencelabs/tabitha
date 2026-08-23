@@ -1,10 +1,18 @@
 <script lang="ts">
 	import type { PageProps } from './$types'
 	import Icon from '@iconify/svelte'
+	import { check_for_pending_creates } from '$lib/offline/pending'
+	import type { OntologyChange } from '$lib/types'
 
 	let { data }: PageProps = $props()
 
-	let changes = $derived(data.changes)
+	// svelte-ignore state_referenced_locally
+	let changes = $state<OntologyChange[]>(data.changes)
+
+	$effect(() => {
+		// these only live in this browser's offline queue, so the server can't have included them in data.changes
+		check_for_pending_creates().then(local => changes = [...local, ...data.changes])
+	})
 
 	function categories_display(value: string[], old: string[] | undefined) {
 		if (!old) {
@@ -136,7 +144,14 @@
 						{/if}
 					</td>
 					<td>
-						{change.applied_date ? change.applied_date.toLocaleString() : 'Pending'}
+						{#if change.is_unsynced}
+							<span class="badge badge-warning badge-soft gap-1">
+								<Icon icon="mdi:cloud-off-outline" class="h-4 w-4" />
+								Unsynced
+							</span>
+						{:else}
+							{change.applied_date ? change.applied_date.toLocaleString() : 'Pending'}
+						{/if}
 					</td>
 					<td>
 						{change.version || ''}

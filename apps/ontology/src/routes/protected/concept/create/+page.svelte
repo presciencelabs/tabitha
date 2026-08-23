@@ -69,8 +69,8 @@
 			const { stem, part_of_speech } = debounced_stem_pos
 			if (stem && part_of_speech) {
 				fetch(`create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`).then(async res => {
-					const { sense } = await res.json()
-					concept_data.sense = sense
+					const { next_sense } = await res.json()
+					concept_data.sense = next_sense
 				}).catch(err => {
 					console.error({
 						err,
