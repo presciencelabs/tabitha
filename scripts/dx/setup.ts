@@ -109,6 +109,11 @@ Useful Commands:
   • pnpm test:unit        Run all unit test suites
   • pnpm test:e2e         Run Playwright end-to-end tests
   • pnpm db:load          Reload all D1 databases from snapshots
+  • pnpm db:grant <email> Grant yourself Ontology permissions locally (see below)
+
+⚠️  Ontology only: after signing in with Google locally for the first time, a
+   401 on /protected pages is expected -- your local Auth DB starts with no
+   user grants. Fix it once with: pnpm db:grant your.email@example.com
 
 🧪 60-Second Golden Path Smoke Test:
   1. Start all dev servers: \`pnpm dev\`

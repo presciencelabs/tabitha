@@ -12,18 +12,18 @@ const root_dir = resolve(script_dir, '../..')
 const snapshots_dir = join(root_dir, 'tools/databases/snapshots')
 const workerd_hash_cache_path = join(root_dir, 'tools/databases/.d1-workerd-hash-cache.json')
 
-interface D1DatabaseEntry {
+export interface D1DatabaseEntry {
 	binding?: string
 	database_name: string
 	database_id: string
 }
 
-interface AppConfig {
+export interface AppConfig {
 	app_dir: string
 	wrangler_path: string
 }
 
-const apps_config: Record<string, AppConfig> = {
+export const apps_config: Record<string, AppConfig> = {
 	ontology: {
 		app_dir: join(root_dir, 'apps/ontology'),
 		wrangler_path: join(root_dir, 'apps/ontology/wrangler.jsonc'),
@@ -38,7 +38,7 @@ const apps_config: Record<string, AppConfig> = {
 	},
 }
 
-function parse_wrangler_jsonc(file_path: string): { d1_databases?: D1DatabaseEntry[] } | null {
+export function parse_wrangler_jsonc(file_path: string): { d1_databases?: D1DatabaseEntry[] } | null {
 	if (!existsSync(file_path)) return null
 	const content = readFileSync(file_path, 'utf-8')
 	const cleaned = strip_jsonc_comments(content)
@@ -54,7 +54,7 @@ async function find_latest_snapshot(prefix: string): Promise<string | null> {
 	return matching.length > 0 ? join(snapshots_dir, matching[matching.length - 1]) : null
 }
 
-function read_workerd_hash_cache(): Record<string, string> {
+export function read_workerd_hash_cache(): Record<string, string> {
 	if (!existsSync(workerd_hash_cache_path)) return {}
 	try {
 		return JSON.parse(readFileSync(workerd_hash_cache_path, 'utf-8'))
@@ -63,7 +63,7 @@ function read_workerd_hash_cache(): Record<string, string> {
 	}
 }
 
-function write_workerd_hash_cache(cache: Record<string, string>) {
+export function write_workerd_hash_cache(cache: Record<string, string>) {
 	writeFileSync(workerd_hash_cache_path, JSON.stringify(cache, null, '\t') + '\n')
 }
 
@@ -74,7 +74,7 @@ function write_workerd_hash_cache(cache: Record<string, string>) {
 // use) and write a uniquely-named marker table through each binding, then scan the state dir's existing
 // .sqlite files to see which one picked it up. (A "which file is new" diff doesn't work here: the real
 // file is almost always already sitting in the state dir from a previous `vite dev` run.)
-async function resolve_workerd_hashes(
+export async function resolve_workerd_hashes(
 	config: AppConfig,
 	entries: D1DatabaseEntry[],
 	d1_state_dir: string,
