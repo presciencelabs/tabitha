@@ -1,6 +1,6 @@
 # Contributing to TaBiThA
 
-Welcome to the **TaBiThA** monorepo! This guide explains the project's architecture, conventions, and common development workflows to help you build, test, and contribute effectively.
+Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions, and workflows to get you building, testing, and shipping.
 
 ---
 
@@ -130,13 +130,13 @@ pnpm dev:copilot
 
 ### 4. Ontology Local Permissions (first time only)
 
-`pnpm setup`'s D1 bootstrap loads schema and app data, but never seeds real user grants -- those only exist in production, so a fresh local Auth database starts with nobody authorized. After you sign in to Ontology (`http://localhost:5173`) with Google for the first time, a `401` on any `/protected` page is expected, not a bug. Fix it once with:
+`pnpm setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:5173`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
 
 ```bash
 pnpm db:grant your.email@example.com
 ```
 
-This grants every Ontology permission to that email in your local Auth D1 only -- it never touches production. Run it again any time you reload the database from a fresh snapshot (`pnpm db:load`/`db:load:ontology`), since that resets local grants too.
+Grants every Ontology permission to that email in your local Auth D1 only — production is untouched. Re-run after any `pnpm db:load`/`db:load:ontology`, since a fresh snapshot resets local grants too.
 
 ---
 
@@ -154,6 +154,16 @@ All contributions should adhere to the **13 TaBiThA Development Philosophies** a
   - **E2E Tests (`*.spec.ts`)**: Multi-service browser integration tests executed via Playwright.
 
 👉 **Complete Definitions & Code Examples**: See the canonical [**`AGENTS.md`**](AGENTS.md) at the repository root.
+
+---
+
+## 🌱 Branching Strategy
+
+TaBiThA follows a lightweight GitHub Flow:
+
+- 🔒 `main` is always deployable.
+- 🌿 **Regular work**: branch off `main` → make your changes → open a PR targeting `main` → review + `pnpm precommit`/CI pass → squash-merge (branch auto-deletes). Naming your branch is up to you.
+- 🚑 **Hotfixes/patches**: urgent production fixes may skip the PR and push straight to `main` — enabled by GitHub's existing admin bypass on branch protection, not a separate rule to configure. Non-admins still go through a PR.
 
 ---
 
@@ -186,7 +196,7 @@ Git diffs show *what* code changed; commit messages should explain **why** the c
 
 ### Convenient Git Commit Template (`.gitmessage`)
 
-Running `pnpm setup` automatically registers the repository's `.gitmessage` template (`git config commit.template .gitmessage`). When you run `git commit` (or commit via your IDE), your editor will open pre-populated with prompts and type reminders. Lines starting with `#` are automatically stripped out by Git.
+`pnpm setup` registers the repo's `.gitmessage` template (`git config commit.template .gitmessage`) — `git commit` then opens pre-populated with prompts and type reminders. Lines starting with `#` are stripped by Git.
 
 ### ✨ AI Commit "Easy Button" in IDE
 

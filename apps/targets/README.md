@@ -5,7 +5,7 @@
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Hierarchical Navigation APIs
 
@@ -33,7 +33,7 @@
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 From the **monorepo root**:
 
@@ -53,6 +53,6 @@ pnpm dev
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

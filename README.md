@@ -20,7 +20,7 @@ This repository houses all core deployable web applications, developer tools, sh
 
 ## 🚀 Applications & Dedicated Ports
 
-All applications are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers. Each app has a dedicated, non-overlapping local port configured for seamless multi-app development.
+Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers — each app gets a dedicated, non-overlapping port for multi-app dev.
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -177,7 +177,7 @@ pnpm update:interactive
 
 ### Local CI/CD Workflow Testing (Optional)
 
-For developers developing or testing GitHub Actions workflows in `.github/workflows/` locally, you can use [`act`](https://github.com/nektos/act) to run workflows in local Docker containers:
+To test GitHub Actions workflows in `.github/workflows/` locally, use [`act`](https://github.com/nektos/act) to run them in local Docker containers:
 
 ```bash
 # Installation:
