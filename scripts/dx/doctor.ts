@@ -1,4 +1,3 @@
-import { lookup } from 'node:dns/promises'
 import { existsSync, readdirSync } from 'node:fs'
 import { platform } from 'node:os'
 import { join } from 'node:path'
@@ -125,43 +124,6 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 		})
 	}
 
-	return results
-}
-
-async function check_network_and_dns(): Promise<DiagnosticResult[]> {
-	const results: DiagnosticResult[] = []
-	try {
-		const { address } = await lookup('localhost.tabitha.bible')
-		if (address === '127.0.0.1' || address === '::1') {
-			results.push({
-				category: 'Network & DNS',
-				name: 'Local Domain Mapping',
-				status: 'PASS',
-				message: `localhost.tabitha.bible -> ${address}`,
-			})
-		} else {
-			results.push({
-				category: 'Network & DNS',
-				name: 'Local Domain Mapping',
-				status: 'WARN',
-				message: `Resolves to ${address} (expected 127.0.0.1)`,
-				fix: 'Check your local hosts file (/etc/hosts or C:\\Windows\\System32\\drivers\\etc\\hosts)',
-			})
-		}
-	} catch {
-		const os_type = platform()
-		const hosts_fix = os_type === 'win32'
-			? 'Add-Content -Path C:\\Windows\\System32\\drivers\\etc\\hosts -Value "127.0.0.1 localhost.tabitha.bible"'
-			: 'echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts'
-
-		results.push({
-			category: 'Network & DNS',
-			name: 'Local Domain Mapping',
-			status: 'WARN',
-			message: 'localhost.tabitha.bible not mapped in hosts',
-			fix: hosts_fix,
-		})
-	}
 	return results
 }
 
@@ -368,7 +330,6 @@ export async function run_doctor(): Promise<{ all_passed: boolean; fixes: string
 
 	const results: DiagnosticResult[] = [
 		...(await check_runtimes()),
-		...(await check_network_and_dns()),
 		...(await check_env_files()),
 		...(await check_local_databases()),
 		...(await check_security_and_cloudflare()),

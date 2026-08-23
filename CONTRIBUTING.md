@@ -55,11 +55,11 @@ graph TD
 
 | App | Port | Local URL | Primary Responsibility |
 | --- | --- | --- | --- |
-| **`ontology`** | `5173` | [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
-| **`targets`** | `8788` | [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
-| **`sources`** | `8789` | [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
-| **`editor`** | `8790` | [http://localhost.tabitha.bible:8790](http://localhost.tabitha.bible:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
-| **`copilot`** | `8793` | [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793) | AI translation guidance, theological constraint checking, and Gemini API integration. |
+| **`ontology`** | `5173` | [http://localhost:5173](http://localhost:5173) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
+| **`targets`** | `8788` | [http://localhost:8788](http://localhost:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
+| **`sources`** | `8789` | [http://localhost:8789](http://localhost:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
+| **`editor`** | `8790` | [http://localhost:8790](http://localhost:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
+| **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and Gemini API integration. |
 
 ### Shared Packages (`packages/`)
 
@@ -98,23 +98,7 @@ graph TD
 - **pnpm**
 - **SQLite3 CLI** (`sqlite3`)
 
-### 2. Local Domain Setup
-
-To support clean OAuth redirects and inter-app API calls, map `localhost.tabitha.bible` to `127.0.0.1`:
-
-- **macOS / Linux**:
-
-  ```bash
-  echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
-  ```
-
-- **Windows** (PowerShell as Admin):
-
-  ```powershell
-  Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "127.0.0.1 localhost.tabitha.bible"
-  ```
-
-### 3. Bootstrap Workspace
+### 2. Bootstrap Workspace
 
 ```bash
 # 1. Install dependencies
@@ -127,7 +111,7 @@ pnpm setup
 pnpm check:doctor
 ```
 
-### 4. Start Development Servers
+### 3. Start Development Servers
 
 ```bash
 # Start all 5 apps concurrently
@@ -144,9 +128,9 @@ pnpm dev:targets
 pnpm dev:copilot
 ```
 
-### 5. Ontology Local Permissions (first time only)
+### 4. Ontology Local Permissions (first time only)
 
-`pnpm setup`'s D1 bootstrap loads schema and app data, but never seeds real user grants -- those only exist in production, so a fresh local Auth database starts with nobody authorized. After you sign in to Ontology (`http://localhost.tabitha.bible:5173`) with Google for the first time, a `401` on any `/protected` page is expected, not a bug. Fix it once with:
+`pnpm setup`'s D1 bootstrap loads schema and app data, but never seeds real user grants -- those only exist in production, so a fresh local Auth database starts with nobody authorized. After you sign in to Ontology (`http://localhost:5173`) with Google for the first time, a `401` on any `/protected` page is expected, not a bug. Fix it once with:
 
 ```bash
 pnpm db:grant your.email@example.com

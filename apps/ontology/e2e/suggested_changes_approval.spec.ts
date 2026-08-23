@@ -33,7 +33,7 @@ async function sign_in_as(context, email, permissions) {
 	await context.addCookies([{
 		name: SESSION_COOKIE_NAME,
 		value: session_token,
-		domain: 'localhost.tabitha.bible',
+		domain: 'localhost',
 		path: '/',
 		httpOnly: true,
 		sameSite: 'Lax',

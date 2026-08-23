@@ -1,7 +1,7 @@
 # Sources API & Explorer
 
 - **Live URL**: [https://sources.tabitha.bible](https://sources.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789) (Port `8789`)
+- **Local Dev URL**: [http://localhost:8789](http://localhost:8789) (Port `8789`)
 
 ---
 

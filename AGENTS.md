@@ -271,6 +271,7 @@ export const format_word_label = ({
 - **The Rule of Three for Shared Packages**: Implement features locally inside their consuming app (`apps/editor`, `apps/ontology`, etc.). Do not extract code into `packages/*` until at least 3 distinct consumers require identical functionality.
 - **Lean Cloudflare Worker Bundles**: Every unused export, speculative handler, or oversized dependency adds cold-start latency and bundle size to edge workers. Keep endpoints minimal and focused.
 - **Pragmatic AI Prompts**: Keep AI prompts in `apps/copilot` tailored directly to active tasks rather than building complex generic prompt framework abstractions.
+- **Don't restate a dependency's own default**: If a wrapper's parameter default just re-declares what the underlying library already defaults to, and no caller ever overrides it, drop the parameter and let the library's default apply on its own. Confirm no call site overrides it before removing.
 
 ```typescript
 // ❌ Avoid: Speculative over-generalized configuration flags
@@ -284,6 +285,19 @@ interface FetchConceptOptions {
 interface FetchConceptOptions {
 	readonly concept_id: string
 	readonly include_glosses?: boolean
+}
+```
+
+```javascript
+// ❌ Avoid: default merely restates Vite's own built-in default for server.host,
+// and no app in the workspace ever overrides it
+export function create_app_vite_config({ port, host = 'localhost', ...rest }) {
+	return defineConfig({ server: { host, port, strictPort: true } })
+}
+
+// ✅ Preferred: omit it and let Vite's own default apply
+export function create_app_vite_config({ port, ...rest }) {
+	return defineConfig({ server: { port, strictPort: true } })
 }
 ```
 
@@ -394,15 +408,85 @@ monorepo:
   **variable** instead (`vars.NAME`, managed via Settings → Secrets and variables → Actions →
   Variables, or `gh variable set`).
 - **Local env files**: a workspace package's committed `.env` should declare every var it
-  needs, but only ever hold real values for the non-sensitive ones -- secrets stay as empty
-  stubs there, documenting that the key exists without exposing a value. The real secret
-  values go in `.env.local`, which is gitignored and never committed. Both Vite (`apps/*`) and
-  Bun (`tools/*`, `scripts/*`) natively load `.env` then `.env.local` on top of it, so a
-  non-empty value in `.env.local` overrides the empty stub for the same key with no extra
-  tooling required.
+  needs, holding whatever value is actually correct for production and preview -- both are
+  built from `.env` alone, since `.env.local` is gitignored and never present outside a
+  developer's own machine. That's a real value for most vars (an API host, a redirect URL), but
+  it can just as validly be an intentionally blank/off value when that's genuinely what
+  production wants too (a dev-only toggle that should stay disabled everywhere it's actually
+  deployed). Genuinely sensitive values are the one case where blank in `.env` is mandatory
+  regardless of what "correct for prod" would otherwise be -- the real value is never committed
+  anywhere in the repo; it lives only in `.env.local` locally and in the deployment's own
+  secret store remotely. `.env.local` itself is exclusively a local-dev override layer on top
+  of `.env`, in whichever direction local dev needs -- filling in a secret or widening a
+  permission the same way `.env` left blank, or forcing something to blank/off that `.env`
+  populated for production. Both Vite (`apps/*`) and Bun (`tools/*`, `scripts/*`) natively load
+  `.env` then `.env.local` on top of it, so either direction works with no extra tooling.
+
+  This `.env`/`.env.local` split is a repo convention layered on top of SvelteKit's own env
+  system, which is a separate, orthogonal 2×2: static (frozen into the bundle at build/dev-server
+  start) vs. dynamic (read at request time), crossed with public (safe for client code) vs.
+  private (server-only) -- see
+  [`$env/static/private`](https://svelte.dev/docs/kit/$env-static-private),
+  [`$env/static/public`](https://svelte.dev/docs/kit/$env-static-public),
+  [`$env/dynamic/private`](https://svelte.dev/docs/kit/$env-dynamic-private), and
+  [`$env/dynamic/public`](https://svelte.dev/docs/kit/$env-dynamic-public). This monorepo mostly
+  uses the two **static** modules, but a handful of server-only values consumed inside request
+  handlers -- the Gemini and Aquifer API credentials in `apps/copilot/src/hooks.server.ts`,
+  `apps/copilot/src/lib/server/brief/brief.ts`, and `apps/ontology/src/lib/server/semantic_search.ts`
+  -- are read via `$env/dynamic/private` instead. Nothing yet needs `$env/dynamic/public`. Which
+  of the two (public vs. private) to use is about client-bundle exposure only, and is unrelated to whether a
+  given var happens to be blank or populated in `.env` -- a var can be public and blank (e.g.
+  `PUBLIC_CORS_ALLOW_LOCALHOST`, whose correct production value genuinely is "off"), or private
+  and populated (e.g. `OAUTH_REDIRECT_PROXY_URL`, non-sensitive but server-only, holding a real
+  value in production).
+
+  SvelteKit is moving toward a different, [explicit environment variables
+  system](https://svelte.dev/docs/kit/environment-variables) (`$app/env/private` /
+  `$app/env/public`, declared in a per-app `src/env.ts`) that will eventually replace `$env/*`
+  entirely -- but as of this writing it's still an opt-in experimental flag
+  (`kit.experimental.explicitEnvironmentVariables`) that only becomes the default in SvelteKit 3.
+  Nothing in this monorepo has opted into it; every app still uses the four modules above. Revisit
+  this section if/when that migration happens.
 
 Either way, a developer should be able to tell at a glance -- from the checked-in file alone,
-without needing to open a vault -- which values are actually sensitive.
+without needing to open a vault -- which values are actually sensitive. Every committed `.env`
+follows the same two-tier skeleton, ordered from most open to most private:
+
+```env
+# ══════════════════════════════════════════════════════════════════════════
+# OPEN CONFIG
+# Real values, safe to commit. May be public (client-exposed) or private
+# (server-only) -- see the $env/... tag on each line for which SvelteKit
+# module to import it from. Cloudflare: belongs in wrangler.jsonc's `vars`
+# block for real deployments, not a `wrangler secret`.
+# ══════════════════════════════════════════════════════════════════════════
+
+# $env/static/public -- <why this is safe to expose to the client>
+PUBLIC_SOME_HOST=https://example.tabitha.bible
+
+# ══════════════════════════════════════════════════════════════════════════
+# SECRETS
+# Left blank here; real values live only in .env.local (gitignored) or the
+# deployment's own secret store. Still tagged with the SvelteKit module
+# they're read through. Cloudflare: set via `wrangler secret put <NAME>`
+# (or the dashboard), never in wrangler.jsonc `vars` --
+# scripts/audits/check_cloudflare.ts enforces this.
+# ══════════════════════════════════════════════════════════════════════════
+
+# $env/static/private -- <where to obtain this credential>
+SOME_SECRET=
+```
+
+`OPEN CONFIG` holds every var with a real, safe-to-commit value -- public or private, static or
+dynamic, doesn't matter, since public/private is purely about client-bundle exposure (see above)
+and has nothing to do with sensitivity. `SECRETS` holds everything left blank in `.env` and
+filled only in `.env.local` or the deployment's own secret store. Each var gets a one-line
+comment: for `OPEN CONFIG`, the `$env/...` module it's read through plus (when not obvious) why
+that value is correct; for `SECRETS`, the module plus a link to where a developer obtains their
+own credential. `tools/*` scripts (Bun, not SvelteKit) use the same two-tier shape but skip the
+`$env/...` tags, since they read `process.env` directly rather than importing from `$env/*`. See
+`apps/ontology/.env` for a populated real-world example spanning both tiers and three of the four
+`$env` modules.
 
 ---
 

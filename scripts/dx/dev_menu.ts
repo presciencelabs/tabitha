@@ -108,7 +108,7 @@ async function start_turbo_dev(selected_app_keys: string[]) {
 
 Active Endpoints:`)
 	for (const app of selected_apps) {
-		console.log(`  • ${app.name.padEnd(10)} http://localhost.tabitha.bible:${app.port} (${app.desc})`)
+		console.log(`  • ${app.name.padEnd(10)} http://localhost:${app.port} (${app.desc})`)
 	}
 	console.log('============================================================\n')
 

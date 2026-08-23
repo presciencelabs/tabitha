@@ -40,7 +40,7 @@ export default async function global_setup() {
 	await context.addCookies([{
 		name: SESSION_COOKIE_NAME,
 		value: session_token,
-		domain: 'localhost.tabitha.bible',
+		domain: 'localhost',
 		path: '/',
 		httpOnly: true,
 		sameSite: 'Lax',

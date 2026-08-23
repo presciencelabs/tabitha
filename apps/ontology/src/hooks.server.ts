@@ -1,24 +1,15 @@
-import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } from '$env/static/private'
+import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, OAUTH_REDIRECT_PROXY_URL } from '$env/static/private'
+import { PUBLIC_CORS_ALLOW_LOCALHOST } from '$env/static/public'
 import { is_authorized } from '$lib/server/auth'
 import { sync_complex_terms } from '$lib/server/complex_terms'
+import { create_cors_handle } from '@tabitha/cors'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Google from '@auth/sveltekit/providers/google'
 import type { ExecutionContext, ScheduledEvent } from '@cloudflare/workers-types'
 import { error, type Handle, type RequestEvent } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
-const cors_handle: Handle = async function cors_handle({ event, resolve }) {
-	const response = await resolve(event)
-
-	const origin = event.request.headers.get('Origin')
-
-	const FROM_TBTA_BIBLE_OPTIONAL_PORT = /\.(tabitha\.bible|tbta\.workers\.dev)(:\d+)?$/
-	if (origin?.match(FROM_TBTA_BIBLE_OPTIONAL_PORT)) {
-		response.headers.set('Access-Control-Allow-Origin', origin)
-	}
-
-	return response
-}
+const cors_handle = create_cors_handle({ allow_localhost: Boolean(PUBLIC_CORS_ALLOW_LOCALHOST) })
 
 const db_config_handle: Handle = async function db_config_handle({ event, resolve }) {
 	if (!event.platform?.env.DB_Ontology) {
@@ -51,9 +42,12 @@ async function initialize_config(event: RequestEvent) {
 	 * - On Production (`ontology.tabitha.bible`): Auth.js sees `url.origin === redirectProxyUrl.origin` and sets
 	 *   `isOnRedirectProxy = true`, allowing production to receive the OAuth callback, decrypt the state, and
 	 *   forward the user back to the preview deployment.
+	 *
+	 * OAUTH_REDIRECT_PROXY_URL holds this value in `.env` (used by both prod and preview) and is forced
+	 * blank in local dev's `.env.local` by scripts/dx/setup_env.ts, so Auth.js falls back to its own
+	 * no-proxy default there instead of a hostname check baked into this code.
 	 */
-	const is_local = event.url.hostname.includes('localhost') || event.url.hostname === '127.0.0.1'
-	const redirectProxyUrl = is_local ? undefined : 'https://ontology.tabitha.bible/auth'
+	const redirectProxyUrl = OAUTH_REDIRECT_PROXY_URL || undefined
 
 	return {
 		providers: [

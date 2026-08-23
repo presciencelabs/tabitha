@@ -1,33 +1,23 @@
 import { building } from '$app/environment'
+import { PUBLIC_CORS_ALLOW_LOCALHOST } from '$env/static/public'
+import { create_cors_handle } from '@tabitha/cors'
 import type { Handle } from '@sveltejs/kit'
+import { sequence } from '@sveltejs/kit/hooks'
 
-export const handle: Handle = async ({ event, resolve }) => {
-	set_up_database()
+const cors_handle = create_cors_handle({ allow_localhost: Boolean(PUBLIC_CORS_ALLOW_LOCALHOST) })
 
-	const response = await resolve(event)
-
-	handle_cors()
-
-	return response
-
-	function set_up_database() {
-		if (!event.platform?.env.DB_Sources) {
-			if (!building) {
-				throw new Error(`database missing from platform arg: ${JSON.stringify(event.platform)}`)
-			}
-		}
-
-		// putting it on `locals` to clean up usage in routes
-		// @ts-expect-error until local bindings issue resolved
-		event.locals.db = event.platform?.env.DB_Sources?.withSession()
-	}
-
-	function handle_cors() {
-		const origin = event.request.headers.get('Origin')
-
-		const FROM_TBTA_BIBLE_OPTIONAL_PORT = /\.(tabitha\.bible|tbta\.workers\.dev)(:\d+)?$/
-		if (origin?.match(FROM_TBTA_BIBLE_OPTIONAL_PORT)) {
-			response.headers.set('Access-Control-Allow-Origin', origin)
+const db_config_handle: Handle = async function db_config_handle({ event, resolve }) {
+	if (!event.platform?.env.DB_Sources) {
+		if (!building) {
+			throw new Error(`database missing from platform arg: ${JSON.stringify(event.platform)}`)
 		}
 	}
+
+	// putting it on `locals` to clean up usage in routes
+	// @ts-expect-error until local bindings issue resolved
+	event.locals.db = event.platform?.env.DB_Sources?.withSession()
+
+	return resolve(event)
 }
+
+export const handle = sequence(cors_handle, db_config_handle)

@@ -1,5 +1,5 @@
 name: 'Setup TaBiThA Workspace'
-description: 'Shared checkout, toolchain setup, caching, host mapping, and dependencies'
+description: 'Shared checkout, toolchain setup, caching, and dependencies'
 
 inputs:
   node-version:
@@ -31,10 +31,6 @@ runs:
         key: turbo-${{ runner.os }}-${{ github.sha }}
         restore-keys: |
           turbo-${{ runner.os }}-
-
-    - name: Map localhost.tabitha.bible domain
-      shell: bash
-      run: echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
 
     - name: Install dependencies
       shell: bash
