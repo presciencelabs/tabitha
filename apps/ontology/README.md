@@ -5,7 +5,7 @@
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Concept Search API
 
@@ -35,11 +35,11 @@
 
 ---
 
-## Local Development & Setup
+## 💻 Local Development & Setup
 
 ### 1. Configure Local Auth
 
-`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there -- grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:5173/auth/callback`.
+`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:5173/auth/callback`.
 
 (If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
 
@@ -90,6 +90,6 @@ Complex terms and simplification hints are synchronized from Google Sheets every
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

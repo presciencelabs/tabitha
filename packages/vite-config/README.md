@@ -4,7 +4,7 @@ Shared Vite, Playwright, and SvelteKit configuration helpers for Tabitha applica
 
 ---
 
-## Usage
+## ⚙️ Usage
 
 ### 1. Vite Configuration (`vite.config.js`)
 
