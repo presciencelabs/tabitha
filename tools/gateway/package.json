@@ -10,9 +10,11 @@
     "check:lint:fix": "eslint . --fix",
     "test": "pnpm test:unit",
     "test:unit": "bun test",
-    "apply": "bun apply.ts"
+    "apply": "bun apply.ts",
+    "verify": "bun verify_gateway.ts"
   },
   "devDependencies": {
+    "@tabitha/ai": "workspace:*",
     "@tabitha/eslint-config": "workspace:*",
     "@tabitha/tsconfig": "workspace:*",
     "@types/bun": "^1.3.14",

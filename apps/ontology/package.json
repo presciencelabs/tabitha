@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@auth/sveltekit": "^1.11.3",
-    "@google/genai": "^2.17.1",
     "@sveltejs/kit": "^2.70.2",
+    "@tabitha/ai": "workspace:*",
     "@tabitha/api-client": "workspace:*",
     "@tabitha/types": "workspace:*",
     "@tabitha/ui": "workspace:*",

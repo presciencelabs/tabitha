@@ -32,12 +32,12 @@ importers:
 
   apps/copilot:
     dependencies:
-      '@google/genai':
-        specifier: ^2.17.1
-        version: 2.17.1(supports-color@10.2.2)
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0))
+      '@tabitha/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@tabitha/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
@@ -211,12 +211,12 @@ importers:
       '@auth/sveltekit':
         specifier: ^1.11.3
         version: 1.11.3(@sveltejs/kit@2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))
-      '@google/genai':
-        specifier: ^2.17.1
-        version: 2.17.1(supports-color@10.2.2)
       '@sveltejs/kit':
         specifier: ^2.70.2
         version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0))
+      '@tabitha/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@tabitha/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
@@ -685,6 +685,9 @@ importers:
 
   tools/gateway:
     devDependencies:
+      '@tabitha/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@tabitha/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config

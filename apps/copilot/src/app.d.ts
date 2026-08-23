@@ -1,4 +1,4 @@
-import type { GoogleGenAI } from '@google/genai/node'
+import type { AiClient } from '@tabitha/ai'
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
@@ -13,7 +13,7 @@ declare global {
 
 		// interface Error {}
 		interface Locals {
-			ai: GoogleGenAI
+			ai: AiClient
 		}
 		// interface PageData {}
 		// interface PageState {}

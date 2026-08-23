@@ -3,9 +3,9 @@ import { default_target_audience, fetch_encoding, fetch_target_text, lwc_info } 
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
-import type { GoogleGenAI } from '@google/genai/node'
+import type { AiClient } from '@tabitha/ai'
 
-export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings, ai: GoogleGenAI): Promise<CopilotApiResult> {
+export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings, ai: AiClient): Promise<CopilotApiResult> {
 	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
 
 	const encoding = await fetch_encoding(reference)

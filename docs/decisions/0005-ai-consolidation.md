@@ -45,7 +45,15 @@ This consolidation preserves each existing call site's current model and seed as
 - **Ontology uses `gemini-2.5-flash`; copilot uses `gemini-3.5-flash`.** Was ontology pinned to `2.5-flash` on purpose (e.g. cost/latency tradeoff for its large ~74k-token payloads), or should it move onto the newer model like copilot?
 - **`brief.ts` uses seed `41`; `semantic_notes.ts` and `semantic_search.ts` use seed `42`.** Was that split intentional, or did it just drift from copy-paste? If not intentional, all call sites should standardize on one seed.
 
-## Things to verify empirically before Phase 3 migration
+## Phase 3 status
+
+Code migration is complete for all four call sites (`semantic_search.ts`, `semantic_notes.ts`, `brief.ts` ×2) -- both apps now route through `@tabitha/ai`, `@google/genai` is dropped from both apps' `package.json`, ontology's in-memory cache is replaced by `cf-aig-cache-ttl`, and both apps' `.env`/`wrangler.jsonc` are updated to the new gateway-token model. Each site's model and seed are preserved exactly as an explicit override, per the "Open questions" above.
+
+One deliberate, minor behavior change beyond pure plumbing: the four sites previously handled an empty/malformed LLM response inconsistently (silent `[]`/`{notes: []}` fallback in some, an uncaught throw on invalid JSON in others). All four now catch `AiResponseError` uniformly and fail soft (empty results, `undefined`, or the existing retry path, depending on the site) -- consistent with the retry-oriented error handling `copilot`'s route handlers already do, and arguably safer than crashing on a malformed response. Flagging this explicitly since "behavior must not change" was the stated goal for this phase; this is the one place it does, narrowly, in the failure path only.
+
+**Not yet live-verified**: end-to-end testing is blocked on obtaining a full Vertex service account JSON (`tools/gateway/verify_gateway.ts` is ready and waiting). The gateway itself and its authenticated-gateway token are provisioned and confirmed working; Provider Keys (BYOK) is the remaining manual step.
+
+## Things to verify empirically before relying on this in production
 
 - **Vertex AI + BYOK client-side auth.** `@google/genai`'s Node auth layer only skips its own Google-credential resolution when an `apiKey` is supplied on the client -- otherwise it tries to resolve real Application Default Credentials, which would fail in a Cloudflare Worker. Supplying the gateway token as `apiKey` avoids that failure (confirmed by tracing the SDK's precedence logic that this doesn't change the request body or URL -- those are still driven by the real `project`/`location`), but the SDK then also sends an `x-goog-api-key` header carrying that same (not-a-real-Google-key) value on every request. Cloudflare's BYOK docs warn that sending a provider-key-style header alongside `cf-aig-authorization` can cause confusing 400s; it's unconfirmed whether that applies here, since Vertex's native auth is OAuth-bearer-based rather than API-key-based, and the extraneous header may simply be ignored. Test against a real BYOK-configured gateway before depending on this in production.
 - **`cf-aig-metadata` and the cache key**, as above.

@@ -361,7 +361,11 @@ monorepo:
   values go in `.env.local`, which is gitignored and never committed. Both Vite (`apps/*`) and
   Bun (`tools/*`, `scripts/*`) natively load `.env` then `.env.local` on top of it, so a
   non-empty value in `.env.local` overrides the empty stub for the same key with no extra
-  tooling required.
+  tooling required. Order the file non-secrets first, then a blank line, then this exact header
+  comment, then another blank line before the secret stubs themselves:
+  `# secrets (always empty in this file -- set real values only in .env.local, which is
+  gitignored)`. A short comment above each secret linking to where to obtain its value (a
+  dashboard page, a docs link) is encouraged.
 
 Either way, a developer should be able to tell at a glance -- from the checked-in file alone,
 without needing to open a vault -- which values are actually sensitive.

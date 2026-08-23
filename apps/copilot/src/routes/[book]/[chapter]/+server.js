@@ -138,7 +138,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
  * 
  * @param {CopilotApiResult} result 
  * @param {CopilotSettings} settings 
- * @param {import('@google/genai/node').GoogleGenAI} ai 
+ * @param {import('@tabitha/ai').AiClient} ai
  * @returns {Promise<string>}
  */
 async function get_sfm_for_verse(result, settings, ai) {
