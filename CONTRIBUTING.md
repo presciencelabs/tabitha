@@ -144,6 +144,16 @@ pnpm dev:targets
 pnpm dev:copilot
 ```
 
+### 5. Ontology Local Permissions (first time only)
+
+`pnpm setup`'s D1 bootstrap loads schema and app data, but never seeds real user grants -- those only exist in production, so a fresh local Auth database starts with nobody authorized. After you sign in to Ontology (`http://localhost.tabitha.bible:5173`) with Google for the first time, a `401` on any `/protected` page is expected, not a bug. Fix it once with:
+
+```bash
+pnpm db:grant your.email@example.com
+```
+
+This grants every Ontology permission to that email in your local Auth D1 only -- it never touches production. Run it again any time you reload the database from a fresh snapshot (`pnpm db:load`/`db:load:ontology`), since that resets local grants too.
+
 ---
 
 ## 📐 Development Guidelines & Philosophies

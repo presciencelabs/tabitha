@@ -51,7 +51,7 @@
 				<td>
 					<Level level={concept.level} />
 					{#if pending_level_change}
-						<PendingChange>
+						<PendingChange change={pending_level_change}>
 							<Level level={pending_level_change.data.level?.value || ''} />
 						</PendingChange>
 					{/if}

@@ -6,8 +6,10 @@
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
+	import { Toast } from '@tabitha/ui'
+	import { enqueue } from '$lib/offline/sync'
 
-	let { data, form }: PageProps = $props()
+	let { data }: PageProps = $props()
 
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
@@ -17,8 +19,41 @@
 	let debounce_delay = 500
 	let fetching_sense = $state(false)
 
-	function focus_alert(node: HTMLElement) {
-		node.focus()
+	let saving = $state(false)
+	let error_message = $state('')
+	let save_result: 'applied' | 'pending' | 'queued' | null = $state(null)
+	let toast_timeout: ReturnType<typeof setTimeout> | undefined
+
+	function dismiss_toast() {
+		clearTimeout(toast_timeout)
+		error_message = ''
+		save_result = null
+	}
+
+	async function handle_submit(event: SubmitEvent) {
+		event.preventDefault()
+		saving = true
+		dismiss_toast()
+
+		try {
+			const outcome = await enqueue('create', $state.snapshot(concept_data))
+
+			if (outcome.type === 'failed') {
+				error_message = outcome.message
+			} else if (outcome.type === 'still_pending') {
+				save_result = 'queued'
+			} else {
+				save_result = outcome.applied ? 'applied' : 'pending'
+				if (outcome.applied) {
+					// success is good news and doesn't need to linger; pending/queued/error stay until dismissed, since they carry more to act on
+					toast_timeout = setTimeout(dismiss_toast, 4000)
+				}
+			}
+		} catch (err: unknown) {
+			error_message = err instanceof Error ? err.message : 'Failed to create the concept.'
+		} finally {
+			saving = false
+		}
 	}
 
 	$effect(() => {
@@ -34,8 +69,8 @@
 			const { stem, part_of_speech } = debounced_stem_pos
 			if (stem && part_of_speech) {
 				fetch(`create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`).then(async res => {
-					const { sense } = await res.json()
-					concept_data.sense = sense
+					const { next_sense } = await res.json()
+					concept_data.sense = next_sense
 				}).catch(err => {
 					console.error({
 						err,
@@ -52,18 +87,25 @@
 	})
 </script>
 
+{#if error_message}
+	<Toast variant="error" on_dismiss={dismiss_toast}>{error_message}</Toast>
+{:else if save_result === 'applied'}
+	<Toast variant="success" on_dismiss={dismiss_toast}>Saved — your change is live now.</Toast>
+{:else if save_result === 'pending'}
+	<Toast variant="info" on_dismiss={dismiss_toast}>
+		Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.
+	</Toast>
+{:else if save_result === 'queued'}
+	<Toast variant="info" on_dismiss={dismiss_toast}>
+		Couldn't reach the server — this change is saved on this device and will sync automatically.
+	</Toast>
+{/if}
+
 <article class="card bg-base-200 mx-auto w-[80%]">
 	<div class="card-body">
 		<div class="prose pb-4">
 			<h2>Add a new concept</h2>
 		</div>
-
-		{#if form?.error}
-			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
-				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
-				<span>{form.error}</span>
-			</aside>
-		{/if}
 
 		{#if concept_data.sense}
 			{@const concept_for_header = create_fallback_concept(concept_data)}
@@ -76,7 +118,7 @@
 			</div>
 		{/if}
 
-		<form method="POST" action="?/create" class="flex flex-col gap-6">
+		<form onsubmit={handle_submit} class="flex flex-col gap-6">
 			<section class="flex flex-wrap gap-4 items-end">
 				<fieldset class="fieldset">
 					<legend class="fieldset-legend font-semibold">Stem</legend>
@@ -129,7 +171,12 @@
 			</section>
 
 			<div class="flex gap-2">
-				<button type="submit" disabled={!can_save} class="btn btn-primary">Save</button>
+				<button type="submit" disabled={!can_save || saving} class="btn btn-primary">
+					{#if saving}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					Save
+				</button>
 				<a href="/" class="btn btn-ghost">Cancel</a>
 			</div>
 		</form>

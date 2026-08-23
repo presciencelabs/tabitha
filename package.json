@@ -22,6 +22,7 @@
     "db:load:ontology": "bun scripts/dx/db_load.ts ontology",
     "db:load:sources": "bun scripts/dx/db_load.ts sources",
     "db:load:targets": "bun scripts/dx/db_load.ts targets",
+    "db:grant": "bun scripts/dx/grant_permission.ts",
     "build": "turbo run build",
     "precommit": "pnpm check && pnpm test && pnpm build",
     "check": "turbo run check",

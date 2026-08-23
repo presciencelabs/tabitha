@@ -5,6 +5,7 @@ import { get_version } from '$lib/server/ontology'
 import { default_categories } from '$lib/lookups'
 import type {
 	OntologyChange,
+	OntologyChangeAction,
 	OntologyChangeDataFields,
 	PartOfSpeech,
 } from '$lib/types'
@@ -60,8 +61,12 @@ export async function get_pending_changes(db: D1Database): Promise<OntologyChang
 	return results.map(transform)
 }
 
-export async function record_create_concept(db: D1Database, create_data: ConceptCreateData, user: User) {
+// Records the change and, since only authorized users can reach this, applies it immediately using the diff already in hand -- no re-fetch.
+export async function add_change(db: D1Database, action: OntologyChangeAction, data: ConceptUpdateData, user: User): Promise<boolean> {
 	await create_table_if_not_exists(db)
+
+	const { stem, sense, part_of_speech } = data
+	const change_data = action === 'create' ? create_change_data(data) : await diff_change_data(db, data)
 
 	const sql = `
 		INSERT INTO Changes (
@@ -76,52 +81,47 @@ export async function record_create_concept(db: D1Database, create_data: Concept
 		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
-	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categories } = create_data
-	const change_data: OntologyChangeDataFields = {
+	const approved_date = new Date().toISOString()
+	const result = await db.prepare(sql)
+		.bind(stem, sense, part_of_speech, JSON.stringify(change_data), action, user.email!, approved_date)
+		.run()
+
+	const change: OntologyChange = {
+		id: result.meta.last_row_id,
+		concept: { stem, sense, part_of_speech },
+		data: change_data,
+		action,
+		approved_by: { email: user.email!, date: new Date(approved_date) },
+		applied_date: null,
+		version: null,
+	}
+
+	const version = await get_next_version(db)
+	return apply_one_change(db, change, version, new Date().toISOString())
+}
+
+function create_change_data(create_data: ConceptCreateData): OntologyChangeDataFields {
+	const { level, gloss, brief_gloss, categories } = create_data
+	return {
 		level: { value: level },
 		gloss: { value: gloss },
 		...brief_gloss ? { brief_gloss: { value: brief_gloss } } : {},
 		categories: { value: categories },
 	}
-
-	await db.prepare(sql)
-		.bind(stem, sense, part_of_speech, JSON.stringify(change_data), 'create', user.email!, new Date().toISOString())
-		.run()
 }
 
-export async function record_update_concept(db: D1Database, update_data: ConceptUpdateData, user: User) {
-	await create_table_if_not_exists(db)
-
-	const sql = `
-		INSERT INTO Changes (
-			concept_stem,
-			concept_sense,
-			concept_part_of_speech,
-			data,
-			action,
-			approved_by_email,
-			approved_date
-			)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
-	`
-
-	const { stem, sense, part_of_speech } = update_data
-
-	// only record the differences in the data
+async function diff_change_data(db: D1Database, update_data: ConceptUpdateData): Promise<OntologyChangeDataFields> {
+	// only record the fields that actually changed
 	const old = (await get_concept_for_update(db, update_data))!
 
 	const fields: (keyof OntologyChangeDataFields)[] = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples']
-	const change_data: OntologyChangeDataFields = Object.fromEntries(
+	return Object.fromEntries(
 		fields.flatMap(field => {
 			return old[field]?.toString() !== update_data[field]?.toString()
 				? [[field, { old: old[field], value: update_data[field] }]]
 				: []
 		}),
 	)
-
-	await db.prepare(sql)
-		.bind(stem, sense, part_of_speech, JSON.stringify(change_data), 'update', user.email!, new Date().toISOString())
-		.run()
 }
 
 function transform(db_change: DbOntologyChange): OntologyChange {
@@ -179,48 +179,10 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 	let failed = 0
 
 	for (const change of pending_changes) {
-		try {
-			if (change.action === 'create') {
-				const fallback_categories = default_categories[change.concept.part_of_speech as PartOfSpeech] || []
-				const create_data: ConceptCreateData = {
-					...change.concept,
-					level: change.data.level?.value ?? '0',
-					gloss: change.data.gloss?.value ?? '',
-					brief_gloss: change.data.brief_gloss?.value ?? '',
-					categories: change.data.categories?.value ?? fallback_categories,
-					curated_examples: change.data.curated_examples?.value ?? '',
-				}
-				await create_concept(db, create_data)
-			} else {
-				const current_data = (await get_concept_for_update(db, change.concept))!
-				const update_data: ConceptUpdateData = {
-					...change.concept,
-					level: change.data.level?.value ?? current_data.level,
-					gloss: change.data.gloss?.value ?? current_data.gloss,
-					brief_gloss: change.data.brief_gloss?.value ?? current_data.brief_gloss,
-					categories: change.data.categories?.value ?? current_data.categories,
-					curated_examples: change.data.curated_examples?.value ?? current_data.curated_examples,
-				}
-				await update_concept(db, update_data)
-			}
-
-			const sql = `
-				UPDATE Changes
-				SET applied_date = ?, version = ?
-				WHERE id = ?
-			`
-			await db.prepare(sql).bind(applied_date, version, change.id).run()
+		const applied = await apply_one_change(db, change, version, applied_date)
+		if (applied) {
 			count++
-		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : String(err)
-			console.error(`Failed to apply change ${change.id}: ${message}`)
-
-			const sql = `
-				UPDATE Changes
-				SET version = ?
-				WHERE id = ?
-			`
-			await db.prepare(sql).bind('Failed', change.id).run()
+		} else {
 			failed++
 		}
 	}
@@ -230,6 +192,54 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 		count,
 		failed,
 		version,
+	}
+}
+
+// On failure, applying stays pending (applied_date left null) for the /protected/changes review flow to retry.
+async function apply_one_change(db: D1Database, change: OntologyChange, version: string, applied_date: string): Promise<boolean> {
+	try {
+		if (change.action === 'create') {
+			const fallback_categories = default_categories[change.concept.part_of_speech as PartOfSpeech] || []
+			const create_data: ConceptCreateData = {
+				...change.concept,
+				level: change.data.level?.value ?? '0',
+				gloss: change.data.gloss?.value ?? '',
+				brief_gloss: change.data.brief_gloss?.value ?? '',
+				categories: change.data.categories?.value ?? fallback_categories,
+				curated_examples: change.data.curated_examples?.value ?? '',
+			}
+			await create_concept(db, create_data)
+		} else {
+			const current_data = (await get_concept_for_update(db, change.concept))!
+			const update_data: ConceptUpdateData = {
+				...change.concept,
+				level: change.data.level?.value ?? current_data.level,
+				gloss: change.data.gloss?.value ?? current_data.gloss,
+				brief_gloss: change.data.brief_gloss?.value ?? current_data.brief_gloss,
+				categories: change.data.categories?.value ?? current_data.categories,
+				curated_examples: change.data.curated_examples?.value ?? current_data.curated_examples,
+			}
+			await update_concept(db, update_data)
+		}
+
+		const sql = `
+			UPDATE Changes
+			SET applied_date = ?, version = ?
+			WHERE id = ?
+		`
+		await db.prepare(sql).bind(applied_date, version, change.id).run()
+		return true
+	} catch (err: unknown) {
+		const message = err instanceof Error ? err.message : String(err)
+		console.error(`Failed to apply change ${change.id}: ${message}`)
+
+		const sql = `
+			UPDATE Changes
+			SET version = ?
+			WHERE id = ?
+		`
+		await db.prepare(sql).bind('Failed', change.id).run()
+		return false
 	}
 }
 
@@ -244,6 +254,7 @@ async function get_next_version(db: D1Database): Promise<string> {
 	const version_from_changes = await db.prepare(sql).first<string>('version')
 	const current_version = version_from_changes || await get_version(db)
 
+	// e.g. "3.0.9495" -> [3, 0, 9495]
 	const parts = current_version.split('.').map(Number)
 
 	if (parts[2] < 9999) {
