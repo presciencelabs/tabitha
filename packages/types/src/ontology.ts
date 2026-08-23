@@ -111,12 +111,16 @@ export type OntologyChange = {
 	concept: ConceptKey
 	data: OntologyChangeDataFields
 	action: OntologyChangeAction
+	suggested_by: WorkflowInfo | null
 	approved_by: WorkflowInfo | null
 	applied_date: Date | null
 	version: string | null
 	// set for changes synthesized client-side from the offline queue -- not yet sent to the server at all,
 	// as opposed to a change the server recorded but hasn't applied/approved yet
 	is_unsynced?: boolean
+	// whether the viewing user is allowed to approve this specific change -- computed server-side (see
+	// can_approve_change in changes.ts) since it depends on the viewer's permissions, not just the change itself
+	can_approve?: boolean
 }
 
 export interface Concept extends Omit<DbRowConcept, 'level' | 'curated_examples'> {

@@ -24,6 +24,8 @@ export type DbOntologyChange = {
 	concept_part_of_speech: string
 	data: string
 	action: OntologyChangeAction
+	suggested_by_email: UserEmail | null
+	suggested_date: string | null
 	approved_by_email: UserEmail | null
 	approved_date: string | null
 	applied_date: string | null

@@ -61,12 +61,39 @@ export async function get_pending_changes(db: D1Database): Promise<OntologyChang
 	return results.map(transform)
 }
 
-// Records the change and, since only authorized users can reach this, applies it immediately using the diff already in hand -- no re-fetch.
-export async function add_change(db: D1Database, action: OntologyChangeAction, data: ConceptUpdateData, user: User): Promise<boolean> {
+export async function get_change(db: D1Database, id: number): Promise<OntologyChange | null> {
+	await create_table_if_not_exists(db)
+
+	const db_change = await db.prepare('SELECT * FROM Changes WHERE id = ?').bind(id).first<DbOntologyChange>()
+	return db_change ? transform(db_change) : null
+}
+
+// Records the change. An authorized user applies it immediately using the diff already in hand -- no re-fetch.
+// Anyone else's edit is recorded as a suggestion, left unapproved and unapplied, for an authorized user to review.
+export async function add_change(db: D1Database, action: OntologyChangeAction, data: ConceptUpdateData, user: User, can_apply_directly: boolean): Promise<boolean> {
 	await create_table_if_not_exists(db)
 
 	const { stem, sense, part_of_speech } = data
 	const change_data = action === 'create' ? create_change_data(data) : await diff_change_data(db, data)
+
+	if (!can_apply_directly) {
+		const sql = `
+			INSERT INTO Changes (
+				concept_stem,
+				concept_sense,
+				concept_part_of_speech,
+				data,
+				action,
+				suggested_by_email,
+				suggested_date
+				)
+			VALUES (?, ?, ?, ?, ?, ?, ?)
+		`
+		await db.prepare(sql)
+			.bind(stem, sense, part_of_speech, JSON.stringify(change_data), action, user.email!, new Date().toISOString())
+			.run()
+		return false
+	}
 
 	const sql = `
 		INSERT INTO Changes (
@@ -91,13 +118,36 @@ export async function add_change(db: D1Database, action: OntologyChangeAction, d
 		concept: { stem, sense, part_of_speech },
 		data: change_data,
 		action,
+		suggested_by: null,
 		approved_by: { email: user.email!, date: new Date(approved_date) },
 		applied_date: null,
 		version: null,
 	}
 
 	const version = await get_next_version(db)
-	return apply_one_change(db, change, version, new Date().toISOString())
+	const applied = await apply_one_change(db, change, version, new Date().toISOString())
+	return !!applied.applied_date
+}
+
+export function can_approve_change(change: OntologyChange, permissions: { can_add: boolean, can_update: boolean }): boolean {
+	if (!change.suggested_by || change.approved_by) {
+		return false
+	}
+	return change.action === 'create' ? permissions.can_add : permissions.can_update
+}
+
+// Approves a suggested change so the existing apply-pending machinery will pick it up.
+export async function approve_change(db: D1Database, id: number, user: User): Promise<OntologyChange> {
+	await create_table_if_not_exists(db)
+
+	const sql = `
+		UPDATE Changes
+		SET approved_by_email = ?, approved_date = ?
+		WHERE id = ? AND approved_date IS NULL
+	`
+	await db.prepare(sql).bind(user.email!, new Date().toISOString(), id).run()
+
+	return (await get_change(db, id))!
 }
 
 function create_change_data(create_data: ConceptCreateData): OntologyChangeDataFields {
@@ -132,6 +182,8 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 		concept_part_of_speech,
 		data,
 		action,
+		suggested_by_email,
+		suggested_date,
 		approved_by_email,
 		approved_date,
 		applied_date,
@@ -147,13 +199,14 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 		},
 		data: JSON.parse(data) as OntologyChangeDataFields,
 		action,
+		suggested_by: suggested_by_email && suggested_date ? { email: suggested_by_email, date: new Date(suggested_date) } : null,
 		approved_by: approved_by_email && approved_date ? { email: approved_by_email, date: new Date(approved_date) } : null,
 		applied_date: applied_date ? new Date(applied_date) : null,
 		version,
 	}
 }
 
-export async function apply_pending_changes(db: D1Database): Promise<{ count: number, failed: number, version: string }> {
+export async function apply_pending_changes(db: D1Database): Promise<{ count: number, failed: number, version: string, changes: OntologyChange[] }> {
 	await create_table_if_not_exists(db)
 
 	const sql = `
@@ -169,34 +222,31 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 			count: 0,
 			failed: 0,
 			version: await get_version(db),
+			changes: [],
 		}
 	}
 
 	const version = await get_next_version(db)
 	const applied_date = new Date().toISOString()
 
-	let count = 0
-	let failed = 0
-
+	const changes: OntologyChange[] = []
 	for (const change of pending_changes) {
-		const applied = await apply_one_change(db, change, version, applied_date)
-		if (applied) {
-			count++
-		} else {
-			failed++
-		}
+		changes.push(await apply_one_change(db, change, version, applied_date))
 	}
 	// TODO once changes are fully supported, actually save the new version within the 'Version' table
 
+	const count = changes.filter(change => change.applied_date).length
+
 	return {
 		count,
-		failed,
+		failed: changes.length - count,
 		version,
+		changes,
 	}
 }
 
 // On failure, applying stays pending (applied_date left null) for the /protected/changes review flow to retry.
-async function apply_one_change(db: D1Database, change: OntologyChange, version: string, applied_date: string): Promise<boolean> {
+async function apply_one_change(db: D1Database, change: OntologyChange, version: string, applied_date: string): Promise<OntologyChange> {
 	try {
 		if (change.action === 'create') {
 			const fallback_categories = default_categories[change.concept.part_of_speech as PartOfSpeech] || []
@@ -228,7 +278,7 @@ async function apply_one_change(db: D1Database, change: OntologyChange, version:
 			WHERE id = ?
 		`
 		await db.prepare(sql).bind(applied_date, version, change.id).run()
-		return true
+		return { ...change, applied_date: new Date(applied_date), version }
 	} catch (err: unknown) {
 		const message = err instanceof Error ? err.message : String(err)
 		console.error(`Failed to apply change ${change.id}: ${message}`)
@@ -239,7 +289,7 @@ async function apply_one_change(db: D1Database, change: OntologyChange, version:
 			WHERE id = ?
 		`
 		await db.prepare(sql).bind('Failed', change.id).run()
-		return false
+		return { ...change, version: 'Failed' }
 	}
 }
 

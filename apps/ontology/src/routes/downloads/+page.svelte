@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
+	import { format_datetime } from '$lib/format'
 
 	let { data }: PageProps = $props()
 </script>
@@ -21,7 +22,7 @@
 			<tr class="hover">
 				<td>{name}</td>
 				<td>{version}</td>
-				<td>{created_at.toLocaleString()}</td>
+				<td>{format_datetime(created_at, data)}</td>
 				<td>{size_mb} MB</td>
 				<td>
 					<!-- download name being controlled by https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Disposition since the download link is cross-origin -->

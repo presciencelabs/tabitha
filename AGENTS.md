@@ -4,9 +4,9 @@ Welcome to the **TaBiThA** engineering workspace. This document serves as the **
 
 ---
 
-## 🏛️ 13 Core Development Philosophies
+## 🏛️ 14 Core Development Philosophies
 
-All code written in this repository should adhere to the following 13 foundational philosophies:
+All code written in this repository should adhere to the following 14 foundational philosophies:
 
 ### 1. Self-contained components
 
@@ -313,6 +313,44 @@ interface FetchConceptOptions {
 	<p>{concept.definition}</p>
 	<button class="btn btn-sm not-prose">Show more</button>
 </section>
+```
+
+---
+
+### 14. SvelteKit data-loading boundaries
+
+Keep `.svelte` component scripts limited to presentation and event wiring. Data fetching, response shaping, derived properties the UI needs, and permission-dependent display decisions belong in the appropriate `load` function or a `$lib` data-layer module, never written inline in the component:
+
+- **`+page.svelte` / `+layout.svelte`** — display only. Read already-shaped `data`, wire up events. No `fetch()` written directly in the component script — this holds regardless of what triggers the call (page load, a click, a keystroke) or where the request goes (our own backend or a third-party API); wrap it in a `$lib` data-layer function the component calls instead. No response parsing, no deriving new properties from raw data, in the component either. The only valid exception is Philosophy #12's YAGNI: a genuinely disposable, single-use, one-line call that will never be touched again, where a wrapper module would be pure ceremony — not a case-by-case judgment call for anything that might be reused or grow.
+- **`+page.ts` / `+layout.ts` (universal load)** — shapes data for the UI and may hold display-adjacent business logic. This is also the only place allowed to depend on browser-only context (e.g. `navigator.language`, `Intl.DateTimeFormat().resolvedOptions().timeZone`), since a universal load reruns once on the client right after SSR.
+- **`+page.server.ts` / `+layout.server.ts`** — a narrow role: server-only session/auth checks and assembling the data a page needs by calling server modules. Not the home for reusable business logic.
+- **`+server.ts` endpoints and `$lib/server/**` modules** — canonical, call-site-independent business logic and data access. A decision like "can this user approve this change?" is computed once here and reused by both an endpoint's authorization check and the value it returns — never re-derived separately in a loader or a component.
+
+```svelte
+<!-- ❌ Avoid: fetch, response parsing, and a derived permission decision inline in the component -->
+<script lang="ts">
+	async function approve(change) {
+		const res = await fetch(`/protected/changes/${change.id}/approve`, { method: 'POST' })
+		const result = await res.json()
+		if (res.ok) { /* ... */ }
+	}
+	function can_approve(change) {
+		return !!change.suggested_by && !change.approved_by && data.can_add
+	}
+</script>
+
+<!-- ✅ Preferred: the component only reads already-shaped data and calls a data-layer function -->
+<script lang="ts">
+	import { approve_change } from '$lib/changes'
+
+	async function approve(change) {
+		changes = changes.map(c => c.id === change.id ? await approve_change(change.id) : c)
+	}
+</script>
+
+{#if change.can_approve}
+	<button onclick={() => approve(change)}>Approve</button>
+{/if}
 ```
 
 ---

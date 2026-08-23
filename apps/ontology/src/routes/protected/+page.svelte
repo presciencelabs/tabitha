@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
+	import { format_time } from '$lib/format'
 
 	let { data } = $props()
 
@@ -17,7 +18,7 @@
 			const result = await res.json()
 
 			if (res.ok && result.success) {
-				const time = new Date(result.timestamp).toLocaleTimeString()
+				const time = format_time(new Date(result.timestamp), data)
 				status_message = `Successfully synced ${result.count} complex terms at ${time}.`
 				status_type = 'success'
 			} else {

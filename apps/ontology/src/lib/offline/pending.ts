@@ -52,6 +52,7 @@ function to_change(mutation: QueuedMutation, concept?: Concept): OntologyChange 
 		concept: { stem: body.stem, sense: body.sense, part_of_speech: body.part_of_speech },
 		data: mutation.action === 'create' ? create_change_fields(body) : diff(body, concept!),
 		action: mutation.action,
+		suggested_by: null,
 		approved_by: null,
 		applied_date: null,
 		version: null,

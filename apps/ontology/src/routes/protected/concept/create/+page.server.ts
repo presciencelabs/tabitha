@@ -1,13 +1,10 @@
-import { is_authorized } from '$lib/server/auth'
-import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import type { ConceptCreateData } from '$lib/server/types'
 
-export const load: PageServerLoad = async ({ locals }) => {
-	if (!await is_authorized(locals, 'ADD_CONCEPT')) {
-		throw error(403, 'You must have permission to add a concept to the Ontology.')
-	}
-
+// Reaching this page only requires PROTECTED_ACCESS (enforced in hooks.server.ts for all /protected
+// routes) -- ADD_CONCEPT is no longer required here, since a user without it can still submit a new
+// concept, it just gets recorded as a suggestion instead of applied immediately (see add_change).
+export const load: PageServerLoad = async () => {
 	const concept_data: ConceptCreateData = {
 		stem: '',
 		sense: '',
