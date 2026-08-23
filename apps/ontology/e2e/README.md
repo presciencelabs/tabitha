@@ -19,6 +19,16 @@ See [`docs/decisions/0006-e2e-auth-bypass-via-signed-session-cookie.md`](../../.
 - The local Auth D1 must exist (`pnpm db:load:ontology`), since that's what `db:grant` writes into.
 - `bun` must be on `PATH` (same requirement as `pnpm db:grant`/`db:load` generally).
 
+## Don't use `context.setOffline()` to simulate offline in this app
+
+This app registers a PWA service worker (`vite-plugin-pwa`), and Playwright/Chrome's `context.setOffline(true)` interacts badly with it: confirmed directly, it stalls page reactivity entirely -- even a plain form field edit stops updating component state, unrelated to any app code. Simulate offline by failing the specific request instead:
+
+```ts
+await page.route('**/protected/concept/update/submit', route => route.abort('internetdisconnected'))
+```
+
+See `e2e/offline_queue.spec.ts` for a full example.
+
 ## If a protected-route test starts failing with a 401/redirect-to-login
 
 - Confirm `AUTH_SECRET` in `.env.local` actually matches what the running dev server loaded (a stale copy from a different environment won't decrypt).

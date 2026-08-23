@@ -1,12 +1,14 @@
 <script lang="ts">
 	import '$lib/app.css'
 
+	import { onMount } from 'svelte'
 	import { page } from '$app/state'
 	import { Search } from '$lib'
 	import { Header, Footer } from '@tabitha/ui'
 	import { signIn, signOut } from '@auth/sveltekit/client'
 	import Icon from '@iconify/svelte'
 	import { useRegisterSW } from 'virtual:pwa-register/svelte'
+	import { sync_pending } from '$lib/offline/sync'
 
 	let { data, children } = $props()
 
@@ -20,6 +22,15 @@
 		// https://next-auth.js.org/getting-started/client#signout
 		await signOut({ callbackUrl: '/' })
 	}
+
+	onMount(() => {
+		// Catches anything left over from a previous visit that never made it to the server --
+		// the `online` event alone wouldn't fire for a tab that was fully closed while offline.
+		sync_pending()
+
+		window.addEventListener('online', sync_pending)
+		return () => window.removeEventListener('online', sync_pending)
+	})
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->

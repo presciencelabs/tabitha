@@ -5,6 +5,7 @@
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
 	import { Toast } from '@tabitha/ui'
+	import { enqueue } from '$lib/offline/sync'
 	import type { Concept } from '$lib/types'
 	import type { ConceptUpdateData } from '$lib/server/types'
 
@@ -18,7 +19,7 @@
 
 	let saving = $state(false)
 	let error_message = $state('')
-	let save_result: 'applied' | 'pending' | null = $state(null)
+	let save_result: 'applied' | 'pending' | 'queued' | null = $state(null)
 	let toast_timeout: ReturnType<typeof setTimeout> | undefined
 
 	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
@@ -37,25 +38,23 @@
 		dismiss_toast()
 
 		try {
-			const res = await fetch('update/submit', {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify(concept_data),
-			})
+			const outcome = await enqueue('update', $state.snapshot(concept_data))
 
-			if (!res.ok) {
-				const body = await res.json().catch(() => ({}))
-				error_message = body.message || 'Failed to save the concept.'
-				return
-			}
+			if (outcome.type === 'failed') {
+				error_message = outcome.message
+			} else {
+				// the intent is durably recorded either way (applied, left pending, or queued offline) -- only a rejected change leaves the form dirty
+				initial_data = $state.snapshot(concept_data)
 
-			const { applied } = await res.json()
-			save_result = applied ? 'applied' : 'pending'
-			initial_data = $state.snapshot(concept_data)
-
-			if (applied) {
-				// success is good news and doesn't need to linger; pending/error stay until dismissed, since they carry more to act on
-				toast_timeout = setTimeout(dismiss_toast, 4000)
+				if (outcome.type === 'still_pending') {
+					save_result = 'queued'
+				} else {
+					save_result = outcome.applied ? 'applied' : 'pending'
+					if (outcome.applied) {
+						// success is good news and doesn't need to linger; pending/queued/error stay until dismissed, since they carry more to act on
+						toast_timeout = setTimeout(dismiss_toast, 4000)
+					}
+				}
 			}
 		} catch (err: unknown) {
 			error_message = err instanceof Error ? err.message : 'Failed to save the concept.'
@@ -72,6 +71,10 @@
 {:else if save_result === 'pending'}
 	<Toast variant="info" on_dismiss={dismiss_toast}>
 		Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.
+	</Toast>
+{:else if save_result === 'queued'}
+	<Toast variant="info" on_dismiss={dismiss_toast}>
+		Couldn't reach the server — this change is saved on this device and will sync automatically.
 	</Toast>
 {/if}
 
