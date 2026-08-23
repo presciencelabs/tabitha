@@ -6,6 +6,7 @@
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
 	import Header from '$lib/card/Header.svelte'
+	import { Toast } from '@tabitha/ui'
 
 	let { data }: PageProps = $props()
 
@@ -20,16 +21,18 @@
 	let saving = $state(false)
 	let error_message = $state('')
 	let save_result: 'applied' | 'pending' | null = $state(null)
+	let toast_timeout: ReturnType<typeof setTimeout> | undefined
 
-	function focus_alert(node: HTMLElement) {
-		node.focus()
+	function dismiss_toast() {
+		clearTimeout(toast_timeout)
+		error_message = ''
+		save_result = null
 	}
 
 	async function handle_submit(event: SubmitEvent) {
 		event.preventDefault()
 		saving = true
-		error_message = ''
-		save_result = null
+		dismiss_toast()
 
 		try {
 			const res = await fetch('create/submit', {
@@ -46,6 +49,11 @@
 
 			const { applied } = await res.json()
 			save_result = applied ? 'applied' : 'pending'
+
+			if (applied) {
+				// success is good news and doesn't need to linger; pending/error stay until dismissed, since they carry more to act on
+				toast_timeout = setTimeout(dismiss_toast, 4000)
+			}
 		} catch (err: unknown) {
 			error_message = err instanceof Error ? err.message : 'Failed to create the concept.'
 		} finally {
@@ -84,30 +92,21 @@
 	})
 </script>
 
+{#if error_message}
+	<Toast variant="error" on_dismiss={dismiss_toast}>{error_message}</Toast>
+{:else if save_result === 'applied'}
+	<Toast variant="success" on_dismiss={dismiss_toast}>Saved — your change is live now.</Toast>
+{:else if save_result === 'pending'}
+	<Toast variant="info" on_dismiss={dismiss_toast}>
+		Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.
+	</Toast>
+{/if}
+
 <article class="card bg-base-200 mx-auto w-[80%]">
 	<div class="card-body">
 		<div class="prose pb-4">
 			<h2>Add a new concept</h2>
 		</div>
-
-		{#if error_message}
-			<aside role="alert" tabindex="-1" use:focus_alert class="alert alert-error mb-4 outline-none">
-				<Icon icon="material-symbols:error-outline-rounded" class="h-6 w-6 shrink-0" />
-				<span>{error_message}</span>
-			</aside>
-		{/if}
-
-		{#if save_result === 'applied'}
-			<div class="alert alert-success mb-4 text-sm">
-				<Icon icon="material-symbols:check-circle-outline" class="h-5 w-5 shrink-0" />
-				<span>Saved — your change is live now.</span>
-			</div>
-		{:else if save_result === 'pending'}
-			<div class="alert alert-info mb-4 text-sm">
-				<Icon icon="material-symbols:info-outline" class="h-5 w-5 shrink-0" />
-				<span>Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.</span>
-			</div>
-		{/if}
 
 		{#if concept_data.sense}
 			{@const concept_for_header = create_fallback_concept(concept_data)}
