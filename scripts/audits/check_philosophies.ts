@@ -2,18 +2,19 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+	check_classes_at_end,
+	check_prose_scoping,
+	check_pure_functions,
+	check_snake_case_functions,
+	check_strict_domain_typing,
+	check_sveltekit_data_boundaries,
+	check_tabs_indentation,
+	findings,
+} from './philosophies'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
-
-interface PhilosophyFinding {
-	rule_id: number
-	rule_title: string
-	file_path: string
-	line_number: number
-	snippet: string
-	message: string
-}
 
 // Maps each rule to the AGENTS.md section that explains it, so a failing check
 // can point a developer (or AI agent) straight to the "why" instead of just the "what".
@@ -22,11 +23,10 @@ const RULE_DOC_ANCHORS: Record<number, string> = {
 	5: 'AGENTS.md#5-classes-at-the-end-of-elements',
 	7: 'AGENTS.md#7-strict-domain-typing',
 	10: 'AGENTS.md#10-snake_case-for-functions-variables-and-files',
+	11: 'AGENTS.md#11-pure-functions',
 	13: 'AGENTS.md#13-scope-prose-to-content-escape-with-not-prose',
 	14: 'AGENTS.md#14-sveltekit-data-loading-boundaries',
 }
-
-const findings: PhilosophyFinding[] = []
 
 async function get_source_files(dir: string): Promise<string[]> {
 	if (!existsSync(dir)) return []
@@ -58,178 +58,6 @@ async function get_source_files(dir: string): Promise<string[]> {
 	return files
 }
 
-function check_tabs_indentation(file_path: string, lines: string[]) {
-	// Philosophy 3: Tabs for indentation
-	lines.forEach((line, idx) => {
-		const trimmed = line.trimStart()
-		if (!trimmed || trimmed.startsWith('*') || trimmed.startsWith('/*')) return
-
-		const leading_spaces = line.match(/^( +)/)
-		if (leading_spaces && leading_spaces[1].length >= 2) {
-			findings.push({
-				rule_id: 3,
-				rule_title: 'Tabs for indentation',
-				file_path,
-				line_number: idx + 1,
-				snippet: line.trim(),
-				message: `Line is indented with ${leading_spaces[1].length} spaces instead of tab character(s).`,
-			})
-		}
-	})
-}
-
-function check_classes_at_end(file_path: string, content: string, lines: string[]) {
-	// Philosophy 5: Classes at the end of elements (in .svelte files)
-	if (!file_path.endsWith('.svelte')) return
-
-	// Regex looks for tags with class="..." followed by functional attributes like onclick, disabled, type, href
-	const element_regex = /<([a-zA-Z0-9_-]+)\s+([^>]+)>/g
-	let match
-
-	while ((match = element_regex.exec(content)) !== null) {
-		const tag_name = match[1]
-		const attrs_string = match[2]
-
-		if (tag_name === 'script' || tag_name === 'style') continue
-
-		const class_match = attrs_string.match(/\bclass=["'{]/)
-		if (!class_match || class_match.index === undefined) continue
-
-		const class_pos = class_match.index
-		const rest_of_attrs = attrs_string.slice(class_pos)
-
-		// Check if functional attributes appear after class attribute
-		const functional_attr_match = rest_of_attrs.match(/\b(onclick|onchange|onsubmit|onkeydown|type|disabled|href|value)=/)
-		if (functional_attr_match) {
-			const line_number = content.substring(0, match.index).split('\n').length
-			findings.push({
-				rule_id: 5,
-				rule_title: 'Classes at the end of elements',
-				file_path,
-				line_number,
-				snippet: match[0].slice(0, 80) + '...',
-				message: `Element <${tag_name}> has functional attribute "${functional_attr_match[1]}" placed after class attribute.`,
-			})
-		}
-	}
-}
-
-const LAYOUT_UTILITY_PATTERN = /^(flex|grid|inline-flex|inline-grid|items-|justify-|content-|place-|gap-\d)/
-const DAISYUI_STRUCTURAL_PATTERN = /^(card-title|card-actions|btn|navbar|modal-action|menu|tabs|steps|alert)/
-
-function check_prose_scoping(file_path: string, content: string) {
-	// Philosophy 13: Scope "prose" to content; escape with "not-prose"
-	if (!file_path.endsWith('.svelte')) return
-
-	const class_attr_regex = /class=["']([^"']*)["']/g
-	let match
-
-	while ((match = class_attr_regex.exec(content)) !== null) {
-		const classes = match[1].split(/\s+/).filter(Boolean)
-		const has_prose = classes.some(c => c === 'prose' || c.startsWith('prose-'))
-		if (!has_prose) continue
-
-		const conflicting_classes = classes.filter(c => LAYOUT_UTILITY_PATTERN.test(c) || DAISYUI_STRUCTURAL_PATTERN.test(c))
-		if (conflicting_classes.length === 0) continue
-
-		const line_number = content.substring(0, match.index).split('\n').length
-		findings.push({
-			rule_id: 13,
-			rule_title: 'Scope prose to content; escape with not-prose',
-			file_path,
-			line_number,
-			snippet: match[0],
-			message: `Element combines "prose" typography with layout/component class(es) (${conflicting_classes.join(', ')}). Move layout onto a wrapping element and keep "prose" scoped to a content-only block, or add "not-prose" to the nested component.`,
-		})
-	}
-}
-
-const SVELTEKIT_FRAMEWORK_EXEMPTIONS = new Set(['handleError', 'handleFetch', 'handle', 'reroute', 'load'])
-
-function check_strict_domain_typing(file_path: string, lines: string[]) {
-	// Philosophy 7: Strict domain typing (avoid : any or as any in TypeScript files)
-	if (!file_path.endsWith('.ts') && !file_path.endsWith('.svelte')) return
-
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
-
-		// Matches ': any' or 'as any'
-		const any_match = line.match(/(:\s*any\b|\bas\s+any\b)/)
-		if (any_match) {
-			findings.push({
-				rule_id: 7,
-				rule_title: 'Strict domain typing',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: `Explicit use of "${any_match[1].trim()}" detected. Prefer explicit types or discriminating unions.`,
-			})
-		}
-	})
-}
-
-function check_snake_case_functions(file_path: string, lines: string[]) {
-	// Philosophy 10: snake_case for functions and variables
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
-
-		// Match function declaration: function camelCase(
-		const func_decl_match = trimmed.match(/\bfunction\s+([a-z]+[A-Z][a-zA-Z0-9]*)\s*\(/)
-		// Match const fn = (...) => or const fn = function
-		const const_fn_match = trimmed.match(/\b(?:const|let)\s+([a-z]+[A-Z][a-zA-Z0-9]*)\s*=\s*(?:\([^)]*\)|[a-zA-Z0-9_]+)\s*=>/)
-
-		const camel_name = func_decl_match?.[1] || const_fn_match?.[1]
-		if (camel_name) {
-			if (SVELTEKIT_FRAMEWORK_EXEMPTIONS.has(camel_name)) return
-			findings.push({
-				rule_id: 10,
-				rule_title: 'snake_case for functions and variables',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: `Function "${camel_name}" uses camelCase. Prefer snake_case naming.`,
-			})
-		}
-	})
-}
-
-function check_sveltekit_data_boundaries(file_path: string, lines: string[]) {
-	// Philosophy 14: SvelteKit data-loading boundaries -- fetch/response-parsing and locale-dependent
-	// formatting belong in a load function or a $lib data-layer module, not inline in a component.
-	if (!file_path.endsWith('.svelte')) return
-
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
-
-		if (/\bfetch\s*\(/.test(trimmed)) {
-			findings.push({
-				rule_id: 14,
-				rule_title: 'SvelteKit data-loading boundaries',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: 'Direct fetch() call in a component. Move data fetching into a $lib data-layer module (or a +page.ts/+layout.ts load function).',
-			})
-			return
-		}
-
-		const locale_match = trimmed.match(/\.toLocale(String|DateString|TimeString)\s*\(/)
-		if (locale_match) {
-			findings.push({
-				rule_id: 14,
-				rule_title: 'SvelteKit data-loading boundaries',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: `Direct .toLocale${locale_match[1]}() call in a component. Resolve locale/timezone in a universal load (+layout.ts/+page.ts) and format via a shared $lib utility instead.`,
-			})
-		}
-	})
-}
-
 function get_changed_files(): Set<string> {
 	const changed = new Set<string>()
 	try {
@@ -258,7 +86,7 @@ function get_changed_files(): Set<string> {
 async function audit_codebase() {
 	console.log(`
 ============================================================
-       📜 TaBiThA Development Philosophy Compliance Audit   
+       📜 TaBiThA Development Philosophy Compliance Audit
 ============================================================
 `)
 
@@ -297,6 +125,7 @@ async function audit_codebase() {
 		check_classes_at_end(file_path, content, lines)
 		check_strict_domain_typing(file_path, lines)
 		check_snake_case_functions(file_path, lines)
+		check_pure_functions(file_path, content)
 		check_prose_scoping(file_path, content)
 		check_sveltekit_data_boundaries(file_path, lines)
 	}
