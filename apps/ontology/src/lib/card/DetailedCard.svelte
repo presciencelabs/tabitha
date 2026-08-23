@@ -51,7 +51,7 @@
 
 						{#if pending_categories_change}
 							{@const pending_categories = pending_categories_change.data.categories?.value.filter(category => category) || []}
-							<PendingChange>
+							<PendingChange change={pending_categories_change}>
 								<Category {part_of_speech} categories={pending_categories} />
 							</PendingChange>
 						{/if}

@@ -7,6 +7,11 @@ const STORE_NAME = 'mutations'
 
 export type QueuedMutationStatus = 'pending' | 'syncing' | 'failed'
 
+// A not-yet-delivered write request -- the full new record plus delivery bookkeeping (status,
+// retry_count). This is the transport-layer view of a "requested change." It's distinct from
+// OntologyChange (packages/types/src/ontology.ts), the domain-layer view: a field-level old/value
+// diff plus approval/application bookkeeping. Converting one into the other requires a diff against
+// a concept's current data (see offline/pending.ts) -- a mutation alone doesn't know what changed.
 export type QueuedMutation = {
 	client_id: string
 	action: OntologyChangeAction
@@ -65,6 +70,12 @@ export async function add_mutation(action: OntologyChangeAction, body: ConceptCr
 export async function get_pending_mutations(): Promise<QueuedMutation[]> {
 	const all = await with_store<QueuedMutation[]>('readonly', store => store.getAll())
 	return all.filter(mutation => mutation.status === 'pending')
+}
+
+// Every mutation still sitting in the queue at all -- a successful sync deletes its record, so
+// anything still here (pending, mid-sync, or rejected by the server) hasn't taken effect yet.
+export async function get_all_mutations(): Promise<QueuedMutation[]> {
+	return with_store<QueuedMutation[]>('readonly', store => store.getAll())
 }
 
 export async function update_mutation(client_id: string, changes: Partial<QueuedMutation>): Promise<void> {

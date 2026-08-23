@@ -2,6 +2,8 @@
 	import Icon from '@iconify/svelte'
 	import { page } from '$app/state'
 	import { DisplayPreference, SummaryCard, Table } from '$lib'
+	import { merge_pending_changes } from '$lib/offline/pending'
+	import type { Concept } from '$lib/types'
 	import type { PageProps } from './$types'
 
 	let { data }: PageProps = $props()
@@ -9,9 +11,15 @@
 	let display_preference = $state<'grid' | 'table'>('grid')
 
 	let searched = $derived(!!page.url.search)
-	let matches = $derived(data.results)
+	// svelte-ignore state_referenced_locally
+	let matches = $state<Concept[]>(data.results)
 	let found = $derived(!!matches.length)
 	let icon = $derived(`material-symbols:${found ? 'check-circle' : 'warning'}-outline-rounded`)
+
+	$effect(() => {
+		// this is only in IndexedDB on this device, so the server can't have included it in `data.results` already
+		merge_pending_changes(data.results).then(results => matches = results)
+	})
 </script>
 
 <header class="flex justify-between">

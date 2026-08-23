@@ -15,7 +15,7 @@
 	<div class="flex flex-row items-center gap-1">
 		<Level level={concept.level} />
 		{#if pending_change}
-			<PendingChange>
+			<PendingChange change={pending_change}>
 				<Level level={pending_change.data.level!.value} />
 			</PendingChange>
 		{/if}

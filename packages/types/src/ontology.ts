@@ -101,6 +101,11 @@ export type WorkflowInfo = {
 	date: Date
 }
 
+// The domain-layer view of a requested change: a field-level old/value diff plus approval/application
+// bookkeeping. This is distinct from a QueuedMutation (apps/ontology/src/lib/offline/queue.ts), the
+// transport-layer view: a not-yet-delivered write request carrying the full new record plus delivery
+// bookkeeping (status, retry_count). Producing one from the other requires diffing the mutation's body
+// against a concept's current data (see apps/ontology/src/lib/offline/pending.ts).
 export type OntologyChange = {
 	id: number
 	concept: ConceptKey
@@ -109,6 +114,9 @@ export type OntologyChange = {
 	approved_by: WorkflowInfo | null
 	applied_date: Date | null
 	version: string | null
+	// set for changes synthesized client-side from the offline queue -- not yet sent to the server at all,
+	// as opposed to a change the server recorded but hasn't applied/approved yet
+	is_unsynced?: boolean
 }
 
 export interface Concept extends Omit<DbRowConcept, 'level' | 'curated_examples'> {

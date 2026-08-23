@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { levels } from '$lib/lookups'
@@ -6,6 +7,7 @@
 	import Header from '$lib/card/Header.svelte'
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'
+	import { check_for_pending_change } from '$lib/offline/pending'
 	import type { Concept } from '$lib/types'
 	import type { ConceptUpdateData } from '$lib/server/types'
 
@@ -19,8 +21,18 @@
 
 	let saving = $state(false)
 	let error_message = $state('')
-	let save_result: 'applied' | 'pending' | 'queued' | null = $state(null)
+	let save_result: 'applied' | 'pending' | 'queued' | 'unsynced_loaded' | null = $state(null)
 	let toast_timeout: ReturnType<typeof setTimeout> | undefined
+
+	onMount(() => {
+		check_for_pending_change(concept_data).then(mutation => {
+			if (!mutation) return
+
+			Object.assign(concept_data, mutation.body)
+			initial_data = $state.snapshot(concept_data)
+			save_result = 'unsynced_loaded'
+		})
+	})
 
 	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
 		return JSON.stringify(obj1) === JSON.stringify(obj2)
@@ -75,6 +87,10 @@
 {:else if save_result === 'queued'}
 	<Toast variant="info" on_dismiss={dismiss_toast}>
 		Couldn't reach the server — this change is saved on this device and will sync automatically.
+	</Toast>
+{:else if save_result === 'unsynced_loaded'}
+	<Toast variant="info" on_dismiss={dismiss_toast}>
+		Showing your unsynced edit from this device — it hasn't been sent to the server yet.
 	</Toast>
 {/if}
 
