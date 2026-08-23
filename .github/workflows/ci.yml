@@ -116,6 +116,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
