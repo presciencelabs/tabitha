@@ -89,9 +89,11 @@ Useful Commands:
 
 🧪 60-Second Golden Path Smoke Test:
   1. Start all dev servers: \`pnpm dev\`
-  2. Open Editor: http://localhost:8790/?text=Paul+write-01
-  3. Click the 'write-01' concept card (navigates to Ontology at :5173)
-  4. Expand any 'Usage Example' accordion in Ontology:
+  2. Open Editor: http://localhost:8790
+  3. Type 'Paul write-A a letter.' into the text box and click Check
+  4. Click the 'write-A' token, then the 'write-A' link in the popup
+     (navigates to Ontology at :5173)
+  5. Expand any 'Usage Example' accordion in Ontology:
      • Verifies Sources (:8789) -> Fetches semantic tree
      • Verifies Targets (:8788) -> Fetches generated English text
 ============================================================
