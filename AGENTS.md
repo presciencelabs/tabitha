@@ -247,7 +247,7 @@ export const fetch_concept_data = async (payload: ConceptPayload): Promise<Conce
 Functions should be pure and free of side effects wherever practical. Receive one argument (destructuring an options object if multiple inputs are needed) and return one value.
 
 ```typescript
-interface FormatWordOptions {
+type FormatWordOptions = {
 	readonly word: Word
 	readonly prefix?: string
 }
