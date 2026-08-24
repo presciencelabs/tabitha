@@ -253,25 +253,32 @@ jobs:
               body += `\n${mentions} — ${failed.length} advisory check(s) need a look: ${failed.map(([name]) => name).join(', ')}.`
             }
 
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            })
-            const existing = comments.find((c) => c.body.includes(marker))
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              })
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body,
               })
+              const existing = comments.find((c) => c.body.includes(marker))
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                })
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body,
+                })
+              }
+            } catch (error) {
+              // The default GITHUB_TOKEN is read-only under current org policy, so posting
+              // 403s until this job is given a repo-scoped PAT or GitHub App token. Warn
+              // instead of failing the step so this check doesn't show as a hard failure.
+              core.warning(`Could not post PR summary comment: ${error.message}`)
             }
