@@ -5,6 +5,7 @@
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
+	import { get_next_sense } from '$lib/concepts'
 	import Header from '$lib/card/Header.svelte'
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'
@@ -36,7 +37,7 @@
 		dismiss_toast()
 
 		try {
-			const outcome = await enqueue('create', $state.snapshot(concept_data))
+			const outcome = await enqueue({ action: 'create', body: $state.snapshot(concept_data) })
 
 			if (outcome.type === 'failed') {
 				error_message = outcome.message
@@ -65,20 +66,18 @@
 		debounced_stem_pos = { stem: concept_data.stem, part_of_speech: concept_data.part_of_speech }
 		fetching_sense = true
 
-		const timer = setTimeout(() => {
+		const timer = setTimeout(async () => {
 			const { stem, part_of_speech } = debounced_stem_pos
-			if (stem && part_of_speech) {
-				fetch(`create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`).then(async res => {
-					const { next_sense } = await res.json()
-					concept_data.sense = next_sense
-				}).catch(err => {
-					console.error({
-						err,
-					})
-				}).finally(() => {
-					fetching_sense = false
-				})
-			} else {
+			if (!stem || !part_of_speech) {
+				fetching_sense = false
+				return
+			}
+
+			try {
+				concept_data.sense = await get_next_sense({ stem, part_of_speech })
+			} catch (err) {
+				console.error({ err })
+			} finally {
 				fetching_sense = false
 			}
 		}, debounce_delay)

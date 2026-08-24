@@ -15,8 +15,8 @@ export async function load({ locals }: LayoutServerLoadEvent): Promise<LayoutDat
 
 	const session = await locals.auth()
 
-	const can_update = await is_authorized(locals, 'UPDATE_CONCEPT')
-	const can_add = await is_authorized(locals, 'ADD_CONCEPT')
+	const can_update = await is_authorized({ locals, permission: 'UPDATE_CONCEPT' })
+	const can_add = await is_authorized({ locals, permission: 'ADD_CONCEPT' })
 
 	return {
 		version,

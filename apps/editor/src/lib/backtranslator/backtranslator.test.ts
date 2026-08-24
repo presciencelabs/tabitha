@@ -30,7 +30,7 @@ describe('textify', () => {
 	test('Added token', () => {
 		const test_tokens = tokenize_input('This is a test.')
 		const rule_id = 'BT_TEST'
-		test_tokens.splice(2, 0, create_added_token('added', { ...MESSAGE_TYPE.ERROR, message: 'message', rule_id }))
+		test_tokens.splice(2, 0, create_added_token({ token: 'added', message: { ...MESSAGE_TYPE.ERROR, message: 'message', rule_id } }))
 		const expected = 'This is a test .'
 
 		const result = textify(clausify(test_tokens))
@@ -50,9 +50,9 @@ describe('textify', () => {
 
 describe('backtranslate integration and helper pipeline functions', () => {
 	test('remove_some_gap_tokens filters out GAP_INTV_V tokens', () => {
-		const gap_token = create_gap_token('rule:1', 'INTV_V')
-		const normal_token = create_token('John', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' })
-		const sentence: Sentence = { clause: create_clause_token([gap_token, normal_token]) }
+		const gap_token = create_gap_token({ rule_id: 'rule:1', label: 'INTV_V' })
+		const normal_token = create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' })
+		const sentence: Sentence = { clause: create_clause_token({ sub_tokens: [gap_token, normal_token] }) }
 
 		const cleaned = remove_some_gap_tokens([sentence])
 		expect(cleaned[0].clause.sub_tokens).toHaveLength(1)

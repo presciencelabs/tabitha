@@ -32,7 +32,7 @@ export function replace_punctuation(sentences: Sentence[]): Sentence[] {
 				...token,
 				token: stem,
 				type: TOKEN_TYPE.LOOKUP_WORD,
-				lookup_results: [create_lookup_result({ stem, part_of_speech: 'Particle' }, { sense: 'A', ontology_status: 'in ontology' })],
+				lookup_results: [create_lookup_result({ stem, part_of_speech: 'Particle', sense: 'A', ontology_status: 'in ontology' })],
 			}
 		}
 		return token

@@ -48,7 +48,7 @@
 		return ['}', ']', ')'].includes(entity.value)
 	}
 
-	function get_parent_category(entities: SourceEntity[], index: number): string {
+	function get_parent_category({ entities, index }: { entities: SourceEntity[], index: number }): string {
 		let inner_level = 0
 		for (let j = index - 1; j >= 0; j--) {
 			const entity = entities[j]
@@ -71,7 +71,7 @@
 	<div class="hover:bg-base-200 flex flex-wrap items-center">
 		{#each main_clause as source_entity, i}
 			{@const Component = get_component(source_entity)}
-			<span class="entity-{source_entity.category_abbr || get_parent_category(main_clause, i)}">
+			<span class="entity-{source_entity.category_abbr || get_parent_category({ entities: main_clause, index: i })}">
 				<Component {source_entity} {selected_concept} />
 			</span>
 		{/each}

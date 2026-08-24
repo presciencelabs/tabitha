@@ -19,7 +19,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'patient_clause_same_participant|patient_clause_same_subject_passive|adverbial_clause_same_subject' } }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token, rule_id }) => {
-				fill_same_subject_gap(trigger_token.sub_tokens, rule_id)
+				fill_same_subject_gap({ tokens: trigger_token.sub_tokens, rule_id })
 			}),
 		},
 	},
@@ -30,7 +30,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token, rule_id }) => {
-				fill_relative_clause_gap(trigger_token.sub_tokens, rule_id)
+				fill_relative_clause_gap({ tokens: trigger_token.sub_tokens, rule_id })
 			}),
 		},
 	},
@@ -44,7 +44,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 			}),
 			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
 				const verb_index = subtoken_indexes[0]
-				fill_interrogative_gap(trigger_token.sub_tokens, verb_index, rule_id)
+				fill_interrogative_gap({ tokens: trigger_token.sub_tokens, verb_index, rule_id })
 			}),
 		},
 	},
@@ -64,7 +64,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 				const part_of_speech = trigger_context.trigger_token.lookup_results[0].part_of_speech
 				const case_frame_rule_getter = CASE_FRAME_RULE_GETTERS.get(part_of_speech)
 				if (case_frame_rule_getter) {
-					initialize_case_frame_rules(trigger_context, case_frame_rule_getter)
+					initialize_case_frame_rules({ trigger_context, rule_info_getter: case_frame_rule_getter })
 				}
 			}),
 		},
@@ -78,7 +78,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 				'subtokens': { 'stem': 'be', 'skip': 'all' },
 			}),
 			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
-				handle_be_interrogative(trigger_token.sub_tokens, subtoken_indexes[0], rule_id)
+				handle_be_interrogative({ tokens: trigger_token.sub_tokens, be_index: subtoken_indexes[0], rule_id })
 			}),
 		},
 	},
@@ -111,8 +111,8 @@ const argument_and_sense_rules: BuiltInRule[] = [
 				const case_frame = selected_result.case_frame.result
 				const present_arguments = [...case_frame.valid_arguments, ...case_frame.extra_arguments].map(arg => arg.role_tag)
 				if (!(present_arguments.includes('modified_noun') || present_arguments.includes('modified_noun_with_subgroup'))
-						&& !token_has_tag(token, { 'role': 'verse_ref' })) {
-					add_tag_to_token(token, { 'adj_usage': 'predicative' }, trigger_context.rule_id)
+						&& !token_has_tag({ token, tag_to_check: { 'role': 'verse_ref' } })) {
+					add_tag_to_token({ token, tag: { 'adj_usage': 'predicative' }, rule_id: trigger_context.rule_id })
 				}
 			}),
 		},
@@ -137,7 +137,7 @@ const argument_and_sense_rules: BuiltInRule[] = [
 				'followedby': { 'tag': { 'pre_np_adposition': 'agent_of_passive' }, 'skip': 'all' },
 			}),
 			action: simple_rule_action(trigger_context => {
-				initialize_case_frame_rules(trigger_context, get_passive_verb_case_frame_rules)
+				initialize_case_frame_rules({ trigger_context, rule_info_getter: get_passive_verb_case_frame_rules })
 				check_case_frames(trigger_context)
 			}),
 		},
@@ -189,10 +189,10 @@ const argument_and_sense_rules: BuiltInRule[] = [
 		name: 'Revert ghost tokens to lookup tokens',
 		comment: 'In a previous rule, the lookup results of ghost tokens were moved to their corresponding gap tokens. These now get moved back.',
 		rule: {
-			trigger: token => token_has_tag(token, 'gap_index'),
+			trigger: token => token_has_tag({ token, tag_to_check: 'gap_index' }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ tokens, trigger_index }) => {
-				restore_ghost_tokens(tokens, trigger_index)
+				restore_ghost_tokens({ tokens, ghost_index: trigger_index })
 			}),
 		},
 	},

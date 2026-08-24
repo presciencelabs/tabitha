@@ -14,7 +14,11 @@ export function parse_search_query(q: string): ParsedSearchQuery {
 	return { or_terms }
 }
 
-export async function search_text(db: D1Database, project: string, parsed_q: ParsedSearchQuery): Promise<SearchTextResult[]> {
+export async function search_text({ db, project, parsed_q }: {
+	db: D1Database
+	project: string
+	parsed_q: ParsedSearchQuery
+}): Promise<SearchTextResult[]> {
 	if (!parsed_q.or_terms.length || parsed_q.or_terms.every(term => !term.and_terms.length)) {
 		return []
 	}

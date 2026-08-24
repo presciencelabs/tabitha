@@ -13,19 +13,19 @@ export function entityfy(sentences: Sentence[]): SimpleSourceEntity[] {
 	return entityfy_tokens(sentences.map(sentence => sentence.clause))
 
 	function entityfy_tokens(tokens: Token[]): SimpleSourceEntity[] {
-		return tokens.flatMap((_, index, tokens) => entityfy_token(tokens, index))
+		return tokens.flatMap((_, index, tokens) => entityfy_token({ tokens, token_index: index }))
 	}
 
-	function entityfy_token(tokens: Token[], token_index: number): SimpleSourceEntity[] {
+	function entityfy_token({ tokens, token_index }: { tokens: Token[]; token_index: number }): SimpleSourceEntity[] {
 		const token = tokens[token_index]
 		const category = get_token_category(token)
 		if (!category) {
 			return []
 		}
 
-		const features = get_features_for_token(tokens, token_index, category)
+		const features = get_features_for_token({ tokens, token_index, category })
 		if (category === 'Clause') {
-			if (token_has_tag(token, { 'clause_type': 'main_clause' })) {
+			if (token_has_tag({ token, tag_to_check: { 'clause_type': 'main_clause' } })) {
 				return [
 					create_source_entity({ category, value: '{', features }),
 					...entityfy_tokens(token.sub_tokens),

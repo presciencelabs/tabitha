@@ -32,11 +32,11 @@ describe('search helpers', () => {
 	})
 
 	it('filters search results by selected book and audience', () => {
-		const filteredBook = filter_search_results(mockRealWorldResults, { Book: 'Ruth', Audience: 'Any' })
+		const filteredBook = filter_search_results({ matches: mockRealWorldResults, selected_filters: { Book: 'Ruth', Audience: 'Any' } })
 		expect(filteredBook).toHaveLength(1)
 		expect(filteredBook[0].reference.id_primary).toBe('Ruth')
 
-		const filteredAudience = filter_search_results(mockRealWorldResults, { Book: 'Any', Audience: 'Unchurched Adults' })
+		const filteredAudience = filter_search_results({ matches: mockRealWorldResults, selected_filters: { Book: 'Any', Audience: 'Unchurched Adults' } })
 		expect(filteredAudience).toHaveLength(1)
 		expect(filteredAudience[0].reference.id_primary).toBe('1 Samuel')
 	})

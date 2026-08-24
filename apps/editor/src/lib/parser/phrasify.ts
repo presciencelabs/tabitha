@@ -105,7 +105,7 @@ function phrasify_tokens(tokens: Token[]): Token[] {
 			phrase_type: get_phrase_type(head_token),
 			...head_token.tag,
 		}
-		return create_token('', TOKEN_TYPE.PHRASE, { tag, sub_tokens: [head_token] })
+		return create_token({ token: '', type: TOKEN_TYPE.PHRASE, tag, sub_tokens: [head_token] })
 	}
 
 	function get_phrase_type(head_token: Token): string {
@@ -129,9 +129,9 @@ function phrasify_tokens(tokens: Token[]): Token[] {
 			const tags_to_maintain = ['role', 'adj_usage', 'implicit']
 			const tag = Object.fromEntries(Object.entries(token.tag).filter(([key]) => tags_to_maintain.includes(key)))
 			return [
-				create_token(`{${token.tag['phrase_type']}`, TOKEN_TYPE.PHRASE, { tag }),
+				create_token({ token: `{${token.tag['phrase_type']}`, type: TOKEN_TYPE.PHRASE, tag }),
 				...token.sub_tokens.flatMap(flatten_phrases),
-				create_token('}', TOKEN_TYPE.PHRASE),
+				create_token({ token: '}', type: TOKEN_TYPE.PHRASE }),
 			]
 		}
 		return [token]

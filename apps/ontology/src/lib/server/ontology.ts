@@ -23,14 +23,14 @@ export async function get_all_concepts(db: D1Database): Promise<Concept[]> {
 
 	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all<SimplificationHint>()
 
-	return merge_how_to_results(concepts, how_to_results)
+	return merge_how_to_results({ concepts, how_to_results })
 }
 
 /**
  * case-insensitive match, will accept % as a wildcard as well as sense-specific search, e.g., love-A
  */
 export const get_concepts = (db: D1Database) => async (concept_filter: ConceptSearchFilter): Promise<Concept[]> => {
-	const query_builder = build_concept_query(db, 'Concepts')
+	const query_builder = build_concept_query({ db, table: 'Concepts' })
 
 	if (concept_filter.category && concept_filter.category !== 'all') {
 		query_builder.add_filter('part_of_speech = ?', [concept_filter.category])
@@ -61,18 +61,18 @@ export const get_concepts = (db: D1Database) => async (concept_filter: ConceptSe
 
 	const all_pending_changes = await get_pending_changes(db)
 	for (const concept of concepts) {
-		concept.pending_changes = all_pending_changes.filter(change => concepts_match(concept, change.concept))
+		concept.pending_changes = all_pending_changes.filter(change => concepts_match({ a: concept, b: change.concept }))
 	}
 
 	const how_to_results = await get_simplification_hints(db)(concept_filter)
-	return merge_how_to_results(concepts, how_to_results)
+	return merge_how_to_results({ concepts, how_to_results })
 }
 
 function transform(match_from_db: DbRowConcept): Concept {
 	return {
 		...match_from_db,
 		level: match_from_db.level.toString(),
-		categories: decode_categorization(match_from_db.part_of_speech, match_from_db.categorization),
+		categories: decode_categorization({ part_of_speech: match_from_db.part_of_speech, categorization: match_from_db.categorization }),
 		curated_examples: transform_curated_examples(match_from_db.curated_examples),
 		curated_examples_raw: match_from_db.curated_examples,
 		status: 'in ontology',
@@ -99,7 +99,7 @@ export const get_simplification_hints = (db: D1Database) => async (filter: Conce
 		return []
 	}
 
-	const query_builder = build_concept_query(db, 'Complex_Terms')
+	const query_builder = build_concept_query({ db, table: 'Complex_Terms' })
 
 	if (filter.category && filter.category !== 'all') {
 		query_builder.add_filter('part_of_speech = ?', [filter.category])
@@ -166,7 +166,12 @@ export const get_examples = (db: D1Database) => async (
 	}))
 }
 
-export function merge_how_to_results(concepts: Concept[], how_to_results: SimplificationHint[]): Concept[] {
+type MergeHowToResultsOptions = {
+	readonly concepts: Concept[]
+	readonly how_to_results: SimplificationHint[]
+}
+
+export function merge_how_to_results({ concepts, how_to_results }: MergeHowToResultsOptions): Concept[] {
 	const merged_concepts = [...concepts]
 	const concept_map = new Map<string, Concept>()
 
@@ -221,11 +226,16 @@ export function merge_how_to_results(concepts: Concept[], how_to_results: Simpli
 	}
 }
 
-function concepts_match(a: ConceptKey, b: ConceptKey): boolean {
+function concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey }): boolean {
 	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 
-function build_concept_query(db: D1Database, table: string): ConceptQueryBuilder {
+type BuildConceptQueryOptions = {
+	readonly db: D1Database
+	readonly table: string
+}
+
+function build_concept_query({ db, table }: BuildConceptQueryOptions): ConceptQueryBuilder {
 	const all_filters: string[] = []
 	const all_params: (string | number)[] = []
 	let order_by_sql = ''

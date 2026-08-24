@@ -16,7 +16,7 @@ export async function check_forms(lookup_token: Token) {
 		.filter(result => !result.stem.includes(' '))
 		.reduce(transform_results, [])
 
-	add_missing_forms(lookup_results, term)
+	add_missing_forms({ results: lookup_results, term })
 
 	if (lookup_results.length === 0) {
 		return
@@ -44,7 +44,7 @@ export async function check_forms(lookup_token: Token) {
 
 		if (!existing_result) {
 			// This is a new lexical entry
-			const new_result = create_lookup_result(form_result, { form: form_result.form })
+			const new_result = create_lookup_result({ ...form_result, form: form_result.form })
 			transformed_results.push(new_result)
 
 		} else if (!existing_result.form.includes(form_result.form.toLowerCase())) {
@@ -59,12 +59,12 @@ export async function check_forms(lookup_token: Token) {
 		return transformed_results
 	}
 
-	function add_missing_forms(results: LookupResult[], term: string) {
+	function add_missing_forms({ results, term }: { results: LookupResult[]; term: string }) {
 		const missing_form = MISSING_FORMS.get(term.toLowerCase())
 
 		// Some missing forms may become not missing before the code here is updated. Avoid duplicate results in that case.
 		if (missing_form && !results.some(LOOKUP_FILTERS.MATCHES_LOOKUP(missing_form))) {
-			results.push(create_lookup_result(missing_form, { form: missing_form.forms }))
+			results.push(create_lookup_result({ ...missing_form, form: missing_form.forms }))
 		}
 	}
 }

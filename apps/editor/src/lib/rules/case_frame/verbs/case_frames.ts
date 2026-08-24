@@ -1128,13 +1128,13 @@ const verb_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag
 
 function create_default_argument_rules(): ArgumentRoleRule[] {
 	return Object.entries(default_verb_case_frame_json)
-		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('verb_default', role_tag as RoleTag, rule_json as RoleRuleValueJson))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule({ sense: 'verb_default', role_tag: role_tag as RoleTag, rule_json: rule_json as RoleRuleValueJson }))
 }
 
 function create_verb_argument_rules(): Map<WordStem, ArgumentRulesForSense[]> {
 	return new Map(Array.from(verb_case_frames.entries()).map(([stem, sense_rules_json]) => {
 		const defaults = get_default_rules_for_stem(stem)
-		return [stem, parse_sense_rules(sense_rules_json, defaults)]
+		return [stem, parse_sense_rules({ rule_json: sense_rules_json, defaults })]
 	}))
 }
 
@@ -1160,7 +1160,7 @@ export function get_verb_case_frame_rules(token: Token): CaseFrameRuleInfo {
 		return {
 			rules_by_sense: [],
 			default_rule_getter: () => [],
-			role_info_getter: get_verb_usage_info,
+			role_info_getter: (categorization, role_rules) => get_verb_usage_info({ categorization, role_rules }),
 			should_check: false,
 		}
 	}
@@ -1168,7 +1168,7 @@ export function get_verb_case_frame_rules(token: Token): CaseFrameRuleInfo {
 	return {
 		rules_by_sense: argument_rules_by_sense,
 		default_rule_getter: () => get_default_rules_for_stem(stem),
-		role_info_getter: get_verb_usage_info,
+		role_info_getter: (categorization, role_rules) => get_verb_usage_info({ categorization, role_rules }),
 		should_check: true,
 	}
 }
@@ -1180,7 +1180,7 @@ export function get_passive_verb_case_frame_rules(token: Token): CaseFrameRuleIn
 		'agent': by_adposition('by'),
 	}
 	const passive_rules = Object.entries(passive_rules_json)
-		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('verb_passive', role_tag as RoleTag, rule_json as RoleRuleValueJson))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule({ sense: 'verb_passive', role_tag: role_tag as RoleTag, rule_json: rule_json as RoleRuleValueJson }))
 
 	const active_rules = get_verb_case_frame_rules(token)
 	return {
@@ -1207,7 +1207,7 @@ const VERB_LETTER_TO_ROLE = new Map([
 	['I', 'agent_clause'],
 ])
 
-function get_verb_usage_info(categorization: string, { other_optional, other_required, patient_clause_type }: ArgumentRulesForSense): RoleUsageInfo {
+function get_verb_usage_info({ categorization, role_rules: { other_optional, other_required, patient_clause_type } }: { categorization: string; role_rules: ArgumentRulesForSense }): RoleUsageInfo {
 	const role_letters = [...categorization].filter(c => c !== '_')
 
 	// some categorizations are blank (eg become-J)

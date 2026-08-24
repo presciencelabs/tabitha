@@ -258,25 +258,25 @@ const adjective_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<Adject
 
 function create_default_argument_rules(): ArgumentRoleRule[] {
 	return Object.entries(default_adjective_case_frame_json)
-		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('adj_default', role_tag as RoleTag, rule_json as RoleRuleValueJson))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule({ sense: 'adj_default', role_tag: role_tag as RoleTag, rule_json: rule_json as RoleRuleValueJson }))
 }
 
 function create_adjective_argument_rules(): Map<WordStem, ArgumentRulesForSense[]> {
 	return new Map(Array.from(adjective_case_frames.entries()).map(([stem, sense_rules_json]) => {
-		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_CASE_FRAME_RULES)]
+		return [stem, parse_sense_rules({ rule_json: sense_rules_json, defaults: DEFAULT_CASE_FRAME_RULES })]
 	}))
 }
 
 const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()
 const ADJECTIVE_CASE_FRAME_RULES = create_adjective_argument_rules()
-const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule('adj_default', 'modified_noun_with_subgroup', modified_noun_with_subgroup())
+const SUBGROUPABLE_CASE_FRAME_RULE = parse_case_frame_rule({ sense: 'adj_default', role_tag: 'modified_noun_with_subgroup', rule_json: modified_noun_with_subgroup() })
 
 export function get_adjective_case_frame_rules(token: Token): CaseFrameRuleInfo {
 	const stem = token.lookup_results[0].stem
 	return {
 		rules_by_sense: ADJECTIVE_CASE_FRAME_RULES.get(stem) ?? [],
 		default_rule_getter: get_adjective_default_rules,
-		role_info_getter: get_adjective_usage_info,
+		role_info_getter: (categorization, role_rules) => get_adjective_usage_info({ categorization, role_rules }),
 		should_check: true,
 	}
 }
@@ -304,7 +304,7 @@ function get_adjective_default_rules(lookup: LookupResult): ArgumentRoleRule[] {
 	return DEFAULT_CASE_FRAME_RULES
 }
 
-function get_adjective_usage_info(categorization: string, role_rules: ArgumentRulesForSense): RoleUsageInfo {
+function get_adjective_usage_info({ categorization, role_rules }: { categorization: string; role_rules: ArgumentRulesForSense }): RoleUsageInfo {
 	// The first character of the categorization is the category (Generic, Quantity, Cardinal Number, etc)
 	const role_letters = [...categorization.slice(1)].filter(c => c !== '_')
 

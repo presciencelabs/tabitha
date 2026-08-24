@@ -6,7 +6,7 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 	const stem = searchParams.get('stem') || ''
 	const part_of_speech = searchParams.get('part_of_speech') || ''
 
-	const next_sense = await get_next_sense(db_ontology, stem, part_of_speech)
+	const next_sense = await get_next_sense({ db: db_ontology, stem, part_of_speech })
 
 	return json({ next_sense })
 }

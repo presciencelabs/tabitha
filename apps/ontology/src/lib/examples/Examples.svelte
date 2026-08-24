@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import Icon from '@iconify/svelte'
-	import { by_book_order, ExampleSummary, Filters, SourceData, TargetData } from '$lib/examples'
+	import { by_book_order, ExampleSummary, Filters, get_examples, SourceData, TargetData } from '$lib/examples'
 	import type { Concept, Example } from '$lib/types'
 
 	type Props = {
@@ -20,11 +20,10 @@
 		filtered_examples.toSorted(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED),
 	)
 
-	async function load_examples({ stem, sense, part_of_speech }: Concept) {
+	async function load_examples(concept: Concept) {
 		loading = true
 		try {
-			const response = await fetch(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=Bible`)
-			all_examples = await response.json()
+			all_examples = await get_examples(concept)
 		} finally {
 			loading = false
 		}
@@ -41,7 +40,7 @@
 
 	let retrieval_queue = $state<number[]>([])
 
-	function handle_queue(event: Event, id: number) {
+	function handle_queue({ event, id }: { event: Event, id: number }) {
 		const details = event.currentTarget as HTMLDetailsElement
 		if (details.open) {
 			retrieval_queue = [...retrieval_queue, id]
@@ -62,7 +61,7 @@
 
 		{#each displayed_examples as { reference, context, book_status }, i}
 			<details
-				ontoggle={event => handle_queue(event, i)}
+				ontoggle={event => handle_queue({ event, id: i })}
 				transition:fade={FADE_CHARACTERISTICS}
 				class="collapse collapse-arrow bg-base-100 overflow-visible"
 			>

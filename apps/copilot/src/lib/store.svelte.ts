@@ -1,6 +1,6 @@
 import { browser } from '$app/environment'
 
-export function persisted<T extends object>(key: string, defaultValue: T) {
+export function persisted<T extends object>({ key, defaultValue }: { key: string, defaultValue: T }) {
 	let state = $state(defaultValue)
 
 	// Use $effect.root for side effects outside a component's lifecycle

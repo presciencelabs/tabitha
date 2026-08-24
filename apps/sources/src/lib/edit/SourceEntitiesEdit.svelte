@@ -61,7 +61,7 @@
 		y: 0,
 	})
 
-	function open_insert_context_menu(event: UIEvent, entity_id: number) {
+	function open_insert_context_menu({ event, entity_id }: { event: UIEvent, entity_id: number }) {
 		event.stopPropagation()
 		event.preventDefault()
 		insert_context_menu_data = {
@@ -79,16 +79,19 @@
 		}
 	}
 
-	function close_insert_context_menu(recalculate: boolean = false) {
+	function close_insert_context_menu() {
 		insert_context_menu_data.is_open = false
-		if (recalculate) {
-			structure_entities(source_entities)
-			select_entity(insert_context_menu_data.entity_id)
-		}
 		insert_context_menu_data.entity_id = -1
 	}
 
-	function insert_button_in_range(i: number, range: IndexRange|null) {
+	function close_insert_context_menu_and_recalculate() {
+		insert_context_menu_data.is_open = false
+		structure_entities(source_entities)
+		select_entity(insert_context_menu_data.entity_id)
+		insert_context_menu_data.entity_id = -1
+	}
+
+	function insert_button_in_range({ i, range }: { i: number, range: IndexRange|null }) {
 		return !!range?.length && (i > range[0] && i <= range[range.length - 1])
 	}
 
@@ -162,7 +165,7 @@
 		}
 
 		const range_length = get_action_range_length(dragged_entity)
-		const insert_pos = get_insert_position(i, dragged_entity, range_length)
+		const insert_pos = get_insert_position({ drop_index: i, drag_index: dragged_entity, range_length })
 		const entities = source_entities.splice(dragged_entity, range_length)
 		source_entities.splice(insert_pos, 0, ...entities)
 
@@ -172,7 +175,7 @@
 		dragged_entity = null
 		set_settings({ show_hover_popups: previous_popup_setting })
 
-		function get_insert_position(drop_index: number, drag_index: number, range_length: number) {
+		function get_insert_position({ drop_index, drag_index, range_length }: { drop_index: number, drag_index: number, range_length: number }) {
 			if (drop_index < drag_index) {
 				return drop_index
 			} else if (drop_index < drag_index + range_length) {
@@ -207,8 +210,8 @@
 {#snippet insert_button(i: number)}
 	{@const opacity_classes = insert_context_menu_data.entity_id === i ? 'opacity-100' : 'opacity-0 focus:opacity-100 hover:opacity-100'}
 	<button
-		onclick={e => open_insert_context_menu(e, i)}
-		onkeydown={e => e.key === 'Enter' && open_insert_context_menu(e, i)}
+		onclick={e => open_insert_context_menu({ event: e, entity_id: i })}
+		onkeydown={e => e.key === 'Enter' && open_insert_context_menu({ event: e, entity_id: i })}
 		ondragover={e => e.preventDefault()}
 		ondrop={() => paste_entity(i)}
 		aria-label="Insert Constituent"
@@ -223,7 +226,7 @@
 		{@const i = entity.id}
 		{@const Component = component_filters.find(([filter]) => filter(entity))?.[1]}
 
-		<div class="{insert_button_in_range(i, hover_range) || insert_button_in_range(i, select_range) ? entity_highlights[i] : ''}">
+		<div class="{insert_button_in_range({ i, range: hover_range }) || insert_button_in_range({ i, range: select_range }) ? entity_highlights[i] : ''}">
 			{@render insert_button(i)}
 		</div>
 
@@ -273,6 +276,7 @@
 		<InsertEntityContextMenu
 				bind:source_entities
 				data={insert_context_menu_data}
-				onclose={close_insert_context_menu} />
+				onclose={close_insert_context_menu}
+				onclose_and_recalculate={close_insert_context_menu_and_recalculate} />
 	{/if}
 </div>

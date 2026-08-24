@@ -25,7 +25,7 @@
 		}
 	})
 
-	let filtered_results = $derived(filter_search_results(matches, selected_filters))
+	let filtered_results = $derived(filter_search_results({ matches, selected_filters }))
 	let sorted_results = $derived(filtered_results.slice().sort(by_book_order))
 
 	let collapse_states = $state<boolean[]>([])

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import { SourceEntities } from '$lib/examples'
+	import { get_source_data, get_sources_url, SourceEntities } from '$lib/examples'
 	import Icon from '@iconify/svelte'
 	import type { Reference, SourceConcept, SourceData } from '$lib/types'
 
@@ -14,15 +13,6 @@
 
 	let loading = $state(true)
 	let source = $state<SourceData | null>(null)
-
-	async function get_source_data(ref: Reference): Promise<SourceData> {
-		const response = await fetch(get_sources_url(ref))
-		return await response.json()
-	}
-
-	function get_sources_url({ type, id_primary, id_secondary, id_tertiary }: Reference): string {
-		return `${PUBLIC_SOURCES_API_HOST}/${type}/${id_primary}/${id_secondary}/${id_tertiary}`
-	}
 
 	onMount(async () => {
 		try {

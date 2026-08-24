@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ locals: { db }, params: { project },
 
 	const forms: LexicalForm[] = await transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
 
-	return cached_json(forms)
+	return cached_json({ data: forms })
 
 	async function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): Promise<LexicalForm[]> {
 		const forms: LexicalForm[] = []

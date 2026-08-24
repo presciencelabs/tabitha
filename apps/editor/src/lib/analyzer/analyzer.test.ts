@@ -17,22 +17,13 @@ describe('analyzer', () => {
 		})
 
 		test('analyzes sentence with lookup tokens', () => {
-			const noun_token = create_token(
-				'Paul',
-				TOKEN_TYPE.LOOKUP_WORD,
-				{
-					lookup_results: [create_lookup_result({ stem: 'Paul', part_of_speech: 'Noun' }, { sense: 'A' })],
-					tag: { noun_index: '1' },
-				},
-			)
-			const main_clause = create_token(
-				'{',
-				TOKEN_TYPE.CLAUSE,
-				{
-					sub_tokens: [noun_token],
-					tag: { clause_type: 'main_clause' },
-				},
-			)
+			const noun_token = create_token({
+				token: 'Paul',
+				type: TOKEN_TYPE.LOOKUP_WORD,
+				lookup_results: [create_lookup_result({ stem: 'Paul', part_of_speech: 'Noun', sense: 'A' })],
+				tag: { noun_index: '1' },
+			})
+			const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [noun_token], tag: { clause_type: 'main_clause' } })
 
 			const sentence: Sentence = {
 				clause: main_clause,
@@ -47,23 +38,14 @@ describe('analyzer', () => {
 
 	describe('entityfy', () => {
 		test('converts main clause structure with delimiters', () => {
-			const token_noun = create_token(
-				'Paul',
-				TOKEN_TYPE.LOOKUP_WORD,
-				{
-					lookup_results: [create_lookup_result({ stem: 'Paul', part_of_speech: 'Noun' }, { sense: 'A' })],
-					tag: { noun_index: '1' },
-				},
-			)
+			const token_noun = create_token({
+				token: 'Paul',
+				type: TOKEN_TYPE.LOOKUP_WORD,
+				lookup_results: [create_lookup_result({ stem: 'Paul', part_of_speech: 'Noun', sense: 'A' })],
+				tag: { noun_index: '1' },
+			})
 
-			const main_clause = create_token(
-				'{',
-				TOKEN_TYPE.CLAUSE,
-				{
-					sub_tokens: [token_noun],
-					tag: { clause_type: 'main_clause' },
-				},
-			)
+			const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [token_noun], tag: { clause_type: 'main_clause' } })
 
 			const entities = entityfy([{ clause: main_clause }])
 			expect(entities[0].category).toBe('Clause')
@@ -72,14 +54,7 @@ describe('analyzer', () => {
 		})
 
 		test('handles subordinate clauses with bracket notation', () => {
-			const sub_clause = create_token(
-				'[',
-				TOKEN_TYPE.CLAUSE,
-				{
-					sub_tokens: [],
-					tag: { clause_type: 'subordinate_clause' },
-				},
-			)
+			const sub_clause = create_token({ token: '[', type: TOKEN_TYPE.CLAUSE, sub_tokens: [], tag: { clause_type: 'subordinate_clause' } })
 
 			const entities = entityfy([{ clause: sub_clause }])
 			expect(entities[0].value).toBe('[')
@@ -115,15 +90,8 @@ describe('analyzer', () => {
 		})
 
 		test('replace_punctuation replaces sentence terminal punctuation', () => {
-			const token_punct = create_token('!', TOKEN_TYPE.PUNCTUATION)
-			const main_clause = create_token(
-				'{',
-				TOKEN_TYPE.CLAUSE,
-				{
-					sub_tokens: [token_punct],
-					tag: { clause_type: 'main_clause' },
-				},
-			)
+			const token_punct = create_token({ token: '!', type: TOKEN_TYPE.PUNCTUATION })
+			const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [token_punct], tag: { clause_type: 'main_clause' } })
 
 			const sentences: Sentence[] = [{ clause: main_clause }]
 			const result = replace_punctuation(sentences)
@@ -133,15 +101,9 @@ describe('analyzer', () => {
 
 	describe('features', () => {
 		test('get_features_for_token extracts default features', () => {
-			const token = create_token(
-				'write-01',
-				TOKEN_TYPE.LOOKUP_WORD,
-				{
-					lookup_results: [create_lookup_result({ stem: 'write-01', part_of_speech: 'Verb' }, { sense: 'A' })],
-				},
-			)
+			const token = create_token({ token: 'write-01', type: TOKEN_TYPE.LOOKUP_WORD, lookup_results: [create_lookup_result({ stem: 'write-01', part_of_speech: 'Verb', sense: 'A' })] })
 
-			const features = get_features_for_token([token], 0, 'Verb')
+			const features = get_features_for_token({ tokens: [token], token_index: 0, category: 'Verb' })
 			expect(Array.isArray(features)).toBe(true)
 		})
 	})

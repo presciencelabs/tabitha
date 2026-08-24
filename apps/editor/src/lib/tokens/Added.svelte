@@ -11,7 +11,7 @@
 	let { token }: Props = $props()
 </script>
 
-{#if token_has_message(token)}
+{#if token_has_message({ token })}
 	<Message {token}>
 		<span class="text-lg tracking-widest">
 			{token.token}

@@ -4,7 +4,12 @@ import { get_all_concepts } from './ontology'
 import type { D1Database } from '@cloudflare/workers-types'
 import type { Concept } from '$lib/types'
 
-export async function find_related_concepts(db: D1Database, search_term: string): Promise<Concept[]> {
+type FindRelatedConceptsOptions = {
+	readonly db: D1Database
+	readonly search_term: string
+}
+
+export async function find_related_concepts({ db, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
 	const all_concepts = await get_all_concepts(db)
 
 	// check the cache
@@ -70,7 +75,7 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 
 	const output = response.text?.length ? (JSON.parse(response.text) as string[]) : []
 	if (output.length) {
-		set_cache(search_term, output)
+		set_cache({ search_term, results: output })
 	}
 
 	return output
@@ -123,6 +128,11 @@ function get_from_cache(search_term: string): string[] | undefined {
 	return [...results]
 }
 
-function set_cache(search_term: string, results: string[]) {
+type SetCacheOptions = {
+	readonly search_term: string
+	readonly results: string[]
+}
+
+function set_cache({ search_term, results }: SetCacheOptions) {
 	related_concept_cache.set(search_term, [[...results], new Date()])
 }

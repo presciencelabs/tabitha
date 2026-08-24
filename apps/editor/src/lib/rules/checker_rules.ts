@@ -839,7 +839,7 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 
 	const message_type = Object.values(MESSAGE_TYPE).find(({ label }) => label in rule_json)!
 	const checker_action_json = rule_json[message_type.label] ?? { 'message': 'will never be undefined' }
-	const action = checker_action(checker_action_json, message_type)
+	const action = checker_action({ action: checker_action_json, message_type })
 
 	return {
 		id: `checker:${index}`,
@@ -849,11 +849,11 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 		action,
 	}
 
-	function checker_action(action: CheckerActionJson, message_type: MessageType): RuleAction {
+	function checker_action({ action, message_type }: { action: CheckerActionJson; message_type: MessageType }): RuleAction {
 		return trigger_context => {
 			const { tokens, trigger_index, rule_id } = trigger_context
 
-			const formatted_message = format_token_message(trigger_context, action.message)
+			const formatted_message = format_token_message({ trigger_context, message: action.message })
 			const message: Message = {
 				...message_type,
 				message: formatted_message,
@@ -862,21 +862,21 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (action.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token(action.precededby, message, rule_id))
+				tokens.splice(trigger_index, 0, create_added_token({ token: action.precededby, message, rule_id }))
 				return trigger_index + 2
 			}
 			if (action.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token(action.followedby, message, rule_id))
+				tokens.splice(trigger_index + 1, 0, create_added_token({ token: action.followedby, message, rule_id }))
 				return trigger_index + 2
 			}
 
-			const token_to_flag = get_token_to_flag(action, trigger_context)
-			set_message_plain(token_to_flag, message)
+			const token_to_flag = get_token_to_flag({ action, trigger_context })
+			set_message_plain({ token: token_to_flag, message })
 			return trigger_index + 1
 		}
 	}
 
-	function get_token_to_flag(action: CheckerActionJson, { tokens, trigger_token, context_indexes, subtoken_indexes }: RuleTriggerContext): Token {
+	function get_token_to_flag({ action, trigger_context: { tokens, trigger_token, context_indexes, subtoken_indexes } }: { action: CheckerActionJson; trigger_context: RuleTriggerContext }): Token {
 		if (!action.on) {
 			return trigger_token
 		}

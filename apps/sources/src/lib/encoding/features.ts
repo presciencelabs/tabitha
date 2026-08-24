@@ -60,7 +60,13 @@ function by_feature_name(category_entry: [CategoryName, DbFeature[]]): [Category
 	return [category, infos]
 }
 
-export function decode_features(raw_feature_codes: string, category: CategoryName, all_features: FeatureMap): SourceFeatures {
+type DecodeFeaturesOptions = {
+	raw_feature_codes: string
+	category: CategoryName
+	all_features: FeatureMap
+}
+
+export function decode_features({ raw_feature_codes, category, all_features }: DecodeFeaturesOptions): SourceFeatures {
 	if (!raw_feature_codes.length) {
 		return { feature_codes: '', features: [], noun_list_index: null }
 	}
@@ -77,7 +83,7 @@ export function decode_features(raw_feature_codes: string, category: CategoryNam
 	// This feature is not included in the 'Features' database, and so needs to be handled separately.
 	const noun_list_index = is_noun ? raw_feature_codes[2] : null
 
-	const features = feature_codes_to_structure(category, feature_codes, all_features)
+	const features = feature_codes_to_structure({ category, feature_codes, all_features })
 
 	return {
 		feature_codes,
@@ -95,7 +101,7 @@ export function encode_features(entity: SourceEntity): string {
 	return entity.feature_codes
 }
 
-function feature_codes_to_structure(category: CategoryName, feature_codes: string, all_features: FeatureMap): EntityFeature[] {
+function feature_codes_to_structure({ category, feature_codes, all_features }: { category: CategoryName, feature_codes: string, all_features: FeatureMap }): EntityFeature[] {
 	const category_features = all_features.get(category) || []
 	const feature_code_array = [...feature_codes]
 
@@ -110,7 +116,7 @@ function feature_codes_to_structure(category: CategoryName, feature_codes: strin
 	})
 }
 
-function feature_structure_to_codes(category: CategoryName, features: EntityFeature[], all_features: FeatureMap): string {
+function feature_structure_to_codes({ category, features, all_features }: { category: CategoryName, features: EntityFeature[], all_features: FeatureMap }): string {
 	const category_features = all_features.get(category) || []
 	
 	const codes = category_features.map(feature_info => {
@@ -126,19 +132,29 @@ function feature_structure_to_codes(category: CategoryName, features: EntityFeat
 	return codes.join('')
 }
 
-export function fill_in_features(source_entity: SourceEntity, all_features: FeatureMap): { feature_codes: string, features: EntityFeature[] } {
+type FillInFeaturesOptions = {
+	source_entity: SourceEntity
+	all_features: FeatureMap
+}
+
+export function fill_in_features({ source_entity, all_features }: FillInFeaturesOptions): { feature_codes: string, features: EntityFeature[] } {
 	const { category, features } = source_entity
-	const feature_codes = feature_structure_to_codes(category, features, all_features)
+	const feature_codes = feature_structure_to_codes({ category, features, all_features })
 	// fill in any missing features in the structure
-	const new_features = feature_codes_to_structure(category, feature_codes, all_features)
+	const new_features = feature_codes_to_structure({ category, feature_codes, all_features })
 	return { feature_codes, features: new_features }
 }
 
-export async function transform_features_to_codes(db: D1Database, source_entities: SourceEntity[]): Promise<SourceEntity[]> {
+type TransformFeaturesToCodesOptions = {
+	db: D1Database
+	source_entities: SourceEntity[]
+}
+
+export async function transform_features_to_codes({ db, source_entities }: TransformFeaturesToCodesOptions): Promise<SourceEntity[]> {
 	const all_features = await load_source_feature_map(db)
 
 	return source_entities.map(entity => {
-		const { feature_codes, features } =	fill_in_features(entity, all_features)
+		const { feature_codes, features } =	fill_in_features({ source_entity: entity, all_features })
 		return { ...entity, feature_codes, features }
 	})
 }

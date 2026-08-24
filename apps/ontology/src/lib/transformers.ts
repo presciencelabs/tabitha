@@ -103,7 +103,12 @@ const categorization_decoders: Record<string, (categories_from_db: string) => st
 	Verb: transform_verb_categorization,
 }
 
-export function decode_categorization(part_of_speech: string, categorization: string): string[] {
+type DecodeCategorizationOptions = {
+	readonly part_of_speech: string
+	readonly categorization: string
+}
+
+export function decode_categorization({ part_of_speech, categorization }: DecodeCategorizationOptions): string[] {
 	const decoder = categorization_decoders[part_of_speech]
 	return decoder ? decoder(categorization) : [...categorization]
 }
@@ -186,7 +191,12 @@ const categorization_encoders: Record<string, (categories: string[]) => string> 
 	Verb: encode_verb_categorization,
 }
 
-export function encode_categorization(part_of_speech: string, categories: string[]): string {
+type EncodeCategorizationOptions = {
+	readonly part_of_speech: string
+	readonly categories: string[]
+}
+
+export function encode_categorization({ part_of_speech, categories }: EncodeCategorizationOptions): string {
 	const encoder = categorization_encoders[part_of_speech]
 	return encoder ? encoder(categories) : ''
 }
@@ -240,14 +250,14 @@ function encode_usage_categorization(part_of_speech: string): (categories: strin
 		 * @returns the categorization character [ABC|abc|_]
 		 */
 		function encode_usage(sentence: string, i: number): string {
-			return encode_frequency(sentence, get_usage_character(i))
+			return encode_frequency({ sentence, character: get_usage_character(i) })
 		}
 
 		/**
 		 * @param sentence starting with "always", "sometimes", or "never"
 		 * @param character the position-based upper-case character
 		 */
-		function encode_frequency(sentence: string, character: string): string {
+		function encode_frequency({ sentence, character }: { sentence: string, character: string }): string {
 			return sentence.startsWith('never') ? '_' : sentence.startsWith('always') ? character : character.toLowerCase()
 		}
 

@@ -38,7 +38,7 @@
 	<div class="toast toast-end toast-bottom z-50">
 		<div class="alert alert-info shadow-lg">
 			<span>A new version is available.</span>
-			<button class="btn btn-sm btn-primary" onclick={refresh}>
+			<button onclick={refresh} class="btn btn-sm btn-primary">
 				Refresh
 			</button>
 		</div>

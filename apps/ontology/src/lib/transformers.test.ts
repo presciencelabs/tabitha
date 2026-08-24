@@ -53,27 +53,27 @@ describe('transformers', () => {
 
 	describe('categorization decoders & encoders', () => {
 		it('decodes and encodes noun categorizations', () => {
-			expect(decode_categorization('Noun', 'A')).toEqual(['Abstracts'])
-			expect(decode_categorization('Noun', 'o')).toEqual(['All other objects'])
-			expect(decode_categorization('Noun', '')).toEqual(['No information available yet.'])
+			expect(decode_categorization({ part_of_speech: 'Noun', categorization: 'A' })).toEqual(['Abstracts'])
+			expect(decode_categorization({ part_of_speech: 'Noun', categorization: 'o' })).toEqual(['All other objects'])
+			expect(decode_categorization({ part_of_speech: 'Noun', categorization: '' })).toEqual(['No information available yet.'])
 
-			expect(encode_categorization('Noun', ['Abstracts'])).toBe('A')
-			expect(encode_categorization('Noun', ['All other objects'])).toBe('o')
-			expect(encode_categorization('Noun', [])).toBe('o')
+			expect(encode_categorization({ part_of_speech: 'Noun', categories: ['Abstracts'] })).toBe('A')
+			expect(encode_categorization({ part_of_speech: 'Noun', categories: ['All other objects'] })).toBe('o')
+			expect(encode_categorization({ part_of_speech: 'Noun', categories: [] })).toBe('o')
 		})
 
 		it('decodes and encodes verb theta grids', () => {
 			const db_verb = 'Ab_______'
-			const decoded = decode_categorization('Verb', db_verb)
+			const decoded = decode_categorization({ part_of_speech: 'Verb', categorization: db_verb })
 			expect(decoded).toEqual(['Agent-like', '(Patient-like)'])
 
-			const reencoded = encode_categorization('Verb', ['Agent-like', '(Patient-like)', '', '', '', '', '', '', ''])
+			const reencoded = encode_categorization({ part_of_speech: 'Verb', categories: ['Agent-like', '(Patient-like)', '', '', '', '', '', '', ''] })
 			expect(reencoded).toBe('Ab_______')
 		})
 
 		it('decodes and encodes adjective categorizations', () => {
 			const db_adj = 'GA_____'
-			const decoded = decode_categorization('Adjective', db_adj)
+			const decoded = decode_categorization({ part_of_speech: 'Adjective', categorization: db_adj })
 			expect(decoded).toEqual([
 				'Generic',
 				'always used attributively',
@@ -84,26 +84,26 @@ describe('transformers', () => {
 				'never used comparatively',
 			])
 
-			const reencoded = encode_categorization('Adjective', decoded)
+			const reencoded = encode_categorization({ part_of_speech: 'Adjective', categories: decoded })
 			expect(reencoded).toBe('GA_____')
 		})
 
 		it('decodes and encodes particle categorizations (Adposition, Adverb, Conjunction)', () => {
 			const db_adp = 'Ab_'
-			const decoded = decode_categorization('Adposition', db_adp)
+			const decoded = decode_categorization({ part_of_speech: 'Adposition', categorization: db_adp })
 			expect(decoded).toEqual([
 				'always used in Adjunct Phrases',
 				'sometimes used in Noun-Noun Phrases',
 				'never used in Abverbial Clauses',
 			])
 
-			const reencoded = encode_categorization('Adposition', decoded)
+			const reencoded = encode_categorization({ part_of_speech: 'Adposition', categories: decoded })
 			expect(reencoded).toBe('Ab_')
 		})
 
 		it('handles fallback for unknown part of speech', () => {
-			expect(decode_categorization('Unknown', 'xyz')).toEqual(['x', 'y', 'z'])
-			expect(encode_categorization('Unknown', ['xyz'])).toBe('')
+			expect(decode_categorization({ part_of_speech: 'Unknown', categorization: 'xyz' })).toEqual(['x', 'y', 'z'])
+			expect(encode_categorization({ part_of_speech: 'Unknown', categories: ['xyz'] })).toBe('')
 		})
 	})
 

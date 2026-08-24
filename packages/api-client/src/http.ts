@@ -29,7 +29,7 @@ export function create_http_client(options: ClientOptions): HttpClient {
 	const clean_base = clean_trailing_slash(base_url)
 	const get_fetch = () => options.fetch ?? globalThis.fetch
 
-	function build_url(path: string, is_get = false): string {
+	function build_url({ path, is_get = false }: { path: string, is_get?: boolean }): string {
 		const normalized_path = path.startsWith('/') ? path : `/${path}`
 		const full_url = `${clean_base}${normalized_path}`
 		if (!cache || !is_get) return full_url
@@ -76,13 +76,13 @@ export function create_http_client(options: ClientOptions): HttpClient {
 
 	return {
 		async get<T>(path: string, init?: RequestInit): Promise<T | null> {
-			const url = build_url(path, true)
+			const url = build_url({ path, is_get: true })
 			const res = await (init ? get_fetch()(url, { ...init, method: 'GET' }) : get_fetch()(url))
 			return parse_response<T>(res)
 		},
 
 		async post<T>(path: string, body?: unknown, init?: RequestInit): Promise<T | null> {
-			const url = build_url(path, false)
+			const url = build_url({ path })
 			const res = await get_fetch()(url, {
 				...init,
 				method: 'POST',

@@ -32,7 +32,7 @@ function open_db(): Promise<IDBDatabase> {
 	})
 }
 
-async function with_store<T = undefined>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+async function with_store<T = undefined>({ mode, fn }: { mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T> }): Promise<T> {
 	const db = await open_db()
 	return new Promise((resolve, reject) => {
 		const request = fn(db.transaction(STORE_NAME, mode).objectStore(STORE_NAME))
@@ -55,7 +55,12 @@ function generate_client_id(): string {
 	return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }
 
-export async function add_mutation(action: OntologyChangeAction, body: ConceptCreateData | ConceptUpdateData): Promise<QueuedMutation> {
+type AddMutationOptions = {
+	readonly action: OntologyChangeAction
+	readonly body: ConceptCreateData | ConceptUpdateData
+}
+
+export async function add_mutation({ action, body }: AddMutationOptions): Promise<QueuedMutation> {
 	const mutation: QueuedMutation = {
 		client_id: generate_client_id(),
 		action,
@@ -63,22 +68,27 @@ export async function add_mutation(action: OntologyChangeAction, body: ConceptCr
 		status: 'pending',
 		retry_count: 0,
 	}
-	await with_store('readwrite', store => store.add(mutation))
+	await with_store({ mode: 'readwrite', fn: store => store.add(mutation) })
 	return mutation
 }
 
 export async function get_pending_mutations(): Promise<QueuedMutation[]> {
-	const all = await with_store<QueuedMutation[]>('readonly', store => store.getAll())
+	const all = await with_store<QueuedMutation[]>({ mode: 'readonly', fn: store => store.getAll() })
 	return all.filter(mutation => mutation.status === 'pending')
 }
 
 // Every mutation still sitting in the queue at all -- a successful sync deletes its record, so
 // anything still here (pending, mid-sync, or rejected by the server) hasn't taken effect yet.
 export async function get_all_mutations(): Promise<QueuedMutation[]> {
-	return with_store<QueuedMutation[]>('readonly', store => store.getAll())
+	return with_store<QueuedMutation[]>({ mode: 'readonly', fn: store => store.getAll() })
 }
 
-export async function update_mutation(client_id: string, changes: Partial<QueuedMutation>): Promise<void> {
+type UpdateMutationOptions = {
+	readonly client_id: string
+	readonly changes: Partial<QueuedMutation>
+}
+
+export async function update_mutation({ client_id, changes }: UpdateMutationOptions): Promise<void> {
 	const db = await open_db()
 	await new Promise<void>((resolve, reject) => {
 		const store = db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME)
@@ -98,5 +108,5 @@ export async function update_mutation(client_id: string, changes: Partial<Queued
 }
 
 export async function delete_mutation(client_id: string): Promise<void> {
-	await with_store('readwrite', store => store.delete(client_id))
+	await with_store({ mode: 'readwrite', fn: store => store.delete(client_id) })
 }

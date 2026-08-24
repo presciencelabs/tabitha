@@ -72,10 +72,10 @@ const ALL_HAVE_EXTRA_ARGUMENT_MESSAGES = new Map<RoleTag, string>([
 	['predicate_adjective', "'{stem}' can never be used with a predicate adjective. Consider using something like 'cause [X to be...]'. Consult its usage in the Ontology."],
 ])
 
-export function parse_case_frame_rule(sense: WordSense, role_tag: RoleTag, rule_json: RoleRuleValueJson): ArgumentRoleRule[] {
+export function parse_case_frame_rule({ sense, role_tag, rule_json }: { sense: WordSense; role_tag: RoleTag; rule_json: RoleRuleValueJson }): ArgumentRoleRule[] {
 	if (Array.isArray(rule_json)) {
 		// An argument role may have multiple possible trigger rules, ie different structures that are allowed.
-		return rule_json.flatMap(rule_option => parse_case_frame_rule(sense, role_tag, rule_option))
+		return rule_json.flatMap(rule_option => parse_case_frame_rule({ sense, role_tag, rule_json: rule_option }))
 	}
 
 	const tag_role = rule_json['tag_role'] ?? true
@@ -97,20 +97,19 @@ export function parse_case_frame_rule(sense: WordSense, role_tag: RoleTag, rule_
 }
 
 export function parse_sense_rules<K extends string = string>(
-	rule_json: [WordSense, SenseRuleJson<K>][],
-	defaults: ArgumentRoleRule[],
+	{ rule_json, defaults }: { rule_json: [WordSense, SenseRuleJson<K>][]; defaults: ArgumentRoleRule[] },
 ): ArgumentRulesForSense[] {
 	return rule_json.map(parse_sense_rule(defaults))
 
 	function parse_sense_rule(defaults: ArgumentRoleRule[]) {
 		return ([sense, rules_json]: [WordSense, SenseRuleJson<K>]): ArgumentRulesForSense => {
 			const role_rules = defaults.flatMap(rule => rule.role_tag in rules_json
-				? parse_case_frame_rule(sense, rule.role_tag, rules_json[rule.role_tag as K] as RoleRuleValueJson)
+				? parse_case_frame_rule({ sense, role_tag: rule.role_tag, rule_json: rules_json[rule.role_tag as K] as RoleRuleValueJson })
 				: [rule])
 
 			const other_rules = rules_json.other_rules
 				? Object.entries(rules_json.other_rules)
-					.flatMap(([other_tag, other_rule_json]) => parse_case_frame_rule(sense, other_tag, other_rule_json))
+					.flatMap(([other_tag, other_rule_json]) => parse_case_frame_rule({ sense, role_tag: other_tag, rule_json: other_rule_json }))
 				: []
 
 			return {
@@ -124,7 +123,8 @@ export function parse_sense_rules<K extends string = string>(
 	}
 }
 
-export function initialize_case_frame_rules({ trigger_token }: RuleTriggerContext, rule_info_getter: (token: Token) => CaseFrameRuleInfo) {
+export function initialize_case_frame_rules({ trigger_context, rule_info_getter }: { trigger_context: RuleTriggerContext; rule_info_getter: (token: Token) => CaseFrameRuleInfo }) {
+	const { trigger_token } = trigger_context
 	initialize_rules(trigger_token)
 	if (trigger_token.pairing) {
 		initialize_rules(trigger_token.pairing)
@@ -138,7 +138,7 @@ export function initialize_case_frame_rules({ trigger_token }: RuleTriggerContex
 
 		for (const lookup of token.lookup_results.filter(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 			if (should_check) {
-				const rules_for_sense = get_rules_for_sense(rules_by_sense, default_rule_getter)(lookup)
+				const rules_for_sense = get_rules_for_sense({ rules_by_sense, default_rule_getter })(lookup)
 				lookup.case_frame = {
 					rules: rules_for_sense.role_rules,
 					usage: role_info_getter(lookup.categorization, rules_for_sense),
@@ -163,8 +163,8 @@ export function check_case_frames(trigger_context: RuleTriggerContext) {
 		.filter(lookup => lookup.case_frame?.rules.length > 0)
 
 	for (const lookup of lookups_to_check) {
-		const match_results = match_sense_rules(trigger_context, lookup)
-		lookup.case_frame.result = check_usage(lookup, match_results)
+		const match_results = match_sense_rules({ main_trigger_context: trigger_context, lookup })
+		lookup.case_frame.result = check_usage({ lookup, role_matches: match_results })
 	}
 }
 
@@ -177,11 +177,11 @@ export function check_pairing_case_frames({ trigger_token }: RuleTriggerContext)
 		?? []
 
 	for (const lookup of lookups_to_check) {
-		lookup.case_frame.result = check_usage(lookup, selected_result.case_frame.result.valid_arguments)
+		lookup.case_frame.result = check_usage({ lookup, role_matches: selected_result.case_frame.result.valid_arguments })
 	}
 }
 
-function get_rules_for_sense(rules_by_sense: ArgumentRulesForSense[], default_rule_getter: DefaultRuleGetter): (lookup: LookupResult) => ArgumentRulesForSense {
+function get_rules_for_sense({ rules_by_sense, default_rule_getter }: { rules_by_sense: ArgumentRulesForSense[]; default_rule_getter: DefaultRuleGetter }): (lookup: LookupResult) => ArgumentRulesForSense {
 	return (lookup: LookupResult): ArgumentRulesForSense => {
 		const defaults_for_stem: ArgumentRulesForSense = {
 			sense: '',
@@ -196,13 +196,13 @@ function get_rules_for_sense(rules_by_sense: ArgumentRulesForSense[], default_ru
 	}
 }
 
-function match_sense_rules(main_trigger_context: RuleTriggerContext, lookup: LookupResult): RoleMatchResult[] {
+function match_sense_rules({ main_trigger_context, lookup }: { main_trigger_context: RuleTriggerContext; lookup: LookupResult }): RoleMatchResult[] {
 	return lookup.case_frame.rules
-		.map(rule => match_argument_rule(main_trigger_context, rule))
+		.map(rule => match_argument_rule({ main_trigger_context, rule }))
 		.filter((match): match is RoleMatchResult => match.success)
 }
 
-function match_argument_rule(main_trigger_context: RuleTriggerContext, rule: ArgumentRoleRule): RoleMatchResult {
+function match_argument_rule({ main_trigger_context, rule }: { main_trigger_context: RuleTriggerContext; rule: ArgumentRoleRule }): RoleMatchResult {
 	const { tokens } = main_trigger_context
 	const { trigger, context } = rule.trigger_rule
 
@@ -211,17 +211,21 @@ function match_argument_rule(main_trigger_context: RuleTriggerContext, rule: Arg
 		const context_result = context(tokens, main_trigger_context.trigger_index)
 
 		if (!context_result.success) {
-			return create_role_match_result(rule, false)
+			return create_role_match_result({ rule, success: false })
 		}
 
 		const argument_index = context_result.context_indexes[rule.relative_context_index]
 
-		return create_role_match_result(rule, true, {
-			tokens,
-			trigger_index: argument_index,
-			trigger_token: tokens[argument_index],
-			rule_id: rule.trigger_rule.id,
-			...context_result,
+		return create_role_match_result({
+			rule,
+			success: true,
+			argument_context: {
+				tokens,
+				trigger_index: argument_index,
+				trigger_token: tokens[argument_index],
+				rule_id: rule.trigger_rule.id,
+				...context_result,
+			},
 		})
 
 	} else {
@@ -237,27 +241,31 @@ function match_argument_rule(main_trigger_context: RuleTriggerContext, rule: Arg
 				continue
 			}
 
-			return create_role_match_result(rule, true, {
-				tokens,
-				trigger_index: i,
-				trigger_token: tokens[i],
-				rule_id: rule.trigger_rule.id,
-				...context_result,
+			return create_role_match_result({
+				rule,
+				success: true,
+				argument_context: {
+					tokens,
+					trigger_index: i,
+					trigger_token: tokens[i],
+					rule_id: rule.trigger_rule.id,
+					...context_result,
+				},
 			})
 		}
 
-		return create_role_match_result(rule, false)
+		return create_role_match_result({ rule, success: false })
 	}
 }
 
-function create_role_match_result(rule: ArgumentRoleRule, success: boolean, argument_context: RuleTriggerContext | null = null): RoleMatchResult {
+function create_role_match_result({ rule, success, argument_context = null }: { rule: ArgumentRoleRule; success: boolean; argument_context?: RuleTriggerContext | null }): RoleMatchResult {
 	return {
 		role_tag: rule.role_tag,
 		success,
 		trigger_context: argument_context ?? {
 			tokens: [],
 			trigger_index: -1,
-			trigger_token: create_token('', TOKEN_TYPE.NOTE),
+			trigger_token: create_token({ token: '', type: TOKEN_TYPE.NOTE }),
 			context_indexes: [],
 			subtoken_indexes: [],
 			rule_id: rule.trigger_rule.id,
@@ -266,7 +274,7 @@ function create_role_match_result(rule: ArgumentRoleRule, success: boolean, argu
 	}
 }
 
-function check_usage(lookup: LookupResult, role_matches: RoleMatchResult[]): CaseFrameResult {
+function check_usage({ lookup, role_matches }: { lookup: LookupResult; role_matches: RoleMatchResult[] }): CaseFrameResult {
 	if (!LOOKUP_FILTERS.IS_IN_ONTOLOGY(lookup)) {
 		return create_case_frame()
 	}
@@ -301,7 +309,7 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 	}
 
 	// show the case frame messages as warnings when inside a relative clause or question, in case something is mishandled
-	const severity: MessageLabel = token_has_tag(trigger_context.tokens[0], 'in_relative_clause|in_interrogative') ? 'warning' : 'error'
+	const severity: MessageLabel = token_has_tag({ token: trigger_context.tokens[0], tag_to_check: 'in_relative_clause|in_interrogative' }) ? 'warning' : 'error'
 	
 	const selected_result = token.lookup_results[0]
 	const sense = stem_with_sense(selected_result)
@@ -311,13 +319,13 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 		yield { [severity]: "This use of '{stem}' does not match any sense in the Ontology. Check other errors and warnings for more information." }
 
 		// flag any extra roles common to all lookup results
-		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }: RoleMatchResult) => role_is_extra_for_all(role_tag, token))
+		const extra_roles_for_all = selected_result.case_frame.result.extra_arguments.filter(({ role_tag }: RoleMatchResult) => role_is_extra_for_all({ role_tag, token }))
 		for (const extra_argument of extra_roles_for_all) {
 			const extra_message = ALL_HAVE_EXTRA_ARGUMENT_MESSAGES.get(extra_argument.role_tag)
 				|| extra_argument.rule.extra_message.replaceAll('{sense}', "'{stem}'")
 			// put the error message on both the trigger token AND the argument token
 			yield { [severity]: extra_message }
-			yield flag_extra_argument(trigger_context, extra_argument, extra_message, severity)
+			yield flag_extra_argument({ trigger_context, extra_argument, message: extra_message, severity })
 		}
 
 		// show the invalid arguments for each lookup result
@@ -330,7 +338,7 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 		yield show_invalid_roles(selected_result)
 		
 		for (const extra_argument of case_frame.extra_arguments) {
-			yield flag_extra_argument(trigger_context, extra_argument, extra_argument.rule.extra_message, severity)
+			yield flag_extra_argument({ trigger_context, extra_argument, message: extra_argument.rule.extra_message, severity })
 		}
 	}
 
@@ -401,13 +409,13 @@ function no_matches_and_ambiguous_sense(token: Token): boolean {
 	return token.lookup_results.every(({ case_frame }) => case_frame.result.status === 'invalid') && token.lookup_results.length > 1 && !token.specified_sense
 }
 
-function role_is_extra_for_all(role_tag: RoleTag, token: Token): boolean {
+function role_is_extra_for_all({ role_tag, token }: { role_tag: RoleTag; token: Token }): boolean {
 	return token.lookup_results.every(LOOKUP_FILTERS.HAS_EXTRA_ARGUMENT(role_tag))
 }
 
-function flag_extra_argument(trigger_context: RuleTriggerContext, extra_argument: RoleMatchResult, message: string, severity: MessageLabel): MessageInfo {
+function flag_extra_argument({ trigger_context, extra_argument, message, severity }: { trigger_context: RuleTriggerContext; extra_argument: RoleMatchResult; message: string; severity: MessageLabel }): MessageInfo {
 	// The message is formatted based on the verb trigger token, not the argument token
-	const formatted_message = format_token_message(trigger_context, message)
+	const formatted_message = format_token_message({ trigger_context, message })
 
 	const argument_token = extra_argument.trigger_context.trigger_token
 	const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token

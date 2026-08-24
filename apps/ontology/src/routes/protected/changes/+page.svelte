@@ -16,7 +16,7 @@
 		check_for_pending_creates().then(local => changes = [...local, ...data.changes])
 	})
 
-	function categories_display(value: string[], old: string[] | undefined) {
+	function categories_display({ value, old }: { value: string[], old: string[] | undefined }) {
 		if (!old) {
 			return value.filter(v => !!v && !v.startsWith('never')).join(' | ')
 		}
@@ -60,7 +60,7 @@
 			const { count, failed, version, timestamp, changes: updated } = await apply_pending_changes()
 			changes = changes.map(c => updated.find(u => u.id === c.id) ?? c)
 
-			const time = format_time(timestamp, data)
+			const time = format_time({ date: timestamp, ...data })
 			const success_message = `Successfully applied ${count} changes at ${time} for new Ontology Version ${version}.`
 			const failed_message = failed > 0 ? `Failed to apply ${failed} changes.` : ''
 			status_message = `${success_message} ${failed_message}`
@@ -142,7 +142,7 @@
 							{#if change.data.categories}
 								{@const { value, old } = change.data.categories}
 								{@const label = change.concept.part_of_speech === 'Verb' ? 'Theta grid' : 'Categorization'}
-								<li><span class="font-semibold">{label}</span>: {categories_display(value, old)}</li>
+								<li><span class="font-semibold">{label}</span>: {categories_display({ value, old })}</li>
 							{/if}
 							{#if change.data.curated_examples}
 								<li><span class="font-semibold">Curated examples</span> updated</li>
@@ -152,7 +152,7 @@
 					<td>
 						{#if change.suggested_by}
 							<div class="flex flex-col gap-0.5">
-								<span>{format_datetime(change.suggested_by.date, data)}</span>
+								<span>{format_datetime({ date: change.suggested_by.date, ...data })}</span>
 								<!-- TODO: Show user name instead of email once user profile data is tracked in Changes -->
 								<span class="text-xs opacity-75 font-mono">{change.suggested_by.email}</span>
 							</div>
@@ -161,7 +161,7 @@
 					<td>
 						{#if change.approved_by}
 							<div class="flex flex-col gap-0.5">
-								<span>{format_datetime(change.approved_by.date, data)}</span>
+								<span>{format_datetime({ date: change.approved_by.date, ...data })}</span>
 								<!-- TODO: Show user name instead of email once user profile data is tracked in Changes -->
 								<span class="text-xs opacity-75 font-mono">{change.approved_by.email}</span>
 							</div>
@@ -174,7 +174,7 @@
 								Unsynced
 							</span>
 						{:else}
-							{change.applied_date ? format_datetime(change.applied_date, data) : 'Pending'}
+							{change.applied_date ? format_datetime({ date: change.applied_date, ...data }) : 'Pending'}
 						{/if}
 					</td>
 					<td>

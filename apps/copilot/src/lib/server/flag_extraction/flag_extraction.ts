@@ -16,7 +16,7 @@ export function extract_flags(entities: EncodingEntity[]): CopilotTriggerFlag[] 
 		children: entities,
 	}
 
-	const matches = get_matches(root_node, all_flag_extractions)
+	const matches = get_matches({ root_entity: root_node, extractions: all_flag_extractions })
 	return matches.map(flag_from_match).filter(f => !!f)
 }
 
