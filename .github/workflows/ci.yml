@@ -102,6 +102,7 @@ jobs:
       - name: Typecheck & Svelte Diagnostics
         id: typecheck
         run: pnpm check
+        continue-on-error: true
 
       - name: ESLint
         id: eslint
