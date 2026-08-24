@@ -55,7 +55,7 @@ async function get_latest_database_name(name: string): Promise<string> {
 	})
 
 	const filtered_databases = databases.filter(db => db.name.startsWith(name))
-	const sorted_descending = filtered_databases.sort((a, b) => b.created_at.localeCompare(a.created_at))
+	const sorted_descending = filtered_databases.toSorted((a, b) => b.created_at.localeCompare(a.created_at))
 	const latest = sorted_descending[0] // ⚠️ when testing, might want to do [1] to avoid the prod db.
 
 	return latest.name

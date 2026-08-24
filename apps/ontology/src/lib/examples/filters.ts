@@ -107,7 +107,7 @@ export function derive_filters({ concept, examples }: { concept: Concept, exampl
 	const filters: FilterMap = new Map()
 
 	// The Book filter has to be handled separately because it's a little different than the context filters.
-	const book_names_found_in_examples = examples.slice().sort(by_book_order).map(book_name)
+	const book_names_found_in_examples = examples.toSorted(by_book_order).map(book_name)
 	filters.set('Book', new Set(['Any', ...book_names_found_in_examples]))
 
 	const context_filters: FilterMap = initialize_filter_map().get(concept.part_of_speech) ?? new Map()
