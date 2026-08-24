@@ -11,7 +11,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 		error(400, 'chapter must be an integer')
 	}
 
-	let start_verse = searchParams.has('v1') ? parseInt(searchParams.get('v0') || '') : 1
+	let start_verse = searchParams.has('v0') ? parseInt(searchParams.get('v0') || '') : 1
 	let end_verse = searchParams.has('v1') ? parseInt(searchParams.get('v1') || '') : null
 
 	const param_settings = JSON.parse(searchParams.get('settings') || '{}')
