@@ -88,7 +88,6 @@ jobs:
     name: 🔍 Code Quality & Typecheck
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
-    continue-on-error: true
     outputs:
       typecheck: ${{ steps.typecheck.outcome }}
       eslint: ${{ steps.eslint.outcome }}
@@ -107,12 +106,12 @@ jobs:
       - name: ESLint
         id: eslint
         run: pnpm check:lint
+        continue-on-error: true
 
   unit_tests:
     name: 🧪 Unit Tests & Coverage
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
-    continue-on-error: true
     outputs:
       coverage: ${{ steps.coverage.outcome }}
     steps:
@@ -125,12 +124,12 @@ jobs:
       - name: In-Memory Unit Tests & Coverage Report
         id: coverage
         run: pnpm test:coverage
+        continue-on-error: true
 
   e2e_tests:
     name: 🎭 Playwright E2E Tests
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
-    continue-on-error: true
     outputs:
       e2e: ${{ steps.e2e.outcome }}
     steps:
@@ -169,9 +168,10 @@ jobs:
       - name: Execute Playwright End-to-End Suite
         id: e2e
         run: pnpm test:e2e
+        continue-on-error: true
 
       - name: Diagnose D1 State on Failure
-        if: failure()
+        if: steps.e2e.outcome == 'failure'
         run: |
           echo "=== ⚠️ Playwright E2E Failure Storage State ==="
           find apps/*/.wrangler -name "*.sqlite" -exec ls -lh {} + 2>/dev/null || true
