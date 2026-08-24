@@ -4,7 +4,7 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { normalize_wildcards } from '@tabitha/types'
 import type { DbRowLexicon, LexicalForm } from '$lib/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { project }, url: { searchParams } }) => {
+export async function GET({ locals: { db }, params: { project }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const word = normalize_wildcards(searchParams.get('word') ?? '')
 
 	const stem_sql = `

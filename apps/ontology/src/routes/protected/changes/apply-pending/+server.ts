@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { apply_pending_changes } from '$lib/server/changes/changes'
 
-export const POST: RequestHandler = async ({ locals }) => {
+export async function POST({ locals }: Parameters<RequestHandler>[0]) {
 	if (!locals.user) {
 		throw error(401, 'Unauthorized')
 	}

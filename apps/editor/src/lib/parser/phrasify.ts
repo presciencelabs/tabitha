@@ -35,9 +35,7 @@ function phrasify_tokens(tokens: Token[]): Token[] {
 
 	return tokens.flatMap(flatten_phrases)
 
-	/**
-	 * @param {number} direction +1 for forward, -1 for reverse
-	 */
+	// direction: +1 for forward, -1 for reverse
 	function expand_phrases(direction: number) {
 		const i_start = direction < 0 ? tokens.length - 1 : 0
 		const i_condition = direction < 0

@@ -3,10 +3,6 @@ import { create_context_filter, create_skip_filter, create_token_filter, simple_
 import type { Token } from '$lib/types'
 import type { RuleTriggerContext, TokenFilter, TokenRuleCore } from '$lib/rules/types'
 
-/**
- * @param {Token[]} tokens
- * @param {string} rule_id
- */
 export function fill_same_subject_gap({ tokens, rule_id }: { tokens: Token[]; rule_id: string }) {
 	// place the gap token right after any conjunction or adposition
 	const skip_filter = create_skip_filter(['clause_start', { 'category': 'Adposition' }, { 'tag': { 'syntax': 'gerundifier' } }])
@@ -84,19 +80,13 @@ export function handle_be_interrogative({ tokens, be_index, rule_id }: { tokens:
 	insert_ghosted_gap_token({ gap_label: 'INTV_V', tokens, ghost_index: be_index, gap_index: vp_gap_index, rule_id })
 }
 
-/**
- * @param {Token[]} tokens 
- * @returns {number}
- */
 function find_clause_end_for_gap(tokens: Token[]): number {
 	// starting from the end, find the first index that isn't punctuation
 	const IS_PUNCTUATION: TokenFilter = token => token.type === TOKEN_TYPE.PUNCTUATION
 	return find_preceding({ tokens, start_index: tokens.length, token_filter: token => !IS_PUNCTUATION(token), skip_filter: IS_PUNCTUATION })[1] + 1
 }
 
-/**
- * @returns {number[]} an array of indexes, where the length indicates the nested level of the found gap
- */
+// returns an array of indexes, where the length indicates the nested level of the found gap
 function find_clause_gap(tokens: Token[]): number[] {
 	const head_np_filter = create_token_filter({ 'tag': { 'syntax': 'head_np' } })
 	const np_vp_filter = create_skip_filter(['np', 'vp_modifiers'])

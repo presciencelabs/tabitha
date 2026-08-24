@@ -47,11 +47,7 @@ async function get_latest_database_name(name: string): Promise<string> {
 
 	const databases: DbInfo[] = data_lines.map(line => {
 		const values = line.split('│').map(v => v.trim()).filter(Boolean)
-
-		return headers.reduce((database, header: keyof DbInfo, index) => {
-			database[header] = values[index]
-			return database
-		}, {} as DbInfo)
+		return Object.fromEntries(headers.map((header, index) => [header, values[index]])) as DbInfo
 	})
 
 	const filtered_databases = databases.filter(db => db.name.startsWith(name))

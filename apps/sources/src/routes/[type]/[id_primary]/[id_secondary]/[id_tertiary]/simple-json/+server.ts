@@ -9,7 +9,7 @@ import type { RequestHandler } from './$types'
 
 const ontology_client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary }, url: { searchParams } }) => {
+export async function GET({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const include_glosses = searchParams.get('glosses') === 'true'
 
 	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }

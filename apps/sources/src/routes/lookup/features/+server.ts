@@ -3,7 +3,7 @@ import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { ApiFeature, DbFeature } from '@tabitha/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams } }) => {
+export async function GET({ locals: { db }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const category = searchParams.get('category')?.toLowerCase() ?? ''
 
 	const features = await get_source_features(db)

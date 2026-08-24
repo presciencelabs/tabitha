@@ -3,7 +3,7 @@ import { testament_groupings } from '$lib/data/lookups'
 import { BIBLE_BOOKS } from '@tabitha/types'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({ locals: { db }, params: { type } }) => {
+export async function load({ locals: { db }, params: { type } }: Parameters<PageServerLoad>[0]) {
 	const statuses = await get_all_book_statuses({ db, type })
 
 	const primary_id_to_order_map: Record<string, number> = Object.fromEntries(Object.entries(BIBLE_BOOKS).map(([i, name]) => [name, Number(i)]))

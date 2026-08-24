@@ -262,9 +262,8 @@ function create_default_argument_rules(): ArgumentRoleRule[] {
 }
 
 function create_adjective_argument_rules(): Map<WordStem, ArgumentRulesForSense[]> {
-	return new Map(Array.from(adjective_case_frames.entries()).map(([stem, sense_rules_json]) => {
-		return [stem, parse_sense_rules({ rule_json: sense_rules_json, defaults: DEFAULT_CASE_FRAME_RULES })]
-	}))
+	return new Map([...adjective_case_frames.entries()].map(([stem, sense_rules_json]) =>
+		[stem, parse_sense_rules({ rule_json: sense_rules_json, defaults: DEFAULT_CASE_FRAME_RULES })]))
 }
 
 const DEFAULT_CASE_FRAME_RULES = create_default_argument_rules()

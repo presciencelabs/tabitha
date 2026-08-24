@@ -17,11 +17,11 @@ export async function transform_inflections(dir: string = '.') {
 	await mkdir(unix_dir, { recursive: true })
 	await mkdir(csv_dir, { recursive: true })
 
-	const files = Array.from(new Glob('*.win.txt').scanSync(win_dir))
+	const files = [...new Glob('*.win.txt').scanSync(win_dir)]
 
 	for (const win_file of files) {
 		const full_win_file = join(win_dir, win_file)
-		const base_unix_name = basename(win_file, '.win.txt') + '.txt'
+		const base_unix_name = `${basename(win_file, '.win.txt')}.txt`
 		const full_unix_file = join(unix_dir, base_unix_name)
 
 		console.log(`converting ${full_win_file} => ${full_unix_file}`)
@@ -37,8 +37,7 @@ export async function transform_inflections(dir: string = '.') {
 		if (!match) continue
 
 		const pos_key = match[1] // e.g., 'nouns'
-		const part_of_speech = parts_of_speech_map[pos_key] ||
-			pos_key.charAt(0).toUpperCase() + pos_key.slice(1, -1)
+		const part_of_speech = parts_of_speech_map[pos_key] ?? `${pos_key[0].toUpperCase()}${pos_key.slice(1, -1)}`
 
 		const csv_filename = `${pos_key}.csv`
 		const full_csv_file = join(csv_dir, csv_filename)
@@ -50,24 +49,25 @@ export async function transform_inflections(dir: string = '.') {
 	}
 }
 
+const MATCH_STEM_LINE = /^(\d+)\.\s+(.+)$/
+const ADDITIONAL_INFO = / {3}\(\w+\)/ // e.g.,   (suppletive)
+
 function process_to_csv(content: string, part_of_speech: string): string {
 	// TBTA files are generated in a Windows environment resulting in '\r\n' line endings.
 	// If the invisible carriage return ('\r') is not stripped, it remains attached to the extracted
 	// word stem and breaks exact string matching downstream during the Lexicon DB migration.
 	const lines = content.replace(/\r/g, '').split('\n')
-	
+
 	const extracted_data = new Map<string, string[]>()
 	let current_key: string | null = null
 
 	for (const line of lines) {
 		if (!line) continue
 
-		const MATCH_STEM_LINE = /^(\d+)\.\s+(.+)$/
 		const match = line.match(MATCH_STEM_LINE)
 
 		if (match) {
-			const sequence_number = match[1]
-			const stem = match[2]
+			const [, sequence_number, stem] = match
 			current_key = `${sequence_number}:${stem}`
 			extracted_data.set(current_key, [])
 			continue
@@ -77,19 +77,16 @@ function process_to_csv(content: string, part_of_speech: string): string {
 			const parts = line.split(':')
 			if (parts.length > 1) {
 				const inflection = parts[1].trim()
-				const ADDITIONAL_INFO = / {3}\(\w+\)/ // e.g.,   (suppletive)
 				const normalized_inflection = inflection.replace(ADDITIONAL_INFO, '')
 				extracted_data.get(current_key)!.push(normalized_inflection)
 			}
 		}
 	}
 
-	const output: string[] = []
-	for (const [key, inflections] of extracted_data) {
+	return [...extracted_data].map(([key, inflections]) => {
 		const [sequence_number, stem] = key.split(':')
-		output.push(`${sequence_number},${stem},${part_of_speech},|${inflections.join('|')}|`)
-	}
-	return output.join('\n')
+		return `${sequence_number},${stem},${part_of_speech},|${inflections.join('|')}|`
+	}).join('\n')
 }
 
 // Allow running from CLI directly

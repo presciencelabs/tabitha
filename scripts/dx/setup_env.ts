@@ -77,8 +77,9 @@ function generate_local_env_content(template_content: string, existing_content?:
 		}
 
 		// Priority 4: If the developer already supplied a custom value in existing .env.local, preserve it
-		if (existing_vars.has(key) && existing_vars.get(key) !== '') {
-			output_lines.push(`${key}=${existing_vars.get(key)}`)
+		const existing_value = existing_vars.get(key)
+		if (existing_value) {
+			output_lines.push(`${key}=${existing_value}`)
 			continue
 		}
 
@@ -101,12 +102,12 @@ export async function setup_env() {
 
 	const app_dirs = readdirSync(apps_dir, { withFileTypes: true })
 		.filter(d => d.isDirectory())
-		.map(d => join(apps_dir, d.name))
 
 	let configured_count = 0
 
-	for (const app_path of app_dirs) {
-		const app_name = app_path.replace(apps_dir + '/', '')
+	for (const app_dir of app_dirs) {
+		const app_name = app_dir.name
+		const app_path = join(apps_dir, app_name)
 		const env_template = join(app_path, '.env')
 		const env_local = join(app_path, '.env.local')
 

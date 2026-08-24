@@ -10,7 +10,6 @@
 	let source = $derived(data.source)
 	let nav_data = $derived(data.nav_data)
 
-	/** @type {PageSourceEntity|null}*/
 	let selected_entity = $state<PageSourceEntity | null>(null)
 	let sidebar_open = $state(false)
 

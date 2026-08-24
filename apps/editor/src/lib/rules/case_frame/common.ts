@@ -17,11 +17,6 @@ import type {
 } from '$lib/rules/case_frame/types'
 import type { RuleTriggerContext } from '$lib/rules/types'
 
-/**
- * 
- * @param {RoleTag} role_tag 
- * @returns {string}
- */
 function readable_role_tag(role_tag: RoleTag): string {
 	const readables = new Map<string, string>([
 		// verb arguments

@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit'
 import { parse_reference } from '$lib/data/ref_parser'
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = async ({ url: { searchParams } }) => {
+export async function GET({ url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const ref = searchParams.get('ref') ?? ''
 
 	const parsed_ref = parse_reference(ref)

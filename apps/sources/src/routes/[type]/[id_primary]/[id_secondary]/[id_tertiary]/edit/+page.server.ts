@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import type { Reference } from '@tabitha/types'
 
-export const load: PageServerLoad = async ({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }) => {
+export async function load({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }: Parameters<PageServerLoad>[0]) {
 	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }
 	const source = await get_source_data({ db, ...reference })
 

@@ -82,11 +82,11 @@ function match_value_internal({ actual, pattern, bindings }: { actual: unknown, 
 	if (typeof pattern === 'object' && typeof actual === 'object') {
 		const pattern_obj = pattern as Record<string, unknown>
 		const actual_obj = actual as Record<string, unknown>
-		for (const key of Object.keys(pattern_obj)) {
+		for (const [key, pattern_value] of Object.entries(pattern_obj)) {
 			if (!(key in actual_obj)) {
 				return false
 			}
-			const value_match = match_value_internal({ actual: actual_obj[key], pattern: pattern_obj[key], bindings })
+			const value_match = match_value_internal({ actual: actual_obj[key], pattern: pattern_value, bindings })
 			if (!value_match) {
 				return false
 			}

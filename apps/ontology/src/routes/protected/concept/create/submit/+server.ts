@@ -5,7 +5,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { ConceptCreateData } from '$lib/server/types'
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export async function POST({ request, locals }: Parameters<RequestHandler>[0]) {
 	const data: ConceptCreateData = await request.json()
 
 	const existing = await get_concept_for_update({ db: locals.db_ontology, concept_key: data })

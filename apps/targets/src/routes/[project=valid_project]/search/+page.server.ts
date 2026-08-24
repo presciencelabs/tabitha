@@ -2,7 +2,7 @@ import { parse_search_query, search_text } from '$lib/server/search'
 import type { PageServerLoad } from './$types'
 import type { ReturnTo } from '$lib/types'
 
-export const load: PageServerLoad = async ({ url: { searchParams }, params: { project }, locals: { db } }) => {
+export async function load({ url: { searchParams }, params: { project }, locals: { db } }: Parameters<PageServerLoad>[0]) {
 	const q = searchParams.get('q')?.trim()
 	if (!q) {
 		return { results: [], search_terms: [], return_to: undefined }

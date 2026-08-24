@@ -3,7 +3,7 @@ import { approve_change, can_approve_change, get_change } from '$lib/server/chan
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
-export const POST: RequestHandler = async ({ params, locals }) => {
+export async function POST({ params, locals }: Parameters<RequestHandler>[0]) {
 	const id = Number(params.id)
 	const change = await get_change({ db: locals.db_ontology, id })
 	if (!change) {

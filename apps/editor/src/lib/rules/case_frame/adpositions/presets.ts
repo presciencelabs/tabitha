@@ -1,9 +1,5 @@
 import type { CaseFrameRuleJson } from '$lib/rules/case_frame/types'
 import type { TokenContextFilterJson } from '$lib/rules/types'
-/**
- * 
- * @returns {CaseFrameRuleJson}
- */
 export function opening_subordinate_clause() {
 	return {
 		...by_relative_context({
@@ -14,10 +10,6 @@ export function opening_subordinate_clause() {
 	}
 }
 
-/**
- * 
- * @returns {CaseFrameRuleJson}
- */
 export function head_noun() {
 	return {
 		...by_relative_context({
@@ -28,10 +20,6 @@ export function head_noun() {
 	}
 }
 
-/**
- * 
- * @returns {CaseFrameRuleJson}
- */
 export function head_noun_post() {
 	return {
 		...by_relative_context({

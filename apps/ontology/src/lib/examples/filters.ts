@@ -123,7 +123,7 @@ export function derive_filters({ concept, examples }: { concept: Concept, exampl
 		})
 	})
 
-	for (const [name, options] of Array.from(context_filters.entries()).filter(has_options)) {
+	for (const [name, options] of [...context_filters.entries()].filter(has_options)) {
 		const common_options = new Set<string>()
 
 		// second condition added because take-A [Instrument and Addressee] both have only one option...

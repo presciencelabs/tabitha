@@ -6,7 +6,7 @@ import type { LayoutLoad } from './$types'
 // just be wrong (and, since this is a universal load, it reruns client-side right after SSR anyway).
 // Spreads `data` (the sibling +layout.server.ts's return value) back in -- a universal load's return
 // value otherwise replaces the server load's for the component, rather than merging with it.
-export const load: LayoutLoad = ({ data }) => {
+export function load({ data }: Parameters<LayoutLoad>[0]) {
 	const locale = browser ? navigator.language : 'en-US'
 	const time_zone = browser ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC'
 

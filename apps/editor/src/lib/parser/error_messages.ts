@@ -19,9 +19,7 @@ const WORD_LEVEL_TOO_HIGH = 'Word must be a level 0 or 1. Hover over the word to
 const WORD_LEVEL_TOO_LOW = 'Word must be a level 2 or 3'
 const AMBIGUOUS_LEVEL = 'This word has multiple senses and ambiguous complexity. Consider including the sense (e.g. {stem}-A).'
 
-const INVALID_TOKEN_END = function(text: string): string {
-	return `${text} must be followed by a space or punctuation.`
-}
+const INVALID_TOKEN_END = (text: string): string => `${text} must be followed by a space or punctuation.`
 
 export const ERRORS = {
 	MISSING_OPENING_PAREN,

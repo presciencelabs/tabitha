@@ -1,7 +1,7 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit'
 import type { ChapterResult } from '$lib/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { project, book } }) => {
+export async function GET({ locals: { db }, params: { project, book } }: Parameters<RequestHandler>[0]) {
 	const sql = `
 		SELECT DISTINCT chapter
 		FROM Text
