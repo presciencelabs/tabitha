@@ -22,6 +22,12 @@ jobs:
   security_compliance:
     name: 🛡️ Security & Compliance (Blocking)
     runs-on: ubuntu-latest
+    outputs:
+      philosophies: ${{ steps.check_philosophies.outcome }}
+      cloudflare: ${{ steps.check_cloudflare.outcome }}
+      storage: ${{ steps.check_storage.outcome }}
+      badges: ${{ steps.check_badges.outcome }}
+      md: ${{ steps.check_md.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,22 +41,27 @@ jobs:
         run: pnpm check:secrets
 
       - name: Architectural Philosophy Verification
+        id: check_philosophies
         run: pnpm check:philosophies
         continue-on-error: true
 
       - name: Cloudflare Workers Configuration Audit
+        id: check_cloudflare
         run: pnpm check:cloudflare
         continue-on-error: true
 
       - name: Storage Hygiene & Cookie Security Audit
+        id: check_storage
         run: pnpm check:storage
         continue-on-error: true
 
       - name: README Badge & Version Sync Audit
+        id: check_badges
         run: pnpm check:badges
         continue-on-error: true
 
       - name: Markdown Specification Lint
+        id: check_md
         run: pnpm check:md
         continue-on-error: true
 
@@ -78,6 +89,9 @@ jobs:
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
+    outputs:
+      typecheck: ${{ steps.typecheck.outcome }}
+      eslint: ${{ steps.eslint.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,9 +100,11 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Typecheck & Svelte Diagnostics
+        id: typecheck
         run: pnpm check
 
       - name: ESLint
+        id: eslint
         run: pnpm check:lint
 
   unit_tests:
@@ -96,6 +112,8 @@ jobs:
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
+    outputs:
+      coverage: ${{ steps.coverage.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -104,6 +122,7 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: In-Memory Unit Tests & Coverage Report
+        id: coverage
         run: pnpm test:coverage
 
   e2e_tests:
@@ -111,6 +130,8 @@ jobs:
     needs: [security_compliance, production_build]
     runs-on: ubuntu-latest
     continue-on-error: true
+    outputs:
+      e2e: ${{ steps.e2e.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -145,6 +166,7 @@ jobs:
         run: pnpm exec playwright install-deps chromium
 
       - name: Execute Playwright End-to-End Suite
+        id: e2e
         run: pnpm test:e2e
 
       - name: Diagnose D1 State on Failure
@@ -163,3 +185,90 @@ jobs:
             apps/*/test-results/
             apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/
           retention-days: 7
+
+  # ============================================================================
+  # STAGE 3: PR SUMMARY (Advisory Results Surfaced on the PR)
+  # ============================================================================
+  pr_summary:
+    name: 📝 Post PR Advisory Summary
+    if: always() && github.event_name == 'pull_request'
+    needs: [security_compliance, production_build, code_quality, unit_tests, e2e_tests]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Build & Upsert PR Summary Comment
+        uses: actions/github-script@v7
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        with:
+          script: |
+            const needs = JSON.parse(process.env.NEEDS_JSON)
+            const marker = '<!-- ci-pr-summary -->'
+
+            const icon = (outcome) => {
+              if (outcome === 'success') return '✅'
+              if (outcome === 'failure') return '⚠️'
+              if (outcome === 'skipped') return '⏭️'
+              return '❓'
+            }
+
+            const checks = [
+              ['Architectural Philosophies', needs.security_compliance.outputs.philosophies],
+              ['Cloudflare Workers Config Audit', needs.security_compliance.outputs.cloudflare],
+              ['Storage & Cookie Hygiene', needs.security_compliance.outputs.storage],
+              ['README Badge & Version Sync', needs.security_compliance.outputs.badges],
+              ['Markdown Lint', needs.security_compliance.outputs.md],
+              ['Typecheck & Svelte Diagnostics', needs.code_quality.outputs.typecheck],
+              ['ESLint', needs.code_quality.outputs.eslint],
+              ['Unit Test Coverage', needs.unit_tests.outputs.coverage],
+              ['Playwright E2E', needs.e2e_tests.outputs.e2e],
+            ]
+
+            let body = `${marker}\n### 🔎 CI Advisory Summary\n\nThese checks are non-blocking and never stop a merge, but are worth a look.\n\n`
+
+            if (needs.security_compliance.result === 'failure') {
+              body += `🚫 **Blocking gate failed:** secret/dependency scan (\`security_compliance\`). Advisory checks below may not have run.\n\n`
+            }
+            if (needs.production_build.result === 'failure') {
+              body += `🚫 **Blocking gate failed:** production build (\`production_build\`).\n\n`
+            }
+
+            body += '| Check | Result |\n|---|---|\n'
+            for (const [name, outcome] of checks) {
+              body += `| ${name} | ${icon(outcome)} ${outcome ?? 'did not run'} |\n`
+            }
+
+            const failed = checks.filter(([, outcome]) => outcome === 'failure')
+            if (failed.length > 0) {
+              const pr = context.payload.pull_request
+              const participants = new Set([pr.user.login])
+              for (const reviewer of pr.requested_reviewers || []) {
+                participants.add(reviewer.login)
+              }
+              const mentions = [...participants].map((login) => `@${login}`).join(' ')
+              body += `\n${mentions} — ${failed.length} advisory check(s) need a look: ${failed.map(([name]) => name).join(', ')}.`
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const existing = comments.find((c) => c.body.includes(marker))
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
