@@ -10,7 +10,7 @@ import type { AnalysisResult } from '$lib/types'
 
 const editor_client = create_editor_client({ base_url: PUBLIC_EDITOR_API_HOST })
 
-export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams } }) => {
+export async function GET({ locals: { db }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const text = searchParams.get('text') ?? ''
 
 	const api_result = await editor_client.analyze_text(sanitize_input(text))

@@ -4,7 +4,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { ConceptUpdateData } from '$lib/server/types'
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export async function POST({ request, locals }: Parameters<RequestHandler>[0]) {
 	const data: ConceptUpdateData = await request.json()
 
 	const can_apply_directly = await is_authorized({ locals, permission: 'UPDATE_CONCEPT' })

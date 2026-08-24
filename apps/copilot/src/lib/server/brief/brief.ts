@@ -74,7 +74,7 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: Google
 
 function format_weight(weight: number) {
 	const max = 5
-	return '●'.repeat(weight) + '○'.repeat(max - weight)
+	return `${'●'.repeat(weight)}${'○'.repeat(max - weight)}`
 }
 
 function format_verdict(verdict: { type: string, subtype?: string | null, reason?: string | null }) {
@@ -90,14 +90,14 @@ function format_verdict(verdict: { type: string, subtype?: string | null, reason
 	}
 }
 
-const translationOpener = '[['
-const translationDelimiter = '||'
-const translationCloser = ']]'
-const placeholderOpener = '{{'
-const placeholderCloser = '}}'
+const translation_opener = '[['
+const translation_delimiter = '||'
+const translation_closer = ']]'
+const placeholder_opener = '{{'
+const placeholder_closer = '}}'
 
 function mark_for_translation({ text, targetLanguageName, sourceLanguageName = 'English' }: { text: string, targetLanguageName: string, sourceLanguageName?: string }): string {
-	return sourceLanguageName !== targetLanguageName ? `${translationOpener}${text}${translationDelimiter}${sourceLanguageName}${translationDelimiter}${targetLanguageName}${translationCloser}` : text
+	return sourceLanguageName !== targetLanguageName ? `${translation_opener}${text}${translation_delimiter}${sourceLanguageName}${translation_delimiter}${targetLanguageName}${translation_closer}` : text
 }
 
 export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }): Promise<T> {
@@ -107,21 +107,19 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }
 	const prompt = []
 	let text = JSON.stringify(obj)
 	while (true) {
-		const openerIndex = text.indexOf(translationOpener)
-		if (openerIndex === -1)
+		const opener_index = text.indexOf(translation_opener)
+		if (opener_index === -1)
 			break
-		const closerIndex = text.indexOf(translationCloser, openerIndex + translationOpener.length)
-		const parts = text.substring(openerIndex + translationOpener.length, closerIndex).split(translationDelimiter)
+		const closer_index = text.indexOf(translation_closer, opener_index + translation_opener.length)
+		const [translation_text, source_language, target_language] = text.substring(opener_index + translation_opener.length, closer_index).split(translation_delimiter)
 
-		let placeholder: number
-		if (placeholder_map.has(parts[0])) {
-			placeholder = placeholder_map.get(parts[0])!
-		} else {
+		let placeholder = placeholder_map.get(translation_text)
+		if (placeholder === undefined) {
 			placeholder = prompt.length
-			placeholder_map.set(parts[0], placeholder)
-			prompt.push({ text: parts[0], sourceLanguage: parts[1], targetLanguage: parts[2] })
+			placeholder_map.set(translation_text, placeholder)
+			prompt.push({ text: translation_text, sourceLanguage: source_language, targetLanguage: target_language })
 		}
-		text = text.substring(0, openerIndex) + placeholderOpener + placeholder + placeholderCloser + text.substring(closerIndex + translationCloser.length, text.length)
+		text = `${text.slice(0, opener_index)}${placeholder_opener}${placeholder}${placeholder_closer}${text.slice(closer_index + translation_closer.length)}`
 	}
 
 	if (!prompt.length) {
@@ -149,8 +147,8 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }
 	})
 
 	const substitutions = response.text ? JSON.parse(response.text) : []
-	for (let i = 0; i < substitutions.length; ++i) {
-		text = text.replaceAll(`${placeholderOpener}${i}${placeholderCloser}`, substitutions[i].replaceAll('"', '\\"'))
+	for (const [i, substitution] of substitutions.entries()) {
+		text = text.replaceAll(`${placeholder_opener}${i}${placeholder_closer}`, substitution.replaceAll('"', '\\"'))
 	}
 
 	return JSON.parse(text)
@@ -177,8 +175,8 @@ export async function create_brief_for_verse({ note_results, settings, ai }: { n
 }
 
 async function get_brief_data({ input, ai }: { input: BriefInput, ai: GoogleGenAI }): Promise<BriefOutput | undefined> {
-	const tnnBasedInfo = await get_tnn_based_info({ input, ai })
-	if (!tnnBasedInfo) {
+	const tnn_based_info = await get_tnn_based_info({ input, ai })
+	if (!tnn_based_info) {
 		return undefined
 	}
 	return {
@@ -200,7 +198,7 @@ async function get_brief_data({ input, ai }: { input: BriefInput, ai: GoogleGenA
 				text: `${note.meaning} ${note.check}`,
 			})),
 		},
-		...tnnBasedInfo,
+		...tnn_based_info,
 	}
 }
 
@@ -263,16 +261,16 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 
 export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: VerseReference, output: BriefOutput, ai: GoogleGenAI }) {
 	// TODO fully implement this - this is currently here to keep the pre-existing conversion to this template data
-	const readerLanguage = output.lwc
+	const reader_language = output.lwc
 	const template_data: BriefDocxTemplateData = await translate_json({
 		obj: {
 			verseReference: verse_ref,
 			passageReference: `${verse_ref.book} ${verse_ref.chapter}:${verse_ref.verse}`,
 			promptVersion: output.tnnPromptVersion,
-			pagePreamble: mark_for_translation({ text: 'page', targetLanguageName: readerLanguage }),
+			pagePreamble: mark_for_translation({ text: 'page', targetLanguageName: reader_language }),
 			rigorMode: output.rigor,
-			lwcName: mark_for_translation({ text: output.lwc, targetLanguageName: readerLanguage }),
-			flagsHeading: mark_for_translation({ text: 'PROVENANCE FLAGS', targetLanguageName: readerLanguage }),
+			lwcName: mark_for_translation({ text: output.lwc, targetLanguageName: reader_language }),
+			flagsHeading: mark_for_translation({ text: 'PROVENANCE FLAGS', targetLanguageName: reader_language }),
 			flagNotes: output.section1.flagNotes.flatMap(question =>
 				question.trigger.flags.map(flag => ({
 					title: question.trigger.name,
@@ -282,15 +280,15 @@ export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: Ve
 					btText: mark_for_translation({ text: `${question.meaning} ${question.check}`, targetLanguageName: 'English', sourceLanguageName: output.lwc }),
 				})),
 			),
-			sourceHeading: mark_for_translation({ text: 'TBTA LWC VERSE', targetLanguageName: readerLanguage }),
+			sourceHeading: mark_for_translation({ text: 'TBTA LWC VERSE', targetLanguageName: reader_language }),
 			sourceBody: output.section2.lwcText,
-			notesHeading: mark_for_translation({ text: 'TaBiThA SEMANTIC NOTES', targetLanguageName: readerLanguage }),
+			notesHeading: mark_for_translation({ text: 'TaBiThA SEMANTIC NOTES', targetLanguageName: reader_language }),
 			notes: output.section1.flagNotes.map((question, index) => ({
 				ordinal: index + 1,
-				name: mark_for_translation({ text: question.trigger.name, targetLanguageName: readerLanguage }),
-				text: question.meaning + ' ' + question.check,
+				name: mark_for_translation({ text: question.trigger.name, targetLanguageName: reader_language }),
+				text: `${question.meaning} ${question.check}`,
 			})),
-			tnnHeading: mark_for_translation({ text: 'SIL TRANSLATOR NOTES', targetLanguageName: readerLanguage }),
+			tnnHeading: mark_for_translation({ text: 'SIL TRANSLATOR NOTES', targetLanguageName: reader_language }),
 			tnnTraces: output.section4.sourcePointabilityRows.filter(row => row.verdict.type !== 'RETAIN').map(row => ({
 				note: row.note,
 				function: row.function,
@@ -301,31 +299,31 @@ export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: Ve
 				verdict3: row.verdict.type === 'SECTION 5' ? format_verdict(row.verdict) : '',
 			})),
 			retainedNone: output.section4.sourcePointabilityRows.filter(row => row.verdict.type === 'RETAIN').length === 0,
-			retainedNoneText: mark_for_translation({ text: 'No mechanics notes were retained for this passage.', targetLanguageName: readerLanguage }),
+			retainedNoneText: mark_for_translation({ text: 'No mechanics notes were retained for this passage.', targetLanguageName: reader_language }),
 			retainedNotes: output.section4.notes.map(row => ({
-				text: mark_for_translation({ text: row.text, targetLanguageName: readerLanguage }),
+				text: mark_for_translation({ text: row.text, targetLanguageName: reader_language }),
 			})),
 			excludedNotes: output.section4.excluded.map(row => ({
 				text: `${row.note}: ${row.reason}`,
 			})),
-			contextHeading: mark_for_translation({ text: 'CULTURAL & CONTEXTUAL BACKGROUND', targetLanguageName: readerLanguage }),
-			contextNotesCulturalHeading: mark_for_translation({ text: 'Cultural', targetLanguageName: readerLanguage }),
+			contextHeading: mark_for_translation({ text: 'CULTURAL & CONTEXTUAL BACKGROUND', targetLanguageName: reader_language }),
+			contextNotesCulturalHeading: mark_for_translation({ text: 'Cultural', targetLanguageName: reader_language }),
 			contextNotesCultural: output.section5.cultural.map(row => ({
-				title: mark_for_translation({ text: row.term, targetLanguageName: readerLanguage }),
-				text: mark_for_translation({ text: row.summary, targetLanguageName: readerLanguage }),
+				title: mark_for_translation({ text: row.term, targetLanguageName: reader_language }),
+				text: mark_for_translation({ text: row.summary, targetLanguageName: reader_language }),
 			})),
-			contextNotesBackgroundHeading: mark_for_translation({ text: 'Background', targetLanguageName: readerLanguage }),
+			contextNotesBackgroundHeading: mark_for_translation({ text: 'Background', targetLanguageName: reader_language }),
 			contextNotesBackground: output.section5.background.map(row => ({
-				title: mark_for_translation({ text: row.term, targetLanguageName: readerLanguage }),
-				text: mark_for_translation({ text: row.summary, targetLanguageName: readerLanguage }),
+				title: mark_for_translation({ text: row.term, targetLanguageName: reader_language }),
+				text: mark_for_translation({ text: row.summary, targetLanguageName: reader_language }),
 			})),
-			imagesHeading: mark_for_translation({ text: 'IMAGE KEYWORDS', targetLanguageName: readerLanguage }),
+			imagesHeading: mark_for_translation({ text: 'IMAGE KEYWORDS', targetLanguageName: reader_language }),
 			imageNotes: output.section6.keywords.map(keyword => ({
 				title: keyword,
 			})),
-			consultantHeading: mark_for_translation({ text: 'CONSULTANT DECISION', targetLanguageName: readerLanguage }),
-			consultantNotes: output.section7.decisions.length === 0 ? [{ text: mark_for_translation({ text: 'No Section 7 candidate was identified.', targetLanguageName: readerLanguage }) }] : output.section7.decisions.map(decision => ({
-				text: `${mark_for_translation({ text: decision.status, targetLanguageName: readerLanguage })} — ${mark_for_translation({ text: decision.text, targetLanguageName: readerLanguage })}`,
+			consultantHeading: mark_for_translation({ text: 'CONSULTANT DECISION', targetLanguageName: reader_language }),
+			consultantNotes: output.section7.decisions.length === 0 ? [{ text: mark_for_translation({ text: 'No Section 7 candidate was identified.', targetLanguageName: reader_language }) }] : output.section7.decisions.map(decision => ({
+				text: `${mark_for_translation({ text: decision.status, targetLanguageName: reader_language })} — ${mark_for_translation({ text: decision.text, targetLanguageName: reader_language })}`,
 			})),
 		},
 		ai,

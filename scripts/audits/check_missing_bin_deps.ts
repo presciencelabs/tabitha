@@ -170,11 +170,10 @@ export async function analyze_package_bin_deps(pkg: WorkspacePackage): Promise<M
 	const declared = await get_declared_dependency_names(pkg.package_json_path)
 	const files = await get_scannable_source_files(pkg.dir)
 
-	const findings: MissingBinDepFinding[] = []
-	for (const file_path of files) {
+	const findings = (await Promise.all(files.map(async file_path => {
 		const content = await readFile(file_path, 'utf-8')
-		findings.push(...find_undeclared_bin_deps(pkg, file_path, content, declared))
-	}
+		return find_undeclared_bin_deps(pkg, file_path, content, declared)
+	}))).flat()
 
 	return findings
 }
@@ -228,10 +227,7 @@ export async function scan_missing_bin_deps(options: { all?: boolean } = {}): Pr
 		}
 	}
 
-	const all_findings: MissingBinDepFinding[] = []
-	for (const pkg of packages_to_scan) {
-		all_findings.push(...(await analyze_package_bin_deps(pkg)))
-	}
+	const all_findings = (await Promise.all(packages_to_scan.map(analyze_package_bin_deps))).flat()
 
 	return { scanned: packages_to_scan, findings: all_findings, scoped }
 }

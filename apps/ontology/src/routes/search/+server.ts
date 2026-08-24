@@ -3,7 +3,7 @@ import { get_concepts } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
 
-export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
+export async function GET({ url: { searchParams }, locals: { db_ontology } }: Parameters<RequestHandler>[0]) {
 	const search_filter: ConceptSearchFilter = {
 		q: '',
 		scope: 'stems',

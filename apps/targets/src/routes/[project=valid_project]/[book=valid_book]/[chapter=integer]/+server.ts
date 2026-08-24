@@ -1,7 +1,7 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit'
 import type { VerseResult } from '$lib/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { project, book, chapter } }) => {
+export async function GET({ locals: { db }, params: { project, book, chapter } }: Parameters<RequestHandler>[0]) {
 	const sql = `
 		SELECT DISTINCT verse
 		FROM Text

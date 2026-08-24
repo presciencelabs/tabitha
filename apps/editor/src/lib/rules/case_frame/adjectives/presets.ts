@@ -2,10 +2,6 @@ import { TOKEN_TYPE } from '$lib/token'
 import type { CaseFrameRuleJson } from '$lib/rules/case_frame/types'
 import type { TokenContextFilterJson } from '$lib/rules/types'
 
-/**
- * 
- * @returns {CaseFrameRuleJson}
- */
 export function modified_noun_with_subgroup() {
 	return {
 		...by_relative_context({

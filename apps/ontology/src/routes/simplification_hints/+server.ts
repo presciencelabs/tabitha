@@ -3,7 +3,7 @@ import { get_simplification_hints } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { ConceptSearchFilter } from '$lib/types'
 
-export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
+export async function GET({ url: { searchParams }, locals: { db_ontology } }: Parameters<RequestHandler>[0]) {
 	const complex_term = searchParams.get('complex_term') ?? ''
 	const category = searchParams.get('category') ?? ''
 

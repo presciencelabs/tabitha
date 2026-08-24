@@ -199,7 +199,7 @@ export async function load_database(target_app: string = 'all') {
 				continue
 			}
 
-			const display_snapshot = snapshot_file.replace(root_dir + '/', '')
+			const display_snapshot = snapshot_file.replace(`${root_dir}/`, '')
 			console.log(`   📄 Using snapshot: ${display_snapshot}`)
 
 			const start_time = Date.now()
@@ -212,9 +212,9 @@ export async function load_database(target_app: string = 'all') {
 				// Mirror database file to all possible hash formats (id, name, binding, prefix)
 				const alternate_keys = [
 					db_name,
-					d1.binding || '',
+					d1.binding,
 					db_name.split('_')[0],
-				].filter(k => Boolean(k && k !== db_id))
+				].filter((k): k is string => Boolean(k && k !== db_id))
 
 				function copy_database_safely(src: string, dest: string) {
 					if (src === dest) return
@@ -246,8 +246,8 @@ export async function load_database(target_app: string = 'all') {
 				const duration = ((Date.now() - start_time) / 1000).toFixed(2)
 				console.log(`   ⚡ Loaded "${db_name}" (${table_count} tables) in ${duration}s (-> ${db_hash.slice(0, 12)}...sqlite)!\n`)
 				success_count++
-			} catch (err: any) {
-				console.error(`   ❌ Failed to load "${db_name}":`, err?.message || err)
+			} catch (err) {
+				console.error(`   ❌ Failed to load "${db_name}":`, err instanceof Error ? err.message : err)
 			}
 		}
 	}

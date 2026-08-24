@@ -1132,7 +1132,7 @@ function create_default_argument_rules(): ArgumentRoleRule[] {
 }
 
 function create_verb_argument_rules(): Map<WordStem, ArgumentRulesForSense[]> {
-	return new Map(Array.from(verb_case_frames.entries()).map(([stem, sense_rules_json]) => {
+	return new Map([...verb_case_frames.entries()].map(([stem, sense_rules_json]) => {
 		const defaults = get_default_rules_for_stem(stem)
 		return [stem, parse_sense_rules({ rule_json: sense_rules_json, defaults })]
 	}))

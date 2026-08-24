@@ -6,7 +6,7 @@ export { by_book_order }
 export function build_filter_options(matches: SearchTextResult[]): FilterMap {
 	const filter_map: FilterMap = new Map()
 
-	const book_names_found_in_examples = [...new Set(matches.slice().sort(by_book_order).map(result => result.reference.id_primary))]
+	const book_names_found_in_examples = [...new Set(matches.toSorted(by_book_order).map(result => result.reference.id_primary))]
 	filter_map.set('Book', ['Any', ...book_names_found_in_examples])
 
 	const audiences_found_in_examples = [...new Set(matches.flatMap(result => result.texts.map(t => t.audience)))].sort()

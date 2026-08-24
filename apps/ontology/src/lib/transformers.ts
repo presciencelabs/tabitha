@@ -83,7 +83,7 @@ export function transform_curated_examples(curated_examples_raw: string): Curate
  */
 function decode_reference(encoded_reference: string): Reference {
 	const [type_key, primary_key, id_secondary, id_tertiary] = encoded_reference.split(',').map(Number)
-	const source_entries = Array.from(sources.entries())
+	const source_entries = [...sources.entries()]
 	const [type, primary_keys] = source_entries[type_key] ?? ['Unknown', {}]
 
 	return {

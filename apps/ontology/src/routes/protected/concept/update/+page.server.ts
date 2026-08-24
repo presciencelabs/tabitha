@@ -7,7 +7,7 @@ import type { ConceptKey } from '$lib/types'
 // Reaching this page only requires PROTECTED_ACCESS (enforced in hooks.server.ts for all /protected
 // routes) -- UPDATE_CONCEPT is no longer required here, since a user without it can still submit an
 // edit, it just gets recorded as a suggestion instead of applied immediately (see add_change).
-export const load: PageServerLoad = async ({ url: { searchParams }, locals }) => {
+export async function load({ url: { searchParams }, locals }: Parameters<PageServerLoad>[0]) {
 	const concept_key = get_concept_from_url(searchParams)
 
 	const concept_data = await get_concept_for_update({ db: locals.db_ontology, concept_key })

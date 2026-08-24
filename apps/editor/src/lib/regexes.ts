@@ -34,9 +34,7 @@ const WORD_START_CHAR = /[a-zA-Z0-9-]/
 const WORD_CHAR = /[a-zA-Z0-9-']/
 const STARTS_LOWERCASE = /^[a-z.]/	// include '.' for cases like 'half'->'.5'
 
-const OR = function (regex1: RegExp, regex2: RegExp): RegExp {
-	return new RegExp(`${regex1.source}|${regex2.source}`)
-}
+const OR = ({ regex1, regex2 }: { regex1: RegExp, regex2: RegExp }): RegExp => new RegExp(`${regex1.source}|${regex2.source}`)
 
 export const REGEXES = {
 	ANY_WHITESPACE,

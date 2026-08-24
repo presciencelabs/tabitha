@@ -129,18 +129,11 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 
 async function check_env_files(): Promise<DiagnosticResult[]> {
 	const results: DiagnosticResult[] = []
-	let all_present = true
-	const missing_apps: string[] = []
+	const missing_apps = APPS
+		.filter(app => !existsSync(join(process.cwd(), 'apps', app.name, '.env.local')))
+		.map(app => app.name)
 
-	for (const app of APPS) {
-		const env_path = join(process.cwd(), 'apps', app.name, '.env.local')
-		if (!existsSync(env_path)) {
-			all_present = false
-			missing_apps.push(app.name)
-		}
-	}
-
-	if (all_present) {
+	if (missing_apps.length === 0) {
 		results.push({
 			category: 'Environment',
 			name: 'App .env.local Files',
@@ -336,7 +329,7 @@ export async function run_doctor(): Promise<{ all_passed: boolean; fixes: string
 	]
 
 	// Group by category
-	const categories = Array.from(new Set(results.map(r => r.category)))
+	const categories = [...new Set(results.map(r => r.category))]
 	const fixes: { name: string; fix: string }[] = []
 
 	for (const cat of categories) {

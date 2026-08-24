@@ -104,7 +104,7 @@ export function tokenize_input(text: string = ''): Token[] {
 
 	function clause_notation(): Token {
 		// any non-boundary character can go between the parentheses
-		eat_until(REGEXES.OR(REGEXES.TOKEN_END_BOUNDARY, REGEXES.CLOSING_PAREN))
+		eat_until(REGEXES.OR({ regex1: REGEXES.TOKEN_END_BOUNDARY, regex2: REGEXES.CLOSING_PAREN }))
 		if (!match(REGEXES.CLOSING_PAREN)) {
 			// (imp
 			return error_token(ERRORS.MISSING_CLOSING_PAREN)
@@ -120,7 +120,7 @@ export function tokenize_input(text: string = ''): Token[] {
 	function underscore_notation(): Token {
 		// anything can go after the underscore
 		// in addition to the normal boundary punctuation, [ can follow as well
-		eat_until(REGEXES.OR(REGEXES.TOKEN_END_BOUNDARY, REGEXES.OPENING_BRACKET))
+		eat_until(REGEXES.OR({ regex1: REGEXES.TOKEN_END_BOUNDARY, regex2: REGEXES.OPENING_BRACKET }))
 		return simple_token(TOKEN_TYPE.NOTE)
 	}
 

@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import { sync_complex_terms } from '$lib/server/complex_terms'
 import type { RequestHandler } from './$types'
 
-export const POST: RequestHandler = async ({ locals }) => {
+export async function POST({ locals }: Parameters<RequestHandler>[0]) {
 	if (!locals.user) {
 		throw error(401, 'Unauthorized')
 	}

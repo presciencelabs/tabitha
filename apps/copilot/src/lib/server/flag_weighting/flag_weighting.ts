@@ -19,7 +19,7 @@ function get_flag_weight({ flag, weights }: { flag: CopilotTriggerFlag, weights:
 		return undefined
 	}
 	const weight = flag_weights[flag.value]
-	return weight !== undefined ? weight : flag_weights['*']
+	return weight ?? flag_weights['*']
 }
 
 function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {

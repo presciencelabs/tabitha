@@ -78,7 +78,7 @@ async function load_data(word_forms: WordFormMap, targets_db: Database, project:
 	const total_forms = Object.values(word_forms).reduce((sum, forms) => sum + forms.length, 0)
 	let current_index = 0
 
-	for (const part_of_speech of Object.keys(word_forms)) {
+	for (const [part_of_speech, forms] of Object.entries(word_forms)) {
 		const lexicon_words = targets_db.query<LexiconRecord, string[]>(`
 			SELECT *
 			FROM Lexicon
@@ -87,7 +87,7 @@ async function load_data(word_forms: WordFormMap, targets_db: Database, project:
 			ORDER BY id
 		`).all(project, part_of_speech)
 
-		for (const from_word_forms of word_forms[part_of_speech]) {
+		for (const from_word_forms of forms) {
 			current_index++
 			const from_lexicon = lexicon_words[from_word_forms.sequence_number - 1]
 
