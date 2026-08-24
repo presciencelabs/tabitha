@@ -157,10 +157,7 @@ export async function scan_secrets(): Promise<{ scanned: number; found: number; 
 		join(root_dir, '.github'),
 	]
 
-	const all_files: string[] = []
-	for (const dir of search_dirs) {
-		all_files.push(...(await get_scannable_files(dir)))
-	}
+	const all_files = (await Promise.all(search_dirs.map(get_scannable_files))).flat()
 
 	for (const file_path of all_files) {
 		try {

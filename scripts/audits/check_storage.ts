@@ -144,10 +144,7 @@ export async function scan_storage_hygiene(): Promise<{ scanned: number; errors:
 		join(root_dir, 'packages'),
 	]
 
-	const all_files: string[] = []
-	for (const dir of search_dirs) {
-		all_files.push(...(await get_scannable_source_files(dir)))
-	}
+	const all_files = (await Promise.all(search_dirs.map(get_scannable_source_files))).flat()
 
 	const all_findings: StorageFinding[] = []
 

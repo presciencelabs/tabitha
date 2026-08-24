@@ -104,11 +104,7 @@ async function audit_codebase() {
 		join(root_dir, 'packages/types/src'),
 	]
 
-	const all_files: string[] = []
-	for (const dir of search_dirs) {
-		const files = await get_source_files(dir)
-		all_files.push(...files)
-	}
+	const all_files = (await Promise.all(search_dirs.map(get_source_files))).flat()
 
 	const changed_files = get_changed_files()
 	const is_ci = process.env.GITHUB_ACTIONS === 'true'
