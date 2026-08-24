@@ -1,3 +1,4 @@
+import { $ } from 'bun'
 import { platform } from 'node:os'
 import { load_database } from './db_load'
 import { setup_env } from './setup_env'
@@ -58,8 +59,8 @@ async function setup_workspace() {
 	try {
 		await $`pnpm check`
 		console.log('✅ Workspace checks passed cleanly!')
-	} catch (err: any) {
-		console.warn('⚠️  Verification encountered an issue:', err?.message || err)
+	} catch (err) {
+		console.warn('⚠️  Verification encountered an issue:', err instanceof Error ? err.message : err)
 	}
 
 	console.log(`
