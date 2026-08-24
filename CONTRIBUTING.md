@@ -157,6 +157,32 @@ All contributions should adhere to the **13 TaBiThA Development Philosophies** a
 
 ---
 
+## 🤖 AI-Assisted Development
+
+TaBiThA is set up to make AI coding agents effective contributors here, whichever tool you use — none of this requires adopting any particular agent, it's infrastructure that's there if you want it.
+
+### `AGENTS.md` — the shared source of truth
+
+[**`AGENTS.md`**](AGENTS.md) is the canonical constitution for this repo: the 14 development philosophies, architecture and package boundaries, and secrets-vs-config rules. It's written for humans first (README and this guide both link to it), but its filename is also a convention several AI coding agents auto-discover and load as project context — so pointing an agent at this repo tends to get you conventions-aware output without extra prompting.
+
+### `.claude/skills/` — narrower, task-scoped guidance
+
+Some conventions are too specific to belong in AGENTS.md but still worth writing down once — e.g. `.claude/skills/typography/SKILL.md` covers when `prose` belongs on an element vs. when to escape it with `not-prose`. These are loaded contextually by Claude Code when relevant. Add a new skill here when you notice an agent (or a human) repeatedly getting a narrow, specific convention wrong.
+
+### `docs/decisions/` — don't relitigate settled choices
+
+Architecture Decision Records capture the "why" behind non-obvious technical choices. Worth checking before you (or an agent) re-derive a decision that's already been made — see [`docs/decisions/README.md`](docs/decisions/README.md).
+
+### The safety net: automated enforcement
+
+`scripts/audits/check_philosophies.ts`, run as part of `pnpm check`/`pnpm precommit`, mechanically enforces several of the 14 philosophies. This applies equally to human- and AI-authored code, which is what keeps "let an agent try it" low-risk here — drift gets caught by the same gate either way.
+
+### Commit messages
+
+The IDE's AI commit-message generation is already wired to the repo's conventions — see [Commit Message Guidelines](#️-commit-message-guidelines-why-first-philosophy) above.
+
+---
+
 ## 🌱 Branching Strategy
 
 TaBiThA follows a lightweight GitHub Flow:
