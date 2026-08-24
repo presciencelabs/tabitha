@@ -194,6 +194,9 @@ jobs:
     if: always() && github.event_name == 'pull_request'
     needs: [security_compliance, production_build, code_quality, unit_tests, e2e_tests]
     runs-on: ubuntu-latest
+    # Org policy caps the default GITHUB_TOKEN at read-only, so the comment step below
+    # 403s until this job is given a repo-scoped PAT or GitHub App token instead.
+    continue-on-error: true
     permissions:
       issues: write
     steps:
