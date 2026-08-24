@@ -1,0 +1,25 @@
+{
+  "name": "@tabitha/scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Monorepo-wide dev-experience and audit scripts",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:lint:fix": "eslint . --fix",
+    "test": "pnpm test:unit",
+    "test:unit": "bun test ."
+  },
+  "dependencies": {
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@tabitha/eslint-config": "workspace:*",
+    "@tabitha/tsconfig": "workspace:*",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^26.2.0",
+    "eslint": "^10.8.1",
+    "typescript": "^6.0.3"
+  }
+}
