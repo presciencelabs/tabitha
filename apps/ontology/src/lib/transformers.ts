@@ -103,7 +103,7 @@ const categorization_decoders: Record<string, (categories_from_db: string) => st
 	Verb: transform_verb_categorization,
 }
 
-interface DecodeCategorizationOptions {
+type DecodeCategorizationOptions = {
 	readonly part_of_speech: string
 	readonly categorization: string
 }
@@ -191,7 +191,7 @@ const categorization_encoders: Record<string, (categories: string[]) => string> 
 	Verb: encode_verb_categorization,
 }
 
-interface EncodeCategorizationOptions {
+type EncodeCategorizationOptions = {
 	readonly part_of_speech: string
 	readonly categories: string[]
 }

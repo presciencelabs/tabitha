@@ -166,7 +166,7 @@ export const get_examples = (db: D1Database) => async (
 	}))
 }
 
-interface MergeHowToResultsOptions {
+type MergeHowToResultsOptions = {
 	readonly concepts: Concept[]
 	readonly how_to_results: SimplificationHint[]
 }
@@ -230,7 +230,7 @@ function concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey }): boolean {
 	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 
-interface BuildConceptQueryOptions {
+type BuildConceptQueryOptions = {
 	readonly db: D1Database
 	readonly table: string
 }

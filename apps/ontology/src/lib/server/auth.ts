@@ -1,6 +1,6 @@
 import type { Permission } from '$lib/server/types'
 
-interface IsAuthorizedOptions {
+type IsAuthorizedOptions = {
 	readonly locals: App.Locals
 	readonly permission: Permission
 }

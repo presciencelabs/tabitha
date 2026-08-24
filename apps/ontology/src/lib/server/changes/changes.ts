@@ -61,7 +61,7 @@ export async function get_pending_changes(db: D1Database): Promise<OntologyChang
 	return results.map(transform)
 }
 
-interface GetChangeOptions {
+type GetChangeOptions = {
 	readonly db: D1Database
 	readonly id: number
 }
@@ -148,7 +148,7 @@ export async function apply_change_directly({ db, action, data, user }: ChangeSu
 	return !!applied.applied_date
 }
 
-interface CanApproveChangeOptions {
+type CanApproveChangeOptions = {
 	readonly change: OntologyChange
 	readonly permissions: { can_add: boolean, can_update: boolean }
 }
@@ -160,7 +160,7 @@ export function can_approve_change({ change, permissions }: CanApproveChangeOpti
 	return change.action === 'create' ? permissions.can_add : permissions.can_update
 }
 
-interface ApproveChangeOptions {
+type ApproveChangeOptions = {
 	readonly db: D1Database
 	readonly id: number
 	readonly user: User
@@ -190,7 +190,7 @@ function create_change_data(create_data: ConceptCreateData): OntologyChangeDataF
 	}
 }
 
-interface DiffChangeDataOptions {
+type DiffChangeDataOptions = {
 	readonly db: D1Database
 	readonly update_data: ConceptUpdateData
 }
@@ -280,7 +280,7 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 	}
 }
 
-interface ApplyOneChangeOptions {
+type ApplyOneChangeOptions = {
 	readonly db: D1Database
 	readonly change: OntologyChange
 	readonly version: string

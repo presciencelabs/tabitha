@@ -5,7 +5,7 @@ import { theta_grid_arguments } from '$lib/lookups'
 import type { Concept, ConceptKey, DbRowConcept } from '$lib/types'
 import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
 
-interface GetConceptForUpdateOptions {
+type GetConceptForUpdateOptions = {
 	readonly db: D1Database
 	readonly concept_key: ConceptKey
 }
@@ -46,7 +46,7 @@ function decode_categorization_for_update({ part_of_speech, categorization }: { 
 	return categories
 }
 
-interface UpdateConceptOptions {
+type UpdateConceptOptions = {
 	readonly db: D1Database
 	readonly data: ConceptUpdateData
 }
@@ -64,7 +64,7 @@ export async function update_concept({ db, data }: UpdateConceptOptions) {
 	await db.prepare(sql).bind(level, gloss, brief_gloss, categorization, curated_examples, stem, sense, part_of_speech).run()
 }
 
-interface GetNextSenseOptions {
+type GetNextSenseOptions = {
 	readonly db: D1Database
 	readonly stem: string
 	readonly part_of_speech: string
@@ -77,7 +77,7 @@ export async function get_next_sense({ db, stem, part_of_speech }: GetNextSenseO
 	return String.fromCharCode('A'.charCodeAt(0) + valid_senses.length)
 }
 
-interface CreateConceptOptions {
+type CreateConceptOptions = {
 	readonly db: D1Database
 	readonly data: ConceptCreateData
 }
@@ -141,7 +141,7 @@ export function compare_stems({ a, b }: { a: string, b: string }): number {
 	}
 }
 
-interface FindConceptPositionOptions {
+type FindConceptPositionOptions = {
 	readonly db: D1Database
 	readonly data: ConceptKey
 }

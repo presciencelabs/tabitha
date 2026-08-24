@@ -46,7 +46,7 @@ export function get_function_words(filter: ConceptSearchFilter): Concept[] {
 	return FUNCTION_WORDS.filter(get_word_filter({ pre_wildcard, term, post_wildcard })).map(transform_function_word)
 }
 
-interface GetWordFilterOptions {
+type GetWordFilterOptions = {
 	readonly pre_wildcard: string | undefined
 	readonly term: string
 	readonly post_wildcard: string | undefined

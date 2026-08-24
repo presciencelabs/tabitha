@@ -4,7 +4,7 @@ import { get_all_concepts } from './ontology'
 import type { D1Database } from '@cloudflare/workers-types'
 import type { Concept } from '$lib/types'
 
-interface FindRelatedConceptsOptions {
+type FindRelatedConceptsOptions = {
 	readonly db: D1Database
 	readonly search_term: string
 }
@@ -128,7 +128,7 @@ function get_from_cache(search_term: string): string[] | undefined {
 	return [...results]
 }
 
-interface SetCacheOptions {
+type SetCacheOptions = {
 	readonly search_term: string
 	readonly results: string[]
 }

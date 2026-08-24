@@ -67,7 +67,7 @@ async function sync_mutation(mutation: QueuedMutation): Promise<MutationOutcome>
 // Always records the mutation first, then immediately attempts to flush -- the only difference
 // between the online and offline cases is whether that immediate flush succeeds, not a separate
 // code path the caller has to think about.
-interface EnqueueOptions {
+type EnqueueOptions = {
 	readonly action: OntologyChangeAction
 	readonly body: ConceptCreateData | ConceptUpdateData
 }

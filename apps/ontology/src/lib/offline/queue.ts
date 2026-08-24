@@ -55,7 +55,7 @@ function generate_client_id(): string {
 	return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }
 
-interface AddMutationOptions {
+type AddMutationOptions = {
 	readonly action: OntologyChangeAction
 	readonly body: ConceptCreateData | ConceptUpdateData
 }
@@ -83,7 +83,7 @@ export async function get_all_mutations(): Promise<QueuedMutation[]> {
 	return with_store<QueuedMutation[]>({ mode: 'readonly', fn: store => store.getAll() })
 }
 
-interface UpdateMutationOptions {
+type UpdateMutationOptions = {
 	readonly client_id: string
 	readonly changes: Partial<QueuedMutation>
 }
