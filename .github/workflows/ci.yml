@@ -194,17 +194,16 @@ jobs:
     if: always() && github.event_name == 'pull_request'
     needs: [security_compliance, production_build, code_quality, unit_tests, e2e_tests]
     runs-on: ubuntu-latest
-    # Org policy caps the default GITHUB_TOKEN at read-only, so the comment step below
-    # 403s until this job is given a repo-scoped PAT or GitHub App token instead.
+    # Org policy caps the default GITHUB_TOKEN at read-only, so this uses a fine-grained
+    # PAT (repo-scoped to tabitha, Issues: write) stored as PR_SUMMARY_TOKEN instead.
     continue-on-error: true
-    permissions:
-      issues: write
     steps:
       - name: Build & Upsert PR Summary Comment
         uses: actions/github-script@v7
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}
         with:
+          github-token: ${{ secrets.PR_SUMMARY_TOKEN }}
           script: |
             const needs = JSON.parse(process.env.NEEDS_JSON)
             const marker = '<!-- ci-pr-summary -->'
@@ -277,8 +276,6 @@ jobs:
                 })
               }
             } catch (error) {
-              // The default GITHUB_TOKEN is read-only under current org policy, so posting
-              // 403s until this job is given a repo-scoped PAT or GitHub App token. Warn
-              // instead of failing the step so this check doesn't show as a hard failure.
+              // Warn rather than fail so a token/API hiccup doesn't show as a hard failure.
               core.warning(`Could not post PR summary comment: ${error.message}`)
             }
