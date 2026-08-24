@@ -103,7 +103,7 @@ export const context_argument_map: ContextArgumentMap = new Map([
  * | Agent			| ...									|
  * | Patient		| ...									|
  */
-export function derive_filters(concept: Concept, examples: Example[]): FilterMap {
+export function derive_filters({ concept, examples }: { concept: Concept, examples: Example[] }): FilterMap {
 	const filters: FilterMap = new Map()
 
 	// The Book filter has to be handled separately because it's a little different than the context filters.

@@ -13,7 +13,7 @@ export async function load({ locals: { db_ontology }, url: { searchParams }, par
 	return {
 		changes: changes.map(change => ({
 			...change,
-			can_approve: can_approve_change(change, { can_add, can_update }),
+			can_approve: can_approve_change({ change, permissions: { can_add, can_update } }),
 		})),
 	}
 }

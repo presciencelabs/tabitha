@@ -38,7 +38,7 @@ export async function sync_pending(): Promise<Map<string, MutationOutcome>> {
 }
 
 async function sync_mutation(mutation: QueuedMutation): Promise<MutationOutcome> {
-	await update_mutation(mutation.client_id, { status: 'syncing' })
+	await update_mutation({ client_id: mutation.client_id, changes: { status: 'syncing' } })
 
 	let res: Response
 	try {
@@ -48,14 +48,14 @@ async function sync_mutation(mutation: QueuedMutation): Promise<MutationOutcome>
 			body: JSON.stringify(mutation.body),
 		})
 	} catch {
-		await update_mutation(mutation.client_id, { status: 'pending', retry_count: mutation.retry_count + 1 })
+		await update_mutation({ client_id: mutation.client_id, changes: { status: 'pending', retry_count: mutation.retry_count + 1 } })
 		return { type: 'still_pending' }
 	}
 
 	if (!res.ok) {
 		const body = await res.json().catch(() => ({}))
 		const message = body.message || 'Failed to sync this change.'
-		await update_mutation(mutation.client_id, { status: 'failed', failure_reason: message })
+		await update_mutation({ client_id: mutation.client_id, changes: { status: 'failed', failure_reason: message } })
 		return { type: 'failed', message }
 	}
 
@@ -67,8 +67,13 @@ async function sync_mutation(mutation: QueuedMutation): Promise<MutationOutcome>
 // Always records the mutation first, then immediately attempts to flush -- the only difference
 // between the online and offline cases is whether that immediate flush succeeds, not a separate
 // code path the caller has to think about.
-export async function enqueue(action: OntologyChangeAction, body: ConceptCreateData | ConceptUpdateData): Promise<MutationOutcome> {
-	const mutation = await add_mutation(action, body)
+interface EnqueueOptions {
+	readonly action: OntologyChangeAction
+	readonly body: ConceptCreateData | ConceptUpdateData
+}
+
+export async function enqueue({ action, body }: EnqueueOptions): Promise<MutationOutcome> {
+	const mutation = await add_mutation({ action, body })
 	const outcomes = await sync_pending()
 	return outcomes.get(mutation.client_id) ?? { type: 'still_pending' }
 }

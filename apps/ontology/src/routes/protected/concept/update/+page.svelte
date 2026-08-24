@@ -16,7 +16,7 @@
 	// svelte-ignore state_referenced_locally
 	let concept_data = $state(data.concept_data)
 	let initial_data = $state.snapshot(concept_data)
-	let is_dirty = $derived(!deep_equal(concept_data, initial_data))
+	let is_dirty = $derived(!deep_equal({ obj1: concept_data, obj2: initial_data }))
 	let concept_for_header: Concept = $derived(create_fallback_concept(concept_data))
 
 	let saving = $state(false)
@@ -34,7 +34,7 @@
 		})
 	})
 
-	function deep_equal(obj1: ConceptUpdateData, obj2: ConceptUpdateData): boolean {
+	function deep_equal({ obj1, obj2 }: { obj1: ConceptUpdateData, obj2: ConceptUpdateData }): boolean {
 		return JSON.stringify(obj1) === JSON.stringify(obj2)
 	}
 
@@ -50,7 +50,7 @@
 		dismiss_toast()
 
 		try {
-			const outcome = await enqueue('update', $state.snapshot(concept_data))
+			const outcome = await enqueue({ action: 'update', body: $state.snapshot(concept_data) })
 
 			if (outcome.type === 'failed') {
 				error_message = outcome.message

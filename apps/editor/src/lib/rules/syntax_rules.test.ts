@@ -10,7 +10,7 @@ describe('sentence syntax: tag setting', () => {
 	test('quote_begin clause tag', () => {
 		const test_tokens = clausify(tokenize_input('People [] say [] person ["].'))
 
-		const checked_tokens = apply_rules(test_tokens, SYNTAX_RULES)
+		const checked_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES })
 		const clause_tokens = checked_tokens[0].clause.sub_tokens
 		
 		expect(clause_tokens[1].type).toBe(TOKEN_TYPE.CLAUSE)
@@ -25,20 +25,20 @@ describe('sentence syntax: tag setting', () => {
 describe('sentence syntax: first_word detection', () => {
 	test('. empty sentence', () => {
 		const test_tokens = clausify(tokenize_input('.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES })
 
 		expect(result_tokens).toEqual(test_tokens)
 	})
 	test('Token token.', () => {
 		const test_tokens = clausify(tokenize_input('Token token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
 	})
 	test('Token. Token.', () => {
 		const test_tokens = clausify(tokenize_input('Token. Token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
@@ -47,7 +47,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('.5 token. 100 token. numbers count as a word', () => {
 		const test_tokens = clausify(tokenize_input('.5 token. 100 token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
@@ -58,7 +58,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('_note Token. (imp) Token. notes get skipped over', () => {
 		const test_tokens = clausify(tokenize_input('_note Token. (imp) Token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).not.toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).toHaveProperty('position', 'first_word')
@@ -69,7 +69,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('[Token] token. first word in nested clause', () => {
 		const test_tokens = clausify(tokenize_input('[Token] token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).not.toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).toHaveProperty('position', 'first_word')
@@ -79,7 +79,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('[[Token]] token. first word in double nested clause', () => {
 		const test_tokens = clausify(tokenize_input('[[Token]] token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).not.toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
@@ -91,7 +91,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('A token. function words get tagged', () => {
 		const test_tokens = clausify(tokenize_input('A token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
@@ -99,7 +99,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('Followers/disciples token. pairings get tagged', () => {
 		const test_tokens = clausify(tokenize_input('Followers/disciples token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[0].pairing?.tag).toHaveProperty('position', 'first_word')
@@ -108,7 +108,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('You(token) token. pronoun referents get tagged', () => {
 		const test_tokens = clausify(tokenize_input('You(token) token.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[0].pronoun?.tag).not.toHaveProperty('position', 'first_word')
@@ -117,7 +117,7 @@ describe('sentence syntax: first_word detection', () => {
 	})
 	test('Token [token] ["Token"]. words in quote clauses get tagged, but not other subordinate clauses', () => {
 		const test_tokens = clausify(tokenize_input('Token [token] ["Token"].'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		expect(result_tokens[0].tag).toHaveProperty('position', 'first_word')
 		expect(result_tokens[1].tag).not.toHaveProperty('position', 'first_word')
@@ -133,13 +133,13 @@ describe('sentence syntax: first_word detection', () => {
 
 	test('verse reference syntax rule tags single and ranged verse numbers', () => {
 		const test_tokens = clausify(tokenize_input('Verse 5:10 text.'))
-		const result_tokens = apply_rules(test_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const result_tokens = apply_rules({ sentences: test_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		const colon_token = result_tokens.find(t => t.token === ':')
 		expect(colon_token?.tag).toHaveProperty('syntax', 'verse_ref_colon')
 
 		const range_tokens = clausify(tokenize_input('Verse 5:10-12 text.'))
-		const range_result = apply_rules(range_tokens, SYNTAX_RULES).flatMap(flatten_sentence)
+		const range_result = apply_rules({ sentences: range_tokens, rules: SYNTAX_RULES }).flatMap(flatten_sentence)
 
 		const hyphen_token = range_result.find(t => t.token === '-')
 		expect(hyphen_token?.tag).toHaveProperty('syntax', 'verse_ref_hyphen')

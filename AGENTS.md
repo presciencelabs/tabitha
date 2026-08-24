@@ -392,7 +392,21 @@ Keep `.svelte` component scripts limited to presentation and event wiring. Data 
 3. **Dependency Direction**:
    - `apps/*` ➔ `packages/*` (Allowed)
    - `packages/*` ➔ `apps/*` (STRICTLY PROHIBITED)
+   - Within a single app, `src/routes/**` ➔ `src/lib/**` (Allowed)
+   - Within a single app, `src/lib/**` ➔ `src/routes/**` (STRICTLY PROHIBITED)
    - No circular dependencies between workspace packages.
+
+### App-internal lib/routes boundary
+
+`src/lib/**` is an app's shared, reusable layer; `src/routes/**` is page- and endpoint-specific and depends on lib, never the reverse. A type or helper needed by both a route and a `$lib` module belongs in `$lib` (e.g. `$lib/types.ts`) -- never defined inside a route and reached into from `$lib` via a relative import.
+
+```typescript
+// ❌ Avoid: a $lib module reaching into src/routes for a type
+import type { AnalysisResult } from '../../routes/analyze/types'
+
+// ✅ Preferred: the type lives in $lib; the route imports it from there too
+import type { AnalysisResult } from '$lib/types'
+```
 
 ---
 

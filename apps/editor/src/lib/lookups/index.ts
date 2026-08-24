@@ -20,7 +20,7 @@ export async function perform_ontology_lookups(sentences: Sentence[]): Promise<S
 
 	await Promise.all(lookup_tokens.map(check_ontology))
 
-	result_filter_rules.map(from_built_in_rule('result_filter')).forEach(rule => apply_rule_to_tokens(lookup_tokens, rule))
+	result_filter_rules.map(from_built_in_rule('result_filter')).forEach(rule => apply_rule_to_tokens({ tokens: lookup_tokens, rule }))
 
 	return sentences
 }
@@ -47,7 +47,7 @@ const result_filter_rules: BuiltInRule[] = [
 		name: 'Filter lookup results based on upper/lowercase for words not at the start of the sentence.',
 		comment: '',
 		rule: {
-			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag(token, { 'position': 'first_word' }),
+			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && !token_has_tag({ token, tag_to_check: { 'position': 'first_word' } }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token: token }) => {
 				filter_results_by_capitalization(token)

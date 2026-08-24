@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { USFM_VERSE_MARKER_REGEX } from '@tabitha/types'
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-	import { default_settings, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
+	import { default_settings, fetch_batch_cautions, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
 
-	let reference = $state(persisted<ChapterReference>('saved_verse', {
+	let reference = $state(persisted<ChapterReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
 		chapter: 1,
-	}).value)
+	} }).value)
 	let start_verse = $state(1)
 	let end_verse = $state(0)
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
+	let settings = $state(persisted<CopilotSettings>({ key: 'saved_settings@1.5', defaultValue: default_settings }).value)
 
 	let fetching_verse_count = $state(false)
 	let verse_count: number|undefined = $state(-1)
@@ -40,30 +39,14 @@
 		try {
 			const { book, chapter } = reference
 			const book_code = usfm_book_codes[book] || book
-			const params = JSON.stringify(settings)
-			const response = await fetch(`/${book}/${chapter}?v0=${start_verse}&v1=${end_verse}&settings=${encodeURIComponent(params)}`)
 
-			if (!response.ok || !response.body) {
-				const message = await response.text() || 'Unexpected error occurred'
-				throw new Error(message)
-			}
-
-			const reader = response.body.getReader()
-			const decoder = new TextDecoder()
-			let sfm_text = ''
-
-			while (true) {
-				const { done, value } = await reader.read()
-				if (done) break
-
-				const chunk_text = decoder.decode(value, { stream: true })
-				sfm_text += chunk_text
-
-				const matches = chunk_text.match(USFM_VERSE_MARKER_REGEX)
-				if (matches) {
-					completed_verses += matches.length
-				}
-			}
+			const sfm_text = await fetch_batch_cautions({
+				reference,
+				start_verse,
+				end_verse,
+				settings,
+				on_progress: completed_delta => completed_verses += completed_delta,
+			})
 
 			// Create blob from response
 			const blob = new Blob([sfm_text], { type: 'text/plain;charset=utf-8' })

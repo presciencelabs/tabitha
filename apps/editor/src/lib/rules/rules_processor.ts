@@ -1,30 +1,30 @@
 import type { Sentence, Token } from '$lib/types'
 import type { TokenRule } from '$lib/rules/types'
 export function rules_applier(rules: TokenRule[]): (sentences: Sentence[]) => Sentence[] {
-	return sentences => apply_rules(sentences, rules)
+	return sentences => apply_rules({ sentences, rules })
 }
 
-export function apply_rules(sentences: Sentence[], rules: TokenRule[]): Sentence[] {
-	return apply_rules_to_tokens(sentences.map(sentence => sentence.clause), rules).map(clause => ({ clause }))
-	
-	function apply_rules_to_tokens(tokens: Token[], rules: TokenRule[]): Token[] {
+export function apply_rules({ sentences, rules }: { sentences: Sentence[]; rules: TokenRule[] }): Sentence[] {
+	return apply_rules_to_tokens({ tokens: sentences.map(sentence => sentence.clause), rules }).map(clause => ({ clause }))
+
+	function apply_rules_to_tokens({ tokens, rules }: { tokens: Token[]; rules: TokenRule[] }): Token[] {
 		tokens = tokens.slice()
 
 		for (const rule of rules) {
-			tokens = apply_rule_to_tokens(tokens, rule)
+			tokens = apply_rule_to_tokens({ tokens, rule })
 		}
 
 		return tokens
 	}
 }
 
-export function apply_rule_to_tokens(tokens: Token[], rule: TokenRule): Token[] {
+export function apply_rule_to_tokens({ tokens, rule }: { tokens: Token[]; rule: TokenRule }): Token[] {
 	if (tokens.length === 0) {
 		return tokens
 	}
 
 	for (let i = 0; i < tokens.length;) {
-		tokens[i].sub_tokens = apply_rule_to_tokens(tokens[i].sub_tokens, rule)
+		tokens[i].sub_tokens = apply_rule_to_tokens({ tokens: tokens[i].sub_tokens, rule })
 
 		if (!rule.trigger(tokens[i])) {
 			i++

@@ -6,7 +6,7 @@ import type { Reference } from '@tabitha/types'
 export const POST: RequestHandler = async ({ locals: { db }, request }) => {
 	const references: Reference[] = await request.json()
 
-	const results = await get_verse_statuses(db, references)
+	const results = await get_verse_statuses({ db, references })
 
 	return json(results)
 }

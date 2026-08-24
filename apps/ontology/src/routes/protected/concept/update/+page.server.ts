@@ -10,7 +10,7 @@ import type { ConceptKey } from '$lib/types'
 export const load: PageServerLoad = async ({ url: { searchParams }, locals }) => {
 	const concept_key = get_concept_from_url(searchParams)
 
-	const concept_data = await get_concept_for_update(locals.db_ontology, concept_key)
+	const concept_data = await get_concept_for_update({ db: locals.db_ontology, concept_key })
 	if (!concept_data) {
 		throw error(400, 'Specified concept does not exist.')
 	}

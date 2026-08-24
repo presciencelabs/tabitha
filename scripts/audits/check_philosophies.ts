@@ -4,12 +4,14 @@ import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
 	check_classes_at_end,
+	check_lib_routes_boundary,
 	check_prose_scoping,
 	check_pure_functions,
 	check_snake_case_functions,
 	check_strict_domain_typing,
 	check_sveltekit_data_boundaries,
 	check_tabs_indentation,
+	find_native_callback_names,
 	findings,
 } from './philosophies'
 
@@ -26,6 +28,7 @@ const RULE_DOC_ANCHORS: Record<number, string> = {
 	11: 'AGENTS.md#11-pure-functions',
 	13: 'AGENTS.md#13-scope-prose-to-content-escape-with-not-prose',
 	14: 'AGENTS.md#14-sveltekit-data-loading-boundaries',
+	20: 'AGENTS.md#app-internal-libroutes-boundary',
 }
 
 async function get_source_files(dir: string): Promise<string[]> {
@@ -117,18 +120,26 @@ async function audit_codebase() {
 		console.log('\n')
 	}
 
-	for (const file_path of all_files) {
-		const content = await readFile(file_path, 'utf-8')
+	const file_contents = await Promise.all(all_files.map(file_path => readFile(file_path, 'utf-8')))
+
+	// A function passed by reference to a native callback (e.g. a .sort() comparator) is
+	// typically defined in one module and used from another, so this exemption set is
+	// computed once across the whole corpus before any single file is checked.
+	const native_callback_names = find_native_callback_names(file_contents)
+
+	all_files.forEach((file_path, i) => {
+		const content = file_contents[i]
 		const lines = content.split('\n')
 
 		check_tabs_indentation(file_path, lines)
 		check_classes_at_end(file_path, content, lines)
 		check_strict_domain_typing(file_path, lines)
 		check_snake_case_functions(file_path, lines)
-		check_pure_functions(file_path, content)
+		check_pure_functions(file_path, content, native_callback_names)
 		check_prose_scoping(file_path, content)
 		check_sveltekit_data_boundaries(file_path, lines)
-	}
+		check_lib_routes_boundary(file_path, content)
+	})
 
 	if (findings.length === 0) {
 		console.log('✨ 100% Compliance! All inspected files adhere to the Development Philosophies.\n')

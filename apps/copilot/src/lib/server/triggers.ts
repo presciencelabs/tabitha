@@ -185,15 +185,15 @@ const triggers: TriggerTemplate[] = [
 	},
 ]
 
-export function collect_triggers(flags: CopilotWeightedFlag[], language_profile: LanguageProfile): TriggerData[] {
-	return triggers.flatMap(trigger => apply_trigger(trigger, flags, language_profile))
+export function collect_triggers({ flags, language_profile }: { flags: CopilotWeightedFlag[], language_profile: LanguageProfile }): TriggerData[] {
+	return triggers.flatMap(trigger => apply_trigger({ trigger, flags, language_profile }))
 }
 
-export function triggers_match(t1: TriggerIdData, t2: TriggerIdData) {
+export function triggers_match({ t1, t2 }: { t1: TriggerIdData, t2: TriggerIdData }) {
 	return t1.name === t2.name && t1.node_id === t2.node_id
 }
 
-function apply_trigger(trigger: TriggerTemplate, flags: CopilotWeightedFlag[], language_profile: LanguageProfile): TriggerData[] {
+function apply_trigger({ trigger, flags, language_profile }: { trigger: TriggerTemplate, flags: CopilotWeightedFlag[], language_profile: LanguageProfile }): TriggerData[] {
 	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
 	const grouper: (flag: CopilotWeightedFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
 	const grouped = Map.groupBy(trigger_flags, grouper)

@@ -92,7 +92,9 @@ export function tokenize_input(text: string = ''): Token[] {
 	function colon(): Token {
 		if (peek_match(/\d/)) {
 			// verse reference
-			return create_token(collect_text(), TOKEN_TYPE.LOOKUP_WORD, {
+			return create_token({
+				token: collect_text(),
+				type: TOKEN_TYPE.LOOKUP_WORD,
 				lookup_term: '-ReferenceMarker',
 				tag: { 'syntax': 'verse_ref_colon' },
 			})
@@ -187,7 +189,7 @@ export function tokenize_input(text: string = ''): Token[] {
 
 	function get_function_word(token: string): Token | null {
 		const word_function = FUNCTION_WORDS.get(token.toLowerCase())
-		return word_function ? create_token(token, TOKEN_TYPE.FUNCTION_WORD, { tag: word_function }) : null
+		return word_function ? create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD, tag: word_function }) : null
 	}
 
 	function lookup_token(text: string): Token {
@@ -196,7 +198,7 @@ export function tokenize_input(text: string = ''): Token[] {
 		// combine stem and sense
 		const stem = lookup_match?.[1]
 		const sense = lookup_match?.[2] ?? ''
-		return create_token(text, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: stem, specified_sense: sense })
+		return create_token({ token: text, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: stem, specified_sense: sense })
 	}
 
 	function pairing_token(pairing_type: PairingType): (token: string) => Token {
@@ -214,17 +216,17 @@ export function tokenize_input(text: string = ''): Token[] {
 
 		const [pronoun_text, referent_text] = [referent_match[1], referent_match[2]]
 		const referent = lookup_token(referent_text)
-		const pronoun = create_token(pronoun_text, TOKEN_TYPE.FUNCTION_WORD)
+		const pronoun = create_token({ token: pronoun_text, type: TOKEN_TYPE.FUNCTION_WORD })
 		referent.pronoun = pronoun
 		return referent
 	}
 
 	function error_token(message: string): Token {
-		return create_token(collect_text(), TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' } })
+		return create_token({ token: collect_text(), type: TOKEN_TYPE.NOTE, message: { ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' } })
 	}
 
 	function simple_token(type: TokenType): Token {
-		return create_token(collect_text(), type)
+		return create_token({ token: collect_text(), type })
 	}
 
 	function peek(): string {

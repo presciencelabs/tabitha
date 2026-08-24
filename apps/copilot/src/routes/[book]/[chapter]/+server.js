@@ -75,7 +75,7 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 
 							// Translate batch in 1 LLM API call if in brief mode
 							const translated_batch = settings.mode === 'brief'
-								? await translate_json(batch, ai)
+								? await translate_json({ obj: batch, ai })
 								: batch
 
 							// Enqueue translated verses
@@ -94,10 +94,10 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 						const verse = start_verse + verse_idx
 						const reference = { book, chapter: chapter_int, verse }
 
-						let result = await get_copilot_result(reference, settings, ai)
+						let result = await get_copilot_result({ reference, settings, ai })
 						if (result.error) {
 							console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}. Retrying...`)
-							result = await get_copilot_result(reference, settings, ai)
+							result = await get_copilot_result({ reference, settings, ai })
 							if (result.error) {
 								console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}.`)
 							}
@@ -151,17 +151,17 @@ async function get_sfm_for_verse(result, settings, ai) {
 			output_style: 'production',
 		}
 
-		let brief_output = await create_brief_for_verse(result, brief_settings, ai)
+		let brief_output = await create_brief_for_verse({ note_results: result, settings: brief_settings, ai })
 		// if there was an error, try one more time. the error itself is logged elsewhere
 		if (!brief_output) {
 			console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Retrying to get brief notes...`)
-			brief_output = await create_brief_for_verse(result, brief_settings, ai)
+			brief_output = await create_brief_for_verse({ note_results: result, settings: brief_settings, ai })
 			if (!brief_output) {
 				console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Could not generate brief notes. Skipping this verse.`)
 			}
 		}
 
-		return convert_to_usfm_for_brief(result.verse, brief_output)
+		return convert_to_usfm_for_brief({ verse_ref: result.verse, output: brief_output })
 
 	} else {
 		return convert_to_usfm_for_discern(settings.lwc)(result)

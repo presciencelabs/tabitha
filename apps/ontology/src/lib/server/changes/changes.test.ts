@@ -19,7 +19,7 @@ vi.mock('./concepts', () => ({
 	}),
 }))
 
-const { add_change, approve_change, can_approve_change } = await import('./changes')
+const { apply_change_directly, suggest_change, approve_change, can_approve_change } = await import('./changes')
 const { create_concept } = await import('./concepts')
 
 type QueuedResponse = { first?: unknown, all?: unknown[], run?: { last_row_id?: number } }
@@ -68,7 +68,7 @@ const user = { email: 'user@example.com' } as User
 describe('can_approve_change', () => {
 	it('returns false for a change that was never suggested (applied directly by an authorized user)', () => {
 		const change = make_change({ suggested_by: null, approved_by: { email: 'x@y.com', date: new Date() } })
-		expect(can_approve_change(change, { can_add: true, can_update: true })).toBe(false)
+		expect(can_approve_change({ change, permissions: { can_add: true, can_update: true } })).toBe(false)
 	})
 
 	it('returns false once a suggestion is already approved', () => {
@@ -76,23 +76,23 @@ describe('can_approve_change', () => {
 			suggested_by: { email: 'suggester@y.com', date: new Date() },
 			approved_by: { email: 'approver@y.com', date: new Date() },
 		})
-		expect(can_approve_change(change, { can_add: true, can_update: true })).toBe(false)
+		expect(can_approve_change({ change, permissions: { can_add: true, can_update: true } })).toBe(false)
 	})
 
 	it("requires can_add for a 'create' suggestion", () => {
 		const change = make_change({ action: 'create', suggested_by: { email: 'a@b.com', date: new Date() } })
-		expect(can_approve_change(change, { can_add: true, can_update: false })).toBe(true)
-		expect(can_approve_change(change, { can_add: false, can_update: true })).toBe(false)
+		expect(can_approve_change({ change, permissions: { can_add: true, can_update: false } })).toBe(true)
+		expect(can_approve_change({ change, permissions: { can_add: false, can_update: true } })).toBe(false)
 	})
 
 	it("requires can_update for an 'update' suggestion", () => {
 		const change = make_change({ action: 'update', suggested_by: { email: 'a@b.com', date: new Date() } })
-		expect(can_approve_change(change, { can_add: false, can_update: true })).toBe(true)
-		expect(can_approve_change(change, { can_add: true, can_update: false })).toBe(false)
+		expect(can_approve_change({ change, permissions: { can_add: false, can_update: true } })).toBe(true)
+		expect(can_approve_change({ change, permissions: { can_add: true, can_update: false } })).toBe(false)
 	})
 })
 
-describe('add_change', () => {
+describe('suggest_change', () => {
 	const create_data: ConceptCreateData = {
 		stem: 'peace',
 		sense: 'A',
@@ -107,13 +107,26 @@ describe('add_change', () => {
 	it('records a suggestion, and does not apply it, when the user lacks permission', async () => {
 		const { db, statements } = make_db()
 
-		const applied = await add_change(db, 'create', create_data, user, false)
+		const applied = await suggest_change({ db, action: 'create', data: create_data, user })
 
 		expect(applied).toBe(false)
 		expect(create_concept).not.toHaveBeenCalled()
 		expect(statements).toHaveLength(1)
 		expect(statements[0].bind).toHaveBeenCalledWith('peace', 'A', 'Noun', expect.any(String), 'create', user.email, expect.any(String))
 	})
+})
+
+describe('apply_change_directly', () => {
+	const create_data: ConceptCreateData = {
+		stem: 'peace',
+		sense: 'A',
+		part_of_speech: 'Noun',
+		level: '1',
+		gloss: 'a state of calm',
+		brief_gloss: '',
+		categories: [],
+		curated_examples: '',
+	}
 
 	it('applies immediately when the user is authorized', async () => {
 		const { db } = make_db([
@@ -122,10 +135,10 @@ describe('add_change', () => {
 			{}, // apply_one_change's UPDATE after a successful create_concept
 		])
 
-		const applied = await add_change(db, 'create', create_data, user, true)
+		const applied = await apply_change_directly({ db, action: 'create', data: create_data, user })
 
 		expect(applied).toBe(true)
-		expect(create_concept).toHaveBeenCalledWith(db, expect.objectContaining({ stem: 'peace', gloss: 'a state of calm' }))
+		expect(create_concept).toHaveBeenCalledWith({ db, data: expect.objectContaining({ stem: 'peace', gloss: 'a state of calm' }) })
 	})
 })
 
@@ -151,7 +164,7 @@ describe('approve_change', () => {
 			}, // get_change's re-fetch
 		])
 
-		const updated = await approve_change(db, 1, user)
+		const updated = await approve_change({ db, id: 1, user })
 
 		expect(updated.approved_by?.email).toBe(user.email)
 		expect(updated.applied_date).toBeNull()

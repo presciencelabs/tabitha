@@ -17,8 +17,8 @@ const builtin_syntax_rules: BuiltInRule[] = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'subordinate_clause' } }),
 			context: create_context_filter({ 'subtokens': { 'token': '"', 'skip': { 'token': '[' } } }),
 			action: simple_rule_action(({ trigger_token, subtoken_indexes, rule_id }) => {
-				add_tag_to_token(trigger_token, { 'clause_type': 'patient_clause_quote_begin' }, rule_id)
-				add_tag_to_token(trigger_token.sub_tokens[subtoken_indexes[0]], { 'quote': 'begin' }, rule_id)
+				add_tag_to_token({ token: trigger_token, tag: { 'clause_type': 'patient_clause_quote_begin' }, rule_id })
+				add_tag_to_token({ token: trigger_token.sub_tokens[subtoken_indexes[0]], tag: { 'quote': 'begin' }, rule_id })
 			}),
 		},
 	},
@@ -35,9 +35,9 @@ const builtin_syntax_rules: BuiltInRule[] = [
 					return
 				}
 
-				add_tag_to_token(word_token, { 'position': 'first_word' }, rule_id)
+				add_tag_to_token({ token: word_token, tag: { 'position': 'first_word' }, rule_id })
 				if (word_token.pairing) {
-					add_tag_to_token(word_token.pairing, { 'position': 'first_word' }, rule_id)
+					add_tag_to_token({ token: word_token.pairing, tag: { 'position': 'first_word' }, rule_id })
 				}
 			}),
 		},
@@ -49,7 +49,7 @@ const builtin_syntax_rules: BuiltInRule[] = [
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD && REGEXES.HAS_POSSESSIVE.test(token.token),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token, rule_id }) => {
-				add_tag_to_token(trigger_token, { 'relation': 'genitive_saxon' }, rule_id)
+				add_tag_to_token({ token: trigger_token, tag: { 'relation': 'genitive_saxon' }, rule_id })
 			}),
 		},
 	},
@@ -62,7 +62,7 @@ const builtin_syntax_rules: BuiltInRule[] = [
 				'followedby': { 'tag': { 'syntax': 'verse_ref_colon' } },
 			}),
 			action: simple_rule_action(({ trigger_token, rule_id }) => {
-				add_tag_to_token(trigger_token, { 'role': 'verse_ref' }, rule_id)
+				add_tag_to_token({ token: trigger_token, tag: { 'role': 'verse_ref' }, rule_id })
 			}),
 		},
 	},
@@ -80,16 +80,22 @@ const builtin_syntax_rules: BuiltInRule[] = [
 					const verse_numbers = trigger_token.token.split('-')
 
 					tokens.splice(trigger_index, 1,
-						create_token(verse_numbers[0], TOKEN_TYPE.LOOKUP_WORD, {
+						create_token({
+							token: verse_numbers[0],
+							type: TOKEN_TYPE.LOOKUP_WORD,
 							lookup_term: verse_numbers[0],
 							tag: { 'role': 'verse_ref' },
 							rule_info: `create - ${rule_id}`,
 						}),
-						create_token('-', TOKEN_TYPE.FUNCTION_WORD, {
+						create_token({
+							token: '-',
+							type: TOKEN_TYPE.FUNCTION_WORD,
 							tag: { 'syntax': 'verse_ref_hyphen' },
 							rule_info: `create - ${rule_id}`,
 						}),
-						create_token(verse_numbers[1], TOKEN_TYPE.LOOKUP_WORD, {
+						create_token({
+							token: verse_numbers[1],
+							type: TOKEN_TYPE.LOOKUP_WORD,
 							lookup_term: verse_numbers[1],
 							tag: { 'role': 'verse_ref' },
 							rule_info: `create - ${rule_id}`,
@@ -98,7 +104,7 @@ const builtin_syntax_rules: BuiltInRule[] = [
 					return trigger_index + 3	// add 2 and advance 1
 				}
 
-				add_tag_to_token(trigger_token, { 'role': 'verse_ref' }, rule_id)
+				add_tag_to_token({ token: trigger_token, tag: { 'role': 'verse_ref' }, rule_id })
 
 				return trigger_index + 1
 			},

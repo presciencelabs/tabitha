@@ -11,15 +11,15 @@ import type { Sentence, Token, LookupResult } from '$lib/types'
 import type { CheckerRuleJson } from '$lib/rules/types'
 
 function create_sentence(tokens: Token[]): Sentence {
-	return { clause: create_clause_token(tokens, { 'clause_type': 'main_clause' }) }
+	return { clause: create_clause_token({ sub_tokens: tokens, tag: { 'clause_type': 'main_clause' } }) }
 }
 
 function create_lookup_token(token: string, { lookup_results = [] }: { lookup_results?: LookupResult[] } = {}): Token {
-	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: token, lookup_results })
+	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: token, lookup_results })
 }
 
 function lookup_result(stem: string, { sense = 'A', part_of_speech = 'Noun', level = 1, ontology_status = 'in ontology' as OntologyStatus }: { sense?: string; part_of_speech?: string; level?: number; ontology_status?: OntologyStatus } = {}): LookupResult {
-	return create_lookup_result({ stem, part_of_speech }, { sense, level, ontology_status })
+	return create_lookup_result({ stem, part_of_speech, sense, level, ontology_status })
 }
 
 describe('transform rules', () => {
@@ -34,12 +34,12 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
-				create_token('other', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'other' }),
+				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'text' }),
+				create_token({ token: 'other', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'other' }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -55,12 +55,12 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_token('text', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'text' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'text' }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -76,16 +76,16 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('John\'s', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
-				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'peanut' }),
-				create_token('was', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'was' }),
-				create_token('a', TOKEN_TYPE.FUNCTION_WORD),
-				create_token('peanut', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'peanut' }),
-				create_token('.', TOKEN_TYPE.PUNCTUATION),
+				create_token({ token: 'John\'s', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' }),
+				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'peanut' }),
+				create_token({ token: 'was', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'was' }),
+				create_token({ token: 'a', type: TOKEN_TYPE.FUNCTION_WORD }),
+				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'peanut' }),
+				create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules }).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(6)
 		expect(results[1].tag).toEqual({})
@@ -103,14 +103,14 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_clause_token([
-					create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
-				]),
+				create_clause_token({ sub_tokens: [
+					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+				] }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules }).flatMap(flatten_sentence)
 
 		expect(results[0].tag).toEqual({ 'key': 'value' })
 	})
@@ -126,14 +126,14 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
 			]),
 			create_sentence([
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -149,14 +149,14 @@ describe('transform rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_clause_token([
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
-				]),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_clause_token({ sub_tokens: [
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+				] }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, transform_rules)
+		const results = apply_rules({ sentences: input_tokens, rules: transform_rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -177,11 +177,11 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('not_token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'not_token' }),
+				create_token({ token: 'not_token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'not_token' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules })
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -199,11 +199,11 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules })
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -221,17 +221,17 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(3)
 		expect(output_tokens[0].messages.length).toBe(0)
 		expect(output_tokens[1].token).toBe('add')
-		expect_error(output_tokens[1], 'message')
+		expect_error({ token: output_tokens[1], message: 'message' })
 		expect(output_tokens[2].messages.length).toBe(0)
 	})
 	test('triggered with require precededby', () => {
@@ -248,16 +248,16 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(3)
 		expect(output_tokens[0].token).toBe('add')
-		expect_error(output_tokens[0], 'message')
+		expect_error({ token: output_tokens[0], message: 'message' })
 		expect(output_tokens[1].messages.length).toBe(0)
 		expect(output_tokens[2].messages.length).toBe(0)
 	})
@@ -283,18 +283,18 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(4)
 		expect(output_tokens[0].token).toBe('add1')
-		expect_error(output_tokens[0], 'message1')
+		expect_error({ token: output_tokens[0], message: 'message1' })
 		expect(output_tokens[1].token).toBe('add2')
-		expect_error(output_tokens[1], 'message2')
+		expect_error({ token: output_tokens[1], message: 'message2' })
 		expect(output_tokens[2].messages.length).toBe(0)
 		expect(output_tokens[3].messages.length).toBe(0)
 	})
@@ -309,16 +309,16 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(output_tokens.length).toBe(2)
 		expect(output_tokens[0].token).toBe('token')
-		expect_error(output_tokens[0], 'message')
+		expect_error({ token: output_tokens[0], message: 'message' })
 		expect(output_tokens[1].messages.length).toBe(0)
 	})
 	test('not triggered across sentences', () => {
@@ -335,14 +335,14 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
 			]),
 			create_sentence([
-				create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules })
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -360,14 +360,14 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-				create_clause_token([
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
-				]),
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+				create_clause_token({ sub_tokens: [
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+				] }),
 			]),
 		]
 
-		const output_tokens = apply_rules(input_tokens, rules)
+		const output_tokens = apply_rules({ sentences: input_tokens, rules })
 
 		expect(output_tokens).toEqual(input_tokens)
 	})
@@ -386,18 +386,18 @@ describe('checker rules', () => {
 
 		const input_tokens = [
 			create_sentence([
-				create_clause_token([
-					create_token('token', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'token' }),
-					create_token('context', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'context' }),
-				]),
+				create_clause_token({ sub_tokens: [
+					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+				] }),
 			]),
 		]
 
-		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(results.length).toBe(3)
 		expect(results[1].token).toBe('add')
-		expect_error(results[1], 'message')
+		expect_error({ token: results[1], message: 'message' })
 	})
 })
 
@@ -405,23 +405,23 @@ describe('lookup rules', () => {
 	test('built-in lookup rules', () => {
 		const input_tokens = [
 			create_sentence([
-				create_token('John', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'John' }),
-				create_token('ran', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'run' }),
-				create_clause_token([
-					create_token('[', TOKEN_TYPE.PUNCTUATION),
-					create_token('in', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'in' }),
-					create_token('order', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'order' }),
-					create_token('to', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'to' }),
-					create_token('take', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'take' }),
-					create_token('many', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'many' }),
-					create_token('books', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'book' }),
-					create_token('away', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: 'away' }),
-					create_token(']', TOKEN_TYPE.PUNCTUATION),
-				]),
-				create_token('.', TOKEN_TYPE.PUNCTUATION),
+				create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' }),
+				create_token({ token: 'ran', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'run' }),
+				create_clause_token({ sub_tokens: [
+					create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+					create_token({ token: 'in', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'in' }),
+					create_token({ token: 'order', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'order' }),
+					create_token({ token: 'to', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'to' }),
+					create_token({ token: 'take', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'take' }),
+					create_token({ token: 'many', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'many' }),
+					create_token({ token: 'books', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'book' }),
+					create_token({ token: 'away', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'away' }),
+					create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+				] }),
+				create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			]),
 		]
-		const results = apply_rules(input_tokens, LOOKUP_RULES).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules: LOOKUP_RULES }).flatMap(flatten_sentence)
 
 		expect(results[0].token).toBe('John')
 		expect(results[0].messages.length).toBe(0)
@@ -467,7 +467,7 @@ describe('part-of-speech rules', () => {
 			]),
 		]
 
-		const results = apply_rules(input_tokens, rules)
+		const results = apply_rules({ sentences: input_tokens, rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -489,7 +489,7 @@ describe('part-of-speech rules', () => {
 			]),
 		]
 
-		const results = apply_rules(input_tokens, rules)
+		const results = apply_rules({ sentences: input_tokens, rules })
 
 		expect(results).toEqual(input_tokens)
 	})
@@ -513,7 +513,7 @@ describe('part-of-speech rules', () => {
 			]),
 		]
 
-		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(results[0].messages.length).toBe(0)
 		expect(results[0].lookup_results.length).toBe(2)
@@ -540,7 +540,7 @@ describe('part-of-speech rules', () => {
 			]),
 		]
 
-		const results = apply_rules(input_tokens, rules).flatMap(flatten_sentence)
+		const results = apply_rules({ sentences: input_tokens, rules }).flatMap(flatten_sentence)
 
 		expect(results[0].messages.length).toBe(0)
 		expect(results[0].lookup_results.length).toBe(3)

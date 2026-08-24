@@ -20,7 +20,7 @@
 	const Component = $derived(component_map.get(token.type))
 </script>
 
-{#if token_has_message(token)}
+{#if token_has_message({ token })}
 	<div class="join">
 		<Message {token} />
 		{#if Component}

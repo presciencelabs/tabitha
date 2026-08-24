@@ -1,8 +1,8 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import type { StatusRequestReference, StatusResult } from '../../routes/lookup/status/types'
+import type { StatusRequestReference, StatusResult } from '$lib/types'
 import type { Reference, SourceStatus } from '@tabitha/types'
 
-export async function get_all_book_statuses(db: D1Database, type: string): Promise<StatusResult[]> {
+export async function get_all_book_statuses({ db, type }: { db: D1Database, type: string }): Promise<StatusResult[]> {
 	const sql = `
 		SELECT status, id_primary
 		FROM ChapterStatus
@@ -17,7 +17,7 @@ export async function get_all_book_statuses(db: D1Database, type: string): Promi
 	})).toArray()
 }
 
-export async function get_book_status(db: D1Database, reference: StatusRequestReference): Promise<StatusResult> {
+export async function get_book_status({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<StatusResult> {
 	const sql = `
 		SELECT status
 		FROM ChapterStatus
@@ -45,7 +45,7 @@ export function combine_statuses(status_array: { status: SourceStatus }[]) {
 	return just_statuses.length ? status_mapping.find(([predicate]) => predicate(just_statuses))![1] : 'Not Started'
 }
 
-export async function get_chapter_statuses_for_book(db: D1Database, reference: StatusRequestReference): Promise<StatusResult[]> {
+export async function get_chapter_statuses_for_book({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<StatusResult[]> {
 	const sql = `
 		SELECT id_secondary, status
 		FROM ChapterStatus
@@ -60,7 +60,7 @@ export async function get_chapter_statuses_for_book(db: D1Database, reference: S
 	}))
 }
 
-export async function get_chapter_status(db: D1Database, reference: StatusRequestReference): Promise<StatusResult> {
+export async function get_chapter_status({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<StatusResult> {
 	const sql = `
 		SELECT status
 		FROM ChapterStatus
@@ -78,7 +78,7 @@ export async function get_chapter_status(db: D1Database, reference: StatusReques
 	}
 }
 
-export async function get_verse_statuses(db: D1Database, references: Reference[]): Promise<StatusResult[]> {
+export async function get_verse_statuses({ db, references }: { db: D1Database, references: Reference[] }): Promise<StatusResult[]> {
 	const sql = `
 		SELECT status
 		FROM Sources

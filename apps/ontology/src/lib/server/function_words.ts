@@ -43,14 +43,16 @@ export function get_function_words(filter: ConceptSearchFilter): Concept[] {
 	}
 
 	const { pre_wildcard, term, post_wildcard } = match.groups
-	return FUNCTION_WORDS.filter(get_word_filter(pre_wildcard, term, post_wildcard)).map(transform_function_word)
+	return FUNCTION_WORDS.filter(get_word_filter({ pre_wildcard, term, post_wildcard })).map(transform_function_word)
 }
 
-function get_word_filter(
-	pre_wildcard: string | undefined,
-	term: string,
-	post_wildcard: string | undefined,
-): (word_and_gloss: [string, string]) => boolean {
+interface GetWordFilterOptions {
+	readonly pre_wildcard: string | undefined
+	readonly term: string
+	readonly post_wildcard: string | undefined
+}
+
+function get_word_filter({ pre_wildcard, term, post_wildcard }: GetWordFilterOptions): (word_and_gloss: [string, string]) => boolean {
 	const key = `${pre_wildcard ? 1 : 0}${post_wildcard ? 1 : 0}`
 	const lower_term = term.toLowerCase()
 

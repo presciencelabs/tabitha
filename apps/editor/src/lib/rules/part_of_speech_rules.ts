@@ -566,7 +566,7 @@ const builtin_part_of_speech_rules: BuiltInRule[] = [
 		name: 'Disambiguate "is Xing"',
 		comment: 'When a verb like "saying" or "teaching" is preceded by "be", another rule wrongly selects the Noun. In these cases, a Noun like this would never immediately follow "be", so we can select the Verb instead.',
 		rule: {
-			trigger: token => has_part_of_speech(token, 'Verb') && has_part_of_speech(token, 'Noun'),
+			trigger: token => has_part_of_speech({ token, part_of_speech: 'Verb' }) && has_part_of_speech({ token, part_of_speech: 'Noun' }),
 			context: create_context_filter({ 'precededby': { 'stem': 'be' } }),
 			action: simple_rule_action(({ trigger_token }) => {
 				if (trigger_token.lookup_results
@@ -582,13 +582,13 @@ const builtin_part_of_speech_rules: BuiltInRule[] = [
 		name: 'If an ambiguous word could be a Verb, and there are no other Verbs in the clause, select the Verb',
 		comment: 'this is an implicit rule in the Analyzer',
 		rule: {
-			trigger: token => has_part_of_speech(token, 'Verb') && !is_one_part_of_speech(token),
+			trigger: token => has_part_of_speech({ token, part_of_speech: 'Verb' }) && !is_one_part_of_speech(token),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ tokens, trigger_token, trigger_index }) => {
 				// Can't use the context filter, because there may be another ambiguous word somewhere.
 				// The context filter only matches words whose part of speech has been fully determined.
 				// But we want to prevent this rule from applying if there is ANY possibility of another Verb.
-				if (!tokens.some((token, index) => index !== trigger_index && has_part_of_speech(token, 'Verb'))) {
+				if (!tokens.some((token, index) => index !== trigger_index && has_part_of_speech({ token, part_of_speech: 'Verb' }))) {
 					keep_parts_of_speech(new Set(['Verb']))(trigger_token)
 				}
 			}),
@@ -631,7 +631,7 @@ export function parse_part_of_speech_rule(rule_json: PartOfSpeechRuleJson, index
 export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(from_built_in_rule('part_of_speech'))
 	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
 
-function has_part_of_speech(token: Token, part_of_speech: string): boolean {
+function has_part_of_speech({ token, part_of_speech }: { token: Token; part_of_speech: string }): boolean {
 	return token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech))
 }
 

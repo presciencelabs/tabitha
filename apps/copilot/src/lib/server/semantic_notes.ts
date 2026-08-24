@@ -1,6 +1,6 @@
 import type { GoogleGenAI } from '@google/genai/node'
 
-export async function get_semantic_notes(llm_input: CopilotLlmInput, ai: GoogleGenAI): Promise<CopilotLlmOutput> {
+export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: GoogleGenAI }): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 

@@ -7,8 +7,8 @@
 
 	let { reference }: { reference: SourceReference } = $props()
 
-	let sources_url = $derived(get_sources_url(reference, PUBLIC_SOURCES_API_HOST))
-	let source_data_promise = $derived(fetch_source_data(reference, PUBLIC_SOURCES_API_HOST))
+	let sources_url = $derived(get_sources_url({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))
+	let source_data_promise = $derived(fetch_source_data({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))
 </script>
 
 <h4 class="flex justify-between">

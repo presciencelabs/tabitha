@@ -11,8 +11,8 @@ export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams 
 	
 	const is_target = raw_encoding.includes('~\\z1')
 	const parsed_encoding: EncodingEntity[] = is_target
-		? await transform_target_encoding(db, raw_encoding, project)
-		: await transform_semantic_encoding(db, raw_encoding)
+		? await transform_target_encoding({ db, semantic_encoding: raw_encoding, project })
+		: await transform_semantic_encoding({ db, semantic_encoding: raw_encoding })
 
 	return simple
 		? json({ parsed_encoding: simplify_encoding(parsed_encoding) })

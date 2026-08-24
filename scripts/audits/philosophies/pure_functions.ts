@@ -53,7 +53,52 @@ function references_param_in_conditional(body: string, param_name: string): bool
 const FUNCTION_SIGNATURE_PATTERN =
 	/(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:<[^)]*>)?\s*\(([^)]*)\)|(?:export\s+)?(?:const|let)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(?::[^=]+)?=\s*(?:async\s*)?(?:<[^)]*>)?\(([^)]*)\)\s*(?::[^=>{]+)?=>/g
 
-export function check_pure_functions(file_path: string, content: string) {
+// Standard-library iteration/sort methods whose callback signature is fixed by the
+// language spec, not chosen by us (e.g. a sort comparator must take (a, b)). A named
+// function passed *by reference* to one of these is fulfilling an external contract we
+// don't control, so it's exempt from Philosophy 11 -- to add another such contract
+// (a different native/web/framework API with a fixed multi-arg callback shape), add its
+// method name here rather than special-casing individual function names.
+const NATIVE_CALLBACK_METHODS = [
+	'sort',
+	'toSorted',
+	'reduce',
+	'reduceRight',
+	'map',
+	'filter',
+	'forEach',
+	'some',
+	'every',
+	'find',
+	'findIndex',
+	'findLast',
+	'findLastIndex',
+	'flatMap',
+]
+const NATIVE_CALLBACK_REF_PATTERN = new RegExp(
+	`\\.(?:${NATIVE_CALLBACK_METHODS.join('|')})\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[,)]`,
+	'g',
+)
+// Array.from(iterable, mapFn) passes its map function as a second positional argument
+// rather than through a method call on the function's own name.
+const ARRAY_FROM_CALLBACK_REF_PATTERN = /Array\.from\([^,]*,\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\)/g
+
+// Scans the whole codebase (not just the file defining a candidate function) because an
+// exported helper is typically defined in one module and passed as a bare callback from
+// another.
+export function find_native_callback_names(all_content: string[]): Set<string> {
+	const names = new Set<string>()
+	for (const content of all_content) {
+		for (const pattern of [NATIVE_CALLBACK_REF_PATTERN, ARRAY_FROM_CALLBACK_REF_PATTERN]) {
+			const regex = new RegExp(pattern.source, pattern.flags)
+			let match: RegExpExecArray | null
+			while ((match = regex.exec(content)) !== null) names.add(match[1])
+		}
+	}
+	return names
+}
+
+export function check_pure_functions(file_path: string, content: string, native_callback_names: Set<string>) {
 	// Philosophy 11: Pure functions -- receive one argument (destructure an options object
 	// for multiple inputs) and avoid boolean "flag" parameters that branch a function's behavior.
 	if (!file_path.endsWith('.ts') && !file_path.endsWith('.svelte')) return
@@ -64,7 +109,7 @@ export function check_pure_functions(file_path: string, content: string) {
 	while ((match = regex.exec(content)) !== null) {
 		const name = match[1] || match[3]
 		const params_raw = (match[2] ?? match[4] ?? '').trim()
-		if (!name || SVELTEKIT_FRAMEWORK_EXEMPTIONS.has(name) || !params_raw) continue
+		if (!name || SVELTEKIT_FRAMEWORK_EXEMPTIONS.has(name) || native_callback_names.has(name) || !params_raw) continue
 
 		const params = split_top_level_params(params_raw)
 		const line_number = content.substring(0, match.index).split('\n').length

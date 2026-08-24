@@ -37,7 +37,7 @@ export async function check_ontology(lookup_token: Token) {
 		} else {
 			// The word exists in the Ontology, but was not found in the form lookup
 			// This is the case for concepts like 'take-away'
-			transformed_results.push(create_lookup_result(ontology_result, {
+			transformed_results.push(create_lookup_result({
 				...ontology_result,
 				level: level_number,
 				ontology_status: ontology_result.status,

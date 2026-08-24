@@ -4,7 +4,7 @@ import { BIBLE_BOOKS } from '@tabitha/types'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals: { db }, params: { type } }) => {
-	const statuses = await get_all_book_statuses(db, type)
+	const statuses = await get_all_book_statuses({ db, type })
 
 	const primary_id_to_order_map: Record<string, number> = Object.fromEntries(Object.entries(BIBLE_BOOKS).map(([i, name]) => [name, Number(i)]))
 

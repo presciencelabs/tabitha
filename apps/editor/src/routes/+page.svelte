@@ -1,18 +1,18 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckResponse } from '@tabitha/types'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
+	import { fetch_check_result } from '$lib/check'
 	import Icon from '@iconify/svelte'
 
 	let entered_text = $state(save_state.value)
 	let checking = $state(false)
-	let check_response = $state<{ status: string; tokens: SimpleToken[]; back_translation: string }>({ status: 'ok', tokens: [], back_translation: '' })
+	let check_response = $state<CheckResponse>({ status: 'ok', tokens: [], back_translation: '' })
 
 	async function check_text() {
 		checking = true
-		const response = await fetch(`/check?text=${sanitize_input(entered_text)}`)
-		check_response = await response.json()
+		check_response = await fetch_check_result(sanitize_input(entered_text))
 		checking = false
 	}
 

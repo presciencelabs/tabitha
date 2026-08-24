@@ -33,7 +33,7 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 	const examples = await get_examples(db_ontology)(concept, part_of_speech, source)
 	const examples_with_status = await fetch_statuses_by_book(examples)
 
-	return cached_json(examples_with_status)
+	return cached_json({ data: examples_with_status })
 }
 
 async function fetch_statuses_by_book(examples: Example[]): Promise<Example[]> {

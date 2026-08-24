@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
+	import { get_target_data } from '$lib/examples'
 	import type { Reference, TargetTextResult } from '$lib/types'
 
 	type Props = {
@@ -11,19 +11,6 @@
 
 	let loading = $state(true)
 	let target_data = $state<TargetTextResult | null>(null)
-
-	async function get_target_data({ id_primary, id_secondary, id_tertiary }: Reference): Promise<TargetTextResult> {
-		const response = await fetch(`${PUBLIC_TARGETS_API_HOST}/English/${id_primary}/${id_secondary}/${id_tertiary}`)
-
-		// Show the Unchurched Adults if available, because it's usually the most up-to-date.
-		// Otherwise, default to the first audience with text
-		const texts: TargetTextResult[] = await response.json()
-		return (
-			texts.find(text => text.audience === 'Unchurched Adults')
-			|| texts.find(text => text.text)
-			|| { text: '--', audience: 'none saved yet...' }
-		)
-	}
 
 	onMount(async () => {
 		try {

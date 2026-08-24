@@ -61,39 +61,58 @@ export async function get_pending_changes(db: D1Database): Promise<OntologyChang
 	return results.map(transform)
 }
 
-export async function get_change(db: D1Database, id: number): Promise<OntologyChange | null> {
+interface GetChangeOptions {
+	readonly db: D1Database
+	readonly id: number
+}
+
+export async function get_change({ db, id }: GetChangeOptions): Promise<OntologyChange | null> {
 	await create_table_if_not_exists(db)
 
 	const db_change = await db.prepare('SELECT * FROM Changes WHERE id = ?').bind(id).first<DbOntologyChange>()
 	return db_change ? transform(db_change) : null
 }
 
-// Records the change. An authorized user applies it immediately using the diff already in hand -- no re-fetch.
-// Anyone else's edit is recorded as a suggestion, left unapproved and unapplied, for an authorized user to review.
-export async function add_change(db: D1Database, action: OntologyChangeAction, data: ConceptUpdateData, user: User, can_apply_directly: boolean): Promise<boolean> {
+type ChangeSubmission = {
+	readonly db: D1Database
+	readonly action: OntologyChangeAction
+	readonly data: ConceptUpdateData
+	readonly user: User
+}
+
+async function prepare_change_data({ db, action, data }: Pick<ChangeSubmission, 'db' | 'action' | 'data'>) {
 	await create_table_if_not_exists(db)
-
 	const { stem, sense, part_of_speech } = data
-	const change_data = action === 'create' ? create_change_data(data) : await diff_change_data(db, data)
+	const change_data = action === 'create' ? create_change_data(data) : await diff_change_data({ db, update_data: data })
+	return { stem, sense, part_of_speech, change_data }
+}
 
-	if (!can_apply_directly) {
-		const sql = `
-			INSERT INTO Changes (
-				concept_stem,
-				concept_sense,
-				concept_part_of_speech,
-				data,
-				action,
-				suggested_by_email,
-				suggested_date
-				)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
-		`
-		await db.prepare(sql)
-			.bind(stem, sense, part_of_speech, JSON.stringify(change_data), action, user.email!, new Date().toISOString())
-			.run()
-		return false
-	}
+// Records an edit as an unapproved, unapplied suggestion, for an authorized user to review later.
+export async function suggest_change({ db, action, data, user }: ChangeSubmission): Promise<boolean> {
+	const { stem, sense, part_of_speech, change_data } = await prepare_change_data({ db, action, data })
+
+	const sql = `
+		INSERT INTO Changes (
+			concept_stem,
+			concept_sense,
+			concept_part_of_speech,
+			data,
+			action,
+			suggested_by_email,
+			suggested_date
+			)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
+	`
+	await db.prepare(sql)
+		.bind(stem, sense, part_of_speech, JSON.stringify(change_data), action, user.email!, new Date().toISOString())
+		.run()
+	return false
+}
+
+// Applies the change immediately using the diff already in hand -- no re-fetch -- for an
+// authorized user.
+export async function apply_change_directly({ db, action, data, user }: ChangeSubmission): Promise<boolean> {
+	const { stem, sense, part_of_speech, change_data } = await prepare_change_data({ db, action, data })
 
 	const sql = `
 		INSERT INTO Changes (
@@ -125,19 +144,30 @@ export async function add_change(db: D1Database, action: OntologyChangeAction, d
 	}
 
 	const version = await get_next_version(db)
-	const applied = await apply_one_change(db, change, version, new Date().toISOString())
+	const applied = await apply_one_change({ db, change, version, applied_date: new Date().toISOString() })
 	return !!applied.applied_date
 }
 
-export function can_approve_change(change: OntologyChange, permissions: { can_add: boolean, can_update: boolean }): boolean {
+interface CanApproveChangeOptions {
+	readonly change: OntologyChange
+	readonly permissions: { can_add: boolean, can_update: boolean }
+}
+
+export function can_approve_change({ change, permissions }: CanApproveChangeOptions): boolean {
 	if (!change.suggested_by || change.approved_by) {
 		return false
 	}
 	return change.action === 'create' ? permissions.can_add : permissions.can_update
 }
 
+interface ApproveChangeOptions {
+	readonly db: D1Database
+	readonly id: number
+	readonly user: User
+}
+
 // Approves a suggested change so the existing apply-pending machinery will pick it up.
-export async function approve_change(db: D1Database, id: number, user: User): Promise<OntologyChange> {
+export async function approve_change({ db, id, user }: ApproveChangeOptions): Promise<OntologyChange> {
 	await create_table_if_not_exists(db)
 
 	const sql = `
@@ -147,7 +177,7 @@ export async function approve_change(db: D1Database, id: number, user: User): Pr
 	`
 	await db.prepare(sql).bind(user.email!, new Date().toISOString(), id).run()
 
-	return (await get_change(db, id))!
+	return (await get_change({ db, id }))!
 }
 
 function create_change_data(create_data: ConceptCreateData): OntologyChangeDataFields {
@@ -160,9 +190,14 @@ function create_change_data(create_data: ConceptCreateData): OntologyChangeDataF
 	}
 }
 
-async function diff_change_data(db: D1Database, update_data: ConceptUpdateData): Promise<OntologyChangeDataFields> {
+interface DiffChangeDataOptions {
+	readonly db: D1Database
+	readonly update_data: ConceptUpdateData
+}
+
+async function diff_change_data({ db, update_data }: DiffChangeDataOptions): Promise<OntologyChangeDataFields> {
 	// only record the fields that actually changed
-	const old = (await get_concept_for_update(db, update_data))!
+	const old = (await get_concept_for_update({ db, concept_key: update_data }))!
 
 	const fields: (keyof OntologyChangeDataFields)[] = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples']
 	return Object.fromEntries(
@@ -231,7 +266,7 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 
 	const changes: OntologyChange[] = []
 	for (const change of pending_changes) {
-		changes.push(await apply_one_change(db, change, version, applied_date))
+		changes.push(await apply_one_change({ db, change, version, applied_date }))
 	}
 	// TODO once changes are fully supported, actually save the new version within the 'Version' table
 
@@ -245,8 +280,15 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 	}
 }
 
+interface ApplyOneChangeOptions {
+	readonly db: D1Database
+	readonly change: OntologyChange
+	readonly version: string
+	readonly applied_date: string
+}
+
 // On failure, applying stays pending (applied_date left null) for the /protected/changes review flow to retry.
-async function apply_one_change(db: D1Database, change: OntologyChange, version: string, applied_date: string): Promise<OntologyChange> {
+async function apply_one_change({ db, change, version, applied_date }: ApplyOneChangeOptions): Promise<OntologyChange> {
 	try {
 		if (change.action === 'create') {
 			const fallback_categories = default_categories[change.concept.part_of_speech as PartOfSpeech] || []
@@ -258,9 +300,9 @@ async function apply_one_change(db: D1Database, change: OntologyChange, version:
 				categories: change.data.categories?.value ?? fallback_categories,
 				curated_examples: change.data.curated_examples?.value ?? '',
 			}
-			await create_concept(db, create_data)
+			await create_concept({ db, data: create_data })
 		} else {
-			const current_data = (await get_concept_for_update(db, change.concept))!
+			const current_data = (await get_concept_for_update({ db, concept_key: change.concept }))!
 			const update_data: ConceptUpdateData = {
 				...change.concept,
 				level: change.data.level?.value ?? current_data.level,
@@ -269,7 +311,7 @@ async function apply_one_change(db: D1Database, change: OntologyChange, version:
 				categories: change.data.categories?.value ?? current_data.categories,
 				curated_examples: change.data.curated_examples?.value ?? current_data.curated_examples,
 			}
-			await update_concept(db, update_data)
+			await update_concept({ db, data: update_data })
 		}
 
 		const sql = `

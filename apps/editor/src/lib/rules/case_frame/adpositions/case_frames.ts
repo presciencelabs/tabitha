@@ -105,12 +105,12 @@ const adposition_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<Adpos
 
 function create_usage_rules(): ArgumentRoleRule[] {
 	return Object.entries(default_adposition_usage_json)
-		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule('adp_default', role_tag, rule_json))
+		.flatMap(([role_tag, rule_json]) => parse_case_frame_rule({ sense: 'adp_default', role_tag, rule_json }))
 }
 
 function create_adposition_argument_rules(): Map<WordStem, ArgumentRulesForSense[]> {
 	return new Map(Array.from(adposition_case_frames.entries()).map(([stem, sense_rules_json]) => {
-		return [stem, parse_sense_rules(sense_rules_json, DEFAULT_USAGE_RULES)]
+		return [stem, parse_sense_rules({ rule_json: sense_rules_json, defaults: DEFAULT_USAGE_RULES })]
 	}))
 }
 
@@ -122,7 +122,7 @@ export function get_adposition_case_frame_rules(token: Token): CaseFrameRuleInfo
 	return {
 		rules_by_sense: ADPOSITION_USAGE_RULES.get(stem) ?? [],
 		default_rule_getter: get_default_usage_rules,
-		role_info_getter: get_adposition_usage_info,
+		role_info_getter: (categorization, role_rules) => get_adposition_usage_info({ categorization, role_rules }),
 		should_check: true,
 	}
 }
@@ -141,7 +141,7 @@ const ADPOSITION_LETTER_TO_ROLE = new Map([
 	['C', 'opening_subordinate_clause'],
 ])
 
-function get_adposition_usage_info(categorization: string, role_rules: ArgumentRulesForSense): RoleUsageInfo {
+function get_adposition_usage_info({ categorization, role_rules }: { categorization: string; role_rules: ArgumentRulesForSense }): RoleUsageInfo {
 	const usage_roles = convert_usage_info(categorization)
 
 	const all_roles = usage_roles.concat(role_rules.other_optional).concat(role_rules.other_required)

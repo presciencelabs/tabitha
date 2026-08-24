@@ -424,7 +424,7 @@ function parse_all_feature_rules(): FeatureRulesByCategory {
 					return [
 						feature_name,
 						feature_values_json.map(([feature_value, rule_json]) => {
-							return [feature_value, parse_feature_rule_json(pos, feature_name, feature_value, rule_json)]
+							return [feature_value, parse_feature_rule_json({ part_of_speech: pos, feature_name, feature_value, rule_json })]
 						}),
 					]
 				}),
@@ -433,13 +433,15 @@ function parse_all_feature_rules(): FeatureRulesByCategory {
 	)
 
 	function parse_feature_rule_json(
-		part_of_speech: string,
-		feature_name: FeatureName,
-		feature_value: FeatureValue,
-		rule_json: FeatureRuleJson,
+		{ part_of_speech, feature_name, feature_value, rule_json }: {
+			part_of_speech: string
+			feature_name: FeatureName
+			feature_value: FeatureValue
+			rule_json: FeatureRuleJson
+		},
 	): TokenRule[] {
 		if (Array.isArray(rule_json)) {
-			return rule_json.flatMap(json => parse_feature_rule_json(part_of_speech, feature_name, feature_value, json))
+			return rule_json.flatMap(json => parse_feature_rule_json({ part_of_speech, feature_name, feature_value, rule_json: json }))
 		}
 
 		const trigger = create_token_filter(rule_json['trigger'] || 'all')
@@ -455,10 +457,10 @@ function parse_all_feature_rules(): FeatureRulesByCategory {
 	}
 }
 
-export function get_features_for_token(tokens: Token[], token_index: number, category: CategoryName): EntityFeature[] {
+export function get_features_for_token({ tokens, token_index, category }: { tokens: Token[]; token_index: number; category: CategoryName }): EntityFeature[] {
 	const category_feature_rules = FEATURE_RULES_BY_CATEGORY[category] || []
 	return category_feature_rules.map(([feature_name, feature_rules]) => {
-		const selected_value_rules = feature_rules.findLast(([, rules]) => rules.some(rule => test_feature_rule(tokens, token_index, rule)))
+		const selected_value_rules = feature_rules.findLast(([, rules]) => rules.some(rule => test_feature_rule({ tokens, token_index, rule })))
 		return {
 			name: feature_name,
 			value: selected_value_rules?.[0] || '',
@@ -466,6 +468,6 @@ export function get_features_for_token(tokens: Token[], token_index: number, cat
 	})
 }
 
-function test_feature_rule(tokens: Token[], token_index: number, rule: TokenRule): boolean {
+function test_feature_rule({ tokens, token_index, rule }: { tokens: Token[]; token_index: number; rule: TokenRule }): boolean {
 	return rule.trigger(tokens[token_index]) && rule.context(tokens, token_index).success
 }

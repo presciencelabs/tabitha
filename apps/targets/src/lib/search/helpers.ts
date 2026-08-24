@@ -15,7 +15,10 @@ export function build_filter_options(matches: SearchTextResult[]): FilterMap {
 	return filter_map
 }
 
-export function filter_search_results(matches: SearchTextResult[], selected_filters: Record<string, string>): SearchTextResult[] {
+export function filter_search_results({ matches, selected_filters }: {
+	matches: SearchTextResult[]
+	selected_filters: Record<string, string>
+}): SearchTextResult[] {
 	return matches.filter(result => {
 		const selected_book = selected_filters['Book']
 		if (selected_book && selected_book !== 'Any' && result.reference.id_primary !== selected_book) {

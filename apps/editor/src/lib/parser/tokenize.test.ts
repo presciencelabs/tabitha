@@ -8,7 +8,7 @@ import type { PairingType } from '@tabitha/types'
 import type { Token } from '$lib/types'
 
 function create_word_token(token: string, { lookup_term = null, sense = '' }: { lookup_term?: string | null; sense?: string } = {}): Token {
-	return create_token(token, TOKEN_TYPE.LOOKUP_WORD, { lookup_term: lookup_term || token, specified_sense: sense })
+	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: lookup_term || token, specified_sense: sense })
 }
 
 function create_pairing(left_token: Token, right_token: Token, pairing_type: PairingType): Token {
@@ -18,13 +18,13 @@ function create_pairing(left_token: Token, right_token: Token, pairing_type: Pai
 }
 
 function create_pronoun_token(pronoun: string, referent_token: Token): Token {
-	const pronoun_token = create_token(pronoun, TOKEN_TYPE.FUNCTION_WORD)
+	const pronoun_token = create_token({ token: pronoun, type: TOKEN_TYPE.FUNCTION_WORD })
 	referent_token.pronoun = pronoun_token
 	return referent_token
 }
 
 function create_error_token(token: string, message: string): Token {
-	return create_token(token, TOKEN_TYPE.NOTE, { message: { ...MESSAGE_TYPE.ERROR, message: message, rule_id: 'token:syntax' } })
+	return create_token({ token, type: TOKEN_TYPE.NOTE, message: { ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' } })
 }
 
 describe('tokenize_input', () => {
@@ -80,9 +80,9 @@ describe('tokenize_input', () => {
 			create_word_token('2.5', { lookup_term: '2.5' }),
 			create_word_token('.5', { lookup_term: '.5' }),
 			create_word_token('.1', { lookup_term: '.1' }),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('3.88', { lookup_term: '3.88' }),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('2.5', { lookup_term: '2.5' }),
 		]
 
@@ -111,9 +111,9 @@ describe('tokenize_input', () => {
 			create_pronoun_token('your', create_word_token('son-C', { lookup_term: 'son', sense: 'C' })),
 			create_pronoun_token('your', create_word_token('son\'s-C', { lookup_term: 'son', sense: 'C' })),
 			create_pronoun_token('your', create_word_token('sons\'-C', { lookup_term: 'sons', sense: 'C' })),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 			create_pronoun_token('you', create_word_token('Paul')),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -127,7 +127,7 @@ describe('tokenize_input', () => {
 			create_error_token('youPaul)', ERRORS.MISSING_OPENING_PAREN),
 			create_error_token('you(Paul)[', ERRORS.NO_SPACE_BEFORE_OPENING_BRACKET),
 			create_error_token('you(Paul)_', ERRORS.INVALID_TOKEN_END('you(Paul)')),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -137,16 +137,16 @@ describe('tokenize_input', () => {
 		const INPUT = '_note _note. _note] [_note _note[ __implicit'
 
 		const EXPECTED_OUTPUT = [
-			create_token('_note', TOKEN_TYPE.NOTE),
-			create_token('_note', TOKEN_TYPE.NOTE),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('_note', TOKEN_TYPE.NOTE),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('_note', TOKEN_TYPE.NOTE),
-			create_token('_note', TOKEN_TYPE.NOTE),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('__implicit', TOKEN_TYPE.NOTE), 	// double underscore is fine
+			create_token({ token: '_note', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '_note', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '_note', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '_note', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '_note', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '__implicit', type: TOKEN_TYPE.NOTE }), 	// double underscore is fine
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -169,14 +169,14 @@ describe('tokenize_input', () => {
 		const INPUT = '(imp) (implicit-situational) [(imp) (imp)] (imp).'
 
 		const EXPECTED_OUTPUT = [
-			create_token('(imp)', TOKEN_TYPE.NOTE),
-			create_token('(implicit-situational)', TOKEN_TYPE.NOTE),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('(imp)', TOKEN_TYPE.NOTE),
-			create_token('(imp)', TOKEN_TYPE.NOTE),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token('(imp)', TOKEN_TYPE.NOTE),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '(imp)', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '(implicit-situational)', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '(imp)', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '(imp)', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '(imp)', type: TOKEN_TYPE.NOTE }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -185,7 +185,7 @@ describe('tokenize_input', () => {
 	describe('all valid clause notations', () => {
 		test.each(CLAUSE_NOTATIONS.map(notation => [[notation]]))('%s', test_text => {
 			const EXPECTED_OUTPUT = [
-				create_token(test_text[0], TOKEN_TYPE.NOTE),
+				create_token({ token: test_text[0], type: TOKEN_TYPE.NOTE }),
 			]
 
 			expect(tokenize_input(test_text[0])).toEqual(EXPECTED_OUTPUT)
@@ -213,7 +213,7 @@ describe('tokenize_input', () => {
 	describe('all valid function words lowercase', () => {
 		test.each(Array.from(FUNCTION_WORDS))('%s', (word, tag) => {
 			const EXPECTED_OUTPUT = [
-				create_token(word, TOKEN_TYPE.FUNCTION_WORD, { tag }),
+				create_token({ token: word, type: TOKEN_TYPE.FUNCTION_WORD, tag }),
 			]
 
 			expect(tokenize_input(word)).toEqual(EXPECTED_OUTPUT)
@@ -224,7 +224,7 @@ describe('tokenize_input', () => {
 		test.each(Array.from(FUNCTION_WORDS))('%s', (word, tag) => {
 			const upper_word = word.toUpperCase()
 			const EXPECTED_OUTPUT = [
-				create_token(upper_word, TOKEN_TYPE.FUNCTION_WORD, { tag }),
+				create_token({ token: upper_word, type: TOKEN_TYPE.FUNCTION_WORD, tag }),
 			]
 
 			expect(tokenize_input(upper_word)).toEqual(EXPECTED_OUTPUT)
@@ -235,25 +235,25 @@ describe('tokenize_input', () => {
 		const INPUT = '[[ [" "[ [token [. [? [] [[token]]'
 
 		const EXPECTED_OUTPUT = [
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('token'),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('?', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '?', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('token'),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -278,27 +278,27 @@ describe('tokenize_input', () => {
 		const INPUT = '." ". ?"] token]". "], token]] token, 5:5'
 
 		const EXPECTED_OUTPUT = [
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('?', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '?', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('token'),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token(',', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('token'),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('token'),
-			create_token(',', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('5'),
-			create_token(':', TOKEN_TYPE.LOOKUP_WORD, { lookup_term: '-ReferenceMarker', tag: { 'syntax': 'verse_ref_colon' } }),
+			create_token({ token: ':', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: '-ReferenceMarker', tag: { 'syntax': 'verse_ref_colon' } }),
 			create_word_token('5'),
 		]
 
@@ -324,14 +324,14 @@ describe('tokenize_input', () => {
 		const INPUT = '[“Yes.”] " “'
 
 		const EXPECTED_OUTPUT = [
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('Yes'),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
-			create_token('"', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '"', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -377,10 +377,10 @@ describe('tokenize_input', () => {
 				create_word_token('complex-B', { lookup_term: 'complex', sense: 'B' }),
 				'complex',
 			),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
 			create_pairing(create_word_token('simple'), create_word_token('complex'), 'complex'),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
@@ -428,10 +428,10 @@ describe('tokenize_input', () => {
 				create_word_token('literal-B', { lookup_term: 'literal', sense: 'B' }),
 				'literal',
 			),
-			create_token('.', TOKEN_TYPE.PUNCTUATION),
-			create_token('[', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
 			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'literal'),
-			create_token(']', TOKEN_TYPE.PUNCTUATION),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)

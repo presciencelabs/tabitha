@@ -13,7 +13,7 @@ describe('@tabitha/api-client', () => {
 	describe('cached_json', () => {
 		test('returns a standard Response object with JSON body', async () => {
 			const data = { message: 'hello', count: 42 }
-			const response = cached_json(data)
+			const response = cached_json({ data })
 
 			expect(response).toBeInstanceOf(Response)
 			expect(response.status).toBe(200)
@@ -24,28 +24,28 @@ describe('@tabitha/api-client', () => {
 		})
 
 		test('sets default SWR Cache-Control header (24 hours = 86400s edge, 0s browser)', () => {
-			const response = cached_json({ ok: true })
+			const response = cached_json({ data: { ok: true } })
 			expect(response.headers.get('cache-control')).toBe(
 				`public, max-age=0, s-maxage=${ONE_DAY_IN_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}, must-revalidate`,
 			)
 		})
 
 		test('allows custom s_maxage duration via number', () => {
-			const response = cached_json({ ok: true }, 3600)
+			const response = cached_json({ data: { ok: true }, options: 3600 })
 			expect(response.headers.get('cache-control')).toBe(
 				`public, max-age=0, s-maxage=3600, stale-while-revalidate=${ONE_DAY_IN_SECONDS}, must-revalidate`,
 			)
 		})
 
 		test('allows custom options object', () => {
-			const response = cached_json(
-				{ ok: true },
-				{
+			const response = cached_json({
+				data: { ok: true },
+				options: {
 					browser_max_age_seconds: 60,
 					s_maxage_seconds: 7200,
 					stale_while_revalidate_seconds: 1800,
 				},
-			)
+			})
 			expect(response.headers.get('cache-control')).toBe(
 				'public, max-age=60, s-maxage=7200, stale-while-revalidate=1800, must-revalidate',
 			)

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import { format_time } from '$lib/format'
+	import { sync_complex_terms } from '$lib/sync'
 
 	let { data } = $props()
 
@@ -14,17 +15,10 @@
 		status_type = 'idle'
 
 		try {
-			const res = await fetch('/protected/sync-complex-terms', { method: 'POST' })
-			const result = await res.json()
-
-			if (res.ok && result.success) {
-				const time = format_time(new Date(result.timestamp), data)
-				status_message = `Successfully synced ${result.count} complex terms at ${time}.`
-				status_type = 'success'
-			} else {
-				status_message = result.message || result.error || 'Failed to sync complex terms.'
-				status_type = 'error'
-			}
+			const { count, timestamp } = await sync_complex_terms()
+			const time = format_time({ date: timestamp, ...data })
+			status_message = `Successfully synced ${count} complex terms at ${time}.`
+			status_type = 'success'
 		} catch (err: unknown) {
 			status_message = err instanceof Error ? err.message : 'An error occurred during sync.'
 			status_type = 'error'

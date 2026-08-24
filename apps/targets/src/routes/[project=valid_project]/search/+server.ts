@@ -8,6 +8,6 @@ export const GET: RequestHandler = async ({ locals: { db }, params: { project },
 	}
 
 	const parsed_q = parse_search_query(q)
-	const results = await search_text(db, project!, parsed_q)
+	const results = await search_text({ db, project: project!, parsed_q })
 	return json(results)
 }

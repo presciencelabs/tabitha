@@ -1,5 +1,6 @@
 import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { create_sources_client, create_targets_client } from '@tabitha/api-client'
+import { USFM_VERSE_MARKER_REGEX } from '@tabitha/types'
 
 const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST, cache: true })
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
@@ -9,13 +10,62 @@ export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceA
 	return res ?? undefined
 }
 
-export async function fetch_target_text(verse_ref: VerseReference, project: string, preferred_audience: string): Promise<TargetApiResult | undefined> {
+export async function fetch_target_text({ verse_ref, project, preferred_audience }: { verse_ref: VerseReference, project: string, preferred_audience: string }): Promise<TargetApiResult | undefined> {
 	const res = await targets_client.get_target_text(verse_ref, project, preferred_audience)
 	return (res as TargetApiResult) ?? undefined
 }
 
 export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number | undefined> {
 	return await sources_client.get_chapter_verses_count({ book, chapter }, 'Bible')
+}
+
+export async function fetch_batch_cautions({ reference, start_verse, end_verse, settings, on_progress }: {
+	reference: ChapterReference
+	start_verse: number
+	end_verse: number
+	settings: CopilotSettings
+	on_progress: (completed_delta: number) => void
+}): Promise<string> {
+	const { book, chapter } = reference
+	const params = JSON.stringify(settings)
+	const response = await fetch(`/${book}/${chapter}?v0=${start_verse}&v1=${end_verse}&settings=${encodeURIComponent(params)}`)
+
+	if (!response.ok || !response.body) {
+		const message = await response.text() || 'Unexpected error occurred'
+		throw new Error(message)
+	}
+
+	const reader = response.body.getReader()
+	const decoder = new TextDecoder()
+	let sfm_text = ''
+
+	while (true) {
+		const { done, value } = await reader.read()
+		if (done) break
+
+		const chunk_text = decoder.decode(value, { stream: true })
+		sfm_text += chunk_text
+
+		const matches = chunk_text.match(USFM_VERSE_MARKER_REGEX)
+		if (matches) {
+			on_progress(matches.length)
+		}
+	}
+
+	return sfm_text
+}
+
+export async function fetch_notes({ reference, settings }: { reference: VerseReference, settings: CopilotSettings }): Promise<CopilotApiResult> {
+	const { book, chapter, verse } = reference
+	const params = JSON.stringify(settings)
+	const response = await fetch(`/${book}/${chapter}/${verse}?settings=${encodeURIComponent(params)}`)
+
+	if (!response.ok) {
+		const body = await response.json().catch(() => null)
+		throw new Error(body?.message || 'Unexpected error occurred')
+	}
+
+	return await response.json() as CopilotApiResult
 }
 
 export const polished_books = [

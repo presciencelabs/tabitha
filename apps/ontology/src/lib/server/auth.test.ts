@@ -13,7 +13,7 @@ describe('is_authorized', () => {
 	it('returns false without querying the database when there is no logged-in user', async () => {
 		const { locals, prepare } = make_locals(undefined, true)
 
-		const result = await is_authorized(locals, 'ADD_CONCEPT')
+		const result = await is_authorized({ locals, permission: 'ADD_CONCEPT' })
 
 		expect(result).toBe(false)
 		expect(prepare).not.toHaveBeenCalled()
@@ -22,7 +22,7 @@ describe('is_authorized', () => {
 	it("returns true when the user's permission row is found", async () => {
 		const { locals, bind } = make_locals({ email: 'user@example.com' } as App.Locals['user'], true)
 
-		const result = await is_authorized(locals, 'ADD_CONCEPT')
+		const result = await is_authorized({ locals, permission: 'ADD_CONCEPT' })
 
 		expect(result).toBe(true)
 		expect(bind).toHaveBeenCalledWith('ontology', 'user@example.com', 'ADD_CONCEPT')
@@ -31,7 +31,7 @@ describe('is_authorized', () => {
 	it('returns false when no matching permission row exists', async () => {
 		const { locals } = make_locals({ email: 'user@example.com' } as App.Locals['user'], null)
 
-		const result = await is_authorized(locals, 'DELETE_CONCEPT')
+		const result = await is_authorized({ locals, permission: 'DELETE_CONCEPT' })
 
 		expect(result).toBe(false)
 	})

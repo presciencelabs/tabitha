@@ -15,5 +15,5 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 
 	const matches = await get_simplification_hints(db_ontology)(concept_filter)
 
-	return cached_json(matches)
+	return cached_json({ data: matches })
 }

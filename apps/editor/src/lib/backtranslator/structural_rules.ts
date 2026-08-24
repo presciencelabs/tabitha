@@ -14,7 +14,7 @@ const structural_rules_json: BuiltInRule[] = [
 				'precededby': { 'tag': { 'pronoun': 'second_person' } },
 			}),
 			action: ({ tokens, trigger_index, context_indexes }) => {
-				fix_capitalization([tokens[context_indexes[0]]], tokens.slice(trigger_index))
+				fix_capitalization({ old_tokens: [tokens[context_indexes[0]]], new_tokens: tokens.slice(trigger_index) })
 
 				tokens.splice(trigger_index, 1)	// remove the (imp)
 				tokens.splice(context_indexes[0], 1)	// remove the You()
@@ -35,7 +35,7 @@ const structural_rules_json: BuiltInRule[] = [
 				if (!subject.pronoun) {
 					return trigger_index + 1
 				}
-				subject.pronoun.token = token_has_tag(subject, { 'position': 'first_word' }) ? "Let's" : "let's"
+				subject.pronoun.token = token_has_tag({ token: subject, tag_to_check: { 'position': 'first_word' } }) ? "Let's" : "let's"
 
 				return trigger_index + 1
 			},
@@ -54,13 +54,13 @@ const structural_rules_json: BuiltInRule[] = [
 				const first_is_conjunction = first_word.lookup_results[0]?.part_of_speech === 'Conjunction'
 				const let_position = first_is_conjunction ? context_indexes[0] + 1 : context_indexes[0]
 				
-				const let_token = create_token('let', TOKEN_TYPE.FUNCTION_WORD)
+				const let_token = create_token({ token: 'let', type: TOKEN_TYPE.FUNCTION_WORD })
 				const jussive_token = tokens.splice(trigger_index, 1)[0]
 
 				tokens.splice(let_position, 0, let_token, jussive_token)
 				
 				if (!first_is_conjunction) {
-					fix_capitalization([first_word], [let_token], true)
+					fix_capitalization({ old_tokens: [first_word], new_tokens: [let_token], decapitalize: true })
 				}
 
 				return trigger_index + 2	// removed 1 and inserted 2
@@ -78,7 +78,7 @@ const structural_rules_json: BuiltInRule[] = [
 			}),
 			action: simple_rule_action(({ trigger_token }) => {
 				// Don't add 'that' if the patient clause is like 'John heard [Mary speaking].'
-				if (token_has_tag(trigger_token, { 'clause_type': 'patient_clause_simultaneous' })) {
+				if (token_has_tag({ token: trigger_token, tag_to_check: { 'clause_type': 'patient_clause_simultaneous' } })) {
 					return
 				}
 
@@ -91,7 +91,7 @@ const structural_rules_json: BuiltInRule[] = [
 				}
 
 				const that_index = get_index_for_that()
-				trigger_token.sub_tokens.splice(that_index, 0, create_token('that', TOKEN_TYPE.FUNCTION_WORD))
+				trigger_token.sub_tokens.splice(that_index, 0, create_token({ token: 'that', type: TOKEN_TYPE.FUNCTION_WORD }))
 
 				function get_index_for_that() {
 					// Put the 'that' after a conjunction, if present. eg 'X knows that Y and that Z.'
@@ -117,7 +117,7 @@ const structural_rules_json: BuiltInRule[] = [
 			}),
 			action: simple_rule_action(({ trigger_token }) => {
 				const that_index = get_index_for_that()
-				trigger_token.sub_tokens.splice(that_index, 0, create_token('that', TOKEN_TYPE.FUNCTION_WORD))
+				trigger_token.sub_tokens.splice(that_index, 0, create_token({ token: 'that', type: TOKEN_TYPE.FUNCTION_WORD }))
 
 				function get_index_for_that() {
 					// Put the 'that' after a conjunction, if present. eg 'It is true that Y and that Z.'
@@ -139,9 +139,9 @@ const structural_rules_json: BuiltInRule[] = [
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.sub_tokens = [
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 					...trigger_token.sub_tokens,
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 			}),
 		},
@@ -155,7 +155,7 @@ const structural_rules_json: BuiltInRule[] = [
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.sub_tokens = [
 					...trigger_token.sub_tokens,
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 			}),
 		},
@@ -169,7 +169,7 @@ const structural_rules_json: BuiltInRule[] = [
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.sub_tokens = [
 					...trigger_token.sub_tokens,
-					create_token(',', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 			}),
 		},
@@ -195,12 +195,12 @@ const structural_rules_json: BuiltInRule[] = [
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ tokens, trigger_index }) => {
 				const is_relative_clause = create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } })
-				const relative_clauses = find_tokens_within_phrase(trigger_index, tokens, is_relative_clause)
+				const relative_clauses = find_tokens_within_phrase({ start_index: trigger_index, tokens, filter: is_relative_clause })
 					.reverse()	// need to reverse so that the indexes don't get affected
 					.flatMap(i => tokens.splice(i, 1))
 					.reverse()	// reverse again so they get inserted in the right order
 
-				const phrase_end = find_phrase_end(tokens, trigger_index)
+				const phrase_end = find_phrase_end({ tokens, start_index: trigger_index })
 
 				tokens.splice(phrase_end, 0, ...relative_clauses)
 			}),
@@ -223,20 +223,20 @@ const structural_rules_json: BuiltInRule[] = [
 				// eg: {NP at Baal-Peor {NP named a place _explainName } } => {NP at <<{NP a place _explainName named }>> Baal-Peor }
 
 				// move 'named' to the end of the inner phrase and add the implicit markers
-				const named_phrase_start = find_phrase_start(tokens, named_index)
-				const named_phrase_end = find_phrase_end(tokens, named_index)
+				const named_phrase_start = find_phrase_start({ tokens, start_index: named_index })
+				const named_phrase_end = find_phrase_end({ tokens, start_index: named_index })
 				const new_implicit_phrase = [
-					create_token('<<', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: '<<', type: TOKEN_TYPE.PUNCTUATION }),
 					...tokens.slice(named_phrase_start, named_index),
 					...tokens.slice(named_index + 1, named_phrase_end),
 					tokens[named_index],
 					tokens[named_phrase_end],
-					create_token('>>', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: '>>', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 
 				const outer_phrase = tokens.slice(proper_name_index, named_phrase_start)
 
-				fix_capitalization(outer_phrase, new_implicit_phrase)
+				fix_capitalization({ old_tokens: outer_phrase, new_tokens: new_implicit_phrase })
 
 				// insert the new implicit phrase right before the proper noun
 				tokens.splice(proper_name_index, named_phrase_end - proper_name_index + 1, ...[
@@ -267,8 +267,8 @@ const structural_rules_json: BuiltInRule[] = [
 				// eg: {NP {NP King } Herod {NP of the soldiers _dynamicExpansion } } => {NP <<{NP The soldiers _dynamicExpansion of }>> {NP king } Herod }
 
 				// move 'of' to the end of the inner phrase and add the implicit markers
-				const inner_phrase_start = find_phrase_start(tokens, of_index)
-				const inner_phrase_end = find_phrase_end(tokens, of_index)
+				const inner_phrase_start = find_phrase_start({ tokens, start_index: of_index })
+				const inner_phrase_end = find_phrase_end({ tokens, start_index: of_index })
 
 				if (inner_phrase_start === -1 || inner_phrase_end === -1) {
 					// the 'of' was found outside an NP, and continuing may cause errors
@@ -276,23 +276,23 @@ const structural_rules_json: BuiltInRule[] = [
 				}
 
 				const new_inner_phrase = [
-					create_token(is_literal ? '{' : '<<', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: is_literal ? '{' : '<<', type: TOKEN_TYPE.PUNCTUATION }),
 					...tokens.slice(inner_phrase_start, of_index),
 					...tokens.slice(of_index + 1, inner_phrase_end),
 					tokens[of_index],
 					tokens[inner_phrase_end],
-					create_token(is_literal ? '}' : '>>', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: is_literal ? '}' : '>>', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 
 				// for the outer noun, don't include any adposition or conjunction
-				let outer_phrase_start = find_phrase_start(tokens, outer_noun_index) + 1	// +1 to exclude the phrase boundary itself
+				let outer_phrase_start = find_phrase_start({ tokens, start_index: outer_noun_index }) + 1	// +1 to exclude the phrase boundary itself
 				const skip_filter = create_token_filter({ 'tag': [{ 'syntax': 'coord_noun' }, 'pre_np_adposition'] })
 				while (skip_filter(tokens[outer_phrase_start])) {
 					outer_phrase_start += 1
 				}
 				const outer_phrase = tokens.slice(outer_phrase_start, inner_phrase_start)
 
-				fix_capitalization(outer_phrase, new_inner_phrase, true)
+				fix_capitalization({ old_tokens: outer_phrase, new_tokens: new_inner_phrase, decapitalize: true })
 
 				tokens.splice(outer_phrase_start, inner_phrase_end - outer_phrase_start + 1, ...[
 					...new_inner_phrase,
@@ -316,10 +316,10 @@ const structural_rules_json: BuiltInRule[] = [
 			}),
 			action: simple_rule_action(({ trigger_token, subtoken_indexes }) => {
 				trigger_token.sub_tokens = [
-					create_token('<<', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: '<<', type: TOKEN_TYPE.PUNCTUATION }),
 					...trigger_token.sub_tokens.slice(0, subtoken_indexes[0]),
 					...trigger_token.sub_tokens.slice(subtoken_indexes[0] + 1),
-					create_token('>>', TOKEN_TYPE.PUNCTUATION),
+					create_token({ token: '>>', type: TOKEN_TYPE.PUNCTUATION }),
 				]
 			}),
 		},
@@ -331,8 +331,8 @@ const structural_rules_json: BuiltInRule[] = [
 			trigger: ({ token }) => token.startsWith('_') && token.toLowerCase().includes('implicit'),
 			context: create_context_filter({ }),
 			action: ({ tokens, trigger_index }) => {
-				let phrase_start = find_phrase_start(tokens, trigger_index)
-				let phrase_end = find_phrase_end(tokens, trigger_index)
+				let phrase_start = find_phrase_start({ tokens, start_index: trigger_index })
+				let phrase_end = find_phrase_end({ tokens, start_index: trigger_index })
 
 				if (phrase_start === -1 || phrase_end === -1) {
 					// there is no phrase, so surround only the preceding word
@@ -341,8 +341,8 @@ const structural_rules_json: BuiltInRule[] = [
 				}
 
 				const is_necessary = tokens[trigger_index].token.toLowerCase().includes('necessary')
-				tokens.splice(phrase_end + 1, 0, create_token(is_necessary ? '>' : '>>', TOKEN_TYPE.PUNCTUATION))
-				tokens.splice(phrase_start, 0, create_token(is_necessary ? '<' : '<<', TOKEN_TYPE.PUNCTUATION))
+				tokens.splice(phrase_end + 1, 0, create_token({ token: is_necessary ? '>' : '>>', type: TOKEN_TYPE.PUNCTUATION }))
+				tokens.splice(phrase_start, 0, create_token({ token: is_necessary ? '<' : '<<', type: TOKEN_TYPE.PUNCTUATION }))
 				return trigger_index + 2	// add 1 behind and move forward 1
 			},
 		},
@@ -355,14 +355,14 @@ const structural_rules_json: BuiltInRule[] = [
 			context: create_context_filter({ 'precededby': { 'token': "God's" } }),
 			action: simple_rule_action(({ tokens, trigger_index, context_indexes }) => {
 				const new_tokens = [
-					create_token(is_first_word(tokens[context_indexes[0]]) ? 'The' : 'the', TOKEN_TYPE.FUNCTION_WORD),
-					create_token('Scriptures', TOKEN_TYPE.LOOKUP_WORD),
+					create_token({ token: is_first_word(tokens[context_indexes[0]]) ? 'The' : 'the', type: TOKEN_TYPE.FUNCTION_WORD }),
+					create_token({ token: 'Scriptures', type: TOKEN_TYPE.LOOKUP_WORD }),
 				]
-				const inner_phrase_start = find_phrase_start(tokens, context_indexes[0])
+				const inner_phrase_start = find_phrase_start({ tokens, start_index: context_indexes[0] })
 				tokens.splice(inner_phrase_start, trigger_index - inner_phrase_start + 1, ...new_tokens)
 
 				// If the next word is a verb, change it from singular to plural
-				const next_word = find_next_word(tokens, trigger_index)
+				const next_word = find_next_word({ tokens, start_index: trigger_index })
 				if (next_word?.token === 'says') {
 					next_word.token = 'say'
 				}
@@ -414,8 +414,8 @@ const structural_rules_json: BuiltInRule[] = [
 				tokens.splice(trigger_index, 0, literal_sentence)
 
 				// Add the appropriate (literal) and (dynamic) notes at the start of each sentence
-				dynamic_sentence.sub_tokens.splice(0, 0, create_token('(dynamic)', TOKEN_TYPE.NOTE))
-				literal_sentence.sub_tokens.splice(0, 0, create_token('(literal)', TOKEN_TYPE.NOTE))
+				dynamic_sentence.sub_tokens.splice(0, 0, create_token({ token: '(dynamic)', type: TOKEN_TYPE.NOTE }))
+				literal_sentence.sub_tokens.splice(0, 0, create_token({ token: '(literal)', type: TOKEN_TYPE.NOTE }))
 
 				return trigger_index + 2	// move past both sentences
 
@@ -465,7 +465,7 @@ const structural_rules_json: BuiltInRule[] = [
 		name: 'Simple number text mappings',
 		comment: 'Change some numbers to text (eg. 2 -> two), unless they are part of a verse reference (eg. Habakkuk 2:3)',
 		rule: {
-			trigger: token => NUMBER_TOKEN_TEXT_MAP.has(token.token) && !token_has_tag(token, { 'role': 'verse_ref' }),
+			trigger: token => NUMBER_TOKEN_TEXT_MAP.has(token.token) && !token_has_tag({ token, tag_to_check: { 'role': 'verse_ref' } }),
 			context: create_context_filter({ }),
 			action: simple_rule_action(({ trigger_token }) => {
 				trigger_token.token = NUMBER_TOKEN_TEXT_MAP.get(trigger_token.token) ?? trigger_token.token
@@ -493,25 +493,25 @@ const NUMBER_TOKEN_TEXT_MAP = new Map([
 	['.8', '0.8'],
 ])
 
-function find_phrase_start(tokens: Token[], start_index: number): number {
+function find_phrase_start({ tokens, start_index }: { tokens: Token[]; start_index: number }): number {
 	for (let i = start_index - 1; i >= 0; i--) {
 		const token = tokens[i]
 		if (is_opening_phrase(token)) {
 			return i
 		} else if (is_closing_phrase(token)) {
-			i = find_phrase_start(tokens, i)
+			i = find_phrase_start({ tokens, start_index: i })
 		}
 	}
 	return -1
 }
 
-function find_phrase_end(tokens: Token[], start_index: number): number {
+function find_phrase_end({ tokens, start_index }: { tokens: Token[]; start_index: number }): number {
 	for (let i = start_index + 1; i < tokens.length; i++) {
 		const token = tokens[i]
 		if (is_closing_phrase(token)) {
 			return i
 		} else if (is_opening_phrase(token)) {
-			i = find_phrase_end(tokens, i)
+			i = find_phrase_end({ tokens, start_index: i })
 		}
 	}
 	return -1
@@ -525,7 +525,7 @@ function is_closing_phrase(token: Token): boolean {
 	return token.token === '}'
 }
 
-function find_next_word(tokens: Token[], start_index: number): Token | undefined {
+function find_next_word({ tokens, start_index }: { tokens: Token[]; start_index: number }): Token | undefined {
 	// Find the next word in the sentence (skip any notes, phrases, or implicit markers)
 	const skip_filters = [
 		create_token_filter({ 'type': `${TOKEN_TYPE.NOTE}|${TOKEN_TYPE.PHRASE}` }),
@@ -538,7 +538,7 @@ function find_next_word(tokens: Token[], start_index: number): Token | undefined
  * Finds all the arguments that match one of the given filters, and adds it to the context arguments object according to the provided 
  * key and value getters. The argument is always at the top level within the phrase or clause located at the provided start_index.
  */
-function find_tokens_within_phrase(start_index: number, tokens: Token[], filter: TokenFilter): number[] {
+function find_tokens_within_phrase({ start_index, tokens, filter }: { start_index: number; tokens: Token[]; filter: TokenFilter }): number[] {
 	const matched_indexes: number[] = []
 	for (let i = start_index + 1; i < tokens.length; i++) {
 		const token = tokens[i]
@@ -546,9 +546,9 @@ function find_tokens_within_phrase(start_index: number, tokens: Token[], filter:
 		if (filter(token)) {
 			matched_indexes.push(i)
 		}
-		
+
 		if (is_opening_phrase(token)) {
-			i = find_phrase_end(tokens, i)
+			i = find_phrase_end({ tokens, start_index: i })
 		} else if (is_closing_phrase(token)) {
 			break
 		}
@@ -556,8 +556,8 @@ function find_tokens_within_phrase(start_index: number, tokens: Token[], filter:
 	return matched_indexes
 }
 
-function fix_capitalization(old_tokens: Token[], new_tokens: Token[], decapitalize = false) {
-	const old_first_word = find_next_word(old_tokens, 0)
+function fix_capitalization({ old_tokens, new_tokens, decapitalize = false }: { old_tokens: Token[]; new_tokens: Token[]; decapitalize?: boolean }) {
+	const old_first_word = find_next_word({ tokens: old_tokens, start_index: 0 })
 	if (!old_first_word || !is_first_word(old_first_word)) {
 		return
 	}
@@ -566,7 +566,7 @@ function fix_capitalization(old_tokens: Token[], new_tokens: Token[], decapitali
 		old_first_word.token = decapitalize_token(old_first_word)
 	}
 
-	const new_first_word = find_next_word(new_tokens, 0)
+	const new_first_word = find_next_word({ tokens: new_tokens, start_index: 0 })
 	if (new_first_word) {
 		new_first_word.token = capitalize_token(new_first_word)
 		if (new_first_word.pairing) {

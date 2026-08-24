@@ -24,11 +24,11 @@ export function clausify(tokens: Token[]): Sentence[] {
 			start_clause()
 
 			if (clause_tokens.length > 4) {
-				set_message_plain(token, {
+				set_message_plain({ token, message: {
 					...MESSAGE_TYPE.WARNING,
 					message: 'Clause nesting depth exceeds 3 levels. Consider reworking the sentence for clarity.',
 					rule_id: 'clause:nesting_depth',
-				})
+				} })
 			}
 		}
 
@@ -45,7 +45,7 @@ export function clausify(tokens: Token[]): Sentence[] {
 
 	if (!sentence_is_ending && !is_only_notes()) {
 		// add a 'missing period' error
-		add_token_to_clause(create_added_token('.', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_PERIOD, rule_id: 'clause:syntax' }))
+		add_token_to_clause(create_added_token({ token: '.', message: { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_PERIOD, rule_id: 'clause:syntax' } }))
 	}
 
 	end_sentence()
@@ -63,7 +63,7 @@ export function clausify(tokens: Token[]): Sentence[] {
 
 	function end_sentence() {
 		while (clause_tokens.length > 1) {
-			add_token_to_clause(create_added_token(']', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_CLOSING_BRACKET, rule_id: 'clause:syntax' }))
+			add_token_to_clause(create_added_token({ token: ']', message: { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_CLOSING_BRACKET, rule_id: 'clause:syntax' } }))
 			end_clause()
 		}
 
@@ -76,7 +76,7 @@ export function clausify(tokens: Token[]): Sentence[] {
 
 	function end_clause() {
 		if (clause_tokens.length === 1) {
-			clause_tokens[0].splice(0, 0, create_added_token('[', { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_OPENING_BRACKET, rule_id: 'clause:syntax' }))
+			clause_tokens[0].splice(0, 0, create_added_token({ token: '[', message: { ...MESSAGE_TYPE.ERROR, message: ERRORS.MISSING_OPENING_BRACKET, rule_id: 'clause:syntax' } }))
 			return
 		}
 
@@ -84,7 +84,7 @@ export function clausify(tokens: Token[]): Sentence[] {
 	}
 
 	function create_clause(tag: string): Clause {
-		return create_clause_token(clause_tokens.pop()!, { clause_type: tag })
+		return create_clause_token({ sub_tokens: clause_tokens.pop()!, tag: { clause_type: tag } })
 	}
 
 	function is_sentence_end_token(token: Token): boolean {

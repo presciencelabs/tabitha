@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 
 	const lite_matches = matches.map(make_lite)
 
-	return cached_json(lite_matches)
+	return cached_json({ data: lite_matches })
 
 	function make_lite(concept: Concept) {
 		const { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints } = concept
