@@ -62,7 +62,7 @@ async function grant_permission(email: string, permissions?: string[]) {
 	db.prepare('INSERT OR REPLACE INTO Users (email, name) VALUES (?, ?)').run(email, email)
 
 	let granted = 0
-	for (const { id, permission } of to_grant) {
+	for (const { id } of to_grant) {
 		const existing = db.prepare('SELECT 1 FROM User_Permissions WHERE user_email = ? AND permission_id = ?').get(email, id)
 		if (!existing) {
 			db.prepare('INSERT INTO User_Permissions (user_email, permission_id) VALUES (?, ?)').run(email, id)

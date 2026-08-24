@@ -2,7 +2,7 @@ import { createInterface } from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { spawn } from 'node:child_process'
 
-interface AppInfo {
+type AppInfo = {
 	id: string
 	pkg: string
 	name: string
@@ -48,7 +48,7 @@ const APPS: Record<string, AppInfo> = {
 	},
 }
 
-interface Preset {
+type Preset = {
 	name: string
 	description: string
 	apps: string[]

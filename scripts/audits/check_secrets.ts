@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 
-interface SecretFinding {
+type SecretFinding = {
 	rule_name: string
 	file_path: string
 	line_number: number
@@ -16,8 +16,6 @@ interface SecretFinding {
 
 // Where this check's rationale and remediation steps are documented.
 const DOC_LINK = 'README.md#verification--testing'
-
-const findings: SecretFinding[] = []
 
 const secret_patterns: Array<{ name: string; regex: RegExp; message: string }> = [
 	{
@@ -84,7 +82,7 @@ async function get_scannable_files(dir: string): Promise<string[]> {
 			) {
 				continue
 			}
-			files.push(...(await get_scannable_files(full_path)))
+			files.push(...await get_scannable_files(full_path))
 		} else {
 			// Scan source files, env files, config files, workflows
 			// Skip gitignored local env files (.env.local, .env.*.local)
@@ -100,51 +98,6 @@ async function get_scannable_files(dir: string): Promise<string[]> {
 function mask_secret(str: string): string {
 	if (str.length <= 8) return '****'
 	return str.slice(0, 4) + '****' + str.slice(-4)
-}
-
-function check_line_secrets(file_path: string, line: string, line_num: number) {
-	const trimmed = line.trim()
-	if (!trimmed) return
-
-	for (const pattern of secret_patterns) {
-		const match = line.match(pattern.regex)
-		if (match) {
-			findings.push({
-				rule_name: pattern.name,
-				file_path,
-				line_number: line_num,
-				snippet: mask_secret(match[0]),
-				message: pattern.message,
-			})
-		}
-	}
-}
-
-function check_env_template_sanitization(file_path: string, lines: string[]) {
-	// Base .env files committed to git must have empty values for sensitive secrets
-	const file_name = file_path.split('/').pop() ?? ''
-	if (file_name !== '.env') return
-
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (!trimmed || trimmed.startsWith('#')) return
-
-		const eq_idx = trimmed.indexOf('=')
-		if (eq_idx === -1) return
-
-		const key = trimmed.slice(0, eq_idx).trim()
-		const val = trimmed.slice(eq_idx + 1).trim()
-
-		if (sensitive_env_keys.includes(key) && val !== '') {
-			findings.push({
-				rule_name: 'Committed .env Secret',
-				file_path,
-				line_number: idx + 1,
-				snippet: `${key}=${mask_secret(val)}`,
-				message: `Committed base .env file has populated value for sensitive key "${key}". Base .env must be an empty template.`,
-			})
-		}
-	})
 }
 
 export async function scan_secrets(): Promise<{ scanned: number; found: number; findings: SecretFinding[] }> {

@@ -1,7 +1,7 @@
 import { $ } from 'bun'
 import { appendFile } from 'node:fs/promises'
 
-interface PackageConfig {
+type PackageConfig = {
 	name: string
 	pkg: string
 	/** Package has @vitest/coverage-v8 wired up and can run `vitest --coverage`. */
@@ -10,7 +10,7 @@ interface PackageConfig {
 	hasTestScript: boolean
 }
 
-interface CoverageMetrics {
+type CoverageMetrics = {
 	name: string
 	pkg: string
 	testCount: number
@@ -181,25 +181,25 @@ async function run_coverage_report() {
 		const total_tests = results.reduce((acc, r) => acc + r.testCount, 0)
 		const total_files = results.reduce((acc, r) => acc + r.fileCount, 0)
 
-		let markdown = `## 📊 Test Suite & Code Coverage Summary\n\n`
+		let markdown = '## 📊 Test Suite & Code Coverage Summary\n\n'
 		markdown += `✨ **${total_tests} Unit Tests Executed across ${total_files} Test Suites**\n\n`
 
-		markdown += `### 📈 Code Coverage Metrics\n\n`
-		markdown += `| Subsystem / Package | Statements | Branches | Functions | Lines | Status |\n`
-		markdown += `| :--- | :--- | :--- | :--- | :--- | :--- |\n`
+		markdown += '### 📈 Code Coverage Metrics\n\n'
+		markdown += '| Subsystem / Package | Statements | Branches | Functions | Lines | Status |\n'
+		markdown += '| :--- | :--- | :--- | :--- | :--- | :--- |\n'
 		for (const r of results) {
 			markdown += `| **${r.name}** | \`${r.statements}\` | \`${r.branches}\` | \`${r.functions}\` | \`${r.lines}\` | ${r.status} |\n`
 		}
-		markdown += `\n`
+		markdown += '\n'
 
-		markdown += `### 🧪 Test Suite Breakdown\n\n`
-		markdown += `| Workspace Test Suite | Test Files | Total Tests | Status |\n`
-		markdown += `| :--- | :--- | :--- | :--- |\n`
+		markdown += '### 🧪 Test Suite Breakdown\n\n'
+		markdown += '| Workspace Test Suite | Test Files | Total Tests | Status |\n'
+		markdown += '| :--- | :--- | :--- | :--- |\n'
 		for (const r of results) {
 			markdown += `| **${r.pkg}** | ${r.fileCount} files | ${r.testCount} tests | ${r.status} |\n`
 		}
-		markdown += `\n`
-		markdown += `> Pure in-memory unit tests with zero network or database dependencies.\n`
+		markdown += '\n'
+		markdown += '> Pure in-memory unit tests with zero network or database dependencies.\n'
 
 		await appendFile(summary_file, markdown, 'utf-8')
 		console.log('📝 Published full coverage dashboard to GitHub Step Summary.')

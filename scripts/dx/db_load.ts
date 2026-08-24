@@ -12,13 +12,13 @@ const root_dir = resolve(script_dir, '../..')
 const snapshots_dir = join(root_dir, 'tools/databases/snapshots')
 const workerd_hash_cache_path = join(root_dir, 'tools/databases/.d1-workerd-hash-cache.json')
 
-export interface D1DatabaseEntry {
+export type D1DatabaseEntry = {
 	binding?: string
 	database_name: string
 	database_id: string
 }
 
-export interface AppConfig {
+export type AppConfig = {
 	app_dir: string
 	wrangler_path: string
 }

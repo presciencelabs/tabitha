@@ -111,7 +111,7 @@ describe('README Badge Synchronization & Verification', () => {
 
 	describe('Live Workspace Synchronization', () => {
 		it('verifies or auto-syncs live README.md', async () => {
-			const sync_result = await sync_readme_badges({ should_write: true })
+			await sync_readme_badges({ should_write: true })
 			const verify_result = await sync_readme_badges({ should_write: false })
 			expect(verify_result.is_synced).toBe(true)
 			expect(verify_result.findings.length).toBe(0)
