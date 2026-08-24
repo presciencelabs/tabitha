@@ -82,7 +82,7 @@ export const audit_and_sync_badge_content = ({
 	let updated_content = content
 
 	// 1. pnpm badge check
-	const pnpm_badge_regex = /<a href="https:\/\/pnpm\.io"><img src="https:\/\/img\.shields\.io\/badge\/pnpm-([^-\?]+)-F69220[^"]*" alt="pnpm" \/><\/a>/
+	const pnpm_badge_regex = /<a href="https:\/\/pnpm\.io"><img src="https:\/\/img\.shields\.io\/badge\/pnpm-([^-?]+)-F69220[^"]*" alt="pnpm" \/><\/a>/
 	const pnpm_match = updated_content.match(pnpm_badge_regex)
 	if (pnpm_match) {
 		const current_pnpm = pnpm_match[1]
@@ -106,7 +106,7 @@ export const audit_and_sync_badge_content = ({
 	}
 
 	// 2. Svelte badge check
-	const svelte_badge_regex = /<a href="https:\/\/svelte\.dev"><img src="https:\/\/img\.shields\.io\/badge\/Svelte-([^-\?]+)-FF3E00[^"]*" alt="Svelte [^"]*" \/><\/a>/
+	const svelte_badge_regex = /<a href="https:\/\/svelte\.dev"><img src="https:\/\/img\.shields\.io\/badge\/Svelte-([^-?]+)-FF3E00[^"]*" alt="Svelte [^"]*" \/><\/a>/
 	const svelte_match = updated_content.match(svelte_badge_regex)
 	if (svelte_match) {
 		const current_svelte = svelte_match[1]
@@ -130,7 +130,7 @@ export const audit_and_sync_badge_content = ({
 	}
 
 	// 3. Tailwind CSS badge check
-	const tailwind_badge_regex = /<a href="https:\/\/tailwindcss\.com"><img src="https:\/\/img\.shields\.io\/badge\/Tailwind_CSS-([^-\?]+)-06B6D4[^"]*" alt="Tailwind CSS [^"]*" \/><\/a>/
+	const tailwind_badge_regex = /<a href="https:\/\/tailwindcss\.com"><img src="https:\/\/img\.shields\.io\/badge\/Tailwind_CSS-([^-?]+)-06B6D4[^"]*" alt="Tailwind CSS [^"]*" \/><\/a>/
 	const tailwind_match = updated_content.match(tailwind_badge_regex)
 	if (tailwind_match) {
 		const current_tailwind = tailwind_match[1]
@@ -154,7 +154,7 @@ export const audit_and_sync_badge_content = ({
 	}
 
 	// 4. daisyUI badge check
-	const daisyui_badge_regex = /<a href="https:\/\/daisyui\.com"><img src="https:\/\/img\.shields\.io\/badge\/daisyUI-([^-\?]+)-570DF8[^"]*" alt="daisyUI [^"]*" \/><\/a>/
+	const daisyui_badge_regex = /<a href="https:\/\/daisyui\.com"><img src="https:\/\/img\.shields\.io\/badge\/daisyUI-([^-?]+)-570DF8[^"]*" alt="daisyUI [^"]*" \/><\/a>/
 	const daisyui_match = updated_content.match(daisyui_badge_regex)
 	if (daisyui_match) {
 		const current_daisyui = daisyui_match[1]

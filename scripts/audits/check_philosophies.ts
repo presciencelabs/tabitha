@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
@@ -47,7 +48,7 @@ async function get_source_files(dir: string): Promise<string[]> {
 			) {
 				continue
 			}
-			files.push(...(await get_source_files(full_path)))
+			files.push(...await get_source_files(full_path))
 		} else if (
 			(entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name.endsWith('.svelte')) &&
 			!entry.name.endsWith('.d.ts') &&
@@ -64,7 +65,6 @@ async function get_source_files(dir: string): Promise<string[]> {
 function get_changed_files(): Set<string> {
 	const changed = new Set<string>()
 	try {
-		const { execSync } = require('node:child_process')
 		const base_ref = process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : 'origin/main'
 		let output = ''
 		try {
@@ -128,7 +128,7 @@ async function audit_codebase() {
 		const lines = content.split('\n')
 
 		check_tabs_indentation(file_path, lines)
-		check_classes_at_end(file_path, content, lines)
+		check_classes_at_end(file_path, content)
 		check_strict_domain_typing(file_path, lines)
 		check_snake_case_functions(file_path, lines)
 		check_pure_functions(file_path, content, native_callback_names)
@@ -170,7 +170,7 @@ async function audit_codebase() {
 	const summary_file = process.env.GITHUB_STEP_SUMMARY
 	if (is_ci && summary_file) {
 		const { appendFile } = await import('node:fs/promises')
-		let markdown = `## 🏛️ Architectural Philosophy & Compliance\n\n`
+		let markdown = '## 🏛️ Architectural Philosophy & Compliance\n\n'
 		if (findings.length === 0) {
 			markdown += `✨ **100% Compliance!** All ${all_files.length} inspected source files adhere to the Development Philosophies.\n\n`
 		} else {
@@ -184,24 +184,24 @@ async function audit_codebase() {
 			const pr_findings = findings.filter(f => changed_files.has(f.file_path))
 			if (pr_findings.length > 0) {
 				markdown += `### ✏️ Observations in PR-Modified Files (${pr_findings.length})\n\n`
-				markdown += `| Rule | Location | Observation | Docs |\n`
-				markdown += `| :--- | :--- | :--- | :--- |\n`
+				markdown += '| Rule | Location | Observation | Docs |\n'
+				markdown += '| :--- | :--- | :--- | :--- |\n'
 				for (const f of pr_findings) {
 					const rel_path = relative(root_dir, f.file_path)
 					markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 				}
-				markdown += `\n`
+				markdown += '\n'
 			}
 
 			markdown += `### 🌐 All Workspace Observations (${findings.length})\n\n`
-			markdown += `| Scope | Rule | Location | Observation | Docs |\n`
-			markdown += `| :--- | :--- | :--- | :--- | :--- |\n`
+			markdown += '| Scope | Rule | Location | Observation | Docs |\n'
+			markdown += '| :--- | :--- | :--- | :--- | :--- |\n'
 			for (const f of findings) {
 				const rel_path = relative(root_dir, f.file_path)
 				const scope = changed_files.has(f.file_path) ? '✏️ **PR File**' : '📄 Workspace'
 				markdown += `| ${scope} | **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 			}
-			markdown += `\n`
+			markdown += '\n'
 		}
 		await appendFile(summary_file, markdown, 'utf-8')
 	}

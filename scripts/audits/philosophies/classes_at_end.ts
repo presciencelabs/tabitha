@@ -1,6 +1,6 @@
 import { findings } from './types'
 
-export function check_classes_at_end(file_path: string, content: string, lines: string[]) {
+export function check_classes_at_end(file_path: string, content: string) {
 	// Philosophy 5: Classes at the end of elements (in .svelte files)
 	if (!file_path.endsWith('.svelte')) return
 

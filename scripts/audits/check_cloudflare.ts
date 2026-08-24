@@ -8,12 +8,19 @@ const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
-interface CloudflareFinding {
+type CloudflareFinding = {
 	app_name: string
 	file_path: string
 	line_number?: number
 	message: string
 	severity: 'warning' | 'error'
+}
+
+type WranglerConfig = {
+	compatibility_flags?: string[]
+	compatibility_date?: string
+	vars?: Record<string, string>
+	d1_databases?: { binding?: string, database_name?: string, database_id?: string }[]
 }
 
 // Where this check's rationale and remediation steps are documented.
@@ -40,16 +47,16 @@ export async function check_cloudflare_configs(): Promise<{ valid: boolean; erro
 		if (!existsSync(wrangler_path)) continue
 
 		const raw_content = await readFile(wrangler_path, 'utf-8')
-		let config: Record<string, any>
+		let config: WranglerConfig
 
 		try {
 			const cleaned = strip_jsonc_comments(raw_content)
 			config = JSON.parse(cleaned)
-		} catch (err: any) {
+		} catch (err) {
 			local_findings.push({
 				app_name,
 				file_path: wrangler_path,
-				message: `Failed to parse wrangler.jsonc as valid JSONC: ${err?.message || err}`,
+				message: `Failed to parse wrangler.jsonc as valid JSONC: ${err instanceof Error ? err.message : err}`,
 				severity: 'error',
 			})
 			continue
@@ -81,7 +88,7 @@ export async function check_cloudflare_configs(): Promise<{ valid: boolean; erro
 			})
 		}
 
-		const vars: Record<string, any> = config.vars || {}
+		const vars: Record<string, string> = config.vars || {}
 		for (const key of Object.keys(vars)) {
 			if (forbidden_var_keys.includes(key)) {
 				local_findings.push({

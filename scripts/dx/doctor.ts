@@ -7,7 +7,7 @@ import { check_cloudflare_configs } from '../audits/check_cloudflare'
 import { sync_readme_badges } from '../audits/check_readme_badges'
 import { scan_secrets } from '../audits/check_secrets'
 
-interface DiagnosticResult {
+type DiagnosticResult = {
 	category: string
 	name: string
 	status: 'PASS' | 'WARN' | 'FAIL'
@@ -207,16 +207,16 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 					name: `D1 Database (${app.name})`,
 					status: 'WARN',
 					message: `Database exists but table '${app.table}' has 0 rows`,
-					fix: `Run \`pnpm db:load\` to populate tables`,
+					fix: 'Run `pnpm db:load` to populate tables',
 				})
 			}
-		} catch (err: any) {
+		} catch (err) {
 			results.push({
 				category: 'Local Databases',
 				name: `D1 Database (${app.name})`,
 				status: 'WARN',
-				message: `Error querying SQLite: ${err?.message || err}`,
-				fix: `Run \`pnpm db:load\` to re-bootstrap SQLite snapshot`,
+				message: `Error querying SQLite: ${err instanceof Error ? err.message : err}`,
+				fix: 'Run `pnpm db:load` to re-bootstrap SQLite snapshot',
 			})
 		}
 	}
@@ -246,12 +246,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `pnpm check:secrets` for line-by-line inspection',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'Credential & Secret Scanner',
 			status: 'WARN',
-			message: `Could not run scanner: ${err?.message || err}`,
+			message: `Could not run scanner: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -274,12 +274,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `pnpm check:cloudflare` for details',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'Cloudflare Wrangler Configs',
 			status: 'WARN',
-			message: `Could not check Cloudflare configs: ${err?.message || err}`,
+			message: `Could not check Cloudflare configs: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -302,12 +302,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `bun scripts/audits/check_readme_badges.ts --fix` to sync badges',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'README Badges Sync',
 			status: 'WARN',
-			message: `Could not check README badges: ${err?.message || err}`,
+			message: `Could not check README badges: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -322,10 +322,10 @@ export async function run_doctor(): Promise<{ all_passed: boolean; fixes: string
 `)
 
 	const results: DiagnosticResult[] = [
-		...(await check_runtimes()),
-		...(await check_env_files()),
-		...(await check_local_databases()),
-		...(await check_security_and_cloudflare()),
+		...await check_runtimes(),
+		...await check_env_files(),
+		...await check_local_databases(),
+		...await check_security_and_cloudflare(),
 	]
 
 	// Group by category

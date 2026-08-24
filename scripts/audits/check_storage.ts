@@ -56,7 +56,7 @@ async function get_scannable_source_files(dir: string): Promise<string[]> {
 			) {
 				continue
 			}
-			files.push(...(await get_scannable_source_files(full_path)))
+			files.push(...await get_scannable_source_files(full_path))
 		} else if (
 			(entry.name.endsWith('.ts') ||
 				entry.name.endsWith('.js') ||
