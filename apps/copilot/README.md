@@ -1,11 +1,11 @@
 # Tabitha Copilot
 
 - **Live URL**: [https://copilot.tabitha.bible](https://copilot.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793) (Port `8793`)
+- **Local Dev URL**: [http://localhost:8793](http://localhost:8793) (Port `8793`)
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Verse Copilot Notes API
 
@@ -23,17 +23,15 @@
 
 ---
 
-## Environment Setup
+## 🔐 Environment Setup
 
-Copy `.env` to `.env.local` and supply the required API keys:
+`apps/copilot/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root). Fill in the secrets that are still blank there: `API_KEY_AQUIFER`, `GEMINI_PRIVATE_KEY`.
 
-```sh
-cp .env .env.local
-```
+(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 From the **monorepo root**:
 
@@ -53,6 +51,6 @@ pnpm dev
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

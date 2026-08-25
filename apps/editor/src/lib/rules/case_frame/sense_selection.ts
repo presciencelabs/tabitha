@@ -425,7 +425,7 @@ function parse_sense_override([stem, sense_rules]: WordStemPriorityOverrides): [
 
 export function select_sense(trigger_context: RuleTriggerContext) {
 	const token = trigger_context.trigger_token
-	select_word_sense(token, trigger_context)
+	select_word_sense({ token, trigger_context })
 
 	if (!token.lookup_results[0]?.case_frame) {
 		return
@@ -438,7 +438,7 @@ export function select_sense(trigger_context: RuleTriggerContext) {
 		argument.rule.trigger_rule.action(argument.trigger_context)
 		argument.trigger_context.trigger_token.applied_rules.push(`transform:argument - ${argument.trigger_context.rule_id}`)
 		if (argument.rule.main_word_tag) {
-			add_tag_to_token(token, argument.rule.main_word_tag, argument.trigger_context.rule_id)
+			add_tag_to_token({ token, tag: argument.rule.main_word_tag, rule_id: argument.trigger_context.rule_id })
 		}
 	}
 }
@@ -447,7 +447,7 @@ export function select_pairing_sense(trigger_context: RuleTriggerContext) {
 	if (!trigger_context.trigger_token.pairing) {
 		return
 	}
-	select_word_sense(trigger_context.trigger_token.pairing, trigger_context)
+	select_word_sense({ token: trigger_context.trigger_token.pairing, trigger_context })
 }
 
 function find_matching_sense(token: Token): string | undefined {
@@ -472,7 +472,7 @@ function find_matching_sense(token: Token): string | undefined {
 	}
 }
 
-function select_word_sense(token: Token, trigger_context: RuleTriggerContext) {
+function select_word_sense({ token, trigger_context }: { token: Token; trigger_context: RuleTriggerContext }) {
 	if (!token.lookup_results.some(LOOKUP_FILTERS.IS_IN_ONTOLOGY)) {
 		return
 	}
@@ -489,7 +489,7 @@ function select_word_sense(token: Token, trigger_context: RuleTriggerContext) {
 	const default_matching_sense = find_matching_sense(token) ?? valid_lookups.at(0)?.sense ?? 'A'
 
 	if (token.specified_sense && token.specified_sense === default_matching_sense) {
-		set_message(trigger_context, { token_to_flag: token, suggest: 'Consider removing the sense, as it would be selected by default.', plain: true })
+		set_message({ trigger_context, message_info: { token_to_flag: token, suggest: 'Consider removing the sense, as it would be selected by default.', plain: true } })
 	}
 
 	const sense_to_select = token.specified_sense || default_matching_sense

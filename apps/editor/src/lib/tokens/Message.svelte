@@ -22,7 +22,7 @@
 	}
 </script>
 
-{#if token_has_message(token)}
+{#if token_has_message({ token })}
 	{@const top_ui = message_ui[token.messages[0].label]}
 
 	<PopupMenu color_classes="bg-base-200 text-base-content">

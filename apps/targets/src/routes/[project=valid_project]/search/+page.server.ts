@@ -2,7 +2,7 @@ import { parse_search_query, search_text } from '$lib/server/search'
 import type { PageServerLoad } from './$types'
 import type { ReturnTo } from '$lib/types'
 
-export const load: PageServerLoad = async ({ url: { searchParams }, params: { project }, locals: { db } }) => {
+export async function load({ url: { searchParams }, params: { project }, locals: { db } }: Parameters<PageServerLoad>[0]) {
 	const q = searchParams.get('q')?.trim()
 	if (!q) {
 		return { results: [], search_terms: [], return_to: undefined }
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ url: { searchParams }, params: { pr
 	const return_to: ReturnTo | undefined = return_to_raw ? JSON.parse(decodeURIComponent(return_to_raw)) : undefined
 
 	const parsed_q = parse_search_query(q)
-	const results = await search_text(db, project!, parsed_q)
+	const results = await search_text({ db, project: project!, parsed_q })
 	return {
 		results,
 		search_terms: parsed_q.or_terms.flatMap(or_term => or_term.and_terms),

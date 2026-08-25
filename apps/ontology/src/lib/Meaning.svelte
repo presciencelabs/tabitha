@@ -35,7 +35,7 @@
 	{concept.gloss}
 	{#if pending_change}
 		<br />
-		<PendingChange>
+		<PendingChange change={pending_change}>
 			{pending_change.data.gloss!.value}
 		</PendingChange>
 	{/if}

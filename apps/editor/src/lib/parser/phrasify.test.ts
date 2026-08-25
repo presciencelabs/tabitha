@@ -10,12 +10,8 @@ describe('phrasify', () => {
 	})
 
 	test('wraps Noun token in NP phrase tokens', () => {
-		const noun_token = create_token('Daniel', TOKEN_TYPE.LOOKUP_WORD, {
-			lookup_results: [create_lookup_result({ stem: 'Daniel', part_of_speech: 'Noun' }, { sense: 'A' })],
-		})
-		const main_clause = create_token('{', TOKEN_TYPE.CLAUSE, {
-			sub_tokens: [noun_token],
-		})
+		const noun_token = create_token({ token: 'Daniel', type: TOKEN_TYPE.LOOKUP_WORD, lookup_results: [create_lookup_result({ stem: 'Daniel', part_of_speech: 'Noun', sense: 'A' })] })
+		const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [noun_token] })
 
 		const result = phrasify([{ clause: main_clause }])
 		const tokens = flatten_sentences(result)
@@ -27,12 +23,8 @@ describe('phrasify', () => {
 	})
 
 	test('wraps Verb token in VP phrase tokens', () => {
-		const verb_token = create_token('prayed', TOKEN_TYPE.LOOKUP_WORD, {
-			lookup_results: [create_lookup_result({ stem: 'pray', part_of_speech: 'Verb' }, { sense: 'A' })],
-		})
-		const main_clause = create_token('{', TOKEN_TYPE.CLAUSE, {
-			sub_tokens: [verb_token],
-		})
+		const verb_token = create_token({ token: 'prayed', type: TOKEN_TYPE.LOOKUP_WORD, lookup_results: [create_lookup_result({ stem: 'pray', part_of_speech: 'Verb', sense: 'A' })] })
+		const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [verb_token] })
 
 		const result = phrasify([{ clause: main_clause }])
 		const tokens = flatten_sentences(result)
@@ -44,15 +36,9 @@ describe('phrasify', () => {
 	})
 
 	test('recursively processes nested subordinate clauses', () => {
-		const noun_token = create_token('God', TOKEN_TYPE.LOOKUP_WORD, {
-			lookup_results: [create_lookup_result({ stem: 'God', part_of_speech: 'Noun' }, { sense: 'A' })],
-		})
-		const sub_clause = create_token('[', TOKEN_TYPE.CLAUSE, {
-			sub_tokens: [noun_token],
-		})
-		const main_clause = create_token('{', TOKEN_TYPE.CLAUSE, {
-			sub_tokens: [sub_clause],
-		})
+		const noun_token = create_token({ token: 'God', type: TOKEN_TYPE.LOOKUP_WORD, lookup_results: [create_lookup_result({ stem: 'God', part_of_speech: 'Noun', sense: 'A' })] })
+		const sub_clause = create_token({ token: '[', type: TOKEN_TYPE.CLAUSE, sub_tokens: [noun_token] })
+		const main_clause = create_token({ token: '{', type: TOKEN_TYPE.CLAUSE, sub_tokens: [sub_clause] })
 
 		const result = phrasify([{ clause: main_clause }])
 		const tokens = flatten_sentences(result)

@@ -29,8 +29,8 @@ const FONT_STACK = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
 // are shown at their own bounds rather than run through an OS mask shape.
 export function build_cell_svg(letter: string, size: number): string {
 	const inset = size / 64
-	const rx = (size / 64) * 4
-	const border = (size / 64) * 1.5
+	const rx = size / 64 * 4
+	const border = size / 64 * 1.5
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
 	<rect x="${inset}" y="${inset}" width="${size - inset * 2}" height="${size - inset * 2}" rx="${rx}" fill="${CANIL_RED}" stroke="${CANIL_WHITE}" stroke-opacity="0.35" stroke-width="${border}" />
 	<text x="${size * 0.156}" y="${size * 0.266}" text-anchor="start" font-family="${FONT_STACK}" font-size="${size * 0.203}" font-weight="500" fill="${CANIL_WHITE}" fill-opacity="0.65">T</text>

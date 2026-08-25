@@ -28,7 +28,7 @@ describe('get_previous_reference', () => {
 	it('returns null when already at the very first verse of the Bible', async () => {
 		const reference: Reference = { type: 'Bible', id_primary: 'Genesis', id_secondary: '1', id_tertiary: '1' }
 
-		const result = await get_previous_reference(db, reference)
+		const result = await get_previous_reference({ db, reference })
 
 		expect(result).toBeNull()
 		expect(get_source_data).not.toHaveBeenCalled()
@@ -40,7 +40,7 @@ describe('get_previous_reference', () => {
 		get_source_data.mockResolvedValueOnce({})
 
 		const reference: Reference = { type: 'Bible', id_primary: 'Matthew', id_secondary: '1', id_tertiary: '1' }
-		const result = await get_previous_reference(db, reference)
+		const result = await get_previous_reference({ db, reference })
 
 		expect(result).toEqual({ type: 'Bible', id_primary: 'Malachi', id_secondary: '4', id_tertiary: '6' })
 	})
@@ -56,10 +56,10 @@ describe('get_previous_reference', () => {
 		get_source_data.mockResolvedValueOnce({})
 
 		const reference: Reference = { type: 'Grammar Introduction', id_primary: 'Verbs', id_secondary: '1', id_tertiary: '1' }
-		const result = await get_previous_reference(db, reference)
+		const result = await get_previous_reference({ db, reference })
 
 		expect(result).toEqual({ type: 'Grammar Introduction', id_primary: 'Nouns', id_secondary: '3', id_tertiary: '5' })
-		expect(get_primary_ids).toHaveBeenCalledWith(db, 'Grammar Introduction')
+		expect(get_primary_ids).toHaveBeenCalledWith({ db, type: 'Grammar Introduction' })
 	})
 })
 
@@ -68,7 +68,7 @@ describe('get_next_reference', () => {
 		get_source_data.mockResolvedValueOnce(null).mockResolvedValueOnce(null)
 
 		const reference: Reference = { type: 'Bible', id_primary: 'Revelation', id_secondary: '22', id_tertiary: '21' }
-		const result = await get_next_reference(db, reference)
+		const result = await get_next_reference({ db, reference })
 
 		expect(result).toBeNull()
 		expect(get_source_data).toHaveBeenCalledTimes(2)
@@ -81,7 +81,7 @@ describe('get_next_reference', () => {
 			.mockResolvedValueOnce({}) // Matthew 1:1 exists
 
 		const reference: Reference = { type: 'Bible', id_primary: 'Malachi', id_secondary: '4', id_tertiary: '6' }
-		const result = await get_next_reference(db, reference)
+		const result = await get_next_reference({ db, reference })
 
 		expect(result).toEqual({ type: 'Bible', id_primary: 'Matthew', id_secondary: '1', id_tertiary: '1' })
 	})
@@ -98,9 +98,9 @@ describe('get_next_reference', () => {
 		])
 
 		const reference: Reference = { type: 'Grammar Introduction', id_primary: 'Nouns', id_secondary: '3', id_tertiary: '5' }
-		const result = await get_next_reference(db, reference)
+		const result = await get_next_reference({ db, reference })
 
 		expect(result).toEqual({ type: 'Grammar Introduction', id_primary: 'Verbs', id_secondary: '1', id_tertiary: '1' })
-		expect(get_primary_ids).toHaveBeenCalledWith(db, 'Grammar Introduction')
+		expect(get_primary_ids).toHaveBeenCalledWith({ db, type: 'Grammar Introduction' })
 	})
 })

@@ -1,12 +1,22 @@
 <script lang="ts">
 	import type { PageProps } from './$types'
 	import Icon from '@iconify/svelte'
+	import { check_for_pending_creates } from '$lib/offline/pending'
+	import { apply_pending_changes, approve_change } from '$lib/changes'
+	import { format_datetime, format_time } from '$lib/format'
+	import type { OntologyChange } from '$lib/types'
 
 	let { data }: PageProps = $props()
 
-	let changes = $derived(data.changes)
+	// svelte-ignore state_referenced_locally
+	let changes = $state<OntologyChange[]>(data.changes)
 
-	function categories_display(value: string[], old: string[] | undefined) {
+	$effect(() => {
+		// these only live in this browser's offline queue, so the server can't have included them in data.changes
+		check_for_pending_creates().then(local => changes = [...local, ...data.changes])
+	})
+
+	function categories_display({ value, old }: { value: string[], old: string[] | undefined }) {
 		if (!old) {
 			return value.filter(v => !!v && !v.startsWith('never')).join(' | ')
 		}
@@ -24,26 +34,37 @@
 	let status_message = $state('')
 	let status_type: 'idle' | 'success' | 'error' = $state('idle')
 
+	let approving_id = $state<number | null>(null)
+
+	async function approve(change: OntologyChange) {
+		approving_id = change.id
+		status_message = ''
+
+		try {
+			const updated = await approve_change(change.id)
+			changes = changes.map(c => c.id === change.id ? updated : c)
+		} catch (err: unknown) {
+			status_message = err instanceof Error ? err.message : 'An error occurred while approving.'
+			status_type = 'error'
+		} finally {
+			approving_id = null
+		}
+	}
+
 	async function trigger_apply_changes() {
 		applying_changes = true
 		status_message = 'Applying pending changes...'
 		status_type = 'idle'
 
 		try {
-			const res = await fetch('/protected/changes/apply-pending', { method: 'POST' })
-			const result = await res.json()
+			const { count, failed, version, timestamp, changes: updated } = await apply_pending_changes()
+			changes = changes.map(c => updated.find(u => u.id === c.id) ?? c)
 
-			if (res.ok && result.success) {
-				const time = new Date(result.timestamp).toLocaleTimeString()
-
-				const success_message = `Successfully applied ${result.count} changes at ${time} for new Ontology Version ${result.version}.`
-				const failed_message = result.failed > 0 ? `Failed to apply ${result.failed} changes.` : ''
-				status_message = `${success_message} ${failed_message}`
-				status_type = result.failed === 0 ? 'success' : 'error'
-			} else {
-				status_message = result.message || result.error || 'Failed to apply complex terms.'
-				status_type = 'error'
-			}
+			const time = format_time({ date: timestamp, ...data })
+			const success_message = `Successfully applied ${count} changes at ${time} for new Ontology Version ${version}.`
+			const failed_message = failed > 0 ? `Failed to apply ${failed} changes.` : ''
+			status_message = `${success_message} ${failed_message}`
+			status_type = failed === 0 ? 'success' : 'error'
 		} catch (err: unknown) {
 			status_message = err instanceof Error ? err.message : 'An error occurred during apply.'
 			status_type = 'error'
@@ -69,19 +90,19 @@
 					Apply pending changes now
 				{/if}
 			</button>
+		</div>
+	{/if}
 
-			{#if status_message}
-				<div class="alert mt-4 text-sm {status_type === 'success' ? 'alert-success' : status_type === 'error' ? 'alert-error' : 'alert-info'}">
-					{#if status_type === 'success'}
-						<Icon icon="material-symbols:check-circle-outline" class="w-5 h-5" />
-					{:else if status_type === 'error'}
-						<Icon icon="material-symbols:error-outline" class="w-5 h-5" />
-					{:else}
-						<Icon icon="material-symbols:info-outline" class="w-5 h-5" />
-					{/if}
-					<span>{status_message}</span>
-				</div>
+	{#if status_message}
+		<div class="alert mt-4 text-sm {status_type === 'success' ? 'alert-success' : status_type === 'error' ? 'alert-error' : 'alert-info'}">
+			{#if status_type === 'success'}
+				<Icon icon="material-symbols:check-circle-outline" class="w-5 h-5" />
+			{:else if status_type === 'error'}
+				<Icon icon="material-symbols:error-outline" class="w-5 h-5" />
+			{:else}
+				<Icon icon="material-symbols:info-outline" class="w-5 h-5" />
 			{/if}
+			<span>{status_message}</span>
 		</div>
 	{/if}
 
@@ -92,9 +113,11 @@
 					<th>Action</th>
 					<th>Concept</th>
 					<th>Change</th>
+					<th>Suggested</th>
 					<th>Approved</th>
 					<th>Applied</th>
 					<th>Version</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -119,7 +142,7 @@
 							{#if change.data.categories}
 								{@const { value, old } = change.data.categories}
 								{@const label = change.concept.part_of_speech === 'Verb' ? 'Theta grid' : 'Categorization'}
-								<li><span class="font-semibold">{label}</span>: {categories_display(value, old)}</li>
+								<li><span class="font-semibold">{label}</span>: {categories_display({ value, old })}</li>
 							{/if}
 							{#if change.data.curated_examples}
 								<li><span class="font-semibold">Curated examples</span> updated</li>
@@ -127,19 +150,50 @@
 						</ul>
 					</td>
 					<td>
+						{#if change.suggested_by}
+							<div class="flex flex-col gap-0.5">
+								<span>{format_datetime({ date: change.suggested_by.date, ...data })}</span>
+								<!-- TODO: Show user name instead of email once user profile data is tracked in Changes -->
+								<span class="text-xs opacity-75 font-mono">{change.suggested_by.email}</span>
+							</div>
+						{/if}
+					</td>
+					<td>
 						{#if change.approved_by}
 							<div class="flex flex-col gap-0.5">
-								<span>{change.approved_by.date.toLocaleString()}</span>
+								<span>{format_datetime({ date: change.approved_by.date, ...data })}</span>
 								<!-- TODO: Show user name instead of email once user profile data is tracked in Changes -->
 								<span class="text-xs opacity-75 font-mono">{change.approved_by.email}</span>
 							</div>
 						{/if}
 					</td>
 					<td>
-						{change.applied_date ? change.applied_date.toLocaleString() : 'Pending'}
+						{#if change.is_unsynced}
+							<span class="badge badge-warning badge-soft gap-1">
+								<Icon icon="mdi:cloud-off-outline" class="h-4 w-4" />
+								Unsynced
+							</span>
+						{:else}
+							{change.applied_date ? format_datetime({ date: change.applied_date, ...data }) : 'Pending'}
+						{/if}
 					</td>
 					<td>
 						{change.version || ''}
+					</td>
+					<td>
+						{#if change.can_approve}
+							<button
+								onclick={() => approve(change)}
+								disabled={approving_id === change.id}
+								class="btn btn-sm btn-primary"
+							>
+								{#if approving_id === change.id}
+									<span class="loading loading-spinner loading-xs"></span>
+								{:else}
+									Approve
+								{/if}
+							</button>
+						{/if}
 					</td>
 				</tr>
 			{/each}

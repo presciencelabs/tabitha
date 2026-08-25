@@ -31,46 +31,58 @@ export function create_token_filter(filter_json: TokenFilterJson | undefined): T
 
 	const filters: TokenFilter[] = []
 
-	add_value_filter(filter_json['token'], token => token.token)
-	add_value_filter(filter_json['type'], token => token.type)
+	add_value_filter({ property_value: filter_json['token'], value_getter: token => token.token })
+	add_value_filter({ property_value: filter_json['type'], value_getter: token => token.type })
 
 	// a token tag can have | separated values
 	const tag_json = filter_json['tag']
 	if (tag_json !== undefined) {
-		filters.push(token => token_has_tag(token, tag_json))
+		filters.push(token => token_has_tag({ token, tag_to_check: tag_json }))
 	}
 
-	add_lookup_filter(filter_json['stem'], filter_value => {
-		const value_checker = get_value_checker(filter_value)
-		return lookup => value_checker(lookup.stem)
+	add_lookup_filter({
+		property_value: filter_json['stem'],
+		lookup_filter_getter: filter_value => {
+			const value_checker = get_value_checker(filter_value)
+			return lookup => value_checker(lookup.stem)
+		},
 	})
-	add_lookup_filter(filter_json['category'], filter_value => {
-		const value_checker = get_value_checker(filter_value.toLowerCase())
-		return lookup => value_checker(lookup.part_of_speech.toLowerCase())
+	add_lookup_filter({
+		property_value: filter_json['category'],
+		lookup_filter_getter: filter_value => {
+			const value_checker = get_value_checker(filter_value.toLowerCase())
+			return lookup => value_checker(lookup.part_of_speech.toLowerCase())
+		},
 	})
-	add_lookup_filter(filter_json['level'], filter_value => {
-		const value_checker = get_value_checker(filter_value)
-		return lookup => value_checker(`${lookup.level}`)
+	add_lookup_filter({
+		property_value: filter_json['level'],
+		lookup_filter_getter: filter_value => {
+			const value_checker = get_value_checker(filter_value)
+			return lookup => value_checker(`${lookup.level}`)
+		},
 	})
 
-	add_lookup_filter(filter_json['form'], filter_value => {
-		const filter_forms = filter_value.split('|')
-		return lookup => {
-			const lookup_forms = lookup.form.split('|')
-			return lookup_forms.some(form => filter_forms.includes(form))
-		}
+	add_lookup_filter({
+		property_value: filter_json['form'],
+		lookup_filter_getter: filter_value => {
+			const filter_forms = filter_value.split('|')
+			return lookup => {
+				const lookup_forms = lookup.form.split('|')
+				return lookup_forms.some(form => filter_forms.includes(form))
+			}
+		},
 	})
 
 	return token => filters.every(filter => filter(token))
 
-	function add_value_filter(property_value: string | undefined, value_getter: (token: Token) => string) {
+	function add_value_filter({ property_value, value_getter }: { property_value: string | undefined; value_getter: (token: Token) => string }) {
 		if (property_value !== undefined) {
 			const value_checker = get_value_checker(property_value)
 			filters.push(token => value_checker(value_getter(token)))
 		}
 	}
 
-	function add_lookup_filter(property_value: string | undefined, lookup_filter_getter: (json: string) => LookupFilter) {
+	function add_lookup_filter({ property_value, lookup_filter_getter }: { property_value: string | undefined; lookup_filter_getter: (json: string) => LookupFilter }) {
 		if (property_value !== undefined) {
 			const lookup_filter = lookup_filter_getter(property_value)
 			filters.push(token => token.lookup_results.length > 0 && token.lookup_results.every(lookup_filter))
@@ -88,29 +100,29 @@ export function create_token_filter(filter_json: TokenFilterJson | undefined): T
 
 export function create_context_filter(context_json: TokenContextFilterJson | undefined): TokenContextFilter {
 	if (context_json === undefined) {
-		return () => context_result(true)
+		return () => context_result({ success: true })
 	}
 
 	const filters: TokenContextFilter[] = []
 
 	const preceded_by = context_json['precededby']
 	if (preceded_by !== undefined) {
-		filters.push(create_directional_context_filter(preceded_by, -1))
+		filters.push(create_directional_context_filter({ context_json: preceded_by, offset: -1 }))
 	}
 
 	const not_preceded_by = context_json['notprecededby']
 	if (not_preceded_by !== undefined) {
-		filters.push(negate(create_directional_context_filter(not_preceded_by, -1)))
+		filters.push(negate(create_directional_context_filter({ context_json: not_preceded_by, offset: -1 })))
 	}
 
 	const followed_by = context_json['followedby']
 	if (followed_by !== undefined) {
-		filters.push(create_directional_context_filter(followed_by, +1))
+		filters.push(create_directional_context_filter({ context_json: followed_by, offset: +1 }))
 	}
 
 	const not_followed_by = context_json['notfollowedby']
 	if (not_followed_by !== undefined) {
-		filters.push(negate(create_directional_context_filter(not_followed_by, +1)))
+		filters.push(negate(create_directional_context_filter({ context_json: not_followed_by, offset: +1 })))
 	}
 
 	const subtokens = context_json['subtokens']
@@ -119,7 +131,7 @@ export function create_context_filter(context_json: TokenContextFilterJson | und
 	}
 
 	if (filters.length === 0) {
-		return () => context_result(true)
+		return () => context_result({ success: true })
 	} else if (filters.length === 1) {
 		return (tokens, start_index) => filters[0](tokens, start_index)
 	} else {
@@ -127,73 +139,84 @@ export function create_context_filter(context_json: TokenContextFilterJson | und
 	}
 
 	function negate(filter: TokenContextFilter): TokenContextFilter {
-		return (tokens, start_index) => filter(tokens, start_index).success ? context_result(false) : context_result(true)
+		return (tokens, start_index) => filter(tokens, start_index).success ? context_result({ success: false }) : context_result({ success: true })
 	}
 
 	function combine(filters: TokenContextFilter[]): TokenContextFilter {
 		return (tokens, start_index) => {
 			const results = filters.map(filter => filter(tokens, start_index))
 			if (results.every(result => result.success)) {
-				return context_result(true, {
+				return context_result({
+					success: true,
 					context_indexes: results.flatMap(result => result.context_indexes),
 					subtoken_indexes: results.flatMap(result => result.subtoken_indexes),
 				})
 			} else {
-				return context_result(false)
+				return context_result({ success: false })
 			}
 		}
 	}
 
 	function create_subtokens_filter(subtoken_json: TokenFilterJsonForContext): TokenContextFilter {
-		const subtoken_filter = create_directional_context_filter(subtoken_json, +1)
+		const subtoken_filter = create_directional_context_filter({ context_json: subtoken_json, offset: +1 })
 
 		return (tokens, start_index) => {
 			if (tokens[start_index].sub_tokens.length === 0) {
-				return context_result(false)
+				return context_result({ success: false })
 			}
 
 			const clause = tokens[start_index]
 			const result = subtoken_filter(clause.sub_tokens, -1)	// use -1 so that the checks start at 0
-			return result.success ? context_result(true, { subtoken_indexes: result.context_indexes }) : result
+			return result.success ? context_result({ success: true, subtoken_indexes: result.context_indexes }) : result
 		}
 	}
 }
 
-function create_directional_context_filter(context_json: TokenFilterJsonForContext, offset: number): TokenContextFilter {
+function create_directional_context_filter({ context_json, offset }: { context_json: TokenFilterJsonForContext; offset: number }): TokenContextFilter {
 	if (Array.isArray(context_json)) {
-		const filters = context_json.map(filter_json => create_single_context_filter(filter_json, offset))
-		return create_multi_context_filter(filters, offset < 0)
-	} else {
-		return create_single_context_filter(context_json, offset)
-	}
-
-	function create_multi_context_filter(filters: TokenContextFilter[], reverse: boolean): TokenContextFilter {
+		const filters = context_json.map(filter_json => create_single_context_filter({ context_json: filter_json, offset }))
 		// precededby filters have the first element be the furthest from the trigger,
 		// and the last element is closest to the trigger.
-		if (reverse) {
-			filters.reverse()
-		}
+		return offset < 0 ? create_reversed_multi_context_filter(filters) : create_multi_context_filter(filters)
+	} else {
+		return create_single_context_filter({ context_json, offset })
+	}
 
+	function create_multi_context_filter(filters: TokenContextFilter[]): TokenContextFilter {
 		return (tokens, start_index) => {
 			const all_indexes: number[] = []
 			for (const filter of filters) {
 				const { success, context_indexes: indexes } = filter(tokens, start_index)
 				if (!success) {
-					return context_result(false)
+					return context_result({ success: false })
 				}
 				start_index = indexes[0]
 				all_indexes.push(start_index)
 			}
 
-			if (reverse) {
-				all_indexes.reverse()
-			}
-
-			return context_result(true, { context_indexes: all_indexes })
+			return context_result({ success: true, context_indexes: all_indexes })
 		}
 	}
 
-	function create_single_context_filter(context_json: TokenFilterWithSkipJson, offset: number): TokenContextFilter {
+	function create_reversed_multi_context_filter(filters: TokenContextFilter[]): TokenContextFilter {
+		const reversed_filters = [...filters].reverse()
+
+		return (tokens, start_index) => {
+			const all_indexes: number[] = []
+			for (const filter of reversed_filters) {
+				const { success, context_indexes: indexes } = filter(tokens, start_index)
+				if (!success) {
+					return context_result({ success: false })
+				}
+				start_index = indexes[0]
+				all_indexes.push(start_index)
+			}
+
+			return context_result({ success: true, context_indexes: all_indexes.reverse() })
+		}
+	}
+
+	function create_single_context_filter({ context_json, offset }: { context_json: TokenFilterWithSkipJson; offset: number }): TokenContextFilter {
 		const filter = create_token_filter(context_json)
 
 		const skip_filter: TokenFilter = context_json['skip'] !== undefined
@@ -202,20 +225,20 @@ function create_directional_context_filter(context_json: TokenFilterJsonForConte
 
 		const end_check: (tokens: Token[], i: number) => boolean = offset < 0 ? (_, i) => i >= 0 : (tokens, i) => i < tokens.length
 
-		return check_context_with_skip
+		return (tokens, start_index) => check_context_with_skip({ tokens, start_index })
 
-		function check_context_with_skip(tokens: Token[], start_index: number): ContextFilterResult {
+		function check_context_with_skip({ tokens, start_index }: { tokens: Token[]; start_index: number }): ContextFilterResult {
 			const tokens_to_skip: TokenType[] = [TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE]
 
 			for (let i = start_index + offset; end_check(tokens, i); i += offset) {
 				if (filter(tokens[i])) {
-					return context_result(true, { context_indexes: [i] })
+					return context_result({ success: true, context_indexes: [i] })
 				}
 				if (!skip_filter(tokens[i]) && !tokens_to_skip.includes(tokens[i].type)) {
-					return context_result(false)
+					return context_result({ success: false })
 				}
 			}
-			return context_result(false)
+			return context_result({ success: false })
 		}
 	}
 }
@@ -236,8 +259,7 @@ export function create_skip_filter(skip_json: SkipJson): TokenFilter {
 }
 
 function context_result(
-	success: boolean,
-	{ context_indexes = [], subtoken_indexes = [] }: { context_indexes?: number[]; subtoken_indexes?: number[] } = {},
+	{ success, context_indexes = [], subtoken_indexes = [] }: { success: boolean; context_indexes?: number[]; subtoken_indexes?: number[] },
 ): ContextFilterResult {
 	return { success, context_indexes, subtoken_indexes }
 }
@@ -266,12 +288,12 @@ export function create_token_transform(transform_json: TokenTransformJson | unde
 
 	const tag = transform_json['tag']
 	if (tag !== undefined) {
-		transforms.push(token => ({ ...token, tag: add_value_to_tag(token.tag, tag) }))
+		transforms.push(token => ({ ...token, tag: add_value_to_tag({ old_tag: token.tag, new_values: tag }) }))
 	}
 
 	const remove_tag = transform_json['remove_tag']
 	if (remove_tag !== undefined) {
-		transforms.push(token => ({ ...token, tag: remove_tag_labels(token.tag, remove_tag) }))
+		transforms.push(token => ({ ...token, tag: remove_tag_labels({ old_tag: token.tag, tags_to_remove: remove_tag }) }))
 	}
 
 	const function_tag = transform_json['function']
@@ -279,7 +301,7 @@ export function create_token_transform(transform_json: TokenTransformJson | unde
 		transforms.push(token => ({
 			...token,
 			type: TOKEN_TYPE.FUNCTION_WORD,
-			tag: add_value_to_tag(token.tag, function_tag),
+			tag: add_value_to_tag({ old_tag: token.tag, new_values: function_tag }),
 			lookup_results: [],
 		}))
 	}
@@ -292,11 +314,11 @@ export function create_token_transform(transform_json: TokenTransformJson | unde
 		return token => transforms.reduce((new_token, transform) => transform(new_token), token)
 	}
 
-	function add_value_to_tag(old_tag: Tag, new_values: Tag): Tag {
+	function add_value_to_tag({ old_tag, new_values }: { old_tag: Tag; new_values: Tag }): Tag {
 		return { ...old_tag, ...new_values }
 	}
 
-	function remove_tag_labels(old_tag: Tag, tags_to_remove: string | string[]): Tag {
+	function remove_tag_labels({ old_tag, tags_to_remove }: { old_tag: Tag; tags_to_remove: string | string[] }): Tag {
 		if (!Array.isArray(tags_to_remove)) {
 			tags_to_remove = [tags_to_remove]
 		}
@@ -319,9 +341,9 @@ export function message_set_action(action: (trigger_context: RuleTriggerContext)
 		}
 
 		if (Symbol.iterator in result) {
-			[...result].forEach(message => set_message(trigger_context, message))
+			[...result].forEach(message => set_message({ trigger_context, message_info: message }))
 		} else {
-			set_message(trigger_context, result)
+			set_message({ trigger_context, message_info: result })
 		}
 
 		return trigger_context.trigger_index + 1

@@ -11,7 +11,7 @@ const mockRef: SourceReference = {
 
 describe('source_data_helpers', () => {
 	it('builds canonical source URL correctly', () => {
-		const url = get_sources_url(mockRef, 'https://sources.tabitha.bible')
+		const url = get_sources_url({ reference: mockRef, sources_api_host: 'https://sources.tabitha.bible' })
 		expect(url).toBe('https://sources.tabitha.bible/verse/1 Samuel/21/1')
 	})
 
@@ -26,7 +26,11 @@ describe('source_data_helpers', () => {
 			json: vi.fn().mockResolvedValue(mockResponseData),
 		})
 
-		const result = await fetch_source_data(mockRef, 'https://sources.tabitha.bible', mockFetch as unknown as typeof fetch)
+		const result = await fetch_source_data({
+			reference: mockRef,
+			sources_api_host: 'https://sources.tabitha.bible',
+			fetch_fn: mockFetch as unknown as typeof fetch,
+		})
 
 		expect(mockFetch).toHaveBeenCalledWith('https://sources.tabitha.bible/verse/1 Samuel/21/1')
 		expect(result).toEqual(mockResponseData)

@@ -2,20 +2,20 @@ import { default_settings, fetch_verses_for_chapter, usfm_book_codes } from '$li
 import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
 import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
+import type { AiClient } from '@tabitha/ai'
+import type { RequestHandler } from './$types'
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({  params: { book, chapter }, url: { searchParams }, locals: { ai } }) {
+export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
 	if (!chapter_int) {
 		error(400, 'chapter must be an integer')
 	}
 
-	let start_verse = searchParams.has('v1') ? parseInt(searchParams.get('v0') || '') : 1
+	let start_verse = searchParams.has('v0') ? parseInt(searchParams.get('v0') || '') : 1
 	let end_verse = searchParams.has('v1') ? parseInt(searchParams.get('v1') || '') : null
 
 	const param_settings = JSON.parse(searchParams.get('settings') || '{}')
-	/** @type {CopilotSettings} */
-	const settings = {
+	const settings: CopilotSettings = {
 		...default_settings,
 		...param_settings,
 		language_profile: {
@@ -24,7 +24,6 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 		},
 	}
 
-	const chapter_ref = { book, chapter: chapter_int }
 	const book_code = usfm_book_codes[book] ?? book
 
 	const last_verse = await fetch_verses_for_chapter({ book, chapter: chapter_int })
@@ -42,19 +41,18 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 		end_verse = last_verse
 	}
 
-	let total_verses = end_verse - start_verse + 1
+	const total_verses = end_verse - start_verse + 1
 	const filename = `${book_code} ${chapter} - TaBiThA ${settings.mode === 'brief' ? 'Brief' : 'Notes'}.sfm`
 	const encoder = new TextEncoder()
 
 	const stream = new ReadableStream({
 		async start(controller) {
 			try {
-				controller.enqueue(encoder.encode(`\\id ${usfm_book_codes[chapter_ref.book] || chapter_ref.book}\n`))
+				controller.enqueue(encoder.encode(`\\id ${book_code}\n`))
 				controller.enqueue(encoder.encode(`\\c ${chapter_int}\n`))
 
 				const concurrency_limit = 5
-				/** @type {string[]} */
-				const sfm_verses = new Array(total_verses)
+				const sfm_verses: string[] = new Array(total_verses)
 				let next_to_send = 0
 				let next_to_start = 0
 				let is_flushing = false
@@ -75,12 +73,12 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 
 							// Translate batch in 1 LLM API call if in brief mode
 							const translated_batch = settings.mode === 'brief'
-								? await translate_json(batch, ai)
+								? await translate_json({ obj: batch, ai })
 								: batch
 
 							// Enqueue translated verses
 							for (const sfm of translated_batch) {
-								controller.enqueue(encoder.encode(sfm + '\n'))
+								controller.enqueue(encoder.encode(`${sfm}\n`))
 							}
 						}
 					} finally {
@@ -94,16 +92,16 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 						const verse = start_verse + verse_idx
 						const reference = { book, chapter: chapter_int, verse }
 
-						let result = await get_copilot_result(reference, settings, ai)
+						let result = await get_copilot_result({ reference, settings, ai })
 						if (result.error) {
 							console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}. Retrying...`)
-							result = await get_copilot_result(reference, settings, ai)
+							result = await get_copilot_result({ reference, settings, ai })
 							if (result.error) {
 								console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}.`)
 							}
 						}
 
-						sfm_verses[verse_idx] = await get_sfm_for_verse(result, settings, ai)
+						sfm_verses[verse_idx] = await get_sfm_for_verse({ result, settings, ai })
 						await flush()
 					}
 				}
@@ -134,34 +132,26 @@ export async function GET({  params: { book, chapter }, url: { searchParams }, l
 	})
 }
 
-/**
- * 
- * @param {CopilotApiResult} result 
- * @param {CopilotSettings} settings 
- * @param {import('@tabitha/ai').AiClient} ai
- * @returns {Promise<string>}
- */
-async function get_sfm_for_verse(result, settings, ai) {
+async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotApiResult, settings: CopilotSettings, ai: AiClient }): Promise<string> {
 	if (settings.mode === 'brief') {
-		/** @type {BriefSettings} */
-		const brief_settings = {
+		const brief_settings: BriefSettings = {
 			...settings,
 			rigor: 'HIGH',
 			output_format: 'usfm',
 			output_style: 'production',
 		}
 
-		let brief_output = await create_brief_for_verse(result, brief_settings, ai)
+		let brief_output = await create_brief_for_verse({ note_results: result, settings: brief_settings, ai })
 		// if there was an error, try one more time. the error itself is logged elsewhere
 		if (!brief_output) {
 			console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Retrying to get brief notes...`)
-			brief_output = await create_brief_for_verse(result, brief_settings, ai)
+			brief_output = await create_brief_for_verse({ note_results: result, settings: brief_settings, ai })
 			if (!brief_output) {
 				console.error(`${result.verse.book} ${result.verse.chapter}:${result.verse.verse} - Could not generate brief notes. Skipping this verse.`)
 			}
 		}
 
-		return convert_to_usfm_for_brief(result.verse, brief_output)
+		return convert_to_usfm_for_brief({ verse_ref: result.verse, output: brief_output })
 
 	} else {
 		return convert_to_usfm_for_discern(settings.lwc)(result)

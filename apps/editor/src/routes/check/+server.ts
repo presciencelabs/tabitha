@@ -21,7 +21,7 @@ export async function GET({ url: { searchParams } }: RequestEvent) {
 	const text = searchParams.get('text') ?? ''
 
 	const sentences = await parse(text)
-	const checked_sentences = apply_rules(sentences, RULES.CHECKER)
+	const checked_sentences = apply_rules({ sentences, rules: RULES.CHECKER })
 	const tokens = simplify_tokens(checked_sentences)
 
 	const back_translation = backtranslate(sentences)

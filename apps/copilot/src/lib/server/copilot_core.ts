@@ -5,35 +5,35 @@ import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
 import type { AiClient } from '@tabitha/ai'
 
-export async function get_copilot_result(reference: VerseReference, settings: CopilotSettings, ai: AiClient): Promise<CopilotApiResult> {
+export async function get_copilot_result({ reference, settings, ai }: { reference: VerseReference, settings: CopilotSettings, ai: AiClient }): Promise<CopilotApiResult> {
 	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
 
 	const encoding = await fetch_encoding(reference)
 	if (!encoding) {
 		console.error(`Error fetching encoding for ${reference.book} ${reference.chapter}:${reference.verse}`)
-		return error_result(reference, `Verse reference ${ref_display} does not exist`)
+		return error_result({ reference, message: `Verse reference ${ref_display} does not exist` })
 	}
 
-	const english = await fetch_target_text(reference, 'English', default_target_audience['English'])
+	const english = await fetch_target_text({ verse_ref: reference, project: 'English', preferred_audience: default_target_audience['English'] })
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)
-		return error_result(reference, 'There is no English text saved yet for this verse.')
+		return error_result({ reference, message: 'There is no English text saved yet for this verse.' })
 	}
 	const english_text = english.ideal || english.text
 
 	const lwc_text_result = settings.lwc !== 'English'
-		? await fetch_target_text(reference, settings.lwc, default_target_audience[settings.lwc] || 'Unchurched Adults')
+		? await fetch_target_text({ verse_ref: reference, project: settings.lwc, preferred_audience: default_target_audience[settings.lwc] || 'Unchurched Adults' })
 		: english
 
 	if (!lwc_text_result) {
 		console.error(`Error fetching ${settings.lwc} text for ${ref_display}`)
-		return error_result(reference, `There is no ${settings.lwc} text saved yet for this verse.`)
+		return error_result({ reference, message: `There is no ${settings.lwc} text saved yet for this verse.` })
 	}
 	const lwc_text = lwc_text_result.ideal || lwc_text_result.text
 
 	const flags = extract_flags(encoding.encoding)
-	const weighted_flags = assign_flag_weights(flags, settings).filter(({ weight }) => weight > 0)
-	const all_triggers = collect_triggers(weighted_flags, settings.language_profile)
+	const weighted_flags = assign_flag_weights({ flags, settings }).filter(({ weight }) => weight > 0)
+	const all_triggers = collect_triggers({ flags: weighted_flags, language_profile: settings.language_profile })
 	const sorted_triggers = all_triggers.toSorted((t1, t2) => t1.node_id.localeCompare(t2.node_id))
 
 	const sensitivity = Number(settings.sensitivity)	// in case it somehow gets converted to a string somewhere
@@ -50,9 +50,9 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	}
 
 	try {
-		const llm_output = await get_semantic_notes(llm_input, ai)
+		const llm_output = await get_semantic_notes({ llm_input, ai })
 		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) =>
-			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match(trigger, trigger_data))! }),
+			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))! }),
 		)
 		return {
 			verse: reference,
@@ -64,15 +64,15 @@ export async function get_copilot_result(reference: VerseReference, settings: Co
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(`Error fetching notes from LLM for ${ref_display}:`, error.message)
-			return error_result(reference, `Error encountered calling the LLM - ${error.message}`)
+			return error_result({ reference, message: `Error encountered calling the LLM - ${error.message}` })
 		} else {
 			console.error(`Error fetching notes from LLM for ${ref_display}:`, error)
-			return error_result(reference, `Error encountered calling the LLM - ${error}`)
+			return error_result({ reference, message: `Error encountered calling the LLM - ${error}` })
 		}
 	}
 }
 
-export function error_result(reference: VerseReference, message: string) {
+export function error_result({ reference, message }: { reference: VerseReference, message: string }) {
 	return {
 		verse: reference,
 		error: message,

@@ -706,13 +706,13 @@ export function parse_transform_rule(rule_json: TransformRuleJson, index: number
 			tokens[trigger_index] = transform(tokens[trigger_index])
 			tokens[trigger_index].applied_rules.push(`transform - ${rule_id}`)
 		}
-		apply_token_transforms(tokens, context_indexes, context_transforms, `transform:context - ${rule_id}`)
-		apply_token_transforms(tokens[trigger_index].sub_tokens, subtoken_indexes, subtoken_transforms, `transform:subtoken - ${rule_id}`)
+		apply_token_transforms({ tokens, token_indexes: context_indexes, transforms: context_transforms, rule_info: `transform:context - ${rule_id}` })
+		apply_token_transforms({ tokens: tokens[trigger_index].sub_tokens, token_indexes: subtoken_indexes, transforms: subtoken_transforms, rule_info: `transform:subtoken - ${rule_id}` })
 
 		return trigger_index + 1
 	}
 
-	function apply_token_transforms(tokens: Token[], token_indexes: number[], transforms: TokenTransform[], rule_info: string) {
+	function apply_token_transforms({ tokens, token_indexes, transforms, rule_info }: { tokens: Token[]; token_indexes: number[]; transforms: TokenTransform[]; rule_info: string }) {
 		for (let i = 0; i < token_indexes.length && i < transforms.length; i++) {
 			const transformed_token = transforms[i](tokens[token_indexes[i]])
 			transformed_token.applied_rules.push(rule_info)
@@ -729,7 +729,7 @@ const builtin_transform_rules: BuiltInRule[] = [
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token }) => {
-				tag_nested_clauses(trigger_token, { 'in_relative_clause': 'true' })
+				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_relative_clause': 'true' } })
 			}),
 		},
 	},
@@ -740,18 +740,18 @@ const builtin_transform_rules: BuiltInRule[] = [
 			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE, 'tag': 'interrogative' }),
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token }) => {
-				tag_nested_clauses(trigger_token, { 'in_interrogative': 'true' })
+				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_interrogative': 'true' } })
 			}),
 		},
 	},
 ]
 
-function tag_nested_clauses(clause_token: Token, tag_to_set: Tag) {
+function tag_nested_clauses({ clause_token, tag_to_set }: { clause_token: Token; tag_to_set: Tag }) {
 	const quote_begin_filter = create_token_filter({ 'tag': { 'clause_type': 'patient_clause_quote_begin' } })
 
 	function tag_clause_tokens(clause_tokens: Token[]) {
 		// the first token is always the opening bracket. this is what we want to tag
-		add_tag_to_token(clause_tokens[0], tag_to_set)
+		add_tag_to_token({ token: clause_tokens[0], tag: tag_to_set })
 
 		for (let i = 0; i < clause_tokens.length; i++) {
 			const token = clause_tokens[i]

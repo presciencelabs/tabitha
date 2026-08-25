@@ -1,11 +1,11 @@
 # Editor Web App
 
 - **Live URL**: [https://editor.tabitha.bible](https://editor.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:8790](http://localhost.tabitha.bible:8790) (Port `8790`)
+- **Local Dev URL**: [http://localhost:8790](http://localhost:8790) (Port `8790`)
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Grammar & Rule Checker API
 
@@ -21,7 +21,7 @@
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 From the **monorepo root**:
 
@@ -41,6 +41,6 @@ pnpm dev
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

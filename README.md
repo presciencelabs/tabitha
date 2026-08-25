@@ -20,15 +20,15 @@ This repository houses all core deployable web applications, developer tools, sh
 
 ## 🚀 Applications & Dedicated Ports
 
-All applications are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers. Each app has a dedicated, non-overlapping local port configured for seamless multi-app development.
+Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers — each app gets a dedicated, non-overlapping port for multi-app dev.
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
 | --- | --- | --- | --- | --- | --- |
-| **Ontology** | `apps/ontology` | `http://localhost.tabitha.bible:5173` | `5173` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
-| **Targets** | `apps/targets` | `http://localhost.tabitha.bible:8788` | `8788` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
-| **Sources** | `apps/sources` | `http://localhost.tabitha.bible:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
-| **Editor** | `apps/editor` | `http://localhost.tabitha.bible:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator |
-| **Copilot** | `apps/copilot` | `http://localhost.tabitha.bible:8793` | `8793` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
+| **Ontology** | `apps/ontology` | `http://localhost:5173` | `5173` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
+| **Targets** | `apps/targets` | `http://localhost:8788` | `8788` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
+| **Sources** | `apps/sources` | `http://localhost:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
+| **Editor** | `apps/editor` | `http://localhost:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator |
+| **Copilot** | `apps/copilot` | `http://localhost:8793` | `8793` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
 
 ---
 
@@ -83,22 +83,6 @@ pnpm setup
 pnpm dev
 ```
 
-### Local Domain Setup (`localhost.tabitha.bible`)
-
-To support OAuth callbacks and cross-app communication, all apps run under `*.tabitha.bible`. Map this domain to `127.0.0.1`:
-
-- **macOS / Linux (Terminal)**:
-
-  ```bash
-  echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
-  ```
-
-- **Windows (Run PowerShell as Administrator)**:
-
-  ```powershell
-  Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "127.0.0.1 localhost.tabitha.bible"
-  ```
-
 ### Database & Environment Workflows
 
 ```bash
@@ -124,11 +108,11 @@ pnpm setup:env
 pnpm dev:menu
 
 # Or start a specific application directly
-pnpm dev:ontology   # http://localhost.tabitha.bible:5173
-pnpm dev:targets    # http://localhost.tabitha.bible:8788
-pnpm dev:sources    # http://localhost.tabitha.bible:8789
-pnpm dev:editor     # http://localhost.tabitha.bible:8790
-pnpm dev:copilot    # http://localhost.tabitha.bible:8793
+pnpm dev:ontology   # http://localhost:5173
+pnpm dev:targets    # http://localhost:8788
+pnpm dev:sources    # http://localhost:8789
+pnpm dev:editor     # http://localhost:8790
+pnpm dev:copilot    # http://localhost:8793
 ```
 
 ### 🧪 Local Smoke Test ("Golden Path")
@@ -136,11 +120,12 @@ pnpm dev:copilot    # http://localhost.tabitha.bible:8793
 To verify that all local applications, databases, and inter-app APIs are working together:
 
 1. **Start all dev servers**: `pnpm dev`
-2. **Open the Editor**: [http://localhost.tabitha.bible:8790/?text=Paul+write-01](http://localhost.tabitha.bible:8790/?text=Paul+write-01)
-   - *Verifies Editor (`:8790`)*: Parses tokens and renders a clickable concept card for `write-01`.
-3. **Click the `write-01` concept card**:
-   - *Verifies Ontology (`:5173`)*: Navigates to [http://localhost.tabitha.bible:5173/?q=write-01](http://localhost.tabitha.bible:5173/?q=write-01) and loads definitions from the local D1 database.
-4. **Expand any "Usage Example" accordion in Ontology**:
+2. **Open the Editor**: [http://localhost:8790](http://localhost:8790)
+3. **Type `Paul write-A a letter.` into the text box and click Check**:
+   - *Verifies Editor (`:8790`)*: Parses tokens and, on clicking the `write-A` token, shows a popup with a clickable concept link.
+4. **Click the `write-A` link in that popup**:
+   - *Verifies Ontology (`:5173`)*: Navigates to [http://localhost:5173/?q=write-A](http://localhost:5173/?q=write-A) and loads definitions from the local D1 database.
+5. **Expand any "Usage Example" accordion in Ontology**:
    - *Verifies Sources (`:8789`)*: Fetches and displays the semantic clause parse tree.
    - *Verifies Targets (`:8788`)*: Fetches and displays the generated English translation text.
 
@@ -193,7 +178,7 @@ pnpm update:interactive
 
 ### Local CI/CD Workflow Testing (Optional)
 
-For developers developing or testing GitHub Actions workflows in `.github/workflows/` locally, you can use [`act`](https://github.com/nektos/act) to run workflows in local Docker containers:
+To test GitHub Actions workflows in `.github/workflows/` locally, use [`act`](https://github.com/nektos/act) to run them in local Docker containers:
 
 ```bash
 # Installation:

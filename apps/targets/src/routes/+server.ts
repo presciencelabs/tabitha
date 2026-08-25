@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 import type { ProjectResult } from '$lib/types'
 
-export const GET: RequestHandler = async ({ locals: { db } }) => {
+export async function GET({ locals: { db } }: Parameters<RequestHandler>[0]) {
 	const sql = `
 		SELECT DISTINCT project
 		FROM Lexicon

@@ -4,15 +4,15 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { Reference } from '@tabitha/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }) => {
+export async function GET({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }: Parameters<RequestHandler>[0]) {
 	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }
-	const source = await get_source_data(db, reference)
+	const source = await get_source_data({ db, ...reference })
 
 	if (!source) {
 		error(404, 'Unknown source reference.')
 	}
 	
-	const parsed_semantic_encoding = await transform_semantic_encoding(db, source.semantic_encoding)
+	const parsed_semantic_encoding = await transform_semantic_encoding({ db, semantic_encoding: source.semantic_encoding })
 	return json({
 		...source,
 		parsed_semantic_encoding,

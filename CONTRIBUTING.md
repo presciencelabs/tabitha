@@ -1,6 +1,6 @@
 # Contributing to TaBiThA
 
-Welcome to the **TaBiThA** monorepo! This guide explains the project's architecture, conventions, and common development workflows to help you build, test, and contribute effectively.
+Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions, and workflows to get you building, testing, and shipping.
 
 ---
 
@@ -55,11 +55,11 @@ graph TD
 
 | App | Port | Local URL | Primary Responsibility |
 | --- | --- | --- | --- |
-| **`ontology`** | `5173` | [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
-| **`targets`** | `8788` | [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
-| **`sources`** | `8789` | [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
-| **`editor`** | `8790` | [http://localhost.tabitha.bible:8790](http://localhost.tabitha.bible:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
-| **`copilot`** | `8793` | [http://localhost.tabitha.bible:8793](http://localhost.tabitha.bible:8793) | AI translation guidance, theological constraint checking, and Gemini API integration. |
+| **`ontology`** | `5173` | [http://localhost:5173](http://localhost:5173) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
+| **`targets`** | `8788` | [http://localhost:8788](http://localhost:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
+| **`sources`** | `8789` | [http://localhost:8789](http://localhost:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
+| **`editor`** | `8790` | [http://localhost:8790](http://localhost:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
+| **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and Gemini API integration. |
 
 ### Shared Packages (`packages/`)
 
@@ -98,23 +98,7 @@ graph TD
 - **pnpm**
 - **SQLite3 CLI** (`sqlite3`)
 
-### 2. Local Domain Setup
-
-To support clean OAuth redirects and inter-app API calls, map `localhost.tabitha.bible` to `127.0.0.1`:
-
-- **macOS / Linux**:
-
-  ```bash
-  echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts
-  ```
-
-- **Windows** (PowerShell as Admin):
-
-  ```powershell
-  Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "127.0.0.1 localhost.tabitha.bible"
-  ```
-
-### 3. Bootstrap Workspace
+### 2. Bootstrap Workspace
 
 ```bash
 # 1. Install dependencies
@@ -127,7 +111,7 @@ pnpm setup
 pnpm check:doctor
 ```
 
-### 4. Start Development Servers
+### 3. Start Development Servers
 
 ```bash
 # Start all 5 apps concurrently
@@ -143,6 +127,16 @@ pnpm dev:sources
 pnpm dev:targets
 pnpm dev:copilot
 ```
+
+### 4. Ontology Local Permissions (first time only)
+
+`pnpm setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:5173`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
+
+```bash
+pnpm db:grant your.email@example.com
+```
+
+Grants every Ontology permission to that email in your local Auth D1 only — production is untouched. Re-run after any `pnpm db:load`/`db:load:ontology`, since a fresh snapshot resets local grants too.
 
 ---
 
@@ -160,6 +154,42 @@ All contributions should adhere to the **13 TaBiThA Development Philosophies** a
   - **E2E Tests (`*.spec.ts`)**: Multi-service browser integration tests executed via Playwright.
 
 👉 **Complete Definitions & Code Examples**: See the canonical [**`AGENTS.md`**](AGENTS.md) at the repository root.
+
+---
+
+## 🤖 AI-Assisted Development
+
+TaBiThA is set up to make AI coding agents effective contributors here, whichever tool you use — none of this requires adopting any particular agent, it's infrastructure that's there if you want it.
+
+### `AGENTS.md` — the shared source of truth
+
+[**`AGENTS.md`**](AGENTS.md) is the canonical constitution for this repo: the 14 development philosophies, architecture and package boundaries, and secrets-vs-config rules. It's written for humans first (README and this guide both link to it), but its filename is also a convention several AI coding agents auto-discover and load as project context — so pointing an agent at this repo tends to get you conventions-aware output without extra prompting.
+
+### `.claude/skills/` — narrower, task-scoped guidance
+
+Some conventions are too specific to belong in AGENTS.md but still worth writing down once — e.g. `.claude/skills/typography/SKILL.md` covers when `prose` belongs on an element vs. when to escape it with `not-prose`. These are loaded contextually by Claude Code when relevant. Add a new skill here when you notice an agent (or a human) repeatedly getting a narrow, specific convention wrong.
+
+### `docs/decisions/` — don't relitigate settled choices
+
+Architecture Decision Records capture the "why" behind non-obvious technical choices. Worth checking before you (or an agent) re-derive a decision that's already been made — see [`docs/decisions/README.md`](docs/decisions/README.md).
+
+### The safety net: automated enforcement
+
+`scripts/audits/check_philosophies.ts`, run as part of `pnpm check`/`pnpm precommit`, mechanically enforces several of the 14 philosophies. This applies equally to human- and AI-authored code, which is what keeps "let an agent try it" low-risk here — drift gets caught by the same gate either way.
+
+### Commit messages
+
+The IDE's AI commit-message generation is already wired to the repo's conventions — see [Commit Message Guidelines](#️-commit-message-guidelines-why-first-philosophy) above.
+
+---
+
+## 🌱 Branching Strategy
+
+TaBiThA follows a lightweight GitHub Flow:
+
+- 🔒 `main` is always deployable.
+- 🌿 **Regular work**: branch off `main` → make your changes → open a PR targeting `main` → review + `pnpm precommit`/CI pass → squash-merge (branch auto-deletes). Naming your branch is up to you.
+- 🚑 **Hotfixes/patches**: urgent production fixes may skip the PR and push straight to `main` — enabled by GitHub's existing admin bypass on branch protection, not a separate rule to configure. Non-admins still go through a PR.
 
 ---
 
@@ -192,7 +222,7 @@ Git diffs show *what* code changed; commit messages should explain **why** the c
 
 ### Convenient Git Commit Template (`.gitmessage`)
 
-Running `pnpm setup` automatically registers the repository's `.gitmessage` template (`git config commit.template .gitmessage`). When you run `git commit` (or commit via your IDE), your editor will open pre-populated with prompts and type reminders. Lines starting with `#` are automatically stripped out by Git.
+`pnpm setup` registers the repo's `.gitmessage` template (`git config commit.template .gitmessage`) — `git commit` then opens pre-populated with prompts and type reminders. Lines starting with `#` are stripped by Git.
 
 ### ✨ AI Commit "Easy Button" in IDE
 

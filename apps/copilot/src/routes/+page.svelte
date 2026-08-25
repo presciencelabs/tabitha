@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { default_settings, fetch_target_text, lwc_info } from '$lib/lookups'
+	import { default_settings, fetch_notes, fetch_target_text, lwc_info } from '$lib/lookups'
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
 
-	let reference = $state(persisted<VerseReference>('saved_verse', {
+	let reference = $state(persisted<VerseReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
 		chapter: 1,
 		verse: 1,
-	}).value)
+	} }).value)
 	let submitted_reference: VerseReference = $state($state.snapshot(reference))
 
-	let settings = $state(persisted<CopilotSettings>('saved_settings@1.5', default_settings).value)
+	let settings = $state(persisted<CopilotSettings>({ key: 'saved_settings@1.5', defaultValue: default_settings }).value)
 
 	let fetching_english = $state(false)
 	let english_text: TargetApiResult|undefined = $state(undefined)
@@ -23,24 +23,22 @@
 
 	async function get_english_text() {
 		fetching_english = true
-		english_text = await fetch_target_text(reference, 'English', 'Unchurched Adults')
+		english_text = await fetch_target_text({ verse_ref: reference, project: 'English', preferred_audience: 'Unchurched Adults' })
 		fetching_english = false
 	}
 
 	async function get_notes() {
 		fetching_notes = true
 		error_text = ''
-		
+
 		const { book, chapter, verse } = reference
 		submitted_reference = { book, chapter, verse }
-		const params = JSON.stringify(settings)
-		const response = await fetch(`/${book}/${chapter}/${verse}?settings=${encodeURIComponent(params)}`)
 
-		if (response.ok) {
-			result = await response.json() as CopilotApiResult
+		try {
+			result = await fetch_notes({ reference, settings })
 			error_text = result.error || ''
-		} else {
-			error_text = (await response.json())?.message as string || 'Unexpected error occurred'
+		} catch (err) {
+			error_text = err instanceof Error ? err.message : 'Unexpected error occurred'
 			console.error(error_text)
 		}
 

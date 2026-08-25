@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 import type { TextResult } from '$lib/types'
 
-export const GET: RequestHandler = async ({ locals: { db }, params: { project, book, chapter, verse } }) => {
+export async function GET({ locals: { db }, params: { project, book, chapter, verse } }: Parameters<RequestHandler>[0]) {
 	const sql = `
 		SELECT DISTINCT text, audience
 		FROM Text

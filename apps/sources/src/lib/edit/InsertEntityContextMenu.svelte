@@ -11,9 +11,10 @@
 	type Props = {
 		source_entities: PageSourceEntity[]
 		data: EntityContextMenuData
-		onclose: (recalculate?: boolean) => void
+		onclose: () => void
+		onclose_and_recalculate: () => void
 	}
-	let { source_entities = $bindable(), data, onclose }: Props = $props()
+	let { source_entities = $bindable(), data, onclose, onclose_and_recalculate }: Props = $props()
 
 	let parent_category = $derived.by(() => {
 		const entity = source_entities[data.entity_id]
@@ -26,11 +27,11 @@
 	function insert_entities(entities: PageSourceEntity[]) {
 		const new_entities = entities.map(entity => ({
 			...entity,
-			...fill_in_features(entity, page.data.features as FeatureMap),
+			...fill_in_features({ source_entity: entity, all_features: page.data.features as FeatureMap }),
 		}))
 		
 		source_entities.splice(data.entity_id, 0, ...new_entities)
-		onclose(true)
+		onclose_and_recalculate()
 	}
 
 	function insert_entity(entity: PageSourceEntity) {
@@ -45,7 +46,7 @@
 		])
 	}
 
-	function insert_phrase(phrase: PageSourceEntity, concept: PageSourceEntity) {
+	function insert_phrase({ phrase, concept }: { phrase: PageSourceEntity, concept: PageSourceEntity }) {
 		insert_entities([
 			phrase,
 			...concept?.concept?.stem ? [concept] : [],
@@ -70,7 +71,7 @@
 		const new_entities = entity_clipboard.paste()
 		if (new_entities !== null) {
 			source_entities.splice(data.entity_id, 0, ...new_entities)
-			onclose(true)
+			onclose_and_recalculate()
 		} else {
 			onclose()
 		}
@@ -80,7 +81,7 @@
 	let new_concept_entity = $state<PageSourceEntity | null>(null)
 	let new_phrase_entity = $state<PageSourceEntity | null>(null)
 
-	function open_concept_dialog(concept: PageSourceEntity, phrase?: PageSourceEntity) {
+	function open_concept_dialog({ concept, phrase }: { concept: PageSourceEntity, phrase?: PageSourceEntity }) {
 		new_concept_entity = concept
 		new_phrase_entity = phrase || null
 		dialog_open = true
@@ -89,7 +90,7 @@
 		dialog_open = false
 
 		if (new_phrase_entity && new_concept_entity) {
-			insert_phrase(new_phrase_entity, new_concept_entity)
+			insert_phrase({ phrase: new_phrase_entity, concept: new_concept_entity })
 		} else if (new_concept_entity?.concept?.stem) {
 			insert_entity(new_concept_entity)
 		} else {
@@ -143,69 +144,69 @@
 		['Phrase', [
 			{
 				label: 'Noun Phrase',
-				action: () => open_concept_dialog(DEFAULTS.NOUN, DEFAULTS.NOUN_PHRASE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.NOUN, phrase: DEFAULTS.NOUN_PHRASE }),
 				condition: !!parent_category && parent_category !== 'Verb Phrase',
 			},
 			{
 				label: 'Verb Phrase',
-				action: () => open_concept_dialog(DEFAULTS.VERB, DEFAULTS.VERB_PHRASE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.VERB, phrase: DEFAULTS.VERB_PHRASE }),
 				condition: parent_category === 'Clause',
 			},
 			{
 				label: 'Adjective Phrase',
-				action: () => open_concept_dialog(DEFAULTS.ADJECTIVE, DEFAULTS.ADJECTIVE_PHRASE_PREDICATIVE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADJECTIVE, phrase: DEFAULTS.ADJECTIVE_PHRASE_PREDICATIVE }),
 				condition: parent_category === 'Clause',
 			},
 			{
 				label: 'Adjective Phrase',
-				action: () => open_concept_dialog(DEFAULTS.ADJECTIVE, DEFAULTS.ADJECTIVE_PHRASE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADJECTIVE, phrase: DEFAULTS.ADJECTIVE_PHRASE }),
 				condition: !!parent_category && parent_category !== 'Clause' && parent_category !== 'Verb Phrase',
 			},
 			{
 				label: 'Adverb Phrase',
-				action: () => open_concept_dialog(DEFAULTS.ADVERB, DEFAULTS.ADVERB_PHRASE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADVERB, phrase: DEFAULTS.ADVERB_PHRASE }),
 				condition: !!parent_category && parent_category !== 'Verb Phrase',
 			},
 		]],
 		['Concept', [
 			{
 				label: 'Noun',
-				action: () => open_concept_dialog(DEFAULTS.NOUN),
+				action: () => open_concept_dialog({ concept: DEFAULTS.NOUN }),
 				condition: parent_category === 'Noun Phrase',
 			},
 			{
 				label: 'Verb',
-				action: () => open_concept_dialog(DEFAULTS.VERB),
+				action: () => open_concept_dialog({ concept: DEFAULTS.VERB }),
 				condition: parent_category === 'Verb Phrase',
 			},
 			{
 				label: 'Adjective',
-				action: () => open_concept_dialog(DEFAULTS.ADJECTIVE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADJECTIVE }),
 				condition: parent_category === 'Adjective Phrase',
 			},
 			{
 				label: 'Adverb',
-				action: () => open_concept_dialog(DEFAULTS.ADVERB),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADVERB }),
 				condition: parent_category === 'Adverb Phrase',
 			},
 			{
 				label: 'Adposition',
-				action: () => open_concept_dialog(DEFAULTS.ADPOSITION),
+				action: () => open_concept_dialog({ concept: DEFAULTS.ADPOSITION }),
 				condition: !!parent_category,
 			},
 			{
 				label: 'Conjunction',
-				action: () => open_concept_dialog(DEFAULTS.CONJUNCTION),
+				action: () => open_concept_dialog({ concept: DEFAULTS.CONJUNCTION }),
 				condition: !!parent_category,
 			},
 			{
 				label: 'Particle',
-				action: () => open_concept_dialog(DEFAULTS.PARTICLE),
+				action: () => open_concept_dialog({ concept: DEFAULTS.PARTICLE }),
 				condition: !!parent_category,
 			},
 			{
 				label: 'Phrasal',
-				action: () => open_concept_dialog(DEFAULTS.PHRASAL),
+				action: () => open_concept_dialog({ concept: DEFAULTS.PHRASAL }),
 				condition: !!parent_category,
 			},
 		]],

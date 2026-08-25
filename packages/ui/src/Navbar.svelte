@@ -19,11 +19,11 @@
 	let {
 		current_app,
 		links = [
-			{ name: 'Ontology', href: 'http://localhost.tabitha.bible:5173' },
-			{ name: 'Sources', href: 'http://localhost.tabitha.bible:8789' },
-			{ name: 'Targets', href: 'http://localhost.tabitha.bible:8788' },
-			{ name: 'Editor', href: 'http://localhost.tabitha.bible:8790' },
-			{ name: 'Copilot', href: 'http://localhost.tabitha.bible:8793' },
+			{ name: 'Ontology', href: 'http://localhost:5173' },
+			{ name: 'Sources', href: 'http://localhost:8789' },
+			{ name: 'Targets', href: 'http://localhost:8788' },
+			{ name: 'Editor', href: 'http://localhost:8790' },
+			{ name: 'Copilot', href: 'http://localhost:8793' },
 		],
 		children,
 		actions,

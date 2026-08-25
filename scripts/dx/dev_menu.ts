@@ -2,7 +2,7 @@ import { createInterface } from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { spawn } from 'node:child_process'
 
-interface AppInfo {
+type AppInfo = {
 	id: string
 	pkg: string
 	name: string
@@ -48,7 +48,7 @@ const APPS: Record<string, AppInfo> = {
 	},
 }
 
-interface Preset {
+type Preset = {
 	name: string
 	description: string
 	apps: string[]
@@ -108,7 +108,7 @@ async function start_turbo_dev(selected_app_keys: string[]) {
 
 Active Endpoints:`)
 	for (const app of selected_apps) {
-		console.log(`  • ${app.name.padEnd(10)} http://localhost.tabitha.bible:${app.port} (${app.desc})`)
+		console.log(`  • ${app.name.padEnd(10)} http://localhost:${app.port} (${app.desc})`)
 	}
 	console.log('============================================================\n')
 

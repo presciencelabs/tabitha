@@ -25,7 +25,12 @@ import type { PageSourceEntity, Source } from '$lib/types'
  * ~\wd ~\tg .-~\lu .           => { type: '.', label: 'period', features: '', value: '.' }
  * ~\\wd ~\\tg R-~\\lu |        => { type: 'R', label: 'Paragraph', features: '', value: '|' }
  */
-export async function transform_semantic_encoding(db: D1Database, semantic_encoding: string): Promise<SourceEntity[]> {
+type TransformSemanticEncodingOptions = {
+	db: D1Database
+	semantic_encoding: string
+}
+
+export async function transform_semantic_encoding({ db, semantic_encoding }: TransformSemanticEncodingOptions): Promise<SourceEntity[]> {
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg (?:([\w.])-([^~]*))?~\\lu ([^~]+)/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
@@ -41,8 +46,8 @@ export async function transform_semantic_encoding(db: D1Database, semantic_encod
 
 		const category = CATEGORY_NAME_LOOKUP.get(category_code) || ''
 		const category_abbr = CATEGORY_ABBREVIATIONS.get(category) || ''
-		const ontology_data = decode_concept_data(value, category, feature_codes)
-		const features = decode_features(feature_codes, category, all_features)
+		const ontology_data = decode_concept_data({ value, category, raw_feature_codes: feature_codes })
+		const features = decode_features({ raw_feature_codes: feature_codes, category, all_features })
 
 		return {
 			category,
@@ -54,7 +59,13 @@ export async function transform_semantic_encoding(db: D1Database, semantic_encod
 	}
 }
 
-export async function transform_target_encoding(db: D1Database, semantic_encoding: string, project: string): Promise<TargetEntity[]> {
+type TransformTargetEncodingOptions = {
+	db: D1Database
+	semantic_encoding: string
+	project: string
+}
+
+export async function transform_target_encoding({ db, semantic_encoding, project }: TransformTargetEncodingOptions): Promise<TargetEntity[]> {
 	// In addition to the source encoding, '~\z1' denotes the target word
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg ([^~]+)?~\\lu ([^~]+)~\\z1 ?([^~]+)?/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
@@ -71,10 +82,10 @@ export async function transform_target_encoding(db: D1Database, semantic_encodin
 		const category = is_user_defined ? entity_match[1].slice(1) : CATEGORY_NAME_LOOKUP.get(category_code) || ''
 		const category_abbr = is_user_defined ? category : CATEGORY_ABBREVIATIONS.get(category) || ''
 		const raw_feature_codes = is_user_defined ? '' : entity_match[1]?.slice(2) || ''
-		const { feature_codes, features, noun_list_index } = decode_features(raw_feature_codes, category, all_features)
+		const { feature_codes, features, noun_list_index } = decode_features({ raw_feature_codes, category, all_features })
 
 		const value = entity_match[2]
-		const concept = decode_concept_data(value, category, raw_feature_codes).concept
+		const concept = decode_concept_data({ value, category, raw_feature_codes }).concept
 		const target = entity_match[3] === 'Paragraph' ? '|' : entity_match[3] || ''
 
 		return {
@@ -107,7 +118,7 @@ function parse_concept_pairing(value: string): ConceptPairingMatch | null {
 	return { stem, pairing_type, pairing_sense, pairing_stem }
 }
 
-function decode_concept_data(value: string, category: CategoryName, raw_feature_codes: string): SourceConceptData {
+function decode_concept_data({ value, category, raw_feature_codes }: { value: string, category: CategoryName, raw_feature_codes: string }): SourceConceptData {
 	if (!WORD_ENTITY_CATEGORIES.has(category)) {
 		return { concept: null, pairing_concept: null, pairing_type: '' }
 	}

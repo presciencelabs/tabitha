@@ -68,7 +68,7 @@ describe('examples/filters', () => {
 			make_example('Exodus', { Role: 'patient-A' }),
 		]
 
-		const filters = derive_filters(concept, examples)
+		const filters = derive_filters({ concept, examples })
 
 		expect(filters.has('Book')).toBe(true)
 		const bookOptions = Array.from(filters.get('Book') || [])

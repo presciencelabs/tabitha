@@ -6,7 +6,7 @@ import { find_related_concepts } from '$lib/server/semantic_search'
 import type { PageServerLoad } from './$types'
 import type { ConceptSearchFilter } from '$lib/types'
 
-export const load: PageServerLoad = async ({ url: { searchParams }, locals: { db_ontology } }) => {
+export async function load({ url: { searchParams }, locals: { db_ontology } }: Parameters<PageServerLoad>[0]) {
 	const search_filter: ConceptSearchFilter = {
 		q: '',
 		scope: 'stems',
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ url: { searchParams }, locals: { db
 	]
 
 	if (search_filter.scope === 'semantic') {
-		const related = await find_related_concepts(db_ontology, search_filter.q)
+		const related = await find_related_concepts({ db: db_ontology, search_term: search_filter.q })
 		results.push(...related)
 	}
 

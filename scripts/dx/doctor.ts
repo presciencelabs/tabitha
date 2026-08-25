@@ -1,4 +1,3 @@
-import { lookup } from 'node:dns/promises'
 import { existsSync, readdirSync } from 'node:fs'
 import { platform } from 'node:os'
 import { join } from 'node:path'
@@ -8,7 +7,7 @@ import { check_cloudflare_configs } from '../audits/check_cloudflare'
 import { sync_readme_badges } from '../audits/check_readme_badges'
 import { scan_secrets } from '../audits/check_secrets'
 
-interface DiagnosticResult {
+type DiagnosticResult = {
 	category: string
 	name: string
 	status: 'PASS' | 'WARN' | 'FAIL'
@@ -128,57 +127,13 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 	return results
 }
 
-async function check_network_and_dns(): Promise<DiagnosticResult[]> {
-	const results: DiagnosticResult[] = []
-	try {
-		const { address } = await lookup('localhost.tabitha.bible')
-		if (address === '127.0.0.1' || address === '::1') {
-			results.push({
-				category: 'Network & DNS',
-				name: 'Local Domain Mapping',
-				status: 'PASS',
-				message: `localhost.tabitha.bible -> ${address}`,
-			})
-		} else {
-			results.push({
-				category: 'Network & DNS',
-				name: 'Local Domain Mapping',
-				status: 'WARN',
-				message: `Resolves to ${address} (expected 127.0.0.1)`,
-				fix: 'Check your local hosts file (/etc/hosts or C:\\Windows\\System32\\drivers\\etc\\hosts)',
-			})
-		}
-	} catch {
-		const os_type = platform()
-		const hosts_fix = os_type === 'win32'
-			? 'Add-Content -Path C:\\Windows\\System32\\drivers\\etc\\hosts -Value "127.0.0.1 localhost.tabitha.bible"'
-			: 'echo "127.0.0.1 localhost.tabitha.bible" | sudo tee -a /etc/hosts'
-
-		results.push({
-			category: 'Network & DNS',
-			name: 'Local Domain Mapping',
-			status: 'WARN',
-			message: 'localhost.tabitha.bible not mapped in hosts',
-			fix: hosts_fix,
-		})
-	}
-	return results
-}
-
 async function check_env_files(): Promise<DiagnosticResult[]> {
 	const results: DiagnosticResult[] = []
-	let all_present = true
-	const missing_apps: string[] = []
+	const missing_apps = APPS
+		.filter(app => !existsSync(join(process.cwd(), 'apps', app.name, '.env.local')))
+		.map(app => app.name)
 
-	for (const app of APPS) {
-		const env_path = join(process.cwd(), 'apps', app.name, '.env.local')
-		if (!existsSync(env_path)) {
-			all_present = false
-			missing_apps.push(app.name)
-		}
-	}
-
-	if (all_present) {
+	if (missing_apps.length === 0) {
 		results.push({
 			category: 'Environment',
 			name: 'App .env.local Files',
@@ -252,16 +207,16 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 					name: `D1 Database (${app.name})`,
 					status: 'WARN',
 					message: `Database exists but table '${app.table}' has 0 rows`,
-					fix: `Run \`pnpm db:load\` to populate tables`,
+					fix: 'Run `pnpm db:load` to populate tables',
 				})
 			}
-		} catch (err: any) {
+		} catch (err) {
 			results.push({
 				category: 'Local Databases',
 				name: `D1 Database (${app.name})`,
 				status: 'WARN',
-				message: `Error querying SQLite: ${err?.message || err}`,
-				fix: `Run \`pnpm db:load\` to re-bootstrap SQLite snapshot`,
+				message: `Error querying SQLite: ${err instanceof Error ? err.message : err}`,
+				fix: 'Run `pnpm db:load` to re-bootstrap SQLite snapshot',
 			})
 		}
 	}
@@ -291,12 +246,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `pnpm check:secrets` for line-by-line inspection',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'Credential & Secret Scanner',
 			status: 'WARN',
-			message: `Could not run scanner: ${err?.message || err}`,
+			message: `Could not run scanner: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -319,12 +274,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `pnpm check:cloudflare` for details',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'Cloudflare Wrangler Configs',
 			status: 'WARN',
-			message: `Could not check Cloudflare configs: ${err?.message || err}`,
+			message: `Could not check Cloudflare configs: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -347,12 +302,12 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				fix: 'Run `bun scripts/audits/check_readme_badges.ts --fix` to sync badges',
 			})
 		}
-	} catch (err: any) {
+	} catch (err) {
 		results.push({
 			category: 'Quality & Security',
 			name: 'README Badges Sync',
 			status: 'WARN',
-			message: `Could not check README badges: ${err?.message || err}`,
+			message: `Could not check README badges: ${err instanceof Error ? err.message : err}`,
 		})
 	}
 
@@ -367,15 +322,14 @@ export async function run_doctor(): Promise<{ all_passed: boolean; fixes: string
 `)
 
 	const results: DiagnosticResult[] = [
-		...(await check_runtimes()),
-		...(await check_network_and_dns()),
-		...(await check_env_files()),
-		...(await check_local_databases()),
-		...(await check_security_and_cloudflare()),
+		...await check_runtimes(),
+		...await check_env_files(),
+		...await check_local_databases(),
+		...await check_security_and_cloudflare(),
 	]
 
 	// Group by category
-	const categories = Array.from(new Set(results.map(r => r.category)))
+	const categories = [...new Set(results.map(r => r.category))]
 	const fixes: { name: string; fix: string }[] = []
 
 	for (const cat of categories) {

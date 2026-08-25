@@ -2,10 +2,6 @@ import { TOKEN_TYPE } from '$lib/token'
 import type { CaseFrameRuleJson, RoleRuleValueJson } from '$lib/rules/case_frame/types'
 import type { TokenContextFilterJson, TokenFilterJsonBase } from '$lib/rules/types'
 
-/**
- * 
- * @returns {SenseRuleJson<VerbRoleTag>}
- */
 export function patient_from_subordinate_clause() {
 	return {
 		'patient': {
@@ -22,10 +18,6 @@ export function patient_from_subordinate_clause() {
 	}
 }
 
-/**
- * 
- * @returns {SenseRuleJson<VerbRoleTag>}
- */
 export function with_be_auxiliary() {
 	return {
 		'other_rules': {
@@ -42,10 +34,6 @@ export function with_be_auxiliary() {
 	}
 }
 
-/**
- * 
- * @returns {SenseRuleJson<VerbRoleTag>}
- */
 export function with_no_double_patient() {
 	return {
 		'other_rules': {

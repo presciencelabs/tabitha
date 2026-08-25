@@ -14,7 +14,6 @@ process.env.WRANGLER_LOG ??= 'warn'
  *
  * @param {Object} options
  * @param {number} options.port Dedicated local development port
- * @param {string} [options.host] Hostname (defaults to 'localhost.tabitha.bible')
  * @param {any[]} [options.plugins] Additional Vite plugins
  * @param {Record<string, any>} [options.server] Server configuration overrides
  * @param {Record<string, any>} [options.ssr] SSR configuration overrides
@@ -23,7 +22,6 @@ process.env.WRANGLER_LOG ??= 'warn'
  */
 export function create_app_vite_config({
 	port,
-	host = 'localhost.tabitha.bible',
 	plugins = [],
 	server = {},
 	ssr = {},
@@ -36,7 +34,6 @@ export function create_app_vite_config({
 			...plugins,
 		],
 		server: {
-			host,
 			port,
 			strictPort: true,
 			...server,

@@ -28,6 +28,7 @@ playwright-report/
 blob-report/
 playwright/.cache/
 coverage/
+**/e2e/.auth/
 
 # OS & Logs
 .DS_Store

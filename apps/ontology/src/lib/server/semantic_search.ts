@@ -6,7 +6,12 @@ import type { Concept } from '$lib/types'
 
 const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 
-export async function find_related_concepts(db: D1Database, search_term: string): Promise<Concept[]> {
+type FindRelatedConceptsOptions = {
+	readonly db: D1Database
+	readonly search_term: string
+}
+
+export async function find_related_concepts({ db, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
 	const all_concepts = await get_all_concepts(db)
 
 	// These filters currently result in ~3800 concepts getting sent to the LLM, down from ~6380

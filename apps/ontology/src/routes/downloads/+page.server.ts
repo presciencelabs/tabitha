@@ -9,7 +9,7 @@ type Backup = {
 	version: string,
 }
 
-export const load: PageServerLoad = async ({ platform }) => {
+export async function load({ platform }: Parameters<PageServerLoad>[0]) {
 	console.info('checking for downloads...')
 
 	// https://developers.cloudflare.com/r2/api/workers/workers-api-reference/#bucket-method-definitions

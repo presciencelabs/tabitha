@@ -3,10 +3,10 @@ import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { Reference } from '@tabitha/types'
 
-export const POST: RequestHandler = async ({ locals: { db }, request }) => {
+export async function POST({ locals: { db }, request }: Parameters<RequestHandler>[0]) {
 	const references: Reference[] = await request.json()
 
-	const results = await get_verse_statuses(db, references)
+	const results = await get_verse_statuses({ db, references })
 
 	return json(results)
 }

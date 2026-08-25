@@ -1,19 +1,23 @@
+import { execSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+	check_classes_at_end,
+	check_lib_routes_boundary,
+	check_prose_scoping,
+	check_pure_functions,
+	check_snake_case_functions,
+	check_strict_domain_typing,
+	check_sveltekit_data_boundaries,
+	check_tabs_indentation,
+	find_native_callback_names,
+	findings,
+} from './philosophies'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
-
-interface PhilosophyFinding {
-	rule_id: number
-	rule_title: string
-	file_path: string
-	line_number: number
-	snippet: string
-	message: string
-}
 
 // Maps each rule to the AGENTS.md section that explains it, so a failing check
 // can point a developer (or AI agent) straight to the "why" instead of just the "what".
@@ -22,10 +26,11 @@ const RULE_DOC_ANCHORS: Record<number, string> = {
 	5: 'AGENTS.md#5-classes-at-the-end-of-elements',
 	7: 'AGENTS.md#7-strict-domain-typing',
 	10: 'AGENTS.md#10-snake_case-for-functions-variables-and-files',
+	11: 'AGENTS.md#11-pure-functions',
 	13: 'AGENTS.md#13-scope-prose-to-content-escape-with-not-prose',
+	14: 'AGENTS.md#14-sveltekit-data-loading-boundaries',
+	20: 'AGENTS.md#app-internal-libroutes-boundary',
 }
-
-const findings: PhilosophyFinding[] = []
 
 async function get_source_files(dir: string): Promise<string[]> {
 	if (!existsSync(dir)) return []
@@ -43,7 +48,7 @@ async function get_source_files(dir: string): Promise<string[]> {
 			) {
 				continue
 			}
-			files.push(...(await get_source_files(full_path)))
+			files.push(...await get_source_files(full_path))
 		} else if (
 			(entry.name.endsWith('.ts') || entry.name.endsWith('.js') || entry.name.endsWith('.svelte')) &&
 			!entry.name.endsWith('.d.ts') &&
@@ -57,147 +62,9 @@ async function get_source_files(dir: string): Promise<string[]> {
 	return files
 }
 
-function check_tabs_indentation(file_path: string, lines: string[]) {
-	// Philosophy 3: Tabs for indentation
-	lines.forEach((line, idx) => {
-		const trimmed = line.trimStart()
-		if (!trimmed || trimmed.startsWith('*') || trimmed.startsWith('/*')) return
-
-		const leading_spaces = line.match(/^( +)/)
-		if (leading_spaces && leading_spaces[1].length >= 2) {
-			findings.push({
-				rule_id: 3,
-				rule_title: 'Tabs for indentation',
-				file_path,
-				line_number: idx + 1,
-				snippet: line.trim(),
-				message: `Line is indented with ${leading_spaces[1].length} spaces instead of tab character(s).`,
-			})
-		}
-	})
-}
-
-function check_classes_at_end(file_path: string, content: string, lines: string[]) {
-	// Philosophy 5: Classes at the end of elements (in .svelte files)
-	if (!file_path.endsWith('.svelte')) return
-
-	// Regex looks for tags with class="..." followed by functional attributes like onclick, disabled, type, href
-	const element_regex = /<([a-zA-Z0-9_-]+)\s+([^>]+)>/g
-	let match
-
-	while ((match = element_regex.exec(content)) !== null) {
-		const tag_name = match[1]
-		const attrs_string = match[2]
-
-		if (tag_name === 'script' || tag_name === 'style') continue
-
-		const class_match = attrs_string.match(/\bclass=["'{]/)
-		if (!class_match || class_match.index === undefined) continue
-
-		const class_pos = class_match.index
-		const rest_of_attrs = attrs_string.slice(class_pos)
-
-		// Check if functional attributes appear after class attribute
-		const functional_attr_match = rest_of_attrs.match(/\b(onclick|onchange|onsubmit|onkeydown|type|disabled|href|value)=/)
-		if (functional_attr_match) {
-			const line_number = content.substring(0, match.index).split('\n').length
-			findings.push({
-				rule_id: 5,
-				rule_title: 'Classes at the end of elements',
-				file_path,
-				line_number,
-				snippet: match[0].slice(0, 80) + '...',
-				message: `Element <${tag_name}> has functional attribute "${functional_attr_match[1]}" placed after class attribute.`,
-			})
-		}
-	}
-}
-
-const LAYOUT_UTILITY_PATTERN = /^(flex|grid|inline-flex|inline-grid|items-|justify-|content-|place-|gap-\d)/
-const DAISYUI_STRUCTURAL_PATTERN = /^(card-title|card-actions|btn|navbar|modal-action|menu|tabs|steps|alert)/
-
-function check_prose_scoping(file_path: string, content: string) {
-	// Philosophy 13: Scope "prose" to content; escape with "not-prose"
-	if (!file_path.endsWith('.svelte')) return
-
-	const class_attr_regex = /class=["']([^"']*)["']/g
-	let match
-
-	while ((match = class_attr_regex.exec(content)) !== null) {
-		const classes = match[1].split(/\s+/).filter(Boolean)
-		const has_prose = classes.some(c => c === 'prose' || c.startsWith('prose-'))
-		if (!has_prose) continue
-
-		const conflicting_classes = classes.filter(c => LAYOUT_UTILITY_PATTERN.test(c) || DAISYUI_STRUCTURAL_PATTERN.test(c))
-		if (conflicting_classes.length === 0) continue
-
-		const line_number = content.substring(0, match.index).split('\n').length
-		findings.push({
-			rule_id: 13,
-			rule_title: 'Scope prose to content; escape with not-prose',
-			file_path,
-			line_number,
-			snippet: match[0],
-			message: `Element combines "prose" typography with layout/component class(es) (${conflicting_classes.join(', ')}). Move layout onto a wrapping element and keep "prose" scoped to a content-only block, or add "not-prose" to the nested component.`,
-		})
-	}
-}
-
-const SVELTEKIT_FRAMEWORK_EXEMPTIONS = new Set(['handleError', 'handleFetch', 'handle', 'reroute', 'load'])
-
-function check_strict_domain_typing(file_path: string, lines: string[]) {
-	// Philosophy 7: Strict domain typing (avoid : any or as any in TypeScript files)
-	if (!file_path.endsWith('.ts') && !file_path.endsWith('.svelte')) return
-
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
-
-		// Matches ': any' or 'as any'
-		const any_match = line.match(/(:\s*any\b|\bas\s+any\b)/)
-		if (any_match) {
-			findings.push({
-				rule_id: 7,
-				rule_title: 'Strict domain typing',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: `Explicit use of "${any_match[1].trim()}" detected. Prefer explicit types or discriminating unions.`,
-			})
-		}
-	})
-}
-
-function check_snake_case_functions(file_path: string, lines: string[]) {
-	// Philosophy 10: snake_case for functions and variables
-	lines.forEach((line, idx) => {
-		const trimmed = line.trim()
-		if (trimmed.startsWith('//') || trimmed.startsWith('*')) return
-
-		// Match function declaration: function camelCase(
-		const func_decl_match = trimmed.match(/\bfunction\s+([a-z]+[A-Z][a-zA-Z0-9]*)\s*\(/)
-		// Match const fn = (...) => or const fn = function
-		const const_fn_match = trimmed.match(/\b(?:const|let)\s+([a-z]+[A-Z][a-zA-Z0-9]*)\s*=\s*(?:\([^)]*\)|[a-zA-Z0-9_]+)\s*=>/)
-
-		const camel_name = func_decl_match?.[1] || const_fn_match?.[1]
-		if (camel_name) {
-			if (SVELTEKIT_FRAMEWORK_EXEMPTIONS.has(camel_name)) return
-			findings.push({
-				rule_id: 10,
-				rule_title: 'snake_case for functions and variables',
-				file_path,
-				line_number: idx + 1,
-				snippet: trimmed,
-				message: `Function "${camel_name}" uses camelCase. Prefer snake_case naming.`,
-			})
-		}
-	})
-}
-
 function get_changed_files(): Set<string> {
 	const changed = new Set<string>()
 	try {
-		const { execSync } = require('node:child_process')
 		const base_ref = process.env.GITHUB_BASE_REF ? `origin/${process.env.GITHUB_BASE_REF}` : 'origin/main'
 		let output = ''
 		try {
@@ -222,7 +89,7 @@ function get_changed_files(): Set<string> {
 async function audit_codebase() {
 	console.log(`
 ============================================================
-       📜 TaBiThA Development Philosophy Compliance Audit   
+       📜 TaBiThA Development Philosophy Compliance Audit
 ============================================================
 `)
 
@@ -237,11 +104,7 @@ async function audit_codebase() {
 		join(root_dir, 'packages/types/src'),
 	]
 
-	const all_files: string[] = []
-	for (const dir of search_dirs) {
-		const files = await get_source_files(dir)
-		all_files.push(...files)
-	}
+	const all_files = (await Promise.all(search_dirs.map(get_source_files))).flat()
 
 	const changed_files = get_changed_files()
 	const is_ci = process.env.GITHUB_ACTIONS === 'true'
@@ -253,16 +116,26 @@ async function audit_codebase() {
 		console.log('\n')
 	}
 
-	for (const file_path of all_files) {
-		const content = await readFile(file_path, 'utf-8')
+	const file_contents = await Promise.all(all_files.map(file_path => readFile(file_path, 'utf-8')))
+
+	// A function passed by reference to a native callback (e.g. a .sort() comparator) is
+	// typically defined in one module and used from another, so this exemption set is
+	// computed once across the whole corpus before any single file is checked.
+	const native_callback_names = find_native_callback_names(file_contents)
+
+	all_files.forEach((file_path, i) => {
+		const content = file_contents[i]
 		const lines = content.split('\n')
 
 		check_tabs_indentation(file_path, lines)
-		check_classes_at_end(file_path, content, lines)
+		check_classes_at_end(file_path, content)
 		check_strict_domain_typing(file_path, lines)
 		check_snake_case_functions(file_path, lines)
+		check_pure_functions(file_path, content, native_callback_names)
 		check_prose_scoping(file_path, content)
-	}
+		check_sveltekit_data_boundaries(file_path, lines)
+		check_lib_routes_boundary(file_path, content)
+	})
 
 	if (findings.length === 0) {
 		console.log('✨ 100% Compliance! All inspected files adhere to the Development Philosophies.\n')
@@ -297,7 +170,7 @@ async function audit_codebase() {
 	const summary_file = process.env.GITHUB_STEP_SUMMARY
 	if (is_ci && summary_file) {
 		const { appendFile } = await import('node:fs/promises')
-		let markdown = `## 🏛️ Architectural Philosophy & Compliance\n\n`
+		let markdown = '## 🏛️ Architectural Philosophy & Compliance\n\n'
 		if (findings.length === 0) {
 			markdown += `✨ **100% Compliance!** All ${all_files.length} inspected source files adhere to the Development Philosophies.\n\n`
 		} else {
@@ -311,24 +184,24 @@ async function audit_codebase() {
 			const pr_findings = findings.filter(f => changed_files.has(f.file_path))
 			if (pr_findings.length > 0) {
 				markdown += `### ✏️ Observations in PR-Modified Files (${pr_findings.length})\n\n`
-				markdown += `| Rule | Location | Observation | Docs |\n`
-				markdown += `| :--- | :--- | :--- | :--- |\n`
+				markdown += '| Rule | Location | Observation | Docs |\n'
+				markdown += '| :--- | :--- | :--- | :--- |\n'
 				for (const f of pr_findings) {
 					const rel_path = relative(root_dir, f.file_path)
 					markdown += `| **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 				}
-				markdown += `\n`
+				markdown += '\n'
 			}
 
 			markdown += `### 🌐 All Workspace Observations (${findings.length})\n\n`
-			markdown += `| Scope | Rule | Location | Observation | Docs |\n`
-			markdown += `| :--- | :--- | :--- | :--- | :--- |\n`
+			markdown += '| Scope | Rule | Location | Observation | Docs |\n'
+			markdown += '| :--- | :--- | :--- | :--- | :--- |\n'
 			for (const f of findings) {
 				const rel_path = relative(root_dir, f.file_path)
 				const scope = changed_files.has(f.file_path) ? '✏️ **PR File**' : '📄 Workspace'
 				markdown += `| ${scope} | **#${f.rule_id} (${f.rule_title})** | [\`${rel_path}#L${f.line_number}\`](https://github.com/${repo}/blob/${sha}/${rel_path}#L${f.line_number}) | ${f.message} | ${doc_link(f.rule_id)} |\n`
 			}
-			markdown += `\n`
+			markdown += '\n'
 		}
 		await appendFile(summary_file, markdown, 'utf-8')
 	}

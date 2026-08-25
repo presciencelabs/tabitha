@@ -2,24 +2,24 @@ import { default_flag_weights_for_discern, default_flag_weights_for_brief } from
 
 type FlagWeightingMap = Record<string, Record<string, number>>
 
-export function assign_flag_weights(flags: CopilotTriggerFlag[], settings: CopilotNoteSettings): CopilotWeightedFlag[] {
+export function assign_flag_weights({ flags, settings }: { flags: CopilotTriggerFlag[], settings: CopilotNoteSettings }): CopilotWeightedFlag[] {
 	const default_weights = settings.mode === 'discern' ? default_flag_weights_for_discern : default_flag_weights_for_brief
 	const profile_weights = get_profile_weights(settings.language_profile)
-	return flags.map(flag => assign_flag_weight(flag, profile_weights, default_weights))
+	return flags.map(flag => assign_flag_weight({ flag, profile_weights, default_weights }))
 }
 
-function assign_flag_weight(flag: CopilotTriggerFlag, profile_weights: FlagWeightingMap, default_weights: FlagWeightingMap): CopilotWeightedFlag {
-	const weight = get_flag_weight(flag, profile_weights) ?? get_flag_weight(flag, default_weights) ?? 0
+function assign_flag_weight({ flag, profile_weights, default_weights }: { flag: CopilotTriggerFlag, profile_weights: FlagWeightingMap, default_weights: FlagWeightingMap }): CopilotWeightedFlag {
+	const weight = get_flag_weight({ flag, weights: profile_weights }) ?? get_flag_weight({ flag, weights: default_weights }) ?? 0
 	return { ...flag, weight }
 }
 
-function get_flag_weight(flag: CopilotTriggerFlag, weights: FlagWeightingMap): number | undefined {
+function get_flag_weight({ flag, weights }: { flag: CopilotTriggerFlag, weights: FlagWeightingMap }): number | undefined {
 	const flag_weights = weights[flag.name]
 	if (!flag_weights) {
 		return undefined
 	}
 	const weight = flag_weights[flag.value]
-	return weight !== undefined ? weight : flag_weights['*']
+	return weight ?? flag_weights['*']
 }
 
 function get_profile_weights(profile: LanguageProfile): FlagWeightingMap {

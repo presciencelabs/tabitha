@@ -57,3 +57,23 @@ export type PageSourceEntity = SourceEntity & {
 	parent_id: number
 	boundary_category: string
 }
+
+export type AnalyzerStatus = 'ok' | 'warning' | 'error'
+
+export type AnalysisResult = {
+	// status: AnalyzerStatus
+	// notes: AnalysisNote[]
+	source_entities: PageSourceEntity[]
+	noun_list: NounListEntry[]
+}
+
+export type StatusRequestReference = {
+	type?: string
+	id_primary: string
+	id_secondary?: string
+}
+
+export type StatusResult = {
+	reference: StatusRequestReference
+	status: SourceStatus
+}

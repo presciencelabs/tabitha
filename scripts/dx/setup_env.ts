@@ -8,11 +8,11 @@ const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
 const local_hosts: Record<string, string> = {
-	PUBLIC_ONTOLOGY_API_HOST: 'http://localhost.tabitha.bible:5173',
-	PUBLIC_TARGETS_API_HOST: 'http://localhost.tabitha.bible:8788',
-	PUBLIC_SOURCES_API_HOST: 'http://localhost.tabitha.bible:8789',
-	PUBLIC_EDITOR_API_HOST: 'http://localhost.tabitha.bible:8790',
-	PUBLIC_COPILOT_API_HOST: 'http://localhost.tabitha.bible:8793',
+	PUBLIC_ONTOLOGY_API_HOST: 'http://localhost:5173',
+	PUBLIC_TARGETS_API_HOST: 'http://localhost:8788',
+	PUBLIC_SOURCES_API_HOST: 'http://localhost:8789',
+	PUBLIC_EDITOR_API_HOST: 'http://localhost:8790',
+	PUBLIC_COPILOT_API_HOST: 'http://localhost:8793',
 }
 
 function parse_env_file(content: string): Map<string, string> {
@@ -62,20 +62,35 @@ function generate_local_env_content(template_content: string, existing_content?:
 			continue
 		}
 
-		// Priority 2: If the developer already supplied a custom value in existing .env.local, preserve it
-		if (existing_vars.has(key) && existing_vars.get(key) !== '') {
-			output_lines.push(`${key}=${existing_vars.get(key)}`)
+		// Priority 2: Auth.js's redirect-proxy target only makes sense for a genuine Cloudflare
+		// deployment (prod or preview) -- always force it blank for local dev, overriding any stale
+		// value a developer might already have from a prior run
+		if (key === 'OAUTH_REDIRECT_PROXY_URL') {
+			output_lines.push('OAUTH_REDIRECT_PROXY_URL=')
 			continue
 		}
 
-		// Priority 3: If AUTH_SECRET is blank, generate a dedicated random secret for local dev & testing
+		// Priority 3: Trust cross-app localhost origins for CORS in local dev only
+		if (key === 'PUBLIC_CORS_ALLOW_LOCALHOST') {
+			output_lines.push('PUBLIC_CORS_ALLOW_LOCALHOST=true')
+			continue
+		}
+
+		// Priority 4: If the developer already supplied a custom value in existing .env.local, preserve it
+		const existing_value = existing_vars.get(key)
+		if (existing_value) {
+			output_lines.push(`${key}=${existing_value}`)
+			continue
+		}
+
+		// Priority 5: If AUTH_SECRET is blank, generate a dedicated random secret for local dev & testing
 		if (key === 'AUTH_SECRET') {
 			const dev_secret = randomBytes(32).toString('hex')
 			output_lines.push(`AUTH_SECRET=${dev_secret}`)
 			continue
 		}
 
-		// Priority 4: Fall back to the template line
+		// Priority 6: Fall back to the template line
 		output_lines.push(line)
 	}
 
@@ -87,12 +102,12 @@ export async function setup_env() {
 
 	const app_dirs = readdirSync(apps_dir, { withFileTypes: true })
 		.filter(d => d.isDirectory())
-		.map(d => join(apps_dir, d.name))
 
 	let configured_count = 0
 
-	for (const app_path of app_dirs) {
-		const app_name = app_path.replace(apps_dir + '/', '')
+	for (const app_dir of app_dirs) {
+		const app_name = app_dir.name
+		const app_path = join(apps_dir, app_name)
 		const env_template = join(app_path, '.env')
 		const env_local = join(app_path, '.env.local')
 

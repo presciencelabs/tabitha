@@ -18,7 +18,7 @@ function clone<T>(value: T): T {
 /**
  * Resolve a variable through bindings
  */
-function resolve_variable(variable: string, bindings: Record<string, unknown>): unknown {
+function resolve_variable({ variable, bindings }: { variable: string, bindings: Record<string, unknown> }): unknown {
 	let current: unknown = variable
 
 	while (is_variable(current) && bindings[current] !== undefined && bindings[current] !== current) {
@@ -31,10 +31,10 @@ function resolve_variable(variable: string, bindings: Record<string, unknown>): 
 /**
  * Compare two values recursively
  */
-function match_value(a: unknown, b: unknown, bindings: Record<string, unknown> = {}) {
+function match_value({ a, b, bindings = {} }: { a: unknown, b: unknown, bindings?: Record<string, unknown> }) {
 	const local_bindings = clone(bindings)
 
-	const result = match_value_internal(a, b, local_bindings)
+	const result = match_value_internal({ actual: a, pattern: b, bindings: local_bindings })
 
 	if (!result) {
 		return null
@@ -49,14 +49,14 @@ function match_value(a: unknown, b: unknown, bindings: Record<string, unknown> =
 /**
  * Internal recursive matching
  */
-function match_value_internal(actual: unknown, pattern: unknown, bindings: Record<string, unknown>): boolean {
+function match_value_internal({ actual, pattern, bindings }: { actual: unknown, pattern: unknown, bindings: Record<string, unknown> }): boolean {
 	// resolve bound vars
 	// There should be no variables in 'actual', but they can be in 'pattern'
 	if (is_variable(pattern)) {
-		const resolved = resolve_variable(pattern, bindings)
+		const resolved = resolve_variable({ variable: pattern, bindings })
 
 		if (resolved !== pattern) {
-			return match_value_internal(actual, resolved, bindings)
+			return match_value_internal({ actual, pattern: resolved, bindings })
 		}
 	}
 
@@ -82,11 +82,11 @@ function match_value_internal(actual: unknown, pattern: unknown, bindings: Recor
 	if (typeof pattern === 'object' && typeof actual === 'object') {
 		const pattern_obj = pattern as Record<string, unknown>
 		const actual_obj = actual as Record<string, unknown>
-		for (const key of Object.keys(pattern_obj)) {
+		for (const [key, pattern_value] of Object.entries(pattern_obj)) {
 			if (!(key in actual_obj)) {
 				return false
 			}
-			const value_match = match_value_internal(actual_obj[key], pattern_obj[key], bindings)
+			const value_match = match_value_internal({ actual: actual_obj[key], pattern: pattern_value, bindings })
 			if (!value_match) {
 				return false
 			}
@@ -105,7 +105,7 @@ function match_value_internal(actual: unknown, pattern: unknown, bindings: Recor
  *	- variable unification
  *	- named captures
  */
-function match_pattern_internal(node: EncodingEntity, pattern: PatternEntity, bindings: Record<string, unknown> = {}, captures: Record<string, EntityMatchCapture> = {}, stack: IndexStack = []): EntityMatch {
+function match_pattern_internal({ node, pattern, bindings = {}, captures = {}, stack = [] }: { node: EncodingEntity, pattern: PatternEntity, bindings?: Record<string, unknown>, captures?: Record<string, EntityMatchCapture>, stack?: IndexStack }): EntityMatch {
 	const local_bindings = clone(bindings)
 	const local_captures = clone(captures)
 
@@ -127,7 +127,7 @@ function match_pattern_internal(node: EncodingEntity, pattern: PatternEntity, bi
 			return { success: false, bindings, captures }
 		}
 
-		const result = match_value(node[key], pattern[key], local_bindings)
+		const result = match_value({ a: node[key], b: pattern[key], bindings: local_bindings })
 
 		if (!result) {
 			return { success: false, bindings, captures }
@@ -154,7 +154,7 @@ function match_pattern_internal(node: EncodingEntity, pattern: PatternEntity, bi
 
 				const child_node = node.children[i]
 
-				const result = match_pattern_internal(child_node, child_pattern, local_bindings, local_captures, [...stack, i])
+				const result = match_pattern_internal({ node: child_node, pattern: child_pattern, bindings: local_bindings, captures: local_captures, stack: [...stack, i] })
 
 				if (result.success) {
 					used_children.add(i)
@@ -176,13 +176,13 @@ function match_pattern_internal(node: EncodingEntity, pattern: PatternEntity, bi
 	return { success: true, bindings: local_bindings, captures: local_captures }
 }
 
-export function get_matches(root_entity: EncodingEntity, extractions: FlagExtractionRule[]): EntityMatchResult[] {
-	function traverse_dfs(node: EncodingEntity, stack: IndexStack = []): EntityMatchResult[] {
+export function get_matches({ root_entity, extractions }: { root_entity: EncodingEntity, extractions: FlagExtractionRule[] }): EntityMatchResult[] {
+	function traverse_dfs({ node, stack = [] }: { node: EncodingEntity, stack?: IndexStack }): EntityMatchResult[] {
 		const matches: EntityMatchResult[] = []
 
 		for (const { flag, rules } of extractions) {
 			for (const rule of rules) {
-				const match = match_pattern_internal(node, rule.pattern, {}, {}, stack)
+				const match = match_pattern_internal({ node, pattern: rule.pattern, bindings: {}, captures: {}, stack })
 				if (match.success) {
 					matches.push({ ...match, flag, rule })
 					// Once a rule matches, don't check the other rules for the same flag
@@ -193,14 +193,14 @@ export function get_matches(root_entity: EncodingEntity, extractions: FlagExtrac
 
 		if (node.children) {
 			for (let i = 0; i < node.children.length; i++) {
-				matches.push(...traverse_dfs(node.children[i], [...stack, i]))
+				matches.push(...traverse_dfs({ node: node.children[i], stack: [...stack, i] }))
 			}
 		}
-		
+
 		return matches
 	}
-	
-	return traverse_dfs(root_entity)
+
+	return traverse_dfs({ node: root_entity })
 }
 
 /**
@@ -208,21 +208,21 @@ export function get_matches(root_entity: EncodingEntity, extractions: FlagExtrac
  *
  * Searches entire structure DFS
  */
-export function match_pattern(pattern: PatternEntity, root_entity: EncodingEntity): EntityMatch[] {
-	function traverse_dfs(node: EncodingEntity, stack: IndexStack = []): EntityMatch[] {
+export function match_pattern({ pattern, root_entity }: { pattern: PatternEntity, root_entity: EncodingEntity }): EntityMatch[] {
+	function traverse_dfs({ node, stack = [] }: { node: EncodingEntity, stack?: IndexStack }): EntityMatch[] {
 		const matches: EntityMatch[] = []
 
-		const result = match_pattern_internal(node, pattern, {}, {}, stack)
+		const result = match_pattern_internal({ node, pattern, bindings: {}, captures: {}, stack })
 		if (result.success) {
 			matches.push(result)
 		}
 		if (node.children) {
 			for (let i = 0; i < node.children.length; i++) {
-				matches.push(...traverse_dfs(node.children[i], [...stack, i]))
+				matches.push(...traverse_dfs({ node: node.children[i], stack: [...stack, i] }))
 			}
 		}
 		return matches
 	}
 
-	return traverse_dfs(root_entity)
+	return traverse_dfs({ node: root_entity })
 }

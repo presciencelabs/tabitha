@@ -25,7 +25,7 @@ const ISOLATE_STATUS_CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
 const book_status_isolate_cache = new Map<string, CachedStatus>()
 const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST, cache: true })
 
-export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_ontology } }) => {
+export async function GET({ url: { searchParams }, locals: { db_ontology } }: Parameters<RequestHandler>[0]) {
 	const concept = searchParams.get('concept') ?? error(400, 'Missing "concept" parameter')
 	const part_of_speech = searchParams.get('part_of_speech') ?? error(400, 'Missing "part_of_speech" parameter')
 	const source = searchParams.get('source') ?? ''
@@ -33,11 +33,11 @@ export const GET: RequestHandler = async ({ url: { searchParams }, locals: { db_
 	const examples = await get_examples(db_ontology)(concept, part_of_speech, source)
 	const examples_with_status = await fetch_statuses_by_book(examples)
 
-	return cached_json(examples_with_status)
+	return cached_json({ data: examples_with_status })
 }
 
 async function fetch_statuses_by_book(examples: Example[]): Promise<Example[]> {
-	const book_refs = Array.from(new Set(examples.map(({ reference }) => reference.id_primary)))
+	const book_refs = [...new Set(examples.map(({ reference }) => reference.id_primary))]
 	const now = Date.now()
 
 	// Fetch the status for each book using isolate-level caching to avoid redundant sub-requests.

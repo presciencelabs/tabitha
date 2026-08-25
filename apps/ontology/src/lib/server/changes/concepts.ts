@@ -5,7 +5,12 @@ import { theta_grid_arguments } from '$lib/lookups'
 import type { Concept, ConceptKey, DbRowConcept } from '$lib/types'
 import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
 
-export async function get_concept_for_update(db: D1Database, concept_key: ConceptKey): Promise<ConceptUpdateData | null> {
+type GetConceptForUpdateOptions = {
+	readonly db: D1Database
+	readonly concept_key: ConceptKey
+}
+
+export async function get_concept_for_update({ db, concept_key }: GetConceptForUpdateOptions): Promise<ConceptUpdateData | null> {
 	const sql = `
 		SELECT *
 		FROM Concepts
@@ -24,13 +29,13 @@ export async function get_concept_for_update(db: D1Database, concept_key: Concep
 		level: level.toString(),
 		gloss,
 		brief_gloss,
-		categories: decode_categorization_for_update(part_of_speech, categorization),
+		categories: decode_categorization_for_update({ part_of_speech, categorization }),
 		curated_examples,
 	}
 }
 
-function decode_categorization_for_update(part_of_speech: string, categorization: string): string[] {
-	const categories = decode_categorization(part_of_speech, categorization)
+function decode_categorization_for_update({ part_of_speech, categorization }: { part_of_speech: string, categorization: string }): string[] {
+	const categories = decode_categorization({ part_of_speech, categorization })
 
 	if (part_of_speech === 'Verb') {
 		// The above decoder removes empty theta grid arguments, so they are not in a consistent sequence.
@@ -41,7 +46,12 @@ function decode_categorization_for_update(part_of_speech: string, categorization
 	return categories
 }
 
-export async function update_concept(db: D1Database, data: ConceptUpdateData) {
+type UpdateConceptOptions = {
+	readonly db: D1Database
+	readonly data: ConceptUpdateData
+}
+
+export async function update_concept({ db, data }: UpdateConceptOptions) {
 	const sql = `
 		UPDATE Concepts
 		SET level = ?, gloss = ?, brief_gloss = ?, categorization = ?, curated_examples = ?
@@ -49,22 +59,33 @@ export async function update_concept(db: D1Database, data: ConceptUpdateData) {
 	`
 
 	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categories, curated_examples } = data
-	const categorization = encode_categorization(part_of_speech, categories)
+	const categorization = encode_categorization({ part_of_speech, categories })
 
 	await db.prepare(sql).bind(level, gloss, brief_gloss, categorization, curated_examples, stem, sense, part_of_speech).run()
 }
 
-export async function get_next_sense(db: D1Database, stem: string, part_of_speech: string): Promise<string> {
+type GetNextSenseOptions = {
+	readonly db: D1Database
+	readonly stem: string
+	readonly part_of_speech: string
+}
+
+export async function get_next_sense({ db, stem, part_of_speech }: GetNextSenseOptions): Promise<string> {
 	const concepts = await get_concepts(db)({ q: stem, category: part_of_speech, scope: 'stems' })
 	// the search results are not case-sensitive, so filter out concepts that don't exactly match the stem
 	const valid_senses = concepts.filter((c: Concept) => c.stem === stem).map((c: Concept) => c.sense)
 	return String.fromCharCode('A'.charCodeAt(0) + valid_senses.length)
 }
 
-export async function create_concept(db: D1Database, data: ConceptCreateData) {
+type CreateConceptOptions = {
+	readonly db: D1Database
+	readonly data: ConceptCreateData
+}
+
+export async function create_concept({ db, data }: CreateConceptOptions) {
 	// The new concept needs its id set according to its position in the list of concepts sorted by TBTA's custom sorting sequence.
 	// All other concepts below it in the order need to have their id incremented to make room for the new concept.
-	const new_id = await find_concept_position(db, data) + 1 // +1 because ids are 1-based
+	const new_id = await find_concept_position({ db, data }) + 1 // +1 because ids are 1-based
 
 	const update_sql = `
 		UPDATE CONCEPTS SET id = id + 1
@@ -78,7 +99,7 @@ export async function create_concept(db: D1Database, data: ConceptCreateData) {
 	`
 
 	const { stem, sense, part_of_speech, level, gloss, brief_gloss, categories, curated_examples } = data
-	const categorization = encode_categorization(part_of_speech, categories)
+	const categorization = encode_categorization({ part_of_speech, categories })
 
 	await db.prepare(insert_sql)
 		.bind(new_id, stem, sense, part_of_speech, level, gloss, brief_gloss, categorization, curated_examples)
@@ -93,7 +114,7 @@ const SORTING_RANK = new Map(SORTING_SEQUENCE.split('').map((char, index) => [ch
  * Compares two stems according to TBTA's custom sorting sequence.
  * Returns a negative number if a < b, positive if a > b, and 0 if equal.
  */
-export function compare_stems(a: string, b: string): number {
+export function compare_stems({ a, b }: { a: string, b: string }): number {
 	let i = 0, j = 0
 
 	while (true) {
@@ -120,10 +141,15 @@ export function compare_stems(a: string, b: string): number {
 	}
 }
 
-async function find_concept_position(db: D1Database, data: ConceptKey): Promise<number> {
+type FindConceptPositionOptions = {
+	readonly db: D1Database
+	readonly data: ConceptKey
+}
+
+async function find_concept_position({ db, data }: FindConceptPositionOptions): Promise<number> {
 	const concepts = await get_concepts(db)({ q: '*', category: data.part_of_speech, scope: 'stems' })
 
 	const new_stem_lower = data.stem.toLowerCase()
-	const position = concepts.findIndex(({ stem }: Concept) => compare_stems(stem.toLowerCase(), new_stem_lower) > 0)
+	const position = concepts.findIndex(({ stem }: Concept) => compare_stems({ a: stem.toLowerCase(), b: new_stem_lower }) > 0)
 	return position >= 0 ? position : concepts.length
 }

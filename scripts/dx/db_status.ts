@@ -9,12 +9,12 @@ const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 const snapshots_dir = join(root_dir, 'tools', 'databases', 'snapshots')
 
-interface TableInfo {
+type TableInfo = {
 	name: string
 	rows: number
 }
 
-interface DbStatus {
+type DbStatus = {
 	app: string
 	binding: string
 	database_name: string
@@ -27,10 +27,14 @@ interface DbStatus {
 	snapshot_size_bytes: number
 }
 
-interface D1Config {
+type D1Config = {
 	binding: string
 	database_name: string
 	database_id: string
+}
+
+type WranglerD1Config = {
+	d1_databases?: { binding?: string, database_name?: string, database_id?: string }[]
 }
 
 const APP_NAMES = ['ontology', 'sources', 'targets', 'editor', 'copilot']
@@ -42,9 +46,9 @@ function parse_wrangler_d1_configs(app_name: string): D1Config[] {
 	try {
 		const raw = readFileSync(wrangler_path, 'utf-8')
 		const cleaned = strip_jsonc_comments(raw)
-		const config = JSON.parse(cleaned)
+		const config: WranglerD1Config = JSON.parse(cleaned)
 		if (Array.isArray(config.d1_databases)) {
-			return config.d1_databases.map((db: any) => ({
+			return config.d1_databases.map(db => ({
 				binding: db.binding || 'D1_DATABASE',
 				database_name: db.database_name || 'unknown',
 				database_id: db.database_id || 'unknown',
@@ -122,7 +126,7 @@ export async function inspect_databases(): Promise<DbStatus[]> {
 			let matched_file: string | null = null
 			let file_size = 0
 			let last_mod: Date | null = null
-			let tables: TableInfo[] = []
+			const tables: TableInfo[] = []
 
 			const expected_hash = createHash('sha256').update(d1.database_id).digest('hex')
 			const expected_file = join(d1_dir, 'miniflare-D1DatabaseObject', `${expected_hash}.sqlite`)
@@ -139,7 +143,7 @@ export async function inspect_databases(): Promise<DbStatus[]> {
 					const is_auth = d1.binding.toLowerCase().includes('auth') || d1.database_name.toLowerCase().includes('auth')
 					const is_auth_table = table_names.includes('Users') || table_names.includes('Permissions')
 
-					if ((is_auth && is_auth_table) || (!is_auth && !is_auth_table && table_names.some(t => !t.startsWith('_cf_')))) {
+					if (is_auth && is_auth_table || !is_auth && !is_auth_table && table_names.some(t => !t.startsWith('_cf_'))) {
 						matched_file = file_path
 						const stat = statSync(file_path)
 						file_size = stat.size

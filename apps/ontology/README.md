@@ -1,11 +1,11 @@
 # Ontology Web App
 
 - **Live URL**: [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:5173](http://localhost.tabitha.bible:5173) (Port `5173`, `strictPort: true` for OAuth redirects)
+- **Local Dev URL**: [http://localhost:5173](http://localhost:5173) (Port `5173`, `strictPort: true` for OAuth redirects)
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Concept Search API
 
@@ -35,11 +35,13 @@
 
 ---
 
-## Local Development & Setup
+## 💻 Local Development & Setup
 
 ### 1. Configure Local Auth
 
-Grab relevant Google / GitHub OAuth credentials from `.env` and add them to your local `.env.local` file. The OAuth callback redirects to `http://localhost.tabitha.bible:5173/auth/callback`.
+`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:5173/auth/callback`.
+
+(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
 
 ### 2. Running Locally
 
@@ -83,11 +85,11 @@ Complex terms and simplification hints are synchronized from Google Sheets every
   In a separate terminal:
 
   ```bash
-  curl "http://localhost.tabitha.bible:8787/__scheduled"
+  curl "http://localhost:8787/__scheduled"
   ```
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

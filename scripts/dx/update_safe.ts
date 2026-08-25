@@ -88,8 +88,8 @@ async function sync_ci_node_version() {
 				console.log(`   ✓ CI Node.js version is in sync (${current_ci_node})\n`)
 			}
 		}
-	} catch (err: any) {
-		console.warn('   ⚠️  Could not sync CI Node version:', err?.message || err)
+	} catch (err) {
+		console.warn('   ⚠️  Could not sync CI Node version:', err instanceof Error ? err.message : err)
 	}
 }
 
@@ -98,8 +98,8 @@ async function regenerate_worker_and_framework_types() {
 	try {
 		await $`pnpm --filter @tabitha/ontology exec wrangler types ./worker-configuration.d.ts`.quiet()
 		console.log('   ✓ Regenerated Cloudflare Worker types for ontology.\n')
-	} catch (err: any) {
-		console.warn('   ⚠️  Could not regenerate wrangler types:', err?.message || err)
+	} catch (err) {
+		console.warn('   ⚠️  Could not regenerate wrangler types:', err instanceof Error ? err.message : err)
 	}
 }
 
@@ -120,8 +120,8 @@ async function run_safe_update() {
 		console.log(`   • Node.js:  ${node_ver}`)
 		console.log(`   • Bun:      v${bun_ver}`)
 		console.log(`   • pnpm:     v${pnpm_ver}\n`)
-	} catch (err: any) {
-		console.warn('   ⚠️  Could not determine toolchain versions:', err?.message || err)
+	} catch (err) {
+		console.warn('   ⚠️  Could not determine toolchain versions:', err instanceof Error ? err.message : err)
 	}
 
 	// 2. Workspace Skills Audit
@@ -138,8 +138,8 @@ async function run_safe_update() {
 	try {
 		await $`pnpm update --recursive`
 		console.log('✅ Workspace dependencies safely updated!\n')
-	} catch (err: any) {
-		console.error('❌ Dependency update encountered an error:', err?.message || err)
+	} catch (err) {
+		console.error('❌ Dependency update encountered an error:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 
@@ -168,8 +168,8 @@ async function run_safe_update() {
 		} else {
 			console.log(`   ✨ Updated ${badge_res.findings.length} badge(s) in README.md.\n`)
 		}
-	} catch (err: any) {
-		console.warn('   ⚠️  Could not synchronize README badges:', err?.message || err)
+	} catch (err) {
+		console.warn('   ⚠️  Could not synchronize README badges:', err instanceof Error ? err.message : err)
 	}
 
 	// 9. Full-Repo Undeclared CLI Dependency Sweep
@@ -186,8 +186,8 @@ async function run_safe_update() {
 		} else {
 			console.warn(`   ⚠️  Found ${findings.length} undeclared CLI dependenc(y/ies) -- run "pnpm check:deps -- --all" for details.\n`)
 		}
-	} catch (err: any) {
-		console.warn('   ⚠️  Could not complete the undeclared CLI dependency sweep:', err?.message || err)
+	} catch (err) {
+		console.warn('   ⚠️  Could not complete the undeclared CLI dependency sweep:', err instanceof Error ? err.message : err)
 	}
 
 	// 10. Automated Post-Update Health Verification Gate
@@ -197,8 +197,8 @@ async function run_safe_update() {
 	try {
 		await $`pnpm check`
 		console.log('   ✓ Static analysis & typecheck passed cleanly!')
-	} catch (err: any) {
-		console.error('❌ Post-update check failed:', err?.message || err)
+	} catch (err) {
+		console.error('❌ Post-update check failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 
@@ -206,8 +206,8 @@ async function run_safe_update() {
 	try {
 		await $`pnpm test:unit`
 		console.log('   ✓ All unit test suites passed!')
-	} catch (err: any) {
-		console.error('❌ Post-update unit tests failed:', err?.message || err)
+	} catch (err) {
+		console.error('❌ Post-update unit tests failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 
@@ -215,8 +215,8 @@ async function run_safe_update() {
 	try {
 		await $`pnpm build`
 		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully!')
-	} catch (err: any) {
-		console.error('❌ Post-update production build failed:', err?.message || err)
+	} catch (err) {
+		console.error('❌ Post-update production build failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 

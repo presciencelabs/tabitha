@@ -42,10 +42,13 @@ export type CacheControlOptions = {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
  */
-export function cached_json<T>(
-	data: T,
-	options: CacheControlOptions | number = {},
-): Response {
+export function cached_json<T>({
+	data,
+	options = {},
+}: {
+	data: T
+	options?: CacheControlOptions | number
+}): Response {
 	const opts: CacheControlOptions =
 		typeof options === 'number'
 			? { s_maxage_seconds: options }

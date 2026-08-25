@@ -1,6 +1,6 @@
 # TaBiThA Gateway (`@tabitha/gateway`)
 
-Provisions and reconciles the single Cloudflare AI Gateway that every TaBiThA app routes its Gemini calls through (see `docs/decisions/0005-ai-consolidation.md`). Apps consume the gateway via `@tabitha/ai`; this package only manages the gateway resource itself.
+Provisions and reconciles the single Cloudflare AI Gateway that every TaBiThA app routes its Gemini calls through (see `docs/decisions/0007-ai-consolidation.md`). Apps consume the gateway via `@tabitha/ai`; this package only manages the gateway resource itself.
 
 ## Usage
 
@@ -19,4 +19,4 @@ Not automated here -- more sensitive than gateway config, and best done through 
 
 ## Verifying it actually works
 
-`pnpm verify` sends one real request through the live gateway using the real `@tabitha/ai` client (needs `AI_GATEWAY_TOKEN` in `.env.local` and `GEMINI_PROJECT_ID`/`GEMINI_LOCATION` in `.env`, alongside the BYOK setup above). This is a manual, credential-gated integration check -- not run in CI, and deliberately not named to match `bun test`'s automatic `*_test.ts` discovery -- and exists specifically to get a real answer to the open questions in `docs/decisions/0005-ai-consolidation.md` before any app depends on this in production.
+`pnpm verify` sends one real request through the live gateway using the real `@tabitha/ai` client (needs `AI_GATEWAY_TOKEN` in `.env.local` and `GEMINI_PROJECT_ID`/`GEMINI_LOCATION` in `.env`, alongside the BYOK setup above). This is a manual, credential-gated integration check -- not run in CI, and deliberately not named to match `bun test`'s automatic `*_test.ts` discovery -- and exists specifically to get a real answer to the open questions in `docs/decisions/0007-ai-consolidation.md` before any app depends on this in production.

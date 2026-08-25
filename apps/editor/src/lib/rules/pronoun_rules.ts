@@ -58,7 +58,7 @@ const builtin_pronoun_rules: BuiltInRule[] = [
 				const tag = PRONOUN_TAGS.get(normalized_pronoun)
 				const message = PRONOUN_MESSAGES.get(normalized_pronoun) ?? 'Unrecognized pronoun "{token}"'
 				if (tag) {
-					add_tag_to_token(trigger_token, { 'pronoun': tag }, rule_id)
+					add_tag_to_token({ token: trigger_token, tag: { 'pronoun': tag }, rule_id })
 				} else {
 					return { token_to_flag: pronoun, error: message }
 				}

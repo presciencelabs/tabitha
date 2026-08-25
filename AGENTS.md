@@ -4,9 +4,9 @@ Welcome to the **TaBiThA** engineering workspace. This document serves as the **
 
 ---
 
-## 🏛️ 13 Core Development Philosophies
+## 🏛️ 14 Core Development Philosophies
 
-All code written in this repository should adhere to the following 13 foundational philosophies:
+All code written in this repository should adhere to the following 14 foundational philosophies:
 
 ### 1. Self-contained components
 
@@ -247,7 +247,7 @@ export const fetch_concept_data = async (payload: ConceptPayload): Promise<Conce
 Functions should be pure and free of side effects wherever practical. Receive one argument (destructuring an options object if multiple inputs are needed) and return one value.
 
 ```typescript
-interface FormatWordOptions {
+type FormatWordOptions = {
 	readonly word: Word
 	readonly prefix?: string
 }
@@ -271,6 +271,7 @@ export const format_word_label = ({
 - **The Rule of Three for Shared Packages**: Implement features locally inside their consuming app (`apps/editor`, `apps/ontology`, etc.). Do not extract code into `packages/*` until at least 3 distinct consumers require identical functionality.
 - **Lean Cloudflare Worker Bundles**: Every unused export, speculative handler, or oversized dependency adds cold-start latency and bundle size to edge workers. Keep endpoints minimal and focused.
 - **Pragmatic AI Prompts**: Keep AI prompts in `apps/copilot` tailored directly to active tasks rather than building complex generic prompt framework abstractions.
+- **Don't restate a dependency's own default**: If a wrapper's parameter default just re-declares what the underlying library already defaults to, and no caller ever overrides it, drop the parameter and let the library's default apply on its own. Confirm no call site overrides it before removing.
 
 ```typescript
 // ❌ Avoid: Speculative over-generalized configuration flags
@@ -284,6 +285,19 @@ interface FetchConceptOptions {
 interface FetchConceptOptions {
 	readonly concept_id: string
 	readonly include_glosses?: boolean
+}
+```
+
+```javascript
+// ❌ Avoid: default merely restates Vite's own built-in default for server.host,
+// and no app in the workspace ever overrides it
+export function create_app_vite_config({ port, host = 'localhost', ...rest }) {
+	return defineConfig({ server: { host, port, strictPort: true } })
+}
+
+// ✅ Preferred: omit it and let Vite's own default apply
+export function create_app_vite_config({ port, ...rest }) {
+	return defineConfig({ server: { port, strictPort: true } })
 }
 ```
 
@@ -317,6 +331,44 @@ interface FetchConceptOptions {
 
 ---
 
+### 14. SvelteKit data-loading boundaries
+
+Keep `.svelte` component scripts limited to presentation and event wiring. Data fetching, response shaping, derived properties the UI needs, and permission-dependent display decisions belong in the appropriate `load` function or a `$lib` data-layer module, never written inline in the component:
+
+- **`+page.svelte` / `+layout.svelte`** — display only. Read already-shaped `data`, wire up events. No `fetch()` written directly in the component script — this holds regardless of what triggers the call (page load, a click, a keystroke) or where the request goes (our own backend or a third-party API); wrap it in a `$lib` data-layer function the component calls instead. No response parsing, no deriving new properties from raw data, in the component either. The only valid exception is Philosophy #12's YAGNI: a genuinely disposable, single-use, one-line call that will never be touched again, where a wrapper module would be pure ceremony — not a case-by-case judgment call for anything that might be reused or grow.
+- **`+page.ts` / `+layout.ts` (universal load)** — shapes data for the UI and may hold display-adjacent business logic. This is also the only place allowed to depend on browser-only context (e.g. `navigator.language`, `Intl.DateTimeFormat().resolvedOptions().timeZone`), since a universal load reruns once on the client right after SSR.
+- **`+page.server.ts` / `+layout.server.ts`** — a narrow role: server-only session/auth checks and assembling the data a page needs by calling server modules. Not the home for reusable business logic.
+- **`+server.ts` endpoints and `$lib/server/**` modules** — canonical, call-site-independent business logic and data access. A decision like "can this user approve this change?" is computed once here and reused by both an endpoint's authorization check and the value it returns — never re-derived separately in a loader or a component.
+
+```svelte
+<!-- ❌ Avoid: fetch, response parsing, and a derived permission decision inline in the component -->
+<script lang="ts">
+	async function approve(change) {
+		const res = await fetch(`/protected/changes/${change.id}/approve`, { method: 'POST' })
+		const result = await res.json()
+		if (res.ok) { /* ... */ }
+	}
+	function can_approve(change) {
+		return !!change.suggested_by && !change.approved_by && data.can_add
+	}
+</script>
+
+<!-- ✅ Preferred: the component only reads already-shaped data and calls a data-layer function -->
+<script lang="ts">
+	import { approve_change } from '$lib/changes'
+
+	async function approve(change) {
+		changes = changes.map(c => c.id === change.id ? await approve_change(change.id) : c)
+	}
+</script>
+
+{#if change.can_approve}
+	<button onclick={() => approve(change)}>Approve</button>
+{/if}
+```
+
+---
+
 ## 🧭 Monorepo Architecture & Package Boundaries
 
 1. **Applications (`apps/*`)**:
@@ -340,7 +392,21 @@ interface FetchConceptOptions {
 3. **Dependency Direction**:
    - `apps/*` ➔ `packages/*` (Allowed)
    - `packages/*` ➔ `apps/*` (STRICTLY PROHIBITED)
+   - Within a single app, `src/routes/**` ➔ `src/lib/**` (Allowed)
+   - Within a single app, `src/lib/**` ➔ `src/routes/**` (STRICTLY PROHIBITED)
    - No circular dependencies between workspace packages.
+
+### App-internal lib/routes boundary
+
+`src/lib/**` is an app's shared, reusable layer; `src/routes/**` is page- and endpoint-specific and depends on lib, never the reverse. A type or helper needed by both a route and a `$lib` module belongs in `$lib` (e.g. `$lib/types.ts`) -- never defined inside a route and reached into from `$lib` via a relative import.
+
+```typescript
+// ❌ Avoid: a $lib module reaching into src/routes for a type
+import type { AnalysisResult } from '../../routes/analyze/types'
+
+// ✅ Preferred: the type lives in $lib; the route imports it from there too
+import type { AnalysisResult } from '$lib/types'
+```
 
 ---
 
@@ -356,19 +422,85 @@ monorepo:
   **variable** instead (`vars.NAME`, managed via Settings → Secrets and variables → Actions →
   Variables, or `gh variable set`).
 - **Local env files**: a workspace package's committed `.env` should declare every var it
-  needs, but only ever hold real values for the non-sensitive ones -- secrets stay as empty
-  stubs there, documenting that the key exists without exposing a value. The real secret
-  values go in `.env.local`, which is gitignored and never committed. Both Vite (`apps/*`) and
-  Bun (`tools/*`, `scripts/*`) natively load `.env` then `.env.local` on top of it, so a
-  non-empty value in `.env.local` overrides the empty stub for the same key with no extra
-  tooling required. Order the file non-secrets first, then a blank line, then this exact header
-  comment, then another blank line before the secret stubs themselves:
-  `# secrets (always empty in this file -- set real values only in .env.local, which is
-  gitignored)`. A short comment above each secret linking to where to obtain its value (a
-  dashboard page, a docs link) is encouraged.
+  needs, holding whatever value is actually correct for production and preview -- both are
+  built from `.env` alone, since `.env.local` is gitignored and never present outside a
+  developer's own machine. That's a real value for most vars (an API host, a redirect URL), but
+  it can just as validly be an intentionally blank/off value when that's genuinely what
+  production wants too (a dev-only toggle that should stay disabled everywhere it's actually
+  deployed). Genuinely sensitive values are the one case where blank in `.env` is mandatory
+  regardless of what "correct for prod" would otherwise be -- the real value is never committed
+  anywhere in the repo; it lives only in `.env.local` locally and in the deployment's own
+  secret store remotely. `.env.local` itself is exclusively a local-dev override layer on top
+  of `.env`, in whichever direction local dev needs -- filling in a secret or widening a
+  permission the same way `.env` left blank, or forcing something to blank/off that `.env`
+  populated for production. Both Vite (`apps/*`) and Bun (`tools/*`, `scripts/*`) natively load
+  `.env` then `.env.local` on top of it, so either direction works with no extra tooling.
+
+  This `.env`/`.env.local` split is a repo convention layered on top of SvelteKit's own env
+  system, which is a separate, orthogonal 2×2: static (frozen into the bundle at build/dev-server
+  start) vs. dynamic (read at request time), crossed with public (safe for client code) vs.
+  private (server-only) -- see
+  [`$env/static/private`](https://svelte.dev/docs/kit/$env-static-private),
+  [`$env/static/public`](https://svelte.dev/docs/kit/$env-static-public),
+  [`$env/dynamic/private`](https://svelte.dev/docs/kit/$env-dynamic-private), and
+  [`$env/dynamic/public`](https://svelte.dev/docs/kit/$env-dynamic-public). This monorepo mostly
+  uses the two **static** modules, but a handful of server-only values consumed inside request
+  handlers -- the Gemini and Aquifer API credentials in `apps/copilot/src/hooks.server.ts`,
+  `apps/copilot/src/lib/server/brief/brief.ts`, and `apps/ontology/src/lib/server/semantic_search.ts`
+  -- are read via `$env/dynamic/private` instead. Nothing yet needs `$env/dynamic/public`. Which
+  of the two (public vs. private) to use is about client-bundle exposure only, and is unrelated to whether a
+  given var happens to be blank or populated in `.env` -- a var can be public and blank (e.g.
+  `PUBLIC_CORS_ALLOW_LOCALHOST`, whose correct production value genuinely is "off"), or private
+  and populated (e.g. `OAUTH_REDIRECT_PROXY_URL`, non-sensitive but server-only, holding a real
+  value in production).
+
+  SvelteKit is moving toward a different, [explicit environment variables
+  system](https://svelte.dev/docs/kit/environment-variables) (`$app/env/private` /
+  `$app/env/public`, declared in a per-app `src/env.ts`) that will eventually replace `$env/*`
+  entirely -- but as of this writing it's still an opt-in experimental flag
+  (`kit.experimental.explicitEnvironmentVariables`) that only becomes the default in SvelteKit 3.
+  Nothing in this monorepo has opted into it; every app still uses the four modules above. Revisit
+  this section if/when that migration happens.
 
 Either way, a developer should be able to tell at a glance -- from the checked-in file alone,
-without needing to open a vault -- which values are actually sensitive.
+without needing to open a vault -- which values are actually sensitive. Every committed `.env`
+follows the same two-tier skeleton, ordered from most open to most private:
+
+```env
+# ══════════════════════════════════════════════════════════════════════════
+# OPEN CONFIG
+# Real values, safe to commit. May be public (client-exposed) or private
+# (server-only) -- see the $env/... tag on each line for which SvelteKit
+# module to import it from. Cloudflare: belongs in wrangler.jsonc's `vars`
+# block for real deployments, not a `wrangler secret`.
+# ══════════════════════════════════════════════════════════════════════════
+
+# $env/static/public -- <why this is safe to expose to the client>
+PUBLIC_SOME_HOST=https://example.tabitha.bible
+
+# ══════════════════════════════════════════════════════════════════════════
+# SECRETS
+# Left blank here; real values live only in .env.local (gitignored) or the
+# deployment's own secret store. Still tagged with the SvelteKit module
+# they're read through. Cloudflare: set via `wrangler secret put <NAME>`
+# (or the dashboard), never in wrangler.jsonc `vars` --
+# scripts/audits/check_cloudflare.ts enforces this.
+# ══════════════════════════════════════════════════════════════════════════
+
+# $env/static/private -- <where to obtain this credential>
+SOME_SECRET=
+```
+
+`OPEN CONFIG` holds every var with a real, safe-to-commit value -- public or private, static or
+dynamic, doesn't matter, since public/private is purely about client-bundle exposure (see above)
+and has nothing to do with sensitivity. `SECRETS` holds everything left blank in `.env` and
+filled only in `.env.local` or the deployment's own secret store. Each var gets a one-line
+comment: for `OPEN CONFIG`, the `$env/...` module it's read through plus (when not obvious) why
+that value is correct; for `SECRETS`, the module plus a link to where a developer obtains their
+own credential. `tools/*` scripts (Bun, not SvelteKit) use the same two-tier shape but skip the
+`$env/...` tags, since they read `process.env` directly rather than importing from `$env/*`. See
+`apps/ontology/.env` for a populated real-world example spanning both tiers and three of the four
+`$env` modules.
 
 ---
 

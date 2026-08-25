@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { AnalysisResult } from '../../../../../analyze/types'
 	import type { PageSourceEntity } from '$lib/types'
 	import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
 	import { create_editor_client } from '@tabitha/api-client'
 	import type { CheckResponse, Message, NounListEntry, SimpleToken } from '@tabitha/types'
 	import { Navigation } from '$lib'
+	import { fetch_analysis } from '$lib/data/analyze'
 	import type { PageProps } from './$types'
 	import Settings from '$lib/settings/Settings.svelte'
 	import Sidebar from '$lib/sidebar_edit/Sidebar.svelte'
@@ -89,11 +89,7 @@
 		analyzing = true
 
 		try {
-			const response = await fetch(`/analyze?text=${sanitize_input(phase1_text)}`)
-			if (!response.ok) {
-				throw new Error(`Analyze API returned HTTP ${response.status}`)
-			}
-			const result = await response.json() as AnalysisResult
+			const result = await fetch_analysis(sanitize_input(phase1_text))
 			source_entities = result.source_entities
 			noun_list = result.noun_list
 		} catch (err) {

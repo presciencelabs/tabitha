@@ -35,7 +35,7 @@
 		return `${PUBLIC_ONTOLOGY_API_HOST}/?q=${stem}&category=${part_of_speech}`
 	}
 
-	function get_category_and_usage(concept: SourceConcept, current_ontology: OntologyResult | null): [string, string[]] {
+	function get_category_and_usage({ concept, current_ontology }: { concept: SourceConcept, current_ontology: OntologyResult | null }): [string, string[]] {
 		const categories = current_ontology?.categories || []
 		if (concept.part_of_speech === 'Noun') {
 			return [categories.at(0) ?? '', []]
@@ -49,7 +49,7 @@
 
 {#if ontology_data}
 	{@const { stem, sense, level, gloss } = ontology_data}
-	{@const [category, usages] = get_category_and_usage(data, ontology_data)}
+	{@const [category, usages] = get_category_and_usage({ concept: data, current_ontology: ontology_data })}
 
 	<div class="flex w-full mb-2">
 		{#if actions}

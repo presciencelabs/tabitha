@@ -17,16 +17,16 @@
 		duration: 700,
 	}
 
-	let filters: FilterMap = $derived(derive_filters(concept, examples))
+	let filters: FilterMap = $derived(derive_filters({ concept, examples }))
 	let selected_filters = new SvelteMap<ContextArgumentName, Option>()
 
-	let filtered_examples = $derived(apply_filters(examples, selected_filters))
+	let filtered_examples = $derived(apply_filters({ examples_list: examples, filter_rules: selected_filters }))
 
 	$effect(() => {
 		ondatafiltered?.(filtered_examples)
 	})
 
-	function apply_filters(examples_list: Example[] = [], filter_rules: Map<ContextArgumentName, Option>): Example[] {
+	function apply_filters({ examples_list = [], filter_rules }: { examples_list?: Example[], filter_rules: Map<ContextArgumentName, Option> }): Example[] {
 		return examples_list.filter(is_a_match)
 
 		function is_a_match(example: Example): boolean {

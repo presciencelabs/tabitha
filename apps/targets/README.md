@@ -1,11 +1,11 @@
 # Targets API & Explorer
 
 - **Live URL**: [https://targets.tabitha.bible](https://targets.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:8788](http://localhost.tabitha.bible:8788) (Port `8788`)
+- **Local Dev URL**: [http://localhost:8788](http://localhost:8788) (Port `8788`)
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Hierarchical Navigation APIs
 
@@ -33,7 +33,7 @@
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 From the **monorepo root**:
 
@@ -53,6 +53,6 @@ pnpm dev
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

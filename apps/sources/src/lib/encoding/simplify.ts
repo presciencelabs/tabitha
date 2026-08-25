@@ -25,7 +25,7 @@ function clean_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
 		if (entity.target) {
 			entries.push(['target', entity.target])
 		}
-		const simple_features = simplify_features(entity.features, entity.category)
+		const simple_features = simplify_features({ features: entity.features, category: entity.category })
 		if (entity.noun_list_index) {
 			simple_features['Noun List Index'] = entity.noun_list_index
 		}
@@ -37,7 +37,7 @@ function clean_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
 }
 
 type RemovableFeature = [string|null, string|null, string|null]
-function simplify_features(features: EntityFeature[], category: string): Record<string, string> {
+function simplify_features({ features, category }: { features: EntityFeature[], category: string }): Record<string, string> {
 	const values_to_remove: RemovableFeature[] = [
 		[null, null, ''],
 		[null, null, '.'],

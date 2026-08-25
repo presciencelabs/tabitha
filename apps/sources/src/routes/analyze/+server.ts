@@ -6,11 +6,11 @@ import { transform_features_to_codes } from '$lib/encoding/features'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { SimpleSourceEntity, SourceEntity } from '@tabitha/types'
-import type { AnalysisResult } from './types'
+import type { AnalysisResult } from '$lib/types'
 
 const editor_client = create_editor_client({ base_url: PUBLIC_EDITOR_API_HOST })
 
-export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams } }) => {
+export async function GET({ locals: { db }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const text = searchParams.get('text') ?? ''
 
 	const api_result = await editor_client.analyze_text(sanitize_input(text))
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ locals: { db }, url: { searchParams 
 	}
 
 	const source_entities = api_result.source_entities.map(transform_api_entity)
-	const source_entities_with_features = await transform_features_to_codes(db, source_entities)
+	const source_entities_with_features = await transform_features_to_codes({ db, source_entities })
 	const structured_entities = structure_semantic_encoding(source_entities_with_features)
 
 	const result: AnalysisResult = {

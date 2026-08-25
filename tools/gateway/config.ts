@@ -34,8 +34,8 @@ type GuardrailCategory = 'P1' | 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' |
 export const gateway_id = 'tabitha'
 
 export const desired_gateway_config: DesiredGatewayConfig = {
-	// 1 hour; per-request `cf-aig-cache-ttl` can override this per call. See ADR 0005 for the
-	// open question on whether `cf-aig-metadata` fragments this cache -- verify before raising it.
+	// 1 hour; per-request `cf-aig-cache-ttl` can override this per call. `cf-aig-metadata` was
+	// confirmed not to fragment this cache -- see ADR 0007's "Things to verify" section.
 	cache_ttl: 3600,
 	cache_invalidate_on_update: false,
 	collect_logs: true,
@@ -44,7 +44,7 @@ export const desired_gateway_config: DesiredGatewayConfig = {
 	authentication: true,
 	rate_limiting_interval: 60,
 	// No real per-app traffic to size this against yet -- generous placeholder, not a considered
-	// limit. Retune once usage is measurable. See ADR 0005's rate-limit-isolation revisit trigger:
+	// limit. Retune once usage is measurable. See ADR 0007's rate-limit-isolation revisit trigger:
 	// a single shared gateway means one app's burst can throttle another's.
 	rate_limiting_limit: 6000,
 	rate_limiting_technique: 'sliding',

@@ -1,11 +1,11 @@
 # Sources API & Explorer
 
 - **Live URL**: [https://sources.tabitha.bible](https://sources.tabitha.bible)
-- **Local Dev URL**: [http://localhost.tabitha.bible:8789](http://localhost.tabitha.bible:8789) (Port `8789`)
+- **Local Dev URL**: [http://localhost:8789](http://localhost:8789) (Port `8789`)
 
 ---
 
-## API
+## 🔌 API
 
 ### 1. Hierarchical Navigation APIs
 
@@ -38,7 +38,7 @@
 
 ---
 
-## Local Development
+## 💻 Local Development
 
 From the **monorepo root**:
 
@@ -58,6 +58,6 @@ pnpm dev
 
 ---
 
-## Testing & Verification
+## ✅ Testing & Verification
 
 For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.

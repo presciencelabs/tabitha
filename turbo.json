@@ -111,6 +111,7 @@
       ]
     },
     "test:unit": {
+      "dependsOn": ["build"],
       "inputs": [
         "src/**",
         "vitest.config.*",

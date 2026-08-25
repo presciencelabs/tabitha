@@ -77,6 +77,8 @@ export const BIBLE_BOOKS: Book = {
 	66: 'Revelation',
 }
 
+const BOOK_ORDER = new Map(Object.values(BIBLE_BOOKS).map((book, index) => [book, index]))
+
 /**
  * Sorts by Bible book order rather than the natural alphabetical order.
  */
@@ -84,12 +86,7 @@ export function by_book_order(
 	a: { reference: { id_primary: string } },
 	b: { reference: { id_primary: string } },
 ): number {
-	const books_in_order = Object.values(BIBLE_BOOKS)
-
-	const index_1 = books_in_order.indexOf(a.reference.id_primary)
-	const index_2 = books_in_order.indexOf(b.reference.id_primary)
-
-	return index_1 - index_2
+	return (BOOK_ORDER.get(a.reference.id_primary) ?? -1) - (BOOK_ORDER.get(b.reference.id_primary) ?? -1)
 }
 
 /**
