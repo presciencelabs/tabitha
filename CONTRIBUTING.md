@@ -6,7 +6,7 @@ Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions
 
 ## 🗺️ System Architecture
 
-The TaBiThA monorepo consists of 5 modular Cloudflare Worker applications and 6 shared workspace packages managed with **pnpm workspaces** and **Turborepo**:
+The TaBiThA monorepo consists of 5 modular Cloudflare Worker applications and 8 shared workspace packages managed with **pnpm workspaces** and **Turborepo**:
 
 ```mermaid
 graph TD
@@ -15,29 +15,42 @@ graph TD
 		Ontology["Ontology (:5173)<br/>Concepts, Senses, & D1 DB"]
 		Sources["Sources (:8789)<br/>Hebrew/Greek & Semantic Trees"]
 		Targets["Targets (:8788)<br/>Target Language Lexicon & Forms"]
-		Copilot["Copilot (:8793)<br/>AI Translation Assistant (Vertex/Gemini)"]
+		Copilot["Copilot (:8793)<br/>AI Translation Assistant"]
 	end
 
 	subgraph SharedPackages ["Shared Workspace Packages"]
 		Types["@tabitha/types<br/>Shared Domain & API Types"]
 		UI["@tabitha/ui<br/>Reusable Svelte 5 & daisyUI Components"]
 		ApiClient["@tabitha/api-client<br/>Typed Inter-App HTTP Client"]
+		Cors["@tabitha/cors<br/>Shared CORS Middleware"]
+		AI["@tabitha/ai<br/>Shared LLM Client"]
 		ViteConfig["@tabitha/vite-config<br/>Standardized Vite, Svelte, & Test Configs"]
 		ESLintConfig["@tabitha/eslint-config<br/>Standardized ESLint Flat Config"]
 		TSConfig["@tabitha/tsconfig<br/>Shared TypeScript Configs"]
 	end
 
+	subgraph External ["External"]
+		Gateway["Cloudflare AI Gateway"]
+		Vertex["Google Vertex AI"]
+	end
+
 	Editor --> Types
 	Editor --> UI
 	Editor --> ApiClient
+	Editor --> Cors
 	Ontology --> Types
 	Ontology --> UI
+	Ontology --> Cors
+	Ontology --> AI
 	Sources --> Types
 	Sources --> UI
+	Sources --> Cors
 	Targets --> Types
 	Targets --> UI
+	Targets --> Cors
 	Copilot --> Types
 	Copilot --> UI
+	Copilot --> AI
 
 	Editor -.->|"REST / JSON"| Ontology
 	Editor -.->|"REST / JSON"| Sources
@@ -45,6 +58,8 @@ graph TD
 	Editor -.->|"REST / JSON"| Copilot
 	Ontology -.->|"REST / JSON"| Sources
 	Ontology -.->|"REST / JSON"| Targets
+
+	AI --> Gateway --> Vertex
 ```
 
 ---
@@ -59,7 +74,7 @@ graph TD
 | **`targets`** | `8788` | [http://localhost:8788](http://localhost:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
 | **`sources`** | `8789` | [http://localhost:8789](http://localhost:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
 | **`editor`** | `8790` | [http://localhost:8790](http://localhost:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
-| **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and Gemini API integration. |
+| **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
 
 ### Shared Packages (`packages/`)
 
@@ -68,6 +83,8 @@ graph TD
 | **`@tabitha/types`** | Universal TypeScript interfaces for linguistic concepts, clauses, tokens, references, and API payloads. |
 | **`@tabitha/ui`** | Shared Svelte 5 components (buttons, badges, concept cards, headers, layouts) styled with daisyUI 5. |
 | **`@tabitha/api-client`** | Typed HTTP client for inter-service communication across applications. |
+| **`@tabitha/cors`** | Shared CORS middleware for Cloudflare Worker request handlers. |
+| **`@tabitha/ai`** | Shared LLM client (`generate_json`, `generate_text`) routing every app's AI calls through the Cloudflare AI Gateway to Vertex AI. |
 | **`@tabitha/vite-config`** | Standardized configuration helpers for Vite (`vite.config.js`), SvelteKit (`svelte.config.js`), Vitest, and Playwright (`playwright.config.js`). |
 | **`@tabitha/eslint-config`** | Centralized ESLint flat configuration ensuring consistent formatting and quality rules. |
 | **`@tabitha/tsconfig`** | Base TypeScript configurations (`base.json`, `svelte.json`). |
@@ -329,3 +346,5 @@ Before submitting a Pull Request, run the automated 1-command verification gate:
 # 3. Verify production Cloudflare Worker builds (pnpm build)
 pnpm precommit
 ```
+
+🚀 **Pro tip:** while iterating, `pnpm ci` runs the same scoped subset of that pipeline CI will actually run for your change (see [ADR 0008](docs/decisions/0008-ci-change-scoping.md)) — faster, but `pnpm precommit` is still the one to run before opening a PR, since it always runs everything.

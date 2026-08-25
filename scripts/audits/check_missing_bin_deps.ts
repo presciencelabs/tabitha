@@ -194,14 +194,32 @@ export async function get_changed_workspace_packages(base_ref: string): Promise<
 	return all_packages.filter(pkg => changed_dirs.has(pkg.dir))
 }
 
-async function resolve_diff_base(): Promise<string | undefined> {
+export async function resolve_diff_base(): Promise<string | undefined> {
 	if (process.env.GITHUB_BASE_REF) {
 		try {
 			await $`git rev-parse origin/${process.env.GITHUB_BASE_REF}`.quiet()
 			return `origin/${process.env.GITHUB_BASE_REF}`
 		} catch {
-			// fall through
+			// A PR can target any branch (ci.yml's `pull_request: branches: ['**']`), so silently
+			// falling through to the `main`-merge-base tier below risks diffing against the wrong
+			// branch with no trace of it happening. Warn -- callers that gate whole CI jobs on
+			// this (scripts/ci/plan.ts) need that visible, even though `main` is still the best
+			// available guess and the fallback chain still ends in a fail-safe full run.
+			console.warn(`⚠️  Could not resolve origin/${process.env.GITHUB_BASE_REF} (this PR's declared base) -- falling back to a same-branch comparison against main instead.`)
 		}
+	}
+	// Merge-base with origin/main, not just the previous commit -- a multi-commit local branch's
+	// full diff vs main matters here, not only its most recent commit. Deliberately origin/main,
+	// not local main: a dev who rebases onto origin/main directly (the common move) never
+	// advances their local main branch, so comparing against the local ref could compute a stale
+	// merge-base. Worst case that's over-scoping (extra already-merged files inflate the diff,
+	// never fewer), but origin/main -- refreshed by any `git fetch` -- avoids it in practice.
+	try {
+		await $`git rev-parse --verify origin/main`.quiet()
+		const merge_base = (await $`git merge-base HEAD origin/main`.text()).trim()
+		if (merge_base) return merge_base
+	} catch {
+		// fall through
 	}
 	try {
 		await $`git rev-parse HEAD^`.quiet()

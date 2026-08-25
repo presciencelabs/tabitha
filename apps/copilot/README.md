@@ -25,7 +25,7 @@
 
 ## 🔐 Environment Setup
 
-`apps/copilot/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root). Fill in the secrets that are still blank there: `API_KEY_AQUIFER`, `GEMINI_PRIVATE_KEY`.
+`apps/copilot/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root). Fill in the secrets that are still blank there: `API_KEY_AQUIFER`, `AI_GATEWAY_TOKEN`.
 
 (If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
 

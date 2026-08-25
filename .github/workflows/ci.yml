@@ -17,6 +17,32 @@ permissions:
 
 jobs:
   # ============================================================================
+  # STAGE 0: CHANGE SCOPE (decides which of Stage 2's heavy jobs actually need to run)
+  # ============================================================================
+  plan:
+    name: 🧭 Determine CI Scope
+    runs-on: ubuntu-latest
+    outputs:
+      run_build: ${{ steps.plan.outputs.run_build }}
+      run_quality: ${{ steps.plan.outputs.run_quality }}
+      run_unit: ${{ steps.plan.outputs.run_unit }}
+      run_e2e: ${{ steps.plan.outputs.run_e2e }}
+      turbo_filter: ${{ steps.plan.outputs.turbo_filter }}
+      reason: ${{ steps.plan.outputs.reason }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Compute change scope
+        id: plan
+        run: bun scripts/ci/plan.ts
+
+  # ============================================================================
   # STAGE 1: HARD BLOCKERS (Fast-Fail Gates)
   # ============================================================================
   security_compliance:
@@ -70,6 +96,8 @@ jobs:
 
   production_build:
     name: 📦 Production Bundle Build (Blocking)
+    needs: [plan]
+    if: needs.plan.outputs.run_build == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -79,14 +107,15 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Production Bundle Verification
-        run: pnpm build
+        run: pnpm exec turbo run build ${{ needs.plan.outputs.turbo_filter }}
 
   # ============================================================================
   # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
   # ============================================================================
   code_quality:
     name: 🔍 Code Quality & Typecheck
-    needs: [security_compliance, production_build]
+    needs: [plan, security_compliance, production_build]
+    if: needs.plan.outputs.run_quality == 'true'
     runs-on: ubuntu-latest
     outputs:
       typecheck: ${{ steps.typecheck.outcome }}
@@ -100,17 +129,18 @@ jobs:
 
       - name: Typecheck & Svelte Diagnostics
         id: typecheck
-        run: pnpm check
+        run: pnpm exec turbo run check ${{ needs.plan.outputs.turbo_filter }}
         continue-on-error: true
 
       - name: ESLint
         id: eslint
-        run: pnpm check:lint
+        run: pnpm exec turbo run check:lint ${{ needs.plan.outputs.turbo_filter }}
         continue-on-error: true
 
   unit_tests:
     name: 🧪 Unit Tests & Coverage
-    needs: [security_compliance, production_build]
+    needs: [plan, security_compliance, production_build]
+    if: needs.plan.outputs.run_unit == 'true'
     runs-on: ubuntu-latest
     outputs:
       coverage: ${{ steps.coverage.outcome }}
@@ -128,7 +158,8 @@ jobs:
 
   e2e_tests:
     name: 🎭 Playwright E2E Tests
-    needs: [security_compliance, production_build]
+    needs: [plan, security_compliance, production_build]
+    if: needs.plan.outputs.run_e2e == 'true'
     runs-on: ubuntu-latest
     outputs:
       e2e: ${{ steps.e2e.outcome }}
@@ -234,7 +265,7 @@ jobs:
   pr_summary:
     name: 📝 Post PR Advisory Summary
     if: always() && github.event_name == 'pull_request'
-    needs: [security_compliance, production_build, code_quality, unit_tests, e2e_tests]
+    needs: [plan, security_compliance, production_build, code_quality, unit_tests, e2e_tests]
     runs-on: ubuntu-latest
     # Org policy caps the default GITHUB_TOKEN at read-only, so this uses a fine-grained
     # PAT (repo-scoped to tabitha, Issues: write) stored as PR_SUMMARY_TOKEN instead.
@@ -270,6 +301,10 @@ jobs:
             ]
 
             let body = `${marker}\n### 🔎 CI Advisory Summary\n\nThese checks are non-blocking and never stop a merge, but are worth a look.\n\n`
+
+            if (needs.plan.outputs.reason) {
+              body += `🧭 **Scope:** ${needs.plan.outputs.reason}\n\n`
+            }
 
             if (needs.security_compliance.result === 'failure') {
               body += `🚫 **Blocking gate failed:** secret/dependency scan (\`security_compliance\`). Advisory checks below may not have run.\n\n`
