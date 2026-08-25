@@ -6,11 +6,12 @@ import type { GenerateContentConfig } from '@google/genai'
  * data-residency needs, not something app-by-app choice should be allowed to drop. `project`
  * and `location` are Vertex's own required routing fields; `location` can't be `'global'` --
  * Cloudflare's Universal Endpoint docs warn that has limited model support. Owned entirely by
- * the package -- never overridable per call.
+ * the package -- never overridable per call. `gateway_name` isn't here: there's exactly one
+ * TaBiThA gateway (`tools/gateway/config.ts`), so it's fixed alongside the model and seed in
+ * client.ts rather than repeated as a literal at every call site.
  */
 export type AiGatewayConfig = {
 	account_id: string
-	gateway_name: string
 	token: string
 	project: string
 	location: string
