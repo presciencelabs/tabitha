@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { lwc_info, usfm_book_codes } from '$lib/lookups'
-import type { GoogleGenAI } from '@google/genai/node'
+import { AiResponseError, type AiClient } from '@tabitha/ai'
 import { brief_main_prompt, translate_prompt } from './prompts'
 import { json_response_schema } from './json_response_schema'
 
@@ -29,7 +29,7 @@ async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]>
 	return result.items.map(({ id }) => id)
 }
 
-async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: GoogleGenAI }): Promise<BriefTnnBasedOutput | undefined> {
+async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<BriefTnnBasedOutput | undefined> {
 	// get prompt from Aquifer
 	const contentId = (await get_aquifer_content_ids(input.verse))[0]
 
@@ -51,25 +51,17 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: Google
 		tabithaNotes: input.notes,
 	}
 
-	const llm_response = await ai.models.generateContent({
-		model: 'gemini-3.5-flash',
-		contents: JSON.stringify(prompt),
-		config: {
-			temperature: 0.0,
-			seed: 41,
-			frequencyPenalty: 0.0,
-			presencePenalty: 0.0,
-			systemInstruction: brief_main_prompt,
-			responseMimeType: 'application/json',
-			responseJsonSchema: json_response_schema,
-		},
-	})
-
-	if (!llm_response.text) {
-		console.error(`Gemini error: with headers ${llm_response.sdkHttpResponse?.headers}`)
+	try {
+		return await ai.generate_json<BriefTnnBasedOutput>({
+			contents: prompt,
+			system_instruction: brief_main_prompt,
+			schema: json_response_schema,
+		})
+	} catch (error) {
+		if (!(error instanceof AiResponseError)) throw error
+		console.error(`Gemini error: ${error.message}`)
 		return undefined
 	}
-	return JSON.parse(llm_response.text)
 }
 
 function format_weight(weight: number) {
@@ -100,7 +92,7 @@ function mark_for_translation({ text, targetLanguageName, sourceLanguageName = '
 	return sourceLanguageName !== targetLanguageName ? `${translation_opener}${text}${translation_delimiter}${sourceLanguageName}${translation_delimiter}${targetLanguageName}${translation_closer}` : text
 }
 
-export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }): Promise<T> {
+export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): Promise<T> {
 	const placeholder_map = new Map<string, number>()
 
 	// TODO use Regex?
@@ -126,27 +118,23 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }
 		return obj
 	}
 	
-	const prompt_string = JSON.stringify(prompt)
-	const response = await ai.models.generateContent({
-		model: 'gemini-3.5-flash',
-		contents: prompt_string,
-		config: {
-			temperature: 0.0,
-			seed: 41,
-			frequencyPenalty: 0.0,
-			presencePenalty: 0.0,
-			systemInstruction: translate_prompt,
-			responseMimeType: 'application/json',
-			responseJsonSchema: {
+	let substitutions: string[]
+	try {
+		substitutions = await ai.generate_json<string[]>({
+			contents: prompt,
+			system_instruction: translate_prompt,
+			schema: {
 				type: 'array',
 				items: {
 					type: 'string',
 				},
 			},
-		},
-	})
+		})
+	} catch (error) {
+		if (!(error instanceof AiResponseError)) throw error
+		substitutions = []
+	}
 
-	const substitutions = response.text ? JSON.parse(response.text) : []
 	for (const [i, substitution] of substitutions.entries()) {
 		text = text.replaceAll(`${placeholder_opener}${i}${placeholder_closer}`, substitution.replaceAll('"', '\\"'))
 	}
@@ -156,7 +144,7 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: GoogleGenAI }
 
 // main
 
-export async function create_brief_for_verse({ note_results, settings, ai }: { note_results: CopilotApiResult, settings: BriefSettings, ai: GoogleGenAI }): Promise<BriefOutput | undefined> {
+export async function create_brief_for_verse({ note_results, settings, ai }: { note_results: CopilotApiResult, settings: BriefSettings, ai: AiClient }): Promise<BriefOutput | undefined> {
 	if (note_results.error) {
 		// the error is already logged elsewhere
 		return undefined
@@ -174,7 +162,7 @@ export async function create_brief_for_verse({ note_results, settings, ai }: { n
 	return get_brief_data({ input: brief_input, ai })
 }
 
-async function get_brief_data({ input, ai }: { input: BriefInput, ai: GoogleGenAI }): Promise<BriefOutput | undefined> {
+async function get_brief_data({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<BriefOutput | undefined> {
 	const tnn_based_info = await get_tnn_based_info({ input, ai })
 	if (!tnn_based_info) {
 		return undefined
@@ -259,7 +247,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 	return items.join('\n')
 }
 
-export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: VerseReference, output: BriefOutput, ai: GoogleGenAI }) {
+export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: VerseReference, output: BriefOutput, ai: AiClient }) {
 	// TODO fully implement this - this is currently here to keep the pre-existing conversion to this template data
 	const reader_language = output.lwc
 	const template_data: BriefDocxTemplateData = await translate_json({

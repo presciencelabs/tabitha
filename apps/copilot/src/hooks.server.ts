@@ -1,19 +1,19 @@
 import type { ServerInit, Handle } from '@sveltejs/kit'
-import { GoogleGenAI } from '@google/genai/node'
+import { create_ai_client, type AiClient } from '@tabitha/ai'
 import { env } from '$env/dynamic/private'
 
-let ai: GoogleGenAI
+let ai: AiClient
 
 export const init: ServerInit = async () => {
-	ai = new GoogleGenAI({
-		vertexai: true,
-		project: env.GEMINI_PROJECT_ID,
-		location: env.GEMINI_LOCATION,
-		googleAuthOptions: {
-			credentials: {
-				client_email: env.GEMINI_CLIENT_EMAIL,
-				private_key: env.GEMINI_PRIVATE_KEY?.replaceAll(/\\n/g, '\n'),
-			},
+	ai = create_ai_client({
+		app: 'copilot',
+		feature: 'copilot',
+		gateway: {
+			account_id: env.CLOUDFLARE_ACCOUNT_ID,
+			gateway_name: 'tabitha',
+			token: env.AI_GATEWAY_TOKEN,
+			project: env.GEMINI_PROJECT_ID,
+			location: env.GEMINI_LOCATION,
 		},
 	})
 }

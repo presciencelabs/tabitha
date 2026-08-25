@@ -1,6 +1,6 @@
-import type { GoogleGenAI } from '@google/genai/node'
+import { AiResponseError, type AiClient } from '@tabitha/ai'
 
-export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: GoogleGenAI }): Promise<CopilotLlmOutput> {
+export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: AiClient }): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 
@@ -39,17 +39,12 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 
 			Return the schema requested.`
 
-	const response = await ai.models.generateContent({
-		model: 'gemini-3.5-flash',
-		contents: JSON.stringify(llm_input),
-		config: {
-			temperature: 0.0,
-			seed: 42,
-			frequencyPenalty: 0.0,
-			presencePenalty: 0.0,
-			systemInstruction: system_instruction,
-			responseMimeType: 'application/json',
-			responseJsonSchema: {
+	let output: CopilotLlmOutput
+	try {
+		output = await ai.generate_json<CopilotLlmOutput>({
+			contents: llm_input,
+			system_instruction,
+			schema: {
 				'type': 'object',
 				'properties': {
 					'notes': {
@@ -96,11 +91,12 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 				},
 				'required': ['notes'],
 			},
-		},
-	})
+		})
+	} catch (error) {
+		if (!(error instanceof AiResponseError)) throw error
+		output = { notes: [] }
+	}
 
-	const output = response.text?.length ? JSON.parse(response.text) as CopilotLlmOutput : { notes: [] }
-	
 	return {
 		notes: output.notes.map(({ meaning, check, quoted_text, trigger }) => ({ meaning: postprocess(meaning), check: postprocess(check), quoted_text, trigger })),
 		lwc_text: translate_tbta_text ? output.lwc_text : llm_input.lwc_text,

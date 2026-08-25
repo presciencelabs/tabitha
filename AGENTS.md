@@ -504,6 +504,19 @@ own credential. `tools/*` scripts (Bun, not SvelteKit) use the same two-tier sha
 
 ---
 
+## 🔁 Git Workflow for AI Agents
+
+An AI agent working in this repo should make the requested code changes and stop there -- it
+should not run `git add`, `git commit`, or `git push` on its own initiative mid-task. The
+developer reviews the diff and stages changes themselves (sometimes mid-session, outside any
+visible tool call, so `git status` already showing staged files is expected, not a bug to
+investigate). Once the developer signals review is complete (e.g. "go for it", "my review is
+complete"), that single signal should be treated as authorizing both `git commit` and `git push`
+together -- a separate, distinct confirmation for the push step should not be required once
+review-complete has been signaled.
+
+---
+
 ## ⚡ 1-Command Verification Gate
 
 Before submitting any code changes, ensure the entire repository passes the standard verification gate:

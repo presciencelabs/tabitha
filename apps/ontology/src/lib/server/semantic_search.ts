@@ -1,8 +1,10 @@
 import { env } from '$env/dynamic/private'
-import { GoogleGenAI } from '@google/genai'
+import { create_ai_client, AiResponseError } from '@tabitha/ai'
 import { get_all_concepts } from './ontology'
 import type { D1Database } from '@cloudflare/workers-types'
 import type { Concept } from '$lib/types'
+
+const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 
 type FindRelatedConceptsOptions = {
 	readonly db: D1Database
@@ -11,14 +13,6 @@ type FindRelatedConceptsOptions = {
 
 export async function find_related_concepts({ db, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
 	const all_concepts = await get_all_concepts(db)
-
-	// check the cache
-	const cached_results = get_from_cache(search_term)
-	if (cached_results) {
-		return cached_results
-			.map(key => all_concepts.find(c => key === concept_key(c)))
-			.filter((c): c is Concept => c !== undefined)
-	}
 
 	// These filters currently result in ~3800 concepts getting sent to the LLM, down from ~6380
 	const concept_filters: ((c: Concept) => boolean)[] = [
@@ -49,20 +43,24 @@ export async function find_related_concepts({ db, search_term }: FindRelatedConc
 		Provide between 0 and 10 concepts.
 		Return the list of related concepts according to the requested schema, with the MOST related concepts first.`
 
-	const ai = new GoogleGenAI({ apiKey: env.API_KEY_GEMINI })
+	const ai = create_ai_client({
+		app: 'ontology',
+		feature: 'semantic-search',
+		gateway: {
+			account_id: env.CLOUDFLARE_ACCOUNT_ID,
+			gateway_name: 'tabitha',
+			token: env.AI_GATEWAY_TOKEN,
+			project: env.GEMINI_PROJECT_ID,
+			location: env.GEMINI_LOCATION,
+		},
+	})
 
-	const response = await ai.models.generateContent({
-		model: 'gemini-2.5-flash',
-		contents: JSON.stringify(input_data),
-		config: {
-			temperature: 0.0,
-			seed: 42,
-			frequencyPenalty: 0.0,
-			presencePenalty: 0.0,
-			systemInstruction: system_instruction,
-			responseMimeType: 'application/json',
-			// https://ai.google.dev/gemini-api/docs/structured-output?example=recipe#json_schema_support
-			responseJsonSchema: {
+	let output: string[]
+	try {
+		output = await ai.generate_json<string[]>({
+			contents: input_data,
+			system_instruction,
+			schema: {
 				type: 'array',
 				description: 'The list of related concepts.',
 				items: {
@@ -70,12 +68,16 @@ export async function find_related_concepts({ db, search_term }: FindRelatedConc
 					description: 'The concept identifier.',
 				},
 			},
-		},
-	})
-
-	const output = response.text?.length ? (JSON.parse(response.text) as string[]) : []
-	if (output.length) {
-		set_cache({ search_term, results: output })
+			config: {
+				// Replaces the old in-memory Map cache, which was per-isolate and largely
+				// ineffective on Workers anyway -- the gateway's cache is shared and durable.
+				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
+			},
+		})
+	} catch (error) {
+		// No related concepts is a normal, unremarkable outcome for a search feature -- fail soft.
+		if (error instanceof AiResponseError) return []
+		throw error
 	}
 
 	return output
@@ -96,7 +98,7 @@ function transform_concept(concept: Concept): { concept: string, gloss: string }
 			if (!hint) return ''
 
 			const { structure, pairing, explication } = hint
-			
+
 			return `${structure} - ${pairing} - ${explication}`.trim()
 		} else {
 			// remove anything within parentheses
@@ -107,32 +109,4 @@ function transform_concept(concept: Concept): { concept: string, gloss: string }
 
 function concept_key({ stem, sense, part_of_speech }: Concept): string {
 	return `${stem}-${sense}-${part_of_speech}`
-}
-
-const related_concept_cache = new Map<string, [string[], Date]>()
-
-function get_from_cache(search_term: string): string[] | undefined {
-	const cached_value = related_concept_cache.get(search_term)
-	if (!cached_value) {
-		return undefined
-	}
-
-	const [results, timestamp] = cached_value
-
-	const a_week_ago = new Date()
-	a_week_ago.setDate(a_week_ago.getDate() - 7)
-	if (timestamp < a_week_ago) {
-		return undefined
-	}
-
-	return [...results]
-}
-
-type SetCacheOptions = {
-	readonly search_term: string
-	readonly results: string[]
-}
-
-function set_cache({ search_term, results }: SetCacheOptions) {
-	related_concept_cache.set(search_term, [[...results], new Date()])
 }

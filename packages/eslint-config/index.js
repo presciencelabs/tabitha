@@ -5,8 +5,13 @@ import import_x from 'eslint-plugin-import-x'
 import svelte from 'eslint-plugin-svelte'
 import svelte_parser from 'svelte-eslint-parser'
 import ts from 'typescript-eslint'
+import { includeIgnoreFile } from '@eslint/compat'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 import { plainInterfaceToType } from './rules/plain_interface_to_type.js'
 import { pureTypeTopLevel } from './rules/pure_type_top_level.js'
+
+const root_gitignore_path = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.gitignore')
 
 // Shared base rules for JavaScript & TypeScript
 export const baseConfig = [
@@ -106,24 +111,14 @@ export const svelteConfig = [
 	},
 ]
 
-// Shared ignores for build artifacts, cache, and vendor directories
+// Ignores for build artifacts, cache, and vendor directories -- derived from the repo's own
+// .gitignore so the two never drift apart, plus committed-but-generated files that
+// .gitignore doesn't (and shouldn't) cover.
 export const ignoreConfig = [
+	includeIgnoreFile(root_gitignore_path),
 	{
 		ignores: [
-			'**/node_modules/**',
-			'**/.svelte-kit/**',
-			'**/.turbo/**',
-			'**/.wrangler/**',
-			'**/dist/**',
-			'**/build/**',
-			'**/coverage/**',
-			'**/test-results/**',
-			'**/playwright-report/**',
-			'**/blob-report/**',
-			'**/.vite-temp/**',
 			'**/worker-configuration.d.ts',
-			'**/*.generated.*',
-			'**/ambient.d.ts',
 		],
 	},
 ]

@@ -28,12 +28,9 @@ const DOC_LINK = 'README.md#verification--testing'
 
 const forbidden_var_keys = [
 	'AUTH_SECRET',
-	'API_KEY_OPENAI',
-	'API_KEY_GEMINI',
 	'API_KEY_AQUIFER',
-	'PHASE1_AI_ASSIST_API_KEY',
-	'GEMINI_PRIVATE_KEY',
 	'GOOGLE_OAUTH_CLIENT_SECRET',
+	'AI_GATEWAY_TOKEN',
 ]
 
 export async function check_cloudflare_configs(): Promise<{ valid: boolean; errors: CloudflareFinding[]; warnings: CloudflareFinding[] }> {

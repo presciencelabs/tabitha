@@ -2,7 +2,7 @@ import { default_settings, fetch_verses_for_chapter, usfm_book_codes } from '$li
 import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
 import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
-import type { GoogleGenAI } from '@google/genai/node'
+import type { AiClient } from '@tabitha/ai'
 import type { RequestHandler } from './$types'
 
 export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
@@ -132,7 +132,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 	})
 }
 
-async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotApiResult, settings: CopilotSettings, ai: GoogleGenAI }): Promise<string> {
+async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotApiResult, settings: CopilotSettings, ai: AiClient }): Promise<string> {
 	if (settings.mode === 'brief') {
 		const brief_settings: BriefSettings = {
 			...settings,
