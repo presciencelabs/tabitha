@@ -1,5 +1,4 @@
 import { create_ai_client } from '@tabitha/ai'
-import { gateway_id } from './config'
 
 /** Manual, credential-gated integration check -- not part of `pnpm test`. Sends one real request
  * through the live gateway using the actual @tabitha/ai client, to get a real answer (instead of
@@ -15,7 +14,7 @@ async function main() {
 	const ai = create_ai_client({
 		app: 'gateway',
 		feature: 'smoke-test',
-		gateway: { account_id, gateway_name: gateway_id, token: gateway_token, project, location },
+		gateway: { account_id, token: gateway_token, project, location },
 	})
 
 	console.log('Sending a test request through the live gateway...')
