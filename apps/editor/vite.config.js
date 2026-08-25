@@ -11,7 +11,7 @@ export default create_app_vite_config({
 			manifest: {
 				name: 'TaBiThA Editor',
 				short_name: 'Editor',
-				description: 'Grammar and rule checker and backtranslator',
+				description: 'Grammar and rule checker, backtranslator, and AI assistant',
 				theme_color: '#d02031',
 				background_color: '#ffffff',
 				display: 'standalone',
@@ -36,7 +36,8 @@ export default create_app_vite_config({
 				runtimeCaching: [
 					{
 						// /check is editor's own GET API route (grammar/rule checking),
-						// called via client-side fetch from the root page.
+						// called via client-side fetch from the root page. /ai-assist/generate
+						// is POST and is already excluded by `method: 'GET'` below.
 						urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname === '/check',
 						method: 'GET',
 						handler: 'NetworkFirst',

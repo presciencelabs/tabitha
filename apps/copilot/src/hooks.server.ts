@@ -10,7 +10,6 @@ export const init: ServerInit = async () => {
 		feature: 'copilot',
 		gateway: {
 			account_id: env.CLOUDFLARE_ACCOUNT_ID,
-			gateway_name: 'tabitha',
 			token: env.AI_GATEWAY_TOKEN,
 			project: env.GEMINI_PROJECT_ID,
 			location: env.GEMINI_LOCATION,

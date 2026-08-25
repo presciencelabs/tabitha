@@ -2,9 +2,10 @@ import { GoogleGenAI, type GenerateContentConfig } from '@google/genai'
 import { AiResponseError } from './errors'
 import type { AiCallDefaults, AiClient, AiGatewayConfig, CreateAiClientOptions, GenerateJsonParams, GenerateTextParams } from './types'
 
-// Fixed for every call site -- not overridable. See the comment on AiCallDefaults in types.ts.
+// Fixed for every call site -- not overridable. FOr more info, see the type comments in types.ts.
 const FIXED_MODEL = 'gemini-3.5-flash'
 const FIXED_SEED = 42 // 😏
+const GATEWAY_NAME = 'tabitha'
 
 const PACKAGE_DEFAULTS: AiCallDefaults = {
 	temperature: 0.0,
@@ -89,7 +90,7 @@ function create_genai_client(gateway: AiGatewayConfig, metadata: { app: string, 
 		project: gateway.project,
 		location: gateway.location,
 		httpOptions: {
-			baseUrl: `https://gateway.ai.cloudflare.com/v1/${gateway.account_id}/${gateway.gateway_name}/google-vertex-ai`,
+			baseUrl: `https://gateway.ai.cloudflare.com/v1/${gateway.account_id}/${GATEWAY_NAME}/google-vertex-ai`,
 			headers: {
 				'cf-aig-authorization': `Bearer ${gateway.token}`,
 				'cf-aig-metadata': JSON.stringify(metadata),

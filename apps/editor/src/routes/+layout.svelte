@@ -2,6 +2,7 @@
 	import '$lib/app.css'
 
 	import { Header, Footer } from '@tabitha/ui'
+	import AppNav from '$lib/AppNav.svelte'
 	import type { Snippet } from 'svelte'
 	import { useRegisterSW } from 'virtual:pwa-register/svelte'
 
@@ -15,7 +16,9 @@
 </script>
 
 <!-- layout not handled by daisyUI, https://daisyui.com/docs/layout-and-typography -->
-<Header app="Editor" />
+<Header app="Editor">
+	<AppNav />
+</Header>
 
 <main class="mx-8 mt-8">
 	{@render children()}

@@ -64,6 +64,12 @@ One deliberate, minor behavior change beyond pure plumbing: the four sites previ
 
 **Live-verified (2026-08-24)**: Vertex Provider Keys (BYOK) were added in the dashboard and `pnpm verify` in `tools/gateway` succeeded end to end -- see "Things to verify" below.
 
+## Phase 4: editor ai-assist
+
+Editor is the first genuinely *new* AI consumer built on this plumbing, rather than a migration of an existing call site. It confirms the "prompts stay in the consuming app" decision above is more than a paper commitment: `apps/editor/src/lib/server/ai_assist/prompts.ts` imports `CLAUSE_NOTATIONS` directly from editor's own parser (`$lib/parser/clause_notations`) to build its system instruction, which is exactly the kind of domain coupling the rejected `apps/ai` alternative would have had to absorb.
+
+The feature previously existed (`6f262efd`) but was removed (`9b543376`) after an interim OpenAI-to-Gemini migration (`5d715aac`) silently dropped the fine-tuned model that had made it work, and a separate `API_KEY_GEMINI`/`GEMINI_API_KEY` env-var name mismatch meant the endpoint 500'd unconditionally regardless. With no fine-tune to fall back on, this rebuild gets its quality from prompt engineering plus a deterministic self-check instead of model weights: the endpoint generates a Phase 1 encoding, runs it through editor's own checker, and — on a checker error — feeds the checker's messages back for one repair pass before returning the better of the two attempts.
+
 ## Things to verify empirically before relying on this in production
 
 - ~~**Vertex AI + BYOK client-side auth.**~~ **Confirmed working (2026-08-24).** `pnpm verify` in `tools/gateway` sent a real request through the live gateway with Vertex Provider Keys configured, and it succeeded end to end. The extraneous `x-goog-api-key` header the `@google/genai` SDK sends alongside `cf-aig-authorization` does not cause the 400s Cloudflare's BYOK docs warned about -- Cloudflare's gateway apparently ignores or tolerates it for Vertex's OAuth-bearer auth path.

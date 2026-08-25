@@ -13,7 +13,6 @@ vi.mock('@google/genai', () => ({
 
 const gateway: AiGatewayConfig = {
 	account_id: 'acct-1',
-	gateway_name: 'tabitha',
 	token: 'gw-token',
 	project: 'my-project',
 	location: 'us-central1',

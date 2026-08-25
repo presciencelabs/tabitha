@@ -27,7 +27,7 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 | **Ontology** | `apps/ontology` | `http://localhost:5173` | `5173` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
 | **Targets** | `apps/targets` | `http://localhost:8788` | `8788` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
 | **Sources** | `apps/sources` | `http://localhost:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
-| **Editor** | `apps/editor` | `http://localhost:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator |
+| **Editor** | `apps/editor` | `http://localhost:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
 | **Copilot** | `apps/copilot` | `http://localhost:8793` | `8793` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
 
 ---
@@ -312,7 +312,7 @@ graph TD;
 1. **Ontology (`apps/ontology`)**: Central store of all semantic concepts, meanings, part of speech, and contextual usage rules.
 2. **Semantic Representation (`apps/sources`)**: TBTA clause and phrase structure encodings and semantic feature flags.
 3. **Lexicon & Grammar (`apps/targets`)**: Target language vocabulary, features, and transformational grammar rules.
-4. **Editor & Rule Engine (`apps/editor`)**: Grammar checking, validation, and automated backtranslation.
+4. **Editor & Rule Engine (`apps/editor`)**: Grammar checking, validation, automated backtranslation, and AI-assisted Phase 1 encoding.
 5. **Translation Copilot (`apps/copilot`)**: Flag extraction, contextual notes, and AI-assisted consultant briefs.
 
 ---
