@@ -16,10 +16,14 @@ export type AiGatewayConfig = {
 	location: string
 }
 
-/** Generation behavior. Everything here is overridable at the client-defaults or per-call layer. */
-export type AiCallDefaults = Partial<GenerateContentConfig> & {
-	model?: string
-}
+/**
+ * Generation behavior overridable at the client-defaults or per-call layer. `model` and `seed`
+ * are deliberately excluded -- every existing call site had drifted to a different value for
+ * both without a real reason, so they're fixed centrally in client.ts instead of left as an
+ * override surface. Reintroduce a narrow override for either only if a real per-call need for it
+ * emerges.
+ */
+export type AiCallDefaults = Partial<Omit<GenerateContentConfig, 'seed'>>
 
 export type CreateAiClientOptions = {
 	app: string

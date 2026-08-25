@@ -16,7 +16,19 @@ export type DesiredGatewayConfig = {
 	retry_max_attempts: number
 	retry_delay: number
 	retry_backoff: 'constant' | 'linear' | 'exponential'
+	// Only a valid field on the gateway *update* endpoint -- cloudflare-go's AIGatewayNewParams
+	// (create) omits `guardrails`/`dlp` entirely, unlike AIGatewayUpdateParams. apply.ts strips
+	// this from the create request and always follows a create with an update.
+	guardrails: {
+		prompt: Partial<Record<GuardrailCategory, 'FLAG' | 'BLOCK'>>
+		response: Partial<Record<GuardrailCategory, 'FLAG' | 'BLOCK'>>
+	}
 }
+
+/** Llama Guard 3's 13 hazard categories (`S1`-`S13`), plus Cloudflare's own `P1` for prompt
+ * injection (not part of the Llama Guard taxonomy). A category left out of `guardrails.prompt`/
+ * `.response` above is unenforced. */
+type GuardrailCategory = 'P1' | 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | 'S8' | 'S9' | 'S10' | 'S11' | 'S12' | 'S13'
 
 /** The gateway id -- also the path segment every app's Universal Endpoint URL routes through. */
 export const gateway_id = 'tabitha'
@@ -39,4 +51,15 @@ export const desired_gateway_config: DesiredGatewayConfig = {
 	retry_max_attempts: 3,
 	retry_delay: 500,
 	retry_backoff: 'exponential',
+	guardrails: {
+		// P1 (prompt injection) only, at BLOCK. The 13 content categories (S1-S13: violence, hate,
+		// self-harm, sexual content, etc.) are deliberately left unset -- TaBiThA's content is Bible
+		// text, where violence, war, and other mature themes are routine and legitimate; blocking on
+		// those categories would false-positive on real scripture. Revisit per-category if a real
+		// need emerges.
+		prompt: { P1: 'BLOCK' },
+		// Prompt injection isn't a meaningful concept for a model's own response, so nothing is set
+		// here -- but Cloudflare's API requires the `response` object to be present regardless.
+		response: {},
+	},
 }

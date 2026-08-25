@@ -685,6 +685,9 @@ importers:
 
   tools/gateway:
     devDependencies:
+      '@google/genai':
+        specifier: ^2.17.1
+        version: 2.17.1(supports-color@10.2.2)
       '@tabitha/ai':
         specifier: workspace:*
         version: link:../../packages/ai

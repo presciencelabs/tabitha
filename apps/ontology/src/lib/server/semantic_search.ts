@@ -48,11 +48,6 @@ export async function find_related_concepts(db: D1Database, search_term: string)
 			project: env.GEMINI_PROJECT_ID,
 			location: env.GEMINI_LOCATION,
 		},
-		defaults: {
-			// Ontology's payloads (~74k tokens) are large enough that this was a deliberate choice,
-			// not drift -- see the open question in docs/decisions/0005-ai-consolidation.md.
-			model: 'gemini-2.5-flash',
-		},
 	})
 
 	let output: string[]

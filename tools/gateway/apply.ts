@@ -21,6 +21,10 @@ export async function reconcile_gateway(
 	}
 
 	await create_gateway(credentials, fetch_impl)
+	// The create endpoint doesn't accept every field in desired_gateway_config (see create_gateway
+	// below) -- follow up with an update so a freshly provisioned gateway ends up fully reconciled
+	// in one `pnpm apply`, not two.
+	await update_gateway(credentials, fetch_impl)
 	return 'created'
 }
 
@@ -36,10 +40,16 @@ async function gateway_exists({ account_id, api_token }: CloudflareCredentials, 
 }
 
 async function create_gateway({ account_id, api_token }: CloudflareCredentials, fetch_impl: typeof fetch): Promise<void> {
+	// `guardrails` isn't a valid create-body field -- cloudflare-go's AIGatewayNewParams omits it
+	// entirely, unlike AIGatewayUpdateParams. reconcile_gateway always follows this with
+	// update_gateway, which does support it.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- discarding `guardrails`, the field the create endpoint doesn't accept.
+	const { guardrails, ...create_body } = desired_gateway_config
+
 	const response = await fetch_impl(`${CLOUDFLARE_API_BASE}/accounts/${account_id}/ai-gateway/gateways`, {
 		method: 'POST',
 		headers: auth_headers(api_token),
-		body: JSON.stringify({ id: gateway_id, ...desired_gateway_config }),
+		body: JSON.stringify({ id: gateway_id, ...create_body }),
 	})
 
 	if (!response.ok) throw new Error(`Failed to create gateway "${gateway_id}": ${response.status} ${await response.text()}`)

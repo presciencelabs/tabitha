@@ -11,9 +11,11 @@
     "test": "pnpm test:unit",
     "test:unit": "bun test",
     "apply": "bun apply.ts",
-    "verify": "bun verify_gateway.ts"
+    "verify": "bun verify_gateway.ts",
+    "verify:cache": "bun verify_cache_metadata.ts"
   },
   "devDependencies": {
+    "@google/genai": "^2.17.1",
     "@tabitha/ai": "workspace:*",
     "@tabitha/eslint-config": "workspace:*",
     "@tabitha/tsconfig": "workspace:*",

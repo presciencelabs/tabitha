@@ -56,7 +56,6 @@ async function get_tnn_based_info(input: BriefInput, ai: AiClient): Promise<Brie
 			contents: prompt,
 			system_instruction: brief_main_prompt,
 			schema: json_response_schema,
-			config: { seed: 41 },
 		})
 	} catch (error) {
 		if (!(error instanceof AiResponseError)) throw error
@@ -132,7 +131,6 @@ export async function translate_json<T>(obj: T, ai: AiClient): Promise<T> {
 					type: 'string',
 				},
 			},
-			config: { seed: 41 },
 		})
 	} catch (error) {
 		if (!(error instanceof AiResponseError)) throw error

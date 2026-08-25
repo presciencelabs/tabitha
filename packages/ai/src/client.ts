@@ -2,11 +2,12 @@ import { GoogleGenAI, type GenerateContentConfig } from '@google/genai'
 import { AiResponseError } from './errors'
 import type { AiCallDefaults, AiClient, AiGatewayConfig, CreateAiClientOptions, GenerateJsonParams, GenerateTextParams } from './types'
 
-const DEFAULT_MODEL = 'gemini-3.5-flash'
+// Fixed for every call site -- not overridable. See the comment on AiCallDefaults in types.ts.
+const FIXED_MODEL = 'gemini-3.5-flash'
+const FIXED_SEED = 42 // 😏
 
 const PACKAGE_DEFAULTS: AiCallDefaults = {
 	temperature: 0.0,
-	seed: 42,
 	frequencyPenalty: 0.0,
 	presencePenalty: 0.0,
 }
@@ -15,8 +16,8 @@ export function create_ai_client({ app, feature, gateway, defaults }: CreateAiCl
 	const genai = create_genai_client(gateway, { app, feature })
 
 	function resolve_config(overrides?: AiCallDefaults): { model: string, config: Partial<GenerateContentConfig> } {
-		const { model, ...config } = merge_defaults(PACKAGE_DEFAULTS, defaults, overrides)
-		return { model: model ?? DEFAULT_MODEL, config }
+		const config = merge_defaults(PACKAGE_DEFAULTS, defaults, overrides)
+		return { model: FIXED_MODEL, config: { ...config, seed: FIXED_SEED } }
 	}
 
 	async function generate_json<T>(params: GenerateJsonParams): Promise<T> {

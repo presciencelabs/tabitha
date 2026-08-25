@@ -19,17 +19,25 @@ function fake_fetch(get_status: number): typeof fetch {
 }
 
 describe('reconcile_gateway', () => {
-	it('creates the gateway when it does not exist yet', async () => {
+	it('creates the gateway when it does not exist yet, then follows up with an update', async () => {
 		const fetch_impl = fake_fetch(404)
 
 		const result = await reconcile_gateway(credentials, fetch_impl)
 
 		expect(result).toBe('created')
 		const calls = (fetch_impl as unknown as ReturnType<typeof mock>).mock.calls
-		const [, create_call] = calls
+		const [, create_call, update_call] = calls
+
 		expect(create_call[0]).toBe(`https://api.cloudflare.com/client/v4/accounts/${credentials.account_id}/ai-gateway/gateways`)
 		expect(create_call[1].method).toBe('POST')
-		expect(JSON.parse(create_call[1].body)).toEqual({ id: gateway_id, ...desired_gateway_config })
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- discarding `guardrails`, the field the create endpoint doesn't accept.
+		const { guardrails, ...create_only_fields } = desired_gateway_config
+		expect(JSON.parse(create_call[1].body)).toEqual({ id: gateway_id, ...create_only_fields })
+
+		// The create endpoint doesn't accept `guardrails` -- confirm the follow-up update applies it.
+		expect(update_call[0]).toBe(`https://api.cloudflare.com/client/v4/accounts/${credentials.account_id}/ai-gateway/gateways/${gateway_id}`)
+		expect(update_call[1].method).toBe('PUT')
+		expect(JSON.parse(update_call[1].body)).toEqual(desired_gateway_config)
 	})
 
 	it('updates the gateway when it already exists', async () => {

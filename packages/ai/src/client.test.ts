@@ -79,7 +79,7 @@ describe('@tabitha/ai', () => {
 				app: 'copilot',
 				feature: 'brief',
 				gateway,
-				defaults: { seed: 41, model: 'gemini-3.5-flash' },
+				defaults: { topP: 0.9 },
 			})
 
 			await ai.generate_json({ contents: {}, schema: { type: 'object' }, config: { temperature: 0.5 } })
@@ -87,7 +87,8 @@ describe('@tabitha/ai', () => {
 			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
 				model: 'gemini-3.5-flash',
 				config: expect.objectContaining({
-					seed: 41,
+					seed: 42,
+					topP: 0.9,
 					temperature: 0.5,
 					frequencyPenalty: 0.0,
 					presencePenalty: 0.0,
@@ -95,7 +96,7 @@ describe('@tabitha/ai', () => {
 			}))
 		})
 
-		test('falls back to the package default model and seed when the client sets none', async () => {
+		test('always uses the fixed model and seed, regardless of client defaults', async () => {
 			generate_content.mockResolvedValue({ text: '{}' })
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
@@ -104,6 +105,23 @@ describe('@tabitha/ai', () => {
 			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
 				model: 'gemini-3.5-flash',
 				config: expect.objectContaining({ seed: 42, temperature: 0.0 }),
+			}))
+		})
+
+		test('ignores an attempt to override the fixed model or seed', async () => {
+			generate_content.mockResolvedValue({ text: '{}' })
+			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await ai.generate_json({
+				contents: {},
+				schema: { type: 'object' },
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- model/seed aren't valid override keys; this simulates a caller bypassing the type with `as any`.
+				config: { model: 'gemini-2.5-flash', seed: 41 } as any,
+			})
+
+			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
+				model: 'gemini-3.5-flash',
+				config: expect.objectContaining({ seed: 42 }),
 			}))
 		})
 	})
