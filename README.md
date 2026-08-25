@@ -235,6 +235,7 @@ graph TD;
             TypesPkg["@tabitha/types"];
             UIPkg["@tabitha/ui"];
             APIClientPkg["@tabitha/api-client"];
+            AIPkg["@tabitha/ai"];
             ESLintPkg["@tabitha/eslint-config"];
             TSConfigPkg["@tabitha/tsconfig"];
         end
@@ -246,6 +247,12 @@ graph TD;
             TargetsDB[(Targets D1/SQLite)];
             AuthDB[(Auth D1/SQLite)];
         end
+    end
+
+    subgraph ExternalServices ["External AI Services"]
+        direction LR
+        AIGateway["Cloudflare AI Gateway"];
+        VertexAI["Google Vertex AI"];
     end
 
     Phase1Analyst --> OntologyUI;
@@ -268,6 +275,10 @@ graph TD;
     OntologyAPI --> AuthDB;
     SourcesAPI --> SourcesDB;
     TargetsAPI --> TargetsDB;
+
+    OntologyAPI --> AIGateway;
+    CopilotAPI --> AIGateway;
+    AIGateway --> VertexAI;
 ```
 
 ---

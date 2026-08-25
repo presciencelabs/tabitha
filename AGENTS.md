@@ -376,7 +376,7 @@ Keep `.svelte` component scripts limited to presentation and event wiring. Data 
    - `ontology` (:5173) — Core linguistic knowledge base, concepts, and D1 SQLite.
    - `sources` (:8789) — Hebrew/Greek source texts, semantic trees, and verse encodings.
    - `targets` (:8788) — Target language lexicon, inflection engine, and forms.
-   - `copilot` (:8793) — AI translation guidance and Gemini SDK integration.
+   - `copilot` (:8793) — AI translation guidance, routed through `@tabitha/ai` and the Cloudflare AI Gateway.
 
 2. **Shared Packages (`packages/*`)**:
    - `@tabitha/types` — Universal TypeScript interfaces. Must remain free of runtime dependencies.
@@ -385,6 +385,8 @@ Keep `.svelte` component scripts limited to presentation and event wiring. Data 
      - Do not declare domain types as ambient globals (`declare global { type X = ... }`) outside of SvelteKit's own generated `app.d.ts`. Ambient types hide where a type comes from and make accidental duplicates easy to introduce.
    - `@tabitha/ui` — Reusable Svelte 5 components styled with daisyUI 5.
    - `@tabitha/api-client` — Typed HTTP client for inter-service communication.
+   - `@tabitha/cors` — Shared CORS middleware for Worker request handlers.
+   - `@tabitha/ai` — Shared LLM client (`generate_json`, `generate_text`) routing every app's AI calls through the Cloudflare AI Gateway to Vertex AI.
    - `@tabitha/vite-config` — Shared Vite, SvelteKit, Vitest, and Playwright configurations.
    - `@tabitha/eslint-config` — ESLint flat configurations.
    - `@tabitha/tsconfig` — Base TypeScript compiler configurations.
@@ -445,8 +447,9 @@ monorepo:
   [`$env/dynamic/private`](https://svelte.dev/docs/kit/$env-dynamic-private), and
   [`$env/dynamic/public`](https://svelte.dev/docs/kit/$env-dynamic-public). This monorepo mostly
   uses the two **static** modules, but a handful of server-only values consumed inside request
-  handlers -- the Gemini and Aquifer API credentials in `apps/copilot/src/hooks.server.ts`,
-  `apps/copilot/src/lib/server/brief/brief.ts`, and `apps/ontology/src/lib/server/semantic_search.ts`
+  handlers -- the AI Gateway token (`AI_GATEWAY_TOKEN`), Vertex project/location, and Aquifer API
+  credentials in `apps/copilot/src/hooks.server.ts`, `apps/copilot/src/lib/server/brief/brief.ts`,
+  and `apps/ontology/src/lib/server/semantic_search.ts`
   -- are read via `$env/dynamic/private` instead. Nothing yet needs `$env/dynamic/public`. Which
   of the two (public vs. private) to use is about client-bundle exposure only, and is unrelated to whether a
   given var happens to be blank or populated in `.env` -- a var can be public and blank (e.g.
