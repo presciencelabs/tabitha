@@ -346,3 +346,5 @@ Before submitting a Pull Request, run the automated 1-command verification gate:
 # 3. Verify production Cloudflare Worker builds (pnpm build)
 pnpm precommit
 ```
+
+🚀 **Pro tip:** while iterating, `pnpm ci` runs the same scoped subset of that pipeline CI will actually run for your change (see [ADR 0008](docs/decisions/0008-ci-change-scoping.md)) — faster, but `pnpm precommit` is still the one to run before opening a PR, since it always runs everything.
