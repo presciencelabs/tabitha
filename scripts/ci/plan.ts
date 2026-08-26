@@ -176,7 +176,7 @@ async function execute_plan(plan: CiPlan) {
 
 	if (plan.run_build) {
 		console.log('\n▶️  Running production build...\n')
-		await $`pnpm exec turbo run build ${plan.turbo_filter_args}`
+		await $`pnpm exec turbo run build:ci ${plan.turbo_filter_args}`
 	}
 	if (plan.run_quality) {
 		console.log('\n▶️  Running typecheck & lint...\n')

@@ -10,6 +10,7 @@
     "check:lint": "eslint .",
     "check:lint:fix": "eslint . --fix",
     "build": "vite build",
+    "build:ci": "bun run --bun vite build",
     "dev": "vite dev",
     "preview": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173",
     "test": "pnpm test:unit && pnpm test:e2e",

@@ -71,25 +71,39 @@ async function sync_ci_node_version() {
 	try {
 		const node_proc = (await $`node -v`.text()).trim()
 		const major = node_proc.replace(/^v/, '').split('.')[0]
-		const action_path = join(root_dir, '.github/actions/setup-workspace/action.yml')
-		const content = await readFile(action_path, 'utf-8')
-		const match = content.match(/default:\s*['"]?(\d+)['"]?/)
+		const node_version_path = join(root_dir, '.node-version')
+		const current_pin = existsSync(node_version_path)
+			? (await readFile(node_version_path, 'utf-8')).trim()
+			: null
 
-		if (match) {
-			const current_ci_node = match[1]
-			if (current_ci_node !== major) {
-				const updated = content.replace(
-					/default:\s*['"]?\d+['"]?/,
-					`default: '${major}'`,
-				)
-				await writeFile(action_path, updated, 'utf-8')
-				console.log(`   ✨ Aligned CI Node.js version: ${current_ci_node} -> ${major}\n`)
-			} else {
-				console.log(`   ✓ CI Node.js version is in sync (${current_ci_node})\n`)
-			}
+		if (current_pin !== major) {
+			await writeFile(node_version_path, `${major}\n`, 'utf-8')
+			console.log(`   ✨ Aligned CI Node.js version: ${current_pin ?? '(none)'} -> ${major}\n`)
+		} else {
+			console.log(`   ✓ CI Node.js version is in sync (${major})\n`)
 		}
 	} catch (err) {
 		console.warn('   ⚠️  Could not sync CI Node version:', err instanceof Error ? err.message : err)
+	}
+}
+
+async function sync_ci_bun_version() {
+	console.log('🍞 Synchronizing CI Bun version with local runtime...')
+	try {
+		const bun_ver = (await $`bun --version`.text()).trim()
+		const bun_version_path = join(root_dir, '.bun-version')
+		const current_pin = existsSync(bun_version_path)
+			? (await readFile(bun_version_path, 'utf-8')).trim()
+			: null
+
+		if (current_pin !== bun_ver) {
+			await writeFile(bun_version_path, `${bun_ver}\n`, 'utf-8')
+			console.log(`   ✨ Aligned CI Bun version: ${current_pin ?? '(none)'} -> ${bun_ver}\n`)
+		} else {
+			console.log(`   ✓ CI Bun version is in sync (${bun_ver})\n`)
+		}
+	} catch (err) {
+		console.warn('   ⚠️  Could not sync CI Bun version:', err instanceof Error ? err.message : err)
 	}
 }
 
@@ -130,8 +144,9 @@ async function run_safe_update() {
 	// 3. Cloudflare Compatibility Date Maintenance
 	await audit_and_update_cloudflare_compat_dates()
 
-	// 4. CI Workflow & Node.js Version Alignment
+	// 4. CI Workflow & Toolchain Version Alignment
 	await sync_ci_node_version()
+	await sync_ci_bun_version()
 
 	// 5. Non-Breaking SemVer Dependency Update
 	console.log('📦 Updating workspace dependencies within declared SemVer ranges (non-breaking)...')
@@ -193,7 +208,7 @@ async function run_safe_update() {
 	// 10. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
-	console.log('   1/3 Running workspace static analysis & typecheck (pnpm check)...')
+	console.log('   1/4 Running workspace static analysis & typecheck (pnpm check)...')
 	try {
 		await $`pnpm check`
 		console.log('   ✓ Static analysis & typecheck passed cleanly!')
@@ -202,7 +217,7 @@ async function run_safe_update() {
 		process.exit(1)
 	}
 
-	console.log('   2/3 Running unit test suites (pnpm test:unit)...')
+	console.log('   2/4 Running unit test suites (pnpm test:unit)...')
 	try {
 		await $`pnpm test:unit`
 		console.log('   ✓ All unit test suites passed!')
@@ -211,12 +226,24 @@ async function run_safe_update() {
 		process.exit(1)
 	}
 
-	console.log('   3/3 Verifying production Cloudflare Worker bundles (pnpm build)...')
+	console.log('   3/4 Verifying production Cloudflare Worker bundles (pnpm build)...')
 	try {
 		await $`pnpm build`
 		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully!')
 	} catch (err) {
 		console.error('❌ Post-update production build failed:', err instanceof Error ? err.message : err)
+		process.exit(1)
+	}
+
+	// Runs after (not alongside) the check above: build and build:ci both write to the same
+	// per-app .svelte-kit/output, dist/, and build/ directories (see turbo.json), so running
+	// them concurrently would race on the same files instead of actually saving time.
+	console.log('   4/4 Verifying CI production build path (pnpm build:ci, Bun runtime)...')
+	try {
+		await $`pnpm build:ci`
+		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully via the CI (Bun) path!')
+	} catch (err) {
+		console.error('❌ Post-update CI build path failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 

@@ -37,6 +37,8 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: '.bun-version'
 
       - name: Compute change scope
         id: plan
@@ -113,7 +115,7 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Production Bundle Verification
-        run: pnpm exec turbo run build ${{ needs.plan.outputs.turbo_filter }}
+        run: pnpm exec turbo run build:ci ${{ needs.plan.outputs.turbo_filter }}
 
   # ============================================================================
   # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
