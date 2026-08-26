@@ -76,6 +76,13 @@ function generate_local_env_content(template_content: string, existing_content?:
 			continue
 		}
 
+		// Priority 3b: Local dev and CI e2e runs fire fast, unpaced request bursts that a
+		// real-world-abuse threshold isn't meant to survive -- disable rate limiting locally only
+		if (key === 'PUBLIC_RATE_LIMIT_DISABLED') {
+			output_lines.push('PUBLIC_RATE_LIMIT_DISABLED=true')
+			continue
+		}
+
 		// Priority 4: If the developer already supplied a custom value in existing .env.local, preserve it
 		const existing_value = existing_vars.get(key)
 		if (existing_value) {

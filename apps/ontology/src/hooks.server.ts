@@ -1,8 +1,9 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, OAUTH_REDIRECT_PROXY_URL } from '$env/static/private'
-import { PUBLIC_CORS_ALLOW_LOCALHOST } from '$env/static/public'
+import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { is_authorized } from '$lib/server/auth'
 import { sync_complex_terms } from '$lib/server/complex_terms'
 import { create_cors_handle } from '@tabitha/cors'
+import { create_rate_limit_handle } from '@tabitha/rate-limit'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Google from '@auth/sveltekit/providers/google'
 import type { ExecutionContext, ScheduledEvent } from '@cloudflare/workers-types'
@@ -10,6 +11,13 @@ import { error, type Handle, type RequestEvent } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 const cors_handle = create_cors_handle({ allow_localhost: Boolean(PUBLIC_CORS_ALLOW_LOCALHOST) })
+
+// /protected/* already requires a signed-in, authorized session (see authz_handle below), and
+// /auth/* is the Auth.js sign-in flow itself -- neither needs the public-read-API throttle.
+const rate_limit_handle = create_rate_limit_handle({
+	skip_path_prefixes: ['/protected', '/auth'],
+	disabled: Boolean(PUBLIC_RATE_LIMIT_DISABLED),
+})
 
 const db_config_handle: Handle = async function db_config_handle({ event, resolve }) {
 	if (!event.platform?.env.DB_Ontology) {
@@ -60,7 +68,7 @@ async function initialize_config(event: RequestEvent) {
 	}
 }
 
-const authz_handle: Handle = async ({ event, resolve }) => {
+const authz_handle: Handle = async function authz_handle({ event, resolve }) {
 	await authz(event)
 
 	return resolve(event)
@@ -80,7 +88,7 @@ const authz_handle: Handle = async ({ event, resolve }) => {
 	}
 }
 
-export const handle = sequence(cors_handle, db_config_handle, authn_handle, authz_handle)
+export const handle = sequence(cors_handle, rate_limit_handle, db_config_handle, authn_handle, authz_handle)
 
 type ScheduledArgs = {
 	event: ScheduledEvent

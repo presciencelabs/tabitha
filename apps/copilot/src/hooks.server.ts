@@ -1,5 +1,8 @@
 import type { ServerInit, Handle } from '@sveltejs/kit'
+import { sequence } from '@sveltejs/kit/hooks'
 import { create_ai_client, type AiClient } from '@tabitha/ai'
+import { create_rate_limit_handle } from '@tabitha/rate-limit'
+import { PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { env } from '$env/dynamic/private'
 
 let ai: AiClient
@@ -17,7 +20,11 @@ export const init: ServerInit = async () => {
 	})
 }
 
-export const handle: Handle = async ({ event, resolve }) => {
+const rate_limit_handle = create_rate_limit_handle({ disabled: Boolean(PUBLIC_RATE_LIMIT_DISABLED) })
+
+const ai_locals_handle: Handle = async function ai_locals_handle({ event, resolve }) {
 	event.locals.ai = ai
 	return resolve(event)
 }
+
+export const handle = sequence(rate_limit_handle, ai_locals_handle)
