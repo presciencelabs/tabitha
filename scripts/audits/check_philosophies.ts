@@ -4,6 +4,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
+	check_ai_prompts_in_md_files,
 	check_classes_at_end,
 	check_lib_routes_boundary,
 	check_prose_scoping,
@@ -29,6 +30,7 @@ const RULE_DOC_ANCHORS: Record<number, string> = {
 	11: 'AGENTS.md#11-pure-functions',
 	13: 'AGENTS.md#13-scope-prose-to-content-escape-with-not-prose',
 	14: 'AGENTS.md#14-sveltekit-data-loading-boundaries',
+	15: 'AGENTS.md#15-ai-prompts-live-in-separate-markdown-files',
 	20: 'AGENTS.md#app-internal-libroutes-boundary',
 }
 
@@ -128,6 +130,7 @@ async function audit_codebase() {
 		const lines = content.split('\n')
 
 		check_tabs_indentation(file_path, lines)
+		check_ai_prompts_in_md_files(file_path, content)
 		check_classes_at_end(file_path, content)
 		check_strict_domain_typing(file_path, lines)
 		check_snake_case_functions(file_path, lines)

@@ -4,9 +4,9 @@ Welcome to the **TaBiThA** engineering workspace. This document serves as the **
 
 ---
 
-## 🏛️ 14 Core Development Philosophies
+## 🏛️ 15 Core Development Philosophies
 
-All code written in this repository should adhere to the following 14 foundational philosophies:
+All code written in this repository should adhere to the following 15 foundational philosophies:
 
 ### 1. Self-contained components
 
@@ -365,6 +365,25 @@ Keep `.svelte` component scripts limited to presentation and event wiring. Data 
 {#if change.can_approve}
 	<button onclick={() => approve(change)}>Approve</button>
 {/if}
+```
+
+---
+
+### 15. AI prompts live in separate Markdown files
+
+A `system_instruction` handed to the shared `@tabitha/ai` client is an authored document, not incidental code, and should be read and edited like one. Keep it out of the `.ts` module as an inline template literal; instead put the prompt text in a sibling `.md` file and import it with Vite's `?raw` suffix. Markdown headings, bold, and code fences give the model (and the next person editing the prompt) unambiguous structure — hierarchy the model has to infer from indentation and ALL-CAPS labels in plain prose — and let a linter (`check:md`) catch malformed prompt documents the same as any other Markdown in the repo.
+
+- **Scope**: this applies to the top-level `system_instruction` value passed to the AI client for a given call — not every string that happens to end up inside a prompt. A collection of small, per-item fragments tightly coupled to matching/config logic (e.g. a per-trigger note fragment keyed on a data object elsewhere in the codebase) is config data, not a standalone prompt document, and stays inline.
+- **Dynamic content**: a prompt that needs runtime-computed values (a list pulled from another module, a value chosen by a conditional) still keeps its authored text in the `.md` file, with a `{{PLACEHOLDER}}` token substituted in afterward via `.replace('{{PLACEHOLDER}}', () => value)` — the function form avoids `String.replace`'s special handling of `$`-patterns in the replacement text, which a callback value could otherwise contain unexpectedly.
+- **Literal output markers**: if the prompt instructs the model to reproduce an exact literal string (a section header, a status marker), wrap it in backticks or a fenced code block rather than plain prose, so it reads unambiguously as "text to copy," not as a description of behavior.
+
+```ts
+// ❌ Avoid: the prompt is authored inline, as a plain-prose template literal
+const system_instruction = `You are an expert reviewer.
+Follow these rules: ...`
+
+// ✅ Preferred: the prompt is a Markdown document, imported as raw text
+import system_instruction from './review_prompt.md?raw'
 ```
 
 ---
