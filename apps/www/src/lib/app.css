@@ -1,0 +1,9 @@
+@import '@tabitha/ui/theme.css';
+
+h1, h2, h3, h4, .text-balance {
+	text-wrap: balance;
+}
+
+p, article {
+	text-wrap: pretty;
+}

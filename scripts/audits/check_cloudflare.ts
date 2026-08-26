@@ -33,15 +33,17 @@ const forbidden_var_keys = [
 	'AI_GATEWAY_TOKEN',
 ]
 
-export async function check_cloudflare_configs(): Promise<{ valid: boolean; errors: CloudflareFinding[]; warnings: CloudflareFinding[] }> {
+export async function check_cloudflare_configs(): Promise<{ valid: boolean; errors: CloudflareFinding[]; warnings: CloudflareFinding[]; wrangler_config_count: number }> {
 	const local_findings: CloudflareFinding[] = []
 
 	const app_entries = await readdir(apps_dir, { withFileTypes: true })
 	const app_dirs = app_entries.filter(d => d.isDirectory()).map(d => d.name)
 
+	let wrangler_config_count = 0
 	for (const app_name of app_dirs) {
 		const wrangler_path = join(apps_dir, app_name, 'wrangler.jsonc')
 		if (!existsSync(wrangler_path)) continue
+		wrangler_config_count++
 
 		const raw_content = await readFile(wrangler_path, 'utf-8')
 		let config: WranglerConfig
@@ -118,6 +120,7 @@ export async function check_cloudflare_configs(): Promise<{ valid: boolean; erro
 		valid: errors.length === 0,
 		errors,
 		warnings,
+		wrangler_config_count,
 	}
 }
 
@@ -132,7 +135,7 @@ async function audit_cloudflare_configs() {
 	const all_findings = [...result.errors, ...result.warnings]
 
 	if (all_findings.length === 0) {
-		console.log('✅ 100% Valid! All 5 wrangler.jsonc files comply with Cloudflare Workers best practices.\n')
+		console.log(`✅ 100% Valid! All ${result.wrangler_config_count} wrangler.jsonc files comply with Cloudflare Workers best practices.\n`)
 		return
 	}
 

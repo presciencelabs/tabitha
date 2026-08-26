@@ -1,0 +1,25 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "www",
+	"compatibility_date": "2026-08-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"routes": [
+		{
+			"pattern": "tabitha.bible",
+			"custom_domain": true
+		}
+	]
+}
