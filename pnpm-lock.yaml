@@ -114,6 +114,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      undici:
+        specifier: ^8.10.0
+        version: 8.10.0
       vite:
         specifier: 8.2.0
         version: 8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)
@@ -5135,6 +5138,10 @@ packages:
     resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
     engines: {node: '>=20.18.1'}
 
+  undici@8.10.0:
+    resolution: {integrity: sha512-HvltHd7avK13QIw/oLe4qoOLyoVSoafqJ2jYOrtMRBkbYT31eiBQ8O0ehRKZiEZCMEyLFQNIADpgCWC5fALvYQ==}
+    engines: {node: '>=22.19.0'}
+
   unenv@2.0.0-rc.24:
     resolution: {integrity: sha512-i7qRCmY42zmCwnYlh9H2SvLEypEFGye5iRmEMKjcGi7zk9UquigRjFtTLz0TYqr0ZGLZhaMHl/foy1bZR+Cwlw==}
 
@@ -9817,6 +9824,8 @@ snapshots:
   undici-types@8.3.0: {}
 
   undici@7.29.0: {}
+
+  undici@8.10.0: {}
 
   unenv@2.0.0-rc.24:
     dependencies:
