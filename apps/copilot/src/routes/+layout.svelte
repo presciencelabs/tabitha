@@ -1,15 +1,14 @@
 <script>
 	import '$lib/app.css'
 
-	import Brand from '$lib/Brand.svelte'
-	import { Footer } from '@tabitha/ui'
+	import { Brand, Footer } from '@tabitha/ui'
 
 	let { children } = $props()
 </script>
 
 <div class="app">
 	<header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
-		<Brand />
+		<Brand app="Copilot" />
 	</header>
 
 	<div role="alert" class="alert alert-error mx-8">
