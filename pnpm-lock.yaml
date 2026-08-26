@@ -41,6 +41,9 @@ importers:
       '@tabitha/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@tabitha/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@tabitha/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -232,6 +235,9 @@ importers:
       '@tabitha/cors':
         specifier: workspace:*
         version: link:../../packages/cors
+      '@tabitha/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@tabitha/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -332,6 +338,9 @@ importers:
       '@tabitha/cors':
         specifier: workspace:*
         version: link:../../packages/cors
+      '@tabitha/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@tabitha/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -426,6 +435,9 @@ importers:
       '@tabitha/cors':
         specifier: workspace:*
         version: link:../../packages/cors
+      '@tabitha/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@tabitha/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -612,6 +624,30 @@ importers:
       typescript-eslint:
         specifier: ^8.67.0
         version: 8.67.0(eslint@10.8.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+
+  packages/rate-limit:
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^5.20260815.1
+        version: 5.20260815.1
+      '@sveltejs/kit':
+        specifier: ^2.70.2
+        version: 2.70.2(@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9(@typescript-eslint/types@8.67.0))(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)))(svelte@5.56.9(@typescript-eslint/types@8.67.0))(typescript@6.0.3)(vite@8.2.0(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0))
+      '@tabitha/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@tabitha/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      eslint:
+        specifier: ^10.8.1
+        version: 10.8.1(jiti@2.7.0)(supports-color@10.2.2)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^3.2.7
+        version: 3.2.7(@types/debug@4.1.13)(@types/node@26.2.0)(jiti@2.7.0)(lightningcss@1.33.0)(supports-color@10.2.2)(terser@5.50.0)
 
   packages/tsconfig: {}
 
