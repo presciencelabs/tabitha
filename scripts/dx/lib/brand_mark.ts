@@ -11,6 +11,7 @@ export const APP_LETTERS: Record<string, string> = {
 	ontology: 'O',
 	sources: 'S',
 	targets: 'T',
+	www: 'W',
 }
 
 // CANIL's brand red, sampled directly from the pixels of their own favicon

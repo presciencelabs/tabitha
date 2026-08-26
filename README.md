@@ -29,6 +29,7 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 | **Sources** | `apps/sources` | `http://localhost:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
 | **Editor** | `apps/editor` | `http://localhost:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
 | **Copilot** | `apps/copilot` | `http://localhost:8793` | `8793` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
+| **www** | `apps/www` | `http://localhost:8791` | `8791` | [tabitha.bible](https://tabitha.bible) | Public-facing marketing/informational site |
 
 ---
 
@@ -41,7 +42,8 @@ tabitha/
 │   ├── editor/      # Semantic editor, rule parser & backtranslator
 │   ├── ontology/    # Central ontology database & concept management (Auth.js)
 │   ├── sources/     # Source entities, lookups, and feature explorer
-│   └── targets/     # Target grammar, project search, and lexicons
+│   ├── targets/     # Target grammar, project search, and lexicons
+│   └── www/         # Public-facing marketing/informational site
 ├── packages/
 │   ├── ai/             # Shared LLM plumbing: AI Gateway routing, retries, credentials (@tabitha/ai)
 │   ├── api-client/     # Typed HTTP clients for calling one app's API from another (@tabitha/api-client)
