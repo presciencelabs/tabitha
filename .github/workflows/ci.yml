@@ -53,6 +53,7 @@ jobs:
       cloudflare: ${{ steps.check_cloudflare.outcome }}
       storage: ${{ steps.check_storage.outcome }}
       badges: ${{ steps.check_badges.outcome }}
+      philosophy_docs: ${{ steps.check_philosophy_docs.outcome }}
       md: ${{ steps.check_md.outcome }}
     steps:
       - name: Checkout repository
@@ -84,6 +85,11 @@ jobs:
       - name: README Badge & Version Sync Audit
         id: check_badges
         run: pnpm check:badges
+        continue-on-error: true
+
+      - name: Philosophy Count Doc Sync Audit
+        id: check_philosophy_docs
+        run: pnpm check:philosophy-docs
         continue-on-error: true
 
       - name: Markdown Specification Lint
@@ -293,6 +299,7 @@ jobs:
               ['Cloudflare Workers Config Audit', needs.security_compliance.outputs.cloudflare],
               ['Storage & Cookie Hygiene', needs.security_compliance.outputs.storage],
               ['README Badge & Version Sync', needs.security_compliance.outputs.badges],
+              ['Philosophy Count Doc Sync', needs.security_compliance.outputs.philosophy_docs],
               ['Markdown Lint', needs.security_compliance.outputs.md],
               ['Typecheck & Svelte Diagnostics', needs.code_quality.outputs.typecheck],
               ['ESLint', needs.code_quality.outputs.eslint],

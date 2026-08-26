@@ -11,7 +11,7 @@
   <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-11.20-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
   <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-Unit_Tests-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest" /></a>
   <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=flat-square&logo=playwright&logoColor=white" alt="Playwright" /></a>
-  <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-12_Philosophies-blueviolet?style=flat-square" alt="12 Philosophies" /></a>
+  <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-14_Philosophies-blueviolet?style=flat-square" alt="14 Philosophies" /></a>
 </p>
 
 This repository houses all core deployable web applications, developer tools, shared libraries, and linguistic pipelines for the TaBiThA translation platform.
@@ -43,9 +43,14 @@ tabitha/
 │   ├── sources/     # Source entities, lookups, and feature explorer
 │   └── targets/     # Target grammar, project search, and lexicons
 ├── packages/
+│   ├── ai/             # Shared LLM plumbing: AI Gateway routing, retries, credentials (@tabitha/ai)
+│   ├── api-client/     # Typed HTTP clients for calling one app's API from another (@tabitha/api-client)
+│   ├── cors/           # Shared CORS allowed-origin handling for app APIs (@tabitha/cors)
 │   ├── eslint-config/  # Shared ESLint 9 configuration (@tabitha/eslint-config)
 │   ├── tsconfig/       # Base TypeScript configurations (@tabitha/tsconfig)
-│   └── ui/             # Shared Svelte 5 / daisyUI components (@tabitha/ui)
+│   ├── types/          # Shared cross-app domain types (@tabitha/types)
+│   ├── ui/             # Shared Svelte 5 / daisyUI components (@tabitha/ui)
+│   └── vite-config/    # Shared Vite/Playwright/SvelteKit config helpers (@tabitha/vite-config)
 ├── scripts/         # Monorepo maintenance, DX tooling & CI audit scripts
 │   ├── audits/      # Quality, philosophy, secret & storage linters (+ colocated tests)
 │   ├── ci/          # CI test coverage reporting
@@ -335,5 +340,7 @@ All code in this repository adheres to the **TaBiThA Development Philosophies**.
 | **10** | **`snake_case` naming** | `snake_case` for functions, variables, and files; `PascalCase` strictly for Svelte components and TS types. |
 | **11** | **Pure functions** | Side-effect-free functions receiving one options object argument and returning one value. |
 | **12** | **YAGNI & Minimal Surface Area** | Solve today's concrete need; adhere to the Rule of Three before extracting code to `packages/*`. |
+| **13** | **Scope `prose` to content** | Apply Tailwind Typography's `prose` only to genuine text content, never a layout wrapper; escape nested components with `not-prose`. |
+| **14** | **SvelteKit data-loading boundaries** | Keep component scripts to presentation and event wiring; fetching, shaping, and authorization decisions live in `load` functions or `$lib` data-layer modules. |
 
 > 📖 **Full Philosophy Guide & Examples**: See [**`AGENTS.md`**](AGENTS.md) at the workspace root.

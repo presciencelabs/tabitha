@@ -159,11 +159,11 @@ Grants every Ontology permission to that email in your local Auth D1 only — pr
 
 ## 📐 Development Guidelines & Philosophies
 
-All contributions should adhere to the **13 TaBiThA Development Philosophies** and coding standards defined in [**`AGENTS.md`**](AGENTS.md).
+All contributions should adhere to the **14 TaBiThA Development Philosophies** and coding standards defined in [**`AGENTS.md`**](AGENTS.md).
 
 ### Core Standards Quick Summary
 
-- **The 13 Philosophies**: Self-contained components, normalized data, tabs for indentation, code over comments, classes at element end, guard clauses, strict domain typing, daisyUI 5, limit `if`, `snake_case`, pure functions, YAGNI & Minimal Surface Area, and **scoped `prose` (escaped via `not-prose`)**.
+- **The 14 Philosophies**: Self-contained components, normalized data, tabs for indentation, code over comments, classes at element end, guard clauses, strict domain typing, daisyUI 5, limit `if`, `snake_case`, pure functions, YAGNI & Minimal Surface Area, scoped `prose` (escaped via `not-prose`), and **SvelteKit data-loading boundaries**.
 - **Indentation & Formatting**: Literal `tab` characters for all indentation; `'single'` quotes; **no trailing semicolons**.
 - **Naming**: `snake_case` for functions/methods/variables/files; `PascalCase` strictly for Svelte components and TS types.
 - **Testing Standard**:
