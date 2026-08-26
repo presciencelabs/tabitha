@@ -24,6 +24,7 @@
     "db:load:targets": "bun scripts/dx/db_load.ts targets",
     "db:grant": "bun scripts/dx/grant_permission.ts",
     "build": "turbo run build",
+    "build:ci": "turbo run build:ci",
     "ci": "bun scripts/ci/plan.ts --run",
     "ci:plan": "bun scripts/ci/plan.ts",
     "precommit": "pnpm check && pnpm test && pnpm build",

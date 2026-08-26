@@ -22,6 +22,19 @@
       ],
       "outputs": [".svelte-kit/**", "dist/**", "build/**"]
     },
+    "build:ci": {
+      "dependsOn": ["^build", "prepare"],
+      "inputs": [
+        "src/**",
+        "static/**",
+        "package.json",
+        "tsconfig.json",
+        "vite.config.*",
+        "svelte.config.*",
+        "wrangler.jsonc"
+      ],
+      "outputs": [".svelte-kit/**", "dist/**", "build/**"]
+    },
     "check": {
       "dependsOn": [
         "prepare"

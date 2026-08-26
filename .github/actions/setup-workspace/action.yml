@@ -1,12 +1,6 @@
 name: 'Setup TaBiThA Workspace'
 description: 'Shared checkout, toolchain setup, caching, and dependencies'
 
-inputs:
-  node-version:
-    description: 'Node.js version'
-    default: '24'
-    required: false
-
 runs:
   using: 'composite'
   steps:
@@ -16,11 +10,13 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version-file: '.node-version'
         cache: 'pnpm'
 
     - name: Setup Bun
       uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: '.bun-version'
 
     - name: Setup Turborepo cache
       uses: actions/cache@v4
