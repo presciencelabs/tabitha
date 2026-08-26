@@ -14,6 +14,16 @@
 	"placement": {
 		"mode":"smart"
 	},
+	"ratelimits": [
+		{
+			"name": "RATE_LIMITER",
+			"namespace_id": "4",
+			"simple": {
+				"limit": 60,
+				"period": 60
+			}
+		}
+	],
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": {
 		"binding": "ASSETS",
