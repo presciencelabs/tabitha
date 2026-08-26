@@ -1,5 +1,5 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, OAUTH_REDIRECT_PROXY_URL } from '$env/static/private'
-import { PUBLIC_CORS_ALLOW_LOCALHOST } from '$env/static/public'
+import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { is_authorized } from '$lib/server/auth'
 import { sync_complex_terms } from '$lib/server/complex_terms'
 import { create_cors_handle } from '@tabitha/cors'
@@ -14,7 +14,10 @@ const cors_handle = create_cors_handle({ allow_localhost: Boolean(PUBLIC_CORS_AL
 
 // /protected/* already requires a signed-in, authorized session (see authz_handle below), and
 // /auth/* is the Auth.js sign-in flow itself -- neither needs the public-read-API throttle.
-const rate_limit_handle = create_rate_limit_handle({ skip_path_prefixes: ['/protected', '/auth'] })
+const rate_limit_handle = create_rate_limit_handle({
+	skip_path_prefixes: ['/protected', '/auth'],
+	disabled: Boolean(PUBLIC_RATE_LIMIT_DISABLED),
+})
 
 const db_config_handle: Handle = async function db_config_handle({ event, resolve }) {
 	if (!event.platform?.env.DB_Ontology) {

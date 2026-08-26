@@ -27,10 +27,19 @@ type RateLimiterEnv = {
 
 type CreateRateLimitHandleOptions = {
 	readonly skip_path_prefixes?: readonly string[]
+	// Local dev and CI run fast, unpaced automated request bursts (a full e2e suite, a dev
+	// reloading a page repeatedly) that routinely exceed a threshold meant for real-world abuse.
+	// Callers pass this from a public env var, the same way @tabitha/cors's allow_localhost works.
+	readonly disabled?: boolean
 }
 
-export function create_rate_limit_handle({ skip_path_prefixes = [] }: CreateRateLimitHandleOptions = {}): Handle {
+export function create_rate_limit_handle({
+	skip_path_prefixes = [],
+	disabled = false,
+}: CreateRateLimitHandleOptions = {}): Handle {
 	return async function rate_limit_handle({ event, resolve }) {
+		if (disabled) return resolve(event)
+
 		const { pathname } = new URL(event.request.url)
 		if (skip_path_prefixes.some(prefix => pathname.startsWith(prefix))) {
 			return resolve(event)

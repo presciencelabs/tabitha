@@ -96,4 +96,16 @@ describe('create_rate_limit_handle', () => {
 		})
 		expect(response.status).toBe(429)
 	})
+
+	it('resolves without checking the limit at all when disabled, even over the limit', async () => {
+		const handle = create_rate_limit_handle({ disabled: true })
+		const response = await handle({ event: fake_event({ rate_limiter: fake_rate_limiter(false) }), resolve })
+		expect(await response.text()).toBe('ok')
+	})
+
+	it('resolves without checking the limit when disabled, even with no binding present', async () => {
+		const handle = create_rate_limit_handle({ disabled: true })
+		const response = await handle({ event: fake_event({}), resolve })
+		expect(await response.text()).toBe('ok')
+	})
 })
