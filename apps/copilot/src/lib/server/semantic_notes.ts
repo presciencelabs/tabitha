@@ -1,4 +1,5 @@
 import { AiResponseError, type AiClient } from '@tabitha/ai'
+import system_instruction_template from './semantic_notes_prompt.md?raw'
 
 export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: AiClient }): Promise<CopilotLlmOutput> {
 
@@ -8,36 +9,9 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 		return { notes: [], lwc_text: llm_input.lwc_text }
 	}
 
-	const system_instruction = `You are an expert Bible exegetical adviser who trains mother-tongue translators of the Bible.
-			You are an expert in Bible translation, and have PhD in linguistics.
-
-			You task is to render preselected meaning notes to a mother-tongue translator (MTT) based on the provided tbta_encoding.
-			Identify the location of each 'trigger' and write a note related to the features in each trigger, one note per trigger.
-			Each note should have two parts:
-				1) a description of the meaning represented by the trigger.
-				2) a cautionary note to tell the MTT to consider if the meaning is expressed in their translation.
-			Obey the prompt that is attached to a trigger, if provided.
-			Do not quote the text, encoding, or triggers directly, but use the surrounding verse context, making sure the caution is related to the trigger.
-			DO NOT add additional referents, doctrines, exegetical claims, interpretations, or emphasis that are not represented in the text, encoding, or triggers.
-			Do not add additional notes.
-
-			Avoid strong wording like 'make sure that...' or 'clearly' or 'should'.
-			Do not suggest any solution, answer, or target-language word or grammatical construction.
-
-			Never comment on, assess, or question the encoding or feature data you are given.
-			If a feature assignment looks unusual, render it as instructed regardless - do not remark on it.
-
-			Write ONLY in the requested output_language, and be concise.
-			${translate_tbta_text
-				? 'Translate the english_text into the output_language and return it as the lwc_text. Maintain anything within <<>>. Use that resulting text when citing words or phrases in your notes.'
-				: 'When citing words or phrases in your notes, always use the form that appears in the provided lwc_text.'}
-
-			Write according to the specified education level of the MTT according to:
-			- grade5 = simple everyday language, no linguistic or grammar terms
-			- high_school = simple language, only basic grammar terms
-			- undergraduate = moderate linguistic terminology allowed
-
-			Return the schema requested.`
+	const system_instruction = system_instruction_template.replace('{{TRANSLATE_OR_CITE_INSTRUCTION}}', () => translate_tbta_text
+		? 'Translate the english_text into the output_language and return it as the lwc_text. Maintain anything within <<>>. Use that resulting text when citing words or phrases in your notes.'
+		: 'When citing words or phrases in your notes, always use the form that appears in the provided lwc_text.')
 
 	let output: CopilotLlmOutput
 	try {

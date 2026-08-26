@@ -11,7 +11,7 @@
   <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-11.20-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
   <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-Unit_Tests-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest" /></a>
   <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=flat-square&logo=playwright&logoColor=white" alt="Playwright" /></a>
-  <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-14_Philosophies-blueviolet?style=flat-square" alt="14 Philosophies" /></a>
+  <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-15_Philosophies-blueviolet?style=flat-square" alt="15 Philosophies" /></a>
 </p>
 
 This repository houses all core deployable web applications, developer tools, shared libraries, and linguistic pipelines for the TaBiThA translation platform.
@@ -342,5 +342,6 @@ All code in this repository adheres to the **TaBiThA Development Philosophies**.
 | **12** | **YAGNI & Minimal Surface Area** | Solve today's concrete need; adhere to the Rule of Three before extracting code to `packages/*`. |
 | **13** | **Scope `prose` to content** | Apply Tailwind Typography's `prose` only to genuine text content, never a layout wrapper; escape nested components with `not-prose`. |
 | **14** | **SvelteKit data-loading boundaries** | Keep component scripts to presentation and event wiring; fetching, shaping, and authorization decisions live in `load` functions or `$lib` data-layer modules. |
+| **15** | **AI prompts live in separate Markdown files** | A `system_instruction` sent to the AI client is a `.md` file imported via `?raw`, not an inline template literal. |
 
 > 📖 **Full Philosophy Guide & Examples**: See [**`AGENTS.md`**](AGENTS.md) at the workspace root.

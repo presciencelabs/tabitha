@@ -1,3 +1,4 @@
+export { check_ai_prompts_in_md_files } from './ai_prompts_in_md'
 export { check_classes_at_end } from './classes_at_end'
 export { check_lib_routes_boundary } from './lib_routes_boundary'
 export { check_prose_scoping } from './prose_scoping'

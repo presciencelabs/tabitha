@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private'
 import { create_ai_client, AiResponseError } from '@tabitha/ai'
 import { get_all_concepts } from './ontology'
+import system_instruction from './semantic_search_prompt.md?raw'
 import type { D1Database } from '@cloudflare/workers-types'
 import type { Concept } from '$lib/types'
 
@@ -36,12 +37,6 @@ export async function find_related_concepts({ db, search_term }: FindRelatedConc
 		concepts: all_concepts.filter(c => !concept_filters.some(f => f(c))).map(transform_concept),
 		search_term,
 	}
-
-	const system_instruction = `
-		You are provided a 'search_term' and a list of 'concepts', which are entries within a semantic ontology.
-		Your job is to search for and output the 'concepts' that are MOST semantically related to the search_term.
-		Provide between 0 and 10 concepts.
-		Return the list of related concepts according to the requested schema, with the MOST related concepts first.`
 
 	const ai = create_ai_client({
 		app: 'ontology',
