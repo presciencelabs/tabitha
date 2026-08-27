@@ -5,19 +5,23 @@
 //  - Aquifer (brief.ts's SIL Translator's Notes lookup, used by the "brief" mode pipeline)
 // Every other origin (sources.tabitha.bible, targets.tabitha.bible) still hits the real network
 // as usual.
-import { MockAgent, setGlobalDispatcher } from 'undici'
+//
+// This patches globalThis.fetch directly rather than using undici's MockAgent/
+// setGlobalDispatcher: that approach depends on a version-namespaced Symbol registry shared
+// between Node's own internal undici (which implements the built-in fetch) and whatever undici
+// version is installed as a package dependency. When the two disagree on the active registry key,
+// setGlobalDispatcher silently falls back to a dispatcher only the external package can see,
+// while the real built-in fetch keeps using its own -- confirmed to reproduce exactly this way in
+// CI (the mock module loaded with no errors, but the real Cloudflare gateway still got the
+// request). A direct fetch override has no such indirection.
+const original_fetch = globalThis.fetch
 
-console.log('DIAGNOSTIC [copilot mock_ai_gateway] loaded, NODE_OPTIONS=', process.env.NODE_OPTIONS)
+globalThis.fetch = async (input, init) => {
+	const url = typeof input === 'string' ? input : input.url
+	const method = init?.method ?? 'GET'
 
-const agent = new MockAgent()
-setGlobalDispatcher(agent)
-
-const gateway_pool = agent.get('https://gateway.ai.cloudflare.com')
-
-gateway_pool
-	.intercept({ path: path => path.includes(':generateContent'), method: 'POST' })
-	.reply(200, ({ body }) => {
-		const wire_request = JSON.parse(body)
+	if (url.startsWith('https://gateway.ai.cloudflare.com') && url.includes(':generateContent') && method === 'POST') {
+		const wire_request = JSON.parse(init.body)
 		const llm_input = JSON.parse(wire_request.contents[0].parts[0].text)
 
 		const notes = (llm_input.triggers ?? []).map(trigger => ({
@@ -32,25 +36,23 @@ gateway_pool
 			lwc_text: llm_input.lwc_text ?? llm_input.english_text,
 		})
 
-		return {
+		return new Response(JSON.stringify({
 			candidates: [{
 				content: { role: 'model', parts: [{ text: response_text }] },
 				finishReason: 'STOP',
 			}],
-		}
-	})
-	.persist()
+		}), { status: 200, headers: { 'content-type': 'application/json' } })
+	}
 
-// brief.ts's get_tnn_based_info() looks up a resource id via /resources/search, then fetches
-// that resource's plain-text content via /resources/:id.
-const aquifer_pool = agent.get('https://api.aquifer.bible')
+	// brief.ts's get_tnn_based_info() looks up a resource id via /resources/search, then fetches
+	// that resource's plain-text content via /resources/:id.
+	if (url.startsWith('https://api.aquifer.bible/resources/search') && method === 'GET') {
+		return new Response(JSON.stringify({ items: [{ id: 1 }] }), { status: 200, headers: { 'content-type': 'application/json' } })
+	}
 
-aquifer_pool
-	.intercept({ path: path => path.startsWith('/resources/search'), method: 'GET' })
-	.reply(200, { items: [{ id: 1 }] })
-	.persist()
+	if (/^https:\/\/api\.aquifer\.bible\/resources\/\d+$/.test(url) && method === 'GET') {
+		return new Response('[e2e mock] SIL Translator\'s Notes content for this verse.', { status: 200 })
+	}
 
-aquifer_pool
-	.intercept({ path: path => /^\/resources\/\d+$/.test(path), method: 'GET' })
-	.reply(200, '[e2e mock] SIL Translator\'s Notes content for this verse.')
-	.persist()
+	return original_fetch(input, init)
+}
