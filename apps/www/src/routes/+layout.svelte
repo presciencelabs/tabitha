@@ -5,16 +5,18 @@
 	let { children }: { children?: Snippet } = $props()
 </script>
 
-<header class="mx-8 mt-8">
-	<a href="/" class="text-xl font-bold">TaBiThA</a>
-</header>
+<div class="site">
+	<header class="site-header">
+		<a href="/" class="wordmark">TaBiThA</a>
+	</header>
 
-<main class="mx-8 mt-8">
-	{#if children}
-		{@render children()}
-	{/if}
-</main>
+	<main class="site-main">
+		{#if children}
+			{@render children()}
+		{/if}
+	</main>
 
-<footer class="mx-8 mt-8 mb-8">
-	<a href="https://github.com/presciencelabs/tabitha" class="link link-hover">GitHub</a>
-</footer>
+	<footer class="site-footer">
+		<a href="https://github.com/presciencelabs/tabitha" class="footer-link">GitHub</a>
+	</footer>
+</div>
