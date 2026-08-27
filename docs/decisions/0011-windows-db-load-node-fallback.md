@@ -21,6 +21,10 @@ The `resolve_workerd_hashes()` logic was extracted out of `db_load.ts` into its 
 
 There is a single source of truth for the resolution logic either way — Windows doesn't get a forked copy that can drift from the Bun path, only a different caller.
 
+`getPlatformProxy()` itself writes informational lines (e.g. `Using secrets defined in apps\ontology\.env`) straight to stdout, which lands in the same captured buffer as the helper's JSON result. `resolve_workerd_hashes` on the Windows branch picks the JSON back out by taking the first captured line that starts with `{`, rather than assuming the whole buffer is parseable JSON.
+
+A second, unrelated Windows incompatibility surfaced once this got far enough to run: `import_sqlite_snapshot()` piped SQL into `sqlite3` via a POSIX-only shell pipeline (`(echo ...; cat ...; echo ...) | sqlite3 ...`), which `cmd.exe` (execSync's default shell on Windows) can't parse. Fixed the same way — build the SQL in Node (`readFileSync` + string concatenation) and feed it to `sqlite3` via `execSync`'s `input` option instead of shell pipe syntax, which needs no shell-specific behavior at all.
+
 ## Alternatives considered
 
 **Document as a known Windows caveat, recommend WSL2.** Sidesteps the bug entirely (Bun-on-Linux isn't affected), and is the cheapest option, but leaves native Windows dev broken for anyone who can't or doesn't want to use WSL2.
