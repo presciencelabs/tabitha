@@ -7,6 +7,8 @@
 // as usual.
 import { MockAgent, setGlobalDispatcher } from 'undici'
 
+console.log('DIAGNOSTIC [copilot mock_ai_gateway] loaded, NODE_OPTIONS=', process.env.NODE_OPTIONS)
+
 const agent = new MockAgent()
 setGlobalDispatcher(agent)
 
