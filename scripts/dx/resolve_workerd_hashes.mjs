@@ -2,7 +2,7 @@
 // run unmodified under a plain `node` binary on Windows without a build step or type-stripping flag.
 import { createRequire } from 'node:module'
 import { existsSync, readdirSync } from 'node:fs'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { randomBytes } from 'node:crypto'
@@ -47,8 +47,9 @@ export async function resolve_workerd_hashes(app_dir, wrangler_path, entries, d1
 				: []
 			const match = candidates.find(f => {
 				try {
-					const found = execSync(
-						`sqlite3 "${join(d1_state_dir, f)}" "SELECT name FROM sqlite_master WHERE type='table' AND name='${marker}';"`,
+					const found = execFileSync(
+						'sqlite3',
+						[join(d1_state_dir, f), `SELECT name FROM sqlite_master WHERE type='table' AND name='${marker}';`],
 						{ encoding: 'utf-8' },
 					).trim()
 					return found === marker

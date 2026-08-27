@@ -1,10 +1,10 @@
 import { readdir } from 'node:fs/promises'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { platform } from 'node:os'
 import { createHash } from 'node:crypto'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { strip_jsonc_comments } from '../../packages/types/src/index'
 import { resolve_workerd_hashes as resolve_workerd_hashes_impl } from './resolve_workerd_hashes.mjs'
 
@@ -81,7 +81,7 @@ export async function resolve_workerd_hashes(
 	}
 	const helper = join(script_dir, 'resolve_workerd_hashes.mjs')
 	const input = JSON.stringify({ app_dir: config.app_dir, wrangler_path: config.wrangler_path, entries, d1_state_dir })
-	const output = execSync(`node "${helper}"`, { input, encoding: 'utf-8' })
+	const output = execFileSync('node', [helper], { input, encoding: 'utf-8' })
 	// Because this takes from stdout, it also reads any console logs from node itself.
 	// eg. 'Using secrets defined in app\ontology\.env'
 	// This separates the actual return data before parsing.
@@ -95,14 +95,10 @@ function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
 		if (existsSync(path)) unlinkSync(path)
 	}
 
-	// Piping via a shell `(echo ...; cat ...; echo ...) | sqlite3` only works on POSIX shells --
-	// cmd.exe (execSync's default shell on Windows) has neither `cat` nor `;`/`()` in that sense.
-	// Building the SQL in Node and feeding it to sqlite3 via stdin (execSync's `input` option)
-	// works identically on every platform, since it never goes through shell pipe syntax at all.
 	const pragma_header = 'PRAGMA synchronous = OFF; PRAGMA journal_mode = MEMORY; PRAGMA cache_size = 100000; BEGIN TRANSACTION;\n'
 	const pragma_footer = '\nCOMMIT;\n'
 	const sql = pragma_header + readFileSync(snapshot_file, 'utf-8') + pragma_footer
-	execSync(`sqlite3 "${target_db}"`, {
+	execFileSync('sqlite3', [target_db], {
 		input: sql,
 		stdio: 'pipe',
 		maxBuffer: 1024 * 1024 * 50,
@@ -136,9 +132,10 @@ export async function load_database(target_app: string = 'all') {
 		// Initialize Miniflare metadata.sqlite if missing
 		const metadata_db_path = join(d1_state_dir, 'metadata.sqlite')
 		if (!existsSync(metadata_db_path)) {
-			execSync(`sqlite3 "${metadata_db_path}" "CREATE TABLE IF NOT EXISTS _cf_ALARM (actor_id TEXT PRIMARY KEY, scheduled_time INTEGER, actor_name TEXT) WITHOUT ROWID;"`, {
-				stdio: 'ignore',
-			})
+			execFileSync('sqlite3', [
+				metadata_db_path,
+				'CREATE TABLE IF NOT EXISTS _cf_ALARM (actor_id TEXT PRIMARY KEY, scheduled_time INTEGER, actor_name TEXT) WITHOUT ROWID;',
+			], { stdio: 'ignore' })
 		}
 
 		const workerd_hash_cache = read_workerd_hash_cache()
@@ -171,7 +168,7 @@ export async function load_database(target_app: string = 'all') {
 				continue
 			}
 
-			const display_snapshot = snapshot_file.replace(`${root_dir}/`, '')
+			const display_snapshot = relative(root_dir, snapshot_file)
 			console.log(`   📄 Using snapshot: ${display_snapshot}`)
 
 			const start_time = Date.now()
@@ -209,7 +206,7 @@ export async function load_database(target_app: string = 'all') {
 					copy_database_safely(target_db, workerd_db_path)
 				}
 
-				const table_count_str = execSync(`sqlite3 "${target_db}" "SELECT count(*) FROM sqlite_master WHERE type='table';"`, { encoding: 'utf-8' }).trim()
+				const table_count_str = execFileSync('sqlite3', [target_db, "SELECT count(*) FROM sqlite_master WHERE type='table';"], { encoding: 'utf-8' }).trim()
 				const table_count = parseInt(table_count_str, 10) || 0
 				if (table_count === 0) {
 					throw new Error(`Database "${db_name}" imported with 0 tables: ${target_db}`)

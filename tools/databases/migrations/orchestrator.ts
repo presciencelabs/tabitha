@@ -187,7 +187,14 @@ for (const cfg of configs) {
 		log.step(`Skipping ${cfg.key} dump (already completed for this run).`)
 	} else {
 		log.step(`Creating dump of ${cfg.key} database...`)
-		await $`sqlite3 --escape off ${output_file} .dump | grep -Ev "^PRAGMA|^BEGIN TRANSACTION|^COMMIT" > ${dump_file}`
+		// BEGIN TRANSACTION/COMMIT must be stripped before a `wrangler d1 execute --file` import --
+		// https://developers.cloudflare.com/d1/best-practices/import-export-data/
+		const raw_dump = await $`sqlite3 --escape off ${output_file} .dump`.text()
+		const d1_importable_dump = raw_dump
+			.split('\n')
+			.filter(line => !/^(PRAGMA|BEGIN TRANSACTION|COMMIT)/.test(line))
+			.join('\n')
+		await Bun.write(dump_file, d1_importable_dump)
 		await mark_done(date, dumped_step, completed_steps)
 	}
 
