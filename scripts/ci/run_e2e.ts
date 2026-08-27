@@ -10,12 +10,12 @@ import { spawn } from 'node:child_process'
 // any test removes the race, the same way a Docker Compose service waits on its dependencies'
 // healthchecks before starting.
 const dev_servers = [
-	{ name: 'sources', port: 8789 },
-	{ name: 'targets', port: 8788 },
-	{ name: 'editor', port: 8790 },
-	{ name: 'www', port: 8791 },
-	{ name: 'ontology', port: 5173 },
-	{ name: 'copilot', port: 8793 },
+	{ name: 'sources', port: 1947 },
+	{ name: 'targets', port: 1382 },
+	{ name: 'editor', port: 1337 },
+	{ name: 'www', port: 1455 },
+	{ name: 'ontology', port: 3056 },
+	{ name: 'copilot', port: 9000 },
 ]
 
 const READY_TIMEOUT_MS = 60_000

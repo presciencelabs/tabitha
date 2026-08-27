@@ -1,7 +1,7 @@
 # Targets API & Explorer
 
 - **Live URL**: [https://targets.tabitha.bible](https://targets.tabitha.bible)
-- **Local Dev URL**: [http://localhost:8788](http://localhost:8788) (Port `8788`)
+- **Local Dev URL**: [http://localhost:1382](http://localhost:1382) (Port `1382`)
 
 ---
 

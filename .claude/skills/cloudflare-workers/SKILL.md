@@ -79,9 +79,9 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
 - **`compatibility_flags`**: Always include `["nodejs_compat"]`.
 - **`compatibility_date`**: Keep synchronized with today's date via `pnpm update:safe`.
 - **Dedicated Local Dev Ports**:
-  - Ontology: `5173`
-  - Targets: `8788`
-  - Sources: `8789`
-  - Editor: `8790`
-  - Copilot: `8793`
+  - Ontology: `3056`
+  - Targets: `1382`
+  - Sources: `1947`
+  - Editor: `1337`
+  - Copilot: `9000`
 - Validate all workspace configurations with `pnpm check:cloudflare`.

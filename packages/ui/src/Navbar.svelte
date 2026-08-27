@@ -19,11 +19,11 @@
 	let {
 		current_app,
 		links = [
-			{ name: 'Ontology', href: 'http://localhost:5173' },
-			{ name: 'Sources', href: 'http://localhost:8789' },
-			{ name: 'Targets', href: 'http://localhost:8788' },
-			{ name: 'Editor', href: 'http://localhost:8790' },
-			{ name: 'Copilot', href: 'http://localhost:8793' },
+			{ name: 'Ontology', href: 'http://localhost:3056' },
+			{ name: 'Sources', href: 'http://localhost:1947' },
+			{ name: 'Targets', href: 'http://localhost:1382' },
+			{ name: 'Editor', href: 'http://localhost:1337' },
+			{ name: 'Copilot', href: 'http://localhost:9000' },
 		],
 		children,
 		actions,

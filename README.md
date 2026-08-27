@@ -24,12 +24,12 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
 | --- | --- | --- | --- | --- | --- |
-| **Ontology** | `apps/ontology` | `http://localhost:5173` | `5173` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
-| **Targets** | `apps/targets` | `http://localhost:8788` | `8788` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
-| **Sources** | `apps/sources` | `http://localhost:8789` | `8789` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
-| **Editor** | `apps/editor` | `http://localhost:8790` | `8790` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
-| **Copilot** | `apps/copilot` | `http://localhost:8793` | `8793` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
-| **www** | `apps/www` | `http://localhost:8791` | `8791` | [tabitha.bible](https://tabitha.bible) | Public-facing marketing/informational site |
+| **Ontology** | `apps/ontology` | `http://localhost:3056` | `3056` | [ontology.tabitha.bible](https://ontology.tabitha.bible) | `strictPort: true` for Google/GitHub OAuth callback configurations |
+| **Targets** | `apps/targets` | `http://localhost:1382` | `1382` | [targets.tabitha.bible](https://targets.tabitha.bible) | Target language generation search and forms API |
+| **Sources** | `apps/sources` | `http://localhost:1947` | `1947` | [sources.tabitha.bible](https://sources.tabitha.bible) | Source text analysis and semantic encoding explorer |
+| **Editor** | `apps/editor` | `http://localhost:1337` | `1337` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
+| **Copilot** | `apps/copilot` | `http://localhost:9000` | `9000` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
+| **www** | `apps/www` | `http://localhost:1455` | `1455` | [tabitha.bible](https://tabitha.bible) | Public-facing marketing/informational site |
 
 ---
 
@@ -130,11 +130,11 @@ pnpm setup:env
 pnpm dev:menu
 
 # Or start a specific application directly
-pnpm dev:ontology   # http://localhost:5173
-pnpm dev:targets    # http://localhost:8788
-pnpm dev:sources    # http://localhost:8789
-pnpm dev:editor     # http://localhost:8790
-pnpm dev:copilot    # http://localhost:8793
+pnpm dev:ontology   # http://localhost:3056
+pnpm dev:targets    # http://localhost:1382
+pnpm dev:sources    # http://localhost:1947
+pnpm dev:editor     # http://localhost:1337
+pnpm dev:copilot    # http://localhost:9000
 ```
 
 ### 🧪 Local Smoke Test ("Golden Path")
@@ -142,14 +142,14 @@ pnpm dev:copilot    # http://localhost:8793
 To verify that all local applications, databases, and inter-app APIs are working together:
 
 1. **Start all dev servers**: `pnpm dev`
-2. **Open the Editor**: [http://localhost:8790](http://localhost:8790)
+2. **Open the Editor**: [http://localhost:1337](http://localhost:1337)
 3. **Type `Paul write-A a letter.` into the text box and click Check**:
-   - *Verifies Editor (`:8790`)*: Parses tokens and, on clicking the `write-A` token, shows a popup with a clickable concept link.
+   - *Verifies Editor (`:1337`)*: Parses tokens and, on clicking the `write-A` token, shows a popup with a clickable concept link.
 4. **Click the `write-A` link in that popup**:
-   - *Verifies Ontology (`:5173`)*: Navigates to [http://localhost:5173/?q=write-A](http://localhost:5173/?q=write-A) and loads definitions from the local D1 database.
+   - *Verifies Ontology (`:3056`)*: Navigates to [http://localhost:3056/?q=write-A](http://localhost:3056/?q=write-A) and loads definitions from the local D1 database.
 5. **Expand any "Usage Example" accordion in Ontology**:
-   - *Verifies Sources (`:8789`)*: Fetches and displays the semantic clause parse tree.
-   - *Verifies Targets (`:8788`)*: Fetches and displays the generated English translation text.
+   - *Verifies Sources (`:1947`)*: Fetches and displays the semantic clause parse tree.
+   - *Verifies Targets (`:1382`)*: Fetches and displays the generated English translation text.
 
 ### Verification & Testing
 
@@ -236,11 +236,11 @@ graph TD;
 
         subgraph UILayer ["User Interface Layer"]
             direction LR
-            OntologyUI["Ontology UI <br/>(:5173)"];
-            EditorUI["Editor UI <br/>(:8790)"];
-            CopilotUI["Copilot UI <br/>(:8793)"];
-            SourcesUI["Sources UI <br/>(:8789)"];
-            TargetsUI["Targets UI <br/>(:8788)"];
+            OntologyUI["Ontology UI <br/>(:3056)"];
+            EditorUI["Editor UI <br/>(:1337)"];
+            CopilotUI["Copilot UI <br/>(:9000)"];
+            SourcesUI["Sources UI <br/>(:1947)"];
+            TargetsUI["Targets UI <br/>(:1382)"];
         end
 
         subgraph APILayer ["API & Services Layer"]

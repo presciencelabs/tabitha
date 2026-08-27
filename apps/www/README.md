@@ -1,7 +1,7 @@
 # www
 
 - **Live URL**: [https://tabitha.bible](https://tabitha.bible)
-- **Local Dev URL**: [http://localhost:8791](http://localhost:8791) (Port `8791`)
+- **Local Dev URL**: [http://localhost:1455](http://localhost:1455) (Port `1455`)
 
 Public-facing marketing/informational site for the TaBiThA project. Fully static
 (every route is prerendered), built with SvelteKit so interactivity can be added

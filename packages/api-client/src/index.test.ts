@@ -9,6 +9,11 @@ import {
 	ONE_DAY_IN_SECONDS,
 } from './index'
 
+const EDITOR_URL = 'http://localhost:1337'
+const TARGETS_URL = 'http://localhost:1382'
+const SOURCES_URL = 'http://localhost:1947'
+const ONTOLOGY_URL = 'http://localhost:3056'
+
 describe('@tabitha/api-client', () => {
 	describe('cached_json', () => {
 		test('returns a standard Response object with JSON body', async () => {
@@ -59,12 +64,12 @@ describe('@tabitha/api-client', () => {
 				json: async () => ({ status: 'ok' }),
 			})
 			const http = create_http_client({
-				base_url: 'http://localhost:8788/',
+				base_url: `${TARGETS_URL}/`,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			await http.get('search')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/search')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/search`)
 		})
 
 		test('supports declarative cache: true (appends ?v=1)', async () => {
@@ -73,13 +78,13 @@ describe('@tabitha/api-client', () => {
 				json: async () => ({ status: 'ok' }),
 			})
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 				cache: true,
 			})
 
 			await http.get('/search?q=love')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/search?q=love&v=1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/search?q=love&v=1`)
 		})
 
 		test('does not append version query param when cache is false or omitted', async () => {
@@ -88,12 +93,12 @@ describe('@tabitha/api-client', () => {
 				json: async () => ({ status: 'ok' }),
 			})
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			await http.get('/search?q=love')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/search?q=love')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/search?q=love`)
 		})
 
 		test('does not append version query param to POST requests', async () => {
@@ -102,13 +107,13 @@ describe('@tabitha/api-client', () => {
 				json: async () => ({ status: 'ok' }),
 			})
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 				cache: true,
 			})
 
 			await http.post('/check', { text: 'hello' })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/check', {
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/check`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ text: 'hello' }),
@@ -128,7 +133,7 @@ describe('@tabitha/api-client', () => {
 				})
 
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -152,7 +157,7 @@ describe('@tabitha/api-client', () => {
 				})
 
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -171,7 +176,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -188,7 +193,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -205,7 +210,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const http = create_http_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -223,12 +228,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_editor_client({
-				base_url: 'http://localhost:8790/',
+				base_url: `${EDITOR_URL}/`,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const result = await client.check_text('Paul write-01')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8790/check?text=Paul%20write-01')
+			expect(mock_fetch).toHaveBeenCalledWith(`${EDITOR_URL}/check?text=Paul%20write-01`)
 			expect(result).toEqual(mock_response)
 		})
 
@@ -239,7 +244,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_editor_client({
-				base_url: 'http://localhost:8790',
+				base_url: EDITOR_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -257,12 +262,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_ontology_client({
-				base_url: 'http://localhost:5173',
+				base_url: ONTOLOGY_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const results = await client.search_concepts({ q: 'write', category: 'Verb' })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:5173/search?q=write&category=Verb')
+			expect(mock_fetch).toHaveBeenCalledWith(`${ONTOLOGY_URL}/search?q=write&category=Verb`)
 			expect(results).toEqual(mock_results)
 		})
 
@@ -274,13 +279,13 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_ontology_client({
-				base_url: 'http://localhost:5173',
+				base_url: ONTOLOGY_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 				cache: true,
 			})
 
 			await client.search_concepts({ q: 'write' })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:5173/search?q=write&v=1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${ONTOLOGY_URL}/search?q=write&v=1`)
 		})
 
 		test('get_concept returns matching concept from search', async () => {
@@ -294,7 +299,7 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_ontology_client({
-				base_url: 'http://localhost:5173',
+				base_url: ONTOLOGY_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
@@ -312,12 +317,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_sources_client({
-				base_url: 'http://localhost:8789',
+				base_url: SOURCES_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const data = await client.get_verse_source({ book: 'GEN', chapter: 1, verse: 1 })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/Bible/GEN/1/1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${SOURCES_URL}/Bible/GEN/1/1`)
 			expect(data).toEqual(mock_data)
 		})
 
@@ -329,13 +334,13 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_sources_client({
-				base_url: 'http://localhost:8789',
+				base_url: SOURCES_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 				cache: true,
 			})
 
 			await client.get_verse_source({ book: 'GEN', chapter: 1, verse: 1 })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/Bible/GEN/1/1?v=1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${SOURCES_URL}/Bible/GEN/1/1?v=1`)
 		})
 
 		test('get_book_status queries lookup status endpoint', async () => {
@@ -346,12 +351,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_sources_client({
-				base_url: 'http://localhost:8789',
+				base_url: SOURCES_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const status = await client.get_book_status('GEN')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/lookup/status/Bible/GEN')
+			expect(mock_fetch).toHaveBeenCalledWith(`${SOURCES_URL}/lookup/status/Bible/GEN`)
 			expect(status).toBe('Ready to Translate')
 		})
 
@@ -388,12 +393,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_targets_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const result = await client.get_target_text({ book: 'GEN', chapter: 1, verse: 1 })
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/English/GEN/1/1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/English/GEN/1/1`)
 			expect(result?.text).toBe('In the beginning God created...')
 		})
 
@@ -405,13 +410,13 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_targets_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 				cache: true,
 			})
 
 			await client.get_features('Noun')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/features/Noun?v=1')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/features/Noun?v=1`)
 		})
 
 		test('lookup_forms queries forms endpoint', async () => {
@@ -422,12 +427,12 @@ describe('@tabitha/api-client', () => {
 			})
 
 			const client = create_targets_client({
-				base_url: 'http://localhost:8788',
+				base_url: TARGETS_URL,
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
 			const forms = await client.lookup_forms('loved')
-			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8788/English/lookup/forms?word=loved')
+			expect(mock_fetch).toHaveBeenCalledWith(`${TARGETS_URL}/English/lookup/forms?word=loved`)
 			expect(forms).toEqual(mock_forms)
 		})
 	})

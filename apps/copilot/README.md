@@ -1,7 +1,7 @@
 # Tabitha Copilot
 
 - **Live URL**: [https://copilot.tabitha.bible](https://copilot.tabitha.bible)
-- **Local Dev URL**: [http://localhost:8793](http://localhost:8793) (Port `8793`)
+- **Local Dev URL**: [http://localhost:9000](http://localhost:9000) (Port `9000`)
 
 ---
 

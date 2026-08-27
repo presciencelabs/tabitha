@@ -391,11 +391,11 @@ import system_instruction from './review_prompt.md?raw'
 ## 🧭 Monorepo Architecture & Package Boundaries
 
 1. **Applications (`apps/*`)**:
-   - `editor` (:8790) — Translation workbench, clause parser, and rule processing.
-   - `ontology` (:5173) — Core linguistic knowledge base, concepts, and D1 SQLite.
-   - `sources` (:8789) — Hebrew/Greek source texts, semantic trees, and verse encodings.
-   - `targets` (:8788) — Target language lexicon, inflection engine, and forms.
-   - `copilot` (:8793) — AI translation guidance, routed through `@tabitha/ai` and the Cloudflare AI Gateway.
+   - `editor` (:1337) — Translation workbench, clause parser, and rule processing.
+   - `ontology` (:3056) — Core linguistic knowledge base, concepts, and D1 SQLite.
+   - `sources` (:1947) — Hebrew/Greek source texts, semantic trees, and verse encodings.
+   - `targets` (:1382) — Target language lexicon, inflection engine, and forms.
+   - `copilot` (:9000) — AI translation guidance, routed through `@tabitha/ai` and the Cloudflare AI Gateway.
 
 2. **Shared Packages (`packages/*`)**:
    - `@tabitha/types` — Universal TypeScript interfaces. Must remain free of runtime dependencies.
