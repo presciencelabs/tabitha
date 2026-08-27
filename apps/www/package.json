@@ -11,6 +11,7 @@
 		"check:lint:fix": "eslint . --fix",
 		"build": "vite build",
 		"dev": "vite dev",
+		"dev:e2e": "vite dev",
 		"test": "pnpm test:unit && pnpm test:e2e",
 		"test:unit": "vitest run src",
 		"test:unit:watch": "vitest watch",
