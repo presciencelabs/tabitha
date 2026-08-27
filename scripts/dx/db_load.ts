@@ -82,7 +82,11 @@ export async function resolve_workerd_hashes(
 	const helper = join(script_dir, 'resolve_workerd_hashes.mjs')
 	const input = JSON.stringify({ app_dir: config.app_dir, wrangler_path: config.wrangler_path, entries, d1_state_dir })
 	const output = execSync(`node "${helper}"`, { input, encoding: 'utf-8' })
-	return JSON.parse(output)
+	// Because this takes from stdout, it also reads any console logs from node itself.
+	// eg. 'Using secrets defined in app\ontology\.env'
+	// This separates the actual return data before parsing.
+	const json_output = output.split('\n').find(line => line.startsWith('{'))!
+	return JSON.parse(json_output)
 }
 
 function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
