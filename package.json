@@ -12,6 +12,7 @@
     "dev:ontology": "pnpm --filter @tabitha/ontology dev",
     "dev:sources": "pnpm --filter @tabitha/sources dev",
     "dev:targets": "pnpm --filter @tabitha/targets dev",
+    "dev:www": "pnpm --filter @tabitha/www dev",
     "doctor": "bun scripts/dx/doctor.ts",
     "gen:favicons": "bun scripts/dx/generate_favicons.ts",
     "gen:manifest-icons": "bun scripts/dx/generate_manifest_icons.ts",
