@@ -5,5 +5,7 @@
 
 Public-facing marketing/informational site for the TaBiThA project. Fully static
 (every route is prerendered), built with SvelteKit so interactivity can be added
-later without an adapter change. Content and design are still being scoped --
-see the project's backlog for the tiered-explainer plan this will grow into.
+later without an adapter change. The Home page (Level 0 of the tiered-explainer
+plan) has real content and a warm-editorial theme (Spectral/Work Sans, terracotta/
+teal); the rest of the sitemap and the Cloudflare deployment are still to come --
+see the project's backlog for the full plan.

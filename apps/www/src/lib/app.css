@@ -1,9 +1,185 @@
 @import '@tabitha/ui/theme.css';
 
+@theme {
+	--font-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+	--font-sans: 'Work Sans', -apple-system, 'Segoe UI', sans-serif;
+}
+
+:root {
+	--paper: #f5efe2;
+	--paper-raised: #efe4d0;
+	--ink: #2b2420;
+	--ink-soft: #6b6153;
+	--terracotta: #b1512f;
+	--terracotta-soft: #e7c9b8;
+	--teal: #2c6a63;
+	--teal-soft: #cfe0dc;
+	--rule: #d8cbb3;
+}
+
 h1, h2, h3, h4, .text-balance {
 	text-wrap: balance;
 }
 
 p, article {
 	text-wrap: pretty;
+}
+
+body {
+	background: var(--paper);
+	color: var(--ink);
+	font-family: var(--font-sans);
+	line-height: 1.6;
+}
+
+h1, h2, h3 {
+	font-family: var(--font-serif);
+	font-weight: 500;
+	margin: 0 0 1rem;
+}
+
+h1 {
+	font-size: clamp(2.4rem, 5vw, 3.4rem);
+	line-height: 1.08;
+	margin-bottom: 1.1rem;
+	max-width: 14ch;
+}
+
+.site {
+	max-width: 920px;
+	margin: 0 auto;
+	padding: 0 1.5rem;
+}
+
+.site-header {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	padding: 3rem 0 1rem;
+	border-bottom: 1px solid var(--rule);
+}
+
+.wordmark {
+	font-family: var(--font-serif);
+	font-weight: 600;
+	font-size: 1.15rem;
+	letter-spacing: 0.02em;
+	color: var(--ink);
+	text-decoration: none;
+}
+
+.site-main {
+	padding: 3.5rem 0 5rem;
+}
+
+.site-footer {
+	padding: 2rem 0 3rem;
+	border-top: 1px solid var(--rule);
+	font-size: 0.85rem;
+	color: var(--ink-soft);
+}
+
+.footer-link {
+	color: var(--teal);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.footer-link:hover {
+	text-decoration: underline;
+}
+
+.hero-dek {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	font-size: 1.35rem;
+	color: var(--ink-soft);
+	max-width: 34ch;
+	margin: 0 0 2.75rem;
+}
+
+.lede {
+	display: grid;
+	grid-template-columns: 3px 1fr;
+	gap: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.lede-rule {
+	background: var(--teal);
+	border-radius: 2px;
+}
+
+.lede p {
+	margin: 0 0 1.15rem;
+	max-width: 62ch;
+	font-size: 1.05rem;
+}
+
+.lede p:last-child {
+	margin-bottom: 0;
+}
+
+.lede strong {
+	color: var(--ink);
+	font-weight: 600;
+}
+
+.tools-link {
+	color: var(--teal);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid var(--teal-soft);
+}
+
+.tools-link:hover {
+	border-bottom-color: var(--teal);
+}
+
+.tiers-label {
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--ink-soft);
+	margin: 3rem 0 0.5rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--rule);
+}
+
+.tiers-note {
+	font-size: 0.85rem;
+	color: var(--ink-soft);
+	font-style: italic;
+	margin: 0 0 1.25rem;
+}
+
+.tiers {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+}
+
+.tier {
+	border: 1px solid var(--rule);
+	padding: 1.4rem 1.4rem 1.6rem;
+	background: var(--paper-raised);
+}
+
+.tier h3 {
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin: 0 0 0.5rem;
+}
+
+.tier p {
+	font-size: 0.92rem;
+	color: var(--ink-soft);
+	margin: 0;
+}
+
+@media (max-width: 640px) {
+	.tiers {
+		grid-template-columns: 1fr;
+	}
 }
