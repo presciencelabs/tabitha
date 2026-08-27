@@ -33,6 +33,7 @@
 ### 5. Lookups & Status APIs
 
 - `GET /lookup/features?category={category}` — Returns grammatical features, feature codes, values, and examples.
+- `GET /lookup/status/[type]` — Returns translation/completion status for every book of a given type.
 - `GET /lookup/status/[type]/[id_primary]` — Returns translation/completion status for an entire book.
 - `POST /lookup/status` — Batch lookup for verse statuses. Expects a JSON array of reference objects `[{ type, id_primary, id_secondary, id_tertiary }]`.
 

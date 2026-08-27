@@ -354,6 +354,26 @@ describe('@tabitha/api-client', () => {
 			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/lookup/status/Bible/GEN')
 			expect(status).toBe('Ready to Translate')
 		})
+
+		test('get_all_book_statuses queries lookup status endpoint for a type', async () => {
+			const mock_data = [
+				{ reference: { id_primary: 'GEN' }, status: 'Ready to Translate' },
+				{ reference: { id_primary: 'EXO' }, status: 'Not Started' },
+			]
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => mock_data,
+			})
+
+			const client = create_sources_client({
+				base_url: 'http://localhost:8789',
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			const statuses = await client.get_all_book_statuses()
+			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/lookup/status/Bible')
+			expect(statuses).toEqual(mock_data)
+		})
 	})
 
 	describe('create_targets_client', () => {

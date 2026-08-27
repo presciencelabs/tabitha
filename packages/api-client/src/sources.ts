@@ -63,5 +63,12 @@ export function create_sources_client(options: SourcesClientOptions) {
 			const data = await http.get<{ status: SourceStatus }>(`/lookup/status/${type}/${book}`)
 			return data?.status ?? null
 		},
+
+		/**
+		 * Look up the translation status of every book of a given type.
+		 */
+		async get_all_book_statuses(type = 'Bible'): Promise<{ reference: { id_primary: string }, status: SourceStatus }[]> {
+			return await http.get<{ reference: { id_primary: string }, status: SourceStatus }[]>(`/lookup/status/${type}`) ?? []
+		},
 	}
 }

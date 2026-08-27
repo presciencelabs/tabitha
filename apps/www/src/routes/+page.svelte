@@ -27,21 +27,20 @@
 </div>
 
 <div class="tiers-label">Go deeper</div>
-<p class="tiers-note">These sections are being built next.</p>
 <div class="tiers">
-	<div class="tier">
+	<a href="/how-it-works" class="tier">
 		<h3>For translators</h3>
 		<p>
 			How the linguistic side works — the meta-language, the workflow, what a session with
 			TaBiThA actually looks like.
 		</p>
-	</div>
-	<div class="tier">
+	</a>
+	<a href="/developers" class="tier">
 		<h3>For developers</h3>
 		<p>The engineering side — architecture, APIs, and how to contribute to the project.</p>
-	</div>
-	<div class="tier">
+	</a>
+	<a href="/about" class="tier">
 		<h3>The project</h3>
 		<p>Who's behind TaBiThA, what's left to build, and answers to common questions.</p>
-	</div>
+	</a>
 </div>

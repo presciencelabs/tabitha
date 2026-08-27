@@ -13,6 +13,8 @@
 	--terracotta: #b1512f;
 	--terracotta-soft: #e7c9b8;
 	--teal: #2c6a63;
+	--teal-mid-1: #61918b;
+	--teal-mid-2: #99b9b4;
 	--teal-soft: #cfe0dc;
 	--rule: #d8cbb3;
 }
@@ -147,13 +149,6 @@ h1 {
 	border-top: 1px solid var(--rule);
 }
 
-.tiers-note {
-	font-size: 0.85rem;
-	color: var(--ink-soft);
-	font-style: italic;
-	margin: 0 0 1.25rem;
-}
-
 .tiers {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -161,9 +156,17 @@ h1 {
 }
 
 .tier {
+	display: block;
 	border: 1px solid var(--rule);
 	padding: 1.4rem 1.4rem 1.6rem;
 	background: var(--paper-raised);
+	text-decoration: none;
+	color: inherit;
+	transition: border-color 0.15s ease;
+}
+
+.tier:hover {
+	border-color: var(--teal);
 }
 
 .tier h3 {
@@ -182,4 +185,187 @@ h1 {
 	.tiers {
 		grid-template-columns: 1fr;
 	}
+}
+
+.back-link {
+	display: inline-block;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--teal);
+	text-decoration: none;
+	margin-bottom: 2.5rem;
+}
+
+.back-link:hover {
+	text-decoration: underline;
+}
+
+.page-kicker {
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--teal);
+	font-weight: 600;
+	margin: 0 0 0.75rem;
+}
+
+.page-dek {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	font-size: 1.2rem;
+	color: var(--ink-soft);
+	max-width: 58ch;
+	margin: 0 0 2.5rem;
+}
+
+.page-body h2 {
+	font-size: 1.4rem;
+	margin-top: 2.5rem;
+}
+
+.page-body p {
+	max-width: 68ch;
+	margin: 0 0 1.15rem;
+	font-size: 1.02rem;
+}
+
+.page-body a {
+	color: var(--teal);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid var(--teal-soft);
+}
+
+.page-body a:hover {
+	border-bottom-color: var(--teal);
+}
+
+.page-body dl {
+	margin: 0 0 1.5rem;
+	max-width: 68ch;
+}
+
+.page-body dt {
+	font-weight: 600;
+	margin-top: 1.25rem;
+}
+
+.page-body dd {
+	margin: 0.3rem 0 0;
+	color: var(--ink-soft);
+}
+
+.page-body code {
+	font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+	font-size: 0.88em;
+	background: var(--paper-raised);
+	padding: 0.1em 0.4em;
+	border-radius: 3px;
+}
+
+.page-siblings {
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--rule);
+	display: flex;
+	gap: 1.5rem 2rem;
+	flex-wrap: wrap;
+}
+
+.page-siblings a {
+	color: var(--teal);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.page-siblings a:hover {
+	text-decoration: underline;
+}
+
+.progress-panel {
+	margin-top: 1rem;
+	max-width: 68ch;
+}
+
+.progress-headline {
+	display: flex;
+	align-items: baseline;
+	gap: 0.65rem;
+	margin-bottom: 1.5rem;
+}
+
+.progress-figure {
+	font-family: var(--font-serif);
+	font-size: 2.75rem;
+	font-weight: 600;
+	color: var(--teal);
+	line-height: 1;
+}
+
+.progress-unit {
+	font-size: 1rem;
+	color: var(--ink-soft);
+	max-width: 22ch;
+}
+
+.progress-bar {
+	display: flex;
+	height: 14px;
+	border-radius: 7px;
+	overflow: hidden;
+	background: var(--paper-raised);
+	margin-bottom: 1.25rem;
+}
+
+.progress-segment {
+	height: 100%;
+}
+
+.progress-segment + .progress-segment {
+	border-left: 2px solid var(--paper);
+}
+
+.progress-legend {
+	list-style: none;
+	margin: 0 0 1.25rem;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 0.6rem 1.5rem;
+}
+
+.progress-legend li {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-size: 0.9rem;
+	color: var(--ink);
+}
+
+.legend-swatch {
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+.progress-empty {
+	font-size: 0.9rem;
+	font-style: italic;
+	color: var(--ink-soft);
+	margin-bottom: 1.25rem;
+}
+
+.progress-detail-link {
+	display: inline-block;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--teal);
+	text-decoration: none;
+	border-bottom: 1px solid var(--teal-soft);
+}
+
+.progress-detail-link:hover {
+	border-bottom-color: var(--teal);
 }

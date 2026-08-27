@@ -6,7 +6,7 @@ Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions
 
 ## 🗺️ System Architecture
 
-The TaBiThA monorepo consists of 5 modular Cloudflare Worker applications and 8 shared workspace packages managed with **pnpm workspaces** and **Turborepo**:
+The TaBiThA monorepo consists of 6 modular Cloudflare Worker applications and 8 shared workspace packages managed with **pnpm workspaces** and **Turborepo**:
 
 ```mermaid
 graph TD
@@ -16,6 +16,7 @@ graph TD
 		Sources["Sources (:8789)<br/>Hebrew/Greek & Semantic Trees"]
 		Targets["Targets (:8788)<br/>Target Language Lexicon & Forms"]
 		Copilot["Copilot (:8793)<br/>AI Translation Assistant"]
+		Www["Www (:8791)<br/>Public Marketing Site"]
 	end
 
 	subgraph SharedPackages ["Shared Workspace Packages"]
@@ -51,6 +52,9 @@ graph TD
 	Copilot --> Types
 	Copilot --> UI
 	Copilot --> AI
+	Www --> Types
+	Www --> UI
+	Www --> ApiClient
 
 	Editor -.->|"REST / JSON"| Ontology
 	Editor -.->|"REST / JSON"| Sources
@@ -58,6 +62,7 @@ graph TD
 	Editor -.->|"REST / JSON"| Copilot
 	Ontology -.->|"REST / JSON"| Sources
 	Ontology -.->|"REST / JSON"| Targets
+	Www -.->|"REST / JSON"| Sources
 
 	AI --> Gateway --> Vertex
 ```
@@ -75,6 +80,7 @@ graph TD
 | **`sources`** | `8789` | [http://localhost:8789](http://localhost:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
 | **`editor`** | `8790` | [http://localhost:8790](http://localhost:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
 | **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
+| **`www`** | `8791` | [http://localhost:8791](http://localhost:8791) | Public-facing marketing/informational site. |
 
 ### Shared Packages (`packages/`)
 
@@ -131,7 +137,7 @@ pnpm check:doctor
 ### 3. Start Development Servers
 
 ```bash
-# Start all 5 apps concurrently
+# Start all 6 apps concurrently
 pnpm dev
 
 # Interactive launcher (choose presets e.g. Editor + Ontology)
@@ -143,6 +149,7 @@ pnpm dev:ontology
 pnpm dev:sources
 pnpm dev:targets
 pnpm dev:copilot
+pnpm dev:www
 ```
 
 ### 4. Ontology Local Permissions (first time only)
