@@ -11,6 +11,7 @@
 		"check:lint:fix": "eslint . --fix",
 		"build": "vite build",
 		"dev": "vite dev",
+		"dev:e2e": "vite dev",
 		"test": "pnpm test:e2e",
 		"test:e2e": "playwright test",
 		"test:e2e:dev": "playwright test --ui",

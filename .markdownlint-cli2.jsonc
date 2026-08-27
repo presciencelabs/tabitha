@@ -12,6 +12,9 @@
     "**/.svelte-kit/**",
     "**/.turbo/**",
     "**/.wrangler/**",
-    "tmp/**"
+    "tmp/**",
+    // Vendored skill reference docs, not this repo's own authored content -- not worth
+    // reformatting to our lint rules.
+    ".claude/skills/**"
   ]
 }
