@@ -27,6 +27,7 @@ jobs:
       run_quality: ${{ steps.plan.outputs.run_quality }}
       run_unit: ${{ steps.plan.outputs.run_unit }}
       run_e2e: ${{ steps.plan.outputs.run_e2e }}
+      run_windows_smoke: ${{ steps.plan.outputs.run_windows_smoke }}
       turbo_filter: ${{ steps.plan.outputs.turbo_filter }}
       reason: ${{ steps.plan.outputs.reason }}
     steps:
@@ -239,6 +240,34 @@ jobs:
             apps/*/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/
           retention-days: 7
 
+  windows_dx_smoke:
+    name: 🪟 Windows DX Smoke Test
+    needs: [plan, security_compliance, production_build]
+    if: needs.plan.outputs.run_windows_smoke == 'true'
+    runs-on: windows-latest
+    outputs:
+      windows_smoke: ${{ steps.db_load.outcome }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Install SQLite3 CLI
+        run: choco install sqlite -y --no-progress
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Load Local D1 SQLite Databases (db:load)
+        id: db_load
+        run: pnpm db:load
+        continue-on-error: true
+
+      - name: DX Doctor Diagnostics
+        run: pnpm check:doctor
+
   # ============================================================================
   # STAGE 3: PR SUMMARY (Advisory Results Surfaced on the PR)
   # ============================================================================
@@ -286,7 +315,7 @@ jobs:
   pr_summary:
     name: 📝 Post PR Advisory Summary
     if: always() && github.event_name == 'pull_request'
-    needs: [plan, security_compliance, production_build, typecheck, eslint, unit_tests, e2e_tests]
+    needs: [plan, security_compliance, production_build, typecheck, eslint, unit_tests, e2e_tests, windows_dx_smoke]
     runs-on: ubuntu-latest
     # Org policy caps the default GITHUB_TOKEN at read-only, so this uses a fine-grained
     # PAT (repo-scoped to tabitha, Issues: write) stored as PR_SUMMARY_TOKEN instead.
@@ -320,6 +349,7 @@ jobs:
               ['ESLint', needs.eslint.outputs.eslint],
               ['Unit Test Coverage', needs.unit_tests.outputs.coverage],
               ['Playwright E2E', needs.e2e_tests.outputs.e2e],
+              ['Windows DX Smoke (db:load)', needs.windows_dx_smoke.outputs.windows_smoke],
             ]
 
             let body = `${marker}\n### 🔎 CI Advisory Summary\n\nThese checks are non-blocking and never stop a merge, but are worth a look.\n\n`

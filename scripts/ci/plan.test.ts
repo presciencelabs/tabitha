@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { classify_files } from './plan'
+import { classify_files, touches_windows_smoke_paths } from './plan'
 
 describe('classify_files', () => {
 	it('reports no_changes for an empty diff', () => {
@@ -51,5 +51,27 @@ describe('classify_files', () => {
 
 	it('prefers force_full over docs_only when both would otherwise match', () => {
 		expect(classify_files(['README.md', 'turbo.json'])).toEqual({ kind: 'force_full', matched_file: 'turbo.json' })
+	})
+})
+
+describe('touches_windows_smoke_paths', () => {
+	it('is false for an unrelated app change', () => {
+		expect(touches_windows_smoke_paths(['apps/editor/src/routes/+page.svelte'])).toBe(false)
+	})
+
+	it('is true when a scripts/dx file changes', () => {
+		expect(touches_windows_smoke_paths(['scripts/dx/db_load.ts'])).toBe(true)
+	})
+
+	it('is true when a tools/databases file changes', () => {
+		expect(touches_windows_smoke_paths(['tools/databases/migrations/orchestrator.ts'])).toBe(true)
+	})
+
+	it('is true when only one file in a mixed change set matches', () => {
+		expect(touches_windows_smoke_paths(['apps/editor/package.json', 'scripts/dx/setup.ts'])).toBe(true)
+	})
+
+	it('is false for an empty change set', () => {
+		expect(touches_windows_smoke_paths([])).toBe(false)
 	})
 })
