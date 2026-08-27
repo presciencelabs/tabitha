@@ -91,9 +91,15 @@ function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
 		if (existsSync(path)) unlinkSync(path)
 	}
 
-	const pragma_header = 'PRAGMA synchronous = OFF; PRAGMA journal_mode = MEMORY; PRAGMA cache_size = 100000; BEGIN TRANSACTION;'
-	const pragma_footer = 'COMMIT;'
-	execSync(`(echo "${pragma_header}"; cat "${snapshot_file}"; echo "${pragma_footer}") | sqlite3 "${target_db}"`, {
+	// Piping via a shell `(echo ...; cat ...; echo ...) | sqlite3` only works on POSIX shells --
+	// cmd.exe (execSync's default shell on Windows) has neither `cat` nor `;`/`()` in that sense.
+	// Building the SQL in Node and feeding it to sqlite3 via stdin (execSync's `input` option)
+	// works identically on every platform, since it never goes through shell pipe syntax at all.
+	const pragma_header = 'PRAGMA synchronous = OFF; PRAGMA journal_mode = MEMORY; PRAGMA cache_size = 100000; BEGIN TRANSACTION;\n'
+	const pragma_footer = '\nCOMMIT;\n'
+	const sql = pragma_header + readFileSync(snapshot_file, 'utf-8') + pragma_footer
+	execSync(`sqlite3 "${target_db}"`, {
+		input: sql,
 		stdio: 'pipe',
 		maxBuffer: 1024 * 1024 * 50,
 	})
