@@ -25,9 +25,17 @@ export function create_app_playwright_config({
 			},
 		],
 		webServer: {
-			command: 'pnpm dev',
+			// A `dev:e2e` script (falling back to plain `pnpm dev` when an app has no e2e-specific
+			// setup) rather than `pnpm dev` directly, so the root `test:e2e` script (see
+			// scripts/ci/run_e2e.ts) can start every app's e2e dev server the same way up front and
+			// wait for all of them to be healthy before any test runs -- removing the cross-app
+			// startup race where one app's test hits a sibling's port before that sibling is ready.
+			command: 'pnpm dev:e2e',
 			port,
-			reuseExistingServer: !process.env.CI,
+			// Reusing an already-running server is always safe here (it behaves like `pnpm dev`
+			// would for a standalone single-app run if nothing is running yet), and is required for
+			// the orchestrated multi-app run, where the servers are already started externally.
+			reuseExistingServer: true,
 		},
 		...overrides,
 	})
