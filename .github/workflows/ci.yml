@@ -120,14 +120,13 @@ jobs:
   # ============================================================================
   # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
   # ============================================================================
-  code_quality:
-    name: 🔍 Code Quality & Typecheck
+  typecheck:
+    name: 🔍 Typecheck & Svelte Diagnostics
     needs: [plan, security_compliance, production_build]
     if: needs.plan.outputs.run_quality == 'true'
     runs-on: ubuntu-latest
     outputs:
       typecheck: ${{ steps.typecheck.outcome }}
-      eslint: ${{ steps.eslint.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -139,6 +138,20 @@ jobs:
         id: typecheck
         run: pnpm exec turbo run check ${{ needs.plan.outputs.turbo_filter }}
         continue-on-error: true
+
+  eslint:
+    name: 🔍 ESLint
+    needs: [plan, security_compliance, production_build]
+    if: needs.plan.outputs.run_quality == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      eslint: ${{ steps.eslint.outcome }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
 
       - name: ESLint
         id: eslint
@@ -273,7 +286,7 @@ jobs:
   pr_summary:
     name: 📝 Post PR Advisory Summary
     if: always() && github.event_name == 'pull_request'
-    needs: [plan, security_compliance, production_build, code_quality, unit_tests, e2e_tests]
+    needs: [plan, security_compliance, production_build, typecheck, eslint, unit_tests, e2e_tests]
     runs-on: ubuntu-latest
     # Org policy caps the default GITHUB_TOKEN at read-only, so this uses a fine-grained
     # PAT (repo-scoped to tabitha, Issues: write) stored as PR_SUMMARY_TOKEN instead.
@@ -303,8 +316,8 @@ jobs:
               ['README Badge & Version Sync', needs.security_compliance.outputs.badges],
               ['Philosophy Count Doc Sync', needs.security_compliance.outputs.philosophy_docs],
               ['Markdown Lint', needs.security_compliance.outputs.md],
-              ['Typecheck & Svelte Diagnostics', needs.code_quality.outputs.typecheck],
-              ['ESLint', needs.code_quality.outputs.eslint],
+              ['Typecheck & Svelte Diagnostics', needs.typecheck.outputs.typecheck],
+              ['ESLint', needs.eslint.outputs.eslint],
               ['Unit Test Coverage', needs.unit_tests.outputs.coverage],
               ['Playwright E2E', needs.e2e_tests.outputs.e2e],
             ]
