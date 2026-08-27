@@ -186,6 +186,8 @@ TaBiThA is set up to make AI coding agents effective contributors here, whicheve
 
 Some conventions are too specific to belong in AGENTS.md but still worth writing down once — e.g. `.claude/skills/typography/SKILL.md` covers when `prose` belongs on an element vs. when to escape it with `not-prose`. These are loaded contextually by Claude Code when relevant. Add a new skill here when you notice an agent (or a human) repeatedly getting a narrow, specific convention wrong.
 
+Several skills document a specific library's usage patterns and pin the version they cover in their frontmatter (e.g. `svelte: 5.x`, `tailwindcss: 4.x`). If a PR bumps one of those libraries to a new **major** version, review the matching skill alongside it — a `pnpm update`/`pnpm update:safe` run only advances dependencies within their existing SemVer range, so it never triggers this on its own. The `daisyui` skill is the one exception: it pins a minor (`5.7.x`) rather than a major, since it's sourced from daisyUI's own `SKILL.md`, so `pnpm update:safe` checks it against the installed package automatically on every run instead of relying on someone to notice.
+
 ### `docs/decisions/` — don't relitigate settled choices
 
 Architecture Decision Records capture the "why" behind non-obvious technical choices. Worth checking before you (or an agent) re-derive a decision that's already been made — see [`docs/decisions/README.md`](docs/decisions/README.md).

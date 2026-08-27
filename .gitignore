@@ -43,3 +43,7 @@ pnpm-debug.log*
 # Local cache of Miniflare's resolved D1 storage file names (see scripts/dx/db_load.ts) --
 # derived from the local .wrangler state dir, not portable/meaningful across machines
 tools/databases/.d1-workerd-hash-cache.json
+
+# Claude Code -- per-session worktrees and personal permission overrides, not shared config
+.claude/worktrees/
+.claude/settings.local.json

@@ -33,6 +33,21 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 
 ---
 
+## 🔗 Using the APIs
+
+**Ontology**, **Sources**, **Targets**, and **Copilot** each expose a public, read-only HTTP API — no API key or authentication required. Endpoint-level documentation (routes, query params, examples) lives in each app's own README:
+
+- [Ontology API](apps/ontology/README.md#-api) — concept search, simplification hints, usage examples
+- [Sources API](apps/sources/README.md#-api) — source text navigation, semantic encoding, reference search
+- [Targets API](apps/targets/README.md#-api) — target translation text, search, lexical/feature lookups
+- [Copilot API](apps/copilot/README.md#-api) — translation notes and consultant briefs per verse
+
+**Rate limits:** all four apps throttle to **60 requests per 60 seconds per client IP**. A request over the limit gets a `429` response with a `Retry-After: 60` header.
+
+**Stability:** these APIs are built for TaBiThA's own internal UIs first. There's no versioning scheme or backwards-compatibility guarantee — routes and response shapes can change without notice. If you're integrating against one, expect to track changes here rather than relying on a stable contract.
+
+---
+
 ## 📦 Monorepo Structure
 
 ```text
