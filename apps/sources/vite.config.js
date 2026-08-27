@@ -1,8 +1,9 @@
 import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 import { create_app_vite_config } from '@tabitha/vite-config'
+import { PORTS } from '@tabitha/vite-config/ports'
 
 export default create_app_vite_config({
-	port: 8789,
+	port: PORTS.sources.port,
 	plugins: [
 		SvelteKitPWA({
 			registerType: 'prompt',

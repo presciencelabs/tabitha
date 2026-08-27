@@ -17,19 +17,20 @@ Every application in `apps/*` uses `create_app_vite_config` to eliminate boilerp
 
 ```javascript
 import { create_app_vite_config } from '@tabitha/vite-config'
+import { PORTS } from '@tabitha/vite-config/ports'
 
 export default create_app_vite_config({
-	port: 8790, // Dedicated application port
+	port: PORTS.editor.port, // Dedicated application port -- single source of truth, see packages/vite-config/ports.js
 	// Optional plugin overrides or custom alias mappings
 })
 ```
 
 ### Standard Dedicated Ports
-- **Ontology**: `5173`
-- **Targets**: `8788`
-- **Sources**: `8789`
-- **Editor**: `8790`
-- **Copilot**: `8793`
+- **Ontology**: `3056`
+- **Targets**: `1382`
+- **Sources**: `1947`
+- **Editor**: `1337`
+- **Copilot**: `9000`
 
 `create_app_vite_config` automatically binds `host: 'localhost.tabitha.bible'`, enables `strictPort: true`, wires `@tailwindcss/vite`, registers `sveltekit()`, and embeds Vitest test configurations.
 
@@ -57,7 +58,7 @@ Applications with E2E tests use `create_app_playwright_config`:
 import { create_app_playwright_config } from '@tabitha/vite-config/playwright'
 
 export default create_app_playwright_config({
-	port: 8790,
+	port: 1337,
 	host: 'localhost.tabitha.bible',
 })
 ```

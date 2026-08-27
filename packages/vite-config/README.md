@@ -10,8 +10,9 @@ Shared Vite, Playwright, and SvelteKit configuration helpers for Tabitha applica
 
 ```js
 import { create_app_vite_config } from '@tabitha/vite-config'
+import { PORTS } from '@tabitha/vite-config/ports'
 
-export default create_app_vite_config({ port: 8790 })
+export default create_app_vite_config({ port: PORTS.editor.port })
 ```
 
 ### 2. SvelteKit Configuration (`svelte.config.js`)
@@ -27,5 +28,5 @@ export default create_app_svelte_config()
 ```js
 import { create_app_playwright_config } from '@tabitha/vite-config/playwright'
 
-export default create_app_playwright_config({ port: 8790 })
+export default create_app_playwright_config({ port: 1337 })
 ```

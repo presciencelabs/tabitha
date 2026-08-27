@@ -52,7 +52,7 @@ Each application uses the shared helper in `playwright.config.js`:
 import { create_app_playwright_config } from '@tabitha/vite-config/playwright'
 
 export default create_app_playwright_config({
-	port: 5173,
+	port: 3056,
 	host: 'localhost.tabitha.bible',
 })
 ```

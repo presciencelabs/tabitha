@@ -68,11 +68,11 @@ async function setup_workspace() {
 🎉 Setup Complete! You're ready to build with TaBiThA.
 
 Local App Ports & Endpoints:
-  • Ontology:  http://localhost:5173
-  • Targets:   http://localhost:8788
-  • Sources:   http://localhost:8789
-  • Editor:    http://localhost:8790
-  • Copilot:   http://localhost:8793
+  • Ontology:  http://localhost:3056
+  • Targets:   http://localhost:1382
+  • Sources:   http://localhost:1947
+  • Editor:    http://localhost:1337
+  • Copilot:   http://localhost:9000
 
 Useful Commands:
   • pnpm dev              Start all applications in parallel
@@ -89,13 +89,13 @@ Useful Commands:
 
 🧪 60-Second Golden Path Smoke Test:
   1. Start all dev servers: \`pnpm dev\`
-  2. Open Editor: http://localhost:8790
+  2. Open Editor: http://localhost:1337
   3. Type 'Paul write-A a letter.' into the text box and click Check
   4. Click the 'write-A' token, then the 'write-A' link in the popup
-     (navigates to Ontology at :5173)
+     (navigates to Ontology at :3056)
   5. Expand any 'Usage Example' accordion in Ontology:
-     • Verifies Sources (:8789) -> Fetches semantic tree
-     • Verifies Targets (:8788) -> Fetches generated English text
+     • Verifies Sources (:1947) -> Fetches semantic tree
+     • Verifies Targets (:1382) -> Fetches generated English text
 ============================================================
 `)
 }

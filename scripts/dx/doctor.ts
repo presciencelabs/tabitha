@@ -16,11 +16,11 @@ type DiagnosticResult = {
 }
 
 const APPS = [
-	{ name: 'ontology', port: 5173, has_db: true, table: 'Concepts' },
-	{ name: 'targets', port: 8788, has_db: true, table: 'Text' },
-	{ name: 'sources', port: 8789, has_db: true, table: 'Sources' },
-	{ name: 'editor', port: 8790, has_db: false },
-	{ name: 'copilot', port: 8793, has_db: false },
+	{ name: 'ontology', port: 3056, has_db: true, table: 'Concepts' },
+	{ name: 'targets', port: 1382, has_db: true, table: 'Text' },
+	{ name: 'sources', port: 1947, has_db: true, table: 'Sources' },
+	{ name: 'editor', port: 1337, has_db: false },
+	{ name: 'copilot', port: 9000, has_db: false },
 ]
 
 async function check_runtimes(): Promise<DiagnosticResult[]> {

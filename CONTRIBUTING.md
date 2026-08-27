@@ -11,12 +11,12 @@ The TaBiThA monorepo consists of 6 modular Cloudflare Worker applications and 8 
 ```mermaid
 graph TD
 	subgraph Apps ["Applications (Cloudflare Workers / SvelteKit)"]
-		Editor["Editor (:8790)<br/>Translation Workbench & Rule Engine"]
-		Ontology["Ontology (:5173)<br/>Concepts, Senses, & D1 DB"]
-		Sources["Sources (:8789)<br/>Hebrew/Greek & Semantic Trees"]
-		Targets["Targets (:8788)<br/>Target Language Lexicon & Forms"]
-		Copilot["Copilot (:8793)<br/>AI Translation Assistant"]
-		Www["Www (:8791)<br/>Public Marketing Site"]
+		Editor["Editor (:1337)<br/>Translation Workbench & Rule Engine"]
+		Ontology["Ontology (:3056)<br/>Concepts, Senses, & D1 DB"]
+		Sources["Sources (:1947)<br/>Hebrew/Greek & Semantic Trees"]
+		Targets["Targets (:1382)<br/>Target Language Lexicon & Forms"]
+		Copilot["Copilot (:9000)<br/>AI Translation Assistant"]
+		Www["Www (:1455)<br/>Public Marketing Site"]
 	end
 
 	subgraph SharedPackages ["Shared Workspace Packages"]
@@ -75,12 +75,12 @@ graph TD
 
 | App | Port | Local URL | Primary Responsibility |
 | --- | --- | --- | --- |
-| **`ontology`** | `5173` | [http://localhost:5173](http://localhost:5173) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
-| **`targets`** | `8788` | [http://localhost:8788](http://localhost:8788) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
-| **`sources`** | `8789` | [http://localhost:8789](http://localhost:8789) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
-| **`editor`** | `8790` | [http://localhost:8790](http://localhost:8790) | Interactive translation workbench, clause parser, rule processor, and UI. |
-| **`copilot`** | `8793` | [http://localhost:8793](http://localhost:8793) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
-| **`www`** | `8791` | [http://localhost:8791](http://localhost:8791) | Public-facing marketing/informational site. |
+| **`ontology`** | `3056` | [http://localhost:3056](http://localhost:3056) | Core linguistic knowledge base, concepts, word senses, definitions, and rule sets. Backed by Cloudflare D1 SQLite. |
+| **`targets`** | `1382` | [http://localhost:1382](http://localhost:1382) | Target language generation engine, surface form inflection, and target lexicon. Backed by Cloudflare D1 SQLite. |
+| **`sources`** | `1947` | [http://localhost:1947](http://localhost:1947) | Original Biblical language texts (Hebrew/Aramaic/Greek), semantic trees, and verse encodings. Backed by Cloudflare D1 SQLite. |
+| **`editor`** | `1337` | [http://localhost:1337](http://localhost:1337) | Interactive translation workbench, clause parser, rule processor, and UI. |
+| **`copilot`** | `9000` | [http://localhost:9000](http://localhost:9000) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
+| **`www`** | `1455` | [http://localhost:1455](http://localhost:1455) | Public-facing marketing/informational site. |
 
 ### Shared Packages (`packages/`)
 
@@ -152,9 +152,11 @@ pnpm dev:copilot
 pnpm dev:www
 ```
 
+dev ports are not random.
+
 ### 4. Ontology Local Permissions (first time only)
 
-`pnpm setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:5173`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
+`pnpm setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:3056`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
 
 ```bash
 pnpm db:grant your.email@example.com
@@ -294,8 +296,9 @@ All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to elim
 
   ```javascript
   import { create_app_vite_config } from '@tabitha/vite-config'
+  import { PORTS } from '@tabitha/vite-config/ports'
 
-  export default create_app_vite_config({ port: 8790 })
+  export default create_app_vite_config({ port: PORTS.editor.port })
   ```
 
 - `svelte.config.js`:

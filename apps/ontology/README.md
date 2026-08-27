@@ -1,7 +1,7 @@
 # Ontology Web App
 
 - **Live URL**: [https://ontology.tabitha.bible](https://ontology.tabitha.bible)
-- **Local Dev URL**: [http://localhost:5173](http://localhost:5173) (Port `5173`, `strictPort: true` for OAuth redirects)
+- **Local Dev URL**: [http://localhost:3056](http://localhost:3056) (Port `3056`, `strictPort: true` for OAuth redirects)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ### 1. Configure Local Auth
 
-`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:5173/auth/callback`.
+`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:3056/auth/callback`.
 
 (If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
 

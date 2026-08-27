@@ -1,7 +1,7 @@
 # Editor Web App
 
 - **Live URL**: [https://editor.tabitha.bible](https://editor.tabitha.bible)
-- **Local Dev URL**: [http://localhost:8790](http://localhost:8790) (Port `8790`)
+- **Local Dev URL**: [http://localhost:1337](http://localhost:1337) (Port `1337`)
 
 ---
 

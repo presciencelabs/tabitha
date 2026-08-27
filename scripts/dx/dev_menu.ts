@@ -15,35 +15,35 @@ const APPS: Record<string, AppInfo> = {
 		id: 'ontology',
 		pkg: '@tabitha/ontology',
 		name: 'Ontology',
-		port: 5173,
+		port: 3056,
 		desc: 'Concepts, Senses, & Linguistic Rules (D1)',
 	},
 	targets: {
 		id: 'targets',
 		pkg: '@tabitha/targets',
 		name: 'Targets',
-		port: 8788,
+		port: 1382,
 		desc: 'Target Language Lexicon & Surface Forms (D1)',
 	},
 	sources: {
 		id: 'sources',
 		pkg: '@tabitha/sources',
 		name: 'Sources',
-		port: 8789,
+		port: 1947,
 		desc: 'Biblical Source Texts & Semantic Trees (D1)',
 	},
 	editor: {
 		id: 'editor',
 		pkg: '@tabitha/editor',
 		name: 'Editor',
-		port: 8790,
+		port: 1337,
 		desc: 'Translation Workbench & Rule Engine',
 	},
 	copilot: {
 		id: 'copilot',
 		pkg: '@tabitha/copilot',
 		name: 'Copilot',
-		port: 8793,
+		port: 9000,
 		desc: 'AI Translation Guidance (Vertex / Gemini)',
 	},
 }
@@ -128,11 +128,11 @@ Active Endpoints:`)
 async function run_custom_selection(rl: ReturnType<typeof createInterface>): Promise<string[]> {
 	console.log(`
 Available Apps:
-  [1] Ontology  (:5173) - ${APPS.ontology.desc}
-  [2] Targets   (:8788) - ${APPS.targets.desc}
-  [3] Sources   (:8789) - ${APPS.sources.desc}
-  [4] Editor    (:8790) - ${APPS.editor.desc}
-  [5] Copilot   (:8793) - ${APPS.copilot.desc}
+  [1] Ontology  (:3056) - ${APPS.ontology.desc}
+  [2] Targets   (:1382) - ${APPS.targets.desc}
+  [3] Sources   (:1947) - ${APPS.sources.desc}
+  [4] Editor    (:1337) - ${APPS.editor.desc}
+  [5] Copilot   (:9000) - ${APPS.copilot.desc}
 
 Enter numbers separated by commas (e.g. 1,4 or 2,3,4):`)
 

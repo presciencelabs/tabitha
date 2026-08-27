@@ -8,11 +8,11 @@ const root_dir = resolve(script_dir, '../..')
 const apps_dir = join(root_dir, 'apps')
 
 const local_hosts: Record<string, string> = {
-	PUBLIC_ONTOLOGY_API_HOST: 'http://localhost:5173',
-	PUBLIC_TARGETS_API_HOST: 'http://localhost:8788',
-	PUBLIC_SOURCES_API_HOST: 'http://localhost:8789',
-	PUBLIC_EDITOR_API_HOST: 'http://localhost:8790',
-	PUBLIC_COPILOT_API_HOST: 'http://localhost:8793',
+	PUBLIC_ONTOLOGY_API_HOST: 'http://localhost:3056',
+	PUBLIC_TARGETS_API_HOST: 'http://localhost:1382',
+	PUBLIC_SOURCES_API_HOST: 'http://localhost:1947',
+	PUBLIC_EDITOR_API_HOST: 'http://localhost:1337',
+	PUBLIC_COPILOT_API_HOST: 'http://localhost:9000',
 }
 
 function parse_env_file(content: string): Map<string, string> {
