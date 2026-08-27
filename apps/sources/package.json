@@ -37,7 +37,8 @@
     "@tailwindcss/typography": "^0.5.20",
     "daisyui": "^5.7.42",
     "svelte": "^5.57.1",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "mammoth": "1.12.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260920.1",

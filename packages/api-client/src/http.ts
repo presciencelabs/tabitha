@@ -84,9 +84,10 @@ export function create_http_client(options: ClientOptions): HttpClient {
 			return res.body as T
 		}
 
-		// 2. Binary / Downloads (file downloads, audio, zip)
+		// 2. Binary / Downloads (file downloads, audio, zip, docx)
 		if (
 			content_type.includes('application/octet-stream') ||
+			content_type.includes('application/vnd.openxmlformats') ||
 			content_type.includes('application/zip') ||
 			content_type.includes('audio/')
 		) {

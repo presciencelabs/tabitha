@@ -25,3 +25,10 @@ export type ParsedReference = {
 }
 
 export type Book = Record<number, string>
+
+export type PassageReference = {
+	book: string
+	chapter: number
+	verse_start: number
+	verse_end?: number
+}
