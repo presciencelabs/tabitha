@@ -23,6 +23,9 @@ export default create_app_vite_config({
 					{ src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
 				],
 			},
+			// suppressWarnings avoids workbox-build's "glob patterns don't match any files" noise --
+			// dev mode has no built client/prerendered output to precache, so an empty match is
+			// expected here, not a real problem (vite-pwa/sveltekit#80).
 			devOptions: {
 				enabled: true,
 				type: 'module',

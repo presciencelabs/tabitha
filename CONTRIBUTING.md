@@ -154,6 +154,8 @@ pnpm dev:copilot
 pnpm dev:www
 ```
 
+> **Windows:** stopping `pnpm dev` (or `dev:menu`) often needs a second `Ctrl+C` before Turborepo force-kills the underlying dev servers — a documented, actively-tracked Turborepo-on-Windows signal-forwarding issue ([vercel/turborepo#9730](https://github.com/vercel/turborepo/issues/9730), [#9694](https://github.com/vercel/turborepo/issues/9694)), not something in this repo's control to fix. Running from PowerShell or Windows Terminal instead of legacy `cmd.exe` has resolved it for others; WSL2 sidesteps Windows-native tooling issues like this one entirely, at the cost of a separate Linux-side setup (see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md) for another example of this same class of issue).
+
 dev ports are not random.
 
 ### 4. Ontology Local Permissions (first time only)
