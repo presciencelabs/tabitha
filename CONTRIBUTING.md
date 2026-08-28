@@ -121,6 +121,8 @@ graph TD
 - **pnpm**
 - **SQLite3 CLI** (`sqlite3`)
 
+> **Windows:** `pnpm db:load`/`db:load:<app>` runs its Wrangler/Miniflare step via the system `node` binary rather than Bun, working around an unresolved Bun-on-Windows bug — see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md). No extra setup needed, but `node` must be on `PATH`.
+
 ### 2. Bootstrap Workspace
 
 ```bash

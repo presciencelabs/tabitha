@@ -26,6 +26,7 @@ export default create_app_vite_config({
 			devOptions: {
 				enabled: true,
 				type: 'module',
+				suppressWarnings: true,
 			},
 			workbox: {
 				// Opt out of @vite-pwa/sveltekit's default SPA-shell navigation fallback:

@@ -19,6 +19,16 @@ const SCRIPTS_PACKAGE_NAME = '@tabitha/scripts'
 const FORCE_FULL_PREFIXES = ['.github/workflows/', '.github/actions/']
 const FORCE_FULL_EXACT = new Set(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json'])
 
+// Windows has no equivalent to Stage 2's `windows-latest`-billed job running on every PR --
+// unlike run_build/run_quality/run_unit/run_e2e, this stays scoped to the specific paths where a
+// Windows-only regression has actually happened before (see ADR 0011), rather than "any code
+// change, full stop".
+const WINDOWS_SMOKE_PREFIXES = ['scripts/dx/', 'tools/databases/']
+
+export function touches_windows_smoke_paths(changed_files: string[]): boolean {
+	return changed_files.some(file => WINDOWS_SMOKE_PREFIXES.some(prefix => file.startsWith(prefix)))
+}
+
 export type CiPlan = {
 	base_ref: string | undefined
 	changed_files: string[]
@@ -28,6 +38,7 @@ export type CiPlan = {
 	run_quality: boolean
 	run_unit: boolean
 	run_e2e: boolean
+	run_windows_smoke: boolean
 	reason: string
 }
 
@@ -60,6 +71,7 @@ function skip_everything_plan(base_ref: string | undefined, changed_files: strin
 		run_quality: false,
 		run_unit: false,
 		run_e2e: false,
+		run_windows_smoke: false,
 		reason,
 	}
 }
@@ -74,6 +86,7 @@ function run_everything_plan(base_ref: string | undefined, changed_files: string
 		run_quality: true,
 		run_unit: true,
 		run_e2e: true,
+		run_windows_smoke: true,
 		reason,
 	}
 }
@@ -129,6 +142,7 @@ export async function build_ci_plan(): Promise<CiPlan> {
 		// the ADR (docs/decisions/0008-ci-change-scoping.md) for why each stays all-or-nothing.
 		run_unit: true,
 		run_e2e: true,
+		run_windows_smoke: touches_windows_smoke_paths(changed_files),
 		reason: `scoped to ${changed_package_names.length} package(s) + dependents: ${changed_package_names.join(', ')}`,
 	}
 }
@@ -148,6 +162,7 @@ function print_plan(plan: CiPlan) {
 	row('code_quality (typecheck & eslint)', plan.run_quality)
 	row('unit_tests (coverage)', plan.run_unit)
 	row('e2e_tests (Playwright)', plan.run_e2e)
+	row('windows_dx_smoke (db:load on windows-latest)', plan.run_windows_smoke)
 
 	if (plan.turbo_filter_args.length > 0) {
 		console.log(`\n  turbo filter: ${plan.turbo_filter_args.join(' ')}`)
@@ -163,6 +178,7 @@ async function write_github_output(plan: CiPlan) {
 		`run_quality=${plan.run_quality}`,
 		`run_unit=${plan.run_unit}`,
 		`run_e2e=${plan.run_e2e}`,
+		`run_windows_smoke=${plan.run_windows_smoke}`,
 		`turbo_filter=${plan.turbo_filter_args.join(' ')}`,
 		`reason=${plan.reason.replace(/\n/g, ' ')}`,
 	]

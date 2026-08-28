@@ -1,11 +1,12 @@
 import { readdir } from 'node:fs/promises'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
-import { createRequire } from 'node:module'
-import { createHash, randomBytes } from 'node:crypto'
-import { execSync } from 'node:child_process'
+import { dirname, join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { platform } from 'node:os'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import { strip_jsonc_comments } from '../../packages/types/src/index'
+import { resolve_workerd_hashes as resolve_workerd_hashes_impl } from './resolve_workerd_hashes.mjs'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../..')
@@ -67,60 +68,25 @@ export function write_workerd_hash_cache(cache: Record<string, string>) {
 	writeFileSync(workerd_hash_cache_path, JSON.stringify(cache, null, '\t') + '\n')
 }
 
-// Miniflare's local D1 storage is a Durable Object (uniqueKey "miniflare-D1DatabaseObject" for every
-// database) whose on-disk file name comes from workerd's native idFromName(database_id) derivation --
-// an internal, undocumented algorithm with no JS-reachable implementation. Rather than guess it, boot
-// the app's own installed wrangler via getPlatformProxy() (the same mechanism vite dev/adapter-cloudflare
-// use) and write a uniquely-named marker table through each binding, then scan the state dir's existing
-// .sqlite files to see which one picked it up. (A "which file is new" diff doesn't work here: the real
-// file is almost always already sitting in the state dir from a previous `vite dev` run.)
+// Bun's child_process.spawn can't pipe stdio to the workerd process getPlatformProxy() spawns
+// internally on Windows (unresolved upstream: oven-sh/bun#13543), so on win32 this runs the
+// implementation via the system `node` binary instead of in-process under Bun -- see ADR 0011.
 export async function resolve_workerd_hashes(
 	config: AppConfig,
 	entries: D1DatabaseEntry[],
 	d1_state_dir: string,
 ): Promise<Record<string, string>> {
-	const require_from_app = createRequire(join(config.app_dir, 'package.json'))
-	const wrangler_entry = require_from_app.resolve('wrangler')
-	const { getPlatformProxy } = await import(pathToFileURL(wrangler_entry).href)
-
-	const proxy = await getPlatformProxy({
-		configPath: config.wrangler_path,
-		// getPlatformProxy()'s default persist path is relative to process.cwd(), not to configPath's
-		// directory -- since this script always runs from the repo root, that default would silently
-		// create/read a separate, wrong `.wrangler/state` at the repo root instead of the app's own.
-		persist: { path: join(config.app_dir, '.wrangler', 'state', 'v3') },
-	})
-	const resolved: Record<string, string> = {}
-	try {
-		for (const d1 of entries) {
-			if (!d1.binding) continue
-			const marker = `_tabitha_resolve_${randomBytes(8).toString('hex')}`
-			await proxy.env[d1.binding].exec(`CREATE TABLE "${marker}" (x INTEGER);`)
-
-			const candidates = existsSync(d1_state_dir)
-				? (await readdir(d1_state_dir)).filter(f => f.endsWith('.sqlite') && f !== 'metadata.sqlite')
-				: []
-			const match = candidates.find(f => {
-				try {
-					const found = execSync(
-						`sqlite3 "${join(d1_state_dir, f)}" "SELECT name FROM sqlite_master WHERE type='table' AND name='${marker}';"`,
-						{ encoding: 'utf-8' },
-					).trim()
-					return found === marker
-				} catch {
-					return false
-				}
-			})
-			if (!match) {
-				console.warn(`   ⚠️  Could not resolve Miniflare storage file for binding "${d1.binding}"`)
-				continue
-			}
-			resolved[d1.database_id] = match.slice(0, -'.sqlite'.length)
-		}
-	} finally {
-		await proxy.dispose()
+	if (platform() !== 'win32') {
+		return resolve_workerd_hashes_impl(config.app_dir, config.wrangler_path, entries, d1_state_dir)
 	}
-	return resolved
+	const helper = join(script_dir, 'resolve_workerd_hashes.mjs')
+	const input = JSON.stringify({ app_dir: config.app_dir, wrangler_path: config.wrangler_path, entries, d1_state_dir })
+	const output = execFileSync('node', [helper], { input, encoding: 'utf-8' })
+	// Because this takes from stdout, it also reads any console logs from node itself.
+	// eg. 'Using secrets defined in app\ontology\.env'
+	// This separates the actual return data before parsing.
+	const json_output = output.split('\n').find(line => line.startsWith('{'))!
+	return JSON.parse(json_output)
 }
 
 function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
@@ -129,9 +95,11 @@ function import_sqlite_snapshot(snapshot_file: string, target_db: string) {
 		if (existsSync(path)) unlinkSync(path)
 	}
 
-	const pragma_header = 'PRAGMA synchronous = OFF; PRAGMA journal_mode = MEMORY; PRAGMA cache_size = 100000; BEGIN TRANSACTION;'
-	const pragma_footer = 'COMMIT;'
-	execSync(`(echo "${pragma_header}"; cat "${snapshot_file}"; echo "${pragma_footer}") | sqlite3 "${target_db}"`, {
+	const pragma_header = 'PRAGMA synchronous = OFF; PRAGMA journal_mode = MEMORY; PRAGMA cache_size = 100000; BEGIN TRANSACTION;\n'
+	const pragma_footer = '\nCOMMIT;\n'
+	const sql = pragma_header + readFileSync(snapshot_file, 'utf-8') + pragma_footer
+	execFileSync('sqlite3', [target_db], {
+		input: sql,
 		stdio: 'pipe',
 		maxBuffer: 1024 * 1024 * 50,
 	})
@@ -164,9 +132,10 @@ export async function load_database(target_app: string = 'all') {
 		// Initialize Miniflare metadata.sqlite if missing
 		const metadata_db_path = join(d1_state_dir, 'metadata.sqlite')
 		if (!existsSync(metadata_db_path)) {
-			execSync(`sqlite3 "${metadata_db_path}" "CREATE TABLE IF NOT EXISTS _cf_ALARM (actor_id TEXT PRIMARY KEY, scheduled_time INTEGER, actor_name TEXT) WITHOUT ROWID;"`, {
-				stdio: 'ignore',
-			})
+			execFileSync('sqlite3', [
+				metadata_db_path,
+				'CREATE TABLE IF NOT EXISTS _cf_ALARM (actor_id TEXT PRIMARY KEY, scheduled_time INTEGER, actor_name TEXT) WITHOUT ROWID;',
+			], { stdio: 'ignore' })
 		}
 
 		const workerd_hash_cache = read_workerd_hash_cache()
@@ -199,7 +168,7 @@ export async function load_database(target_app: string = 'all') {
 				continue
 			}
 
-			const display_snapshot = snapshot_file.replace(`${root_dir}/`, '')
+			const display_snapshot = relative(root_dir, snapshot_file)
 			console.log(`   📄 Using snapshot: ${display_snapshot}`)
 
 			const start_time = Date.now()
@@ -237,7 +206,7 @@ export async function load_database(target_app: string = 'all') {
 					copy_database_safely(target_db, workerd_db_path)
 				}
 
-				const table_count_str = execSync(`sqlite3 "${target_db}" "SELECT count(*) FROM sqlite_master WHERE type='table';"`, { encoding: 'utf-8' }).trim()
+				const table_count_str = execFileSync('sqlite3', [target_db, "SELECT count(*) FROM sqlite_master WHERE type='table';"], { encoding: 'utf-8' }).trim()
 				const table_count = parseInt(table_count_str, 10) || 0
 				if (table_count === 0) {
 					throw new Error(`Database "${db_name}" imported with 0 tables: ${target_db}`)
