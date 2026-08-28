@@ -301,7 +301,7 @@ Use the one that applies:
 
 ## Worked Examples (canonical — anchor the judgment calls)
 
-These two illustrate the three judgment-heavy rules: the "solved" test, the same-problem test, and marker selection. Both are `HIGH`-rigor (Titus).
+These four illustrate the judgment-heavy rules: the "solved" test, the same-problem/conflict test, the note-to-LWC test, and inline marker-family routing. Examples A–C are `HIGH`-rigor (Titus); Example D's family-routing test applies in either rigor mode.
 
 ### Example A — Titus 2:11 (`RESOLVED UPSTREAM`; TaBiThA covers a relationship but does not solve the surviving hazard)
 
