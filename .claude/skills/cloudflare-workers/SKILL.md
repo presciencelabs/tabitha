@@ -85,3 +85,22 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
   - Editor: `1337`
   - Copilot: `9000`
 - Validate all workspace configurations with `pnpm check:cloudflare`.
+
+---
+
+## 5. Workers Builds Git Integration (Monorepo Cutover)
+
+Every app deploys to production via Cloudflare Workers Builds (dashboard-configured git integration), not any script or GitHub Actions step in this repo. As of this writing, Cloudflare has no public API for the git-connection step itself, so it's a one-time, per-Worker dashboard action: **Workers & Pages -> Create application -> Import a repository** -> select `presciencelabs/tabitha` (this monorepo -- several apps still have their git integration pointed at their old, now-legacy standalone single-app repos; cutting one over means reconnecting that Worker's integration to this monorepo instead).
+
+Use these settings, established while deploying `apps/www` (2026-08):
+
+- **Project name**: must match the app's `wrangler.jsonc` `"name"` field exactly -- this is what the Worker actually deploys as, and it's what any `routes`/`custom_domain` entries in that same `wrangler.jsonc` are attached to.
+- **Build command**: `pnpm run build` -- not `npm run build`. This is a pnpm workspace; npm won't resolve it correctly. Cloudflare's autodetect defaults to `npm`, so this needs manually correcting every time.
+- **Deploy command**: `pnpm exec wrangler deploy` -- not `npx wrangler deploy`, per this repo's `pnpm exec` convention (see the root-level guidance on this).
+- **Non-production branch deploy command**: `pnpm exec wrangler versions upload` (same `npx` -> `pnpm exec` fix; the command itself, `versions upload` rather than a full deploy, is Cloudflare's correct default for preview builds).
+- **Path / root directory**: `apps/<name>` -- without this, the build runs from the repo root and picks up the root `turbo run build` (which builds every app), not the target app's own build script.
+- **API token**: reuse one shared token across every app's Workers Builds connection rather than creating a new one per app. Cloudflare's "Workers Scripts: Edit" permission is account-wide -- there is no way to scope it to a single Worker -- so a per-app token provides no real blast-radius reduction, just more credentials to manage. (Whatever token Cloudflare auto-creates inline in this flow is consumed entirely by its own build pipeline and never surfaced to you to copy elsewhere -- that's expected, not a bug.)
+
+**Custom domain claim failure**: if the target hostname (e.g. a bare apex like `tabitha.bible`) already has DNS records that predate its Workers Custom Domain -- typically leftover `A`/`CNAME` records from before the zone moved to Cloudflare -- the deploy will partially fail with `Hostname '...' already has externally managed DNS records (A, CNAME, etc). Delete them first or try a different hostname.` The Worker itself still deploys fine in this case (check `wrangler deployments list`); only the custom-domain trigger fails. Fix: delete the conflicting records from the zone's DNS tab, then retrigger the build (push a new commit, or trigger a rebuild from the dashboard).
+
+**Zone-level config** (DNS records, redirect rules) is managed separately from all of the above, via `tools/dns` -- see that package's README. It reconciles specific, named records/rules against the live Cloudflare API and is safe to run repeatedly; it deliberately never does a whole-zone listing-and-reconciliation, so it can't touch anything it doesn't explicitly declare.
