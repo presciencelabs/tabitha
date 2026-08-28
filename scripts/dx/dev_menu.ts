@@ -46,6 +46,13 @@ const APPS: Record<string, AppInfo> = {
 		port: 9000,
 		desc: 'AI Translation Guidance (Vertex / Gemini)',
 	},
+	www: {
+		id: 'www',
+		pkg: '@tabitha/www',
+		name: 'Www',
+		port: 1455,
+		desc: 'Public Website & Marketing Site (Static)',
+	},
 }
 
 type Preset = {
@@ -56,9 +63,9 @@ type Preset = {
 
 const PRESETS: Record<string, Preset> = {
 	'1': {
-		name: '🌟 All 5 Applications',
+		name: '🌟 All 6 Applications',
 		description: 'Full stack environment',
-		apps: ['ontology', 'targets', 'sources', 'editor', 'copilot'],
+		apps: ['ontology', 'targets', 'sources', 'editor', 'copilot', 'www'],
 	},
 	'2': {
 		name: '✍️  Editor Workbench',
@@ -84,7 +91,7 @@ function print_menu() {
 ============================================================
 
 Select a preset or custom selection:
-  [1] 🌟 All 5 Applications      (Full Stack: Editor, Ontology, Sources, Targets, Copilot)
+  [1] 🌟 All 6 Applications      (Full Stack: Editor, Ontology, Sources, Targets, Copilot, Www)
   [2] ✍️  Editor Workbench        (Editor + Ontology)
   [3] 📚 Core Linguistics Engine  (Ontology + Sources + Targets)
   [4] 🤖 Copilot AI Lab          (Copilot + Ontology)
@@ -133,6 +140,7 @@ Available Apps:
   [3] Sources   (:1947) - ${APPS.sources.desc}
   [4] Editor    (:1337) - ${APPS.editor.desc}
   [5] Copilot   (:9000) - ${APPS.copilot.desc}
+  [6] Www       (:1455) - ${APPS.www.desc}
 
 Enter numbers separated by commas (e.g. 1,4 or 2,3,4):`)
 
@@ -143,11 +151,13 @@ Enter numbers separated by commas (e.g. 1,4 or 2,3,4):`)
 		'3': 'sources',
 		'4': 'editor',
 		'5': 'copilot',
+		'6': 'www',
 		ontology: 'ontology',
 		targets: 'targets',
 		sources: 'sources',
 		editor: 'editor',
 		copilot: 'copilot',
+		www: 'www',
 	}
 
 	const chosen: string[] = []

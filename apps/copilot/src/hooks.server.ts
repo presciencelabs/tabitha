@@ -1,8 +1,9 @@
 import type { ServerInit, Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { create_ai_client, type AiClient } from '@tabitha/ai'
+import { create_cors_handle } from '@tabitha/cors'
 import { create_rate_limit_handle } from '@tabitha/rate-limit'
-import { PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
+import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { env } from '$env/dynamic/private'
 
 let ai: AiClient
@@ -20,6 +21,8 @@ export const init: ServerInit = async () => {
 	})
 }
 
+const cors_handle = create_cors_handle({ allow_localhost: Boolean(PUBLIC_CORS_ALLOW_LOCALHOST) })
+
 const rate_limit_handle = create_rate_limit_handle({ disabled: Boolean(PUBLIC_RATE_LIMIT_DISABLED) })
 
 const ai_locals_handle: Handle = async function ai_locals_handle({ event, resolve }) {
@@ -27,4 +30,4 @@ const ai_locals_handle: Handle = async function ai_locals_handle({ event, resolv
 	return resolve(event)
 }
 
-export const handle = sequence(rate_limit_handle, ai_locals_handle)
+export const handle = sequence(cors_handle, rate_limit_handle, ai_locals_handle)
