@@ -1,11 +1,14 @@
-import { GoogleGenAI, type GenerateContentConfig } from '@google/genai'
 import { AiResponseError } from './errors'
 import type { AiCallDefaults, AiClient, AiGatewayConfig, CreateAiClientOptions, GenerateJsonParams, GenerateTextParams } from './types'
 
-// Fixed for every call site -- not overridable. FOr more info, see the type comments in types.ts.
+// Fixed for every call site -- not overridable. For more info, see the type comments in types.ts.
 const FIXED_MODEL = 'gemini-3.5-flash'
 const FIXED_SEED = 42 // 😏
 const GATEWAY_NAME = 'tabitha'
+// Vertex AI's REST API version the gateway forwards to -- matches what @google/genai's SDK sent
+// by default (its internal VERTEX_AI_API_DEFAULT_VERSION), kept in sync now that this package
+// builds the request by hand instead of going through that SDK.
+const VERTEX_API_VERSION = 'v1beta1'
 
 const PACKAGE_DEFAULTS: AiCallDefaults = {
 	temperature: 0.0,
@@ -13,56 +16,66 @@ const PACKAGE_DEFAULTS: AiCallDefaults = {
 	presencePenalty: 0.0,
 }
 
-export function create_ai_client({ app, feature, gateway, defaults }: CreateAiClientOptions): AiClient {
-	const genai = create_genai_client(gateway, { app, feature })
+type VertexGenerateContentResponse = {
+	candidates?: { content?: { parts?: { text?: string, thought?: boolean }[] } }[]
+}
 
-	function resolve_config(overrides?: AiCallDefaults): { model: string, config: Partial<GenerateContentConfig> } {
-		const config = merge_defaults(PACKAGE_DEFAULTS, defaults, overrides)
-		return { model: FIXED_MODEL, config: { ...config, seed: FIXED_SEED } }
+export function create_ai_client({ app, feature, gateway, defaults }: CreateAiClientOptions): AiClient {
+	const url = build_url(gateway)
+
+	async function call(contents: unknown, system_instruction: string | undefined, config: AiCallDefaults): Promise<string> {
+		// `httpOptions` is a per-call escape hatch (e.g. ontology's AI-Gateway cache-TTL header) --
+		// it's HTTP transport config, not a Vertex generationConfig field, so it's pulled out here
+		// rather than forwarded into the request body.
+		const { httpOptions, ...generation_config } = config as AiCallDefaults & { httpOptions?: { headers?: Record<string, string> } }
+
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				'cf-aig-authorization': `Bearer ${gateway.token}`,
+				'cf-aig-metadata': JSON.stringify({ app, feature }),
+				...httpOptions?.headers,
+			},
+			body: JSON.stringify({
+				contents: [{ role: 'user', parts: [{ text: JSON.stringify(contents) }] }],
+				...(system_instruction ? { systemInstruction: { role: 'user', parts: [{ text: system_instruction }] } } : {}),
+				generationConfig: { ...generation_config, seed: FIXED_SEED },
+			}),
+		})
+
+		if (!response.ok) {
+			throw new Error(`AI Gateway request failed with status ${response.status} (app "${app}", feature "${feature}"): ${await response.text()}`)
+		}
+
+		const text = extract_text(await response.json() as VertexGenerateContentResponse)
+		if (!text) {
+			throw new AiResponseError(`Empty response from model "${FIXED_MODEL}" (app "${app}", feature "${feature}")`)
+		}
+
+		return text
+	}
+
+	function resolve_config(overrides?: AiCallDefaults): AiCallDefaults {
+		return merge_defaults(PACKAGE_DEFAULTS, defaults, overrides)
 	}
 
 	async function generate_json<T>(params: GenerateJsonParams): Promise<T> {
-		const { model, config } = resolve_config(params.config)
-
-		const response = await genai.models.generateContent({
-			model,
-			contents: JSON.stringify(params.contents),
-			config: {
-				...config,
-				systemInstruction: params.system_instruction ?? config.systemInstruction,
-				responseMimeType: 'application/json',
-				responseJsonSchema: params.schema,
-			},
+		const text = await call(params.contents, params.system_instruction, {
+			...resolve_config(params.config),
+			responseMimeType: 'application/json',
+			responseJsonSchema: params.schema,
 		})
 
-		if (!response.text) {
-			throw new AiResponseError(`Empty response from model "${model}" (app "${app}", feature "${feature}")`)
-		}
-
 		try {
-			return JSON.parse(response.text) as T
+			return JSON.parse(text) as T
 		} catch (cause) {
-			throw new AiResponseError(`Failed to parse JSON response from model "${model}" (app "${app}", feature "${feature}")`, { cause })
+			throw new AiResponseError(`Failed to parse JSON response from model "${FIXED_MODEL}" (app "${app}", feature "${feature}")`, { cause })
 		}
 	}
 
 	async function generate_text(params: GenerateTextParams): Promise<string> {
-		const { model, config } = resolve_config(params.config)
-
-		const response = await genai.models.generateContent({
-			model,
-			contents: JSON.stringify(params.contents),
-			config: {
-				...config,
-				systemInstruction: params.system_instruction ?? config.systemInstruction,
-			},
-		})
-
-		if (!response.text) {
-			throw new AiResponseError(`Empty response from model "${model}" (app "${app}", feature "${feature}")`)
-		}
-
-		return response.text
+		return call(params.contents, params.system_instruction, resolve_config(params.config))
 	}
 
 	return { generate_json, generate_text }
@@ -73,28 +86,22 @@ function merge_defaults(...layers: (AiCallDefaults | undefined)[]): AiCallDefaul
 }
 
 /**
- * BYOK means the gateway injects the real Google credentials -- the client should send only
- * `cf-aig-authorization`. But the SDK's own auth layer falls back to resolving real Google
- * Application Default Credentials whenever `apiKey` is left unset, which would fail outside a
- * GCP environment (e.g. in a Cloudflare Worker). Passing the gateway token as `apiKey` avoids
- * that; traced through the SDK's precedence logic and confirmed it does not change the request
- * body or URL (project/location still drive those), only which auth header gets attached -- it
- * adds an extra `x-goog-api-key` header the gateway doesn't need. Unconfirmed whether Cloudflare's
- * Vertex+BYOK route tolerates that extra header or rejects it -- verify against a real
- * BYOK-configured gateway during Phase 3 migration before relying on it in production.
+ * Same route + resource path @google/genai's SDK builds for `vertexai: true` with a
+ * `httpOptions.baseUrl` override: `{baseUrl}/{apiVersion}/projects/{project}/locations/{location}/
+ * publishers/google/models/{model}:generateContent`. Traced directly from the SDK's own
+ * `ApiClient.constructUrl`/`shouldPrependVertexProjectPath` and `tModel` so this hand-rolled
+ * request matches what was previously sent, byte for byte.
  */
-function create_genai_client(gateway: AiGatewayConfig, metadata: { app: string, feature: string }): GoogleGenAI {
-	return new GoogleGenAI({
-		apiKey: gateway.token,
-		vertexai: true,
-		project: gateway.project,
-		location: gateway.location,
-		httpOptions: {
-			baseUrl: `https://gateway.ai.cloudflare.com/v1/${gateway.account_id}/${GATEWAY_NAME}/google-vertex-ai`,
-			headers: {
-				'cf-aig-authorization': `Bearer ${gateway.token}`,
-				'cf-aig-metadata': JSON.stringify(metadata),
-			},
-		},
-	})
+function build_url(gateway: AiGatewayConfig): string {
+	return `https://gateway.ai.cloudflare.com/v1/${gateway.account_id}/${GATEWAY_NAME}/google-vertex-ai/${VERTEX_API_VERSION}`
+		+ `/projects/${encodeURIComponent(gateway.project)}/locations/${encodeURIComponent(gateway.location)}`
+		+ `/publishers/google/models/${FIXED_MODEL}:generateContent`
+}
+
+function extract_text(response: VertexGenerateContentResponse): string {
+	const parts = response.candidates?.[0]?.content?.parts ?? []
+	return parts
+		.filter((part): part is { text: string, thought?: boolean } => typeof part.text === 'string' && !part.thought)
+		.map(part => part.text)
+		.join('')
 }

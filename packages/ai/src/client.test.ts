@@ -3,13 +3,8 @@ import { create_ai_client } from './client'
 import { AiResponseError } from './errors'
 import type { AiGatewayConfig } from './types'
 
-const generate_content = vi.fn()
-
-vi.mock('@google/genai', () => ({
-	GoogleGenAI: vi.fn().mockImplementation(() => ({
-		models: { generateContent: generate_content },
-	})),
-}))
+const fetch_mock = vi.fn()
+vi.stubGlobal('fetch', fetch_mock)
 
 const gateway: AiGatewayConfig = {
 	account_id: 'acct-1',
@@ -18,36 +13,65 @@ const gateway: AiGatewayConfig = {
 	location: 'us-central1',
 }
 
+function mock_response(text: string) {
+	fetch_mock.mockResolvedValue({
+		ok: true,
+		json: async () => ({ candidates: [{ content: { parts: [{ text }] } }] }),
+	})
+}
+
 describe('@tabitha/ai', () => {
 	beforeEach(() => {
-		generate_content.mockReset()
+		fetch_mock.mockReset()
 	})
 
 	describe('create_ai_client', () => {
-		test('points the underlying client at the Vertex AI gateway route with the gateway auth and metadata headers', async () => {
-			const { GoogleGenAI } = await import('@google/genai')
+		test('sends the request to the Vertex AI gateway route with the gateway auth and metadata headers', async () => {
+			mock_response('{}')
+			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
-			create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
+			await ai.generate_text({ contents: 'hi' })
 
-			expect(GoogleGenAI).toHaveBeenCalledWith({
-				apiKey: 'gw-token',
-				vertexai: true,
-				project: 'my-project',
-				location: 'us-central1',
-				httpOptions: {
-					baseUrl: 'https://gateway.ai.cloudflare.com/v1/acct-1/tabitha/google-vertex-ai',
-					headers: {
-						'cf-aig-authorization': 'Bearer gw-token',
-						'cf-aig-metadata': JSON.stringify({ app: 'ontology', feature: 'semantic-search' }),
-					},
-				},
+			const [url, init] = fetch_mock.mock.calls[0]
+			expect(url).toBe(
+				'https://gateway.ai.cloudflare.com/v1/acct-1/tabitha/google-vertex-ai/v1beta1/projects/my-project/locations/us-central1/publishers/google/models/gemini-3.5-flash:generateContent',
+			)
+			expect(init).toEqual(expect.objectContaining({
+				method: 'POST',
+				headers: expect.objectContaining({
+					'content-type': 'application/json',
+					'cf-aig-authorization': 'Bearer gw-token',
+					'cf-aig-metadata': JSON.stringify({ app: 'ontology', feature: 'semantic-search' }),
+				}),
+			}))
+		})
+
+		test('merges a per-call httpOptions.headers override in without forwarding it into generationConfig', async () => {
+			mock_response('{}')
+			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await ai.generate_text({
+				contents: 'hi',
+				config: { httpOptions: { headers: { 'cf-aig-cache-ttl': '604800' } } },
 			})
+
+			const [, init] = fetch_mock.mock.calls[0]
+			expect(init.headers).toEqual(expect.objectContaining({ 'cf-aig-cache-ttl': '604800' }))
+			const body = JSON.parse(init.body)
+			expect(body.generationConfig).not.toHaveProperty('httpOptions')
+		})
+
+		test('throws on a non-ok gateway response', async () => {
+			fetch_mock.mockResolvedValue({ ok: false, status: 502, text: async () => 'bad gateway' })
+			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow('502')
 		})
 	})
 
 	describe('generate_json', () => {
 		test('parses the response text as JSON', async () => {
-			generate_content.mockResolvedValue({ text: '{"hello":"world"}' })
+			mock_response('{"hello":"world"}')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			const result = await ai.generate_json<{ hello: string }>({
@@ -59,21 +83,21 @@ describe('@tabitha/ai', () => {
 		})
 
 		test('throws AiResponseError on an empty response', async () => {
-			generate_content.mockResolvedValue({ text: '' })
+			mock_response('')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await expect(ai.generate_json({ contents: {}, schema: {} })).rejects.toThrow(AiResponseError)
 		})
 
 		test('throws AiResponseError on unparseable JSON', async () => {
-			generate_content.mockResolvedValue({ text: 'not json' })
+			mock_response('not json')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await expect(ai.generate_json({ contents: {}, schema: {} })).rejects.toThrow(AiResponseError)
 		})
 
 		test('layers package defaults, client defaults, and per-call overrides', async () => {
-			generate_content.mockResolvedValue({ text: '{}' })
+			mock_response('{}')
 			const ai = create_ai_client({
 				app: 'copilot',
 				feature: 'brief',
@@ -83,51 +107,51 @@ describe('@tabitha/ai', () => {
 
 			await ai.generate_json({ contents: {}, schema: { type: 'object' }, config: { temperature: 0.5 } })
 
-			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
-				model: 'gemini-3.5-flash',
-				config: expect.objectContaining({
-					seed: 42,
-					topP: 0.9,
-					temperature: 0.5,
-					frequencyPenalty: 0.0,
-					presencePenalty: 0.0,
-				}),
+			const [, init] = fetch_mock.mock.calls[0]
+			const body = JSON.parse(init.body)
+			expect(body.generationConfig).toEqual(expect.objectContaining({
+				seed: 42,
+				topP: 0.9,
+				temperature: 0.5,
+				frequencyPenalty: 0.0,
+				presencePenalty: 0.0,
+				responseMimeType: 'application/json',
 			}))
 		})
 
 		test('always uses the fixed model and seed, regardless of client defaults', async () => {
-			generate_content.mockResolvedValue({ text: '{}' })
+			mock_response('{}')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await ai.generate_json({ contents: {}, schema: { type: 'object' } })
 
-			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
-				model: 'gemini-3.5-flash',
-				config: expect.objectContaining({ seed: 42, temperature: 0.0 }),
-			}))
+			const [url, init] = fetch_mock.mock.calls[0]
+			expect(url).toContain(':generateContent')
+			expect(url).toContain('/models/gemini-3.5-flash')
+			const body = JSON.parse(init.body)
+			expect(body.generationConfig).toEqual(expect.objectContaining({ seed: 42, temperature: 0.0 }))
 		})
 
-		test('ignores an attempt to override the fixed model or seed', async () => {
-			generate_content.mockResolvedValue({ text: '{}' })
+		test('ignores an attempt to override the fixed seed', async () => {
+			mock_response('{}')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await ai.generate_json({
 				contents: {},
 				schema: { type: 'object' },
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- model/seed aren't valid override keys; this simulates a caller bypassing the type with `as any`.
-				config: { model: 'gemini-2.5-flash', seed: 41 } as any,
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- seed isn't a valid override key; this simulates a caller bypassing the type with `as any`.
+				config: { seed: 41 } as any,
 			})
 
-			expect(generate_content).toHaveBeenCalledWith(expect.objectContaining({
-				model: 'gemini-3.5-flash',
-				config: expect.objectContaining({ seed: 42 }),
-			}))
+			const [, init] = fetch_mock.mock.calls[0]
+			const body = JSON.parse(init.body)
+			expect(body.generationConfig.seed).toBe(42)
 		})
 	})
 
 	describe('generate_text', () => {
 		test('returns the raw response text', async () => {
-			generate_content.mockResolvedValue({ text: 'hello there' })
+			mock_response('hello there')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			const result = await ai.generate_text({ contents: 'hi' })
@@ -136,7 +160,7 @@ describe('@tabitha/ai', () => {
 		})
 
 		test('throws AiResponseError on an empty response', async () => {
-			generate_content.mockResolvedValue({ text: '' })
+			mock_response('')
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow(AiResponseError)
