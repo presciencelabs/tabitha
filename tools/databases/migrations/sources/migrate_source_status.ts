@@ -1,5 +1,5 @@
-import type Database from 'bun:sqlite'
 import { resolve_dated_file } from '../resolve_dated_file'
+import type { SqlRunner } from './sql_runner'
 import { create_logger } from '../log'
 
 const log = create_logger('Sources migration')
@@ -30,7 +30,7 @@ type StatusTally = {
 
 type InputStatus = 'Not Started' | 'STACK'
 	| 'Drafter [HE1]' | 'First Review' | 'Second Review' | 'Checker [HE2>EBT]'
-	| 'Zoho > ParaText' | 'Consultant' | 'Holding' | 'Phase 2'
+	| 'Zoho > ParaText' | 'Consultant' | 'Phase 1 Sign-off' | 'Holding' | 'Phase 2'
 	| 'Phase 3 (POLISHING)' | 'Polish 2nd Language' | 'Completed This Period' | 'Complete' | 'Previously Complete'
 
 type SourceStatus = 'Not Started' | 'Initial Analysis in Progress' | 'Initial Analysis Complete' | 'Final Review in Progress' | 'Ready to Translate'
@@ -44,6 +44,7 @@ const status_mapping: Record<InputStatus, SourceStatus> = {
 	'Checker [HE2>EBT]': 'Initial Analysis in Progress',
 	'Zoho > ParaText': 'Initial Analysis in Progress',
 	'Consultant': 'Initial Analysis in Progress',
+	'Phase 1 Sign-off': 'Initial Analysis Complete',
 	'Holding': 'Initial Analysis Complete',
 	'Phase 2': 'Initial Analysis Complete',
 	'Completed This Period': 'Initial Analysis Complete',
@@ -53,13 +54,13 @@ const status_mapping: Record<InputStatus, SourceStatus> = {
 	'Previously Complete': 'Ready to Translate',
 }
 
-export async function migrate_source_status(sources_db: Database, csv_dir: string, date: string): Promise<void> {
+export async function migrate_source_status(runner: SqlRunner, csv_dir: string, date: string): Promise<void> {
 	const verse_statuses = await extract(csv_dir, date)
 
-	await update_verse_status(verse_statuses, sources_db)
+	await update_verse_status(verse_statuses, runner)
 
-	create_chapter_status_table(sources_db)
-	await populate_chapter_status_table(sources_db, verse_statuses)
+	create_chapter_status_table(runner)
+	await populate_chapter_status_table(runner, verse_statuses)
 }
 
 /**
@@ -115,47 +116,55 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 	return normalized_data
 
 	/**
-	 * CSV format from Google Data Studio:
-	 * 
-	 * ProjectStatusDate,StatusDetail,ProjectName,VerseCount
-	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17
-	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:18-25,8
+	 * CSV format from Google Data Studio -- the leading ProjectStatusDate column has come and gone
+	 * across different export dates, so its presence is detected from the header rather than assumed:
+	 *
+	 * ProjectStatusDate,StatusDetail,ProjectName,VerseCount        StatusDetail,ProjectName,VerseCount
+	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17        Complete,Matthew 1:1-17,17
+	 * "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:18-25,8        Complete,Matthew 1:18-25,8
 	 */
 	function normalize(csv_text: string): VerseStatusRecord[] {
-		const lines = csv_text.split(/\r?\n/)
+		const [header, ...rows] = csv_text.split(/\r?\n/)
+		const has_date_column = header.startsWith('ProjectStatusDate,')
 
-		return lines.slice(1)		// skip the header row
+		return rows
 			.filter(line => line !== '')
 			.map(row => transform(row))
 
 		function transform(row: CommaSeparatedValues): VerseStatusRecord {
-			const without_date = row.slice(row.indexOf('",') + 2) // "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17 => Complete,Matthew 1:1-17,17
+			// "May 1, 2026, 12:00:00 AM",Complete,Matthew 1:1-17,17 => Complete,Matthew 1:1-17,17
+			const without_date = has_date_column ? row.slice(row.indexOf('",') + 2) : row
 			const [csv_status, verse_range] = without_date.split(',')
 			const range = parse_verse_range(verse_range ?? '')
+
+			if (!(csv_status in status_mapping)) {
+				log.warn(`Unrecognized status "${csv_status}" for "${verse_range}" -- defaulting to "Not Started". This usually means the CSV export format changed.`)
+			}
 			const status = status_mapping[csv_status as InputStatus] ?? 'Not Started'
+
 			return { range, status }
 		}
 	}
 }
 
-async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_db: Database): Promise<void> {
+async function update_verse_status(verse_statuses: VerseStatusRecord[], runner: SqlRunner): Promise<void> {
 	log.step('Loading verse statuses into Sources table...')
 
 	for (const [index, { range, status }] of verse_statuses.entries()) {
 		const { type, id_primary, id_secondary, id_tertiary_start, id_tertiary_end } = range
 
 		if (id_tertiary_start && id_tertiary_end) {
-			sources_db.run(`
+			runner.run(`
 				UPDATE Sources
 				SET status = ?
 				WHERE type = ?
 					AND id_primary = ?
 					AND id_secondary = ?
-					AND CAST(id_tertiary AS INTEGER) BETWEEN ? AND ? 
+					AND CAST(id_tertiary AS INTEGER) BETWEEN ? AND ?
 			`, [status, type, id_primary, id_secondary, id_tertiary_start, id_tertiary_end])
 
 		} else {
-			sources_db.run(`
+			runner.run(`
 				UPDATE Sources
 				SET status = ?
 				WHERE type = ?
@@ -170,10 +179,10 @@ async function update_verse_status(verse_statuses: VerseStatusRecord[], sources_
 	log.finish_progress()
 }
 
-function create_chapter_status_table(sources_db: Database) {
-	log.step(`Prepping ChapterStatus table in ${sources_db.filename}...`)
+function create_chapter_status_table(runner: SqlRunner) {
+	log.step('Prepping ChapterStatus table...')
 
-	sources_db.run(`
+	runner.run(`
 		CREATE TABLE IF NOT EXISTS ChapterStatus (
 			'type', -- e.g., Bible, Grammar Introduction, Community Development Texts
 			'id_primary', -- for Bible, this would hold the book name, e.g., Genesis
@@ -182,14 +191,12 @@ function create_chapter_status_table(sources_db: Database) {
 		)
 	`)
 
-	sources_db.run(`
+	runner.run(`
 		DELETE FROM ChapterStatus
 	`)
-
-	return sources_db
 }
 
-async function populate_chapter_status_table(sources_db: Database, verse_statuses: VerseStatusRecord[]) {
+async function populate_chapter_status_table(runner: SqlRunner, verse_statuses: VerseStatusRecord[]) {
 	log.step('Loading chapter statuses into ChapterStatus table...')
 
 	const by_chapter = Map.groupBy(verse_statuses, ({ range: { type, id_primary, id_secondary } }) => JSON.stringify({ type, id_primary, id_secondary }))
@@ -207,7 +214,7 @@ async function populate_chapter_status_table(sources_db: Database, verse_statuse
 		const chapter_status = get_status_from_tally(status_tally)
 		const { type, id_primary, id_secondary } = JSON.parse(chapter_ref) as VerseRange
 
-		sources_db.run(`
+		runner.run(`
 			INSERT INTO ChapterStatus
 			VALUES (?, ?, ?, ?)
 		`, [type, id_primary, id_secondary, chapter_status])

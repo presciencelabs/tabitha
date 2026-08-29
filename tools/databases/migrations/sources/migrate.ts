@@ -3,6 +3,7 @@ import { migrate_source_features } from './migrate_source_features'
 import { migrate_source_texts } from './migrate_source_texts'
 import { basename, join } from 'path'
 import { migrate_source_status } from './migrate_source_status'
+import { bun_sqlite_runner } from './sql_runner'
 import { resolve_dated_file } from '../resolve_dated_file'
 import { create_logger } from '../log'
 
@@ -41,7 +42,7 @@ if (sample_db_path.includes(date)) {
 	log.step(`Skipping Features migration -- Sample unchanged since ${basename(sample_db_path)}.`)
 }
 
-await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../data/status'), date)
+await migrate_source_status(bun_sqlite_runner(tabitha_sources_db), join(import.meta.dir, '../../data/status'), date)
 
 log.step(`Optimizing ${tabitha_db_name}...`)
 tabitha_sources_db.run('VACUUM')

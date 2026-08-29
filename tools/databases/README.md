@@ -91,3 +91,16 @@ Creates default Auth permissions and role structures:
 cd tools/databases
 bun run migrate:auth databases/Auth.tabitha.sqlite
 ```
+
+#### Status Update (Live D1)
+
+Applies the latest verse-status CSVs (see `data/status/README.md` for how to export them) directly
+to a live Sources D1 database, independent of any migration run:
+
+```bash
+cd tools/databases
+bun run migrate:status <d1_database_name> [csv_dir] [YYYY-MM-DD]
+```
+
+`csv_dir` defaults to `data/status/`, and the date defaults to today -- both fall back to the latest
+available file if an exact match isn't found.

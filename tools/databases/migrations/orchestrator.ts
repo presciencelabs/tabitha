@@ -137,6 +137,14 @@ try {
 
 		// console.log(`[Orchestrator] Deploying new ${task.id} data to D1...`)
 		// await $`bun wrangler d1 execute ${d1_db_name} --file ${dump_file} --remote`.quiet()
+
+		// // A freshly-deployed Sources db doesn't carry status data (Sources migration only applies
+		// // status to the local build if a status CSV happened to be available at that time) -- reapply
+		// // the latest known status immediately so a new deploy never regresses to stale/no status.
+		// // import { apply_status_to_d1 } from './sources/update_status' (top of file)
+		// if (task.id === 'Sources') {
+		// 	await apply_status_to_d1(d1_db_name, join(import.meta.dir, '../data/status'), date)
+		// }
 	}
 
 	await clear_state(date)
