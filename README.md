@@ -2,6 +2,7 @@
 
 <p align="left">
   <a href="https://github.com/presciencelabs/tabitha/actions/workflows/ci.yml"><img src="https://github.com/presciencelabs/tabitha/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" /></a>
   <a href="https://svelte.dev"><img src="https://img.shields.io/badge/Svelte-5-FF3E00?style=flat-square&logo=svelte&logoColor=white" alt="Svelte 5" /></a>
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
   <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" /></a>
@@ -15,6 +16,15 @@
 </p>
 
 This repository houses all core deployable web applications, developer tools, shared libraries, and linguistic pipelines for the TaBiThA translation platform.
+
+---
+
+## 🏛️ About This Project
+
+TaBiThA is [CanIL](https://www.canil.ca)'s research and innovation arm, building Bible translation software for languages that don't yet have a translation of their own. It's actively developed (see the CI badge above) and openly licensed under [MIT](LICENSE).
+
+- **Decision history:** [`docs/decisions/`](docs/decisions/) — architecture decision records documenting the "why" behind notable technical choices.
+- **Public site:** [tabitha.bible](https://tabitha.bible) — project background, FAQs, and point of contact.
 
 ---
 
@@ -45,6 +55,16 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 **Rate limits:** all four apps throttle to **60 requests per 60 seconds per client IP**. A request over the limit gets a `429` response with a `Retry-After: 60` header.
 
 **Stability:** these APIs are built for TaBiThA's own internal UIs first. There's no versioning scheme or backwards-compatibility guarantee — routes and response shapes can change without notice. If you're integrating against one, expect to track changes here rather than relying on a stable contract.
+
+---
+
+## 🤖 For AI Coding Agents
+
+This repo is set up to support work with AI coding agents, not just humans.
+
+- **Canonical instructions:** [`AGENTS.md`](AGENTS.md) — the 15 Development Philosophies enforced across the codebase (see the table further down). Many agent tools auto-detect this filename; if yours doesn't, read it before making changes.
+- **Narrower, task-scoped conventions:** [`.claude/skills/`](.claude/skills/) — per-library/domain guidance (Svelte, Tailwind CSS, Cloudflare Workers, SQLite, etc.) loaded contextually rather than kept in `AGENTS.md`. See [CONTRIBUTING.md](CONTRIBUTING.md) for when to add a new one.
+- **Before calling a task done**, run the relevant commands from [Verification & Testing](#verification--testing) below — at minimum `pnpm check` (typecheck + lint), `pnpm check:philosophies` (Development Philosophies audit), and `pnpm check:secrets`.
 
 ---
 
