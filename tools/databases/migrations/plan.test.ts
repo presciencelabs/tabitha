@@ -43,9 +43,17 @@ describe('plan_migration', () => {
 		expect(sources.migrate_args).toEqual([`raw/Bible_${date}.tbta.sqlite`])
 		expect(sources.output_file).toBe(`raw/Sources_${date}.tabitha.sqlite`)
 
-		const targets = plan.tasks.find(t => t.id === 'Targets')!
-		expect(targets.changed).toBe(true)
-		expect(targets.migrate_args).toEqual([`raw/English_${date}.tbta.sqlite`])
+		// Only English has a raw file staged -- its task does a full build; the other target-language
+		// projects have nothing to build from yet and are skipped individually, not treated as errors.
+		const targets_english = plan.tasks.find(t => t.id === 'Targets_English')!
+		expect(targets_english.changed).toBe(true)
+		expect(targets_english.migrate_args).toEqual([`raw/English_${date}.tbta.sqlite`])
+
+		for (const project of ['Swahili', 'Indonesian', 'Tagalog'] as const) {
+			const task = plan.tasks.find(t => t.id === `Targets_${project}`)!
+			expect(task.changed).toBe(false)
+			expect(task.reason).toBe('no raw input has ever been staged for this task')
+		}
 
 		const ontology = plan.tasks.find(t => t.id === 'Ontology')!
 		expect(ontology.changed).toBe(true)
@@ -93,13 +101,24 @@ describe('plan_migration', () => {
 		expect(sources.migrate_args).toEqual([`raw/Bible_${date}.tbta.sqlite`])
 	})
 
-	it('throws when English is missing for Targets', async () => {
+	it('skips a target-language project individually when it has no raw input yet, without failing the run', async () => {
 		const date = '2026-08-29'
 		touch(`Bible_${date}.tbta.sqlite`)
 		touch(`Sources_Complex_${date}.tabitha.sqlite`)
 		stage_ontology(date)
+		// No English (or any other target-language) raw file staged at all -- unlike the old shared
+		// Targets database, this must not fail Sources/Ontology or the other projects' migrations.
 
-		await expect(plan_migration(date)).rejects.toThrow(/English database not found/)
+		const plan = await plan_migration(date)
+
+		for (const project of ['English', 'Swahili', 'Indonesian', 'Tagalog'] as const) {
+			const task = plan.tasks.find(t => t.id === `Targets_${project}`)!
+			expect(task.changed).toBe(false)
+			expect(task.reason).toBe('no raw input has ever been staged for this task')
+		}
+
+		const sources = plan.tasks.find(t => t.id === 'Sources')!
+		expect(sources.changed).toBe(true)
 	})
 
 	it('resolves Sources_Complex independently of Sources, even at a different date', async () => {

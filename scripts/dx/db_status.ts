@@ -3,7 +3,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
-import { strip_jsonc_comments } from '../../packages/types/src/index'
+import { strip_jsonc_comments } from '@tabitha/types'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))
 const root_dir = resolve(script_dir, '../..')

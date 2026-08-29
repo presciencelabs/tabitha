@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { platform } from 'node:os'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { strip_jsonc_comments } from '../../packages/types/src/index'
+import { strip_jsonc_comments } from '@tabitha/types'
 import { resolve_workerd_hashes as resolve_workerd_hashes_impl } from './resolve_workerd_hashes.mjs'
 
 const script_dir = dirname(fileURLToPath(import.meta.url))

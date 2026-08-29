@@ -1,10 +1,16 @@
 import { Glob } from 'bun'
+import { TARGET_PROJECTS } from '@tabitha/types/target'
 import { resolve_dated_file } from './resolve_dated_file'
 
-export type TaskId = 'Sources' | 'Ontology' | 'Targets'
+// One task per target-language project (docs/decisions/0012-per-project-targets-databases.md), each
+// independently plannable/rebuildable/deployable -- `family` groups them back for validation config
+// and script-directory lookup, since only `id` (not `family`) is granular enough for state tracking.
+export type TaskFamily = 'Sources' | 'Ontology' | 'Targets'
+export type TaskId = 'Sources' | 'Ontology' | `Targets_${typeof TARGET_PROJECTS[number]}`
 
 export type PlannedTask = {
 	id: TaskId
+	family: TaskFamily
 	// Whether this task will do real work this run -- false means every one of its inputs was
 	// determined unchanged at staging time, so the prior output is left in place untouched.
 	changed: boolean
@@ -22,7 +28,6 @@ export type MigrationPlan = {
 }
 
 const SOURCES_INPUTS = ['Bible', 'CommunityDevelopmentTexts', 'GrammarIntroduction']
-const TARGET_INPUTS = ['English', 'Swahili', 'Indonesian', 'Tagalog']
 
 /**
  * Walks the migration pipeline's dependency graph for a given run date, resolving every task's
@@ -32,14 +37,21 @@ const TARGET_INPUTS = ['English', 'Swahili', 'Indonesian', 'Tagalog']
  * date), so planning only needs to read that back, not recompute it.
  */
 export async function plan_migration(date: string): Promise<MigrationPlan> {
-	const sources_task = await plan_rebuild_task('Sources', SOURCES_INPUTS, date, { hard_required: [] })
+	const sources_task = await plan_rebuild_task('Sources', 'Sources', SOURCES_INPUTS, date, { hard_required: [] })
 	const ontology_task = await plan_ontology_task(date, sources_task)
-	const targets_task = await plan_rebuild_task('Targets', TARGET_INPUTS, date, { hard_required: ['English'] })
+	// Each target-language project is its own independent task: unlike the old single shared
+	// Targets database, one project's migration no longer requires any other project (including
+	// English) to be present or unchanged -- that's the isolation the per-project split is for.
+	// None are hard-required at plan time; a project with no raw file staged yet (e.g. mid-onboarding)
+	// simply has nothing to build, rather than failing every other project's migration too.
+	const targets_tasks = await Promise.all(
+		TARGET_PROJECTS.map(project => plan_rebuild_task(`Targets_${project}`, 'Targets', [project], date, { hard_required: [] })),
+	)
 
-	return { date, tasks: [sources_task, ontology_task, targets_task] }
+	return { date, tasks: [sources_task, ontology_task, ...targets_tasks] }
 }
 
-async function plan_rebuild_task(id: 'Sources' | 'Targets', input_names: string[], date: string, { hard_required }: { hard_required: string[] }): Promise<PlannedTask> {
+async function plan_rebuild_task(id: TaskId, family: TaskFamily, input_names: string[], date: string, { hard_required }: { hard_required: string[] }): Promise<PlannedTask> {
 	const resolved = await Promise.all(input_names.map(async name => ({ name, path: await resolve_dated_file('raw', name, date, 'tbta.sqlite') })))
 
 	for (const name of hard_required) {
@@ -53,21 +65,29 @@ async function plan_rebuild_task(id: 'Sources' | 'Targets', input_names: string[
 	const changed_inputs = present.filter(r => extract_date(r.path) === date).map(r => r.path)
 
 	const previous_output_file = await latest_previous_output_file(id, date)
-	const changed = changed_inputs.length > 0 || !previous_output_file
+	// present.length === 0 means no raw input has ever been staged for this task -- distinct from
+	// "no prior output exists", which without this check would otherwise read as "do a full build"
+	// with nothing to build from (relevant once a project can be registered before its first raw
+	// file lands, now that each target-language project is independently plannable).
+	const changed = present.length > 0 && (changed_inputs.length > 0 || !previous_output_file)
 
 	const output_file = changed ? `raw/${id}_${date}.tabitha.sqlite` : previous_output_file!
 
 	return {
 		id,
 		changed,
-		reason: !changed
-			? `no inputs changed since ${previous_output_file}`
-			: previous_output_file
-				? `${changed_inputs.length}/${all_inputs.length} input(s) changed`
-				: 'no prior output exists -- full build',
+		reason: describe_reason(),
 		migrate_args: !changed ? [] : previous_output_file ? changed_inputs : all_inputs,
 		output_file,
 		previous_output_file,
+		family,
+	}
+
+	function describe_reason(): string {
+		if (present.length === 0) return 'no raw input has ever been staged for this task'
+		if (!changed) return `no inputs changed since ${previous_output_file}`
+		if (previous_output_file) return `${changed_inputs.length}/${all_inputs.length} input(s) changed`
+		return 'no prior output exists -- full build'
 	}
 }
 
@@ -87,6 +107,7 @@ async function plan_ontology_task(date: string, sources_task: PlannedTask): Prom
 
 	return {
 		id: 'Ontology',
+		family: 'Ontology',
 		changed: true,
 		reason: 'Ontology is exempt from staging dedup and always regenerated fresh.',
 		migrate_args: [sources_task.output_file, sources_complex_file],

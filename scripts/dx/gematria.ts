@@ -1,4 +1,4 @@
-import { PORTS } from '../../packages/vite-config/ports.js'
+import { PORTS } from '@tabitha/vite-config/ports'
 
 const BANNER = 'GnOvGuN Cbeg Trzngevn'
 const SIGNATURE = '"Pbatenghyngvbaf. Lbh sbhaq zl Rnfgre rtt." — Nabenx'

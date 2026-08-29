@@ -1,11 +1,13 @@
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { platform } from 'node:os'
 import { join } from 'node:path'
+import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
-import { check_cloudflare_configs } from '../audits/check_cloudflare'
-import { sync_readme_badges } from '../audits/check_readme_badges'
-import { scan_secrets } from '../audits/check_secrets'
+import { parse_wrangler_jsonc } from './db_load'
+import { check_cloudflare_configs } from '@tabitha/scripts/audits/check_cloudflare'
+import { sync_readme_badges } from '@tabitha/scripts/audits/check_readme_badges'
+import { scan_secrets } from '@tabitha/scripts/audits/check_secrets'
 
 type DiagnosticResult = {
 	category: string
@@ -15,12 +17,19 @@ type DiagnosticResult = {
 	fix?: string
 }
 
-const APPS = [
-	{ name: 'ontology', port: 3056, has_db: true, table: 'Concepts' },
-	{ name: 'targets', port: 1382, has_db: true, table: 'Text' },
-	{ name: 'sources', port: 1947, has_db: true, table: 'Sources' },
-	{ name: 'editor', port: 1337, has_db: false },
-	{ name: 'copilot', port: 9000, has_db: false },
+// Which D1 binding(s) each app has, and which table in each to sanity-check for row count. An app
+// can bind multiple databases (e.g. ontology's DB_Auth) without every one needing a check here --
+// only bindings worth probing are listed. `binding_prefix` checks every binding matching the
+// prefix rather than one exact name -- targets has one D1 binding per target-language project
+// (docs/decisions/0012-per-project-targets-databases.md), resolved from wrangler.jsonc itself
+// rather than a separate hardcoded project list, so a new project needs no change here.
+type DbCheck = { table: string } & ({ binding: string } | { binding_prefix: string })
+const APPS: { name: string, port: number, db_check?: DbCheck }[] = [
+	{ name: 'ontology', port: 3056, db_check: { binding: 'DB_Ontology', table: 'Concepts' } },
+	{ name: 'targets', port: 1382, db_check: { binding_prefix: 'DB_Targets_', table: 'Text' } },
+	{ name: 'sources', port: 1947, db_check: { binding: 'DB_Sources', table: 'Sources' } },
+	{ name: 'editor', port: 1337 },
+	{ name: 'copilot', port: 9000 },
 ]
 
 async function check_runtimes(): Promise<DiagnosticResult[]> {
@@ -153,71 +162,80 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 	return results
 }
 
-function find_sqlite_file(base_dir: string): string | null {
-	if (!existsSync(base_dir)) return null
-	try {
-		const entries = readdirSync(base_dir, { withFileTypes: true, recursive: true })
-		for (const entry of entries) {
-			if (entry.isFile() && entry.name.endsWith('.sqlite') && !entry.name.includes('metadata')) {
-				return join(entry.parentPath || base_dir, entry.name)
-			}
-		}
-	} catch {
-		return null
-	}
-	return null
-}
-
 async function check_local_databases(): Promise<DiagnosticResult[]> {
 	const results: DiagnosticResult[] = []
 
 	for (const app of APPS) {
-		if (!app.has_db || !app.table) continue
+		if (!app.db_check) continue
 
-		const d1_dir = join(process.cwd(), 'apps', app.name, '.wrangler', 'state', 'v3', 'd1')
-		const sqlite_path = find_sqlite_file(d1_dir)
+		const wrangler = parse_wrangler_jsonc(join(process.cwd(), 'apps', app.name, 'wrangler.jsonc'))
+		const d1_state_dir = join(process.cwd(), 'apps', app.name, '.wrangler', 'state', 'v3', 'd1', 'miniflare-D1DatabaseObject')
 
-		if (!sqlite_path) {
+		const entries = (wrangler?.d1_databases ?? []).filter(d1 =>
+			'binding_prefix' in app.db_check! ? d1.binding?.startsWith(app.db_check!.binding_prefix) : d1.binding === app.db_check!.binding,
+		)
+
+		if (entries.length === 0) {
 			results.push({
 				category: 'Local Databases',
 				name: `D1 Database (${app.name})`,
 				status: 'WARN',
-				message: 'No local SQLite database found in .wrangler state',
-				fix: `Run \`pnpm db:load\` or \`bun tools/databases/src/load_d1.ts ${app.name}\``,
+				message: `No matching D1 binding found in ${app.name}/wrangler.jsonc`,
+				fix: 'Check the app\'s wrangler.jsonc d1_databases configuration',
 			})
 			continue
 		}
 
-		try {
-			const db = new Database(sqlite_path)
-			const count_res = db.query(`SELECT count(*) as count FROM ${app.table}`).get() as { count: number } | null
-			db.close()
+		for (const entry of entries) {
+			const label = `D1 Database (${app.name}: ${entry.binding})`
 
-			const count = count_res?.count ?? 0
-			if (count > 0) {
+			// Matches db_load.ts's own key derivation -- the file each binding's snapshot is actually
+			// imported into, not a guess at "the" .sqlite file in a directory that now holds several.
+			const db_hash = createHash('sha256').update(entry.database_id).digest('hex')
+			const sqlite_path = join(d1_state_dir, `${db_hash}.sqlite`)
+
+			if (!existsSync(sqlite_path)) {
 				results.push({
 					category: 'Local Databases',
-					name: `D1 Database (${app.name})`,
-					status: 'PASS',
-					message: `Loaded (${count.toLocaleString()} rows in '${app.table}')`,
-				})
-			} else {
-				results.push({
-					category: 'Local Databases',
-					name: `D1 Database (${app.name})`,
+					name: label,
 					status: 'WARN',
-					message: `Database exists but table '${app.table}' has 0 rows`,
-					fix: 'Run `pnpm db:load` to populate tables',
+					message: 'No local SQLite database found in .wrangler state',
+					fix: `Run \`pnpm db:load\` or \`bun tools/databases/src/load_d1.ts ${app.name}\``,
+				})
+				continue
+			}
+
+			try {
+				const db = new Database(sqlite_path)
+				const count_res = db.query(`SELECT count(*) as count FROM ${app.db_check.table}`).get() as { count: number } | null
+				db.close()
+
+				const count = count_res?.count ?? 0
+				if (count > 0) {
+					results.push({
+						category: 'Local Databases',
+						name: label,
+						status: 'PASS',
+						message: `Loaded (${count.toLocaleString()} rows in '${app.db_check.table}')`,
+					})
+				} else {
+					results.push({
+						category: 'Local Databases',
+						name: label,
+						status: 'WARN',
+						message: `Database exists but table '${app.db_check.table}' has 0 rows`,
+						fix: 'Run `pnpm db:load` to populate tables',
+					})
+				}
+			} catch (err) {
+				results.push({
+					category: 'Local Databases',
+					name: label,
+					status: 'WARN',
+					message: `Error querying SQLite: ${err instanceof Error ? err.message : err}`,
+					fix: 'Run `pnpm db:load` to re-bootstrap SQLite snapshot',
 				})
 			}
-		} catch (err) {
-			results.push({
-				category: 'Local Databases',
-				name: `D1 Database (${app.name})`,
-				status: 'WARN',
-				message: `Error querying SQLite: ${err instanceof Error ? err.message : err}`,
-				fix: 'Run `pnpm db:load` to re-bootstrap SQLite snapshot',
-			})
 		}
 	}
 

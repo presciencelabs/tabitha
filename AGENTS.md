@@ -429,6 +429,29 @@ import type { AnalysisResult } from '../../routes/analyze/types'
 import type { AnalysisResult } from '$lib/types'
 ```
 
+### Cross-package relative imports
+
+Import another workspace package (`apps/*`, `packages/*`, `tools/*`, `scripts`) by its package
+name, never by a relative path that reaches into its internal file layout. A relative path across
+a package boundary breaks silently if that package ever reorganizes its files, and forces a
+reader to count directory hops instead of recognizing "this comes from another package" at a
+glance -- which is exactly what the package name already signals everywhere else in this repo.
+
+This only targets imports that actually cross a package boundary -- a `../` import that stays
+*within* the importing file's own package (e.g. `apps/editor/src/lib/rules/case_frame/common.ts`
+reaching into `lib/rules`) is completely normal and unaffected by this rule. Enforced by `pnpm
+check:package-boundaries` (`scripts/audits/check_relative_package_imports.ts`), which resolves
+every `../` import to its actual target and only flags the ones that land outside the importing
+file's own package.
+
+```typescript
+// ❌ Avoid: scripts/ reaching directly into another package's internal file layout
+import { PORTS } from '../../packages/vite-config/ports.js'
+
+// ✅ Preferred: import the package by name (add it as a real dependency if it isn't one yet)
+import { PORTS } from '@tabitha/vite-config/ports'
+```
+
 ---
 
 ## 🔐 Reserve Secret Storage for Genuinely Sensitive Values
