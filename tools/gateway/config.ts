@@ -52,12 +52,24 @@ export const desired_gateway_config: DesiredGatewayConfig = {
 	retry_delay: 500,
 	retry_backoff: 'exponential',
 	guardrails: {
-		// P1 (prompt injection) only, at BLOCK. The 13 content categories (S1-S13: violence, hate,
-		// self-harm, sexual content, etc.) are deliberately left unset -- TaBiThA's content is Bible
-		// text, where violence, war, and other mature themes are routine and legitimate; blocking on
-		// those categories would false-positive on real scripture. Revisit per-category if a real
-		// need emerges.
-		prompt: { P1: 'BLOCK' },
+		// Everything left unset -- the 13 content categories (S1-S13: violence, hate, self-harm,
+		// sexual content, etc.) for the same reason as always: TaBiThA's content is Bible text, where
+		// violence, war, and other mature themes are routine and legitimate, so blocking on those
+		// categories would false-positive on real scripture.
+		//
+		// P1 (prompt injection) was enabled at BLOCK originally, but disabled 2026-08-29 after it
+		// false-positived on editor's real ai-assist system instruction the first time this gateway's
+		// guardrails were ever exercised against real app content (see PR #69) -- Llama Guard flagged
+		// it as injection, most likely because the Phase-1-encoding worked example is itself an
+		// imperative-mood sample sentence ("You(Christ) (imp) listen to me...") sitting next to
+		// directive framing in the Conventions section, a combination that pattern-matches against
+		// what P1 looks for even though it's legitimate domain content. We *want* prompt-injection
+		// protection here -- it's off only because the false-positive rate against this app's actual
+		// prompts made it unusable, not because the risk isn't real. Revisit if Cloudflare's guardrail
+		// model improves, or if editor's system instruction can be reworded to dodge the false
+		// positive without weakening it (higher-risk, needs re-verifying against the live gateway
+		// either way -- don't just assume a rewording fixes it).
+		prompt: {},
 		// Prompt injection isn't a meaningful concept for a model's own response, so nothing is set
 		// here -- but Cloudflare's API requires the `response` object to be present regardless.
 		response: {},
