@@ -1,8 +1,15 @@
 import { env } from '$env/dynamic/private'
 import { lwc_info, usfm_book_codes } from '$lib/lookups'
-import { AiResponseError, type AiClient } from '@tabitha/ai'
+import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
 import { brief_main_prompt, translate_prompt } from './prompts'
 import { json_response_schema } from './json_response_schema'
+
+// The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
+// and ADR 0007), so this is a local, best-effort substitute scoped to the third-party content
+// fetched here: SIL's Open Translators Notes from the Aquifer API. Unlike a TaBiThA-user-authored
+// verse, this is untrusted external text (a compromised/malicious API response, not a malicious
+// teammate), so the cap is generous -- a full notes document, not a single verse.
+const MAX_TNN_TEXT_LENGTH = 20000
 
 async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]> {
 	const queryParams = new URLSearchParams({
@@ -43,10 +50,22 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 		console.error(`HTTP error: received response of status ${aquifer_response.status} (${aquifer_response.statusText}) from ${aquifer_response.url}`)
 		return undefined
 	}
+	const tnn_text = await aquifer_response.text()
+	const safety_issue = check_input_safety(tnn_text, {
+		max_length: MAX_TNN_TEXT_LENGTH,
+		too_long_message: `TNN text is too long (${tnn_text.length} characters, max ${MAX_TNN_TEXT_LENGTH}).`,
+		suspicious_message: 'TNN text looks like it might contain instructions rather than translator notes.',
+		log_label: 'copilot: brief (tnn)',
+	})
+	if (safety_issue) {
+		console.warn(`copilot: brief rejected Aquifer TNN content for content ID ${contentId}: ${safety_issue}`)
+		return undefined
+	}
+
 	const prompt = {
 		verseReference: `${input.verse.book} ${input.verse.chapter}:${input.verse.verse}`,
 		rigorMode: input.rigor,
-		tnnText: await aquifer_response.text(),
+		tnnText: tnn_text,
 		lwcVerse: input.lwc_text,
 		tabithaNotes: input.notes,
 	}

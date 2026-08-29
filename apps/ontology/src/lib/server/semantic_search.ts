@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private'
-import { create_ai_client, AiResponseError } from '@tabitha/ai'
+import { create_ai_client, check_input_safety, AiResponseError } from '@tabitha/ai'
 import { get_all_concepts } from './ontology'
 import system_instruction from './semantic_search_prompt.md?raw'
 import type { D1Database } from '@cloudflare/workers-types'
@@ -7,12 +7,31 @@ import type { Concept } from '$lib/types'
 
 const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 
+// The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
+// and ADR 0007), so this is a local, best-effort substitute scoped to the one piece of user text
+// here: the search box query. A search term is normally a single word or short phrase, so the cap
+// is tight -- no legitimate search needs more than this.
+const MAX_SEARCH_TERM_LENGTH = 200
+
 type FindRelatedConceptsOptions = {
 	readonly db: D1Database
 	readonly search_term: string
 }
 
 export async function find_related_concepts({ db, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
+	const safety_issue = check_input_safety(search_term, {
+		max_length: MAX_SEARCH_TERM_LENGTH,
+		too_long_message: `Search term is too long (${search_term.length} characters, max ${MAX_SEARCH_TERM_LENGTH}).`,
+		suspicious_message: 'Search term looks like it might contain instructions rather than a concept to search for.',
+		log_label: 'ontology: semantic-search',
+	})
+	if (safety_issue) {
+		// No related concepts is a normal, unremarkable outcome for a search feature -- fail soft,
+		// same as an AiResponseError from the model itself below.
+		console.warn(`ontology: semantic-search rejected search term (${search_term.length} chars): ${safety_issue}`)
+		return []
+	}
+
 	const all_concepts = await get_all_concepts(db)
 
 	// These filters currently result in ~3800 concepts getting sent to the LLM, down from ~6380

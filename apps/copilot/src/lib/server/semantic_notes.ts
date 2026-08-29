@@ -1,11 +1,23 @@
-import { AiResponseError, type AiClient } from '@tabitha/ai'
+import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
 import system_instruction_template from './semantic_notes_prompt.md?raw'
+
+// The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
+// and ADR 0007), so this is a local, best-effort substitute scoped to the translator-authored
+// verse text here (english_text/lwc_text) -- the same kind of content, and the same length
+// profile (a single verse), as apps/editor's ai-assist textarea.
+const MAX_VERSE_TEXT_LENGTH = 2000
 
 export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: AiClient }): Promise<CopilotLlmOutput> {
 
 	const translate_tbta_text = llm_input.output_language !== 'English' && !llm_input.lwc_text
 
 	if (!translate_tbta_text && llm_input.triggers.length === 0) {
+		return { notes: [], lwc_text: llm_input.lwc_text }
+	}
+
+	const safety_issue = check_verse_text_safety(llm_input.english_text) ?? (llm_input.lwc_text ? check_verse_text_safety(llm_input.lwc_text) : undefined)
+	if (safety_issue) {
+		console.warn(`copilot: semantic-notes rejected verse text: ${safety_issue}`)
 		return { notes: [], lwc_text: llm_input.lwc_text }
 	}
 
@@ -80,4 +92,13 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 function postprocess(caution: string) {
 	// remove senses in case the LLM included it
 	return caution?.replaceAll(/ \(\w+-[A-Z]\)/g, '').replaceAll(/-[A-Z](\W)/g, '$1')
+}
+
+function check_verse_text_safety(text: string): string | undefined {
+	return check_input_safety(text, {
+		max_length: MAX_VERSE_TEXT_LENGTH,
+		too_long_message: `Verse text is too long (${text.length} characters, max ${MAX_VERSE_TEXT_LENGTH}).`,
+		suspicious_message: 'Verse text looks like it might contain instructions rather than scripture.',
+		log_label: 'copilot: semantic-notes',
+	})
 }
