@@ -23,6 +23,7 @@ function mock_response(text: string) {
 describe('@tabitha/ai', () => {
 	beforeEach(() => {
 		fetch_mock.mockReset()
+		vi.spyOn(console, 'error').mockImplementation(() => {})
 	})
 
 	describe('create_ai_client', () => {
@@ -61,11 +62,21 @@ describe('@tabitha/ai', () => {
 			expect(body.generationConfig).not.toHaveProperty('httpOptions')
 		})
 
-		test('throws on a non-ok gateway response', async () => {
-			fetch_mock.mockResolvedValue({ ok: false, status: 502, text: async () => 'bad gateway' })
+		test('throws AiResponseError with the status on a non-ok gateway response, and logs the body for Observability', async () => {
+			fetch_mock.mockResolvedValue({ ok: false, status: 502, statusText: 'Bad Gateway', text: async () => 'bad gateway' })
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
+			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow(AiResponseError)
 			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow('502')
+			expect(console.error).toHaveBeenCalledWith(expect.stringContaining('bad gateway'))
+		})
+
+		test('throws AiResponseError on a network failure, without ever calling response.json/.text', async () => {
+			fetch_mock.mockRejectedValue(new Error('fetch failed'))
+			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow(AiResponseError)
+			expect(console.error).toHaveBeenCalled()
 		})
 	})
 

@@ -29,23 +29,31 @@ export function create_ai_client({ app, feature, gateway, defaults }: CreateAiCl
 		// rather than forwarded into the request body.
 		const { httpOptions, ...generation_config } = config as AiCallDefaults & { httpOptions?: { headers?: Record<string, string> } }
 
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-				'cf-aig-authorization': `Bearer ${gateway.token}`,
-				'cf-aig-metadata': JSON.stringify({ app, feature }),
-				...httpOptions?.headers,
-			},
-			body: JSON.stringify({
-				contents: [{ role: 'user', parts: [{ text: JSON.stringify(contents) }] }],
-				...(system_instruction ? { systemInstruction: { role: 'user', parts: [{ text: system_instruction }] } } : {}),
-				generationConfig: { ...generation_config, seed: FIXED_SEED },
-			}),
-		})
+		let response: Response
+		try {
+			response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					'cf-aig-authorization': `Bearer ${gateway.token}`,
+					'cf-aig-metadata': JSON.stringify({ app, feature }),
+					...httpOptions?.headers,
+				},
+				body: JSON.stringify({
+					contents: [{ role: 'user', parts: [{ text: JSON.stringify(contents) }] }],
+					...system_instruction ? { systemInstruction: { role: 'user', parts: [{ text: system_instruction }] } } : {},
+					generationConfig: { ...generation_config, seed: FIXED_SEED },
+				}),
+			})
+		} catch (cause) {
+			console.error(`AI Gateway request failed for app "${app}", feature "${feature}": network error calling ${url}`, cause)
+			throw new AiResponseError(`AI Gateway request failed (app "${app}", feature "${feature}"): network error`, { cause })
+		}
 
 		if (!response.ok) {
-			throw new Error(`AI Gateway request failed with status ${response.status} (app "${app}", feature "${feature}"): ${await response.text()}`)
+			const body = await response.text()
+			console.error(`AI Gateway request failed for app "${app}", feature "${feature}": ${response.status} ${response.statusText} -- ${body}`)
+			throw new AiResponseError(`AI Gateway request failed with status ${response.status} (app "${app}", feature "${feature}")`)
 		}
 
 		const text = extract_text(await response.json() as VertexGenerateContentResponse)
