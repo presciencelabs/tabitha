@@ -32,12 +32,14 @@ All migration commands are run from within this package directory (`cd tools/dat
 
 ### 1. Full Migration (Orchestrator)
 
-Runs all migrations sequentially against a directory of TBTA database exports:
+Runs all migrations sequentially against a directory of TBTA database exports, or a zip bundle containing them:
 
 ```bash
 cd tools/databases
-bun run migrate "<path_to_tbta_dbs_dir>" YYYY-MM-DD
+bun run migrate "<path_to_tbta_dbs_dir_or_zip>" YYYY-MM-DD
 ```
+
+The orchestrator only reprocesses what actually changed: staging skips restaging any individually-delivered source (Swahili, Sample, etc.) that's byte-identical to the last run, and each output (Sources, Targets) is either skipped entirely, incrementally rebuilt from the changed inputs on top of the prior output, or fully rebuilt, depending on what changed.
 
 ### 2. Individual Database Migrations
 
@@ -71,14 +73,14 @@ bun run migrate:sources \
 
 #### Ontology Migration
 
-Ingests legacy Ontology and Sample databases and generates exhaustive concept examples:
+Populates the exhaustive concept examples (`Complex_Terms`) in an already-staged Ontology database, from a migrated Sources database and its Sources_Complex export:
 
 ```bash
 cd tools/databases
 bun run migrate:ontology \
-  databases/Ontology_YYYY-MM-DD.tbta.sqlite \
-  databases/Sample_YYYY-MM-DD.tbta.sqlite \
-  databases/Ontology_9494_YYYY-MM-DD.tabitha.sqlite
+  raw/Sources_YYYY-MM-DD.tabitha.sqlite \
+  raw/Sources_Complex_YYYY-MM-DD.tabitha.sqlite \
+  raw/Ontology_9494_YYYY-MM-DD.tabitha.sqlite
 ```
 
 #### Auth Initialization
@@ -89,3 +91,16 @@ Creates default Auth permissions and role structures:
 cd tools/databases
 bun run migrate:auth databases/Auth.tabitha.sqlite
 ```
+
+#### Status Update (Live D1)
+
+Applies the latest verse-status CSVs (see `data/status/README.md` for how to export them) directly
+to a live Sources D1 database, independent of any migration run:
+
+```bash
+cd tools/databases
+bun run migrate:status <d1_database_name> [csv_dir] [YYYY-MM-DD]
+```
+
+`csv_dir` defaults to `data/status/`, and the date defaults to today -- both fall back to the latest
+available file if an exact match isn't found.

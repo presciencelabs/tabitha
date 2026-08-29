@@ -27,15 +27,6 @@ if (!basename(targets_db_name).includes('Targets')) {
 
 const tbta_db_names = args
 
-const has_english = tbta_db_names.some(db_name => {
-	const project = basename(db_name).split('_')[0]
-	return project === 'English'
-})
-
-if (!has_english) {
-	throw new Error('English database must be present.')
-}
-
 const targets_db = new Database(targets_db_name)
 
 // drastic perf improvement: https://www.sqlite.org/pragma.html#pragma_journal_mode
@@ -65,6 +56,13 @@ for (const tbta_db_name of tbta_db_names) {
 	await migrate_ideal_text_table(project, targets_db, join(import.meta.dir, '../../data/ideal_texts'))
 
 	tbta_db.close()
+}
+
+// English must be present in the output overall -- either processed this run, or already carried
+// over from a prior run via copy-forward (when English itself was unchanged this run).
+const english_row_count = targets_db.query<{ count: number }, [string]>('SELECT COUNT(*) AS count FROM Text WHERE project = ?').get('English')?.count ?? 0
+if (english_row_count === 0) {
+	throw new Error(`${targets_db_name} has no English data in its Text table -- English database must be present, this run or a prior one.`)
 }
 
 log.step(`Optimizing ${targets_db_name}...`)

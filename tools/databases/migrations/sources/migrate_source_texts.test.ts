@@ -109,4 +109,21 @@ describe('migrate_source_texts', () => {
 
 		expect(read_sources_rows(db)).toHaveLength(1)
 	})
+
+	it('preserves another type\'s rows when reprocessing just one type (incremental rebuild)', () => {
+		const db = new Database(':memory:')
+		const bible_path = make_tbta_source_db('Bible', [{ table: 'Genesis', reference: 'Genesis 1:1', verse: 'In the beginning.' }])
+		const grammar_path = make_tbta_source_db('GrammarIntroduction', [{ table: 'Intro', reference: 'Intro 1:1', verse: 'Welcome to the grammar.' }])
+
+		migrate_source_texts(db, [bible_path, grammar_path])
+
+		// Re-run only Bible, as an incremental rebuild would when only Bible's raw input changed.
+		const bible_path_updated = make_tbta_source_db('Bible', [{ table: 'Genesis', reference: 'Genesis 1:1', verse: 'In the beginning, revised.' }])
+		migrate_source_texts(db, [bible_path_updated])
+
+		const rows = read_sources_rows(db)
+		expect(rows).toHaveLength(2)
+		expect(rows.find(r => r.type === 'Bible')?.phase_1_encoding).toBe('In the beginning, revised.')
+		expect(rows.find(r => r.type === 'GrammarIntroduction')?.phase_1_encoding).toBe('Welcome to the grammar.')
+	})
 })

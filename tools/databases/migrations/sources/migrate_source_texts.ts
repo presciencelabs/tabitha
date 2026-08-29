@@ -18,15 +18,17 @@ export function migrate_source_texts(tabitha_sources_db: Database, tbta_sources_
 			'notes'
 		)
 	`)
-	tabitha_sources_db.run(`
-		DELETE FROM Sources
-	`)
 
 	tbta_sources_from_input.map(tbta_source_from_input => {
 		log.step(`Extracting relevant table names from ${tbta_source_from_input}...`)
 		const tbta_db = new Database(tbta_source_from_input, { readwrite: true, create: false }) // raw/Bible_YYYY-MM-DD.tbta.sqlite
 		// Safely extract just the source identity prefix out of the filename (i.e. 'raw/Bible_YYYY-MM-DD...' -> 'Bible')
 		const tbta_source_name = basename(tbta_source_from_input).split('_')[0]
+
+		// Only this source's rows are being replaced this run -- other types' rows (left untouched
+		// since their raw input didn't change) must survive when tabitha_sources_db was copied
+		// forward from a prior run's output.
+		tabitha_sources_db.run('DELETE FROM Sources WHERE type = ?', [tbta_source_name])
 
 		// https://bun.sh/docs/api/sqlite#reference
 		const tbta_source_tablenames = tbta_db.query<{ name: string }, []>(`

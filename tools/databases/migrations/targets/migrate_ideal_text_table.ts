@@ -7,13 +7,13 @@ import OfficeParser, { type OfficeContentNode } from 'officeparser'
 import { join, basename, extname } from 'path'
 
 export async function migrate_ideal_text_table(project: string, targets_db: Database, dir: string) {
-	create_tabitha_table(targets_db)
+	create_tabitha_table(targets_db, project)
 
 	const data = await get_ideal_texts(project, dir)
 	load_data(targets_db, project, data)
 }
 
-function create_tabitha_table(targets_db: Database) {
+function create_tabitha_table(targets_db: Database, project: string) {
 	log.step(`Creating the "Ideal_Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
@@ -27,6 +27,10 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
+	// Only this project's rows are being replaced this run -- other projects' rows (left untouched
+	// since their raw input didn't change) must survive when targets_db was copied forward from a
+	// prior run's output.
+	targets_db.run('DELETE FROM Ideal_Text WHERE project = ?', [project])
 }
 
 function load_data(targets_db: Database, project: string, data: IdealTextData[]) {
