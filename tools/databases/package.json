@@ -17,12 +17,14 @@
     "migrate:targets": "bun migrations/targets/migrate.ts"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "officeparser": "^7.5.1"
   },
   "devDependencies": {
     "@tabitha/eslint-config": "workspace:*",
     "@tabitha/tsconfig": "workspace:*",
     "@tabitha/types": "workspace:*",
+    "@types/adm-zip": "^0.5.7",
     "@types/bun": "^1.3.14",
     "@types/node": "^26.2.0",
     "eslint": "^10.8.1",

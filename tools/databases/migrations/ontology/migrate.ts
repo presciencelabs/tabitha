@@ -5,15 +5,16 @@ import { create_logger } from '../log'
 
 const log = create_logger('Ontology migration')
 
-// usage: `bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite`
-const USAGE = 'Usage: bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite'
-if (Bun.argv.length !== 4) {
+// usage: `bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Sources_Complex_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite`
+const USAGE = 'Usage: bun ontology/migrate.ts raw/Sources_YYYY-MM-DD.tabitha.sqlite raw/Sources_Complex_YYYY-MM-DD.tabitha.sqlite raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite'
+if (Bun.argv.length !== 5) {
 	throw new Error(USAGE)
 }
 
 const sources_db_name = Bun.argv[2]	// raw/Sources_YYYY-MM-DD.tabitha.sqlite
-const tabitha_db_name = Bun.argv[3]	// raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite
-if (!sources_db_name || !tabitha_db_name) {
+const sources_db_complex_name = Bun.argv[3]	// raw/Sources_Complex_YYYY-MM-DD.tabitha.sqlite -- resolved by the planner, may be an older date than sources_db_name
+const tabitha_db_name = Bun.argv[4]	// raw/Ontology_VERSION_YYYY-MM-DD.tabitha.sqlite
+if (!sources_db_name || !sources_db_complex_name || !tabitha_db_name) {
 	throw new Error(USAGE)
 }
 
@@ -29,7 +30,6 @@ create_changes_table(tabitha_db)
 log.step(`Opening Sources database: ${sources_db_name}`)
 const sources_db = new Database(sources_db_name, { readwrite: true, create: false })
 
-const sources_db_complex_name = sources_db_name.replace('Sources', 'Sources_Complex')
 log.step(`Opening Sources_Complex database: ${sources_db_complex_name}`)
 const sources_db_complex = new Database(sources_db_complex_name, { readwrite: true, create: false })
 

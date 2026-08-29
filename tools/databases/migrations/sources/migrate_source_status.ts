@@ -1,5 +1,5 @@
 import type Database from 'bun:sqlite'
-import { Glob } from 'bun'
+import { resolve_dated_file } from '../resolve_dated_file'
 import { create_logger } from '../log'
 
 const log = create_logger('Sources migration')
@@ -98,21 +98,11 @@ async function extract(csv_dir: string, date: string): Promise<VerseStatusRecord
 	log.step('Getting verse statuses from the CSV files...')
 
 	async function get_latest_csv(prefix: string): Promise<string> {
-		const exact_file = Bun.file(`${csv_dir}/${prefix}_${date}.csv`)
-		if (await exact_file.exists()) {
-			return await exact_file.text()
-		}
-
-		const files = Array.from(new Glob(`${prefix}_*.csv`).scanSync(csv_dir))
-		files.sort() // Lexicographical sort will correctly order YYYY-MM-DD
-		const latest = files.pop()
-
-		if (!latest) {
+		const path = await resolve_dated_file(csv_dir, prefix, date, 'csv')
+		if (!path) {
 			throw new Error(`Critical Error: No fallback CSV found for ${prefix} in ${csv_dir}.`)
 		}
-
-		log.warn(`Exact status file ${prefix}_${date}.csv not found. Using fallback: ${latest}`)
-		return await Bun.file(`${csv_dir}/${latest}`).text()
+		return await Bun.file(path).text()
 	}
 
 	const csv_contents_by_file = await Promise.all([
