@@ -32,11 +32,31 @@
 			}
 		}
 	],
+	// One D1 database per target-language project (docs/decisions/0012-per-project-targets-databases.md).
+	// database_name/database_id values below are PLACEHOLDERS pending real "wrangler d1 create"
+	// provisioning -- see the ADR's migration path. Binding names must match TARGET_PROJECTS in
+	// @tabitha/types/target. database_name follows the same "<Task>_<date>" convention as
+	// Sources/Ontology (each migration run mints a fresh dated database rather than updating in place).
 	"d1_databases": [
 		{
-			"binding": "DB_Targets",
-			"database_name": "Targets_2026-07-31",
-			"database_id": "9b9bd873-9e51-42f3-ba3d-393cf5a9bd2f"
+			"binding": "DB_Targets_English",
+			"database_name": "Targets_English_2026-07-31",
+			"database_id": "00000000-0000-0000-0000-000000000001"
+		},
+		{
+			"binding": "DB_Targets_Swahili",
+			"database_name": "Targets_Swahili_2026-07-31",
+			"database_id": "00000000-0000-0000-0000-000000000002"
+		},
+		{
+			"binding": "DB_Targets_Indonesian",
+			"database_name": "Targets_Indonesian_2026-07-31",
+			"database_id": "00000000-0000-0000-0000-000000000003"
+		},
+		{
+			"binding": "DB_Targets_Tagalog",
+			"database_name": "Targets_Tagalog_2026-07-31",
+			"database_id": "00000000-0000-0000-0000-000000000004"
 		}
 	],
 	"placement": {

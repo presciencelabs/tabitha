@@ -50,10 +50,6 @@ export type VerseResult = {
 	verse: number
 }
 
-export type ProjectResult = {
-	project: string
-}
-
 export type DbTextResult = TextResult & BookResult & ChapterResult & VerseResult
 
 export type SearchTextResult = {

@@ -14,10 +14,13 @@ import { create_logger } from '../log'
 
 const log = create_logger('Targets migration')
 
-// usage: `bun targets/migrate.ts raw/English_YYYY-MM-DD.tbta.sqlite [raw/[Swahili|Indonesian|Tagalog]_YYYY-MM-DD.tbta.sqlite] raw/Targets_YYYY-MM-DD.tabitha.sqlite`
+// usage: `bun targets/migrate.ts raw/<Project>_YYYY-MM-DD.tbta.sqlite raw/Targets_<Project>_YYYY-MM-DD.tabitha.sqlite`
+// The orchestrator invokes this once per target-language project, each into its own dedicated
+// output database (docs/decisions/0012-per-project-targets-databases.md) -- multiple raw inputs
+// are still accepted for direct/manual invocations, but no longer merge into a shared database.
 const args = Bun.argv.slice(2)
 if (args.length < 2) {
-	throw new Error('Usage: bun targets/migrate.ts <English_db_path> [Optional_Language_db_paths...] <Targets_db_path>')
+	throw new Error('Usage: bun targets/migrate.ts <Project_db_path> [Additional_Project_db_paths...] <Targets_db_path>')
 }
 
 const targets_db_name = args.pop()!
@@ -32,8 +35,15 @@ const targets_db = new Database(targets_db_name)
 // drastic perf improvement: https://www.sqlite.org/pragma.html#pragma_journal_mode
 targets_db.run('PRAGMA journal_mode = WAL')
 
-await transform_inflections(join(import.meta.dir, '../../data/inflections'))
-await warn_if_inflections_stale(join(import.meta.dir, '../../data/inflections/win'))
+// Each target-language project now migrates into its own dedicated database
+// (docs/decisions/0012-per-project-targets-databases.md), so inflection CSVs -- consumed only by
+// English's migrate_lexical_forms below -- only need regenerating when English is actually being
+// processed this run, not on every project's invocation.
+const projects = tbta_db_names.map(name => basename(name).split('_')[0])
+if (projects.includes('English')) {
+	await transform_inflections(join(import.meta.dir, '../../data/inflections'))
+	await warn_if_inflections_stale(join(import.meta.dir, '../../data/inflections/win'))
+}
 
 for (const tbta_db_name of tbta_db_names) {
 	const project = basename(tbta_db_name).split('_')[0]
@@ -55,14 +65,15 @@ for (const tbta_db_name of tbta_db_names) {
 
 	await migrate_ideal_text_table(project, targets_db, join(import.meta.dir, '../../data/ideal_texts'))
 
-	tbta_db.close()
-}
+	// Each project's database now holds only that project's own data, so this run's own output is
+	// the only thing that needs verifying -- there's no longer a shared file where another
+	// project's rows could mask this one silently producing nothing.
+	const row_count = targets_db.query<{ count: number }, [string]>('SELECT COUNT(*) AS count FROM Text WHERE project = ?').get(project)?.count ?? 0
+	if (row_count === 0) {
+		throw new Error(`${targets_db_name} has no ${project} data in its Text table after migration.`)
+	}
 
-// English must be present in the output overall -- either processed this run, or already carried
-// over from a prior run via copy-forward (when English itself was unchanged this run).
-const english_row_count = targets_db.query<{ count: number }, [string]>('SELECT COUNT(*) AS count FROM Text WHERE project = ?').get('English')?.count ?? 0
-if (english_row_count === 0) {
-	throw new Error(`${targets_db_name} has no English data in its Text table -- English database must be present, this run or a prior one.`)
+	tbta_db.close()
 }
 
 log.step(`Optimizing ${targets_db_name}...`)

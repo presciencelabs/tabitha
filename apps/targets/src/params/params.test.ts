@@ -31,12 +31,15 @@ describe('Route param matchers', () => {
 	})
 
 	describe('valid_project matcher', () => {
-		it('accepts valid alphabetic project names', () => {
+		it('accepts registered target-language projects', () => {
 			expect(match_project('English')).toBe(true)
-			expect(match_project('Spanish')).toBe(true)
+			expect(match_project('Swahili')).toBe(true)
+			expect(match_project('Indonesian')).toBe(true)
+			expect(match_project('Tagalog')).toBe(true)
 		})
 
-		it('rejects non-alphabetic project names', () => {
+		it('rejects unregistered or malformed project names', () => {
+			expect(match_project('Spanish')).toBe(false)
 			expect(match_project('123')).toBe(false)
 			expect(match_project('English_1')).toBe(false)
 		})

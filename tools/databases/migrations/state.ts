@@ -4,12 +4,9 @@
 // step. State lives under raw/, alongside the other per-run artifacts, and is untracked by git.
 
 import { unlink } from 'fs/promises'
+import type { TaskId } from './plan'
 
-export type MigrationStep =
-	| 'staging'
-	| 'Sources:migrated' | 'Sources:dumped'
-	| 'Ontology:migrated' | 'Ontology:dumped'
-	| 'Targets:migrated' | 'Targets:dumped'
+export type MigrationStep = 'staging' | `${TaskId}:migrated` | `${TaskId}:dumped`
 
 type State = { completed_steps: MigrationStep[] }
 

@@ -5,7 +5,7 @@ import { existsSync } from 'fs'
 import { basename, join } from 'path'
 import { create_logger } from './log'
 import { intake } from './intake'
-import { plan_migration, type TaskId } from './plan'
+import { plan_migration, type TaskFamily } from './plan'
 import { resolve_dated_file } from './resolve_dated_file'
 import { load_state, mark_done, clear_state } from './state'
 import { validate_migration_output, type ValidationConfig } from './validate'
@@ -57,7 +57,9 @@ try {
 		await mark_done(date, 'staging', completed_steps)
 	}
 
-	const VALIDATIONS: Record<TaskId, ValidationConfig> = {
+	// Keyed by family, not task id -- every per-project Targets_<project> task shares the same
+	// validation shape (docs/decisions/0012-per-project-targets-databases.md).
+	const VALIDATIONS: Record<TaskFamily, ValidationConfig> = {
 		Sources: {
 			// The source Bible text is expected to be complete, so every canonical book must be present.
 			book_check: { table: 'Sources', book_column: 'id_primary', where: "type = 'Bible'", require_complete: true },
@@ -103,7 +105,7 @@ try {
 				log.step(`Copying forward ${basename(task.previous_output_file)} -> ${basename(task.output_file)}...`)
 				await cp(task.previous_output_file, task.output_file)
 			}
-			await $`bun migrations/${task.id.toLowerCase()}/migrate.ts ${task.migrate_args} ${task.output_file}`
+			await $`bun migrations/${task.family.toLowerCase()}/migrate.ts ${task.migrate_args} ${task.output_file}`
 			await mark_done(date, migrated_step, completed_steps)
 		}
 
@@ -124,7 +126,7 @@ try {
 
 		// Always re-run validation, even on a resumed run -- this is the last gate before a D1 deploy,
 		// so it must reflect the actual state of output_file every time, not just the first pass.
-		await validate_migration_output(task.id, task.output_file, date, VALIDATIONS[task.id])
+		await validate_migration_output(task.id, task.output_file, date, VALIDATIONS[task.family])
 
 		// TEMPORARILY DISABLED for local verification
 		// console.log(`[Orchestrator] Creating new D1 database for ${task.id}...`)
