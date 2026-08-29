@@ -5,9 +5,9 @@ import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
 import { parse_wrangler_jsonc } from './db_load'
-import { check_cloudflare_configs } from '../audits/check_cloudflare'
-import { sync_readme_badges } from '../audits/check_readme_badges'
-import { scan_secrets } from '../audits/check_secrets'
+import { check_cloudflare_configs } from '@tabitha/scripts/audits/check_cloudflare'
+import { sync_readme_badges } from '@tabitha/scripts/audits/check_readme_badges'
+import { scan_secrets } from '@tabitha/scripts/audits/check_secrets'
 
 type DiagnosticResult = {
 	category: string

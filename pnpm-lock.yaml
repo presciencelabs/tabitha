@@ -806,6 +806,9 @@ importers:
       '@tabitha/tsconfig':
         specifier: workspace:*
         version: link:../packages/tsconfig
+      '@tabitha/types':
+        specifier: workspace:*
+        version: link:../packages/types
       '@types/bun':
         specifier: ^1.3.14
         version: 1.3.14
