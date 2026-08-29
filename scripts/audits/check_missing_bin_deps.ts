@@ -71,11 +71,10 @@ export async function get_workspace_packages(): Promise<WorkspacePackage[]> {
 		}
 	}
 
-	// scripts/ isn't a pnpm workspace member -- it has no package.json of its own, so anything
-	// it shells out to must be declared as a dependency of the repo root instead.
+	// scripts/ sits outside the apps/packages/tools globs above, so it needs its own synthetic entry.
 	const scripts_dir = join(root_dir, 'scripts')
 	if (existsSync(scripts_dir)) {
-		packages.push({ name: 'scripts', dir: scripts_dir, package_json_path: join(root_dir, 'package.json') })
+		packages.push({ name: 'scripts', dir: scripts_dir, package_json_path: join(scripts_dir, 'package.json') })
 	}
 
 	return packages
