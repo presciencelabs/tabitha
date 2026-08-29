@@ -4,14 +4,16 @@
 
 // Each app's mark: a big initial letter with a small "T" for TaBiThA in the
 // atomic-number corner, mirroring the full wordmark treatment in
-// packages/ui/src/Brand.svelte.
+// packages/ui/src/Brand.svelte. `www` is deliberately excluded: it's the main
+// TaBiThA landing page rather than a distinct tool, so its favicon is a
+// hand-tuned one-off (apps/www/static/favicon.svg) instead of going through
+// this per-app-initial scheme.
 export const APP_LETTERS: Record<string, string> = {
 	copilot: 'C',
 	editor: 'E',
 	ontology: 'O',
 	sources: 'S',
 	targets: 'T',
-	www: 'W',
 }
 
 // CANIL's brand red, sampled directly from the pixels of their own favicon
