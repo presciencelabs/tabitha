@@ -31,11 +31,13 @@
 	<p>
 		Either way, nothing reaches a translation team without a native speaker's review — the
 		software drafts, it doesn't decide. See <a href="/how-it-works">How does it work?</a> for what
-		each of these stages is actually doing underneath.
+		each of these stages is actually doing underneath, or
+		<a href="/walkthrough">see this run on a real verse</a> to watch it happen start to finish.
 	</p>
 </div>
 
 <nav class="page-siblings">
 	<a href="/how-it-works">How does it work? →</a>
+	<a href="/walkthrough">Worked example →</a>
 	<a href="/developers">For developers →</a>
 </nav>

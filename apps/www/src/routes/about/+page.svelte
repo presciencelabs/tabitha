@@ -26,6 +26,21 @@
 		<dt>David Duncan, Project Lead</dt>
 		<dd><a href="mailto:david.duncan@canil.ca">david.duncan@canil.ca</a></dd>
 	</dl>
+
+	<h2>History and research</h2>
+	<p>
+		The project traces back to Tod Allman's original doctoral research on rule-based generation for
+		minority languages, first presented publicly at the 2006 SALTMIL conference.
+	</p>
+	<ul>
+		<li><a href="/docs/a-brief-history-of-tbta.pdf">A Brief History of TBTA</a></li>
+		<li><a href="/docs/tod-allman-dissertation.pdf">Tod Allman's dissertation</a></li>
+		<li>
+			<a href="/docs/allman-beale-saltmil-2006.pdf"
+				>Allman &amp; Beale, "A Natural Language Generator for Minority Languages" (SALTMIL 2006)</a
+			>
+		</li>
+	</ul>
 </div>
 
 <nav class="page-siblings">
