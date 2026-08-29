@@ -592,11 +592,10 @@ importers:
         version: 4.123.0(@cloudflare/workers-types@5.20260815.1)
 
   packages/ai:
-    dependencies:
+    devDependencies:
       '@google/genai':
         specifier: ^2.17.1
         version: 2.17.1(supports-color@10.2.2)
-    devDependencies:
       '@tabitha/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
