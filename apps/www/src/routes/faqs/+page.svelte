@@ -20,7 +20,9 @@
 		established lexicons, and encoded into a shared semantic representation built specifically for
 		this project — one designed to hold onto meaning precisely enough to regenerate it in a very
 		different language, and expressive enough to cover the range of content across both
-		testaments.
+		testaments. Encoding both source languages into one shared representation, rather than keeping
+		them separate, also means each target language needs only a single transfer grammar — not one
+		per source language it might translate from.
 	</p>
 
 	<h2>How is this different from a general translation tool?</h2>
@@ -36,7 +38,9 @@
 	<h2>How much of the Bible can it translate?</h2>
 	<p>
 		Any passage that has a semantic representation built for it. Coverage is expanding toward the
-		full Bible; see <a href="/remaining-work">Remaining work</a> for where that stands today.
+		full Bible — see <a href="/remaining-work">Remaining work</a> for where that stands today — and
+		the same approach extends beyond Scripture itself, toward commentaries, study materials, and
+		other Christian literature.
 	</p>
 
 	<h2>What about poetry?</h2>
