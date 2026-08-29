@@ -27,7 +27,7 @@ export type MigrationPlan = {
 	tasks: PlannedTask[]
 }
 
-const SOURCES_INPUTS = ['Bible', 'CommunityDevelopmentTexts', 'GrammarIntroduction']
+const SOURCES_INPUTS = ['Bible', 'CommunityDevelopmentTexts', 'GrammarIntroduction', 'MissionsDocuments']
 
 /**
  * Walks the migration pipeline's dependency graph for a given run date, resolving every task's

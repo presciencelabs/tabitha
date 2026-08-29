@@ -101,6 +101,26 @@ describe('plan_migration', () => {
 		expect(sources.migrate_args).toEqual([`raw/Bible_${date}.tbta.sqlite`])
 	})
 
+	it('treats MissionsDocuments as an optional Sources input, same as the other secondary sources', async () => {
+		const prior_date = '2026-08-01'
+		touch(`Bible_${prior_date}.tbta.sqlite`)
+		touch(`MissionsDocuments_${prior_date}.tbta.sqlite`)
+		touch(`Sources_${prior_date}.tabitha.sqlite`)
+
+		const date = '2026-08-29'
+		touch(`Bible_${date}.tbta.sqlite`) // only Bible changed this run
+		touch(`English_${date}.tbta.sqlite`)
+		touch(`Sources_Complex_${date}.tabitha.sqlite`)
+		stage_ontology(date)
+
+		const plan = await plan_migration(date)
+
+		const sources = plan.tasks.find(t => t.id === 'Sources')!
+		expect(sources.changed).toBe(true)
+		// Only the changed input is passed -- MissionsDocuments is left for copy-forward to preserve.
+		expect(sources.migrate_args).toEqual([`raw/Bible_${date}.tbta.sqlite`])
+	})
+
 	it('skips a target-language project individually when it has no raw input yet, without failing the run', async () => {
 		const date = '2026-08-29'
 		touch(`Bible_${date}.tbta.sqlite`)
