@@ -102,4 +102,37 @@ describe('migrate_text_table', () => {
 			{ project: 'Swahili', book: 'Genesis', chapter: 1, verse: 1, audience: 'Literal', text: 'Mwanzoni Mungu aliumba.' },
 		])
 	})
+
+	it('replaces a project\'s own rows rather than duplicating them on a second run', () => {
+		const targets_db = new Database(':memory:')
+
+		const first_run = make_tbta_db(['Literal'], { Target_EB_Genesis: [{ reference: 'Genesis 1:1', verse: 'In the beginning.' }] })
+		migrate_text_table(first_run, 'English', targets_db)
+
+		const second_run = make_tbta_db(['Literal'], { Target_EB_Genesis: [{ reference: 'Genesis 1:1', verse: 'In the beginning, revised.' }] })
+		migrate_text_table(second_run, 'English', targets_db)
+
+		expect(read_text_rows(targets_db)).toEqual([
+			{ project: 'English', book: 'Genesis', chapter: 1, verse: 1, audience: 'Literal', text: 'In the beginning, revised.' },
+		])
+	})
+
+	it('preserves another project\'s rows when reprocessing just one project (incremental rebuild)', () => {
+		const targets_db = new Database(':memory:')
+
+		const english_db = make_tbta_db(['Literal'], { Target_EB_Genesis: [{ reference: 'Genesis 1:1', verse: 'In the beginning.' }] })
+		migrate_text_table(english_db, 'English', targets_db)
+
+		const swahili_db = make_tbta_db(['Literal'], { Target_EB_Genesis: [{ reference: 'Genesis 1:1', verse: 'Mwanzoni.' }] })
+		migrate_text_table(swahili_db, 'Swahili', targets_db)
+
+		// Re-run only Swahili, as an incremental rebuild would when only Swahili's raw input changed.
+		const swahili_db_updated = make_tbta_db(['Literal'], { Target_EB_Genesis: [{ reference: 'Genesis 1:1', verse: 'Mwanzoni, revised.' }] })
+		migrate_text_table(swahili_db_updated, 'Swahili', targets_db)
+
+		expect(read_text_rows(targets_db)).toEqual([
+			{ project: 'English', book: 'Genesis', chapter: 1, verse: 1, audience: 'Literal', text: 'In the beginning.' },
+			{ project: 'Swahili', book: 'Genesis', chapter: 1, verse: 1, audience: 'Literal', text: 'Mwanzoni, revised.' },
+		])
+	})
 })

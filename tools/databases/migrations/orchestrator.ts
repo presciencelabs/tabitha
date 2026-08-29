@@ -64,6 +64,10 @@ const migration_dbs = Array.from(new Glob(`raw/*_${date}.tbta.sqlite`).scanSync(
 type DbConfig = {
 	key: 'Sources' | 'Ontology' | 'Targets'
 	validation: ValidationConfig
+	// Whether this output can skip a run entirely when none of its raw inputs changed (per the
+	// staging content-hash dedup), copying forward the previous run's output instead of rebuilding.
+	// Ontology is excluded -- it's exempt from staging dedup and always regenerated fresh.
+	dedup_eligible: boolean
 	migration_input_args(): Promise<string[]>
 	migration_output_file(): Promise<string>
 	migration_dump_file(): Promise<string>
@@ -71,6 +75,7 @@ type DbConfig = {
 const configs: DbConfig[] = [
 	{
 		key: 'Sources',
+		dedup_eligible: true,
 		validation: {
 			// The source Bible text is expected to be complete, so every canonical book must be present.
 			book_check: { table: 'Sources', book_column: 'id_primary', where: "type = 'Bible'", require_complete: true },
@@ -106,6 +111,7 @@ const configs: DbConfig[] = [
 	},
 	{
 		key: 'Ontology',
+		dedup_eligible: false,
 		validation: {
 			// Complex_Terms is the one table this migration step actually populates, so it's the
 			// meaningful signal for row-count sanity here (the rest of Ontology.sqlite is the
@@ -113,7 +119,9 @@ const configs: DbConfig[] = [
 			row_count_table: 'Complex_Terms',
 		},
 		async migration_input_args() {
-			const sources = await configs.find(cfg => cfg.key === 'Sources')!.migration_output_file()
+			// Sources may have skipped its own run this date (nothing changed) and be relying on an
+			// older dated file -- resolve whichever Sources output actually exists, not just today's.
+			const sources = await resolve_current_output_file(configs.find(cfg => cfg.key === 'Sources')!)
 
 			return [sources]
 		},
@@ -126,6 +134,7 @@ const configs: DbConfig[] = [
 	},
 	{
 		key: 'Targets',
+		dedup_eligible: true,
 		validation: {
 			// Per-language translation output is expected to only partially cover the canon while
 			// in progress, so only unexpected/misspelled book names fail this check, not missing ones.
@@ -167,9 +176,39 @@ const configs: DbConfig[] = [
 	},
 ]
 
+// A raw input's resolved path carries the date it was actually staged under (see staging's
+// content-hash dedup) -- if that date isn't today's run date, staging determined it was unchanged
+// and skipped restaging it, so it doesn't need reprocessing this run.
+function extract_date(path: string): string | undefined {
+	return path.match(/_(\d{4}-\d{2}-\d{2})\.(?:tbta|tabitha)\.sqlite$/)?.[1]
+}
+
+function latest_output_file(key: string): string | undefined {
+	const files = Array.from(new Glob(`raw/${key}_*.tabitha.sqlite`).scanSync('.'))
+	files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
+	return files.pop()
+}
+
+// Resolves whichever output a dedup-eligible config actually produced/kept for this run -- today's
+// dated file if one exists on disk, otherwise the latest prior file it left in place by skipping.
+async function resolve_current_output_file(cfg: DbConfig): Promise<string> {
+	const todays_file = await cfg.migration_output_file()
+	if (await Bun.file(todays_file).exists()) return todays_file
+	return latest_output_file(cfg.key) ?? todays_file
+}
+
 for (const cfg of configs) {
 	const migrated_step = `${cfg.key}:migrated` as const
 	const dumped_step = `${cfg.key}:dumped` as const
+
+	const input_args = await cfg.migration_input_args()
+	const changed_args = cfg.dedup_eligible ? input_args.filter(arg => extract_date(arg) === date) : input_args
+	const previous_output_file = cfg.dedup_eligible ? latest_output_file(cfg.key) : undefined
+
+	if (cfg.dedup_eligible && changed_args.length === 0 && previous_output_file) {
+		log.step(`Skipping ${cfg.key} migration entirely -- no inputs changed since ${basename(previous_output_file)}.`)
+		continue
+	}
 
 	const output_file = await cfg.migration_output_file()
 	const dump_file = await cfg.migration_dump_file()
@@ -178,8 +217,12 @@ for (const cfg of configs) {
 		log.step(`Skipping ${cfg.key} migration (already completed for this run).`)
 	} else {
 		log.step(`Migrating ${cfg.key} database...`)
-		const input_args = await cfg.migration_input_args()
-		await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${input_args} ${output_file}`
+		if (previous_output_file) {
+			log.step(`Copying forward ${basename(previous_output_file)} -> ${basename(output_file)} (${changed_args.length}/${input_args.length} input(s) changed)...`)
+			await cp(previous_output_file, output_file)
+		}
+		const migrate_args = cfg.dedup_eligible ? changed_args : input_args
+		await $`bun migrations/${cfg.key.toLowerCase()}/migrate.ts ${migrate_args} ${output_file}`
 		await mark_done(date, migrated_step, completed_steps)
 	}
 

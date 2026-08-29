@@ -33,8 +33,13 @@ tabitha_sources_db.run('PRAGMA journal_mode = WAL')
 
 migrate_source_texts(tabitha_sources_db, tbta_sources_from_input)
 
-const tbta_sample_db = new Database(await resolve_sample_db_path(date), { readwrite: true, create: false })
-migrate_source_features(tbta_sample_db, tabitha_sources_db)
+const sample_db_path = await resolve_sample_db_path(date)
+if (sample_db_path.includes(date)) {
+	const tbta_sample_db = new Database(sample_db_path, { readwrite: true, create: false })
+	migrate_source_features(tbta_sample_db, tabitha_sources_db)
+} else {
+	log.step(`Skipping Features migration -- Sample unchanged since ${basename(sample_db_path)}.`)
+}
 
 await migrate_source_status(tabitha_sources_db, join(import.meta.dir, '../../data/status'), date)
 

@@ -6,7 +6,7 @@ const log = create_logger('Targets migration')
 export function migrate_text_table(tbta_db: Database, project: string, targets_db: Database) {
 	const transformed_data = transform_tbta_data(tbta_db)
 
-	create_tabitha_table(targets_db)
+	create_tabitha_table(targets_db, project)
 
 	load_data(targets_db, project, transformed_data)
 }
@@ -104,7 +104,7 @@ function transform_tbta_data(tbta_db: Database): TransformedData[] {
 	}
 }
 
-function create_tabitha_table(targets_db: Database) {
+function create_tabitha_table(targets_db: Database, project: string) {
 	log.step(`Creating the "Text" table in ${targets_db.filename} if it does not already exist...`)
 
 	targets_db.run(`
@@ -118,6 +118,10 @@ function create_tabitha_table(targets_db: Database) {
 		)
 	`)
 
+	// Only this project's rows are being replaced this run -- other projects' rows (left untouched
+	// since their raw input didn't change) must survive when targets_db was copied forward from a
+	// prior run's output.
+	targets_db.run('DELETE FROM Text WHERE project = ?', [project])
 
 	return targets_db
 }
