@@ -68,6 +68,7 @@ bun run migrate:sources \
   databases/Bible_YYYY-MM-DD.tbta.sqlite \
   databases/CommunityDevelopmentTexts_YYYY-MM-DD.tbta.sqlite \
   databases/GrammarIntroduction_YYYY-MM-DD.tbta.sqlite \
+  databases/MissionsDocuments_YYYY-MM-DD.tbta.sqlite \
   databases/Sources_YYYY-MM-DD.tabitha.sqlite
 ```
 

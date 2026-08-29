@@ -9,7 +9,7 @@ import { create_logger } from '../log'
 
 const log = create_logger('Sources migration')
 
-// usage: `bun sources/migrate.ts raw/Bible_YYYY-MM-DD.tbta.sqlite [raw/CommunityDevelopmentTexts_YYYY-MM-DD.tbta.sqlite] [raw/GrammarIntroduction_YYYY-MM-DD.tbta.sqlite] raw/Sources_YYYY-MM-DD.tabitha.sqlite`
+// usage: `bun sources/migrate.ts raw/Bible_YYYY-MM-DD.tbta.sqlite [raw/CommunityDevelopmentTexts_YYYY-MM-DD.tbta.sqlite] [raw/GrammarIntroduction_YYYY-MM-DD.tbta.sqlite] [raw/MissionsDocuments_YYYY-MM-DD.tbta.sqlite] raw/Sources_YYYY-MM-DD.tabitha.sqlite`
 const args = Bun.argv.slice(2)
 if (args.length < 2) {
 	throw new Error('Usage: bun sources/migrate.ts <Bible_db_path> [Optional_source_db_paths...] <Sources_db_path>')
