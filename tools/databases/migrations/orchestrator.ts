@@ -237,7 +237,32 @@ async function stage_tbta_files(working_dir: string) {
 			.map(db_name => basename(db_name, '.sqlite')) // e.g., ~/Downloads/2025-09-25/Bible.sqlite => Bible
 			.filter(Boolean) // remove empty strings
 			.map(normalize_name)
-			.map(async ({ src, dest }) => await cp(src, dest))
+			.map(stage_one)
+	}
+
+	// Ontology and Sources_Complex are per-run generated artifacts tightly date-locked to this run's
+	// other outputs (see orchestrator's upfront gate checks below), not independently-versioned raw
+	// inputs -- so they're always staged fresh and excluded from the unchanged-content check.
+	const DEDUP_EXEMPT = new Set(['Ontology', 'Sources_Complex'])
+
+	async function stage_one({ name, src, dest }: { name: string; src: string; dest: string }) {
+		if (!DEDUP_EXEMPT.has(name)) {
+			const latest = latest_staged_file(name)
+			if (latest && await is_unresolved_lfs_pointer(latest)) {
+				log.warn(`${basename(latest)} is an unresolved git-lfs pointer (run "git lfs pull" in tools/databases) -- skipping the unchanged-content check for ${name} and staging a fresh copy.`)
+			} else if (latest && await content_hash(src) === await content_hash(latest)) {
+				log.step(`Skipping stage of ${name}: unchanged since ${basename(latest)}.`)
+				return
+			}
+		}
+
+		await cp(src, dest)
+	}
+
+	function latest_staged_file(name: string): string | undefined {
+		const files = Array.from(new Glob(`raw/${name}_*.tbta.sqlite`).scanSync('.'))
+		files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
+		return files.pop()
 	}
 
 	function normalize_name(name: string) {
@@ -251,7 +276,7 @@ async function stage_tbta_files(working_dir: string) {
 			dest = `./raw/Sources_Complex_${date}.tabitha.sqlite`
 		}
 
-		return { src, dest }
+		return { name, src, dest }
 
 		function derive_ontology_name() {
 			const ontology = new Database(src, { readwrite: true, create: false })
@@ -269,6 +294,21 @@ async function stage_tbta_files(working_dir: string) {
 			return `./raw/Ontology_${minor_version}_${date}.tabitha.sqlite`
 		}
 	}
+}
+
+async function content_hash(path: string): Promise<string> {
+	const hasher = new Bun.CryptoHasher('sha256')
+	for await (const chunk of Bun.file(path).stream()) {
+		hasher.update(chunk)
+	}
+	return hasher.digest('hex')
+}
+
+const LFS_POINTER_PREFIX = 'version https://git-lfs.github.com/spec/v1'
+
+async function is_unresolved_lfs_pointer(path: string): Promise<boolean> {
+	const head = await Bun.file(path).slice(0, LFS_POINTER_PREFIX.length).text()
+	return head === LFS_POINTER_PREFIX
 }
 
 async function stage_win_files(working_dir: string) {
