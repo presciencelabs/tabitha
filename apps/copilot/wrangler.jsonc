@@ -33,7 +33,7 @@
 	"preview_urls": true,
 	"routes": [
 		{
-			"pattern": "copilot-dev.tabitha.bible",
+			"pattern": "copilot.tabitha.bible",
 			"custom_domain": true
 		}
 	],
