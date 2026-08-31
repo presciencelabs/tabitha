@@ -102,7 +102,7 @@
 		</div>
 
 		<section class="mx-auto flex flex-col items-center">
-			<p class="prose text-lg">
+			<p class="prose text-lg max-w-[80ch]">
 				{back_translation}
 			</p>
 
