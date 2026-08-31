@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CheckResponse } from '@tabitha/types'
+	import BackTranslation from '$lib/BackTranslation.svelte'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
@@ -8,7 +9,11 @@
 
 	let entered_text = $state(save_state.value)
 	let checking = $state(false)
-	let check_response = $state<CheckResponse>({ status: 'ok', tokens: [], back_translation: '' })
+	let check_response = $state<CheckResponse>({
+		status: 'ok',
+		tokens: [],
+		back_translation: '',
+	})
 
 	async function check_text() {
 		checking = true
@@ -22,16 +27,21 @@
 
 	function clear() {
 		entered_text = ''
+		check_response = { status: 'ok', tokens: [], back_translation: '' }
 	}
 </script>
 
 <form class="grid justify-items-center">
 	<!-- svelte-ignore a11y_autofocus -->
-	<textarea bind:value={entered_text} rows="5" autofocus class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
+	<textarea
+		bind:value={entered_text}
+		rows="5"
+		autofocus
+		class="textarea textarea-bordered textarea-lg w-4/5"></textarea>
 
 	<div class="w-4/5 mt-8 grid grid-cols-3">
 		<div class="flex flex-row flex-wrap col-span-2">
-			<button onclick={ clear } class="btn btn-secondary">
+			<button onclick={clear} class="btn btn-secondary">
 				Clear
 
 				<Icon icon="mdi:clear-bold" class="h-6 w-6" />
@@ -45,7 +55,11 @@
 		</div>
 
 		<div class="justify-self-end">
-			<button onclick={ check_text } type="submit" disabled={checking} class="btn btn-primary">
+			<button
+				onclick={check_text}
+				type="submit"
+				disabled={checking}
+				class="btn btn-primary">
 				Check
 
 				<Icon icon="mdi:format-list-checks" class="h-6 w-6" />
@@ -56,7 +70,9 @@
 
 {#if checking}
 	<div class="divider my-12 divider-warning">
-		<Icon icon="line-md:loading-twotone-loop" class="h-16 w-16 text-warning" />
+		<Icon
+			icon="line-md:loading-twotone-loop"
+			class="h-16 w-16 text-warning" />
 	</div>
 {:else}
 	{@const { status, tokens, back_translation } = check_response}
@@ -81,21 +97,7 @@
 		<Tokens {tokens} />
 	</section>
 
-	{#if back_translation}
-		<div class="prose divider mb-12 mt-20 max-w-none">
-			<h2>English back translation</h2>
-		</div>
-
-		<section class="mx-auto flex flex-col">
-			<p class="prose text-lg">
-				{back_translation}
-			</p>
-
-			<CopyButton content={back_translation} classes="mt-8 gap-4 self-center">
-				Copy back translation
-			</CopyButton>
-		</section>
-	{/if}
+	<BackTranslation {back_translation} />
 {/if}
 
 <style lang="postcss">
