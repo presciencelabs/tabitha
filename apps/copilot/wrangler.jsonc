@@ -1,7 +1,7 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "tabitha-copilot",
-	"compatibility_date": "2026-08-15",
+	"name": "copilot",
+	"compatibility_date": "2026-08-31",
 	"compatibility_flags": [
 		"nodejs_als",
 		"nodejs_compat"
