@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { network_state } from '@tabitha/ui'
+	import BackTranslation from '$lib/BackTranslation.svelte'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
@@ -136,23 +137,7 @@
 			<Tokens tokens={result.check.tokens} />
 		</section>
 
-		{#if result.check.back_translation}
-			<div class="prose divider mb-12 mt-20 max-w-none">
-				<h2>English back translation</h2>
-			</div>
-
-			<section class="mx-auto flex flex-col items-center">
-				<p class="prose text-lg max-w-[80ch]">
-					{result.check.back_translation}
-				</p>
-
-				<CopyButton
-					content={result.check.back_translation}
-					classes="mt-8 gap-4 self-center">
-					Copy back translation
-				</CopyButton>
-			</section>
-		{/if}
+		<BackTranslation back_translation={result.check.back_translation} />
 	{/if}
 {/if}
 

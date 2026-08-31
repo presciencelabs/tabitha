@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CheckResponse } from '@tabitha/types'
+	import BackTranslation from '$lib/BackTranslation.svelte'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
@@ -96,23 +97,7 @@
 		<Tokens {tokens} />
 	</section>
 
-	{#if back_translation}
-		<div class="prose divider mb-12 mt-20 max-w-none">
-			<h2>English back translation</h2>
-		</div>
-
-		<section class="mx-auto flex flex-col items-center">
-			<p class="prose text-lg max-w-[80ch]">
-				{back_translation}
-			</p>
-
-			<CopyButton
-				content={back_translation}
-				classes="mt-8 gap-4 self-center">
-				Copy back translation
-			</CopyButton>
-		</section>
-	{/if}
+	<BackTranslation {back_translation} />
 {/if}
 
 <style lang="postcss">
