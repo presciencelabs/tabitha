@@ -1,6 +1,7 @@
 import { createInterface } from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
-import { spawn } from 'node:child_process'
+import { spawn, execFileSync } from 'node:child_process'
+import { platform } from 'node:os'
 
 type AppInfo = {
 	id: string
@@ -130,6 +131,26 @@ Active Endpoints:`)
 	child.on('exit', code => {
 		process.exit(code ?? 0)
 	})
+
+	// On Windows, `turbo` resolves through a .cmd shim that Node/Bun runs by implicitly wrapping in
+	// cmd.exe, which intercepts Ctrl+C itself (prompting "Terminate batch job (Y/N)?") instead of
+	// forwarding SIGINT to turbo's process tree -- so Ctrl+C appears to do nothing. Force-killing the
+	// whole tree via taskkill sidesteps that prompt. POSIX doesn't need this: the child shares the
+	// terminal's foreground process group, so Ctrl+C already reaches it directly.
+	if (platform() === 'win32') {
+		const kill_child_tree = () => {
+			if (child.pid) {
+				try {
+					execFileSync('taskkill', ['/pid', String(child.pid), '/t', '/f'])
+				} catch {
+					// Child may have already exited between the signal firing and taskkill running.
+				}
+			}
+			process.exit(0)
+		}
+		process.on('SIGINT', kill_child_tree)
+		process.on('SIGTERM', kill_child_tree)
+	}
 }
 
 async function run_custom_selection(rl: ReturnType<typeof createInterface>): Promise<string[]> {

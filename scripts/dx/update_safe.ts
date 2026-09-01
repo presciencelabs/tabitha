@@ -3,8 +3,8 @@ import { existsSync } from 'node:fs'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { sync_readme_badges } from '@tabitha/scripts/audits/check_readme_badges'
-import { scan_missing_bin_deps } from '@tabitha/scripts/audits/check_missing_bin_deps'
+import { sync_readme_badges } from '../audits/check_readme_badges'
+import { scan_missing_bin_deps } from '../audits/check_missing_bin_deps'
 
 const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
