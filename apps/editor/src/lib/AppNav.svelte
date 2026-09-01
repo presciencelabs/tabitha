@@ -2,17 +2,18 @@
 	import { page } from '$app/state'
 
 	const links = [
-		{ name: 'Check', href: '/' },
+		{ name: 'Home', href: '/' },
 		{ name: 'AI Assist', href: '/ai-assist' },
 	]
 </script>
 
-<nav>
-	<ul class="menu menu-horizontal gap-1 px-0">
+<nav aria-label="Editor sections">
+	<div class="tabs tabs-border">
 		{#each links as { name, href }}
-			<li>
-				<a {href} class="text-sm font-medium {page.url.pathname === href ? 'active font-bold' : ''}">{name}</a>
-			</li>
+			<a
+				{href}
+				class="tab {page.url.pathname === href ? 'tab-active' : ''}"
+				aria-current={page.url.pathname === href ? 'page' : undefined}>{name}</a>
 		{/each}
-	</ul>
+	</div>
 </nav>
