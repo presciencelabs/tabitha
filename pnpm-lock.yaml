@@ -144,6 +144,9 @@ importers:
       '@tabitha/cors':
         specifier: workspace:*
         version: link:../../packages/cors
+      '@tabitha/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@tabitha/types':
         specifier: workspace:*
         version: link:../../packages/types
