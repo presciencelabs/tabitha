@@ -30,6 +30,7 @@
     "@tabitha/ai": "workspace:*",
     "@tabitha/api-client": "workspace:*",
     "@tabitha/cors": "workspace:*",
+    "@tabitha/rate-limit": "workspace:*",
     "@tabitha/types": "workspace:*",
     "@tabitha/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.20",
