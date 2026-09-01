@@ -58,6 +58,7 @@ jobs:
       badges: ${{ steps.check_badges.outcome }}
       philosophy_docs: ${{ steps.check_philosophy_docs.outcome }}
       md: ${{ steps.check_md.outcome }}
+      a11y_names: ${{ steps.check_a11y_names.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -98,6 +99,11 @@ jobs:
       - name: Markdown Specification Lint
         id: check_md
         run: pnpm check:md
+        continue-on-error: true
+
+      - name: Accessible-Name Collision Audit
+        id: check_a11y_names
+        run: pnpm check:a11y-names
         continue-on-error: true
 
       - name: Undeclared CLI Dependency Audit (changed packages, Blocking)
@@ -348,6 +354,7 @@ jobs:
               ['README Badge & Version Sync', needs.security_compliance.outputs.badges],
               ['Philosophy Count Doc Sync', needs.security_compliance.outputs.philosophy_docs],
               ['Markdown Lint', needs.security_compliance.outputs.md],
+              ['Accessible-Name Collision Audit', needs.security_compliance.outputs.a11y_names],
               ['Typecheck & Svelte Diagnostics', needs.typecheck.outputs.typecheck],
               ['ESLint', needs.eslint.outputs.eslint],
               ['Unit Test Coverage', needs.unit_tests.outputs.coverage],

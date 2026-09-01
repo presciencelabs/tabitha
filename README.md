@@ -195,6 +195,9 @@ pnpm check:cloudflare
 # Audit client storage hygiene and cookie security
 pnpm check:storage
 
+# Audit for accessible-name collisions between persistent nav/chrome and page content
+pnpm check:a11y-names
+
 # Run Markdown linting across all documentation
 pnpm check:md
 
