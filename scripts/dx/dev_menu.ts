@@ -123,21 +123,17 @@ Active Endpoints:`)
 	const filter_args = selected_apps.flatMap(app => ['--filter', app.pkg])
 	const args = ['run', 'dev', ...filter_args]
 
-	const child = spawn('turbo', args, {
-		stdio: 'inherit',
-		env: process.env,
-	})
-
-	child.on('exit', code => {
-		process.exit(code ?? 0)
-	})
-
 	// On Windows, `turbo` resolves through a .cmd shim that Node/Bun runs by implicitly wrapping in
 	// cmd.exe, which intercepts Ctrl+C itself (prompting "Terminate batch job (Y/N)?") instead of
 	// forwarding SIGINT to turbo's process tree -- so Ctrl+C appears to do nothing. Force-killing the
 	// whole tree via taskkill sidesteps that prompt. POSIX doesn't need this: the child shares the
 	// terminal's foreground process group, so Ctrl+C already reaches it directly.
 	if (platform() === 'win32') {
+		const child = spawn('turbo', args, {
+			stdio: ['ignore', 'inherit', 'inherit'],
+			env: process.env,
+		})
+
 		const kill_child_tree = () => {
 			if (child.pid) {
 				try {
@@ -150,6 +146,16 @@ Active Endpoints:`)
 		}
 		process.on('SIGINT', kill_child_tree)
 		process.on('SIGTERM', kill_child_tree)
+
+	} else {
+		const child = spawn('turbo', args, {
+			stdio: 'inherit',
+			env: process.env,
+		})
+
+		child.on('exit', code => {
+			process.exit(code ?? 0)
+		})
 	}
 }
 
