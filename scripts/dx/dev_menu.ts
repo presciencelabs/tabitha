@@ -60,7 +60,7 @@ async function run_custom_selection(rl: ReturnType<typeof createInterface>): Pro
 
 	console.log(`
 Available Apps:
-  ${app_items.join('\n')}
+${app_items.join('\n')}
 
 Enter numbers separated by commas (e.g. 1,4 or 2,3,4):`)
 
