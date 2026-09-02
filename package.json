@@ -6,7 +6,7 @@
   "type": "module",
   "packageManager": "pnpm@11.20.0",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "bun scripts/dx/dev_multi.ts",
     "dev:menu": "bun scripts/dx/dev_menu.ts",
     "dev:copilot": "pnpm --filter @tabitha/copilot dev",
     "dev:editor": "pnpm --filter @tabitha/editor dev",
