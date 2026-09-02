@@ -70,7 +70,7 @@ describe('analyzer', () => {
 				features: [],
 				concept: { stem: 'Paul', sense: 'A', part_of_speech: 'Noun' },
 				pairing_concept: null,
-				pairing_type: 'none' as PairingType,
+				pairing_type: null,
 				noun_list_index: '1',
 			}
 			const entity2 = {
@@ -79,7 +79,7 @@ describe('analyzer', () => {
 				features: [],
 				concept: { stem: 'letter', sense: 'A', part_of_speech: 'Noun' },
 				pairing_concept: null,
-				pairing_type: 'none' as PairingType,
+				pairing_type: null,
 				noun_list_index: '2',
 			}
 

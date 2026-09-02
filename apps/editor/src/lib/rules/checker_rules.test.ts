@@ -7,7 +7,7 @@ import { expect_error, expect_message_to_match, expect_no_message } from '$lib/t
 import type { OntologyStatus, PairingType, Tag } from '@tabitha/types'
 import type { Sentence, Token, LookupResult } from '$lib/types'
 
-function create_pairing_token(left: Token, right: Token, pairing_type: PairingType = 'complex'): Token {
+function create_pairing_token(left: Token, right: Token, pairing_type: PairingType = 'simple-complex'): Token {
 	left.pairing = right
 	left.pairing_type = pairing_type
 	return left
@@ -90,17 +90,17 @@ describe('built-in checker rules', () => {
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 0 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
-					'complex',
+					'simple-complex',
 				),
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 3 })] }),
-					'complex',
+					'simple-complex',
 				),
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
-					'literal',
+					'dynamic-literal',
 				),
 			])]
 	
@@ -133,7 +133,7 @@ describe('built-in checker rules', () => {
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 1 })] }),
-					'literal',
+					'dynamic-literal',
 				),
 			])]
 	
@@ -159,7 +159,7 @@ describe('built-in checker rules', () => {
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 1 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
-					'literal',
+					'dynamic-literal',
 				),
 			])]
 	
@@ -185,7 +185,7 @@ describe('built-in checker rules', () => {
 				create_pairing_token(
 					create_lookup_token('first', { lookup_results: [lookup_result('first', { level: 3 })] }),
 					create_lookup_token('second', { lookup_results: [lookup_result('second', { level: 2 })] }),
-					'literal',
+					'dynamic-literal',
 				),
 			])]
 	

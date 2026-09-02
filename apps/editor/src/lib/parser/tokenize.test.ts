@@ -356,30 +356,30 @@ describe('tokenize_input', () => {
 		const INPUT = "simple/complex simple's/complex's simples'/complexs' simples'-A/complexs' simple-A/complex-B. [simple/complex]"
 
 		const EXPECTED_OUTPUT = [
-			create_pairing(create_word_token('simple'), create_word_token('complex'), 'complex'),
+			create_pairing(create_word_token('simple'), create_word_token('complex'), 'simple-complex'),
 			create_pairing(
 				create_word_token("simple's", { lookup_term: 'simple' }),
 				create_word_token("complex's", { lookup_term: 'complex' }),
-				'complex',
+				'simple-complex',
 			),
 			create_pairing(
 				create_word_token("simples'", { lookup_term: 'simples' }),
 				create_word_token("complexs'", { lookup_term: 'complexs' }),
-				'complex',
+				'simple-complex',
 			),
 			create_pairing(
 				create_word_token("simples'-A", { lookup_term: 'simples', sense: 'A' }),
 				create_word_token("complexs'", { lookup_term: 'complexs' }),
-				'complex',
+				'simple-complex',
 			),
 			create_pairing(
 				create_word_token('simple-A', { lookup_term: 'simple', sense: 'A' }),
 				create_word_token('complex-B', { lookup_term: 'complex', sense: 'B' }),
-				'complex',
+				'simple-complex',
 			),
 			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
-			create_pairing(create_word_token('simple'), create_word_token('complex'), 'complex'),
+			create_pairing(create_word_token('simple'), create_word_token('complex'), 'simple-complex'),
 			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
@@ -407,30 +407,30 @@ describe('tokenize_input', () => {
 		const INPUT = "dynamic|literal dynamic's|literal's dynamics'|literals' dynamics'-A|literals' dynamic-A|literal-B. [dynamic|literal]"
 
 		const EXPECTED_OUTPUT = [
-			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'literal'),
+			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'dynamic-literal'),
 			create_pairing(
 				create_word_token("dynamic's", { lookup_term: 'dynamic' }),
 				create_word_token("literal's", { lookup_term: 'literal' }),
-				'literal',
+				'dynamic-literal',
 			),
 			create_pairing(
 				create_word_token("dynamics'", { lookup_term: 'dynamics' }),
 				create_word_token("literals'", { lookup_term: 'literals' }),
-				'literal',
+				'dynamic-literal',
 			),
 			create_pairing(
 				create_word_token("dynamics'-A", { lookup_term: 'dynamics', sense: 'A' }),
 				create_word_token("literals'", { lookup_term: 'literals' }),
-				'literal',
+				'dynamic-literal',
 			),
 			create_pairing(
 				create_word_token('dynamic-A', { lookup_term: 'dynamic', sense: 'A' }),
 				create_word_token('literal-B', { lookup_term: 'literal', sense: 'B' }),
-				'literal',
+				'dynamic-literal',
 			),
 			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
-			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'literal'),
+			create_pairing(create_word_token('dynamic'), create_word_token('literal'), 'dynamic-literal'),
 			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 

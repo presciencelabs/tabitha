@@ -676,7 +676,7 @@ const builtin_checker_rules: BuiltInRule[] = [
 								messages.push({ token_to_flag: token, error: ERRORS.WORD_LEVEL_TOO_HIGH })
 							}
 							// A literal pairing has the same restrictions as a normal word
-							if (token.pairing && token.pairing_type === 'literal' && complex_word_filter(token.pairing)) {
+							if (token.pairing && token.pairing_type === 'dynamic-literal' && complex_word_filter(token.pairing)) {
 								messages.push({ token_to_flag: token.pairing, error: ERRORS.WORD_LEVEL_TOO_HIGH })
 							}
 						}
@@ -693,11 +693,11 @@ const builtin_checker_rules: BuiltInRule[] = [
 		name: 'Check word complexity level of complex pairings',
 		comment: '',
 		rule: {
-			trigger: token => token.pairing_type === 'complex',
+			trigger: token => token.pairing_type === 'simple-complex',
 			context: create_context_filter({}),
 			action: message_set_action(function* ({ trigger_token: token }) {
-				// a complex pairing word should never be level 0 or 1
-				if (token.pairing && check_token_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.pairing)) {
+				// a complex pairing word should always be level 2 or 3
+				if (token.pairing && !check_token_level(LOOKUP_FILTERS.IS_LEVEL_COMPLEX)(token.pairing)) {
 					yield { token_to_flag: token.pairing, error: ERRORS.WORD_LEVEL_TOO_LOW }
 				}
 			}),
@@ -717,14 +717,14 @@ const builtin_checker_rules: BuiltInRule[] = [
 					yield { warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 				// A literal pairing has the same restrictions as normal words
-				if (token.pairing && token.pairing_type === 'literal'
+				if (token.pairing && token.pairing_type === 'dynamic-literal'
 						&& (check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(2))(token.pairing) || check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL(3))(token.pairing))) {
 					yield { token_to_flag: token.pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 
 				// Alert if the first result is simple and there are also complex results (see 'son')
 				// If the first result is already complex, that will be selected by default and thus not ambiguous
-				if (token.pairing && token.pairing_type === 'complex' && check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.pairing)) {
+				if (token.pairing && token.pairing_type === 'simple-complex' && check_ambiguous_level(LOOKUP_FILTERS.IS_LEVEL_SIMPLE)(token.pairing)) {
 					yield { token_to_flag: token.pairing, warning: ERRORS.AMBIGUOUS_LEVEL }
 				}
 			}),

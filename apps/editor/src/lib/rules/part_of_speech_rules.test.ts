@@ -7,7 +7,7 @@ import { expect_error } from '$lib/test_helps'
 import type { OntologyStatus, PairingType, Tag } from '@tabitha/types'
 import type { Sentence, Token, LookupResult } from '$lib/types'
 
-function create_pairing_token(left: Token, right: Token, pairing_type: PairingType = 'complex'): Token {
+function create_pairing_token(left: Token, right: Token, pairing_type: PairingType = 'simple-complex'): Token {
 	left.pairing = right
 	left.pairing_type = pairing_type
 	return left

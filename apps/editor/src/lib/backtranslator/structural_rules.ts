@@ -422,7 +422,7 @@ const structural_rules_json: BuiltInRule[] = [
 				function has_literal_pairing(clause_tokens: Token[]): boolean {
 					for (let i = 0; i < clause_tokens.length; i++) {
 						const token = clause_tokens[i]
-						if (token.pairing_type === 'literal') {
+						if (token.pairing_type === 'dynamic-literal') {
 							return true
 						}
 						if (token.sub_tokens.length > 0) {
@@ -436,7 +436,7 @@ const structural_rules_json: BuiltInRule[] = [
 					const new_tokens = [...clause_tokens]
 					for (let i = 0; i < new_tokens.length; i++) {
 						const token = new_tokens[i]
-						if (token.pairing && token.pairing_type === 'literal') {
+						if (token.pairing && token.pairing_type === 'dynamic-literal') {
 							// switch the pairing around
 							const literal_token = { ...token.pairing }
 							literal_token.pairing = { ...token, pairing: null }

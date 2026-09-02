@@ -17,7 +17,7 @@ export type Token = TokenBase & {
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
 	pairing: Token | null
-	pairing_type: PairingType
+	pairing_type: PairingType | null
 	pronoun: Token | null
 	sub_tokens: Token[]
 }

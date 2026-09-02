@@ -35,20 +35,16 @@ export type SourceFeatures = {
 export type SourceConceptData = {
 	concept: SourceConcept | null
 	pairing_concept: SourceConcept | null
-	pairing_type: string
+	pairing_type: PairingType | null
 }
+
+export type PairingType = 'simple-complex' | 'dynamic-literal' | 'metric-biblical'
 
 export type SourceEntity = {
 	category: CategoryName
 	category_abbr: string
 	value: string
-	feature_codes: string
-	features: EntityFeature[]
-	concept: SourceConcept | null
-	pairing_concept: SourceConcept | null
-	pairing_type?: string
-	noun_list_index: string | null
-}
+} & SourceConceptData & SourceFeatures
 
 export type TargetEntity = {
 	category: CategoryName
@@ -60,19 +56,14 @@ export type TargetEntity = {
 
 // Combination of SourceEntity and TargetEntity used in Sources encoding pipeline
 export type EncodingEntity = {
-	category: string
+	category: CategoryName
 	category_abbr: string
 	value: string
-	concept: SourceConcept | null
-	pairing_concept?: SourceConcept | null
 	target?: string
-	feature_codes: string
-	features: EntityFeature[]
-	noun_list_index: string | null
-}
+} & SourceConceptData & SourceFeatures
 
 export type SimpleEncodingEntity = {
-	category: string
+	category: CategoryName
 	concept?: string
 	pairing_concept?: string
 	target?: string

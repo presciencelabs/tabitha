@@ -2,7 +2,8 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } from './lookups'
 import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
 import { structure_entities } from './structured'
-import type { CategoryName, NounListEntry, SourceConceptData, SourceEntity, TargetEntity } from '@tabitha/types'
+import type { CategoryName, NounListEntry, SourceConceptData, SourceEntity, TargetEntity, PairingType } from '@tabitha/types'
+import { IS_CARDINAL_NUMBER } from '@tabitha/types'
 import type { PageSourceEntity, Source } from '$lib/types'
 
 /**
@@ -103,24 +104,39 @@ export async function transform_target_encoding({ db, semantic_encoding, project
 
 type ConceptPairingMatch = {
 	stem: string
-	pairing_type: string
+	pairing_type: PairingType
 	pairing_sense: string
 	pairing_stem: string
 }
 
 function parse_concept_pairing(value: string): ConceptPairingMatch | null {
 	// follower/Adisciple -> follower / disciple-A
-	const EXTRACT_PAIRING = /^(.+?)([\\/])([A-Z])(.+)$/
+	const EXTRACT_PAIRING = /^(.+?)([\\/|])([A-Z])(.+)$/
 	const match = value.match(EXTRACT_PAIRING)
 	if (!match) return null
 
-	const [, stem, pairing_type, pairing_sense, pairing_stem] = match
+	const [, stem, separator, pairing_sense, pairing_stem] = match
+
+	const pairing_type = determine_pairing_type({ separator, pairing_stem, pairing_sense })
 	return { stem, pairing_type, pairing_sense, pairing_stem }
+}
+
+// the biblical unit pairing uses the same separator as simple-complex, so this is currently the only way to determine metric-biblical
+const BIBLICAL_UNITS = ['bath-A', 'beka-A', 'cor-A', 'cubit-A', 'drachma-A', 'ephah-A', 'log-A', 'mina-A', 'shekel-A', 'span-A', 'stadion-A', 'talent-A' ]
+
+function determine_pairing_type({ separator, pairing_stem, pairing_sense }: { separator: string, pairing_stem: string, pairing_sense: string }): PairingType {
+	if (separator === '\\' || separator === '|') {
+		return 'dynamic-literal'
+	} else if (BIBLICAL_UNITS.includes(`${pairing_stem}-${pairing_sense}`) || IS_CARDINAL_NUMBER.test(pairing_stem)) {
+		return 'metric-biblical'
+	} else {
+		return 'simple-complex'
+	}
 }
 
 function decode_concept_data({ value, category, raw_feature_codes }: { value: string, category: CategoryName, raw_feature_codes: string }): SourceConceptData {
 	if (!WORD_ENTITY_CATEGORIES.has(category)) {
-		return { concept: null, pairing_concept: null, pairing_type: '' }
+		return { concept: null, pairing_concept: null, pairing_type: null }
 	}
 
 	const sense = raw_feature_codes[1]
@@ -149,13 +165,14 @@ function decode_concept_data({ value, category, raw_feature_codes }: { value: st
 			part_of_speech: category,
 		},
 		pairing_concept: null,
-		pairing_type: '',
+		pairing_type: null,
 	}
 }
 
 export function encode_concept_data(entity: SourceEntity): { value: string } {
 	// Encode the concept entity data back into the TBTA-compatible format for storage and generation
 	if (entity.concept && entity.pairing_concept) {
+		const separator = entity.pairing_type === 'dynamic-literal' ? '\\' : '/'
 		return { value: `${entity.concept.stem}${entity.pairing_type}${entity.pairing_concept.sense}${entity.pairing_concept.stem}` }
 	} else if (entity.concept) {
 		return { value: entity.concept.stem }

@@ -9,7 +9,7 @@ const defaults: PageSourceEntity = {
 	noun_list_index: null,
 	concept: null,
 	pairing_concept: null,
-	pairing_type: '',
+	pairing_type: null,
 	id: -1,
 	parent_id: -1,
 	boundary_category: '',

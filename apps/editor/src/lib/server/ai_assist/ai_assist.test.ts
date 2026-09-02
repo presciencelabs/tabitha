@@ -26,7 +26,7 @@ function error_check(token: string): CheckResponse {
 			applied_rules: [],
 			lookup_results: [],
 			pairing: null,
-			pairing_type: 'none',
+			pairing_type: null,
 			pronoun: null,
 			sub_tokens: [],
 		}],
