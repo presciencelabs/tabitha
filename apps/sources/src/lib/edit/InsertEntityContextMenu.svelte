@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { FeatureMap } from '@tabitha/types'
 	import type { EntityContextMenuData } from '$lib/edit/types'
-	import type { PageSourceEntity } from '$lib/types'
+	import type { FeatureMap, PageSourceEntity } from '$lib/types'
 	import ConceptDialog from '$lib/ConceptDialog.svelte'
 	import { entity_clipboard } from './clipboard.svelte'
 	import { DEFAULTS } from './default_entities'

@@ -11,9 +11,12 @@ function entity(overrides: Partial<EncodingEntity> & { category: string, value: 
 		category_abbr: '',
 		feature_codes: '',
 		features: [],
-		concept: null,
 		noun_list_index: null,
 		...overrides,
+		// Partial<> makes the types of these also include 'undefined', which is incompatible
+		concept: overrides.concept ?? null,
+		pairing_concept: overrides.pairing_concept ?? null,
+		pairing_type: overrides.pairing_type ?? null,
 	}
 }
 

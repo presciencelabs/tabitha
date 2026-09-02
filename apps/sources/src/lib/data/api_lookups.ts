@@ -9,8 +9,10 @@ export function create_fallback_ontology_data(concept: SourceConcept): OntologyR
 		...concept,
 		level: '',
 		gloss: '',
+		categorization: '',
 		categories: [],
 		status: 'in ontology',
+		how_to_hints: [],
 	}
 }
 

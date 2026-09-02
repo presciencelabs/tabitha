@@ -50,8 +50,11 @@ export type EncodingEntity = {
 	category: CategoryName
 	category_abbr: string
 	value: string
+	concept: SourceConcept | null
+	pairing_concept?: SourceConcept | null
+	pairing_type?: PairingType | null
 	target?: string
-} & SourceConceptData & SourceFeatures
+} & SourceFeatures
 
 export type SimpleEncodingEntity = {
 	category: CategoryName

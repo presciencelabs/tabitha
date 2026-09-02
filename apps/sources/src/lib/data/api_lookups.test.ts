@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetch_concept_ontology_data } from './api_lookups'
+import type { OntologyResult } from '@tabitha/types'
 
 describe('fetch_concept_ontology_data', () => {
 	beforeEach(() => {
@@ -21,9 +22,11 @@ describe('fetch_concept_ontology_data', () => {
 				part_of_speech: 'Noun' as const,
 				level: '1',
 				gloss: 'Supreme Being',
+				categorization: '',
 				categories: ['Noun'],
 				status: 'in ontology',
-			},
+				how_to_hints: [],
+			} as OntologyResult,
 		}
 
 		const result = await fetch_concept_ontology_data(cachedConcept)
