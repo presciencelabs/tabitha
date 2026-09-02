@@ -193,6 +193,9 @@ bun run check:cloudflare
 # Audit client storage hygiene and cookie security
 bun run check:storage
 
+# Audit for accessible-name collisions between persistent nav/chrome and page content
+bun run check:a11y-names
+
 # Run Markdown linting across all documentation
 bun run check:md
 
