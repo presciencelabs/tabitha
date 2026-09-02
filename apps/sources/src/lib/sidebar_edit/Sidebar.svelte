@@ -8,6 +8,7 @@
 	import AllSenseDetails from '$lib/sidebar_edit/AllSenseDetails.svelte'
 	import FeaturesDetails from '$lib/sidebar_edit/FeaturesDetails.svelte'
 	import NounListDetails from '$lib/sidebar_edit/NounListDetails.svelte'
+	import PairingDetails from './PairingDetails.svelte'
 
 	type Props = {
 		entity: PageSourceEntity|null
@@ -15,6 +16,10 @@
 		noun_list: NounListEntry[]
 	}
 	let { entity = $bindable(), onclose, noun_list = $bindable() }: Props = $props()
+
+	function can_have_pairing(entity: PageSourceEntity) {
+		return ['Noun', 'Verb', 'Adjective', 'Adverb'].includes(entity.concept?.part_of_speech ?? '')
+	}
 </script>
 
 <svelte:window onkeydown={e => e.key === 'Escape' && onclose()} />
@@ -41,23 +46,21 @@
 							<ConceptDetails bind:data={entity!.concept!} />
 						{/snippet}
 					</SidebarDetail>
-					<SidebarDetail summary_title="All Senses">
-						{#snippet details_content()}
-							<AllSenseDetails bind:data={entity!.concept!} />
-						{/snippet}
-					</SidebarDetail>
+					<AllSenseDetails bind:data={entity.concept!} title="All Senses" />
 				{/if}
 
 				<!--Ontology Details for Pairing (if present)-->
 				{#if entity.pairing_concept}
-					<SidebarDetail summary_title="Concept Details - Pairing">
+					<SidebarDetail summary_title="Pairing Details">
 						{#snippet details_content()}
-							<ConceptDetails bind:data={entity!.pairing_concept!} />
+							<PairingDetails bind:data={entity!} />
 						{/snippet}
 					</SidebarDetail>
-					<SidebarDetail summary_title="All Senses - Pairing">
+					<AllSenseDetails bind:data={entity.pairing_concept!} title="Pairing - All Senses" />
+				{:else if can_have_pairing(entity)}
+					<SidebarDetail summary_title="Add Pairing">
 						{#snippet details_content()}
-							<AllSenseDetails bind:data={entity!.pairing_concept!} />
+							<PairingDetails bind:data={entity!} />
 						{/snippet}
 					</SidebarDetail>
 				{/if}
