@@ -90,13 +90,7 @@ Active Endpoints:`)
 		console.log(`  • ${app.name.padEnd(10)} http://localhost:${app.port} (${app.desc})`)
 	}
 	console.log('============================================================\n')
-	if (is_win) {
-		// Using Ctrl+C on windows causes "Terminate batch job (Y/N)?" to show up for all processes
-		// so avoid that by encouraging the use of q+Enter instead
-		console.log('Press q+Enter to exit (or Ctrl+C twice)\n')
-	} else {
-		console.log('Press Ctrl+C or q+Enter to exit\n')
-	}
+	console.log('Press q+Enter to exit\n')
 
 	const app_processes = new Map<string, ReturnType<typeof spawn>>()
 	let terminating = false
