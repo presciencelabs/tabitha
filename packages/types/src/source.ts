@@ -1,4 +1,5 @@
 import type { SourceStatus } from './reference'
+import type { OntologyResult } from './ontology'
 
 export type CategoryName = string
 export type FeatureName = string
@@ -7,16 +8,6 @@ export type FeatureValue = string
 export type EntityFeature = {
 	name: FeatureName
 	value: FeatureValue
-}
-
-export type OntologyResult = {
-	stem: string
-	sense: string
-	part_of_speech: string
-	level: string
-	gloss: string
-	categories: string[]
-	status: string
 }
 
 export type SourceConcept = {
@@ -88,7 +79,7 @@ export type SourceData = {
 	notes: string
 }
 
-export type DbFeature = {
+export type ApiFeature = {
 	category: CategoryName
 	position: number
 	code: string
@@ -96,18 +87,3 @@ export type DbFeature = {
 	value: FeatureValue
 	example?: string
 }
-
-export type ApiFeature = DbFeature
-
-export type FeatureValueInfo = {
-	value: FeatureValue
-	code: string
-	example?: string
-}
-
-export type FeatureInfo = {
-	name: FeatureName
-	values: FeatureValueInfo[]
-}
-
-export type FeatureMap = Map<CategoryName, FeatureInfo[]>

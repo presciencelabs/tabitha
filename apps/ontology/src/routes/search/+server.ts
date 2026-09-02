@@ -2,6 +2,7 @@ import { cached_json } from '@tabitha/api-client'
 import { get_concepts } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
 import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
+import type { HowToEntry, OntologyResult } from '@tabitha/types'
 
 export async function GET({ url: { searchParams }, locals: { db_ontology } }: Parameters<RequestHandler>[0]) {
 	const search_filter: ConceptSearchFilter = {
@@ -17,7 +18,7 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }: Pa
 
 	return cached_json({ data: lite_matches })
 
-	function make_lite(concept: Concept) {
+	function make_lite(concept: Concept): OntologyResult {
 		const { id, stem, sense, part_of_speech, level, gloss, categorization, categories, status, how_to_hints } = concept
 
 		return {
@@ -34,7 +35,7 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }: Pa
 		}
 	}
 
-	function make_lite_hints(hint: SimplificationHint) {
+	function make_lite_hints(hint: SimplificationHint): HowToEntry {
 		const { structure, pairing, explication } = hint
 		return { structure, pairing, explication }
 	}

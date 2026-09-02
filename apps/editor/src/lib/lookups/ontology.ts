@@ -3,7 +3,7 @@ import { create_ontology_client } from '@tabitha/api-client'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/token'
 import type { Token, LookupResult } from '$lib/types'
-import type { OntologyResult } from '$lib/lookups/types'
+import type { OntologyResult } from '@tabitha/types'
 
 const ontology_client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
