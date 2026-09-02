@@ -142,7 +142,7 @@ async function sync_ci_bun_version() {
 async function regenerate_worker_and_framework_types() {
 	console.log('🔄 Regenerating SvelteKit & Cloudflare Worker type artifacts...')
 	try {
-		await $`pnpm --filter @tabitha/ontology exec wrangler types ./worker-configuration.d.ts`.quiet()
+		await $`cd apps/ontology && bunx wrangler types ./worker-configuration.d.ts`.quiet()
 		console.log('   ✓ Regenerated Cloudflare Worker types for ontology.\n')
 	} catch (err) {
 		console.warn('   ⚠️  Could not regenerate wrangler types:', err instanceof Error ? err.message : err)
@@ -161,11 +161,9 @@ async function run_safe_update() {
 	try {
 		const node_ver = (await $`node -v`.text()).trim()
 		const bun_ver = (await $`bun --version`.text()).trim()
-		const pnpm_ver = (await $`pnpm --version`.text()).trim()
 
 		console.log(`   • Node.js:  ${node_ver}`)
-		console.log(`   • Bun:      v${bun_ver}`)
-		console.log(`   • pnpm:     v${pnpm_ver}\n`)
+		console.log(`   • Bun:      v${bun_ver}\n`)
 	} catch (err) {
 		console.warn('   ⚠️  Could not determine toolchain versions:', err instanceof Error ? err.message : err)
 	}
@@ -183,7 +181,7 @@ async function run_safe_update() {
 	// 5. Non-Breaking SemVer Dependency Update
 	console.log('📦 Updating workspace dependencies within declared SemVer ranges (non-breaking)...')
 	try {
-		await $`pnpm update --recursive`
+		await $`bun update --recursive`
 		console.log('✅ Workspace dependencies safely updated!\n')
 	} catch (err) {
 		console.error('❌ Dependency update encountered an error:', err instanceof Error ? err.message : err)
@@ -191,16 +189,16 @@ async function run_safe_update() {
 	}
 
 	// 6. Cross-Workspace Dependency Version Consistency
-	// `pnpm update --recursive` above updates each workspace package independently within its
+	// `bun update --recursive` above updates each workspace package independently within its
 	// own declared semver range, so two packages can silently drift onto different majors of
 	// the same dependency (each staying "up to date" by its own range) with nothing to catch
 	// it. Syncpack checks that every workspace agrees on one version per dependency.
 	console.log('🔗 Checking cross-workspace dependency version consistency (syncpack)...')
 	try {
-		await $`pnpm exec syncpack lint`
+		await $`bunx syncpack lint`
 		console.log('   ✓ All workspace packages agree on dependency versions.\n')
 	} catch {
-		console.warn('   ⚠️  Found cross-workspace version drift -- run "pnpm deps:fix" to align it.\n')
+		console.warn('   ⚠️  Found cross-workspace version drift -- run "bun run deps:fix" to align it.\n')
 	}
 
 	// 7. daisyUI Skill Version Drift Check
@@ -238,7 +236,7 @@ async function run_safe_update() {
 		if (findings.length === 0) {
 			console.log(`   ✓ All ${scanned.length} workspace package(s) declare every CLI they shell out to.\n`)
 		} else {
-			console.warn(`   ⚠️  Found ${findings.length} undeclared CLI dependenc(y/ies) -- run "pnpm check:deps -- --all" for details.\n`)
+			console.warn(`   ⚠️  Found ${findings.length} undeclared CLI dependenc(y/ies) -- run "bun run check:deps -- --all" for details.\n`)
 		}
 	} catch (err) {
 		console.warn('   ⚠️  Could not complete the undeclared CLI dependency sweep:', err instanceof Error ? err.message : err)
@@ -247,27 +245,27 @@ async function run_safe_update() {
 	// 11. Automated Post-Update Health Verification Gate
 	console.log('🧪 Running post-update verification gate...')
 
-	console.log('   1/4 Running workspace static analysis & typecheck (pnpm check)...')
+	console.log('   1/4 Running workspace static analysis & typecheck (bun run check)...')
 	try {
-		await $`pnpm check`
+		await $`bun run check`
 		console.log('   ✓ Static analysis & typecheck passed cleanly!')
 	} catch (err) {
 		console.error('❌ Post-update check failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 
-	console.log('   2/4 Running unit test suites (pnpm test:unit)...')
+	console.log('   2/4 Running unit test suites (bun run test:unit)...')
 	try {
-		await $`pnpm test:unit`
+		await $`bun run test:unit`
 		console.log('   ✓ All unit test suites passed!')
 	} catch (err) {
 		console.error('❌ Post-update unit tests failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
 	}
 
-	console.log('   3/4 Verifying production Cloudflare Worker bundles (pnpm build)...')
+	console.log('   3/4 Verifying production Cloudflare Worker bundles (bun run build)...')
 	try {
-		await $`pnpm build`
+		await $`bun run build`
 		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully!')
 	} catch (err) {
 		console.error('❌ Post-update production build failed:', err instanceof Error ? err.message : err)
@@ -277,9 +275,9 @@ async function run_safe_update() {
 	// Runs after (not alongside) the check above: build and build:ci both write to the same
 	// per-app .svelte-kit/output, dist/, and build/ directories (see turbo.json), so running
 	// them concurrently would race on the same files instead of actually saving time.
-	console.log('   4/4 Verifying CI production build path (pnpm build:ci, Bun runtime)...')
+	console.log('   4/4 Verifying CI production build path (bun run build:ci, Bun runtime)...')
 	try {
-		await $`pnpm build:ci`
+		await $`bun run build:ci`
 		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully via the CI (Bun) path!')
 	} catch (err) {
 		console.error('❌ Post-update CI build path failed:', err instanceof Error ? err.message : err)
@@ -294,7 +292,7 @@ All dependencies have been safely advanced within their
 SemVer minor/patch boundaries, and all tests and builds passed.
 
 To commit the updates:
-  git add pnpm-lock.yaml package.json apps/ packages/ tools/
+  git add bun.lock package.json apps/ packages/ tools/
   git commit -m "chore(deps): safe dependency update"
 ============================================================
 `)

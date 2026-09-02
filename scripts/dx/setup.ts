@@ -57,7 +57,7 @@ async function setup_workspace() {
 	// 5. Run workspace verification
 	console.log('🔍 Running initial workspace verification check...')
 	try {
-		await $`pnpm check`
+		await $`bun run check`
 		console.log('✅ Workspace checks passed cleanly!')
 	} catch (err) {
 		console.warn('⚠️  Verification encountered an issue:', err instanceof Error ? err.message : err)
@@ -75,20 +75,20 @@ Local App Ports & Endpoints:
   • Copilot:   http://localhost:9000
 
 Useful Commands:
-  • pnpm dev              Start all applications in parallel
-  • pnpm dev:<app>        Start a single application (e.g. pnpm dev:ontology)
-  • pnpm check            Run typecheck & linting across all packages
-  • pnpm test:unit        Run all unit test suites
-  • pnpm test:e2e         Run Playwright end-to-end tests
-  • pnpm db:load          Reload all D1 databases from snapshots
-  • pnpm db:grant <email> Grant yourself Ontology permissions locally (see below)
+  • bun run dev              Start all applications in parallel
+  • bun run dev:<app>        Start a single application (e.g. bun run dev:ontology)
+  • bun run check            Run typecheck & linting across all packages
+  • bun run test:unit        Run all unit test suites
+  • bun run test:e2e         Run Playwright end-to-end tests
+  • bun run db:load          Reload all D1 databases from snapshots
+  • bun run db:grant <email> Grant yourself Ontology permissions locally (see below)
 
 ⚠️  Ontology only: after signing in with Google locally for the first time, a
    401 on /protected pages is expected -- your local Auth DB starts with no
-   user grants. Fix it once with: pnpm db:grant your.email@example.com
+   user grants. Fix it once with: bun run db:grant your.email@example.com
 
 🧪 60-Second Golden Path Smoke Test:
-  1. Start all dev servers: \`pnpm dev\`
+  1. Start all dev servers: \`bun run dev\`
   2. Open Editor: http://localhost:1337
   3. Type 'Paul write-A a letter.' into the text box and click Check
   4. Click the 'write-A' token, then the 'write-A' link in the popup

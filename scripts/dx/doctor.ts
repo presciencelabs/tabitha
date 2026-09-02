@@ -35,7 +35,11 @@ const APPS: { name: string, port: number, db_check?: DbCheck }[] = [
 async function check_runtimes(): Promise<DiagnosticResult[]> {
 	const results: DiagnosticResult[] = []
 
-	// 1. Node.js
+	// 1. Node.js -- only genuinely required on Windows, where db_load.ts shells out to a real
+	// `node` binary to work around an unresolved Bun-on-Windows stdio bug (see ADR 0011). Every
+	// other platform runs entirely under Bun, so a missing Node.js there is informational, not
+	// blocking.
+	const node_required = platform() === 'win32'
 	try {
 		const node_proc = await $`node -v`.quiet()
 		const node_version = node_proc.text().trim()
@@ -51,7 +55,7 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 			results.push({
 				category: 'Runtimes',
 				name: 'Node.js Engine',
-				status: 'FAIL',
+				status: node_required ? 'FAIL' : 'WARN',
 				message: `${node_version} (v22+ required)`,
 				fix: 'Install Node.js 22+ using nvm, fnm, or volta',
 			})
@@ -60,8 +64,8 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 		results.push({
 			category: 'Runtimes',
 			name: 'Node.js Engine',
-			status: 'FAIL',
-			message: 'Not found in PATH',
+			status: node_required ? 'FAIL' : 'WARN',
+			message: node_required ? 'Not found in PATH' : 'Not found in PATH (only required on Windows, for db:load -- see ADR 0011)',
 			fix: 'Install Node.js 22+ from https://nodejs.org',
 		})
 	}
@@ -86,27 +90,7 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 		})
 	}
 
-	// 3. pnpm
-	try {
-		const pnpm_proc = await $`pnpm -v`.quiet()
-		const pnpm_version = pnpm_proc.text().trim()
-		results.push({
-			category: 'Runtimes',
-			name: 'pnpm Package Manager',
-			status: 'PASS',
-			message: `v${pnpm_version}`,
-		})
-	} catch {
-		results.push({
-			category: 'Runtimes',
-			name: 'pnpm Package Manager',
-			status: 'FAIL',
-			message: 'Not found in PATH',
-			fix: 'Install pnpm via corepack (`corepack enable && corepack prepare pnpm@latest --activate`)',
-		})
-	}
-
-	// 4. SQLite3 CLI
+	// 3. SQLite3 CLI
 	try {
 		const sqlite_proc = await $`sqlite3 --version`.quiet()
 		const sqlite_version = sqlite_proc.text().trim().split(' ')[0]
@@ -155,7 +139,7 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 			name: 'App .env.local Files',
 			status: 'WARN',
 			message: `Missing in: ${missing_apps.join(', ')}`,
-			fix: 'Run `pnpm setup:env` to generate local environment configs',
+			fix: 'Run `bun run setup:env` to generate local environment configs',
 		})
 	}
 
@@ -200,7 +184,7 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 					name: label,
 					status: 'WARN',
 					message: 'No local SQLite database found in .wrangler state',
-					fix: `Run \`pnpm db:load\` or \`bun tools/databases/src/load_d1.ts ${app.name}\``,
+					fix: `Run \`bun run db:load\` or \`bun tools/databases/src/load_d1.ts ${app.name}\``,
 				})
 				continue
 			}
@@ -224,7 +208,7 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 						name: label,
 						status: 'WARN',
 						message: `Database exists but table '${app.db_check.table}' has 0 rows`,
-						fix: 'Run `pnpm db:load` to populate tables',
+						fix: 'Run `bun run db:load` to populate tables',
 					})
 				}
 			} catch (err) {
@@ -233,7 +217,7 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 					name: label,
 					status: 'WARN',
 					message: `Error querying SQLite: ${err instanceof Error ? err.message : err}`,
-					fix: 'Run `pnpm db:load` to re-bootstrap SQLite snapshot',
+					fix: 'Run `bun run db:load` to re-bootstrap SQLite snapshot',
 				})
 			}
 		}
@@ -261,7 +245,7 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				name: 'Credential & Secret Scanner',
 				status: 'FAIL',
 				message: `${secret_res.found} potential secret(s) found in repository!`,
-				fix: 'Run `pnpm check:secrets` for line-by-line inspection',
+				fix: 'Run `bun run check:secrets` for line-by-line inspection',
 			})
 		}
 	} catch (err) {
@@ -289,7 +273,7 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				name: 'Cloudflare Wrangler Configs',
 				status: 'FAIL',
 				message: `${cf_res.errors.length} configuration error(s) found`,
-				fix: 'Run `pnpm check:cloudflare` for details',
+				fix: 'Run `bun run check:cloudflare` for details',
 			})
 		}
 	} catch (err) {

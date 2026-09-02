@@ -36,7 +36,7 @@ async function grant_permission(email: string, permissions?: string[]) {
 	}
 
 	if (!hash) {
-		console.error('❌ Could not resolve the local Auth database file. Run `pnpm db:load:ontology` first.')
+		console.error('❌ Could not resolve the local Auth database file. Run `bun run db:load:ontology` first.')
 		process.exit(1)
 	}
 
@@ -46,7 +46,7 @@ async function grant_permission(email: string, permissions?: string[]) {
 		.all('ontology') as { id: number, permission: string }[]
 
 	if (app_permissions.length === 0) {
-		console.error('❌ No permissions found for "ontology" in the local Auth DB. Run `pnpm db:load:ontology` first.')
+		console.error('❌ No permissions found for "ontology" in the local Auth DB. Run `bun run db:load:ontology` first.')
 		process.exit(1)
 	}
 

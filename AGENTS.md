@@ -439,7 +439,7 @@ glance -- which is exactly what the package name already signals everywhere else
 
 This only targets imports that actually cross a package boundary -- a `../` import that stays
 *within* the importing file's own package (e.g. `apps/editor/src/lib/rules/case_frame/common.ts`
-reaching into `lib/rules`) is completely normal and unaffected by this rule. Enforced by `pnpm
+reaching into `lib/rules`) is completely normal and unaffected by this rule. Enforced by `bun run
 check:package-boundaries` (`scripts/audits/check_relative_package_imports.ts`), which resolves
 every `../` import to its actual target and only flags the ones that land outside the importing
 file's own package.
@@ -567,6 +567,6 @@ review-complete has been signaled.
 Before submitting any code changes, ensure the entire repository passes the standard verification gate:
 
 ```bash
-cd tabitha && pnpm precommit
-# Runs: pnpm check && pnpm test && pnpm build
+cd tabitha && bun run precommit
+# Runs: bun run check && bun run test && bun run build
 ```

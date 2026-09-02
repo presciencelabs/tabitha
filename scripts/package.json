@@ -11,7 +11,7 @@
     "check": "tsc --noEmit",
     "check:lint": "eslint .",
     "check:lint:fix": "eslint . --fix",
-    "test": "pnpm test:unit",
+    "test": "bun run test:unit",
     "test:unit": "bun test ."
   },
   "dependencies": {

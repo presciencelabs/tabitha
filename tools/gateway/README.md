@@ -5,9 +5,9 @@ Provisions and reconciles the single Cloudflare AI Gateway that every TaBiThA ap
 ## Usage
 
 1. Set `CLOUDFLARE_API_TOKEN` in `.env.local` -- an account token (Manage Account -> API Tokens, not My Profile -> API Tokens) named `AI Gateway - tools/gateway apply`, with the account-scoped "AI Gateway: Edit" permission. `CLOUDFLARE_ACCOUNT_ID` is already set in the committed `.env`.
-2. Run `pnpm apply` to create the gateway if it doesn't exist yet, or update it to match `config.ts` if it does. Safe to re-run any time `config.ts` changes.
+2. Run `bun run apply` to create the gateway if it doesn't exist yet, or update it to match `config.ts` if it does. Safe to re-run any time `config.ts` changes.
 
-`config.ts` is the durable, versioned desired state -- change the gateway's config by editing it and re-running `pnpm apply`, not by hand-editing anything in the Cloudflare dashboard.
+`config.ts` is the durable, versioned desired state -- change the gateway's config by editing it and re-running `bun run apply`, not by hand-editing anything in the Cloudflare dashboard.
 
 ## Storing provider credentials (BYOK) -- manual, one-time
 
@@ -19,4 +19,4 @@ Not automated here -- more sensitive than gateway config, and best done through 
 
 ## Verifying it actually works
 
-`pnpm verify` sends one real request through the live gateway using the real `@tabitha/ai` client (needs `AI_GATEWAY_TOKEN` in `.env.local` and `GEMINI_PROJECT_ID`/`GEMINI_LOCATION` in `.env`, alongside the BYOK setup above). This is a manual, credential-gated integration check -- not run in CI, and deliberately not named to match `bun test`'s automatic `*_test.ts` discovery -- and exists specifically to get a real answer to the open questions in `docs/decisions/0007-ai-consolidation.md` before any app depends on this in production.
+`bun run verify` sends one real request through the live gateway using the real `@tabitha/ai` client (needs `AI_GATEWAY_TOKEN` in `.env.local` and `GEMINI_PROJECT_ID`/`GEMINI_LOCATION` in `.env`, alongside the BYOK setup above). This is a manual, credential-gated integration check -- not run in CI, and deliberately not named to match `bun test`'s automatic `*_test.ts` discovery -- and exists specifically to get a real answer to the open questions in `docs/decisions/0007-ai-consolidation.md` before any app depends on this in production.

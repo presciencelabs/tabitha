@@ -4,6 +4,7 @@ import { appendFile } from 'node:fs/promises'
 type PackageConfig = {
 	name: string
 	pkg: string
+	dir: string
 	/** Package has @vitest/coverage-v8 wired up and can run `vitest --coverage`. */
 	hasCoverage: boolean
 	/** Package has a `test:unit` script at all (some packages have none, e.g. packages/ui). */
@@ -23,14 +24,14 @@ type CoverageMetrics = {
 }
 
 const PACKAGES_TO_COVER: PackageConfig[] = [
-	{ name: 'apps/editor (Linguistic Core)', pkg: '@tabitha/editor', hasCoverage: true, hasTestScript: true },
-	{ name: 'apps/sources (Source Text & Encoding)', pkg: '@tabitha/sources', hasCoverage: true, hasTestScript: true },
-	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', hasCoverage: true, hasTestScript: true },
-	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', hasCoverage: true, hasTestScript: true },
-	{ name: 'apps/copilot (AI Assist)', pkg: '@tabitha/copilot', hasCoverage: false, hasTestScript: true },
-	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', hasCoverage: true, hasTestScript: true },
-	{ name: 'packages/types (Shared Types)', pkg: '@tabitha/types', hasCoverage: false, hasTestScript: true },
-	{ name: 'packages/ui (Component Library)', pkg: '@tabitha/ui', hasCoverage: false, hasTestScript: false },
+	{ name: 'apps/editor (Linguistic Core)', pkg: '@tabitha/editor', dir: 'apps/editor', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/sources (Source Text & Encoding)', pkg: '@tabitha/sources', dir: 'apps/sources', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', dir: 'apps/ontology', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', dir: 'apps/targets', hasCoverage: true, hasTestScript: true },
+	{ name: 'apps/copilot (AI Assist)', pkg: '@tabitha/copilot', dir: 'apps/copilot', hasCoverage: false, hasTestScript: true },
+	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', dir: 'packages/api-client', hasCoverage: true, hasTestScript: true },
+	{ name: 'packages/types (Shared Types)', pkg: '@tabitha/types', dir: 'packages/types', hasCoverage: false, hasTestScript: true },
+	{ name: 'packages/ui (Component Library)', pkg: '@tabitha/ui', dir: 'packages/ui', hasCoverage: false, hasTestScript: false },
 ]
 
 async function run_coverage_report() {
@@ -45,7 +46,7 @@ async function run_coverage_report() {
 
 	// 1. Run unit tests across the monorepo
 	console.log('🧪 Executing workspace unit test suites...')
-	const test_proc = await $`pnpm test:unit`
+	const test_proc = await $`bun run test:unit`
 	if (test_proc.exitCode !== 0) {
 		console.error('❌ Unit tests failed.')
 		process.exit(test_proc.exitCode)
@@ -76,7 +77,7 @@ async function run_coverage_report() {
 
 		try {
 			const vitest_args = p.hasCoverage ? ['--coverage', '--coverage.reporter=text-summary'] : []
-			const cov_proc = await $`pnpm --filter ${p.pkg} exec vitest run src --passWithNoTests ${vitest_args}`.quiet()
+			const cov_proc = await $`cd ${p.dir} && bunx vitest run src --passWithNoTests ${vitest_args}`.quiet()
 			const output = cov_proc.text()
 
 			const file_match = output.match(/Test Files\s+.*\((\d+)\)/)

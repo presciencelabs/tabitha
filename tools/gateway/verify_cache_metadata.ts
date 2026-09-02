@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai'
 import { gateway_id } from './config'
 
-/** Manual, credential-gated diagnostic -- not part of `pnpm test`. Answers the remaining open
+/** Manual, credential-gated diagnostic -- not part of `bun run test`. Answers the remaining open
  * question in ADR 0005: does `cf-aig-metadata` participate in Cloudflare's cache key? Sends the
  * same prompt through the gateway three times -- twice with the same `cf-aig-metadata` (a control,
  * to confirm caching works at all) and once with different metadata -- then compares each

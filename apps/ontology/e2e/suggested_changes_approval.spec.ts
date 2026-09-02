@@ -19,7 +19,7 @@ function read_env_var(name) {
 		const match = readFileSync(path, 'utf-8').match(new RegExp(`^${name}=(.*)$`, 'm'))
 		if (match) return match[1].trim()
 	}
-	throw new Error(`Missing ${name} in apps/ontology/.env.local -- run \`pnpm setup:env\` first.`)
+	throw new Error(`Missing ${name} in apps/ontology/.env.local -- run \`bun run setup:env\` first.`)
 }
 
 async function sign_in_as(context, email, permissions) {

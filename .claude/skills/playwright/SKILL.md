@@ -57,7 +57,7 @@ export default create_app_playwright_config({
 })
 ```
 
-- In CI and local dev, `webServer.command` runs `pnpm dev` with `reuseExistingServer: !process.env.CI`.
+- In CI and local dev, `webServer.command` runs `bun run dev` with `reuseExistingServer: !process.env.CI`.
 
 ---
 

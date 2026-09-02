@@ -7,7 +7,7 @@ const script_dir = fileURLToPath(new URL('.', import.meta.url))
 const root_dir = resolve(script_dir, '../..')
 
 export type BadgeVersionInfo = {
-	readonly pnpm: string
+	readonly bun: string
 	readonly svelte: string
 	readonly tailwind: string
 	readonly daisyui: string
@@ -50,9 +50,9 @@ export const extract_expected_badge_versions = async (
 	const root_pkg = JSON.parse(await readFile(root_pkg_path, 'utf-8'))
 	const ontology_pkg = JSON.parse(await readFile(ontology_pkg_path, 'utf-8'))
 
-	const package_manager = root_pkg.packageManager || 'pnpm@11.20.0'
-	const pnpm_raw = package_manager.replace(/^pnpm@/, '')
-	const pnpm_version = extract_semver_major_minor(pnpm_raw)
+	const package_manager = root_pkg.packageManager || 'bun@1.4.0'
+	const bun_raw = package_manager.replace(/^bun@/, '')
+	const bun_version = extract_semver_major_minor(bun_raw)
 
 	const svelte_raw = ontology_pkg.dependencies?.svelte || ontology_pkg.devDependencies?.svelte || '5'
 	const svelte_major = extract_semver_major(svelte_raw)
@@ -64,7 +64,7 @@ export const extract_expected_badge_versions = async (
 	const daisyui_major = extract_semver_major(daisyui_raw)
 
 	return {
-		pnpm: pnpm_version,
+		bun: bun_version,
 		svelte: svelte_major,
 		tailwind: tailwind_major,
 		daisyui: daisyui_major,
@@ -81,27 +81,27 @@ export const audit_and_sync_badge_content = ({
 	const findings: BadgeFinding[] = []
 	let updated_content = content
 
-	// 1. pnpm badge check
-	const pnpm_badge_regex = /<a href="https:\/\/pnpm\.io"><img src="https:\/\/img\.shields\.io\/badge\/pnpm-([^-?]+)-F69220[^"]*" alt="pnpm" \/><\/a>/
-	const pnpm_match = updated_content.match(pnpm_badge_regex)
-	if (pnpm_match) {
-		const current_pnpm = pnpm_match[1]
-		if (current_pnpm !== expected_versions.pnpm) {
+	// 1. Bun badge check
+	const bun_badge_regex = /<a href="https:\/\/bun\.com"><img src="https:\/\/img\.shields\.io\/badge\/Bun-([^-?]+)-000000[^"]*" alt="Bun" \/><\/a>/
+	const bun_match = updated_content.match(bun_badge_regex)
+	if (bun_match) {
+		const current_bun = bun_match[1]
+		if (current_bun !== expected_versions.bun) {
 			findings.push({
-				badge_name: 'pnpm',
-				expected: expected_versions.pnpm,
-				current: current_pnpm,
-				message: `pnpm badge version (${current_pnpm}) does not match packageManager (${expected_versions.pnpm})`,
+				badge_name: 'Bun',
+				expected: expected_versions.bun,
+				current: current_bun,
+				message: `Bun badge version (${current_bun}) does not match packageManager (${expected_versions.bun})`,
 			})
-			const new_badge = `<a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-${expected_versions.pnpm}-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>`
-			updated_content = updated_content.replace(pnpm_badge_regex, new_badge)
+			const new_badge = `<a href="https://bun.com"><img src="https://img.shields.io/badge/Bun-${expected_versions.bun}-000000?style=flat-square&logo=bun&logoColor=white" alt="Bun" /></a>`
+			updated_content = updated_content.replace(bun_badge_regex, new_badge)
 		}
 	} else {
 		findings.push({
-			badge_name: 'pnpm',
-			expected: expected_versions.pnpm,
+			badge_name: 'Bun',
+			expected: expected_versions.bun,
 			current: 'missing',
-			message: 'pnpm badge is missing or does not match expected format',
+			message: 'Bun badge is missing or does not match expected format',
 		})
 	}
 

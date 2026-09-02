@@ -221,7 +221,7 @@ export async function print_database_status() {
 			}
 		} else {
 			console.log('   • Local SQLite:    ⚠️  No local database found in .wrangler state')
-			console.log(`   • Action:          Run \`pnpm db:load\` or \`pnpm db:load:${s.app}\` to populate`)
+			console.log(`   • Action:          Run \`bun run db:load\` or \`bun run db:load:${s.app}\` to populate`)
 		}
 
 		if (s.snapshot_file) {
@@ -236,9 +236,9 @@ export async function print_database_status() {
 
 	console.log('============================================================')
 	console.log('💡 Quick Commands:')
-	console.log('   • Reload all databases:       pnpm db:load')
-	console.log('   • Reload specific database:   pnpm db:load:ontology | pnpm db:load:sources | pnpm db:load:targets')
-	console.log('   • Health diagnostics:         pnpm check:doctor')
+	console.log('   • Reload all databases:       bun run db:load')
+	console.log('   • Reload specific database:   bun run db:load:ontology | bun run db:load:sources | bun run db:load:targets')
+	console.log('   • Health diagnostics:         bun run check:doctor')
 	console.log('============================================================\n')
 }
 

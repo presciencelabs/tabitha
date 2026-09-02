@@ -4,7 +4,7 @@
 /* Scans packages/ui/src (this file's parent directory) so consuming apps' Tailwind
 	 builds pick up classes used only in shared components like Brand.svelte and
 	 Header.svelte. Must be a plain relative path, not the package specifier
-	 '@tabitha/ui': that form resolves through the pnpm workspace symlink and silently
+	 '@tabitha/ui': that form resolves through the workspace symlink and silently
 	 fails to pick up new classes added after the first scan -- verified with an
 	 isolated marker-class test.
 */

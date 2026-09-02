@@ -49,8 +49,8 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
 
 - Local D1 SQLite files are stored by Miniflare at:
   `apps/<app>/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/<sha256(database_id)>.sqlite`
-- Use `pnpm db:load` (from `tools/databases/scripts/load_d1.ts`) to stream SQL snapshot dumps directly into Miniflare state in ~1-2 seconds.
-- Inspect local database health, tables, and row counts via `pnpm db:status`.
+- Use `bun run db:load` (from `tools/databases/scripts/load_d1.ts`) to stream SQL snapshot dumps directly into Miniflare state in ~1-2 seconds.
+- Inspect local database health, tables, and row counts via `bun run db:status`.
 
 ---
 
@@ -77,14 +77,14 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
 
 - **JSONC format**: Keep JSON with comments clean and valid.
 - **`compatibility_flags`**: Always include `["nodejs_compat"]`.
-- **`compatibility_date`**: Keep synchronized with today's date via `pnpm update:safe`.
+- **`compatibility_date`**: Keep synchronized with today's date via `bun run update:safe`.
 - **Dedicated Local Dev Ports**:
   - Ontology: `3056`
   - Targets: `1382`
   - Sources: `1947`
   - Editor: `1337`
   - Copilot: `9000`
-- Validate all workspace configurations with `pnpm check:cloudflare`.
+- Validate all workspace configurations with `bun run check:cloudflare`.
 
 ---
 
@@ -92,16 +92,21 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
 
 Every app deploys to production via Cloudflare Workers Builds (dashboard-configured git integration), not any script or GitHub Actions step in this repo. As of this writing, Cloudflare has no public API for the git-connection step itself, so it's a one-time, per-Worker dashboard action: **Workers & Pages -> Create application -> Import a repository** -> select `presciencelabs/tabitha` (this monorepo -- several apps still have their git integration pointed at their old, now-legacy standalone single-app repos; cutting one over means reconnecting that Worker's integration to this monorepo instead).
 
-Use these settings, established while deploying `apps/www` (2026-08):
+**Migration note (2026-09):** the monorepo cut over from pnpm to Bun as its package manager. That change lives entirely in git (`package.json`, `bun.lock`), but the **Build command**/**Deploy command**/**Variables** below are dashboard-only settings per Worker, not stored in this repo -- Cloudflare will keep running the old `pnpm` commands verbatim until someone manually edits each of the 6 apps' Workers Builds settings (Settings -> Build) to the `bun`-based commands shown here. Skipping this breaks that app's next production build, since `pnpm` and `pnpm-lock.yaml` no longer exist in the repo.
+
+**Cloudflare's automatic dependency-install step does not reliably detect `bun.lock`** -- Bun's own text-based lockfile format since 1.2, and what this repo uses. Cloudflare's lockfile autodetection was built around the older binary `bun.lockb`; multiple current reports (e.g. the Cloudflare community thread "Pages automatic dependency install does not detect bun.lock") describe it falling back to `npm install` instead, which then fails outright on a Bun-only workspace. The fix, not a cosmetic preference: set the **Build Variable** `SKIP_DEPENDENCY_INSTALL=true` (Settings -> Build -> Variables and secrets) so Cloudflare's own auto-install step never runs, and make the **Build command** self-sufficient by having it install first.
+
+Use these settings, established while deploying `apps/www` (2026-08), updated for the Bun migration (2026-09):
 
 - **Project name**: must match the app's `wrangler.jsonc` `"name"` field exactly -- this is what the Worker actually deploys as, and it's what any `routes`/`custom_domain` entries in that same `wrangler.jsonc` are attached to.
-- **Build command**: `pnpm run build` -- not `npm run build`. This is a pnpm workspace; npm won't resolve it correctly. Cloudflare's autodetect defaults to `npm`, so this needs manually correcting every time.
-- **Deploy command**: `pnpm exec wrangler deploy` -- not `npx wrangler deploy`, per this repo's `pnpm exec` convention (see the root-level guidance on this).
-- **Non-production branch deploy command**: `pnpm exec wrangler versions upload` (same `npx` -> `pnpm exec` fix; the command itself, `versions upload` rather than a full deploy, is Cloudflare's correct default for preview builds).
+- **Build Variables**: `SKIP_DEPENDENCY_INSTALL=true` -- see above; without it, Cloudflare's own pre-build install step runs first, doesn't recognize `bun.lock`, and fails before the Build command below ever executes.
+- **Build command**: `bun install && bun run build` -- not `npm run build`. This is a Bun workspace; npm won't resolve it correctly, and Cloudflare's autodetect defaults to npm regardless, so this needs manually correcting every time. The `bun install &&` prefix is required because of the `SKIP_DEPENDENCY_INSTALL` setting above -- Cloudflare's build image does have Bun preinstalled, it just won't invoke it automatically for this lockfile format.
+- **Deploy command**: `bunx wrangler deploy` -- not `npx wrangler deploy`.
+- **Non-production branch deploy command**: `bunx wrangler versions upload` (same `npx` -> `bunx` fix; the command itself, `versions upload` rather than a full deploy, is Cloudflare's correct default for preview builds).
 - **Path / root directory**: `apps/<name>` -- without this, the build runs from the repo root and picks up the root `turbo run build` (which builds every app), not the target app's own build script.
 - **API token**: reuse one shared token across every app's Workers Builds connection rather than creating a new one per app. Cloudflare's "Workers Scripts: Edit" permission is account-wide -- there is no way to scope it to a single Worker -- so a per-app token provides no real blast-radius reduction, just more credentials to manage. (Whatever token Cloudflare auto-creates inline in this flow is consumed entirely by its own build pipeline and never surfaced to you to copy elsewhere -- that's expected, not a bug.)
 - **Build cache** (Settings -> Build, near the bottom): leave it on. `apps/www` has it enabled; match that for every app cut over after it.
-- **Build watch paths** (Settings -> Build -> Build watch paths, set right after connecting): Cloudflare defaults a new Workers Build to include paths `[*]` and excludes `[]`, meaning it builds on every push to the repo regardless of which files changed -- in a monorepo this means every app's Workers Build fires on every PR, including ones that only touch an unrelated app or `tools/`. There is no `wrangler.jsonc` field or public API for this setting; it's dashboard-only, entered one path at a time (the UI doesn't accept a space- or comma-delimited paste). Work out the include list from what the app's build script (usually just `vite build`) actually loads: the app's own directory (`apps/<name>/*`), every `@tabitha/*` workspace package it depends on at build time via its `dependencies` and any build-tool packages under `devDependencies` that its `vite.config.ts`/`svelte.config.js` import (e.g. `@tabitha/vite-config`) -- but not dev-only tooling like `@tabitha/eslint-config`/`@tabitha/tsconfig` that only `check`/`lint` scripts use, since those aren't part of the Workers Build pipeline -- plus root `package.json` and `pnpm-lock.yaml` (a pnpm workspace install resolves the whole monorepo, so either can change what the app builds with even without touching `apps/<name>/` itself). `apps/www`'s list, done 2026-08-29, is a worked example: `apps/www/*`, `packages/types/*`, `packages/api-client/*`, `packages/ui/*`, `packages/vite-config/*`, `package.json`, `pnpm-lock.yaml`.
+- **Build watch paths** (Settings -> Build -> Build watch paths, set right after connecting): Cloudflare defaults a new Workers Build to include paths `[*]` and excludes `[]`, meaning it builds on every push to the repo regardless of which files changed -- in a monorepo this means every app's Workers Build fires on every PR, including ones that only touch an unrelated app or `tools/`. There is no `wrangler.jsonc` field or public API for this setting; it's dashboard-only, entered one path at a time (the UI doesn't accept a space- or comma-delimited paste). Work out the include list from what the app's build script (usually just `vite build`) actually loads: the app's own directory (`apps/<name>/*`), every `@tabitha/*` workspace package it depends on at build time via its `dependencies` and any build-tool packages under `devDependencies` that its `vite.config.ts`/`svelte.config.js` import (e.g. `@tabitha/vite-config`) -- but not dev-only tooling like `@tabitha/eslint-config`/`@tabitha/tsconfig` that only `check`/`lint` scripts use, since those aren't part of the Workers Build pipeline -- plus root `package.json` and `bun.lock` (a Bun workspace install resolves the whole monorepo, so either can change what the app builds with even without touching `apps/<name>/` itself). `apps/www`'s list, done 2026-08-29, is a worked example: `apps/www/*`, `packages/types/*`, `packages/api-client/*`, `packages/ui/*`, `packages/vite-config/*`, `package.json`, `bun.lock`.
 
 **Never run `wrangler deploy` manually against production for an app cut over to Workers Builds -- push an empty commit instead.** Vite loads `.env.local` over the committed `.env` in every mode, including a production `vite build`, so a local build run from any developer's own checkout silently bakes that developer's local-dev overrides (e.g. `PUBLIC_ONTOLOGY_API_HOST=http://localhost:5173`) into the production bundle instead of the committed prod values -- with no error at deploy time, since the Worker still deploys and runs fine, just with unreachable API hosts. This bit `editor` in production on 2026-08-31: it had never had a Workers Build actually run, so a manual `wrangler deploy` was used to ship a fix, and that deploy baked in `http://localhost:5173` for `PUBLIC_ONTOLOGY_API_HOST` -- every ontology/forms API call then failed and was silently swallowed to an empty result by the shared `http.ts` client's `!res.ok -> null` fallback, so the checker showed literally every word as "not recognized," with no crash or visible error to point at the cause. If an app needs deploying and hasn't had a Workers Build run yet (or you need to force a fresh one), trigger the real pipeline instead: `git commit --allow-empty -m "..."; git push origin main` -- CI always clones fresh from git, so `.env.local` (gitignored, dev-machine-only) is never present and the build can only ever see the committed `.env`. The one narrow exception is rotating a secret via `wrangler secret put <NAME>`, which creates a new deployment but does not rebuild the bundle -- safe for secrets alone, but never reach for a full local `wrangler deploy` to fix an env-var or code issue, even under incident pressure.
 

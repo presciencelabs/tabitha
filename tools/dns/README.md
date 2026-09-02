@@ -7,9 +7,9 @@ This tool is deliberately narrow: it never lists the whole zone and reconciles e
 ## Usage
 
 1. Set `CLOUDFLARE_API_TOKEN` in `.env.local` -- an account token (Manage Account -> API Tokens, not My Profile -> API Tokens) named `DNS - tools/dns apply`, scoped to the `tabitha.bible` zone only (Zone Resources: `tabitha.bible`), with permissions **Zone > DNS > Edit** and **Zone > Dynamic Redirect > Edit**. `CLOUDFLARE_ZONE_ID` is already set in the committed `.env`.
-2. Run `pnpm apply` to create/update whatever's declared in `config.ts` to match the live zone. Safe to re-run any time `config.ts` changes.
+2. Run `bun run apply` to create/update whatever's declared in `config.ts` to match the live zone. Safe to re-run any time `config.ts` changes.
 
-`config.ts` is the durable, versioned desired state -- change a DNS record or redirect rule by editing it and re-running `pnpm apply`, not by hand-editing anything in the Cloudflare dashboard.
+`config.ts` is the durable, versioned desired state -- change a DNS record or redirect rule by editing it and re-running `bun run apply`, not by hand-editing anything in the Cloudflare dashboard.
 
 ## What's not covered here (yet)
 
