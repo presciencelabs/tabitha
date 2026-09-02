@@ -1,0 +1,24 @@
+{
+  "name": "@tabitha/workers",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reconciles Cloudflare Workers Builds trigger config (build/deploy commands, watch paths, build cache, variables) for every TaBiThA app",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:lint:fix": "eslint . --fix",
+    "test": "bun run test:unit",
+    "test:unit": "bun test",
+    "apply": "bun apply.ts",
+    "apply:run": "bun apply.ts --run"
+  },
+  "devDependencies": {
+    "@tabitha/eslint-config": "workspace:*",
+    "@tabitha/tsconfig": "workspace:*",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^26.2.0",
+    "eslint": "^10.8.1",
+    "typescript": "^6.0.3"
+  }
+}

@@ -427,6 +427,18 @@
         "typescript": "^6.0.3",
       },
     },
+    "tools/workers": {
+      "name": "@tabitha/workers",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@tabitha/eslint-config": "workspace:*",
+        "@tabitha/tsconfig": "workspace:*",
+        "@types/bun": "^1.3.14",
+        "@types/node": "^26.2.0",
+        "eslint": "^10.8.1",
+        "typescript": "^6.0.3",
+      },
+    },
   },
   "trustedDependencies": [
     "@google/genai",
@@ -1029,6 +1041,8 @@
     "@tabitha/ui": ["@tabitha/ui@workspace:packages/ui"],
 
     "@tabitha/vite-config": ["@tabitha/vite-config@workspace:packages/vite-config"],
+
+    "@tabitha/workers": ["@tabitha/workers@workspace:tools/workers"],
 
     "@tabitha/www": ["@tabitha/www@workspace:apps/www"],
 
