@@ -41,9 +41,9 @@
 	{/if}
 </Header>
 
-<div class="relative -top-2 mx-8 w-fit text-sm font-mono text-base-content/60">{version}</div>
-
 <main class="mx-8 mt-8">
+	<div class="relative -top-2 w-fit text-sm font-mono text-base-content/60">{version}</div>
+
 	{@render children?.()}
 </main>
 
