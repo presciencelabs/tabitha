@@ -11,7 +11,7 @@
     "rolldown": "1.2.3"
   },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "bun scripts/dx/dev_multi.ts",
     "dev:menu": "bun scripts/dx/dev_menu.ts",
     "dev:copilot": "bun --filter @tabitha/copilot dev",
     "dev:editor": "bun --filter @tabitha/editor dev",
