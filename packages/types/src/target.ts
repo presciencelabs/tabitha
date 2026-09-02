@@ -1,4 +1,4 @@
-import type { DbFeature } from './source'
+import type { SourceApiFeature } from './source'
 
 /**
  * Canonical registry of target-language projects, each backed by its own D1 database (one
@@ -16,7 +16,7 @@ export type TargetTextResult = {
 	ideal?: string
 }
 
-export type TargetApiFeature = DbFeature
+export type TargetApiFeature = SourceApiFeature
 
 export type TargetApiFeatureResult = {
 	source: TargetApiFeature[]

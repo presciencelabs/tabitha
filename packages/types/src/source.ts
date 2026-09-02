@@ -79,7 +79,7 @@ export type SourceData = {
 	notes: string
 }
 
-export type ApiFeature = {
+export type SourceApiFeature = {
 	category: CategoryName
 	position: number
 	code: string
