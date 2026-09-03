@@ -3,7 +3,6 @@
 	"name": "copilot",
 	"compatibility_date": "2026-08-31",
 	"compatibility_flags": [
-		"nodejs_als",
 		"nodejs_compat"
 	],
 	"vars": {
@@ -12,7 +11,11 @@
 		"GEMINI_LOCATION": "global"
 	},
 	"placement": {
-		"mode":"smart"
+		// No D1 database here (unlike editor/ontology/sources/targets, which need edge proximity
+		// to the user for D1 withSession() bookmarking) -- copilot's request-time cost is the
+		// external Vertex AI/Gemini call in brief.ts, so Smart Placement colocating the Worker
+		// near that backend is the right tradeoff instead.
+		"mode": "smart"
 	},
 	"ratelimits": [
 		{
