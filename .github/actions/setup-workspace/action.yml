@@ -4,15 +4,6 @@ description: 'Shared checkout, toolchain setup, caching, and dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v6
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v7
-      with:
-        node-version-file: '.node-version'
-        cache: 'pnpm'
-
     - name: Setup Bun
       uses: oven-sh/setup-bun@v2
       with:
@@ -30,8 +21,8 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install --frozen-lockfile --prefer-offline
+      run: bun install --frozen-lockfile
 
     - name: Scaffold environment configuration
       shell: bash
-      run: pnpm setup:env
+      run: bun run setup:env

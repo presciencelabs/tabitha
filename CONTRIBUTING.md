@@ -6,7 +6,7 @@ Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions
 
 ## 🗺️ System Architecture
 
-The TaBiThA monorepo consists of 6 modular Cloudflare Worker applications and 8 shared workspace packages managed with **pnpm workspaces** and **Turborepo**:
+The TaBiThA monorepo consists of 6 modular Cloudflare Worker applications and 8 shared workspace packages managed with **Bun workspaces** and **Turborepo**:
 
 ```mermaid
 graph TD
@@ -116,57 +116,56 @@ graph TD
 
 ### 1. Prerequisites
 
-- **Node.js**
 - **Bun**
-- **pnpm**
 - **SQLite3 CLI** (`sqlite3`)
+- **Node.js** (Windows only)
 
-> **Windows:** `pnpm db:load`/`db:load:<app>` runs its Wrangler/Miniflare step via the system `node` binary rather than Bun, working around an unresolved Bun-on-Windows bug — see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md). No extra setup needed, but `node` must be on `PATH`.
+> **Windows:** `bun run db:load`/`db:load:<app>` runs its Wrangler/Miniflare step via the system `node` binary rather than Bun, working around an unresolved Bun-on-Windows bug — see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md). No extra setup needed, but `node` must be on `PATH`. On macOS/Linux, Bun handles everything and Node.js isn't required at all.
 
 ### 2. Bootstrap Workspace
 
 ```bash
 # 1. Install dependencies
-pnpm install
+bun install
 
 # 2. Automated onboarding (creates .env.local + loads D1 SQLite databases + verifies setup)
-pnpm setup
+bun run setup
 
 # 3. Check environment health
-pnpm check:doctor
+bun run check:doctor
 ```
 
 ### 3. Start Development Servers
 
 ```bash
 # Start all 6 apps concurrently
-pnpm dev
+bun run dev
 
 # Interactive launcher (choose presets e.g. Editor + Ontology)
-pnpm dev:menu
+bun run dev:menu
 
 # Or start an individual app
-pnpm dev:editor
-pnpm dev:ontology
-pnpm dev:sources
-pnpm dev:targets
-pnpm dev:copilot
-pnpm dev:www
+bun run dev:editor
+bun run dev:ontology
+bun run dev:sources
+bun run dev:targets
+bun run dev:copilot
+bun run dev:www
 ```
 
-> **Windows:** stopping `pnpm dev` (or `dev:menu`) often needs a second `Ctrl+C` before Turborepo force-kills the underlying dev servers — a documented, actively-tracked Turborepo-on-Windows signal-forwarding issue ([vercel/turborepo#9730](https://github.com/vercel/turborepo/issues/9730), [#9694](https://github.com/vercel/turborepo/issues/9694)), not something in this repo's control to fix. Running from PowerShell or Windows Terminal instead of legacy `cmd.exe` has resolved it for others; WSL2 sidesteps Windows-native tooling issues like this one entirely, at the cost of a separate Linux-side setup (see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md) for another example of this same class of issue).
+> **Windows:** stopping `bun run dev` (or `dev:menu`) often needs a second `Ctrl+C` before Turborepo force-kills the underlying dev servers — a documented, actively-tracked Turborepo-on-Windows signal-forwarding issue ([vercel/turborepo#9730](https://github.com/vercel/turborepo/issues/9730), [#9694](https://github.com/vercel/turborepo/issues/9694)), not something in this repo's control to fix. Running from PowerShell or Windows Terminal instead of legacy `cmd.exe` has resolved it for others; WSL2 sidesteps Windows-native tooling issues like this one entirely, at the cost of a separate Linux-side setup (see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md) for another example of this same class of issue).
 
 dev ports are not random.
 
 ### 4. Ontology Local Permissions (first time only)
 
-`pnpm setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:3056`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
+`bun run setup` loads schema and app data, but never seeds real user grants — those only exist in production, so a fresh local Auth DB starts with nobody authorized. Sign in to Ontology (`http://localhost:3056`) with Google once; a `401` on any `/protected` page is expected. Fix it with:
 
 ```bash
-pnpm db:grant your.email@example.com
+bun run db:grant your.email@example.com
 ```
 
-Grants every Ontology permission to that email in your local Auth D1 only — production is untouched. Re-run after any `pnpm db:load`/`db:load:ontology`, since a fresh snapshot resets local grants too.
+Grants every Ontology permission to that email in your local Auth D1 only — production is untouched. Re-run after any `bun run db:load`/`db:load:ontology`, since a fresh snapshot resets local grants too.
 
 ---
 
@@ -199,7 +198,7 @@ TaBiThA is set up to make AI coding agents effective contributors here, whicheve
 
 Some conventions are too specific to belong in AGENTS.md but still worth writing down once — e.g. `.claude/skills/typography/SKILL.md` covers when `prose` belongs on an element vs. when to escape it with `not-prose`. These are loaded contextually by Claude Code when relevant. Add a new skill here when you notice an agent (or a human) repeatedly getting a narrow, specific convention wrong.
 
-Several skills document a specific library's usage patterns and pin the version they cover in their frontmatter (e.g. `svelte: 5.x`, `tailwindcss: 4.x`). If a PR bumps one of those libraries to a new **major** version, review the matching skill alongside it — a `pnpm update`/`pnpm update:safe` run only advances dependencies within their existing SemVer range, so it never triggers this on its own. The `daisyui` skill is the one exception: it pins a minor (`5.7.x`) rather than a major, since it's sourced from daisyUI's own `SKILL.md`, so `pnpm update:safe` checks it against the installed package automatically on every run instead of relying on someone to notice.
+Several skills document a specific library's usage patterns and pin the version they cover in their frontmatter (e.g. `svelte: 5.x`, `tailwindcss: 4.x`). If a PR bumps one of those libraries to a new **major** version, review the matching skill alongside it — a `bun run update`/`bun run update:safe` run only advances dependencies within their existing SemVer range, so it never triggers this on its own. The `daisyui` skill is the one exception: it pins a minor (`5.7.x`) rather than a major, since it's sourced from daisyUI's own `SKILL.md`, so `bun run update:safe` checks it against the installed package automatically on every run instead of relying on someone to notice.
 
 ### `docs/decisions/` — don't relitigate settled choices
 
@@ -207,7 +206,7 @@ Architecture Decision Records capture the "why" behind non-obvious technical cho
 
 ### The safety net: automated enforcement
 
-`scripts/audits/check_philosophies.ts`, run as part of `pnpm check`/`pnpm precommit`, mechanically enforces several of the 14 philosophies. This applies equally to human- and AI-authored code, which is what keeps "let an agent try it" low-risk here — drift gets caught by the same gate either way.
+`scripts/audits/check_philosophies.ts`, run as part of `bun run check`/`bun run precommit`, mechanically enforces several of the 14 philosophies. This applies equally to human- and AI-authored code, which is what keeps "let an agent try it" low-risk here — drift gets caught by the same gate either way.
 
 ### Commit messages
 
@@ -220,7 +219,7 @@ The IDE's AI commit-message generation is already wired to the repo's convention
 TaBiThA follows a lightweight GitHub Flow:
 
 - 🔒 `main` is always deployable.
-- 🌿 **Regular work**: branch off `main` → make your changes → open a PR targeting `main` → review + `pnpm precommit`/CI pass → squash-merge (branch auto-deletes). Naming your branch is up to you.
+- 🌿 **Regular work**: branch off `main` → make your changes → open a PR targeting `main` → review + `bun run precommit`/CI pass → squash-merge (branch auto-deletes). Naming your branch is up to you.
 - 🚑 **Hotfixes/patches**: urgent production fixes may skip the PR and push straight to `main` — enabled by GitHub's existing admin bypass on branch protection, not a separate rule to configure. Non-admins still go through a PR.
 
 ---
@@ -254,7 +253,7 @@ Git diffs show *what* code changed; commit messages should explain **why** the c
 
 ### Convenient Git Commit Template (`.gitmessage`)
 
-`pnpm setup` registers the repo's `.gitmessage` template (`git config commit.template .gitmessage`) — `git commit` then opens pre-populated with prompts and type reminders. Lines starting with `#` are stripped by Git.
+`bun run setup` registers the repo's `.gitmessage` template (`git config commit.template .gitmessage`) — `git commit` then opens pre-populated with prompts and type reminders. Lines starting with `#` are stripped by Git.
 
 ### ✨ AI Commit "Easy Button" in IDE
 
@@ -326,13 +325,13 @@ All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to elim
 Every app's favicon and PWA manifest icons are generated, not hand-drawn: a shared brand mark (CANIL red, the app's initial letter, a small "T" for TaBiThA) is defined once in `scripts/dx/lib/brand_mark.ts` and rendered by two scripts.
 
 1. Add the new app's initial letter to `APP_LETTERS` in `scripts/dx/lib/brand_mark.ts`.
-2. Run `pnpm gen:favicons` to write `apps/<app>/static/favicon.svg`, then reference it from `app.html`:
+2. Run `bun run gen:favicons` to write `apps/<app>/static/favicon.svg`, then reference it from `app.html`:
 
    ```html
    <link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
    ```
 
-3. Run `pnpm gen:manifest-icons` to write `apps/<app>/static/icon-192.png`, `icon-512.png`, and `icon-maskable-512.png`, then reference the 192px one for iOS home-screen installs:
+3. Run `bun run gen:manifest-icons` to write `apps/<app>/static/icon-192.png`, `icon-512.png`, and `icon-maskable-512.png`, then reference the 192px one for iOS home-screen installs:
 
    ```html
    <link rel="apple-touch-icon" href="%sveltekit.assets%/icon-192.png" />
@@ -357,10 +356,10 @@ Before submitting a Pull Request, run the automated 1-command verification gate:
 
 ```bash
 # Runs the full verification pipeline:
-# 1. Typecheck, lint, and security/audit scan all packages (pnpm check)
-# 2. Run all in-memory unit test suites (pnpm test)
-# 3. Verify production Cloudflare Worker builds (pnpm build)
-pnpm precommit
+# 1. Typecheck, lint, and security/audit scan all packages (bun run check)
+# 2. Run all in-memory unit test suites (bun run test)
+# 3. Verify production Cloudflare Worker builds (bun run build)
+bun run precommit
 ```
 
-🚀 **Pro tip:** while iterating, `pnpm ci` runs the same scoped subset of that pipeline CI will actually run for your change (see [ADR 0008](docs/decisions/0008-ci-change-scoping.md)) — faster, but `pnpm precommit` is still the one to run before opening a PR, since it always runs everything.
+🚀 **Pro tip:** while iterating, `bun run ci` runs the same scoped subset of that pipeline CI will actually run for your change (see [ADR 0008](docs/decisions/0008-ci-change-scoping.md)) — faster, but `bun run precommit` is still the one to run before opening a PR, since it always runs everything.

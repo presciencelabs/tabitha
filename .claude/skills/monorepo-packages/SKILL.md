@@ -49,7 +49,7 @@ Before extracting code into `packages/*`, apply the **Rule of Three** (Philosoph
 Before submitting code, verify all packages pass the 1-command verification gate:
 
 ```bash
-pnpm precommit
-# Runs: pnpm check && pnpm test:unit && pnpm check:secrets && pnpm check:cloudflare && pnpm check:md && pnpm build
+bun run precommit
+# Runs: bun run check && bun run test:unit && bun run check:secrets && bun run check:cloudflare && bun run check:md && bun run build
 ```
 

@@ -39,9 +39,9 @@
 
 ### 1. Configure Local Auth
 
-`apps/ontology/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:3056/auth/callback`.
+`apps/ontology/.env.local` is created by the monorepo's onboarding step (`bun run setup`, from the root), including a generated dev `AUTH_SECRET`. Fill in `GOOGLE_OAUTH_CLIENT_SECRET` there — grab it from the same Google Cloud Console client as `GOOGLE_OAUTH_CLIENT_ID`. The OAuth callback redirects to `http://localhost:3056/auth/callback`.
 
-(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
+(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `bun run setup:env` from the root to (re)generate it.)
 
 ### 2. Running Locally
 
@@ -49,16 +49,16 @@ From the **monorepo root**:
 
 ```bash
 # Run Ontology dev server only
-pnpm dev:ontology
+bun run dev:ontology
 
 # Or run all apps concurrently
-pnpm dev
+bun run dev
 ```
 
 Or from within `apps/ontology`:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 ### 3. Loading Local Database
@@ -66,7 +66,7 @@ pnpm dev
 To load the local D1 SQLite database dump into Miniflare state:
 
 ```bash
-pnpm db:load:ontology
+bun run db:load:ontology
 ```
 
 For complete database tooling and snapshots documentation, see [tools/databases/README.md](../../tools/databases/README.md).
@@ -92,4 +92,4 @@ Complex terms and simplification hints are synchronized from Google Sheets every
 
 ## ✅ Testing & Verification
 
-For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `bun run precommit`.

@@ -62,17 +62,17 @@ function run(command: string, args: string[]): Promise<number> {
 	})
 }
 
-// A scoped invocation (e.g. `pnpm test:e2e --filter=@tabitha/copilot`) only touches one app, so it
+// A scoped invocation (e.g. `bun run test:e2e --filter=@tabitha/copilot`) only touches one app, so it
 // doesn't need cross-app readiness gating -- that app's own Playwright webServer (`dev:e2e`)
 // already handles starting/reusing its own server. Only the full, unfiltered run needs this.
 const extra_args = process.argv.slice(2)
 if (extra_args.length > 0) {
-	const code = await run('pnpm', ['exec', 'turbo', 'run', 'test:e2e', '--continue=dependencies-successful', ...extra_args])
+	const code = await run('bunx', ['turbo', 'run', 'test:e2e', '--continue=dependencies-successful', ...extra_args])
 	process.exit(code)
 }
 
 console.log('🚀 Starting every app\'s e2e dev server...')
-const dev_server_process = spawn('pnpm', ['exec', 'turbo', 'run', 'dev:e2e'], { stdio: 'inherit', detached: true })
+const dev_server_process = spawn('bunx', ['turbo', 'run', 'dev:e2e'], { stdio: 'inherit', detached: true })
 
 function shut_down_dev_servers(): void {
 	if (dev_server_process.pid) {
@@ -86,7 +86,7 @@ try {
 	await wait_for_dev_servers()
 
 	console.log('🎭 All dev servers are healthy -- running the Playwright e2e suite...')
-	exit_code = await run('pnpm', ['exec', 'turbo', 'run', 'test:e2e', '--continue=dependencies-successful'])
+	exit_code = await run('bunx', ['turbo', 'run', 'test:e2e', '--continue=dependencies-successful'])
 } finally {
 	shut_down_dev_servers()
 }

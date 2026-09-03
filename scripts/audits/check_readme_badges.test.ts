@@ -8,7 +8,7 @@ import {
 
 describe('README Badge Synchronization & Verification', () => {
 	const mock_versions: BadgeVersionInfo = {
-		pnpm: '11.20',
+		bun: '1.4',
 		svelte: '5',
 		tailwind: 'v4',
 		daisyui: '5',
@@ -24,7 +24,7 @@ describe('README Badge Synchronization & Verification', () => {
   <a href="https://daisyui.com"><img src="https://img.shields.io/badge/daisyUI-5-570DF8?style=flat-square&logo=daisyui&logoColor=white" alt="daisyUI 5" /></a>
   <a href="https://workers.cloudflare.com"><img src="https://img.shields.io/badge/Cloudflare-Workers_%E2%80%A2_D1_%E2%80%A2_R2-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare Workers • D1 • R2" /></a>
   <a href="https://turbo.build/repo"><img src="https://img.shields.io/badge/Turborepo-Monorepo-EF4444?style=flat-square&logo=turborepo&logoColor=white" alt="Turborepo" /></a>
-  <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-11.20-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
+  <a href="https://bun.com"><img src="https://img.shields.io/badge/Bun-1.4-000000?style=flat-square&logo=bun&logoColor=white" alt="Bun" /></a>
   <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-Unit_Tests-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest" /></a>
   <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=flat-square&logo=playwright&logoColor=white" alt="Playwright" /></a>
   <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-12_Philosophies-blueviolet?style=flat-square" alt="12 Philosophies" /></a>
@@ -42,18 +42,18 @@ describe('README Badge Synchronization & Verification', () => {
 			expect(result.updated_content).toBe(sample_valid_readme)
 		})
 
-		it('detects outdated pnpm badge version and corrects it', () => {
-			const outdated_readme = sample_valid_readme.replace('pnpm-11.20', 'pnpm-9.15')
+		it('detects outdated Bun badge version and corrects it', () => {
+			const outdated_readme = sample_valid_readme.replace('Bun-1.4', 'Bun-1.2')
 			const result = audit_and_sync_badge_content({
 				content: outdated_readme,
 				expected_versions: mock_versions,
 			})
 			expect(result.is_synced).toBe(false)
 			expect(result.findings.length).toBe(1)
-			expect(result.findings[0].badge_name).toBe('pnpm')
-			expect(result.findings[0].current).toBe('9.15')
-			expect(result.findings[0].expected).toBe('11.20')
-			expect(result.updated_content).toContain('pnpm-11.20-F69220')
+			expect(result.findings[0].badge_name).toBe('Bun')
+			expect(result.findings[0].current).toBe('1.2')
+			expect(result.findings[0].expected).toBe('1.4')
+			expect(result.updated_content).toContain('Bun-1.4-000000')
 		})
 
 		it('detects outdated Svelte badge version and corrects it', () => {
@@ -102,7 +102,7 @@ describe('README Badge Synchronization & Verification', () => {
 	describe('extract_expected_badge_versions', () => {
 		it('extracts valid non-empty versions from live workspace package.json files', async () => {
 			const versions = await extract_expected_badge_versions()
-			expect(versions.pnpm.length).toBeGreaterThan(0)
+			expect(versions.bun.length).toBeGreaterThan(0)
 			expect(versions.svelte).toBe('5')
 			expect(versions.tailwind).toBe('v4')
 			expect(versions.daisyui).toBe('5')

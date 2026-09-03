@@ -9,7 +9,7 @@
   <a href="https://daisyui.com"><img src="https://img.shields.io/badge/daisyUI-5-570DF8?style=flat-square&logo=daisyui&logoColor=white" alt="daisyUI 5" /></a>
   <a href="https://workers.cloudflare.com"><img src="https://img.shields.io/badge/Cloudflare-Workers_%E2%80%A2_D1_%E2%80%A2_R2-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare Workers • D1 • R2" /></a>
   <a href="https://turbo.build/repo"><img src="https://img.shields.io/badge/Turborepo-Monorepo-EF4444?style=flat-square&logo=turborepo&logoColor=white" alt="Turborepo" /></a>
-  <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-11.20-F69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
+  <a href="https://bun.com"><img src="https://img.shields.io/badge/Bun-1.4-000000?style=flat-square&logo=bun&logoColor=white" alt="Bun" /></a>
   <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-Unit_Tests-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Vitest" /></a>
   <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=flat-square&logo=playwright&logoColor=white" alt="Playwright" /></a>
   <a href="AGENTS.md"><img src="https://img.shields.io/badge/Code_Style-15_Philosophies-blueviolet?style=flat-square" alt="15 Philosophies" /></a>
@@ -64,7 +64,7 @@ This repo is set up to support work with AI coding agents, not just humans.
 
 - **Canonical instructions:** [`AGENTS.md`](AGENTS.md) — the 15 Development Philosophies enforced across the codebase (see the table further down). Many agent tools auto-detect this filename; if yours doesn't, read it before making changes.
 - **Narrower, task-scoped conventions:** [`.claude/skills/`](.claude/skills/) — per-library/domain guidance (Svelte, Tailwind CSS, Cloudflare Workers, SQLite, etc.) loaded contextually rather than kept in `AGENTS.md`. See [CONTRIBUTING.md](CONTRIBUTING.md) for when to add a new one.
-- **Before calling a task done**, run the relevant commands from [Verification & Testing](#verification--testing) below — at minimum `pnpm check` (typecheck + lint), `pnpm check:philosophies` (Development Philosophies audit), and `pnpm check:secrets`.
+- **Before calling a task done**, run the relevant commands from [Verification & Testing](#verification--testing) below — at minimum `bun run check` (typecheck + lint), `bun run check:philosophies` (Development Philosophies audit), and `bun run check:secrets`.
 
 ---
 
@@ -96,7 +96,6 @@ tabitha/
 │   └── databases/   # SQLite snapshots, ETL migration pipeline & reference datasets
 ├── docs/
 │   └── decisions/   # Architecture decision records — the "why" behind notable technical choices
-├── pnpm-workspace.yaml
 ├── turbo.json
 └── package.json
 ```
@@ -107,61 +106,60 @@ tabitha/
 
 ### Prerequisites
 
-- **Node.js**
 - **Bun**
-- **pnpm**
 - **SQLite3 CLI** (`sqlite3`)
+- **Node.js** (Windows only — see [CONTRIBUTING.md](CONTRIBUTING.md#1-prerequisites))
 
 ### Quick Start
 
 ```bash
 # 1. Install all dependencies across workspace
-pnpm install
+bun install
 
 # 2. Automated developer onboarding (environment scaffolding + DB loading + verification)
-pnpm setup
+bun run setup
 
 # 3. Run all dev servers in parallel
-pnpm dev
+bun run dev
 ```
 
 ### Database & Environment Workflows
 
 ```bash
 # Load all SQLite/D1 databases from snapshots into local Wrangler environments
-pnpm db:load
+bun run db:load
 
 # Load database for a specific app
-pnpm db:load:ontology
-pnpm db:load:sources
-pnpm db:load:targets
+bun run db:load:ontology
+bun run db:load:sources
+bun run db:load:targets
 
 # Inspect local D1 database tables, row counts, and snapshot status
-pnpm db:status
+bun run db:status
 
 # Scaffold .env.local files from .env templates
-pnpm setup:env
+bun run setup:env
 ```
 
 ### Running Specific Dev Servers
 
 ```bash
 # Interactive app selector & preset menu
-pnpm dev:menu
+bun run dev:menu
 
 # Or start a specific application directly
-pnpm dev:ontology   # http://localhost:3056
-pnpm dev:targets    # http://localhost:1382
-pnpm dev:sources    # http://localhost:1947
-pnpm dev:editor     # http://localhost:1337
-pnpm dev:copilot    # http://localhost:9000
+bun run dev:ontology   # http://localhost:3056
+bun run dev:targets    # http://localhost:1382
+bun run dev:sources    # http://localhost:1947
+bun run dev:editor     # http://localhost:1337
+bun run dev:copilot    # http://localhost:9000
 ```
 
 ### 🧪 Local Smoke Test ("Golden Path")
 
 To verify that all local applications, databases, and inter-app APIs are working together:
 
-1. **Start all dev servers**: `pnpm dev`
+1. **Start all dev servers**: `bun run dev`
 2. **Open the Editor**: [http://localhost:1337](http://localhost:1337)
 3. **Type `Paul write-A a letter.` into the text box and click Check**:
    - *Verifies Editor (`:1337`)*: Parses tokens and, on clicking the `write-A` token, shows a popup with a clickable concept link.
@@ -175,50 +173,50 @@ To verify that all local applications, databases, and inter-app APIs are working
 
 ```bash
 # Run typechecking (svelte-check) and linting across all apps
-pnpm check
+bun run check
 
 # Run ESLint with auto-fix across all apps
-pnpm check:lint:fix
+bun run check:lint:fix
 
 # Run full workspace environment and health diagnostics
-pnpm check:doctor
+bun run check:doctor
 
 # Audit codebase compliance against Development Philosophies
-pnpm check:philosophies
+bun run check:philosophies
 
 # Scan codebase for exposed secrets and credentials
-pnpm check:secrets
+bun run check:secrets
 
 # Validate Cloudflare Workers wrangler.jsonc configurations
-pnpm check:cloudflare
+bun run check:cloudflare
 
 # Audit client storage hygiene and cookie security
-pnpm check:storage
+bun run check:storage
 
 # Audit for accessible-name collisions between persistent nav/chrome and page content
-pnpm check:a11y-names
+bun run check:a11y-names
 
 # Run Markdown linting across all documentation
-pnpm check:md
+bun run check:md
 
 # Run unit test suites in parallel (Vitest)
-pnpm test:unit
+bun run test:unit
 
 # Build all applications for production (Cloudflare Workers)
-pnpm build
+bun run build
 
 # Clean and re-install entire workspace
-pnpm clean:powerwash
+bun run clean:powerwash
 ```
 
 ### Dependency Maintenance & Upgrades
 
 ```bash
 # Safely update dependencies within declared SemVer ranges, check Cloudflare compat dates, and run verification gate
-pnpm update:safe
+bun run update:safe
 
 # Interactively review and upgrade to latest major releases
-pnpm update:interactive
+bun run update:interactive
 ```
 
 ### Local CI/CD Workflow Testing (Optional)

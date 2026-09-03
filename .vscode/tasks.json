@@ -4,7 +4,7 @@
 		{
 			"label": "🩺 Run TaBiThA Doctor",
 			"type": "shell",
-			"command": "pnpm check:doctor",
+			"command": "bun run check:doctor",
 			"problemMatcher": [],
 			"group": {
 				"kind": "test",
@@ -12,9 +12,9 @@
 			}
 		},
 		{
-			"label": "🚀 Start All Dev Servers (pnpm dev)",
+			"label": "🚀 Start All Dev Servers (bun run dev)",
 			"type": "shell",
-			"command": "pnpm dev",
+			"command": "bun run dev",
 			"isBackground": true,
 			"problemMatcher": [],
 			"group": {
@@ -23,49 +23,49 @@
 			}
 		},
 		{
-			"label": "🎯 Interactive Dev Launcher (pnpm dev:menu)",
+			"label": "🎯 Interactive Dev Launcher (bun run dev:menu)",
 			"type": "shell",
-			"command": "pnpm dev:menu",
+			"command": "bun run dev:menu",
 			"isBackground": true,
 			"problemMatcher": []
 		},
 		{
 			"label": "🔍 Run Workspace Check (Typecheck & Lint)",
 			"type": "shell",
-			"command": "pnpm check",
+			"command": "bun run check",
 			"problemMatcher": [],
 			"group": "test"
 		},
 		{
 			"label": "🧪 Run Unit Tests (Vitest)",
 			"type": "shell",
-			"command": "pnpm test:unit",
+			"command": "bun run test:unit",
 			"problemMatcher": [],
 			"group": "test"
 		},
 		{
 			"label": "🎭 Run End-to-End Tests (Playwright)",
 			"type": "shell",
-			"command": "pnpm test:e2e",
+			"command": "bun run test:e2e",
 			"problemMatcher": [],
 			"group": "test"
 		},
 		{
 			"label": "📦 Reload D1 SQLite Databases",
 			"type": "shell",
-			"command": "pnpm db:load",
+			"command": "bun run db:load",
 			"problemMatcher": []
 		},
 		{
 			"label": "📊 Inspect D1 Database Status",
 			"type": "shell",
-			"command": "pnpm db:status",
+			"command": "bun run db:status",
 			"problemMatcher": []
 		},
 		{
-			"label": "🛡️ Run Full Pre-PR Verification Gate (pnpm precommit)",
+			"label": "🛡️ Run Full Pre-PR Verification Gate (bun run precommit)",
 			"type": "shell",
-			"command": "pnpm precommit",
+			"command": "bun run precommit",
 			"problemMatcher": [],
 			"group": "test"
 		}

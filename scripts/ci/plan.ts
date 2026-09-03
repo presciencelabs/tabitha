@@ -17,7 +17,7 @@ const SCRIPTS_PACKAGE_NAME = '@tabitha/scripts'
 // composite-action changes validate the pipeline itself; the rest are inputs no turbo per-
 // package filter can see (a lockfile bump can change what every package actually resolves to).
 const FORCE_FULL_PREFIXES = ['.github/workflows/', '.github/actions/']
-const FORCE_FULL_EXACT = new Set(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json'])
+const FORCE_FULL_EXACT = new Set(['package.json', 'bun.lock', 'turbo.json'])
 
 // Windows has no equivalent to Stage 2's `windows-latest`-billed job running on every PR --
 // unlike run_build/run_quality/run_unit/run_e2e, this stays scoped to the specific paths where a
@@ -187,25 +187,25 @@ async function write_github_output(plan: CiPlan) {
 
 async function execute_plan(plan: CiPlan) {
 	console.log('▶️  Running audits (always-on)...\n')
-	await $`pnpm check:audits`
-	await $`pnpm check:philosophies`
+	await $`bun run check:audits`
+	await $`bun run check:philosophies`
 
 	if (plan.run_build) {
 		console.log('\n▶️  Running production build...\n')
-		await $`pnpm exec turbo run build:ci ${plan.turbo_filter_args}`
+		await $`bunx turbo run build:ci ${plan.turbo_filter_args}`
 	}
 	if (plan.run_quality) {
 		console.log('\n▶️  Running typecheck & lint...\n')
-		await $`pnpm exec turbo run check ${plan.turbo_filter_args}`
-		await $`pnpm exec turbo run check:lint ${plan.turbo_filter_args}`
+		await $`bunx turbo run check ${plan.turbo_filter_args}`
+		await $`bunx turbo run check:lint ${plan.turbo_filter_args}`
 	}
 	if (plan.run_unit) {
 		console.log('\n▶️  Running unit tests & coverage...\n')
-		await $`pnpm test:coverage`
+		await $`bun run test:coverage`
 	}
 	if (plan.run_e2e) {
 		console.log('\n▶️  Running Playwright e2e suite...\n')
-		await $`pnpm test:e2e`
+		await $`bun run test:e2e`
 	}
 }
 

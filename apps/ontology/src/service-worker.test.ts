@@ -42,7 +42,7 @@ describe('service worker config (apps/ontology/vite.config.js)', () => {
 
 describe('compiled service worker (apps/ontology/.svelte-kit/output/client/sw.js)', () => {
 	if (!existsSync(compiled_sw_path)) {
-		throw new Error(`${compiled_sw_path} does not exist - run \`pnpm build\` before \`pnpm test:unit\` to exercise this check.`)
+		throw new Error(`${compiled_sw_path} does not exist - run \`bun run build\` before \`bun run test:unit\` to exercise this check.`)
 	}
 
 	const compiled_sw = readFileSync(compiled_sw_path, 'utf-8')
