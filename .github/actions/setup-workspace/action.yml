@@ -21,7 +21,7 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: bun install --frozen-lockfile --prefer-offline
+      run: bun install --frozen-lockfile
 
     - name: Scaffold environment configuration
       shell: bash
