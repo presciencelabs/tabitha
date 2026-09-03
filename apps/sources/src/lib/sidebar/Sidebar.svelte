@@ -37,7 +37,7 @@
 			<section>
 				<!--Ontology Details (if present)-->
 				{#if entity.concept}
-					<SidebarDetail summary_title="Concept Details">
+					<SidebarDetail summary_title="Concept Details" start_open={true}>
 						{#snippet details_content()}
 							<ConceptDetails data={entity.concept!} />
 						{/snippet}
@@ -47,7 +47,7 @@
 
 				<!--Ontology Details for Pairing (if present)-->
 				{#if entity.pairing_concept}
-					<SidebarDetail summary_title="Pairing Details">
+					<SidebarDetail summary_title="Pairing Details" start_open={true}>
 						{#snippet details_content()}
 							<PairingDetails data={entity!} />
 						{/snippet}
