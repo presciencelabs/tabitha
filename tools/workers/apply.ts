@@ -41,8 +41,7 @@ type DesiredTriggerFields = {
 	build_command: string
 	deploy_command: string
 	build_caching_enabled: boolean
-	/** Left unset for the non-production trigger -- see the comment at its call site below. */
-	path_includes?: string[]
+	path_includes: string[]
 }
 
 export type FieldChange = { field: string; from: unknown; to: unknown }
@@ -95,12 +94,14 @@ export async function reconcile_workers(
 			credentials,
 			'non_production',
 			non_production,
-			// path_includes is left unset here deliberately: Cloudflare's own default is "*", so
-			// every non-main branch push already gets a preview build regardless of which app
-			// changed. Scoping it down to match production's watch paths would be a genuine
-			// behavior change (fewer preview builds), not a drift fix -- worth doing later, but
-			// as its own reviewed decision.
-			{ build_command, deploy_command: non_production_deploy_command, build_caching_enabled: true },
+			// Deliberately the same watch paths as production: Cloudflare's own default here is
+			// "*", which fires a full preview build+deploy of every app on every push to every
+			// branch, no matter which app actually changed (GitHub issue #74). That was long
+			// believed to be unavoidable -- Cloudflare was thought not to enforce path_includes
+			// on non-production triggers at all -- but a direct test on 2026-09-03 showed it
+			// does, so scoping this matches each app's previews to the same diffs its production
+			// builds already respond to.
+			{ build_command, deploy_command: non_production_deploy_command, build_caching_enabled: true, path_includes: watch_paths },
 			apply,
 			fetch_impl,
 		)
@@ -128,7 +129,7 @@ async function reconcile_trigger(
 	if (current.build_caching_enabled !== desired.build_caching_enabled) {
 		field_changes.push({ field: 'build_caching_enabled', from: current.build_caching_enabled, to: desired.build_caching_enabled })
 	}
-	if (desired.path_includes && !same_string_set(current.path_includes, desired.path_includes)) {
+	if (!same_string_set(current.path_includes, desired.path_includes)) {
 		field_changes.push({ field: 'path_includes', from: current.path_includes, to: desired.path_includes })
 	}
 
@@ -140,7 +141,7 @@ async function reconcile_trigger(
 				build_command: desired.build_command,
 				deploy_command: desired.deploy_command,
 				build_caching_enabled: desired.build_caching_enabled,
-				...desired.path_includes ? { path_includes: desired.path_includes } : {},
+				path_includes: desired.path_includes,
 			},
 			fetch_impl,
 		)
@@ -176,7 +177,7 @@ async function reconcile_environment_variables(
 	return changes
 }
 
-/** Derives the production trigger's watch paths from the app's own `package.json`, rather than
+/** Derives a trigger's watch paths from the app's own `package.json`, rather than
  * hand-maintaining a list per app: every declared workspace dependency (excluding
  * `build_irrelevant_packages`) becomes a `packages/<name>/*` entry, so a newly added dependency
  * is picked up automatically on the next `apply` run instead of silently going unwatched. */
