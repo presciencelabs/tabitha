@@ -17,8 +17,8 @@
 		"test:e2e:dev": "playwright test --ui",
 		"precommit": "bun run check && bun run build && bun run test",
 		"clean:svelte": "rm -rf .svelte-kit",
-		"clean:node": "rm -rf node_modules",
-		"clean:powerwash": "(bun run clean:svelte & bun run clean:node) && bun install"
+		"clean:deps": "rm -rf node_modules",
+		"clean:powerwash": "(bun run clean:svelte & bun run clean:deps) && bun install"
 	},
 	"dependencies": {
 		"@sveltejs/kit": "^2.70.2",

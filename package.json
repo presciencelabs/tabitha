@@ -61,8 +61,8 @@
     "test:e2e": "bun scripts/ci/run_e2e.ts",
     "test:e2e:install": "bunx playwright install --with-deps chromium",
     "clean:svelte": "turbo run clean:svelte",
-    "clean:node": "turbo run clean:node && rm -rf node_modules",
-    "clean:powerwash": "bun run clean:svelte && bun run clean:node && bun install",
+    "clean:deps": "turbo run clean:deps && rm -rf node_modules",
+    "clean:powerwash": "bun run clean:svelte && bun run clean:deps && bun install",
     "update:safe": "bun scripts/dx/update_safe.ts",
     "update:interactive": "bun update --interactive --latest --recursive"
   },
