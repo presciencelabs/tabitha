@@ -7,12 +7,12 @@ This tool is deliberately narrow: it never lists the whole zone and reconciles e
 ## Usage
 
 1. Set `CLOUDFLARE_API_TOKEN` in `.env.local` -- an account token (Manage Account -> API Tokens, not My Profile -> API Tokens) named `DNS - tools/dns apply`, scoped to the `tabitha.bible` zone only (Zone Resources: `tabitha.bible`), with permissions **Zone > DNS > Edit** and **Zone > Dynamic Redirect > Edit**. `CLOUDFLARE_ZONE_ID` is already set in the committed `.env`.
-2. Run `pnpm apply` to create/update whatever's declared in `config.ts` to match the live zone. Safe to re-run any time `config.ts` changes.
+2. Run `bun run apply` to create/update whatever's declared in `config.ts` to match the live zone. Safe to re-run any time `config.ts` changes.
 
-`config.ts` is the durable, versioned desired state -- change a DNS record or redirect rule by editing it and re-running `pnpm apply`, not by hand-editing anything in the Cloudflare dashboard.
+`config.ts` is the durable, versioned desired state -- change a DNS record or redirect rule by editing it and re-running `bun run apply`, not by hand-editing anything in the Cloudflare dashboard.
 
 ## What's not covered here (yet)
 
-- **Workers Builds git integration** (which repo/branch/root-directory a Worker's CI is connected to) has no public Cloudflare API as of this writing -- that's still a one-time, per-Worker dashboard step (Workers & Pages -> Create application -> Import a repository).
+- **Workers Builds trigger config** (build/deploy commands, watch paths, build cache, variables) is scripted in `tools/workers`, not here. The initial repo connection itself (which GitHub repo/branch/root-directory a Worker's Workers Builds is wired to) still has no public Cloudflare API as of this writing -- that's a one-time, per-Worker dashboard step (Workers & Pages -> Create application -> Import a repository).
 - **Page Rules** (e.g. the copilot beta redirect) are a separate, legacy system from the Redirect Rules this tool manages, and aren't scripted here.
 - **Domain registration** at Porkbun is untouched by this tool.

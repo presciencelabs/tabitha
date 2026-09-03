@@ -63,4 +63,4 @@ export default create_app_playwright_config({
 })
 ```
 
-- Manages the `webServer` lifecycle running `pnpm dev` with proper port checks.
+- Manages the `webServer` lifecycle running `bun run dev` with proper port checks.

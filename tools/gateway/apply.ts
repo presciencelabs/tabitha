@@ -23,7 +23,7 @@ export async function reconcile_gateway(
 	await create_gateway(credentials, fetch_impl)
 	// The create endpoint doesn't accept every field in desired_gateway_config (see create_gateway
 	// below) -- follow up with an update so a freshly provisioned gateway ends up fully reconciled
-	// in one `pnpm apply`, not two.
+	// in one `bun run apply`, not two.
 	await update_gateway(credentials, fetch_impl)
 	return 'created'
 }

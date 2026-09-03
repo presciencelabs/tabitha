@@ -69,45 +69,45 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Secret & Credential Leak Scan (Blocking)
-        run: pnpm check:secrets
+        run: bun run check:secrets
 
       - name: Architectural Philosophy Verification
         id: check_philosophies
-        run: pnpm check:philosophies
+        run: bun run check:philosophies
         continue-on-error: true
 
       - name: Cloudflare Workers Configuration Audit
         id: check_cloudflare
-        run: pnpm check:cloudflare
+        run: bun run check:cloudflare
         continue-on-error: true
 
       - name: Storage Hygiene & Cookie Security Audit
         id: check_storage
-        run: pnpm check:storage
+        run: bun run check:storage
         continue-on-error: true
 
       - name: README Badge & Version Sync Audit
         id: check_badges
-        run: pnpm check:badges
+        run: bun run check:badges
         continue-on-error: true
 
       - name: Philosophy Count Doc Sync Audit
         id: check_philosophy_docs
-        run: pnpm check:philosophy-docs
+        run: bun run check:philosophy-docs
         continue-on-error: true
 
       - name: Markdown Specification Lint
         id: check_md
-        run: pnpm check:md
+        run: bun run check:md
         continue-on-error: true
 
       - name: Accessible-Name Collision Audit
         id: check_a11y_names
-        run: pnpm check:a11y-names
+        run: bun run check:a11y-names
         continue-on-error: true
 
       - name: Undeclared CLI Dependency Audit (changed packages, Blocking)
-        run: pnpm check:deps
+        run: bun run check:deps
 
   production_build:
     name: 📦 Production Bundle Build (Blocking)
@@ -122,7 +122,7 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Production Bundle Verification
-        run: pnpm exec turbo run build:ci ${{ needs.plan.outputs.turbo_filter }}
+        run: bunx turbo run build:ci ${{ needs.plan.outputs.turbo_filter }}
 
   # ============================================================================
   # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
@@ -143,7 +143,7 @@ jobs:
 
       - name: Typecheck & Svelte Diagnostics
         id: typecheck
-        run: pnpm exec turbo run check ${{ needs.plan.outputs.turbo_filter }}
+        run: bunx turbo run check ${{ needs.plan.outputs.turbo_filter }}
         continue-on-error: true
 
   eslint:
@@ -162,7 +162,7 @@ jobs:
 
       - name: ESLint
         id: eslint
-        run: pnpm exec turbo run check:lint ${{ needs.plan.outputs.turbo_filter }}
+        run: bunx turbo run check:lint ${{ needs.plan.outputs.turbo_filter }}
         continue-on-error: true
 
   unit_tests:
@@ -181,7 +181,7 @@ jobs:
 
       - name: In-Memory Unit Tests & Coverage Report
         id: coverage
-        run: pnpm test:coverage
+        run: bun run test:coverage
         continue-on-error: true
 
   e2e_tests:
@@ -202,7 +202,7 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       - name: Bootstrap Local D1 SQLite Snapshots
-        run: pnpm db:load
+        run: bun run db:load
 
       - name: Inspect D1 SQLite Storage Inventory
         run: |
@@ -214,19 +214,19 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: Install Playwright Chromium & System Dependencies
         if: steps.playwright_cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
+        run: bunx playwright install --with-deps chromium
 
       - name: Install Playwright OS Dependencies on Cache Hit
         if: steps.playwright_cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: bunx playwright install-deps chromium
 
       - name: Execute Playwright End-to-End Suite
         id: e2e
-        run: pnpm test:e2e
+        run: bun run test:e2e
         continue-on-error: true
 
       - name: Diagnose D1 State on Failure
@@ -266,16 +266,24 @@ jobs:
       - name: Install SQLite3 CLI
         run: choco install sqlite -y --no-progress
 
+      # Only this job needs a real `node` binary on PATH -- db_load.ts's Windows branch shells
+      # out to it as a workaround for an unresolved Bun-on-Windows stdio bug (see ADR 0011).
+      # Every other job runs entirely under Bun.
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: '.node-version'
+
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
 
       - name: Load Local D1 SQLite Databases (db:load)
         id: db_load
-        run: pnpm db:load
+        run: bun run db:load
         continue-on-error: true
 
       - name: DX Doctor Diagnostics
-        run: pnpm check:doctor
+        run: bun run check:doctor
 
   # ============================================================================
   # STAGE 3: PR SUMMARY (Advisory Results Surfaced on the PR)

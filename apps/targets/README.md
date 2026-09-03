@@ -39,20 +39,20 @@ From the **monorepo root**:
 
 ```bash
 # Run Targets dev server only
-pnpm dev:targets
+bun run dev:targets
 
 # Or run all apps concurrently
-pnpm dev
+bun run dev
 ```
 
 Or from within `apps/targets`:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 ---
 
 ## ✅ Testing & Verification
 
-For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `bun run precommit`.

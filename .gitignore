@@ -1,6 +1,5 @@
 # Dependencies
 node_modules
-.pnpm-store
 
 # SvelteKit & Vite
 .svelte-kit
@@ -34,7 +33,6 @@ coverage/
 .DS_Store
 *.log
 npm-debug.log*
-pnpm-debug.log*
 
 # Database WAL / SHM
 *.sqlite-shm

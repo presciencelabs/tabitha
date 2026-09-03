@@ -97,7 +97,7 @@ Active Endpoints:`)
 
 	for (const app of apps_to_run) {
 		const args = ['--filter', app.pkg, 'dev']
-		const child = spawn('pnpm', args, {
+		const child = spawn('bun', args, {
 			env: process.env,
 		})
 

@@ -25,9 +25,9 @@
 
 ## 🔐 Environment Setup
 
-`apps/copilot/.env.local` is created by the monorepo's onboarding step (`pnpm setup`, from the root). Fill in the secrets that are still blank there: `API_KEY_AQUIFER`, `AI_GATEWAY_TOKEN`.
+`apps/copilot/.env.local` is created by the monorepo's onboarding step (`bun run setup`, from the root). Fill in the secrets that are still blank there: `API_KEY_AQUIFER`, `AI_GATEWAY_TOKEN`.
 
-(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `pnpm setup:env` from the root to (re)generate it.)
+(If `.env.local` doesn't exist yet, or is missing a var after pulling a `.env` template change, run `bun run setup:env` from the root to (re)generate it.)
 
 ---
 
@@ -37,20 +37,20 @@ From the **monorepo root**:
 
 ```bash
 # Run Copilot dev server only
-pnpm dev:copilot
+bun run dev:copilot
 
 # Or run all apps concurrently
-pnpm dev
+bun run dev
 ```
 
 Or from within `apps/copilot`:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 ---
 
 ## ✅ Testing & Verification
 
-For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `bun run precommit`.

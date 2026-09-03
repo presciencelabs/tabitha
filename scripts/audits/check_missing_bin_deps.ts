@@ -24,7 +24,7 @@ const DOC_LINK = 'README.md#verification--testing'
 // dependency of any workspace package that shells out to them. A tool invoked this way only
 // works in CI if the package providing its binary is actually installed where the script runs
 // (see 1191e036: wrangler was declared in every app except tools/databases, so the nightly R2
-// backup job could never find it on PATH even after `pnpm install` ran).
+// backup job could never find it on PATH even after `bun install` ran).
 const KNOWN_BIN_PACKAGES: Record<string, string> = {
 	wrangler: 'wrangler',
 	tsc: 'typescript',
@@ -40,7 +40,7 @@ const KNOWN_BIN_PACKAGES: Record<string, string> = {
 // Each pattern's capture group is the invoked command name. Covers Bun's `$` tagged template
 // (the idiom tools/databases and scripts/{audits,ci,dx} actually use) and Node's child_process
 // escape hatches (e.g. scripts/dx/dev_menu.ts's `spawn('turbo', ...)`) -- both are just strings
-// to the type checker and bundler, so neither is caught by `pnpm check` or `pnpm build`.
+// to the type checker and bundler, so neither is caught by `bun run check` or `bun run build`.
 const SHELL_COMMAND_PATTERNS: RegExp[] = [
 	/\$`\s*([a-zA-Z0-9_.-]+)/g,
 	/\b(?:execSync|exec)\(\s*[`'"]([a-zA-Z0-9_.-]+)/g,

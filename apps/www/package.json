@@ -5,20 +5,20 @@
 	"type": "module",
 	"scripts": {
 		"prepare": "svelte-kit sync",
-		"check": "pnpm prepare && pnpm check:svelte",
+		"check": "bun run prepare && bun run check:svelte",
 		"check:svelte": "svelte-check --tsconfig ./tsconfig.json",
 		"check:lint": "eslint .",
 		"check:lint:fix": "eslint . --fix",
 		"build": "vite build",
 		"dev": "vite dev",
 		"dev:e2e": "vite dev",
-		"test": "pnpm test:e2e",
+		"test": "bun run test:e2e",
 		"test:e2e": "playwright test",
 		"test:e2e:dev": "playwright test --ui",
-		"precommit": "pnpm check && pnpm build && pnpm test",
+		"precommit": "bun run check && bun run build && bun run test",
 		"clean:svelte": "rimraf .svelte-kit",
 		"clean:node": "rimraf node_modules",
-		"clean:powerwash": "(pnpm clean:svelte & pnpm clean:node) && pnpm install"
+		"clean:powerwash": "(bun run clean:svelte & bun run clean:node) && bun install"
 	},
 	"dependencies": {
 		"@sveltejs/kit": "^2.70.2",

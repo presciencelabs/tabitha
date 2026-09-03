@@ -46,4 +46,4 @@ Sometimes a daisyUI component or interactive element genuinely belongs inside a 
 
 ## Automated check
 
-`scripts/audits/check_philosophies.ts` (`pnpm check:philosophies`) flags `.svelte` files combining `prose`/`prose-*` with layout utilities or daisyUI structural classes in the same `class` attribute. It's a non-blocking CI observation, not a hard failure — treat findings as a prompt to re-scope, not necessarily a bug.
+`scripts/audits/check_philosophies.ts` (`bun run check:philosophies`) flags `.svelte` files combining `prose`/`prose-*` with layout utilities or daisyUI structural classes in the same `class` attribute. It's a non-blocking CI observation, not a hard failure — treat findings as a prompt to re-scope, not necessarily a bug.

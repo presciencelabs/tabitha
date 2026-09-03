@@ -44,20 +44,20 @@ From the **monorepo root**:
 
 ```bash
 # Run Editor dev server only
-pnpm dev:editor
+bun run dev:editor
 
 # Or run all apps concurrently
-pnpm dev
+bun run dev
 ```
 
 Or from within `apps/editor`:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 ---
 
 ## ✅ Testing & Verification
 
-For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `pnpm precommit`.
+For unified monorepo testing, linting, and build verification commands, see [CONTRIBUTING.md](../../CONTRIBUTING.md) or run `bun run precommit`.

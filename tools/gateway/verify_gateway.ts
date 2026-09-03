@@ -1,6 +1,6 @@
 import { create_ai_client } from '@tabitha/ai'
 
-/** Manual, credential-gated integration check -- not part of `pnpm test`. Sends one real request
+/** Manual, credential-gated integration check -- not part of `bun run test`. Sends one real request
  * through the live gateway using the actual @tabitha/ai client, to get a real answer (instead of
  * a guess) to the open questions in ADR 0005: whether the extra `x-goog-api-key` header the SDK
  * sends alongside `cf-aig-authorization` causes Cloudflare's BYOK route to reject the request, and

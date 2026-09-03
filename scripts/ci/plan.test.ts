@@ -42,7 +42,7 @@ describe('classify_files', () => {
 	})
 
 	it('forces a full run when the lockfile changes', () => {
-		expect(classify_files(['pnpm-lock.yaml'])).toEqual({ kind: 'force_full', matched_file: 'pnpm-lock.yaml' })
+		expect(classify_files(['bun.lock'])).toEqual({ kind: 'force_full', matched_file: 'bun.lock' })
 	})
 
 	it('forces a full run when turbo.json changes', () => {
