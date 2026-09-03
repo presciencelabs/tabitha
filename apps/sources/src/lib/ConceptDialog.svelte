@@ -4,16 +4,23 @@
 	import Icon from '@iconify/svelte'
 	import { onMount } from 'svelte'
 
-	let { concept = $bindable(), onclose }: { concept: SourceConcept, onclose: () => void } = $props()
+	type Props = {
+		concept: SourceConcept
+		onclose: () => void
+		filter?: (result: OntologyResult) => boolean
+	}
+	let { concept = $bindable(), onclose, filter }: Props = $props()
 
 	let dialog: HTMLDialogElement
-	let concept_list: OntologyResult[] = $state([])
+	let concept_list = $state<OntologyResult[]>([])
 
 	onMount(() => {
 		dialog.showModal()
 		
 		fetch_all_concepts_for_part_of_speech(concept.part_of_speech).then(fetched_concepts => {
-			concept_list = fetched_concepts
+			concept_list = filter ? fetched_concepts.filter(filter) : fetched_concepts
+
+			selected_index = concept_list.findIndex(({ stem, sense }) => concept.stem === stem && concept.sense === sense)
 		})
 	})
 

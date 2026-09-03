@@ -11,7 +11,7 @@ function make_entity(value: string, category_abbr = 'C'): PageSourceEntity {
 		features: [],
 		concept: null,
 		pairing_concept: null,
-		pairing_type: '',
+		pairing_type: null,
 		noun_list_index: null,
 		id: -1,
 		parent_id: -1,

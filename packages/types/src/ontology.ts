@@ -19,6 +19,19 @@ export type OntologyStatus =
 	| 'function_word'
 	| 'unknown'
 
+export type OntologyResult = {
+	id?: string
+	stem: string
+	sense: string
+	part_of_speech: string
+	level: string
+	gloss: string
+	categorization: string
+	categories: string[]
+	status: OntologyStatus
+	how_to_hints: HowToEntry[]
+}
+
 export type ConceptKey = {
 	stem: string
 	sense: string

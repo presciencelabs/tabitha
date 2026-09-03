@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { encode_concept_data, get_noun_list, structure_semantic_encoding } from './semantic_encoding'
+import type { SourceEntity } from '@tabitha/types'
 
 describe('encode_concept_data', () => {
 	it('encodes paired concepts correctly', () => {
-		const entity = {
+		const entity: SourceEntity = {
 			category: 'Noun',
 			category_abbr: 'N',
 			value: 'god',
@@ -11,12 +12,12 @@ describe('encode_concept_data', () => {
 			features: [],
 			concept: { stem: 'god', sense: 'A', part_of_speech: 'Noun' },
 			pairing_concept: { stem: 'creator', sense: 'B', part_of_speech: 'Noun' },
-			pairing_type: 'and',
+			pairing_type: 'simple-complex',
 			noun_list_index: null,
 		}
 
 		const result = encode_concept_data(entity)
-		expect(result.value).toBe('godandBcreator')
+		expect(result.value).toBe('god/Bcreator')
 	})
 
 	it('encodes single concept correctly', () => {
@@ -28,7 +29,7 @@ describe('encode_concept_data', () => {
 			features: [],
 			concept: { stem: 'God', sense: 'A', part_of_speech: 'Noun' },
 			pairing_concept: null,
-			pairing_type: '',
+			pairing_type: null,
 			noun_list_index: null,
 		}
 
@@ -45,7 +46,7 @@ describe('encode_concept_data', () => {
 			features: [],
 			concept: null,
 			pairing_concept: null,
-			pairing_type: '',
+			pairing_type: null,
 			noun_list_index: null,
 		}
 
@@ -65,7 +66,7 @@ describe('structure_semantic_encoding', () => {
 				features: [],
 				concept: null,
 				pairing_concept: null,
-				pairing_type: '',
+				pairing_type: null,
 				noun_list_index: null,
 			},
 			{
@@ -76,7 +77,7 @@ describe('structure_semantic_encoding', () => {
 				features: [],
 				concept: { stem: 'God', sense: 'A', part_of_speech: 'Noun' },
 				pairing_concept: null,
-				pairing_type: '',
+				pairing_type: null,
 				noun_list_index: '1',
 			},
 			{
@@ -87,7 +88,7 @@ describe('structure_semantic_encoding', () => {
 				features: [],
 				concept: null,
 				pairing_concept: null,
-				pairing_type: '',
+				pairing_type: null,
 				noun_list_index: null,
 			},
 		]

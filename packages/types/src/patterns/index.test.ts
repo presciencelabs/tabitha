@@ -87,14 +87,6 @@ describe('@tabitha/types/patterns', () => {
 			expect(parse_concept_key('love-A')).toBeNull()
 			expect(parse_concept_key('invalid')).toBeNull()
 		})
-	})
-
-	describe('Scripture patterns & helpers', () => {
-		test('USFM_VERSE_MARKER_REGEX matches verse tokens', () => {
-			const text = '\\c 1 \\v 1 In the beginning \\v 2 was the Word'
-			const matches = text.match(USFM_VERSE_MARKER_REGEX)
-			expect(matches).toEqual(['\\v 1', '\\v 2'])
-		})
 
 		test('strip_gloss_classifiers removes dictionary tags', () => {
 			expect(strip_gloss_classifiers('(universal primitive) to know')).toBe('to know')
@@ -102,6 +94,14 @@ describe('@tabitha/types/patterns', () => {
 			expect(strip_gloss_classifiers('(LDV) ancient')).toBe('ancient')
 			expect(strip_gloss_classifiers('(inexplicable) unknown token')).toBe('unknown token')
 			expect(strip_gloss_classifiers('regular gloss')).toBe('regular gloss')
+		})
+	})
+
+	describe('Scripture patterns & helpers', () => {
+		test('USFM_VERSE_MARKER_REGEX matches verse tokens', () => {
+			const text = '\\c 1 \\v 1 In the beginning \\v 2 was the Word'
+			const matches = text.match(USFM_VERSE_MARKER_REGEX)
+			expect(matches).toEqual(['\\v 1', '\\v 2'])
 		})
 
 		test('BIBLE_BOOKS maps book numbers to canonical book names', () => {

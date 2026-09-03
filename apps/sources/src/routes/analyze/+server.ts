@@ -40,7 +40,7 @@ function transform_api_entity(api_entity: SimpleSourceEntity): SourceEntity {
 		noun_list_index,
 		concept,
 		pairing_concept,
-		pairing_type: pairing_type === 'complex' ? '/' : '\\',
+		pairing_type,
 	}
 }
 

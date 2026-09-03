@@ -1,4 +1,5 @@
 import type { SourceStatus } from './reference'
+import type { OntologyResult } from './ontology'
 
 export type CategoryName = string
 export type FeatureName = string
@@ -7,16 +8,6 @@ export type FeatureValue = string
 export type EntityFeature = {
 	name: FeatureName
 	value: FeatureValue
-}
-
-export type OntologyResult = {
-	stem: string
-	sense: string
-	part_of_speech: string
-	level: string
-	gloss: string
-	categories: string[]
-	status: string
 }
 
 export type SourceConcept = {
@@ -35,20 +26,16 @@ export type SourceFeatures = {
 export type SourceConceptData = {
 	concept: SourceConcept | null
 	pairing_concept: SourceConcept | null
-	pairing_type: string
+	pairing_type: PairingType | null
 }
+
+export type PairingType = 'simple-complex' | 'dynamic-literal' | 'metric-biblical'
 
 export type SourceEntity = {
 	category: CategoryName
 	category_abbr: string
 	value: string
-	feature_codes: string
-	features: EntityFeature[]
-	concept: SourceConcept | null
-	pairing_concept: SourceConcept | null
-	pairing_type?: string
-	noun_list_index: string | null
-}
+} & SourceConceptData & SourceFeatures
 
 export type TargetEntity = {
 	category: CategoryName
@@ -60,19 +47,17 @@ export type TargetEntity = {
 
 // Combination of SourceEntity and TargetEntity used in Sources encoding pipeline
 export type EncodingEntity = {
-	category: string
+	category: CategoryName
 	category_abbr: string
 	value: string
 	concept: SourceConcept | null
 	pairing_concept?: SourceConcept | null
+	pairing_type?: PairingType | null
 	target?: string
-	feature_codes: string
-	features: EntityFeature[]
-	noun_list_index: string | null
-}
+} & SourceFeatures
 
 export type SimpleEncodingEntity = {
-	category: string
+	category: CategoryName
 	concept?: string
 	pairing_concept?: string
 	target?: string
@@ -97,7 +82,7 @@ export type SourceData = {
 	notes: string
 }
 
-export type DbFeature = {
+export type SourceApiFeature = {
 	category: CategoryName
 	position: number
 	code: string
@@ -105,18 +90,3 @@ export type DbFeature = {
 	value: FeatureValue
 	example?: string
 }
-
-export type ApiFeature = DbFeature
-
-export type FeatureValueInfo = {
-	value: FeatureValue
-	code: string
-	example?: string
-}
-
-export type FeatureInfo = {
-	name: FeatureName
-	values: FeatureValueInfo[]
-}
-
-export type FeatureMap = Map<CategoryName, FeatureInfo[]>

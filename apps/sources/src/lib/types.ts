@@ -1,4 +1,4 @@
-import type { NounListEntry, Reference, SourceEntity, SourceStatus } from '@tabitha/types'
+import type { CategoryName, FeatureName, FeatureValue, NounListEntry, Reference, SourceEntity, SourceStatus } from '@tabitha/types'
 
 export type SourceType = {
 	type: string
@@ -77,3 +77,25 @@ export type StatusResult = {
 	reference: StatusRequestReference
 	status: SourceStatus
 }
+
+export type DbFeature = {
+	category: CategoryName
+	position: number
+	code: string
+	feature: FeatureName
+	value: FeatureValue
+	example?: string
+}
+
+export type FeatureValueInfo = {
+	value: FeatureValue
+	code: string
+	example?: string
+}
+
+export type FeatureInfo = {
+	name: FeatureName
+	values: FeatureValueInfo[]
+}
+
+export type FeatureMap = Map<CategoryName, FeatureInfo[]>

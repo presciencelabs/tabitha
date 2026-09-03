@@ -50,10 +50,15 @@ export function tokenize_input(text: string = ''): Token[] {
 			return pronoun_referent()
 
 		} else if (match(REGEXES.FORWARD_SLASH)) {
-			return pairing('complex')
+			return pairing('simple-complex')
 
 		} else if (match(REGEXES.PIPE)) {
-			return pairing('literal')
+			return pairing('dynamic-literal')
+
+		} else if (match(REGEXES.BACK_SLASH)) {
+			// the back slash is used within TBTA to denote a dynamic\literal pairing, but can't be used in the phase 1
+			eat_until(REGEXES.TOKEN_END_BOUNDARY)
+			return error_token(ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
 
 		} else if (match_two(/\.\d/)) {
 			// may be a decimal number like 2.5
@@ -77,7 +82,7 @@ export function tokenize_input(text: string = ''): Token[] {
 		if (!match(REGEXES.WORD_START_CHAR)) {
 			// simple/ or dynamic\
 			eat_until(REGEXES.TOKEN_END_BOUNDARY)
-			return error_token(pairing_type === 'complex' ? ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX : ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
+			return error_token(pairing_type === 'simple-complex' ? ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX : ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
 		}
 		// simple/complex or dynamic\literal
 		eat(REGEXES.WORD_CHAR)
@@ -202,7 +207,7 @@ export function tokenize_input(text: string = ''): Token[] {
 	}
 
 	function pairing_token(pairing_type: PairingType): (token: string) => Token {
-		const pairing_regex = pairing_type === 'complex' ? REGEXES.FORWARD_SLASH : REGEXES.PIPE
+		const pairing_regex = pairing_type === 'simple-complex' ? REGEXES.FORWARD_SLASH : REGEXES.PIPE
 		return token => {
 			const [left, right] = token.split(pairing_regex).map(lookup_token)
 			left.pairing = right

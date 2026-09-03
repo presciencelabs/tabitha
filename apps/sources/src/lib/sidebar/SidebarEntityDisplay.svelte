@@ -28,9 +28,10 @@
 				{#if !entity.pairing_concept}
 					<span>{entity.concept.stem}-{entity.concept.sense}</span>
 				{:else}
+					{@const separator = entity.pairing_type === 'dynamic-literal' ? '\\' : '/'}
 					<div class="join">
 						<span>{entity.concept.stem}-{entity.concept.sense}</span>
-						<span class="px-1">{entity.pairing_type}</span>
+						<span class="px-1">{separator}</span>
 						<span>{entity.pairing_concept.stem}-{entity.pairing_concept.sense}</span>
 					</div>
 				{/if}

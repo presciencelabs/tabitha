@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { NounListEntry, SourceConcept } from '@tabitha/types'
+	import type { NounListEntry } from '@tabitha/types'
 	import type { PageSourceEntity } from '$lib/types'
 	import Icon from '@iconify/svelte'
 	import SidebarDetail from './SidebarDetail.svelte'
@@ -8,6 +8,7 @@
 	import FeaturesDetails from './FeaturesDetails.svelte'
 	import SidebarEntityDisplay from './SidebarEntityDisplay.svelte'
 	import NounListDetails from './NounListDetails.svelte'
+	import PairingDetails from './PairingDetails.svelte'
 
 	type Props = {
 		entity: PageSourceEntity|null
@@ -34,27 +35,24 @@
 			</section>
 
 			<section>
-				{#snippet concept_sections(concept: SourceConcept, suffix: string)}
-					<SidebarDetail summary_title="Concept Details{suffix}" start_open={true}>
-						{#snippet details_content()}
-							<ConceptDetails data={concept} />
-						{/snippet}
-					</SidebarDetail>
-					<SidebarDetail summary_title="All Senses{suffix}">
-						{#snippet details_content()}
-							<AllSenseDetails data={concept} />
-						{/snippet}
-					</SidebarDetail>
-				{/snippet}
-
 				<!--Ontology Details (if present)-->
 				{#if entity.concept}
-					{@render concept_sections(entity.concept, '')}
+					<SidebarDetail summary_title="Concept Details">
+						{#snippet details_content()}
+							<ConceptDetails data={entity.concept!} />
+						{/snippet}
+					</SidebarDetail>
+					<AllSenseDetails data={entity.concept!} title="All Senses" />
 				{/if}
 
 				<!--Ontology Details for Pairing (if present)-->
 				{#if entity.pairing_concept}
-					{@render concept_sections(entity.pairing_concept, ' - Pairing')}
+					<SidebarDetail summary_title="Pairing Details">
+						{#snippet details_content()}
+							<PairingDetails data={entity!} />
+						{/snippet}
+					</SidebarDetail>
+					<AllSenseDetails data={entity.pairing_concept!} title="Pairing - All Senses" />
 				{/if}
 
 				<!--Noun List Index-->

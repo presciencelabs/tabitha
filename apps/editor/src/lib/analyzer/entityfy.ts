@@ -71,7 +71,7 @@ function create_source_entity({
 	features = [],
 	concept = null,
 	pairing_concept = null,
-	pairing_type = 'none',
+	pairing_type = null,
 	noun_list_index = null,
 }: {
 	category?: CategoryName
@@ -79,7 +79,7 @@ function create_source_entity({
 	features?: EntityFeature[]
 	concept?: SourceConcept | null
 	pairing_concept?: SourceConcept | null
-	pairing_type?: PairingType
+	pairing_type?: PairingType | null
 	noun_list_index?: string | null
 } = {}): SimpleSourceEntity {
 	return {

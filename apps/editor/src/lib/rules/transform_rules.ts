@@ -1,6 +1,6 @@
 import { add_tag_to_token, TOKEN_TYPE } from '$lib/token'
 import { create_context_filter, create_token_filter, create_token_transform, create_token_transforms, from_built_in_rule, simple_rule_action } from './rules_parser'
-import type { Tag } from '@tabitha/types'
+import { IS_CARDINAL_NUMBER, type Tag } from '@tabitha/types'
 import type { Token } from '$lib/types'
 import type {
 	BuiltInRule,
@@ -741,6 +741,24 @@ const builtin_transform_rules: BuiltInRule[] = [
 			context: create_context_filter({}),
 			action: simple_rule_action(({ trigger_token }) => {
 				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_interrogative': 'true' } })
+			}),
+		},
+	},
+	{
+		name: 'Find and mark metric-biblical units pairing tokens',
+		comment: 'these pairings use the same separator as simple-complex, and can only be determined once the ontology data is present',
+		rule: {
+			trigger: token => token.pairing_type === 'simple-complex',
+			context: create_context_filter({}),
+			action: simple_rule_action(({ trigger_token }) => {
+				const result = trigger_token.pairing?.lookup_results[0]
+				if (!result) {
+					return
+				}
+
+				if (result.gloss.startsWith('(biblical unit)') || IS_CARDINAL_NUMBER.test(result.stem)) {
+					trigger_token.pairing_type = 'metric-biblical'
+				}
 			}),
 		},
 	},

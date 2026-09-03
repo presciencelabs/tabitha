@@ -65,7 +65,7 @@ describe('encode_features', () => {
 			features: [],
 			concept: { stem: 'God', sense: 'A', part_of_speech: 'Noun' },
 			pairing_concept: null,
-			pairing_type: '',
+			pairing_type: null,
 			noun_list_index: '1',
 		}
 
@@ -82,7 +82,7 @@ describe('encode_features', () => {
 			features: [],
 			concept: null,
 			pairing_concept: null,
-			pairing_type: '',
+			pairing_type: null,
 			noun_list_index: null,
 		}
 

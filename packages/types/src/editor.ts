@@ -1,5 +1,5 @@
 import type { HowToEntry, LookupWord, OntologyStatus } from './ontology'
-import type { CategoryName, EntityFeature, NounListEntry, SourceConcept } from './source'
+import type { CategoryName, EntityFeature, NounListEntry, PairingType, SourceConcept } from './source'
 
 export type TokenType =
 	| 'Punctuation'
@@ -10,8 +10,6 @@ export type TokenType =
 	| 'Added'
 	| 'Phrase'
 	| 'Gap'
-
-export type PairingType = 'none' | 'complex' | 'literal'
 
 export type Tag = Record<string, string>
 
@@ -68,7 +66,7 @@ export type SimpleLookupResult = LookupWord & {
 export type SimpleToken = TokenBase & {
 	lookup_results: SimpleLookupResult[]
 	pairing: SimpleToken | null
-	pairing_type: PairingType
+	pairing_type: PairingType | null
 	pronoun: SimpleToken | null
 	sub_tokens: SimpleToken[]
 }
@@ -89,7 +87,7 @@ export type SimpleSourceEntity = {
 	noun_list_index: string | null
 	concept: SourceConcept | null
 	pairing_concept: SourceConcept | null
-	pairing_type: PairingType
+	pairing_type: PairingType | null
 }
 
 /** The response shape of editor's `GET /analyze` endpoint, consumed by both `apps/editor` and `apps/sources`. */

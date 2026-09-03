@@ -28,7 +28,7 @@ export function create_lookup_token_for_test({ token, lookup_results = [], tag =
 	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, tag, lookup_term: token, lookup_results })
 }
 
-export function create_pairing_token_for_test({ left, right, pairing_type = 'complex' }: { left: Token; right: Token; pairing_type?: PairingType }): Token {
+export function create_pairing_token_for_test({ left, right, pairing_type = 'simple-complex' }: { left: Token; right: Token; pairing_type?: PairingType }): Token {
 	left.pairing = right
 	left.pairing_type = pairing_type
 	return left

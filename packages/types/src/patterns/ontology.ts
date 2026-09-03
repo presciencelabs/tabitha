@@ -18,6 +18,8 @@ export const CONCEPT_SENSE_REGEX = /^(.*)-([A-Z])$/
  */
 export const CONCEPT_KEY_REGEX = /^(.+?)-([A-Z])-(.+)$/
 
+export const IS_CARDINAL_NUMBER = /^[.\d]+$/
+
 /**
  * Matches UI search wildcard characters (`*` and `#`).
  *
@@ -26,6 +28,15 @@ export const CONCEPT_KEY_REGEX = /^(.+?)-([A-Z])-(.+)$/
  * Negative: "love", "grace"
  */
 export const SQL_WILDCARD_CHAR_REGEX = /[*#]/g
+
+/**
+ * Matches linguistic gloss classifier prefixes used in source data dictionaries.
+ *
+ * @example
+ * Positive: "(universal primitive) ", "(LDV) ", "(complex) ", "(complex alternate) ", "(inexplicable) "
+ * Negative: "(noun)", "(verb)"
+ */
+export const GLOSS_CLASSIFIER_REGEX = /\((universal primitive|LDV|complex|complex alternate|inexplicable)\) /g
 
 /**
  * Normalizes user search wildcards (`*` and `#`) into SQL `LIKE` wildcard `%`.
@@ -78,4 +89,18 @@ export function parse_concept_key(key: string): ConceptKey | null {
 		sense: match[2],
 		part_of_speech: match[3],
 	}
+}
+
+/**
+ * Strips dictionary classifier prefixes from a gloss definition.
+ *
+ * @param gloss Raw gloss text with potential classifier prefix
+ * @returns Clean gloss text
+ *
+ * @example
+ * strip_gloss_classifiers("(universal primitive) to know") -> "to know"
+ * strip_gloss_classifiers("(complex) father-in-law") -> "father-in-law"
+ */
+export function strip_gloss_classifiers(gloss: string): string {
+	return gloss.replace(GLOSS_CLASSIFIER_REGEX, '')
 }

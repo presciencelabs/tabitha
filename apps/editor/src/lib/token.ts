@@ -49,7 +49,7 @@ export function create_token(
 		lookup_results = [],
 		sub_tokens = [],
 		pairing = null,
-		pairing_type = 'none',
+		pairing_type = null,
 		pronoun = null,
 		rule_info = null,
 	}: {
@@ -62,7 +62,7 @@ export function create_token(
 		lookup_results?: LookupResult[]
 		sub_tokens?: Token[]
 		pairing?: Token | null
-		pairing_type?: PairingType
+		pairing_type?: PairingType | null
 		pronoun?: Token | null
 		rule_info?: string | null
 	},

@@ -27,9 +27,10 @@
 		{#if source_entity.pairing_concept === null && source_entity.concept}
 			<OntologyResult data={source_entity.concept} />
 		{:else if source_entity.concept && source_entity.pairing_concept}
+			{@const separator = source_entity.pairing_type === 'dynamic-literal' ? '\\' : '/'}
 			<div class="join">
 				<OntologyResult data={source_entity.concept} />
-				<span class="px-1">{source_entity.pairing_type}</span>
+				<span class="px-1">{separator}</span>
 				<OntologyResult data={source_entity.pairing_concept} />
 			</div>
 		{/if}

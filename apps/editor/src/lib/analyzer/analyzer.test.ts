@@ -4,7 +4,7 @@ import { entityfy } from './entityfy'
 import { get_features_for_token } from './features'
 import { populate_noun_list, replace_punctuation } from './other_rules'
 import { TOKEN_TYPE, create_token, create_lookup_result } from '$lib/token'
-import type { CategoryName, PairingType } from '@tabitha/types'
+import type { CategoryName } from '@tabitha/types'
 import type { Sentence } from '$lib/types'
 
 describe('analyzer', () => {
@@ -70,7 +70,7 @@ describe('analyzer', () => {
 				features: [],
 				concept: { stem: 'Paul', sense: 'A', part_of_speech: 'Noun' },
 				pairing_concept: null,
-				pairing_type: 'none' as PairingType,
+				pairing_type: null,
 				noun_list_index: '1',
 			}
 			const entity2 = {
@@ -79,7 +79,7 @@ describe('analyzer', () => {
 				features: [],
 				concept: { stem: 'letter', sense: 'A', part_of_speech: 'Noun' },
 				pairing_concept: null,
-				pairing_type: 'none' as PairingType,
+				pairing_type: null,
 				noun_list_index: '2',
 			}
 

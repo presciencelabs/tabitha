@@ -1,5 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
-import type { ApiFeature, DbRowFeature } from '$lib/types'
+import type { DbRowFeature } from '$lib/types'
+import type { TargetApiFeature } from '@tabitha/types'
 
 export async function GET({ locals: { db }, params: { project }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const category = searchParams.get('category')?.toLowerCase() ?? ''
@@ -24,7 +25,7 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 	})
 }
 
-function transform(features: DbRowFeature[], category: string): ApiFeature[] {
+function transform(features: DbRowFeature[], category: string): TargetApiFeature[] {
 	return features
 		.filter(f => !category.length || f.category.toLowerCase() === category)
 		.map(({ category, feature, position, code, value }) => ({
