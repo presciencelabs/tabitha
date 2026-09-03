@@ -18,12 +18,14 @@ const matching_production_trigger = {
 	build_caching_enabled: true,
 }
 
+// Both triggers are expected to carry the same derived watch paths -- the non-production one
+// included, so a PR only fires previews for the apps it actually touches (GitHub issue #74).
 const matching_non_production_trigger = {
 	trigger_uuid: 'trigger-preview',
 	build_command,
 	deploy_command: non_production_deploy_command,
 	branch_includes: ['*'],
-	path_includes: ['*'],
+	path_includes: www_watch_paths,
 	build_caching_enabled: true,
 }
 
@@ -100,6 +102,27 @@ describe('reconcile_workers', () => {
 		expect(plan.non_production.field_changes).toEqual([{ field: 'build_command', from: 'pnpm run build', to: build_command }])
 		expect(patched_bodies).toContainEqual(expect.objectContaining({ build_command }))
 		expect(patched_bodies).toContainEqual({ SKIP_DEPENDENCY_INSTALL: { value: 'true', is_secret: false } })
+	})
+
+	it('scopes an unscoped non-production trigger down to the app\'s own watch paths', async () => {
+		const unscoped_trigger = { ...matching_non_production_trigger, path_includes: ['*'] }
+		const patched_bodies: unknown[] = []
+		const fetch_impl = router_fetch((url, init) => {
+			const method = init?.method ?? 'GET'
+			if (url.endsWith('/triggers') && method === 'GET') return triggers_response([matching_production_trigger, unscoped_trigger])
+			if (url.endsWith('/environment_variables') && method === 'GET') return env_vars_response({ SKIP_DEPENDENCY_INSTALL: { value: 'true', is_secret: false } })
+			if (url.includes('/builds/triggers/') && method === 'PATCH') {
+				patched_bodies.push(JSON.parse(String(init?.body)))
+				return new Response(JSON.stringify({ result: {} }), { status: 200 })
+			}
+			throw new Error(`Unexpected request: ${method} ${url}`)
+		})
+
+		const [plan] = await reconcile_workers(credentials, { apply: true, apps: [test_app] }, fetch_impl)
+
+		expect(plan.non_production.field_changes).toEqual([{ field: 'path_includes', from: ['*'], to: www_watch_paths }])
+		expect(plan.production.field_changes).toEqual([])
+		expect(patched_bodies).toEqual([expect.objectContaining({ path_includes: www_watch_paths })])
 	})
 
 	it('throws if a worker does not have exactly one production and one non-production trigger', async () => {
