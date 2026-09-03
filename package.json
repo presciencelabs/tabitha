@@ -60,7 +60,7 @@
     "test:coverage": "bun scripts/ci/report_coverage.ts",
     "test:e2e": "bun scripts/ci/run_e2e.ts",
     "clean:svelte": "turbo run clean:svelte",
-    "clean:node": "turbo run clean:node && rimraf node_modules",
+    "clean:node": "turbo run clean:node && rm -rf node_modules",
     "clean:powerwash": "bun run clean:svelte && bun run clean:node && bun install",
     "update:safe": "bun scripts/dx/update_safe.ts",
     "update:interactive": "bun update --interactive --latest --recursive"
@@ -68,7 +68,6 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "markdownlint-cli2": "^0.17.2",
-    "rimraf": "^6.1.3",
     "sharp": "^0.35.3",
     "syncpack": "^15.3.3",
     "turbo": "^2.10.11"
