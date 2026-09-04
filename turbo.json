@@ -163,7 +163,7 @@
     "clean:svelte": {
       "cache": false
     },
-    "clean:node": {
+    "clean:deps": {
       "cache": false
     }
   }

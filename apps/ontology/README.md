@@ -79,7 +79,7 @@ Complex terms and simplification hints are synchronized from Google Sheets every
 - **Testing Cron Trigger locally**:
 
   ```bash
-  npx wrangler dev --test-scheduled
+  bunx wrangler dev --test-scheduled
   ```
 
   In a separate terminal:

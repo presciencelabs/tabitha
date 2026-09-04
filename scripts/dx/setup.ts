@@ -54,7 +54,16 @@ async function setup_workspace() {
 		await load_database('all')
 	}
 
-	// 5. Run workspace verification
+	// 5. Install Playwright browsers for local e2e testing
+	console.log('🎭 Installing Playwright Chromium browser...')
+	try {
+		await $`bun run test:e2e:install`
+		console.log('✅ Playwright Chromium installed!\n')
+	} catch (err) {
+		console.warn('⚠️  Playwright browser install encountered an issue:', err instanceof Error ? err.message : err, '\n')
+	}
+
+	// 6. Run workspace verification
 	console.log('🔍 Running initial workspace verification check...')
 	try {
 		await $`bun run check`

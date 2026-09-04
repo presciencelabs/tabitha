@@ -32,7 +32,6 @@ coverage/
 # OS & Logs
 .DS_Store
 *.log
-npm-debug.log*
 
 # Database WAL / SHM
 *.sqlite-shm
