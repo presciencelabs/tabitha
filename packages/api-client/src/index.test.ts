@@ -144,6 +144,63 @@ describe('@tabitha/api-client', () => {
 			expect(error_result).toBeNull()
 		})
 
+		test('get retries on 429 honoring Retry-After and returns the eventual success', async () => {
+			vi.useFakeTimers()
+			try {
+				const mock_fetch = vi
+					.fn()
+					.mockResolvedValueOnce({
+						ok: false,
+						status: 429,
+						headers: new Headers({ 'retry-after': '1' }),
+					})
+					.mockResolvedValueOnce({
+						ok: true,
+						json: async () => ({ id: 1 }),
+					})
+
+				const http = create_http_client({
+					base_url: TARGETS_URL,
+					fetch: mock_fetch as unknown as typeof fetch,
+				})
+
+				const result_promise = http.get<{ id: number }>('/item')
+				await vi.advanceTimersByTimeAsync(1000)
+				const result = await result_promise
+
+				expect(result).toEqual({ id: 1 })
+				expect(mock_fetch).toHaveBeenCalledTimes(2)
+			} finally {
+				vi.useRealTimers()
+			}
+		})
+
+		test('get gives up and returns null after repeated 429s', async () => {
+			vi.useFakeTimers()
+			try {
+				const mock_fetch = vi.fn().mockResolvedValue({
+					ok: false,
+					status: 429,
+					headers: new Headers({ 'retry-after': '0' }),
+				})
+
+				const http = create_http_client({
+					base_url: TARGETS_URL,
+					fetch: mock_fetch as unknown as typeof fetch,
+				})
+
+				const result_promise = http.get<{ id: number }>('/item')
+				await vi.runAllTimersAsync()
+				const result = await result_promise
+
+				expect(result).toBeNull()
+				// initial attempt + MAX_RATE_LIMIT_RETRIES retries
+				expect(mock_fetch).toHaveBeenCalledTimes(4)
+			} finally {
+				vi.useRealTimers()
+			}
+		})
+
 		test('post parses JSON on ok response and returns null on error', async () => {
 			const mock_fetch = vi
 				.fn()
