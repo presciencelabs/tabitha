@@ -1,4 +1,6 @@
 import { createInterface } from 'node:readline/promises'
+import { execFileSync } from 'node:child_process'
+import { platform } from 'node:os'
 
 type AppInfo = {
 	id: string
@@ -70,6 +72,7 @@ export const APPS: Record<string, AppInfo> = {
 const COLOR_RESET = '\x1b[0m'
 
 export async function run_dev_applications(app_keys: string[]) {
+	const is_win = platform() === 'win32'
 	const apps_to_run = app_keys.map(k => APPS[k]).filter(Boolean)
 	
 	if (apps_to_run.length === 0) {
@@ -101,6 +104,10 @@ Active Endpoints:`)
 			env: process.env,
 			stdout: 'pipe',
 			stderr: 'pipe',
+			// Non-Windows: become its own process-group leader so terminate_apps()
+			// can kill the whole tree (bun --filter's own `vite dev` child included)
+			// via the group instead of just this one process.
+			detached: !is_win,
 			async onExit(_proc, exit_code, _sig, error) {
 				if (error) {
 					console.error(`${prefix} Unexpected error:`, error.message)
@@ -145,7 +152,22 @@ Active Endpoints:`)
 				console.log(`process ${app_process.pid} already exited with exit code ${app_process.exitCode}`)
 				continue
 			}
-			app_process.kill()
+			if (is_win) {
+				// taskkill /t walks the actual process tree, killing `bun --filter`
+				// and the `vite dev` child it spawned together.
+				try {
+					execFileSync('taskkill', ['/pid', String(app_process.pid), '/t', '/f'])
+				} catch {
+					// Child may have already exited between the check above and taskkill running.
+				}
+			} else {
+				// Negative PID targets the whole process group (see the `detached` spawn option above).
+				try {
+					process.kill(-app_process.pid, 'SIGTERM')
+				} catch {
+					// Child may have already exited (and its pid been reused) between the check above and this call.
+				}
+			}
 		}
 		await Promise.all([...app_processes.values()].map(proc => proc.exited))
 		console.log(`${app_processes.size} apps shutdown`)
@@ -159,6 +181,11 @@ Active Endpoints:`)
 			terminate_apps()
 		}
 	})
+	// Without this, readline (attached to a TTY) absorbs the first Ctrl+C into its own
+	// 'pause' event instead of letting it reach process's 'SIGINT' -- only the second
+	// Ctrl+C would actually trigger terminate_apps(), which now matters more than before
+	// since the detached children no longer get a free group-wide SIGINT from the terminal.
+	rl.on('SIGINT', () => terminate_apps())
 
 	process.on('SIGINT', terminate_apps)
 }
