@@ -218,11 +218,28 @@ jobs:
 
       - name: Install Playwright Chromium & System Dependencies
         if: steps.playwright_cache.outputs.cache-hit != 'true'
-        run: bun run test:e2e:install
+        # Retries because `playwright install --with-deps` shells out to apt-get, which
+        # occasionally hits a "Hash Sum mismatch" against a Google/Ubuntu mirror mid-sync --
+        # unrelated to this repo. Each attempt reruns apt-get update from scratch, so it has
+        # a real chance of landing on a different mirror node; backoff increases since this
+        # can be a longer-lived stale-mirror window rather than a single blip.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            bun run test:e2e:install && exit 0
+            echo "Attempt $attempt/5 failed, retrying in $((attempt * 10))s..." >&2
+            sleep $((attempt * 10))
+          done
+          exit 1
 
       - name: Install Playwright OS Dependencies on Cache Hit
         if: steps.playwright_cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps chromium
+        run: |
+          for attempt in 1 2 3 4 5; do
+            bunx playwright install-deps chromium && exit 0
+            echo "Attempt $attempt/5 failed, retrying in $((attempt * 10))s..." >&2
+            sleep $((attempt * 10))
+          done
+          exit 1
 
       - name: Execute Playwright End-to-End Suite
         id: e2e

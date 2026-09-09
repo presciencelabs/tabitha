@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { platform } from 'node:os'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
@@ -23,6 +23,17 @@ type DiagnosticResult = {
 // prefix rather than one exact name -- targets has one D1 binding per target-language project
 // (docs/decisions/0012-per-project-targets-databases.md), resolved from wrangler.jsonc itself
 // rather than a separate hardcoded project list, so a new project needs no change here.
+// Returns true if `version` is >= `minimum`, comparing dotted numeric segments (e.g. "1.4.3" vs "1.4.0").
+function version_at_least(version: string, minimum: string): boolean {
+	const v = version.split('.').map(Number)
+	const m = minimum.split('.').map(Number)
+	for (let i = 0; i < Math.max(v.length, m.length); i++) {
+		const diff = (v[i] ?? 0) - (m[i] ?? 0)
+		if (diff !== 0) return diff > 0
+	}
+	return true
+}
+
 type DbCheck = { table: string } & ({ binding: string } | { binding_prefix: string })
 const APPS: { name: string, port: number, db_check?: DbCheck }[] = [
 	{ name: 'ontology', port: 3056, db_check: { binding: 'DB_Ontology', table: 'Concepts' } },
@@ -70,16 +81,29 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 		})
 	}
 
-	// 2. Bun
+	// 2. Bun -- compared against .bun-version (the same file CI's setup-bun action reads) as a
+	// minimum, not an exact match, so routine Bun patch releases don't trip a false alarm.
 	try {
 		const bun_proc = await $`bun -v`.quiet()
 		const bun_version = bun_proc.text().trim()
-		results.push({
-			category: 'Runtimes',
-			name: 'Bun Runtime',
-			status: 'PASS',
-			message: `v${bun_version}`,
-		})
+		const min_version = readFileSync(join(process.cwd(), '.bun-version'), 'utf-8').trim()
+
+		if (version_at_least(bun_version, min_version)) {
+			results.push({
+				category: 'Runtimes',
+				name: 'Bun Runtime',
+				status: 'PASS',
+				message: `v${bun_version} (>= v${min_version} required)`,
+			})
+		} else {
+			results.push({
+				category: 'Runtimes',
+				name: 'Bun Runtime',
+				status: 'WARN',
+				message: `v${bun_version} (v${min_version}+ required)`,
+				fix: 'Run `bun upgrade` to update to the version this repo expects',
+			})
+		}
 	} catch {
 		results.push({
 			category: 'Runtimes',
