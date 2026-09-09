@@ -155,6 +155,8 @@ bun run dev:editor     # http://localhost:1337
 bun run dev:copilot    # http://localhost:9000
 ```
 
+> **Windows:** avoid using the specific dev commands (eg. `dev:ontology`) -- always run through `dev` or `dev:menu` instead.
+
 ### 🧪 Local Smoke Test ("Golden Path")
 
 To verify that all local applications, databases, and inter-app APIs are working together:

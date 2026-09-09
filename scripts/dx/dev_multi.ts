@@ -1,6 +1,4 @@
 import { createInterface } from 'node:readline/promises'
-import { execFileSync, spawn } from 'node:child_process'
-import { platform } from 'node:os'
 
 type AppInfo = {
 	id: string
@@ -72,7 +70,6 @@ export const APPS: Record<string, AppInfo> = {
 const COLOR_RESET = '\x1b[0m'
 
 export async function run_dev_applications(app_keys: string[]) {
-	const is_win = platform() === 'win32'
 	const apps_to_run = app_keys.map(k => APPS[k]).filter(Boolean)
 	
 	if (apps_to_run.length === 0) {
@@ -92,66 +89,67 @@ Active Endpoints:`)
 	console.log('============================================================\n')
 	console.log('Press q+Enter to exit\n')
 
-	const app_processes = new Map<string, ReturnType<typeof spawn>>()
+	const app_processes = new Map<string, ReturnType<typeof Bun.spawn>>()
 	let terminating = false
 
 	for (const app of apps_to_run) {
-		const args = ['--filter', app.pkg, 'dev']
-		const child = spawn('bun', args, {
-			env: process.env,
-		})
-
 		// Pipe stdout and stderr with color-coded prefixes
 		const prefix = `${app.color}[${app.pkg}]${COLOR_RESET} `
 
-		child.stdout?.on('data', data => {
-			const lines = data.toString().trimEnd().split('\n')
-			for (const line of lines) {
-				console.log(`${prefix}${line}`)
-			}
+		const cmd = ['bun', '--filter', app.pkg, 'dev']
+		const child = Bun.spawn(cmd, {
+			env: process.env,
+			stdout: 'pipe',
+			stderr: 'pipe',
+			async onExit(_proc, exit_code, _sig, error) {
+				if (error) {
+					console.error(`${prefix} Unexpected error:`, error.message)
+				}
+				// If an app crashes unexpectedly, kill the rest to avoid orphaned services
+				if (!terminating && exit_code !== 0 && exit_code !== null) {
+					app_processes.delete(app.id)
+					console.error(`${prefix} crashed with exit code ${exit_code}. Shutting down all apps...`)
+					await terminate_apps()
+				}
+			},
 		})
 
-		child.stderr?.on('data', data => {
-			const lines = data.toString().trimEnd().split('\n')
-			for (const line of lines) {
-				console.error(`${prefix}${line}`)
-			}
-		})
+		function create_subprocess_pipe(input_stream: typeof child.stdout, stdio_output: Bun.BunFile) {
+			input_stream.pipeThrough(new TextDecoderStream())
+				.pipeThrough(new TransformStream<string, string>({
+					transform(chunk, controller) {
+						for (const line of chunk.trimEnd().split('\n')) {
+							controller.enqueue(`${prefix}${line}\n`)
+						}
+					},
+				}))
+				.pipeTo(new WritableStream({
+					async write(chunk) {
+						await stdio_output.write(chunk)
+					},
+				}))
+		}
 
-		// If an app crashes unexpectedly, kill the rest to avoid orphaned services
-		child.on('close', code => {
-			console.log(`${prefix} server shutdown`)
-			app_processes.delete(app.id)
-			if (!terminating && code !== 0 && code !== null) {
-				console.error(`${prefix} crashed with exit code ${code}. Shutting down all apps...`)
-				terminate_apps()
-			}
-		})
-
-		child.on('error', err => {
-			console.error(`${prefix} Failed to start:`, err.message)
-		})
+		create_subprocess_pipe(child.stdout, Bun.stdout)
+		create_subprocess_pipe(child.stderr, Bun.stderr)
 
 		app_processes.set(app.id, child)
 	}
 
-	function terminate_apps() {
+	async function terminate_apps() {
 		console.log(`Terminating ${app_processes.size} apps...`)
 		terminating = true
 
 		for (const app_process of app_processes.values()) {
-			if (is_win) {
-				// Windows cmd intercepts the SIGINT itself (prompting "Terminate batch job (Y/N)?")
-				// so we need to force kill the whole tree.
-				try {
-					execFileSync('taskkill', ['/pid', String(app_process.pid), '/t', '/f'])
-				} catch {
-					// Child may have already exited between the signal firing and taskkill running.
-				}
-			} else {
-				app_process.kill('SIGINT')
+			if (app_process.exitCode) {
+				console.log(`process ${app_process.pid} already exited with exit code ${app_process.exitCode}`)
+				continue
 			}
+			app_process.kill()
 		}
+		await Promise.all([...app_processes.values()].map(proc => proc.exited))
+		console.log(`${app_processes.size} apps shutdown`)
+		rl.close()
 		process.exit(0)
 	}
 
