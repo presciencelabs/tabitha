@@ -89,6 +89,22 @@ export function by_book_order(
 	return (BOOK_ORDER.get(a.reference.id_primary) ?? -1) - (BOOK_ORDER.get(b.reference.id_primary) ?? -1)
 }
 
+const OLD_TESTAMENT_BOOK_COUNT = 39
+
+/**
+ * Returns which testament a canonical Bible book belongs to, or `undefined` if the name
+ * isn't one of the 66 books in `BIBLE_BOOKS`.
+ */
+export function testament(book_name: string): 'Old Testament' | 'New Testament' | undefined {
+	const index = BOOK_ORDER.get(book_name)
+
+	if (index === undefined) {
+		return undefined
+	}
+
+	return index < OLD_TESTAMENT_BOOK_COUNT ? 'Old Testament' : 'New Testament'
+}
+
 /**
  * Matches USFM verse marker tokens (e.g. `\v 14`, `\v  1`).
  *

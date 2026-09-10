@@ -12,6 +12,7 @@ import {
 	BIBLE_BOOKS,
 	by_book_order,
 	clean_trailing_slash,
+	testament,
 } from './index'
 
 describe('@tabitha/types/patterns', () => {
@@ -120,6 +121,18 @@ describe('@tabitha/types/patterns', () => {
 			]
 			expect(refs.toSorted(by_book_order).map(r => r.reference.id_primary))
 				.toEqual(['Genesis', 'Amos', 'John'])
+		})
+
+		test('testament classifies canonical books as Old or New Testament', () => {
+			expect(testament('Genesis')).toBe('Old Testament')
+			expect(testament('Malachi')).toBe('Old Testament')
+			expect(testament('Matthew')).toBe('New Testament')
+			expect(testament('Revelation')).toBe('New Testament')
+		})
+
+		test('testament returns undefined for non-canonical book names', () => {
+			expect(testament('Infected Eye')).toBeUndefined()
+			expect(testament('')).toBeUndefined()
 		})
 	})
 
