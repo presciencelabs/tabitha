@@ -2,16 +2,13 @@ import { describe, expect, test } from 'vitest'
 import { TOKEN_TYPE, create_clause_token, create_added_token, create_token, MESSAGE_TYPE } from '../token'
 import { ERRORS } from './error_messages'
 import { clausify, flatten_sentences } from './clausify'
-import type { TokenType } from '@tabitha/types'
-import type { Sentence, Token } from '$lib/types'
+import type { CheckerTokenType } from '@tabitha/types'
+import type { Token } from '$lib/types'
+import { create_sentence_for_test } from '$lib/test_helps'
 
 function create_tokens(tokens: string[]): Token[] {
-	const type = (token: string): TokenType => token.length > 1 ? TOKEN_TYPE.LOOKUP_WORD : TOKEN_TYPE.PUNCTUATION
+	const type = (token: string): CheckerTokenType => token.length > 1 ? TOKEN_TYPE.LOOKUP_WORD : TOKEN_TYPE.PUNCTUATION
 	return tokens.map(token => create_token({ token, type: type(token) }))
-}
-
-function create_sentence(tokens: Token[]): Sentence {
-	return { clause: create_clause_token({ sub_tokens: tokens, tag: { 'clause_type': 'main_clause' } }) }
 }
 
 function create_error_token(token: string, message: string): Token {
@@ -22,7 +19,7 @@ describe('clausify: brackets', () => {
 	describe('balanced', () => {
 		test('token', () => {
 			const test_tokens = create_tokens(['token','.'])
-			const expected = [create_sentence(test_tokens)]
+			const expected = [create_sentence_for_test(test_tokens)]
 
 			expect(clausify(test_tokens)).toEqual(expected)
 		})
@@ -30,7 +27,7 @@ describe('clausify: brackets', () => {
 		test('[token] ', () => {
 			const test_tokens = create_tokens(['[','token',']','.'])
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 3) }),
 					test_tokens[3],
 				]),
@@ -42,7 +39,7 @@ describe('clausify: brackets', () => {
 		test('[token] [token]', () => {
 			const test_tokens = create_tokens(['[','token',']','[','token',']','.'])
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 3) }),
 					create_clause_token({ sub_tokens: test_tokens.slice(3, 6) }),
 					test_tokens[6],
@@ -55,7 +52,7 @@ describe('clausify: brackets', () => {
 		test('[token [token]]', () => {
 			const test_tokens = create_tokens(['[','token','[','token',']', ']','.'])
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						test_tokens[0],
 						test_tokens[1],
@@ -72,7 +69,7 @@ describe('clausify: brackets', () => {
 		test('[bad[token]]', () => {
 			const test_tokens = create_tokens(['[','bad[','token',']', ']','.'])
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						test_tokens[0],
 						create_clause_token({ sub_tokens: test_tokens.slice(1, 4) }),
@@ -88,7 +85,7 @@ describe('clausify: brackets', () => {
 		test('[token [token] [token [token]]]', () => {
 			const test_tokens = create_tokens(['[','token','[','token',']','[','token','[','token',']',']',']','.'])
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						test_tokens[0],
 						test_tokens[1],
@@ -122,7 +119,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','token','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						...test_tokens.slice(0, 3),
 						create_error_token(']', ERRORS.MISSING_CLOSING_BRACKET),
@@ -137,7 +134,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','token','[','token',']','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						...test_tokens.slice(0, 2),
 						create_clause_token({ sub_tokens: test_tokens.slice(2, 5) }),
@@ -154,7 +151,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['token',']','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					...test_tokens,
 				]),
@@ -167,7 +164,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','token',']','token',']','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 3) }),
 					...test_tokens.slice(3, 6),
@@ -181,7 +178,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','[','[','token',']','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						test_tokens[0],
 						create_clause_token({ sub_tokens: [
@@ -202,7 +199,7 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','token',']',']',']','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 3) }),
@@ -219,13 +216,13 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','"','token','?','"','token','.'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						...test_tokens.slice(0, 5),
 						create_error_token(']', ERRORS.MISSING_CLOSING_BRACKET),
 					] }),
 				]),
-				create_sentence(test_tokens.slice(5, 7)),
+				create_sentence_for_test(test_tokens.slice(5, 7)),
 			]
 
 			expect(clausify(test_tokens)).toEqual(expected)
@@ -234,8 +231,8 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['token','.','token','.',']'])
 
 			const expected = [
-				create_sentence(test_tokens.slice(0, 2)),
-				create_sentence([
+				create_sentence_for_test(test_tokens.slice(0, 2)),
+				create_sentence_for_test([
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					...test_tokens.slice(2, 5),
 				]),
@@ -247,13 +244,13 @@ describe('clausify: brackets', () => {
 			const test_tokens = create_tokens(['[','token','.','token','.',']'])
 
 			const expected = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: [
 						...test_tokens.slice(0, 3),
 						create_error_token(']', ERRORS.MISSING_CLOSING_BRACKET),
 					] }),
 				]),
-				create_sentence([
+				create_sentence_for_test([
 					create_error_token('[', ERRORS.MISSING_OPENING_BRACKET),
 					...test_tokens.slice(3, 6),
 				]),
@@ -269,14 +266,14 @@ describe('clausify: period check', () => {
 		test('token.', () => {
 			const test_tokens = create_tokens(['token', '.'])
 
-			const expected_tokens = [create_sentence(test_tokens)]
+			const expected_tokens = [create_sentence_for_test(test_tokens)]
 
 			expect(clausify(test_tokens)).toEqual(expected_tokens)
 		})
 		test('token?', () => {
 			const test_tokens = create_tokens(['token', '?'])
 
-			const expected_tokens = [create_sentence(test_tokens)]
+			const expected_tokens = [create_sentence_for_test(test_tokens)]
 
 			expect(clausify(test_tokens)).toEqual(expected_tokens)
 		})
@@ -284,7 +281,7 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['[', 'token', '.', ']'])
 
 			const expected_tokens = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: test_tokens }),
 				]),
 			]
@@ -294,7 +291,7 @@ describe('clausify: period check', () => {
 		test('token."', () => {
 			const test_tokens = create_tokens(['token', '.', '"'])
 
-			const expected_tokens = [create_sentence(test_tokens)]
+			const expected_tokens = [create_sentence_for_test(test_tokens)]
 
 			expect(clausify(test_tokens)).toEqual(expected_tokens)
 		})
@@ -302,7 +299,7 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['[', 'token', '.', ']', '"'])
 
 			const expected_tokens = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 4) }),
 					test_tokens[4],
 				]),
@@ -314,9 +311,9 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['token', '.', 'token', '?', 'token', '!'])
 
 			const expected_tokens = [
-				create_sentence(test_tokens.slice(0, 2)),
-				create_sentence(test_tokens.slice(2, 4)),
-				create_sentence(test_tokens.slice(4, 6)),
+				create_sentence_for_test(test_tokens.slice(0, 2)),
+				create_sentence_for_test(test_tokens.slice(2, 4)),
+				create_sentence_for_test(test_tokens.slice(4, 6)),
 			]
 
 			expect(clausify(test_tokens)).toEqual(expected_tokens)
@@ -328,7 +325,7 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['token'])
 
 			const expected_tokens = [
-				create_sentence([
+				create_sentence_for_test([
 					...test_tokens,
 					create_error_token('.', ERRORS.MISSING_PERIOD),
 				]),
@@ -340,8 +337,8 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['token', '.', 'token'])
 
 			const expected_tokens = [
-				create_sentence(test_tokens.slice(0, 2)),
-				create_sentence([
+				create_sentence_for_test(test_tokens.slice(0, 2)),
+				create_sentence_for_test([
 					test_tokens[2],
 					create_error_token('.', ERRORS.MISSING_PERIOD),
 				]),
@@ -353,7 +350,7 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['[', 'token', ']'])
 
 			const expected_tokens = [
-				create_sentence([
+				create_sentence_for_test([
 					create_clause_token({ sub_tokens: test_tokens.slice(0, 3) }),
 					create_error_token('.', ERRORS.MISSING_PERIOD),
 				]),
@@ -365,7 +362,7 @@ describe('clausify: period check', () => {
 			const test_tokens = create_tokens(['token', '"'])
 
 			const expected_tokens = [
-				create_sentence([
+				create_sentence_for_test([
 					...test_tokens,
 					create_error_token('.', ERRORS.MISSING_PERIOD),
 				]),

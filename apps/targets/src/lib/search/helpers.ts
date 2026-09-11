@@ -1,9 +1,8 @@
-import { by_book_order } from '@tabitha/types'
-import type { FilterMap, SearchTextResult } from '../types'
+import { by_book_order } from '@tabitha/types/patterns'
+import type { SearchTargetTextResult } from '@tabitha/types'
+import type { FilterMap } from '../types'
 
-export { by_book_order }
-
-export function build_filter_options(matches: SearchTextResult[]): FilterMap {
+export function build_filter_options(matches: SearchTargetTextResult[]): FilterMap {
 	const filter_map: FilterMap = new Map()
 
 	const book_names_found_in_examples = [...new Set(matches.toSorted(by_book_order).map(result => result.reference.id_primary))]
@@ -16,9 +15,9 @@ export function build_filter_options(matches: SearchTextResult[]): FilterMap {
 }
 
 export function filter_search_results({ matches, selected_filters }: {
-	matches: SearchTextResult[]
+	matches: SearchTargetTextResult[]
 	selected_filters: Record<string, string>
-}): SearchTextResult[] {
+}): SearchTargetTextResult[] {
 	return matches.filter(result => {
 		const selected_book = selected_filters['Book']
 		if (selected_book && selected_book !== 'Any' && result.reference.id_primary !== selected_book) {

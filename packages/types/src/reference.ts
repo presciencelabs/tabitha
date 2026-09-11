@@ -24,15 +24,4 @@ export type ParsedReference = {
 	raw?: string
 }
 
-export type SourceStatus =
-	| 'Not Started'
-	| 'Initial Analysis in Progress'
-	| 'Initial Analysis Complete'
-	| 'Final Review in Progress'
-	| 'Ready to Translate'
-
-export type StatusApiResult = {
-	status: SourceStatus
-}
-
 export type Book = Record<number, string>

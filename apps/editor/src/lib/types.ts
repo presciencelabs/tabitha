@@ -1,18 +1,23 @@
-import type { CheckResponse, HowToEntry, LookupTerm, LookupWord, MessageLabel, OntologyStatus, PairingType, TokenBase } from '@tabitha/types'
+import type { ConceptKey, PairingType } from '@tabitha/types'
+import type { CheckerTokenType, CheckerMessage, CheckerMessageLabel, EditorCheckResult, CheckerLookupResult } from '@tabitha/types/editor'
 import type { CaseFrame } from '$lib/rules/case_frame/types'
 
-export type LookupResult = LookupWord & {
-	form: string
-	sense: string
-	level: number
-	gloss: string
-	categorization: string
-	ontology_status: OntologyStatus
-	how_to_entries: HowToEntry[]
+export type LookupTerm = string
+
+export type LookupWord = Pick<ConceptKey, 'stem' | 'part_of_speech'>
+
+export type LookupResult = Omit<CheckerLookupResult, 'case_frame'> & {
 	case_frame: CaseFrame
 }
 
-export type Token = TokenBase & {
+export type Tag = Record<string, string>
+
+export type Token = {
+	token: string
+	type: CheckerTokenType
+	tag: Tag
+	messages: CheckerMessage[]
+	applied_rules: string[]
 	specified_sense: string
 	lookup_terms: LookupTerm[]
 	lookup_results: LookupResult[]
@@ -33,13 +38,13 @@ export type MessageInfo = {
 	token_to_flag?: Token
 	plain?: boolean
 } & {
-	[key in MessageLabel]?: string
+	[key in CheckerMessageLabel]?: string
 }
 
 export type AiAssistResult = {
 	status: 'ok' | 'error'
 	phase_1: string
 	notes: string[]
-	check: CheckResponse
+	check: EditorCheckResult
 	message?: string
 }

@@ -1,4 +1,9 @@
-import type { SourceApiFeature } from './source'
+import type { PartOfSpeech } from './core'
+import type { Reference } from './reference'
+import type { SourceFeature } from './source'
+
+//===============
+// projects
 
 /**
  * Canonical registry of target-language projects, each backed by its own D1 database (one
@@ -10,28 +15,39 @@ export const TARGET_PROJECTS = ['English', 'Swahili', 'Indonesian', 'Tagalog'] a
 
 export type TargetProject = typeof TARGET_PROJECTS[number]
 
+//===============
+// base text API
+
 export type TargetTextResult = {
 	text: string
 	audience: string
 	ideal?: string
 }
 
-export type TargetApiFeature = SourceApiFeature
+//===============
+// search API
 
-export type TargetApiFeatureResult = {
-	source: TargetApiFeature[]
-	lexical: TargetApiFeature[]
+export type SearchTargetTextResult = {
+	reference: Reference
+	texts: TargetTextResult[]
 }
 
-export type FormName = {
-	form_name: string
-	category: string
-	features: string
+//===============
+// lookup/features API
+
+export type TargetFeature = SourceFeature
+
+export type TargetFeatureResult = {
+	source: TargetFeature[]
+	lexical: TargetFeature[]
 }
 
-export type LexicalForm = {
+//===============
+// lookup/forms API
+
+export type TargetFormResult = {
+	id: number
 	stem: string
+	part_of_speech: PartOfSpeech
 	form: string
-	form_name: string
-	category: string
 }

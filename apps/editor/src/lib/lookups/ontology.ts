@@ -8,7 +8,7 @@ import type { OntologyResult } from '@tabitha/types'
 const ontology_client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
 export async function check_ontology(lookup_token: Token) {
-	const results = (await Promise.all(lookup_token.lookup_terms.map(get_matches_from_ontology))).flat()
+	const results = (await Promise.all(lookup_token.lookup_terms.map(term => ontology_client.search_concepts({ q: term })))).flat()
 
 	const found_results = results.reduce(transform_results, [])
 	const not_found_results = lookup_token.lookup_results.filter(lookup => !results.some(LOOKUP_FILTERS.MATCHES_LOOKUP(lookup)))
@@ -41,14 +41,10 @@ export async function check_ontology(lookup_token: Token) {
 				...ontology_result,
 				level: level_number,
 				ontology_status: ontology_result.status,
-				how_to: ontology_result.how_to_hints,
+				how_to_entries: ontology_result.how_to_hints,
 			}))
 		}
 
 		return transformed_results
 	}
-}
-
-async function get_matches_from_ontology(lookup_term: string): Promise<OntologyResult[]> {
-	return ontology_client.search_concepts<OntologyResult>({ q: lookup_term })
 }

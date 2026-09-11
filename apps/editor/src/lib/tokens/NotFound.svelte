@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 
-	let { token, classes = '' }: { token: SimpleToken, classes?: string } = $props()
+	let { token, classes = '' }: { token: CheckerToken, classes?: string } = $props()
 
 	const how_to_entries = $derived(token.lookup_results.flatMap(lookup => lookup.how_to_entries.map(how_to => ({ lookup, how_to }))))
 	const has_structure = $derived(how_to_entries.some(entry => entry.how_to.structure))

@@ -1,5 +1,7 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit'
-import type { BookResult } from '$lib/types'
+import type { DbRowText } from '$lib/types'
+
+type QueryBookResult = Pick<DbRowText, 'book'>
 
 export async function GET({ locals: { db }, params: { project } }: Parameters<RequestHandler>[0]) {
 	const sql = `
@@ -9,7 +11,7 @@ export async function GET({ locals: { db }, params: { project } }: Parameters<Re
 	`
 
 	try {
-		const { results } = await db.prepare(sql).bind(project).all<BookResult>()
+		const { results } = await db.prepare(sql).bind(project).all<QueryBookResult>()
 
 		return json(results.map(({ book }) => book))
 	} catch {

@@ -360,7 +360,7 @@ describe('@tabitha/api-client', () => {
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
-			const concept = await client.get_concept('write-01', 'B')
+			const concept = await client.get_concept({ stem: 'write-01', sense: 'B', part_of_speech: 'Verb' })
 			expect(concept?.sense).toBe('B')
 		})
 	})

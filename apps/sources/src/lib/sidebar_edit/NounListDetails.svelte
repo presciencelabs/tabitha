@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { NounListEntry } from '@tabitha/types'
+	import type { NounList } from '@tabitha/types'
 	import type { PageSourceEntity } from '$lib/types'
 
-	let { data = $bindable(), noun_list = $bindable() }: { data: PageSourceEntity, noun_list: NounListEntry[] } = $props()
+	let { data = $bindable(), noun_list = $bindable() }: { data: PageSourceEntity, noun_list: NounList } = $props()
 
 	const next_index = $derived(calculate_next_index())
 

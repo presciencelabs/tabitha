@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Component } from 'svelte'
-	import type { PartOfSpeech } from '$lib/types'
+	import type { PartOfSpeech } from '@tabitha/types'
 	import SemanticCategorization from './SemanticCategorization.svelte'
 	import TBD from './TBD.svelte'
 	import ThetaGrid from './ThetaGrid.svelte'
@@ -8,7 +8,7 @@
 	import UsageInfoForParticles from './UsageInfoForParticles.svelte'
 
 	type Props = {
-		part_of_speech: PartOfSpeech | string
+		part_of_speech: PartOfSpeech
 		categories: string[]
 	}
 
@@ -25,7 +25,7 @@
 		Verb: ThetaGrid,
 	}
 
-	let CurrentComponent = $derived(lookup[part_of_speech as PartOfSpeech] || TBD)
+	let CurrentComponent = $derived(lookup[part_of_speech] || TBD)
 </script>
 
 <CurrentComponent {categories} />

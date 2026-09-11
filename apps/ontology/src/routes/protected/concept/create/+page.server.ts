@@ -7,7 +7,7 @@ export async function load() {
 	const concept_data: ConceptCreateData = {
 		stem: '',
 		sense: '',
-		part_of_speech: '',
+		part_of_speech: 'Noun',
 		level: '0',
 		gloss: '',
 		brief_gloss: '',

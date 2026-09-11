@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { cached_json, create_sources_client } from '@tabitha/api-client'
 import { get_examples } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
-import type { Example, SourceStatus } from '$lib/types'
+import type { ConceptExample, SourceStatus } from '@tabitha/types'
 
 /**
  * In-memory Worker isolate cache for book statuses.
@@ -36,7 +36,7 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }: Pa
 	return cached_json({ data: examples_with_status })
 }
 
-async function fetch_statuses_by_book(examples: Example[]): Promise<Example[]> {
+async function fetch_statuses_by_book(examples: ConceptExample[]): Promise<ConceptExample[]> {
 	const book_refs = [...new Set(examples.map(({ reference }) => reference.id_primary))]
 	const now = Date.now()
 

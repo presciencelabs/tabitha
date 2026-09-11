@@ -1,7 +1,6 @@
 import { TOKEN_TYPE, create_token } from '$lib/token'
 import { create_token_filter } from '$lib/rules/rules_parser'
-import type { Tag } from '@tabitha/types'
-import type { Phrase, Sentence, Token } from '$lib/types'
+import type { Phrase, Sentence, Token, Tag } from '$lib/types'
 import type { TokenFilter, TokenFilterJson } from '$lib/rules/types'
 
 export function phrasify(sentences: Sentence[]): Sentence[] {

@@ -1,8 +1,9 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message, token_has_tag } from '$lib/token'
 import { parse_transform_rule } from '../transform_rules'
-import type { MessageLabel } from '@tabitha/types'
+import type { CheckerMessageLabel } from '@tabitha/types'
 import type { MessageInfo, Token, LookupResult } from '$lib/types'
+import type { RuleTriggerContext } from '$lib/rules/types'
 import type {
 	ArgumentRoleRule,
 	ArgumentRulesForSense,
@@ -15,7 +16,6 @@ import type {
 	SenseRuleJson,
 	WordSense,
 } from '$lib/rules/case_frame/types'
-import type { RuleTriggerContext } from '$lib/rules/types'
 
 function readable_role_tag(role_tag: RoleTag): string {
 	const readables = new Map<string, string>([
@@ -304,7 +304,7 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 	}
 
 	// show the case frame messages as warnings when inside a relative clause or question, in case something is mishandled
-	const severity: MessageLabel = token_has_tag({ token: trigger_context.tokens[0], tag_to_check: 'in_relative_clause|in_interrogative' }) ? 'warning' : 'error'
+	const severity: CheckerMessageLabel = token_has_tag({ token: trigger_context.tokens[0], tag_to_check: 'in_relative_clause|in_interrogative' }) ? 'warning' : 'error'
 	
 	const selected_result = token.lookup_results[0]
 	const sense = stem_with_sense(selected_result)
@@ -408,7 +408,7 @@ function role_is_extra_for_all({ role_tag, token }: { role_tag: RoleTag; token: 
 	return token.lookup_results.every(LOOKUP_FILTERS.HAS_EXTRA_ARGUMENT(role_tag))
 }
 
-function flag_extra_argument({ trigger_context, extra_argument, message, severity }: { trigger_context: RuleTriggerContext; extra_argument: RoleMatchResult; message: string; severity: MessageLabel }): MessageInfo {
+function flag_extra_argument({ trigger_context, extra_argument, message, severity }: { trigger_context: RuleTriggerContext; extra_argument: RoleMatchResult; message: string; severity: CheckerMessageLabel }): MessageInfo {
 	// The message is formatted based on the verb trigger token, not the argument token
 	const formatted_message = format_token_message({ trigger_context, message })
 

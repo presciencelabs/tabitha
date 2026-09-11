@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SourceEntity } from '$lib/types'
+	import type { SourceEntity } from '@tabitha/types'
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'

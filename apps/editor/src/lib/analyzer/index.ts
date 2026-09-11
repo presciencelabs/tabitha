@@ -1,10 +1,10 @@
 import { phrasify } from '$lib/parser/phrasify'
 import { entityfy } from './entityfy'
 import { populate_noun_list, replace_punctuation } from './other_rules'
-import type { SimpleSourceData, SimpleSourceEntity } from '@tabitha/types'
+import type { EditorAnalyzeResult, EditorAnalyzedEntity } from '@tabitha/types'
 import type { Sentence } from '$lib/types'
 
-export function analyze(sentences: Sentence[]): SimpleSourceData {
+export function analyze(sentences: Sentence[]): EditorAnalyzeResult {
 	const punctuated = replace_punctuation(sentences)
 	const phrasified = phrasify(punctuated)
 	// replace GAP tokens
@@ -15,7 +15,7 @@ export function analyze(sentences: Sentence[]): SimpleSourceData {
 	return source_data
 }
 
-function to_source_data(source_entities: SimpleSourceEntity[]): SimpleSourceData {
+function to_source_data(source_entities: EditorAnalyzedEntity[]): EditorAnalyzeResult {
 	return {
 		source_entities,
 		noun_list: populate_noun_list(source_entities),

@@ -1,61 +1,7 @@
-export type SourceReference = {
-	type: string
-	id_primary: string
-	id_secondary: number
-	id_tertiary: number
-}
+import type { SourceEntityCategory, PartOfSpeech } from "@tabitha/types"
 
-export type EntityFeature = {
-	name: string
-	value: string
-}
-
-export type SourceConcept = {
-	stem: string
-	sense: string
-}
-
-/** A positional string of character codes straight from the source encoding (e.g., '4A4SDAnS3NN') */
-export type FeatureCodeString = string
-
-export type SourceEntity = {
-	value: string
-	category: string
-	category_abbr: string
-	feature_codes: FeatureCodeString
-	features: EntityFeature[]
-	concept: SourceConcept | null
-	pairing_concept: SourceConcept | null
-}
-
-export type SourceData = {
-	parsed_semantic_encoding: SourceEntity[]
-}
-
-export type TextResult = {
-	text: string
-	audience: string
-	ideal?: string
-}
-
-export type BookResult = {
-	book: string
-}
-
-export type ChapterResult = {
-	chapter: number
-}
-
-export type VerseResult = {
-	verse: number
-}
-
-export type DbTextResult = TextResult & BookResult & ChapterResult & VerseResult
-
-export type SearchTextResult = {
-	reference: SourceReference
-	texts: TextResult[]
-}
+//===============
+// UI-related
 
 export type FilterMap = Map<string, string[]>
 
@@ -64,47 +10,46 @@ export type ReturnTo = {
 	q: string
 }
 
+//===============
+// Db types
+
+export type DbRowText = {
+	text: string
+	audience: string
+	book: string
+	chapter: number
+	verse: number
+}
+
 export type DbRowLexicon = {
 	id: number
 	project: string
 	stem: string
-	part_of_speech: string
+	part_of_speech: PartOfSpeech
 	gloss: string
 	features: string
 	constituents: string
 	forms: string
 }
 
-export type LexicalForm = {
-	id: number
-	stem: string
-	part_of_speech: string
-	form: string
-}
-
 export type DbRowFormNames = {
 	project: string
-	part_of_speech: string
-	name: string
-	position: number
-}
-
-export type FormNameMap = {
-	part_of_speech: string
+	part_of_speech: PartOfSpeech
 	name: string
 	position: number
 }
 
 export type DbRowFeature = {
 	project: string
-	category: string
+	category: SourceEntityCategory
 	feature: string
 	position: number
 	code: string
 	value: string
 }
 
-export type CategoryName = string
+//===============
+// text search query helpers
 
 export type AndTerm = string
 

@@ -2,8 +2,9 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } from './lookups'
 import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
 import { structure_entities } from './structured'
-import { type CategoryName, type NounListEntry, type SourceConceptData, type SourceEntity, type TargetEntity, type PairingType, IS_CARDINAL_NUMBER } from '@tabitha/types'
-import type { PageSourceEntity, Source } from '$lib/types'
+import { IS_CARDINAL_NUMBER } from '@tabitha/types/patterns'
+import type { SourceEntityCategory, NounListEntry, SourceConceptData, SourceResult, SourceEntity, TargetEntity, PairingType, PartOfSpeech, EncodingEntityCategory } from '@tabitha/types'
+import type { PageSourceEntity } from '$lib/types'
 
 /**
  * The phase_2_encoding looks something like:
@@ -34,7 +35,7 @@ export async function transform_semantic_encoding({ db, semantic_encoding }: Tra
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg (?:([\w.])-([^~]*))?~\\lu ([^~]+)/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
-	const all_features = await load_source_feature_map(db)
+	const feature_map = await load_source_feature_map(db)
 
 	return entities.map(decode_entity)
 
@@ -44,10 +45,10 @@ export async function transform_semantic_encoding({ db, semantic_encoding }: Tra
 		const feature_codes = entity_match[2] ?? ''
 		const value = entity_match[3] === 'Paragraph' ? '|' : entity_match[3]
 
-		const category = CATEGORY_NAME_LOOKUP.get(category_code) || ''
+		const category = (CATEGORY_NAME_LOOKUP.get(category_code) || '') as SourceEntityCategory
 		const category_abbr = CATEGORY_ABBREVIATIONS.get(category) || ''
 		const ontology_data = decode_concept_data({ value, category, raw_feature_codes: feature_codes })
-		const features = decode_features({ raw_feature_codes: feature_codes, category, all_features })
+		const features = decode_features({ raw_feature_codes: feature_codes, category, feature_map })
 
 		return {
 			category,
@@ -70,7 +71,7 @@ export async function transform_target_encoding({ db, semantic_encoding, project
 	const EXTRACT_TYPE_FEATURES_VALUES = /~\\wd ~\\tg ([^~]+)?~\\lu ([^~]+)~\\z1 ?([^~]+)?/g
 	const entities = [...semantic_encoding.matchAll(EXTRACT_TYPE_FEATURES_VALUES)]
 
-	const all_features = await load_target_feature_map(project) || await load_source_feature_map(db)
+	const feature_map = await load_target_feature_map(project) || await load_source_feature_map(db)
 
 	return entities.map(decode_entity)
 
@@ -82,7 +83,7 @@ export async function transform_target_encoding({ db, semantic_encoding, project
 		const category = is_user_defined ? entity_match[1].slice(1) : CATEGORY_NAME_LOOKUP.get(category_code) || ''
 		const category_abbr = is_user_defined ? category : CATEGORY_ABBREVIATIONS.get(category) || ''
 		const raw_feature_codes = is_user_defined ? '' : entity_match[1]?.slice(2) || ''
-		const { feature_codes, features, noun_list_index } = decode_features({ raw_feature_codes, category, all_features })
+		const { feature_codes, features, noun_list_index } = decode_features({ raw_feature_codes, category, feature_map })
 
 		const value = entity_match[2]
 		const concept = decode_concept_data({ value, category, raw_feature_codes }).concept
@@ -133,10 +134,11 @@ function determine_pairing_type({ separator, pairing_stem, pairing_sense }: { se
 	}
 }
 
-function decode_concept_data({ value, category, raw_feature_codes }: { value: string, category: CategoryName, raw_feature_codes: string }): SourceConceptData {
+function decode_concept_data({ value, category, raw_feature_codes }: { value: string, category: EncodingEntityCategory, raw_feature_codes: string }): SourceConceptData {
 	if (!WORD_ENTITY_CATEGORIES.has(category)) {
 		return { concept: null, pairing_concept: null, pairing_type: null }
 	}
+	const part_of_speech = category as PartOfSpeech
 
 	const sense = raw_feature_codes[1]
 	const pairing = parse_concept_pairing(value)
@@ -146,12 +148,12 @@ function decode_concept_data({ value, category, raw_feature_codes }: { value: st
 			concept: {
 				stem: pairing.stem,
 				sense,
-				part_of_speech: category,
+				part_of_speech,
 			},
 			pairing_concept: {
 				stem: pairing.pairing_stem,
 				sense: pairing.pairing_sense,
-				part_of_speech: category,
+				part_of_speech,
 			},
 			pairing_type: pairing.pairing_type,
 		}
@@ -161,7 +163,7 @@ function decode_concept_data({ value, category, raw_feature_codes }: { value: st
 		concept: {
 			stem: value,
 			sense,
-			part_of_speech: category,
+			part_of_speech,
 		},
 		pairing_concept: null,
 		pairing_type: null,
@@ -186,9 +188,9 @@ export function structure_semantic_encoding(entities: SourceEntity[]): PageSourc
 	return new_entities
 }
 
-export function get_noun_list(source: Source): NounListEntry[] {
-	const noun_list_start = source.semantic_encoding.lastIndexOf('~|') // this indicates the start of the noun list
-	return source.semantic_encoding
+export function get_noun_list(raw_encoding: string): NounListEntry[] {
+	const noun_list_start = raw_encoding.lastIndexOf('~|') // this indicates the start of the noun list
+	return raw_encoding
 		.slice(noun_list_start + 2).trim()
 		.split('|')
 		.filter(entry => entry.length)

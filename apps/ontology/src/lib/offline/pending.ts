@@ -1,10 +1,11 @@
 import { get_all_mutations, type QueuedMutation } from './queue'
-import type { Concept, ConceptKey, OntologyChange, OntologyChangeDataFields } from '$lib/types'
+import type { Concept, OntologyChange, OntologyChangeDataFields } from '$lib/types'
 import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
+import type { ConceptKey } from '@tabitha/types'
 
 const DIFFED_FIELDS = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples'] as const
 
-export function do_concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey }): boolean {
+function do_concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey | Concept }): boolean {
 	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 

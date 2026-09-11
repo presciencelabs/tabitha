@@ -3,6 +3,8 @@
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
+	import type { VerseReference, TargetTextResult, CopilotNotesResult } from '@tabitha/types'
+	import type { CopilotSettings } from '$lib/types'
 
 	let reference = $state(persisted<VerseReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
@@ -14,10 +16,10 @@
 	let settings = $state(persisted<CopilotSettings>({ key: 'saved_settings@1.5', defaultValue: default_settings }).value)
 
 	let fetching_english = $state(false)
-	let english_text: TargetApiResult|undefined = $state(undefined)
+	let english_text: TargetTextResult|undefined = $state(undefined)
 
 	let fetching_notes = $state(false)
-	let result: CopilotApiResult|null = $state(null)
+	let result: CopilotNotesResult|null = $state(null)
 
 	let error_text = $state('')
 

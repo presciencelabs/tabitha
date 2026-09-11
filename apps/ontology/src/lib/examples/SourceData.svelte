@@ -2,17 +2,17 @@
 	import { onMount } from 'svelte'
 	import { get_source_data, get_sources_url, SourceEntities } from '$lib/examples'
 	import Icon from '@iconify/svelte'
-	import type { Reference, SourceConcept, SourceData } from '$lib/types'
+	import type { Reference, ConceptKey, SourceResult } from '@tabitha/types'
 
 	type Props = {
 		reference: Reference
-		selected_concept: SourceConcept
+		selected_concept: ConceptKey
 	}
 
 	let { reference, selected_concept }: Props = $props()
 
 	let loading = $state(true)
-	let source = $state<SourceData | null>(null)
+	let source = $state<SourceResult | null>(null)
 
 	onMount(async () => {
 		try {

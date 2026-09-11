@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import type { SourceEntity } from '$lib/types'
+	import type { SourceEntity } from '@tabitha/types'
 	import { get_features_to_display } from './features_helpers'
 
 	let {

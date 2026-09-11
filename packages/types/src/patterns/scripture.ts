@@ -1,5 +1,3 @@
-import type { Book } from '../reference'
-
 /**
  * The 66 books of the Bible, in canonical order, keyed by book number.
  *
@@ -8,7 +6,7 @@ import type { Book } from '../reference'
  * integer-index property keys) -- so consumers can rely on `Object.values(BIBLE_BOOKS)` for a
  * book-ordered array without needing to sort it.
  */
-export const BIBLE_BOOKS: Book = {
+export const BIBLE_BOOKS: Record<number, string> = {
 	1: 'Genesis',
 	2: 'Exodus',
 	3: 'Leviticus',

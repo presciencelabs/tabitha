@@ -1,12 +1,13 @@
 <script lang="ts">
-	import type { OntologyResult, SourceConcept } from '@tabitha/types'
+	import type { OntologyResult } from '@tabitha/types'
+	import type { PageSourceConcept } from '$lib/types'
 	import type { Snippet } from 'svelte'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'
 	import Icon from '@iconify/svelte'
 
 	type Props = {
-		data: SourceConcept
+		data: PageSourceConcept
 		actions?: Snippet
 	}
 
@@ -31,11 +32,11 @@
 		}
 	})
 
-	function get_ontology_url_for_link({ stem, part_of_speech }: SourceConcept) {
+	function get_ontology_url_for_link({ stem, part_of_speech }: PageSourceConcept) {
 		return `${PUBLIC_ONTOLOGY_API_HOST}/?q=${stem}&category=${part_of_speech}`
 	}
 
-	function get_category_and_usage({ concept, current_ontology }: { concept: SourceConcept, current_ontology: OntologyResult | null }): [string, string[]] {
+	function get_category_and_usage({ concept, current_ontology }: { concept: PageSourceConcept, current_ontology: OntologyResult | null }): [string, string[]] {
 		const categories = current_ontology?.categories || []
 		if (concept.part_of_speech === 'Noun') {
 			return [categories.at(0) ?? '', []]

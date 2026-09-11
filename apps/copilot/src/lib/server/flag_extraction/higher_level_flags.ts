@@ -1,3 +1,4 @@
+import type { FlagExtractionRule } from '$lib/types'
 
 export const higher_level_flags: FlagExtractionRule[] = [
 	{

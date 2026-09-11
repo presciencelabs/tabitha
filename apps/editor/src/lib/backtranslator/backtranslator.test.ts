@@ -51,7 +51,7 @@ describe('textify', () => {
 describe('backtranslate integration and helper pipeline functions', () => {
 	test('remove_some_gap_tokens filters out GAP_INTV_V tokens', () => {
 		const gap_token = create_gap_token({ rule_id: 'rule:1', label: 'INTV_V' })
-		const normal_token = create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' })
+		const normal_token = create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD })
 		const sentence: Sentence = { clause: create_clause_token({ sub_tokens: [gap_token, normal_token] }) }
 
 		const cleaned = remove_some_gap_tokens([sentence])

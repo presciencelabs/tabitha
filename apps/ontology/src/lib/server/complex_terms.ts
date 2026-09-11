@@ -1,18 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types'
+import type { OntologyStatus, PartOfSpeech, SimplificationHint } from '@tabitha/types'
 
 export type TabSeparatedValues = string
-
-export type ComplexTerm = {
-	stem: string
-	sense: string
-	part_of_speech: string
-	structure: string
-	pairing: string
-	explication: string
-	ontology_status: string
-	level: number
-	notes: string
-}
 
 export const CREATE_COMPLEX_TERMS_TABLE_SQL = `
 	CREATE TABLE IF NOT EXISTS Complex_Terms (
@@ -33,7 +22,7 @@ export const INSERT_COMPLEX_TERMS_SQL = `
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
-export function transform(rows: TabSeparatedValues[]): ComplexTerm[] {
+export function transform(rows: TabSeparatedValues[]): SimplificationHint[] {
 	return rows.map((row: TabSeparatedValues) => {
 		const [term, part_of_speech, structure, pairing, explication, ontology_status, level, notes] = row.split('\t')
 		// Splits the raw source string into a stem block and single-character uppercase sense block (e.g. "love-A" -> [stem: "love", sense: "A"])
@@ -47,11 +36,11 @@ export function transform(rows: TabSeparatedValues[]): ComplexTerm[] {
 		return {
 			stem,
 			sense,
-			part_of_speech: capitalize(part_of_speech),
+			part_of_speech: capitalize(part_of_speech) as PartOfSpeech,
 			structure,
 			pairing,
 			explication,
-			ontology_status,
+			ontology_status: ontology_status as OntologyStatus,
 			level: level_int,
 			notes,
 		}

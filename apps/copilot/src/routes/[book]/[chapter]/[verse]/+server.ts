@@ -2,6 +2,8 @@ import { error, json } from '@sveltejs/kit'
 import { get_copilot_result } from '$lib/server/copilot_core'
 import { default_settings } from '$lib/lookups'
 import type { RequestHandler } from './$types'
+import type { VerseReference } from '@tabitha/types'
+import type { CopilotSettings } from '$lib/types'
 
 export async function GET({ params: { book, chapter, verse }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)

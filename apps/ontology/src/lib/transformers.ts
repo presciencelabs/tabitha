@@ -6,15 +6,8 @@ import {
 	theta_grid,
 	usage_info,
 } from '$lib/lookups'
-import type {
-	CategoryName,
-	Concept,
-	CuratedExample,
-	PartOfSpeech,
-	Reference,
-	SimplifiedEncodingEntity,
-	SimplifiedSemanticEncoding,
-} from '$lib/types'
+import type { Concept, CuratedExample, SimplifiedEncodingEntity, SimplifiedSemanticEncoding } from '$lib/types'
+import type { SourceEntityCategory, PartOfSpeech, Reference } from '@tabitha/types'
 
 /**
  * Transforms raw curated examples string from DB into structured CuratedExample objects.
@@ -61,7 +54,7 @@ export function transform_curated_examples(curated_examples_raw: string): Curate
 				// (APP => { category: 'AdjP', value: '(', feature: { code: 'P', value: 'Predicative' } }
 				// [A => { category: 'Clause', value: '[', feature: { code: 'A', value: 'Agent' } }
 
-				const category: CategoryName =
+				const category =
 					Object.entries(curated_example_category_codes).find(([code]) =>
 						encoded_entity.startsWith(code),
 					)?.[1] || 'Word'
@@ -282,7 +275,7 @@ export function create_fallback_concept(
 		id: '',
 		stem: '',
 		sense: '',
-		part_of_speech: '',
+		part_of_speech: 'Noun',
 		level: '1',
 		gloss: '',
 		brief_gloss: '',

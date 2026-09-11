@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { lwc_info, mtt_level_info, copilot_modes } from '$lib/lookups'
 	import Icon from '@iconify/svelte'
+	import type { CopilotSettings } from '$lib/types'
 
 	type Props = {
 		settings: CopilotSettings

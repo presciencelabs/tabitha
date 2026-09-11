@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { by_book_order, context_argument_map, derive_filters } from './filters'
-import type { Concept, Example } from '$lib/types'
+import { context_argument_map, derive_filters } from './filters'
+import type { Concept } from '$lib/types'
+import type { ConceptExample } from '@tabitha/types'
+import { by_book_order } from '@tabitha/types/patterns'
 
 function make_concept(overrides: Partial<Concept> = {}): Concept {
 	return {
@@ -24,7 +26,7 @@ function make_concept(overrides: Partial<Concept> = {}): Concept {
 	}
 }
 
-function make_example(book: string, context: Record<string, string> = {}): Example {
+function make_example(book: string, context: Record<string, string> = {}): ConceptExample {
 	return {
 		reference: {
 			type: 'Bible',
@@ -63,7 +65,7 @@ describe('examples/filters', () => {
 
 	it('derives filter options including books and context presence', () => {
 		const concept = make_concept({ part_of_speech: 'Noun' })
-		const examples: Example[] = [
+		const examples: ConceptExample[] = [
 			make_example('Genesis', { Role: 'agent-A', Verb: 'tell-D' }),
 			make_example('Exodus', { Role: 'patient-A' }),
 		]

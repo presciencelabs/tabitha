@@ -2,12 +2,13 @@
 	import { SvelteMap } from 'svelte/reactivity'
 	import { fade } from 'svelte/transition'
 	import { derive_filters } from '.'
-	import type { Concept, ContextArgumentName, Example, FilterMap, Option } from '$lib/types'
+	import type { Concept, FilterMap, Option } from '$lib/types'
+	import type { ContextArgumentName, ConceptExample } from '@tabitha/types'
 
 	type Props = {
 		concept: Concept
-		examples: Example[]
-		ondatafiltered?: (filtered_examples: Example[]) => void
+		examples: ConceptExample[]
+		ondatafiltered?: (filtered_examples: ConceptExample[]) => void
 	}
 
 	let { concept, examples, ondatafiltered }: Props = $props()
@@ -26,10 +27,10 @@
 		ondatafiltered?.(filtered_examples)
 	})
 
-	function apply_filters({ examples_list = [], filter_rules }: { examples_list?: Example[], filter_rules: Map<ContextArgumentName, Option> }): Example[] {
+	function apply_filters({ examples_list = [], filter_rules }: { examples_list?: ConceptExample[], filter_rules: Map<ContextArgumentName, Option> }): ConceptExample[] {
 		return examples_list.filter(is_a_match)
 
-		function is_a_match(example: Example): boolean {
+		function is_a_match(example: ConceptExample): boolean {
 			for (const [name, option] of filter_rules.entries()) {
 				if (option === 'Any') continue
 				if (example.context[name] === option) continue

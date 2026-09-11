@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import TokenDisplay from './TokenDisplay.svelte'
 
 	type Props = {
-		token: SimpleToken
+		token: CheckerToken
 		classes?: string
 	}
 

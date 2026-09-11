@@ -3,6 +3,8 @@
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
 	import { default_settings, fetch_batch_cautions, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
+	import type { ChapterReference } from '@tabitha/types'
+	import type { CopilotSettings } from '$lib/types'
 
 	let reference = $state(persisted<ChapterReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',

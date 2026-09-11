@@ -4,11 +4,11 @@
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
 	import Punctuation from './Punctuation.svelte'
-	import type { SourceConcept, SourceEntity } from '$lib/types'
+	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 
 	type Props = {
 		source_entities: SourceEntity[]
-		selected_concept: SourceConcept
+		selected_concept: ConceptKey
 	}
 
 	let { source_entities, selected_concept }: Props = $props()
@@ -25,7 +25,7 @@
 
 	type EntityComponent = Component<{
 		source_entity: SourceEntity
-		selected_concept?: SourceConcept
+		selected_concept?: ConceptKey
 		classes?: string
 	}>
 

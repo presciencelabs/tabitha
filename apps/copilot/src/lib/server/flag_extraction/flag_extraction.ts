@@ -3,6 +3,8 @@ import { get_matches } from './tree_pattern_match'
 import { simple_feature_flags } from './simple_feature_flags'
 import { implicit_feature_flags } from './implicit_flags'
 import { higher_level_flags } from './higher_level_flags'
+import type { EntityMatchResult, FlagExtractionRule, CopilotEncodingEntity } from '$lib/types'
+import type { CopilotEncodingFlag } from '@tabitha/types'
 
 const all_flag_extractions: FlagExtractionRule[] = [
 	...simple_feature_flags,
@@ -10,8 +12,8 @@ const all_flag_extractions: FlagExtractionRule[] = [
 	...higher_level_flags,
 ]
 
-export function extract_flags(entities: EncodingEntity[]): CopilotTriggerFlag[] {
-	const root_node: EncodingEntity = {
+export function extract_flags(entities: CopilotEncodingEntity[]): CopilotEncodingFlag[] {
+	const root_node: CopilotEncodingEntity = {
 		category: 'Root',
 		children: entities,
 	}
@@ -31,7 +33,7 @@ function extract_value(match: EntityMatchResult): string | undefined {
 	}
 }
 
-function flag_from_match(match: EntityMatchResult): CopilotTriggerFlag | undefined {
+function flag_from_match(match: EntityMatchResult): CopilotEncodingFlag | undefined {
 	const value = extract_value(match)
 	if (!value) {
 		return undefined
@@ -52,5 +54,6 @@ function flag_from_match(match: EntityMatchResult): CopilotTriggerFlag | undefin
 			...Object.fromEntries(anchor_entries),
 			...match.rule.anchor_extra?.(match),
 		},
+		weight: -1,
 	}
 }

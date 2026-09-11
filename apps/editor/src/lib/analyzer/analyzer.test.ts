@@ -4,7 +4,7 @@ import { entityfy } from './entityfy'
 import { get_features_for_token } from './features'
 import { populate_noun_list, replace_punctuation } from './other_rules'
 import { TOKEN_TYPE, create_token, create_lookup_result } from '$lib/token'
-import type { CategoryName } from '@tabitha/types'
+import type { EditorAnalyzedEntity } from '@tabitha/types'
 import type { Sentence } from '$lib/types'
 
 describe('analyzer', () => {
@@ -64,8 +64,8 @@ describe('analyzer', () => {
 
 	describe('other_rules', () => {
 		test('populate_noun_list extracts unique nouns and formats noun identifier', () => {
-			const entity1 = {
-				category: 'Noun' as CategoryName,
+			const entity1: EditorAnalyzedEntity = {
+				category: 'Noun',
 				value: 'Paul',
 				features: [],
 				concept: { stem: 'Paul', sense: 'A', part_of_speech: 'Noun' },
@@ -73,8 +73,8 @@ describe('analyzer', () => {
 				pairing_type: null,
 				noun_list_index: '1',
 			}
-			const entity2 = {
-				category: 'Noun' as CategoryName,
+			const entity2: EditorAnalyzedEntity = {
+				category: 'Noun',
 				value: 'letter',
 				features: [],
 				concept: { stem: 'letter', sense: 'A', part_of_speech: 'Noun' },
