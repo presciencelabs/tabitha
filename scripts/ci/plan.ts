@@ -162,7 +162,7 @@ function print_plan(plan: CiPlan) {
 	row('code_quality (typecheck & eslint)', plan.run_quality)
 	row('unit_tests (coverage)', plan.run_unit)
 	row('e2e_tests (Playwright)', plan.run_e2e)
-	row('windows_dx_smoke (db:load on windows-latest)', plan.run_windows_smoke)
+	row('windows_dx_smoke (db:load & unit tests on windows-latest)', plan.run_windows_smoke)
 
 	if (plan.turbo_filter_args.length > 0) {
 		console.log(`\n  turbo filter: ${plan.turbo_filter_args.join(' ')}`)

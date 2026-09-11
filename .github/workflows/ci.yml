@@ -59,6 +59,7 @@ jobs:
       philosophy_docs: ${{ steps.check_philosophy_docs.outcome }}
       md: ${{ steps.check_md.outcome }}
       a11y_names: ${{ steps.check_a11y_names.outcome }}
+      cross_platform: ${{ steps.check_cross_platform.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -108,6 +109,11 @@ jobs:
 
       - name: Undeclared CLI Dependency Audit (changed packages, Blocking)
         run: bun run check:deps
+
+      - name: Cross-Platform DX Tooling Audit
+        id: check_cross_platform
+        run: bun run check:cross-platform
+        continue-on-error: true
 
   production_build:
     name: 📦 Production Bundle Build (Blocking)
@@ -273,6 +279,7 @@ jobs:
     runs-on: windows-latest
     outputs:
       windows_smoke: ${{ steps.db_load.outcome }}
+      windows_unit_tests: ${{ steps.unit_tests.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -301,6 +308,14 @@ jobs:
 
       - name: DX Doctor Diagnostics
         run: bun run check:doctor
+
+      # Windows-only test failures (e.g. a hardcoded forward-slash path assertion breaking on a
+      # backslash-separated result) have otherwise only ever been caught by a developer manually
+      # running this locally, sometimes long after the code that broke it merged.
+      - name: Unit Tests
+        id: unit_tests
+        run: bun run test:unit
+        continue-on-error: true
 
   # ============================================================================
   # STAGE 3: PR SUMMARY (Advisory Results Surfaced on the PR)
@@ -380,11 +395,13 @@ jobs:
               ['Philosophy Count Doc Sync', needs.security_compliance.outputs.philosophy_docs],
               ['Markdown Lint', needs.security_compliance.outputs.md],
               ['Accessible-Name Collision Audit', needs.security_compliance.outputs.a11y_names],
+              ['Cross-Platform DX Tooling Audit', needs.security_compliance.outputs.cross_platform],
               ['Typecheck & Svelte Diagnostics', needs.typecheck.outputs.typecheck],
               ['ESLint', needs.eslint.outputs.eslint],
               ['Unit Test Coverage', needs.unit_tests.outputs.coverage],
               ['Playwright E2E', needs.e2e_tests.outputs.e2e],
               ['Windows DX Smoke (db:load)', needs.windows_dx_smoke.outputs.windows_smoke],
+              ['Windows Unit Tests', needs.windows_dx_smoke.outputs.windows_unit_tests],
             ]
 
             let body = `${marker}\n### 🔎 CI Advisory Summary\n\nThese checks are non-blocking and never stop a merge, but are worth a look.\n\n`

@@ -549,6 +549,36 @@ own credential. `tools/*` scripts (Bun, not SvelteKit) use the same two-tier sha
 
 ---
 
+## 🖥️ Writing Cross-Platform Scripts & Tools
+
+`scripts/*` and `tools/*` run directly on a developer's own machine (Bun on the shell, not inside
+a Cloudflare Worker), so unlike `apps/*` -- which ship to Workers, an OS-agnostic runtime -- these
+are the only parts of the codebase actually exposed to OS differences. The team includes Windows
+developers, so code here should not assume a POSIX-only environment. Two real bugs have already
+shipped from this:
+
+- **`Glob` patterns spanning multiple path segments.** `new Glob('dir/pattern').scanSync('.')`
+  bakes the directory into the pattern; Bun then returns the traversed-directory portion of a
+  match using the OS-native separator (backslash on Windows), even though the pattern used a
+  forward slash. Scan from the directory instead (`new Glob('pattern').scanSync('dir')`) and
+  reconstruct the path manually -- the match then stays a bare filename, sidestepping the issue
+  entirely. See `resolve_dated_file.ts` for the established safe shape.
+- **POSIX-only shell syntax in `execSync`/`execFileSync`.** A command string built with pipes,
+  `&&`, or `;` won't parse under `cmd.exe`, `execSync`'s default shell on Windows (see
+  [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md) for the migration-intake fix).
+  Build the input in JS and pass it via the `input` option, or invoke the target binary directly
+  without shell chaining.
+
+A third pattern to avoid on the same grounds: hardcoded POSIX-only absolute paths (`/tmp/...`,
+`/var/...`) -- use `os.tmpdir()` or a path relative to the project instead.
+
+`scripts/audits/check_cross_platform.ts` (`bun run check:cross-platform`, part of `check:audits`
+and CI's advisory `security_compliance` stage) heuristically flags all three. It's pattern-matching
+against known bug shapes, not an actual Windows run -- it complements `windows_dx_smoke` (`ci.yml`),
+the one CI job that runs on `windows-latest`, rather than replacing it as the real ground truth.
+
+---
+
 ## 🔁 Git Workflow for AI Agents
 
 An AI agent working in this repo should make the requested code changes and stop there -- it
