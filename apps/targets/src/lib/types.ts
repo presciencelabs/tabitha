@@ -1,4 +1,4 @@
-import type { SourceEntityCategory, PartOfSpeech } from "@tabitha/types"
+import type { SourceEntityCategory, PartOfSpeech } from '@tabitha/types'
 
 //===============
 // UI-related

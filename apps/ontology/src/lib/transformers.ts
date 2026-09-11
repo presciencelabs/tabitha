@@ -7,7 +7,7 @@ import {
 	usage_info,
 } from '$lib/lookups'
 import type { Concept, CuratedExample, SimplifiedEncodingEntity, SimplifiedSemanticEncoding } from '$lib/types'
-import type { SourceEntityCategory, PartOfSpeech, Reference } from '@tabitha/types'
+import type { PartOfSpeech, Reference } from '@tabitha/types'
 
 /**
  * Transforms raw curated examples string from DB into structured CuratedExample objects.

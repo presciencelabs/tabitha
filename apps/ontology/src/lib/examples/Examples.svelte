@@ -74,7 +74,7 @@
 				<section class="collapse-content">
 					{#if retrieval_queue.includes(i)}
 						{@const { stem, sense, part_of_speech } = concept}
-						{@const concept_key = { stem, sense, part_of_speech: part_of_speech as PartOfSpeech}}
+						{@const concept_key = { stem, sense, part_of_speech: part_of_speech as PartOfSpeech }}
 						<TargetData {reference} />
 
 						<SourceData {reference} selected_concept={concept_key} />

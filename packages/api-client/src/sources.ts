@@ -52,7 +52,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		 * Look up the translation status of a specific verse reference.
 		 */
 		async get_verse_status(ref: Reference): Promise<SourceStatus | null> {
-			const data = await http.post<SourceStatusResult>(`/lookup/status`, JSON.stringify(ref))
+			const data = await http.post<SourceStatusResult>('/lookup/status', JSON.stringify(ref))
 			return data?.status ?? null
 		},
 

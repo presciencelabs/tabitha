@@ -3,7 +3,7 @@ import { CATEGORY_ABBREVIATIONS, CATEGORY_NAME_LOOKUP, WORD_ENTITY_CATEGORIES } 
 import { load_source_feature_map, load_target_feature_map, decode_features } from './features'
 import { structure_entities } from './structured'
 import { IS_CARDINAL_NUMBER } from '@tabitha/types/patterns'
-import type { SourceEntityCategory, NounListEntry, SourceConceptData, SourceResult, SourceEntity, TargetEntity, PairingType, PartOfSpeech, EncodingEntityCategory } from '@tabitha/types'
+import type { SourceEntityCategory, NounListEntry, SourceConceptData, SourceEntity, TargetEntity, PairingType, PartOfSpeech, EncodingEntityCategory } from '@tabitha/types'
 import type { PageSourceEntity } from '$lib/types'
 
 /**

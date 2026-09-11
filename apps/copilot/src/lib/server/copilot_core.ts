@@ -58,7 +58,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 			meaning,
 			check,
 			quoted_text,
-			trigger: llm_input.triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))!
+			trigger: triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))!,
 		}))
 		return {
 			verse: reference,

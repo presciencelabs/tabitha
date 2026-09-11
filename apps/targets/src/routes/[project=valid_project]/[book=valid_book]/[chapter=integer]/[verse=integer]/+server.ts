@@ -39,6 +39,6 @@ export async function GET({ locals: { db }, params: { project, book, chapter, ve
 function merge_ideal_text_results(results: QueryTextResult[], ideal_results: QueryTextResult[]): TargetTextResult[] {
 	return results.map(result => ({
 		...result,
-		ideal: ideal_results.find(ir => ir.audience === result.audience)?.text
+		ideal: ideal_results.find(ir => ir.audience === result.audience)?.text,
 	}))
 }

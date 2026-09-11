@@ -198,11 +198,11 @@ export function tokenize_input(text: string = ''): Token[] {
 	}
 
 	function lookup_token(text: string): Token {
-		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)
+		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)!
 
 		// combine stem and sense
-		const stem = lookup_match?.[1]!
-		const sense = lookup_match?.[2] ?? ''
+		const stem = lookup_match[1]
+		const sense = lookup_match[2] ?? ''
 		return create_token({ token: text, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [stem], specified_sense: sense })
 	}
 

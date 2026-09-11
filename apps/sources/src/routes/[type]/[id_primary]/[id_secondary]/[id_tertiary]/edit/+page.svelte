@@ -92,7 +92,7 @@
 		try {
 			const result = await fetch_analysis(sanitize_input(phase1_text))
 
-			source_entities = result.source_entities.map(entity => ({ ...entity, id: -1, parent_id: -1, boundary_category: ''}))
+			source_entities = result.source_entities.map(entity => ({ ...entity, id: -1, parent_id: -1, boundary_category: '' }))
 			structure_entities(source_entities)
 
 			noun_list = result.noun_list
