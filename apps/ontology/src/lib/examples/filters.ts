@@ -1,4 +1,4 @@
-import { by_book_order } from '@tabitha/types'
+import { by_book_order, testament } from '@tabitha/types'
 import type {
 	Concept,
 	ContextArgumentMap,
@@ -9,7 +9,7 @@ import type {
 	Options,
 } from '$lib/types'
 
-export { by_book_order }
+export { by_book_order, testament }
 
 export const context_argument_map: ContextArgumentMap = new Map([
 	['Noun', [
