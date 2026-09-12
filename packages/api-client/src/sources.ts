@@ -1,4 +1,4 @@
-import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
+import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceVerseStatusResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type SourcesClient = ReturnType<typeof create_sources_client>
@@ -52,15 +52,19 @@ export function create_sources_client(options: SourcesClientOptions) {
 		 * Look up the translation status of a specific verse reference.
 		 */
 		async get_verse_status(ref: Reference): Promise<SourceStatus | null> {
-			const data = await http.post<SourceStatusResult[]>('/lookup/status', [ref])
+			const data = await http.post<SourceVerseStatusResult[]>('/lookup/status', [ref])
 			return data?.[0]?.status ?? null
 		},
 
 		/**
-		 * Look up the translation status of multiple verse references at once.
+		 * Look up the translation status of multiple verse references at once, along with whether
+		 * each verse actually holds a semantic encoding.
+		 *
+		 * Read `has_encoding`, not `status`, to decide whether there is a structure to show --
+		 * the two are loaded by separate migrations and answer different questions.
 		 */
-		async get_verse_statuses(refs: Reference[]): Promise<SourceStatusResult[] | null> {
-			const data = await http.post<SourceStatusResult[]>('/lookup/status', refs)
+		async get_verse_statuses(refs: Reference[]): Promise<SourceVerseStatusResult[] | null> {
+			const data = await http.post<SourceVerseStatusResult[]>('/lookup/status', refs)
 			return data
 		},
 

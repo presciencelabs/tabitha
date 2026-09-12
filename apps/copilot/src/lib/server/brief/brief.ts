@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/private'
-import { lwc_info, usfm_book_codes } from '$lib/lookups'
+import { lwc_info } from '$lib/lookups'
+import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
 import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
 import translate_prompt from './translate_prompt.md?raw'
 import brief_main_prompt from './brief_main_prompt.md?raw'
@@ -18,7 +19,7 @@ async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]>
 	const queryParams = new URLSearchParams({
 		languageCode: 'eng',
 		resourceCollectionCode: 'SILOpenTranslatorsNotes',
-		bookCode: usfm_book_codes[verse.book],
+		bookCode: USFM_BOOK_CODES[verse.book],
 		startChapter: verse.chapter.toString(),
 		endChapter: verse.chapter.toString(),
 		startVerse: verse.verse.toString(),
