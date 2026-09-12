@@ -77,5 +77,7 @@ export function migrate_source_texts(tabitha_sources_db: Database, tbta_sources_
 			log.finish_progress()
 			log.info(`${valid_rows.length.toLocaleString()} rows inserted from ${tbta_table_name}`)
 		})
+
+		tbta_db.close()
 	})
 }
