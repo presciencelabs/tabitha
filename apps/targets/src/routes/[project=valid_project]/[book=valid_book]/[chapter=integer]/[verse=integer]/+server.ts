@@ -31,13 +31,13 @@ export async function GET({ locals: { db }, params: { project, book, chapter, ve
 		// Ideal_Text table optional or unpopulated in local D1 schema
 	}
 
-	const results = merge_ideal_text_results(text_results, ideal_results)
+	const results = merge_ideal_text_results({ text_results, ideal_results })
 
 	return json(results)
 }
 
-function merge_ideal_text_results(results: QueryTextResult[], ideal_results: QueryTextResult[]): TargetTextResult[] {
-	return results.map(result => ({
+function merge_ideal_text_results({ text_results, ideal_results }: { text_results: QueryTextResult[], ideal_results: QueryTextResult[] }): TargetTextResult[] {
+	return text_results.map(result => ({
 		...result,
 		ideal: ideal_results.find(ir => ir.audience === result.audience)?.text,
 	}))

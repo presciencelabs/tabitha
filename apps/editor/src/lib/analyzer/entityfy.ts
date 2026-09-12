@@ -45,7 +45,7 @@ export function entityfy(sentences: Sentence[]): EditorAnalyzedEntity[] {
 		} else if (token.lookup_results.length) {
 			const concept = convert_to_concept(token)
 			const pairing_concept = token.pairing ? convert_to_concept(token.pairing) : null
-			const noun_list_index = token.tag['noun_index'] || null
+			const noun_list_index = token.tag['noun_index']
 			return [create_source_entity({ category, features, concept, pairing_concept, pairing_type: token.pairing_type, noun_list_index })]
 
 		} else {
@@ -67,8 +67,8 @@ function create_source_entity(overrides: Partial<EditorAnalyzedEntity> = {}): Ed
 		concept: null,
 		pairing_concept: null,
 		pairing_type: null,
-		noun_list_index: overrides.category === 'Noun' ? '1' : null,
 		...overrides,
+		noun_list_index: overrides.noun_list_index || overrides.category === 'Noun' ? '1' : null,
 	}
 }
 
