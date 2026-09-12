@@ -217,6 +217,7 @@ async function stage_tbta_files(working_dir: string) {
 				throw new Error(`Could not derive minor version from "${row.version}".`)
 			}
 
+			ontology.close()
 			return `./raw/Ontology_${minor_version}_${date}.tabitha.sqlite`
 		}
 	}

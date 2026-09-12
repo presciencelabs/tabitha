@@ -100,6 +100,33 @@ function check_hardcoded_posix_paths(file_path: string, lines: string[]) {
 	})
 }
 
+// A bun:sqlite Database opened at module top-level in a one-shot CLI script -- or inside a
+// top-level if/for block there -- is fine left unclosed -- the process exits right after,
+// reclaiming the handle on any OS. But one opened inside a genuinely nested function (two or
+// more indentation levels deep, per this repo's tabs-for-indentation convention) can be called
+// repeatedly from a still-running process -- e.g. imported and invoked by a unit test that then
+// tries to clean up a temp dir containing that same file. POSIX allows unlinking an open file;
+// Windows holds a real lock until .close() is called, so this only breaks there. The 2-tab
+// threshold is a proxy, not real scope analysis: it's low enough to miss a directly-nested
+// function some call sites won't reach, and it can't see a handle closed by the function's
+// *caller* either -- a heuristic nudge, not a guarantee, same as the other checks here.
+function check_unclosed_database_handle(file_path: string, content: string, lines: string[]) {
+	lines.forEach((line, idx) => {
+		if (!/^\t\t/.test(line)) return // shallower than this is top-level script flow -- see comment above
+		const match = line.match(/(?:const|let)\s+(\w+)\s*=\s*new Database\(/)
+		if (!match) return
+		const var_name = match[1]
+		if (!new RegExp(`\\b${var_name}\\.close\\(\\)`).test(content)) {
+			findings.push({
+				file_path,
+				line_number: idx + 1,
+				snippet: line.trim(),
+				message: `"${var_name}" is opened inside a function/loop but never closed in this file. On Windows, an open sqlite handle holds a real file lock -- if this runs more than once in a still-live process (e.g. a unit test cleaning up its own temp dir), the next attempt to touch that file/directory can fail with EBUSY. Call .close() once this handle is done with, or confirm the caller takes ownership of closing it.`,
+			})
+		}
+	})
+}
+
 async function audit_cross_platform_tooling() {
 	console.log(`
 ============================================================
@@ -115,6 +142,7 @@ async function audit_cross_platform_tooling() {
 		const lines = content.split('\n')
 		check_multi_segment_glob(file_path, lines)
 		check_posix_shell_syntax(file_path, lines)
+		check_unclosed_database_handle(file_path, content, lines)
 		check_hardcoded_posix_paths(file_path, lines)
 	}
 
