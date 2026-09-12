@@ -216,7 +216,7 @@ async function check_local_databases(): Promise<DiagnosticResult[]> {
 			try {
 				const db = new Database(sqlite_path)
 				const count_res = db.query(`SELECT count(*) as count FROM ${app.db_check.table}`).get() as { count: number } | null
-				db.close()
+				db.close(true)
 
 				const count = count_res?.count ?? 0
 				if (count > 0) {

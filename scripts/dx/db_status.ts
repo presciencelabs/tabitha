@@ -158,10 +158,10 @@ export async function inspect_databases(): Promise<DbStatus[]> {
 								tables.push({ name: tname, rows: -1 })
 							}
 						}
-						db.close()
+						db.close(true)
 						break
 					}
-					db.close()
+					db.close(true)
 				} catch {
 					// Continue searching
 				}

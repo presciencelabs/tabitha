@@ -144,7 +144,9 @@ async function load_prior_snapshot_row_count(key: string, date: string, table: s
 		try {
 			return temp_db.query<{ count: number }, []>(`SELECT COUNT(*) AS count FROM ${table}`).get()?.count ?? null
 		} finally {
-			temp_db.close()
+			// close(true), not close(): cleanup() below unlinks temp_db_path immediately, and a
+			// deferred (sqlite3_close_v2) release would still be holding a Windows file lock by then.
+			temp_db.close(true)
 		}
 	} finally {
 		await cleanup()

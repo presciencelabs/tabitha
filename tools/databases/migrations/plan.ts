@@ -92,8 +92,10 @@ async function plan_rebuild_task(id: TaskId, family: TaskFamily, input_names: st
 }
 
 async function plan_ontology_task(date: string, sources_task: PlannedTask): Promise<PlannedTask> {
-	const output_file = Array.from(new Glob(`raw/Ontology_*_${date}.tabitha.sqlite`).scanSync('.'))[0]
-	if (!output_file) {
+	// See latest_previous_output_file's comment: scan from 'raw' rather than baking it into the
+	// pattern, so the match stays a bare filename regardless of OS-native separator handling.
+	const matched_file = Array.from(new Glob(`Ontology_*_${date}.tabitha.sqlite`).scanSync('raw'))[0]
+	if (!matched_file) {
 		throw new Error(`No staged Ontology database found for ${date}. An Ontology.sqlite (or .new) file must be present for every migration run.`)
 	}
 
@@ -111,7 +113,7 @@ async function plan_ontology_task(date: string, sources_task: PlannedTask): Prom
 		changed: true,
 		reason: 'Ontology is exempt from staging dedup and always regenerated fresh.',
 		migrate_args: [sources_task.output_file, sources_complex_file],
-		output_file,
+		output_file: `raw/${matched_file}`,
 	}
 }
 
@@ -126,7 +128,11 @@ function extract_date(path: string): string | undefined {
 // resumed run may already have a partially-written today's file on disk that must not be
 // mistaken for "the previous run's" output.
 async function latest_previous_output_file(id: string, date: string): Promise<string | undefined> {
-	const files = Array.from(new Glob(`raw/${id}_*.tabitha.sqlite`).scanSync('.')).filter(file => !file.includes(`_${date}.`))
+	// Scanning from 'raw' (rather than baking it into the pattern and scanning from '.') keeps the
+	// match a bare filename -- Bun's Glob otherwise returns the traversed directory portion using the
+	// OS-native separator, which broke this on Windows (backslash) despite the forward-slash pattern.
+	const files = Array.from(new Glob(`${id}_*.tabitha.sqlite`).scanSync('raw')).filter(file => !file.includes(`_${date}.`))
 	files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
-	return files.pop()
+	const latest = files.pop()
+	return latest ? `raw/${latest}` : undefined
 }
