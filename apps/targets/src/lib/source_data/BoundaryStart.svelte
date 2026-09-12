@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Features from './Features.svelte'
-	import type { SourceEntity } from '$lib/types'
+	import type { SourceEntity } from '@tabitha/types'
 
 	let { source_entity }: { source_entity: SourceEntity } = $props()
 </script>

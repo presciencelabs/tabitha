@@ -1,11 +1,6 @@
 import type { Permission } from '$lib/server/types'
 
-type IsAuthorizedOptions = {
-	readonly locals: App.Locals
-	readonly permission: Permission
-}
-
-export async function is_authorized({ locals, permission }: IsAuthorizedOptions): Promise<boolean> {
+export async function is_authorized({ locals, permission }: { locals: App.Locals, permission: Permission }): Promise<boolean> {
 	if (!locals.user) {
 		return false
 	}

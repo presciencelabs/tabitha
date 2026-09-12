@@ -1,4 +1,5 @@
-import type { Concept, ConceptSearchFilter } from '$lib/types'
+import type { Concept } from '$lib/types'
+import type { ConceptSearchFilter } from '@tabitha/types'
 
 const FUNCTION_WORDS: [string, string][] = [
 	['as', "Sometimes sets the Degree feature of an Adjective or Adverb to Equality (eg. 'as good as')"],

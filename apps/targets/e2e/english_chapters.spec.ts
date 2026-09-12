@@ -5,7 +5,7 @@ test('get all chapters of 1 Samuel (English project)', async ({ request }) => {
 	const chapters = await response.json()
 
 	expect(chapters).toHaveLength(31)
-	expect(chapters).toContain(21)
+	expect(chapters).toContain('21')
 })
 
 test('Ensure book parameter is valid', async ({ request }) => {

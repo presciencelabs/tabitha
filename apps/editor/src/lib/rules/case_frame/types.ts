@@ -1,14 +1,8 @@
-import type { CaseFrameStatus, RoleTag, Tag } from '@tabitha/types'
-import type { LookupResult } from '$lib/types'
-import type {
-	RuleTriggerContext,
-	TokenRule,
-	TransformRuleJson,
-	TokenFilterJsonBase,
-	TokenContextFilterJson,
-} from '$lib/rules/types'
+import type { CaseFrameStatus } from '@tabitha/types'
+import type { LookupResult, Tag } from '$lib/types'
+import type { RuleTriggerContext, TokenRule, TransformRuleJson, TokenFilterJsonBase, TokenContextFilterJson } from '$lib/rules/types'
 
-export type { CaseFrameStatus, RoleTag }
+export type RoleTag = string
 
 export type WordSense = string
 export type WordStem = string

@@ -1,6 +1,6 @@
-import type { CheckResponse } from '@tabitha/types'
+import type { EditorCheckResult } from '@tabitha/types'
 
-export async function fetch_check_result(text: string): Promise<CheckResponse> {
+export async function fetch_check_result(text: string): Promise<EditorCheckResult> {
 	const response = await fetch(`/check?text=${encodeURIComponent(text)}`)
 
 	if (!response.ok) {

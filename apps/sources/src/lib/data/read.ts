@@ -1,6 +1,6 @@
 import type { D1Database, D1Result } from '@cloudflare/workers-types'
-import type { Reference } from '@tabitha/types'
-import type { PrimaryId, SecondaryId, Source, SourceType, TertiaryId } from '$lib/types'
+import type { DbSource } from '$lib/types'
+import type { Reference, PrimaryId, SecondaryId, SourceType, TertiaryId } from '@tabitha/types'
 
 export async function get_types(db: D1Database): Promise<SourceType[]> {
 	const sql = `
@@ -48,7 +48,7 @@ export async function get_tertiary_ids({ db, type, id_primary, id_secondary }: {
 	return results
 }
 
-export async function get_source_data({ db, type, id_primary, id_secondary, id_tertiary }: Reference & { db: D1Database }): Promise<Source | null> {
+export async function get_source_data({ db, type, id_primary, id_secondary, id_tertiary }: Reference & { db: D1Database }): Promise<DbSource | null> {
 	const sql = `
 		SELECT *
 		FROM Sources
@@ -58,6 +58,6 @@ export async function get_source_data({ db, type, id_primary, id_secondary, id_t
 			AND id_tertiary = ?
 	`
 
-	const result: Source | null = await db.prepare(sql).bind(type, id_primary, id_secondary, id_tertiary).first()
+	const result: DbSource | null = await db.prepare(sql).bind(type, id_primary, id_secondary, id_tertiary).first()
 	return result
 }

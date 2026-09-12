@@ -4,11 +4,12 @@ import { create_targets_client } from '@tabitha/api-client'
 import { GRAMMAR_ONLY_FEATURES, WORD_ENTITY_CATEGORIES } from './lookups'
 import type { DbFeature, FeatureInfo, FeatureMap } from '$lib/types'
 import type {
-	CategoryName,
+	SourceEntityCategory,
+	EncodingEntityCategory,
 	EntityFeature,
 	FeatureName,
 	SourceEntity,
-	SourceFeatures,
+	SourceFeaturesData,
 } from '@tabitha/types'
 
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
@@ -50,7 +51,7 @@ export async function load_target_feature_map(project: string): Promise<FeatureM
 	return new Map(feature_map_entries)
 }
 
-function by_feature_name(category_entry: [CategoryName, DbFeature[]]): [CategoryName, FeatureInfo[]] {
+function by_feature_name(category_entry: [EncodingEntityCategory, DbFeature[]]): [EncodingEntityCategory, FeatureInfo[]] {
 	const [category, features] = category_entry
 	const infos = [...Map.groupBy(features, ({ feature }) => feature).entries()]
 		.toSorted(([, db_features]) => db_features[0].position)
@@ -60,11 +61,11 @@ function by_feature_name(category_entry: [CategoryName, DbFeature[]]): [Category
 
 type DecodeFeaturesOptions = {
 	raw_feature_codes: string
-	category: CategoryName
-	all_features: FeatureMap
+	category: EncodingEntityCategory
+	feature_map: FeatureMap
 }
 
-export function decode_features({ raw_feature_codes, category, all_features }: DecodeFeaturesOptions): SourceFeatures {
+export function decode_features({ raw_feature_codes, category, feature_map }: DecodeFeaturesOptions): SourceFeaturesData {
 	if (!raw_feature_codes.length) {
 		return { feature_codes: '', features: [], noun_list_index: null }
 	}
@@ -75,13 +76,15 @@ export function decode_features({ raw_feature_codes, category, all_features }: D
 	// It is therefore meaningless at this stage and can be dropped.
 	// The second feature is the lexical sense, which is treated specially elsewhere.
 	// So it too can be dropped from the features.
-	const feature_codes = WORD_ENTITY_CATEGORIES.has(category) ? raw_feature_codes.slice(is_noun ? 3 : 2) : raw_feature_codes
+	const feature_codes = WORD_ENTITY_CATEGORIES.has(category)
+		? raw_feature_codes.slice(is_noun ? 3 : 2)
+		: raw_feature_codes
 
 	// The third feature on a Noun is the Noun List Index, and its value is just the character itself.
 	// This feature is not included in the 'Features' database, and so needs to be handled separately.
 	const noun_list_index = is_noun ? raw_feature_codes[2] : null
 
-	const features = feature_codes_to_structure({ category, feature_codes, all_features })
+	const features = feature_codes_to_structure({ category, feature_codes, feature_map })
 
 	return {
 		feature_codes,
@@ -99,8 +102,8 @@ export function encode_features(entity: SourceEntity): string {
 	return entity.feature_codes
 }
 
-function feature_codes_to_structure({ category, feature_codes, all_features }: { category: CategoryName, feature_codes: string, all_features: FeatureMap }): EntityFeature[] {
-	const category_features = all_features.get(category) || []
+function feature_codes_to_structure({ category, feature_codes, feature_map }: { category: EncodingEntityCategory, feature_codes: string, feature_map: FeatureMap }): EntityFeature[] {
+	const category_features = feature_map.get(category) || []
 	const feature_code_array = [...feature_codes]
 
 	return category_features.map((feature_info, index) => {
@@ -114,8 +117,8 @@ function feature_codes_to_structure({ category, feature_codes, all_features }: {
 	})
 }
 
-function feature_structure_to_codes({ category, features, all_features }: { category: CategoryName, features: EntityFeature[], all_features: FeatureMap }): string {
-	const category_features = all_features.get(category) || []
+function feature_structure_to_codes({ category, features, feature_map }: { category: EncodingEntityCategory, features: EntityFeature[], feature_map: FeatureMap }): string {
+	const category_features = feature_map.get(category) || []
 	
 	const codes = category_features.map(feature_info => {
 		const value = features.find(f => f.name.toLowerCase() === feature_info.name.toLowerCase())?.value.toLowerCase()
@@ -130,33 +133,23 @@ function feature_structure_to_codes({ category, features, all_features }: { cate
 	return codes.join('')
 }
 
-type FillInFeaturesOptions = {
-	source_entity: SourceEntity
-	all_features: FeatureMap
-}
-
-export function fill_in_features({ source_entity, all_features }: FillInFeaturesOptions): { feature_codes: string, features: EntityFeature[] } {
+export function fill_in_features({ source_entity, feature_map }: { source_entity: SourceEntity, feature_map: FeatureMap }): Omit<SourceFeaturesData, 'noun_list_index'> {
 	const { category, features } = source_entity
-	const feature_codes = feature_structure_to_codes({ category, features, all_features })
+	const feature_codes = feature_structure_to_codes({ category, features, feature_map })
 	// fill in any missing features in the structure
-	const new_features = feature_codes_to_structure({ category, feature_codes, all_features })
+	const new_features = feature_codes_to_structure({ category, feature_codes, feature_map })
 	return { feature_codes, features: new_features }
 }
 
-type TransformFeaturesToCodesOptions = {
-	db: D1Database
-	source_entities: SourceEntity[]
-}
-
-export async function transform_features_to_codes({ db, source_entities }: TransformFeaturesToCodesOptions): Promise<SourceEntity[]> {
-	const all_features = await load_source_feature_map(db)
+export async function transform_features_to_codes({ db, source_entities }: { db: D1Database, source_entities: SourceEntity[] }): Promise<SourceEntity[]> {
+	const feature_map = await load_source_feature_map(db)
 
 	return source_entities.map(entity => {
-		const { feature_codes, features } =	fill_in_features({ source_entity: entity, all_features })
+		const { feature_codes, features } =	fill_in_features({ source_entity: entity, feature_map })
 		return { ...entity, feature_codes, features }
 	})
 }
 
-export function is_used_in_source(category: CategoryName): (feature: { name: FeatureName }) => boolean {
+export function is_used_in_source(category: SourceEntityCategory): (feature: { name: FeatureName }) => boolean {
 	return feature => !feature.name.startsWith('Spare') && !GRAMMAR_ONLY_FEATURES.includes(`${category}-${feature.name}`)
 }

@@ -1,4 +1,4 @@
-import { clean_trailing_slash } from '@tabitha/types'
+import { clean_trailing_slash } from '@tabitha/types/patterns'
 
 export type ClientOptions = {
 	base_url: string

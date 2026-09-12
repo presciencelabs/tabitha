@@ -1,19 +1,20 @@
 import { default_flag_weights_for_discern, default_flag_weights_for_brief } from './default_flag_weights'
+import type { FlagWeightingMap, CopilotNoteSettings, LanguageProfile } from '$lib/types'
+import type { CopilotEncodingFlag } from '@tabitha/types/copilot'
 
-type FlagWeightingMap = Record<string, Record<string, number>>
 
-export function assign_flag_weights({ flags, settings }: { flags: CopilotTriggerFlag[], settings: CopilotNoteSettings }): CopilotWeightedFlag[] {
+export function assign_flag_weights({ flags, settings }: { flags: CopilotEncodingFlag[], settings: CopilotNoteSettings }): CopilotEncodingFlag[] {
 	const default_weights = settings.mode === 'discern' ? default_flag_weights_for_discern : default_flag_weights_for_brief
 	const profile_weights = get_profile_weights(settings.language_profile)
 	return flags.map(flag => assign_flag_weight({ flag, profile_weights, default_weights }))
 }
 
-function assign_flag_weight({ flag, profile_weights, default_weights }: { flag: CopilotTriggerFlag, profile_weights: FlagWeightingMap, default_weights: FlagWeightingMap }): CopilotWeightedFlag {
+function assign_flag_weight({ flag, profile_weights, default_weights }: { flag: CopilotEncodingFlag, profile_weights: FlagWeightingMap, default_weights: FlagWeightingMap }): CopilotEncodingFlag {
 	const weight = get_flag_weight({ flag, weights: profile_weights }) ?? get_flag_weight({ flag, weights: default_weights }) ?? 0
 	return { ...flag, weight }
 }
 
-function get_flag_weight({ flag, weights }: { flag: CopilotTriggerFlag, weights: FlagWeightingMap }): number | undefined {
+function get_flag_weight({ flag, weights }: { flag: CopilotEncodingFlag, weights: FlagWeightingMap }): number | undefined {
 	const flag_weights = weights[flag.name]
 	if (!flag_weights) {
 		return undefined

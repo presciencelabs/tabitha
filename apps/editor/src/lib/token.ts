@@ -1,26 +1,11 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { REGEXES } from '$lib/regexes'
-import type {
-	HowToEntry,
-	Message,
-	MessageLabel,
-	MessageType,
-	OntologyStatus,
-	PairingType,
-	Tag,
-	TokenBase,
-	TokenType,
-} from '@tabitha/types'
-import type {
-	CaseFrameResult,
-	CaseFrameStatus,
-	RoleMatchResult,
-	RoleTag,
-} from '$lib/rules/case_frame/types'
+import type { CheckerMessage, CheckerMessageLabel, CheckerMessageType, CheckerTokenType } from '@tabitha/types'
+import type { CaseFrameResult } from '$lib/rules/case_frame/types'
 import type { RuleTriggerContext } from '$lib/rules/types'
-import type { LookupResult, MessageInfo, Sentence, Token } from '$lib/types'
+import type { LookupResult, MessageInfo, Sentence, Token, Tag } from '$lib/types'
 
-export const TOKEN_TYPE = {
+export const TOKEN_TYPE: Record<string, CheckerTokenType> = {
 	PUNCTUATION: 'Punctuation',
 	NOTE: 'Note',
 	FUNCTION_WORD: 'FunctionWord',
@@ -31,75 +16,46 @@ export const TOKEN_TYPE = {
 	GAP: 'Gap',
 } as const
 
-export const MESSAGE_TYPE: Record<string, MessageType> = {
+export const MESSAGE_TYPE: Record<Uppercase<CheckerMessageLabel>, CheckerMessageType> = {
 	ERROR: { label: 'error', severity: 0 },
 	WARNING: { label: 'warning', severity: 1 },
 	SUGGEST: { label: 'suggest', severity: 2 },
 	INFO: { label: 'info', severity: 3 },
-}
+} as const
 
-export function create_token(
-	{
-		token,
-		type,
-		message = null,
-		tag = {},
-		specified_sense = '',
-		lookup_term = '',
-		lookup_results = [],
-		sub_tokens = [],
-		pairing = null,
-		pairing_type = null,
-		pronoun = null,
-		rule_info = null,
-	}: {
-		token: string
-		type: TokenType
-		message?: Message | null
-		tag?: Tag
-		specified_sense?: string
-		lookup_term?: string
-		lookup_results?: LookupResult[]
-		sub_tokens?: Token[]
-		pairing?: Token | null
-		pairing_type?: PairingType | null
-		pronoun?: Token | null
-		rule_info?: string | null
-	},
-): Token {
+export function create_token(overrides: Partial<Token> & Pick<Token, 'token' | 'type'>): Token {
 	return {
-		token,
-		type,
-		messages: message ? [message] : [],
-		tag,
-		specified_sense,
-		lookup_terms: lookup_term ? [lookup_term] : [],
-		lookup_results,
-		sub_tokens,
-		pairing,
-		pairing_type,
-		pronoun,
-		applied_rules: rule_info ? [rule_info] : [],
+		messages: [],
+		tag: {},
+		specified_sense: '',
+		lookup_results: [],
+		sub_tokens: [],
+		pairing: null,
+		pairing_type: null,
+		pronoun: null,
+		applied_rules: [],
+		...overrides,
+		lookup_terms: overrides.lookup_terms ?? overrides.type === TOKEN_TYPE.LOOKUP_WORD ? [overrides.token] : [],
 	}
 }
 
-export function create_added_token({ token, message, rule_id = null }: { token: string; message: Message; rule_id?: string | null }): Token {
-	const rule_info = rule_id ? `add - ${rule_id}` : null
-	return create_token({ token, type: TOKEN_TYPE.ADDED, message, rule_info })
+export function create_added_token({ token, message, rule_id = null }: { token: string; message: CheckerMessage; rule_id?: string | null }): Token {
+	const applied_rules = rule_id ? [`add - ${rule_id}`] : undefined
+	return create_token({ token, type: TOKEN_TYPE.ADDED, messages: [message], applied_rules })
 }
 
 export function create_gap_token({ rule_id, label, tag = {} }: { rule_id: string; label: string; tag?: Tag }): Token {
 	const token = `GAP_${label}`
 	const gap_result = create_lookup_result({ stem: token, part_of_speech: 'Noun' })
-	const rule_info = `add - ${rule_id}`
-	return create_token({ token, type: TOKEN_TYPE.GAP, lookup_results: [gap_result], tag, rule_info })
+	const applied_rules = [`add - ${rule_id}`]
+	return create_token({ token, type: TOKEN_TYPE.GAP, lookup_results: [gap_result], tag, applied_rules })
 }
 
 export function create_clause_token({ sub_tokens, tag = { clause_type: 'subordinate_clause' } }: { sub_tokens: Token[]; tag?: Tag }): Token {
 	return create_token({ token: '', type: TOKEN_TYPE.CLAUSE, sub_tokens, tag })
 }
 
-export function get_message_type(label: MessageLabel): MessageType {
+export function get_message_type(label: CheckerMessageLabel): CheckerMessageType {
 	return Object.values(MESSAGE_TYPE).find(message_type => message_type.label === label)!
 }
 
@@ -116,7 +72,7 @@ export function set_message({ trigger_context, message_info }: { trigger_context
 		return
 	}
 
-	const message: Message = {
+	const message: CheckerMessage = {
 		...message_type,
 		message: message_info.plain ? message_text : format_token_message({ trigger_context, message: message_text, token: token_to_flag }),
 		rule_id: trigger_context.rule_id,
@@ -127,7 +83,7 @@ export function set_message({ trigger_context, message_info }: { trigger_context
 /**
  * Set the message on the given token. No formatting is performed.
  */
-export function set_message_plain({ token, message }: { token: Token; message: Message }) {
+export function set_message_plain({ token, message }: { token: Token; message: CheckerMessage }) {
 	token.messages.push(message)
 	token.applied_rules.push(`message:${message.label} - ${message.rule_id}`)
 }
@@ -154,18 +110,21 @@ export function format_token_message({ trigger_context: { tokens, trigger_token,
 	}
 }
 
-export function token_has_error(token: TokenBase): boolean {
+export function token_has_error(token: Pick<Token, 'messages'>): boolean {
 	return token_has_message({ token, type_to_check: 'error' })
 }
 
-export function token_has_message({ token, type_to_check = null }: { token: TokenBase; type_to_check?: MessageLabel | null }): boolean {
+export function token_has_message({ token, type_to_check = null }: { token: Pick<Token, 'messages'>; type_to_check?: CheckerMessageLabel | null }): boolean {
 	return type_to_check
 		? token.messages.some(({ label }) => label === type_to_check)
 		: token.messages.length > 0
 }
 
-export function is_one_part_of_speech(token: Token): boolean {
-	const part_of_speech_0 = token.lookup_results.at(0)?.part_of_speech ?? ''
+export function is_one_part_of_speech(token: Pick<Token, 'lookup_results'>): boolean {
+	const part_of_speech_0 = token.lookup_results.at(0)?.part_of_speech
+	if (!part_of_speech_0) {
+		return false
+	}
 	return token.lookup_results.every(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech_0))
 }
 
@@ -220,69 +179,37 @@ export function stem_with_sense(result: { stem: string, sense: string }): string
 	return result.sense.length ? `${result.stem}-${result.sense}` : result.stem
 }
 
-export function create_lookup_result(
-	{
-		stem,
-		part_of_speech,
-		form = 'stem',
-		sense = '',
-		level = -1,
-		gloss = '',
-		categorization = '',
-		how_to = [],
-		case_frame = null,
-		ontology_status = 'unknown',
-	}: {
-		stem: string
-		part_of_speech: string
-		form?: string
-		sense?: string
-		level?: number
-		gloss?: string
-		categorization?: string
-		how_to?: HowToEntry[]
-		case_frame?: CaseFrameResult | null
-		ontology_status?: OntologyStatus
-	},
-): LookupResult {
+type CreatLookupResultOptions = Partial<Omit<LookupResult, 'case_frame'>>
+	& Pick<LookupResult, 'stem' | 'part_of_speech'>
+	& { case_frame?: CaseFrameResult }
+
+export function create_lookup_result(overrides: CreatLookupResultOptions): LookupResult {
 	return {
-		stem,
-		part_of_speech,
-		form: form.toLowerCase(),
-		sense,
-		level,
-		gloss,
-		categorization,
-		ontology_status,
-		how_to_entries: how_to,
+		sense: '',
+		level: -1,
+		gloss: '',
+		categorization: '',
+		ontology_status: 'unknown',
+		how_to_entries: [],
+		...overrides,
 		case_frame: {
 			rules: [],
 			usage: {
 				possible_roles: [],
 				required_roles: [],
 			},
-			result: case_frame ?? create_case_frame(),
+			result: overrides.case_frame ?? create_case_frame(),
 		},
+		form: overrides.form?.toLowerCase() ?? 'stem',
 	}
 }
 
-export function create_case_frame(
-	{
-		status = 'unchecked',
-		valid_arguments = [],
-		extra_arguments = [],
-		missing_arguments = [],
-	}: {
-		status?: CaseFrameStatus
-		valid_arguments?: RoleMatchResult[]
-		extra_arguments?: RoleMatchResult[]
-		missing_arguments?: RoleTag[]
-	} = {},
-): CaseFrameResult {
+export function create_case_frame(overrides: Partial<CaseFrameResult> = {}): CaseFrameResult {
 	return {
-		status,
-		valid_arguments,
-		extra_arguments,
-		missing_arguments,
+		status: 'unchecked',
+		valid_arguments: [],
+		extra_arguments: [],
+		missing_arguments: [],
+		...overrides,
 	}
 }

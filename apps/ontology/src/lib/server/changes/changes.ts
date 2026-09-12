@@ -3,17 +3,9 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { create_concept, get_concept_for_update, update_concept } from './concepts'
 import { get_version } from '$lib/server/ontology'
 import { default_categories } from '$lib/lookups'
-import type {
-	OntologyChange,
-	OntologyChangeAction,
-	OntologyChangeDataFields,
-	PartOfSpeech,
-} from '$lib/types'
-import type {
-	ConceptCreateData,
-	ConceptUpdateData,
-	DbOntologyChange,
-} from '$lib/server/types'
+import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields } from '$lib/types'
+import type { ConceptCreateData, ConceptUpdateData, DbOntologyChange } from '$lib/server/types'
+import type { PartOfSpeech } from '@tabitha/types'
 
 async function create_table_if_not_exists(db: D1Database) {
 	const sql = `

@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit'
 import { PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { find_related_concepts } from '$lib/server/semantic_search'
 import type { PageServerLoad } from './$types'
-import type { ConceptSearchFilter } from '$lib/types'
+import type { ConceptSearchFilter } from '@tabitha/types'
 
 export async function load({ url: { searchParams }, locals: { db_ontology } }: Parameters<PageServerLoad>[0]) {
 	const search_filter: ConceptSearchFilter = {

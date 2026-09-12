@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Features from './Features.svelte'
 	import Concept from './Concept.svelte'
-	import type { SourceConcept, SourceEntity } from '$lib/types'
+	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 
 	type Props = {
 		source_entity: SourceEntity
-		selected_concept?: SourceConcept
+		selected_concept?: ConceptKey
 	}
 
 	let {
@@ -13,7 +13,7 @@
 		selected_concept = {
 			stem: '',
 			sense: '',
-			part_of_speech: '',
+			part_of_speech: 'Noun',
 		},
 	}: Props = $props()
 

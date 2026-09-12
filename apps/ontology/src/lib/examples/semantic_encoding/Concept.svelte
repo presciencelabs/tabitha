@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { SourceConcept } from '$lib/types'
+	import type { ConceptKey } from '@tabitha/types'
 
 	type Props = {
-		data: SourceConcept
-		selected_concept: SourceConcept
+		data: ConceptKey
+		selected_concept: ConceptKey
 	}
 
 	let { data, selected_concept }: Props = $props()

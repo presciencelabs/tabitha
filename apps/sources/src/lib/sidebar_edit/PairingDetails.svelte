@@ -1,15 +1,17 @@
 <script lang="ts">
 	import ConceptDialog from '$lib/ConceptDialog.svelte'
 	import ConceptDetails from '$lib/sidebar/ConceptDetails.svelte'
-	import { type OntologyResult, type SourceConcept, type SourceEntity, type PairingType, IS_CARDINAL_NUMBER } from '@tabitha/types'
+	import { IS_CARDINAL_NUMBER } from '@tabitha/types/patterns'
+	import type { OntologyResult, SourceEntity, PairingType } from '@tabitha/types'
+	import type { PageSourceConcept } from '$lib/types'
 	import Icon from '@iconify/svelte'
 
 	let { data = $bindable() }: { data: SourceEntity } = $props()
 
-	let pairing_concept = $derived<SourceConcept>(data.pairing_concept ?? {
+	let pairing_concept = $derived<PageSourceConcept>(data.pairing_concept ?? {
 		stem: '',
 		sense: '',
-		part_of_speech: data.concept?.part_of_speech ?? '',
+		part_of_speech: data.concept!.part_of_speech,
 	})
 
 	let pairing_type = $derived<PairingType>(data.pairing_type ?? 'simple-complex')

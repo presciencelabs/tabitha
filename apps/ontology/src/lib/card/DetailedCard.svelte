@@ -9,6 +9,7 @@
 	import { CONCEPT_FILTERS } from '$lib/filters'
 	import SimplifiedEntities from '$lib/examples/curated_examples/SimplifiedEntities.svelte'
 	import type { Concept } from '$lib/types'
+	import type { PartOfSpeech } from '@tabitha/types'
 
 	type Props = {
 		concept: Concept
@@ -44,10 +45,10 @@
 				</section>
 
 				{#if CONCEPT_FILTERS.IS_OR_WILL_BE_IN_ONTOLOGY(concept)}
-					{@const { part_of_speech, categories } = concept}
+					{@const part_of_speech = concept.part_of_speech as PartOfSpeech}
 					{@const pending_categories_change = concept.pending_changes.find(change => change.data.categories)}
 					<section class="prose mt-4 max-w-none">
-						<Category {part_of_speech} {categories} />
+						<Category {part_of_speech} categories={concept.categories} />
 
 						{#if pending_categories_change}
 							{@const pending_categories = pending_categories_change.data.categories?.value.filter(category => category) || []}

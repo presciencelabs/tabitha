@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { OntologyResult, SourceConcept } from '@tabitha/types'
+	import type { OntologyResult } from '@tabitha/types'
+	import type { PageSourceConcept } from '$lib/types'
 	import { fetch_concept_ontology_data } from '$lib/data/api_lookups'
 	import HoverPopup from './HoverPopup.svelte'
 
-	let { data }: { data: SourceConcept } = $props()
+	let { data }: { data: PageSourceConcept } = $props()
 
 	let ontology_data = $state<OntologyResult | null>(null)
 

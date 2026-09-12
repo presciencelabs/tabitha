@@ -1,17 +1,23 @@
-import type { TokenType, Tag, MessageLabel } from '@tabitha/types'
-import type { Token, LookupResult } from '$lib/types'
+import type { CheckerTokenType, CheckerMessageLabel } from '@tabitha/types/editor'
+import type { Token, Tag, LookupResult } from '$lib/types'
 
 export type TokenFilter = (token: Token) => boolean
-export type LookupFilter = (concept: LookupResult) => boolean
-export type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
+export type TokenTransform = (token: Token) => Token
 
+export type LookupFilter = (concept: LookupResult) => boolean
+
+export type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
 export type ContextFilterResult = {
 	success: boolean
 	context_indexes: number[]
 	subtoken_indexes: number[]
 }
 
-export type TokenTransform = (token: Token) => Token
+export type TokenRuleCore = {
+	trigger: TokenFilter
+	context: TokenContextFilter
+	action: RuleAction
+}
 
 export type RuleTriggerContext = {
 	trigger_token: Token
@@ -24,12 +30,6 @@ export type RuleTriggerContext = {
 
 export type RuleAction = (trigger_context: RuleTriggerContext) => number
 
-export type TokenRuleCore = {
-	trigger: TokenFilter
-	context: TokenContextFilter
-	action: RuleAction
-}
-
 export type TokenRule = TokenRuleCore & {
 	id: string
 	name: string
@@ -41,7 +41,9 @@ export type BuiltInRule = {
 	rule: TokenRuleCore
 }
 
+//===============
 // Json structures
+
 export type TagFilterJson = Tag | string
 
 export type TokenFilterJsonBase = {
@@ -60,7 +62,7 @@ export type SkipGroup = string
 export type SkipJsonSingle = TokenFilterJson | SkipGroup
 export type SkipJson = SkipJsonSingle | SkipJsonSingle[]
 
-export interface TokenFilterWithSkipJson extends TokenFilterJsonBase {
+export type TokenFilterWithSkipJson = TokenFilterJsonBase & {
 	skip?: SkipJson
 }
 
@@ -75,7 +77,7 @@ export type TokenContextFilterJson = {
 }
 
 export type TokenTransformJson = {
-	type?: TokenType
+	type?: CheckerTokenType
 	tag?: Tag
 	remove_tag?: string | string[]
 	function?: Tag
@@ -88,17 +90,17 @@ export type TokenRuleJsonBase = {
 	comment?: string
 }
 
-export interface LookupRuleJson extends TokenRuleJsonBase {
+export type LookupRuleJson = TokenRuleJsonBase & {
 	lookup: string
 	combine?: number
 }
 
-export interface PartOfSpeechRuleJson extends TokenRuleJsonBase {
+export type PartOfSpeechRuleJson = TokenRuleJsonBase & {
 	category: string
 	remove: string
 }
 
-export interface TransformRuleJson extends TokenRuleJsonBase {
+export type TransformRuleJson = TokenRuleJsonBase & {
 	transform?: TokenTransformJson
 	context_transform?: TokenTransformJson | TokenTransformJson[]
 	subtoken_transform?: TokenTransformJson | TokenTransformJson[]
@@ -112,5 +114,5 @@ export type CheckerActionJson = {
 }
 
 export type CheckerRuleJson = TokenRuleJsonBase & {
-	[key in MessageLabel]?: CheckerActionJson
+	[key in CheckerMessageLabel]?: CheckerActionJson
 }

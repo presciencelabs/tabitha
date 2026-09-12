@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
 	type Props = {
-		token: SimpleToken
+		token: CheckerToken
 	}
 
 	let { token }: Props = $props()

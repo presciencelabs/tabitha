@@ -1,8 +1,9 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { cached_json } from '@tabitha/api-client'
 import type { D1Database } from '@cloudflare/workers-types'
-import { normalize_wildcards } from '@tabitha/types'
-import type { DbRowLexicon, LexicalForm } from '$lib/types'
+import { normalize_wildcards } from '@tabitha/types/patterns'
+import type { TargetFormResult } from '@tabitha/types'
+import type { DbRowLexicon } from '$lib/types'
 
 export async function GET({ locals: { db }, params: { project }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
 	const word = normalize_wildcards(searchParams.get('word') ?? '')
@@ -23,12 +24,12 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 	const { results: stem_matches } = await db.prepare(stem_sql).bind(project, `${word}`).all<DbRowLexicon>()
 	const { results: forms_matches } = await db.prepare(forms_sql).bind(project, `%|${word}|%`).all<DbRowLexicon>()
 
-	const forms: LexicalForm[] = await transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
+	const forms: TargetFormResult[] = await transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
 
 	return cached_json({ data: forms })
 
-	async function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): Promise<LexicalForm[]> {
-		const forms: LexicalForm[] = []
+	async function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): Promise<TargetFormResult[]> {
+		const forms: TargetFormResult[] = []
 
 		for (const { id, stem: base_stem, part_of_speech, constituents } of stem_matches) {
 			const stem = derive_stem({ base_stem, constituents })

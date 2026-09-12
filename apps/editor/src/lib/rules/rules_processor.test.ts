@@ -1,26 +1,12 @@
-import { TOKEN_TYPE, create_clause_token, create_lookup_result, create_token, flatten_sentence } from '$lib/token'
+import { TOKEN_TYPE, create_clause_token, create_token, flatten_sentence } from '$lib/token'
 import { describe, expect, test } from 'vitest'
 import { apply_rules } from './rules_processor'
 import { LOOKUP_RULES } from './lookup_rules'
 import { parse_transform_rule } from './transform_rules'
 import { parse_checker_rule } from './checker_rules'
 import { parse_part_of_speech_rule } from './part_of_speech_rules'
-import { expect_error } from '$lib/test_helps'
-import type { OntologyStatus } from '@tabitha/types'
-import type { Sentence, Token, LookupResult } from '$lib/types'
+import { expect_error, create_lookup_token_for_test, create_sentence_for_test, lookup_result_for_test } from '$lib/test_helps'
 import type { CheckerRuleJson } from '$lib/rules/types'
-
-function create_sentence(tokens: Token[]): Sentence {
-	return { clause: create_clause_token({ sub_tokens: tokens, tag: { 'clause_type': 'main_clause' } }) }
-}
-
-function create_lookup_token(token: string, { lookup_results = [] }: { lookup_results?: LookupResult[] } = {}): Token {
-	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: token, lookup_results })
-}
-
-function lookup_result(stem: string, { sense = 'A', part_of_speech = 'Noun', level = 1, ontology_status = 'in ontology' as OntologyStatus }: { sense?: string; part_of_speech?: string; level?: number; ontology_status?: OntologyStatus } = {}): LookupResult {
-	return create_lookup_result({ stem, part_of_speech, sense, level, ontology_status })
-}
 
 describe('transform rules', () => {
 	test('trigger does not match', () => {
@@ -33,9 +19,9 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'text' }),
-				create_token({ token: 'other', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'other' }),
+			create_sentence_for_test([
+				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'other', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -54,9 +40,9 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'text' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'text', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -75,12 +61,12 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'John\'s', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' }),
-				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'peanut' }),
-				create_token({ token: 'was', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'was' }),
+			create_sentence_for_test([
+				create_token({ token: 'John\'s', type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: ['John'] }),
+				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'was', type: TOKEN_TYPE.LOOKUP_WORD }),
 				create_token({ token: 'a', type: TOKEN_TYPE.FUNCTION_WORD }),
-				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'peanut' }),
+				create_token({ token: 'peanut', type: TOKEN_TYPE.LOOKUP_WORD }),
 				create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 			]),
 		]
@@ -102,10 +88,10 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
+			create_sentence_for_test([
 				create_clause_token({ sub_tokens: [
-					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 				] }),
 			]),
 		]
@@ -125,11 +111,11 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
-			create_sentence([
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -148,10 +134,10 @@ describe('transform rules', () => {
 		].map(parse_transform_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
 				create_clause_token({ sub_tokens: [
-					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 				] }),
 			]),
 		]
@@ -176,8 +162,8 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'not_token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'not_token' }),
+			create_sentence_for_test([
+				create_token({ token: 'not_token', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -198,8 +184,8 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -220,9 +206,9 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -247,9 +233,9 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -282,9 +268,9 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -308,9 +294,9 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -334,11 +320,11 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
-			create_sentence([
-				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+			create_sentence_for_test([
+				create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 			]),
 		]
 
@@ -359,10 +345,10 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
+			create_sentence_for_test([
+				create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
 				create_clause_token({ sub_tokens: [
-					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 				] }),
 			]),
 		]
@@ -385,10 +371,10 @@ describe('checker rules', () => {
 		] as CheckerRuleJson[]).map(parse_checker_rule)
 
 		const input_tokens = [
-			create_sentence([
+			create_sentence_for_test([
 				create_clause_token({ sub_tokens: [
-					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'token' }),
-					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'context' }),
+					create_token({ token: 'token', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'context', type: TOKEN_TYPE.LOOKUP_WORD }),
 				] }),
 			]),
 		]
@@ -404,18 +390,18 @@ describe('checker rules', () => {
 describe('lookup rules', () => {
 	test('built-in lookup rules', () => {
 		const input_tokens = [
-			create_sentence([
-				create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'John' }),
-				create_token({ token: 'ran', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'run' }),
+			create_sentence_for_test([
+				create_token({ token: 'John', type: TOKEN_TYPE.LOOKUP_WORD }),
+				create_token({ token: 'ran', type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: ['run'] }),
 				create_clause_token({ sub_tokens: [
 					create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
-					create_token({ token: 'in', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'in' }),
-					create_token({ token: 'order', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'order' }),
-					create_token({ token: 'to', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'to' }),
-					create_token({ token: 'take', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'take' }),
-					create_token({ token: 'many', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'many' }),
-					create_token({ token: 'books', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'book' }),
-					create_token({ token: 'away', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'away' }),
+					create_token({ token: 'in', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'order', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'to', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'take', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'many', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'books', type: TOKEN_TYPE.LOOKUP_WORD }),
+					create_token({ token: 'away', type: TOKEN_TYPE.LOOKUP_WORD }),
 					create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 				] }),
 				create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
@@ -460,10 +446,13 @@ describe('part-of-speech rules', () => {
 		].map(parse_part_of_speech_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_lookup_token('token', { lookup_results: [
-					lookup_result('token', { part_of_speech: 'Adjective' }),
-				] }),
+			create_sentence_for_test([
+				create_lookup_token_for_test({
+					token: 'token',
+					lookup_results: [
+						lookup_result_for_test({ stem: 'token', part_of_speech: 'Adjective' }),
+					],
+				}),
 			]),
 		]
 
@@ -481,11 +470,14 @@ describe('part-of-speech rules', () => {
 		].map(parse_part_of_speech_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_lookup_token('token', { lookup_results: [
-					lookup_result('token1', { part_of_speech: 'Noun' }),
-					lookup_result('token2', { part_of_speech: 'Noun' }),
-				] }),
+			create_sentence_for_test([
+				create_lookup_token_for_test({
+					token: 'token',
+					lookup_results: [
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Noun' }),
+						lookup_result_for_test({ stem: 'token2', part_of_speech: 'Noun' }),
+					],
+				}),
 			]),
 		]
 
@@ -503,13 +495,16 @@ describe('part-of-speech rules', () => {
 		].map(parse_part_of_speech_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_lookup_token('token', { lookup_results: [
-					lookup_result('token1', { part_of_speech: 'Noun' }),
-					lookup_result('token2', { part_of_speech: 'Noun' }),
-					lookup_result('token1', { part_of_speech: 'Verb' }),
-					lookup_result('token2', { part_of_speech: 'Verb' }),
-				] }),
+			create_sentence_for_test([
+				create_lookup_token_for_test({
+					token: 'token',
+					lookup_results: [
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Noun' }),
+						lookup_result_for_test({ stem: 'token2', part_of_speech: 'Noun' }),
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Verb' }),
+						lookup_result_for_test({ stem: 'token2', part_of_speech: 'Verb' }),
+					],
+				}),
 			]),
 		]
 
@@ -529,14 +524,17 @@ describe('part-of-speech rules', () => {
 		].map(parse_part_of_speech_rule)
 
 		const input_tokens = [
-			create_sentence([
-				create_lookup_token('token', { lookup_results: [
-					lookup_result('token1', { part_of_speech: 'Noun' }),
-					lookup_result('token2', { part_of_speech: 'Noun' }),
-					lookup_result('token1', { part_of_speech: 'Verb' }),
-					lookup_result('token2', { part_of_speech: 'Verb' }),
-					lookup_result('token1', { part_of_speech: 'Adjective' }),
-				] }),
+			create_sentence_for_test([
+				create_lookup_token_for_test({
+					token: 'token',
+					lookup_results: [
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Noun' }),
+						lookup_result_for_test({ stem: 'token2', part_of_speech: 'Noun' }),
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Verb' }),
+						lookup_result_for_test({ stem: 'token2', part_of_speech: 'Verb' }),
+						lookup_result_for_test({ stem: 'token1', part_of_speech: 'Adjective' }),
+					],
+				}),
 			]),
 		]
 

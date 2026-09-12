@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import PopupMenu from './PopupMenu.svelte'
 	import Table from './Table.svelte'
 	import { Badge } from '$lib'
@@ -8,7 +8,7 @@
 	import type { Snippet } from 'svelte'
 
 	type Props = {
-		token: SimpleToken
+		token: CheckerToken
 		children?: Snippet
 	}
 

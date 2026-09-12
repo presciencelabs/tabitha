@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { OntologyResult, SourceConcept } from '@tabitha/types'
+	import type { OntologyResult, ConceptKey } from '@tabitha/types'
 	import type { Snippet } from 'svelte'
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { fetch_ontology_data_for_all_senses } from '$lib/data/api_lookups'
@@ -7,7 +7,7 @@
 	import SidebarDetail from './SidebarDetail.svelte'
 
 	type Props = {
-		data: SourceConcept
+		data: ConceptKey
 		title: string
 		actions?: Snippet<[OntologyResult]>
 	}
@@ -21,7 +21,7 @@
 		})
 	})
 
-	function get_ontology_url_for_link({ stem, part_of_speech }: SourceConcept): string {
+	function get_ontology_url_for_link({ stem, part_of_speech }: ConceptKey): string {
 		return `${PUBLIC_ONTOLOGY_API_HOST}/?q=${stem}&category=${part_of_speech}`
 	}
 </script>

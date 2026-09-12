@@ -3,7 +3,7 @@ import { FUNCTION_WORDS } from './function_words'
 import { REGEXES } from '$lib/regexes'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
 import { ERRORS } from './error_messages'
-import type { PairingType, TokenType } from '@tabitha/types'
+import type { PairingType, CheckerTokenType } from '@tabitha/types'
 import type { Token } from '$lib/types'
 
 function normalize_input(text: string): string {
@@ -100,7 +100,7 @@ export function tokenize_input(text: string = ''): Token[] {
 			return create_token({
 				token: collect_text(),
 				type: TOKEN_TYPE.LOOKUP_WORD,
-				lookup_term: '-ReferenceMarker',
+				lookup_terms: ['-ReferenceMarker'],
 				tag: { 'syntax': 'verse_ref_colon' },
 			})
 		}
@@ -198,12 +198,12 @@ export function tokenize_input(text: string = ''): Token[] {
 	}
 
 	function lookup_token(text: string): Token {
-		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)
+		const lookup_match = text.match(REGEXES.EXTRACT_LOOKUP_TERM)!
 
 		// combine stem and sense
-		const stem = lookup_match?.[1]
-		const sense = lookup_match?.[2] ?? ''
-		return create_token({ token: text, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: stem, specified_sense: sense })
+		const stem = lookup_match[1]
+		const sense = lookup_match[2] ?? ''
+		return create_token({ token: text, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [stem], specified_sense: sense })
 	}
 
 	function pairing_token(pairing_type: PairingType): (token: string) => Token {
@@ -227,10 +227,10 @@ export function tokenize_input(text: string = ''): Token[] {
 	}
 
 	function error_token(message: string): Token {
-		return create_token({ token: collect_text(), type: TOKEN_TYPE.NOTE, message: { ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' } })
+		return create_token({ token: collect_text(), type: TOKEN_TYPE.NOTE, messages: [{ ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' }] })
 	}
 
-	function simple_token(type: TokenType): Token {
+	function simple_token(type: CheckerTokenType): Token {
 		return create_token({ token: collect_text(), type })
 	}
 

@@ -1,17 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { build_filter_options, build_search_regex, by_book_order, filter_search_results } from './helpers'
-import type { SearchTextResult } from '../types'
+import { build_filter_options, build_search_regex, filter_search_results } from './helpers'
+import { by_book_order } from '@tabitha/types/patterns'
+import type { SearchTargetTextResult } from '@tabitha/types'
 
-const mockRealWorldResults: SearchTextResult[] = [
+const mockRealWorldResults: SearchTargetTextResult[] = [
 	{
-		reference: { type: 'verse', id_primary: '1 Samuel', id_secondary: 21, id_tertiary: 1 },
+		reference: { type: 'verse', id_primary: '1 Samuel', id_secondary: '21', id_tertiary: '1' },
 		texts: [
 			{ audience: 'Churched Adults', text: 'David went to Nob to meet Ahimelech the priest.' },
 			{ audience: 'Unchurched Adults', text: 'David went to Nob to meet Ahimelech the priest. When Ahimelech saw David, he was afraid.' },
 		],
 	},
 	{
-		reference: { type: 'verse', id_primary: 'Ruth', id_secondary: 4, id_tertiary: 17 },
+		reference: { type: 'verse', id_primary: 'Ruth', id_secondary: '4', id_tertiary: '17' },
 		texts: [
 			{ audience: 'Churched Adults', text: 'The women named the child Obed. Obed became the father of Jesse, who was the father of David.' },
 		],

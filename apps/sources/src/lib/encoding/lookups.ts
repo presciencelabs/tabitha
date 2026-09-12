@@ -1,5 +1,6 @@
+import type { EncodingEntityCategory } from '@tabitha/types'
 
-export const CATEGORY_NAME_LOOKUP = new Map([
+export const CATEGORY_NAME_LOOKUP = new Map<string, EncodingEntityCategory>([
 	['N', 'Noun'],
 	['V', 'Verb'],
 	['A', 'Adjective'],
@@ -18,7 +19,7 @@ export const CATEGORY_NAME_LOOKUP = new Map([
 	['.', 'period'],
 ])
 
-export const CATEGORY_ABBREVIATIONS = new Map([
+export const CATEGORY_ABBREVIATIONS = new Map<EncodingEntityCategory, string>([
 	['Noun', 'N'],
 	['Verb', 'V'],
 	['Adjective', 'Adj'],
@@ -37,7 +38,7 @@ export const CATEGORY_ABBREVIATIONS = new Map([
 	['period', 'period'],
 ])
 
-export const WORD_ENTITY_CATEGORIES = new Set(['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Phrasal', 'Particle'])
+export const WORD_ENTITY_CATEGORIES = new Set<EncodingEntityCategory>(['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Phrasal', 'Particle'])
 
 export const GRAMMAR_ONLY_FEATURES = [
 	'Verb-Adjective Degree',

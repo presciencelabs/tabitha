@@ -1,6 +1,6 @@
 import { TOKEN_TYPE, set_message, token_has_tag } from '$lib/token'
-import type { Tag, TokenType } from '@tabitha/types'
-import type { MessageInfo, Token } from '$lib/types'
+import type { CheckerTokenType } from '@tabitha/types'
+import type { MessageInfo, Token, Tag } from '$lib/types'
 import type {
 	BuiltInRule,
 	ContextFilterResult,
@@ -228,7 +228,7 @@ function create_directional_context_filter({ context_json, offset }: { context_j
 		return (tokens, start_index) => check_context_with_skip({ tokens, start_index })
 
 		function check_context_with_skip({ tokens, start_index }: { tokens: Token[]; start_index: number }): ContextFilterResult {
-			const tokens_to_skip: TokenType[] = [TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE]
+			const tokens_to_skip: CheckerTokenType[] = [TOKEN_TYPE.NOTE, TOKEN_TYPE.ADDED, TOKEN_TYPE.PHRASE]
 
 			for (let i = start_index + offset; end_check(tokens, i); i += offset) {
 				if (filter(tokens[i])) {

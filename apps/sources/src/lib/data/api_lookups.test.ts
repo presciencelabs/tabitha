@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetch_concept_ontology_data } from './api_lookups'
-import type { OntologyResult } from '@tabitha/types'
+import type { ConceptKey, OntologyResult } from '@tabitha/types'
 
 describe('fetch_concept_ontology_data', () => {
 	beforeEach(() => {
@@ -51,7 +51,7 @@ describe('fetch_concept_ontology_data', () => {
 			json: async () => mockResponse,
 		} as Response)
 
-		const concept = { stem: 'God', sense: 'A', part_of_speech: 'Noun' }
+		const concept: ConceptKey = { stem: 'God', sense: 'A', part_of_speech: 'Noun' }
 		const result = await fetch_concept_ontology_data(concept)
 
 		expect(result.gloss).toBe('Supreme Being')
@@ -65,7 +65,7 @@ describe('fetch_concept_ontology_data', () => {
 			status: 404,
 		} as Response)
 
-		const concept = { stem: 'Unknown', sense: 'A', part_of_speech: 'Noun' }
+		const concept: ConceptKey = { stem: 'Unknown', sense: 'A', part_of_speech: 'Noun' }
 		const result = await fetch_concept_ontology_data(concept)
 
 		expect(result.stem).toBe('Unknown')
@@ -76,7 +76,7 @@ describe('fetch_concept_ontology_data', () => {
 	it('returns fallback data when fetch throws a network error', async () => {
 		vi.mocked(fetch).mockRejectedValueOnce(new Error('Network error'))
 
-		const concept = { stem: 'OfflineTerm', sense: 'A', part_of_speech: 'Noun' }
+		const concept: ConceptKey = { stem: 'OfflineTerm', sense: 'A', part_of_speech: 'Noun' }
 		const result = await fetch_concept_ontology_data(concept)
 
 		expect(result.stem).toBe('OfflineTerm')

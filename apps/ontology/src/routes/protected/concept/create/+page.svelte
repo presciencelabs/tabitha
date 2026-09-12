@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import type { PageProps } from './$types'
-	import type { PartOfSpeech } from '$lib/types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
@@ -58,7 +57,7 @@
 	}
 
 	$effect(() => {
-		concept_data.categories = default_categories[concept_data.part_of_speech as PartOfSpeech]?.slice() ?? []
+		concept_data.categories = default_categories[concept_data.part_of_speech]?.slice() ?? []
 	})
 
 	$effect(() => {

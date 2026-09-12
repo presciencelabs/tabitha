@@ -1,8 +1,8 @@
 import { cached_json } from '@tabitha/api-client'
 import { get_concepts } from '$lib/server/ontology'
 import type { RequestHandler } from './$types'
-import type { Concept, ConceptSearchFilter, SimplificationHint } from '$lib/types'
-import type { HowToEntry, OntologyResult } from '@tabitha/types'
+import type { Concept } from '$lib/types'
+import type { HowToEntry, OntologyResult, ConceptSearchFilter, SimplificationHint, PartOfSpeech } from '@tabitha/types'
 
 export async function GET({ url: { searchParams }, locals: { db_ontology } }: Parameters<RequestHandler>[0]) {
 	const search_filter: ConceptSearchFilter = {
@@ -25,7 +25,7 @@ export async function GET({ url: { searchParams }, locals: { db_ontology } }: Pa
 			id,
 			stem,
 			sense,
-			part_of_speech,
+			part_of_speech: part_of_speech as PartOfSpeech,	// this is safe because we don't draw on the function words for this search API
 			level,
 			gloss,
 			categorization,

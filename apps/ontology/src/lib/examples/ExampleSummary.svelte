@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
-	import type { ContextArguments, Reference, SourceStatus } from '$lib/types'
+	import type { ContextArguments, Reference, SourceStatus } from '@tabitha/types'
 
 	type Props = {
 		reference: Reference

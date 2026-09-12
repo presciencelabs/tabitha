@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import PendingChange from './PendingChange.svelte'
+	import type { Concept } from './types'
 
 	let { concept, compact = false }: { concept: Concept, compact?: boolean } = $props()
 

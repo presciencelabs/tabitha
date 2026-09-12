@@ -1,4 +1,4 @@
-import type { AnalysisResult } from '$lib/types'
+import type { AnalysisResult } from '@tabitha/types'
 
 export async function fetch_analysis(text: string): Promise<AnalysisResult> {
 	const response = await fetch(`/analyze?text=${text}`)

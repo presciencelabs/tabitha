@@ -1,20 +1,20 @@
 <script lang="ts">
 	import type { Component } from 'svelte'
-	import type { PartOfSpeech } from '$lib/types'
+	import type { PartOfSpeech } from '@tabitha/types'
 	import AdjectiveCategorization from './AdjectiveCategorization.svelte'
 	import SemanticCategorization from './SemanticCategorization.svelte'
 	import ThetaGrid from './ThetaGrid.svelte'
 	import UsageInfo from './UsageInfo.svelte'
 
 	type Props = {
-		part_of_speech: PartOfSpeech | string
+		part_of_speech: PartOfSpeech
 		categories?: string[]
 	}
 
 	let { part_of_speech, categories = $bindable([]) }: Props = $props()
 
 	type CategoryComponent = Component<
-		{ part_of_speech: PartOfSpeech | string, categories: string[] },
+		{ part_of_speech: PartOfSpeech, categories: string[] },
 		Record<string, never>,
 		'categories'
 	>

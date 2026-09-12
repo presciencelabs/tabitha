@@ -23,8 +23,6 @@ import type { RuleTriggerContext } from '$lib/rules/types'
  * 
  * The order of the priorities mostly makes sense when referring to the theta-grids in the Ontology,
  * as overlapping and compatible argument structures need to be considered.
- * 
- * TODO store these in the db
  */
 const verb_sense_priority_overrides: WordStemPriorityOverrides[] = [
 	['answer', [

@@ -2,7 +2,7 @@
 	import type { PageSourceEntity } from '$lib/types'
 	import { PUBLIC_EDITOR_API_HOST } from '$env/static/public'
 	import { create_editor_client } from '@tabitha/api-client'
-	import type { CheckResponse, Message, NounListEntry, SimpleToken } from '@tabitha/types'
+	import type { EditorCheckResult, CheckerMessage, CheckerToken, NounListEntry } from '@tabitha/types'
 	import { Navigation } from '$lib'
 	import { fetch_analysis } from '$lib/data/analyze'
 	import type { PageProps } from './$types'
@@ -10,6 +10,7 @@
 	import Sidebar from '$lib/sidebar_edit/Sidebar.svelte'
 	import Icon from '@iconify/svelte'
 	import SourceEntitiesEdit from '$lib/edit/SourceEntitiesEdit.svelte'
+	import { structure_entities } from '$lib/encoding/structured'
 
 	const editor_client = create_editor_client({ base_url: PUBLIC_EDITOR_API_HOST })
 
@@ -27,8 +28,8 @@
 
 	let is_checked = $state(false)
 	let checking = $state(false)
-	let check_result = $state<CheckResponse | null>(null)
-	let errors_and_warnings = $state<[Message, number][]>([])
+	let check_result = $state<EditorCheckResult | null>(null)
+	let errors_and_warnings = $state<[CheckerMessage, number][]>([])
 
 	let analyzing = $state(false)
 	let api_error = $state<string | null>(null)
@@ -52,7 +53,7 @@
 			check_response.tokens = check_response.tokens.flatMap(flatten_tokens)
 
 			errors_and_warnings = check_response.tokens
-				.flatMap((token, i) => token.messages.map<[Message, number]>(msg => [msg, i]))
+				.flatMap((token, i) => token.messages.map<[CheckerMessage, number]>(msg => [msg, i]))
 				.filter(([msg]) => ['error', 'warning'].includes(msg.label))
 
 			check_result = check_response
@@ -63,7 +64,7 @@
 			checking = false
 		}
 
-		function flatten_tokens(token: SimpleToken): SimpleToken[] {
+		function flatten_tokens(token: CheckerToken): CheckerToken[] {
 			if (token.sub_tokens.length) {
 				return token.sub_tokens.flatMap(flatten_tokens)
 			} else {
@@ -90,7 +91,10 @@
 
 		try {
 			const result = await fetch_analysis(sanitize_input(phase1_text))
-			source_entities = result.source_entities
+
+			source_entities = result.source_entities.map(entity => ({ ...entity, id: -1, parent_id: -1, boundary_category: '' }))
+			structure_entities(source_entities)
+
 			noun_list = result.noun_list
 		} catch (err) {
 			api_error = err instanceof Error ? err.message : 'Failed to analyze text'

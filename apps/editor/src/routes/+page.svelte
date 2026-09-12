@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CheckResponse } from '@tabitha/types'
+	import type { EditorCheckResult } from '@tabitha/types'
 	import BackTranslation from '$lib/BackTranslation.svelte'
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
@@ -9,7 +9,7 @@
 
 	let entered_text = $state(save_state.value)
 	let checking = $state(false)
-	let check_response = $state<CheckResponse>({
+	let check_response = $state<EditorCheckResult>({
 		status: 'ok',
 		tokens: [],
 		back_translation: '',

@@ -4,6 +4,8 @@ import { error } from '@sveltejs/kit'
 import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
 import type { AiClient } from '@tabitha/ai'
 import type { RequestHandler } from './$types'
+import type { CopilotNotesResult } from '@tabitha/types'
+import type { CopilotSettings, BriefSettings } from '$lib/types'
 
 export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
@@ -132,7 +134,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 	})
 }
 
-async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotApiResult, settings: CopilotSettings, ai: AiClient }): Promise<string> {
+async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotNotesResult, settings: CopilotSettings, ai: AiClient }): Promise<string> {
 	if (settings.mode === 'brief') {
 		const brief_settings: BriefSettings = {
 			...settings,

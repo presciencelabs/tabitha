@@ -1,12 +1,12 @@
-import type { EncodingEntity, EntityFeature, SimpleEncodingEntity } from '@tabitha/types'
+import type { EncodingEntity, EntityFeature, SourceSimpleJsonEntity } from '@tabitha/types'
 
-export function simplify_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
+export function simplify_encoding(entities: EncodingEntity[]): SourceSimpleJsonEntity[] {
 	const cleaned = clean_encoding(entities)
 	const structured = structure_encoding(cleaned)
 	return structured
 }
 
-function clean_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
+function clean_encoding(entities: EncodingEntity[]): SourceSimpleJsonEntity[] {
 	const end_categories_map: Record<string, string> = {
 		')': 'Phrase End',
 		']': 'Clause End',
@@ -32,7 +32,7 @@ function clean_encoding(entities: EncodingEntity[]): SimpleEncodingEntity[] {
 		if (Object.keys(simple_features).length) {
 			entries.push(['features', simple_features])
 		}
-		return Object.fromEntries(entries) as SimpleEncodingEntity
+		return Object.fromEntries(entries) as SourceSimpleJsonEntity
 	})
 }
 
@@ -67,9 +67,9 @@ function simplify_features({ features, category }: { features: EntityFeature[], 
 	return Object.fromEntries(feature_entries)
 }
 
-function structure_encoding(encoding: SimpleEncodingEntity[]): SimpleEncodingEntity[] {
-	const structured: SimpleEncodingEntity[] = []
-	const parent_stack: SimpleEncodingEntity[] = []
+function structure_encoding(encoding: SourceSimpleJsonEntity[]): SourceSimpleJsonEntity[] {
+	const structured: SourceSimpleJsonEntity[] = []
+	const parent_stack: SourceSimpleJsonEntity[] = []
 
 	const end_categories = ['Phrase End', 'Clause End', 'Clause Sentence End']
 	const start_categories = ['Clause', 'Noun Phrase', 'Verb Phrase', 'Adjective Phrase', 'Adverb Phrase']

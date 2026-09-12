@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { semantic_category } from '$lib/lookups'
-	import type { PartOfSpeech } from '$lib/types'
+	import type { PartOfSpeech } from '@tabitha/types'
 
 	type Props = {
-		part_of_speech: PartOfSpeech | string
+		part_of_speech: PartOfSpeech
 		categories?: string[]
 	}
 
 	let { part_of_speech, categories = $bindable([]) }: Props = $props()
 
-	let category_map = $derived(semantic_category[part_of_speech as PartOfSpeech])
+	let category_map = $derived(semantic_category[part_of_speech])
 	let category_options = $derived(category_map ? Object.values(category_map) : [])
 </script>
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { get_function_words } from './function_words'
-import type { ConceptSearchFilter } from '$lib/types'
+import type { ConceptSearchFilter } from '@tabitha/types'
 
 describe('function_words', () => {
 	it('returns matching function words for exact search', () => {

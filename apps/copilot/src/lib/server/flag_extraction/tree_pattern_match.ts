@@ -1,3 +1,4 @@
+import type { CopilotEncodingEntity, EntityMatch, EntityMatchCapture, EntityMatchResult, FlagExtractionRule, IndexStack, PatternEntity } from '$lib/types'
 
 /**
  * Check whether a value is a variable
@@ -105,7 +106,7 @@ function match_value_internal({ actual, pattern, bindings }: { actual: unknown, 
  *	- variable unification
  *	- named captures
  */
-function match_pattern_internal({ node, pattern, bindings = {}, captures = {}, stack = [] }: { node: EncodingEntity, pattern: PatternEntity, bindings?: Record<string, unknown>, captures?: Record<string, EntityMatchCapture>, stack?: IndexStack }): EntityMatch {
+function match_pattern_internal({ node, pattern, bindings = {}, captures = {}, stack = [] }: { node: CopilotEncodingEntity, pattern: PatternEntity, bindings?: Record<string, unknown>, captures?: Record<string, EntityMatchCapture>, stack?: IndexStack }): EntityMatch {
 	const local_bindings = clone(bindings)
 	const local_captures = clone(captures)
 
@@ -118,7 +119,7 @@ function match_pattern_internal({ node, pattern, bindings = {}, captures = {}, s
 	}
 
 	// check non-children properties
-	for (const key of Object.keys(pattern) as (keyof EncodingEntity | keyof PatternEntity)[]) {
+	for (const key of Object.keys(pattern) as (keyof CopilotEncodingEntity | keyof PatternEntity)[]) {
 		if (key === 'children' || key === 'name' || key === 'optional') {
 			continue
 		}
@@ -176,8 +177,8 @@ function match_pattern_internal({ node, pattern, bindings = {}, captures = {}, s
 	return { success: true, bindings: local_bindings, captures: local_captures }
 }
 
-export function get_matches({ root_entity, extractions }: { root_entity: EncodingEntity, extractions: FlagExtractionRule[] }): EntityMatchResult[] {
-	function traverse_dfs({ node, stack = [] }: { node: EncodingEntity, stack?: IndexStack }): EntityMatchResult[] {
+export function get_matches({ root_entity, extractions }: { root_entity: CopilotEncodingEntity, extractions: FlagExtractionRule[] }): EntityMatchResult[] {
+	function traverse_dfs({ node, stack = [] }: { node: CopilotEncodingEntity, stack?: IndexStack }): EntityMatchResult[] {
 		const matches: EntityMatchResult[] = []
 
 		for (const { flag, rules } of extractions) {
@@ -208,8 +209,8 @@ export function get_matches({ root_entity, extractions }: { root_entity: Encodin
  *
  * Searches entire structure DFS
  */
-export function match_pattern({ pattern, root_entity }: { pattern: PatternEntity, root_entity: EncodingEntity }): EntityMatch[] {
-	function traverse_dfs({ node, stack = [] }: { node: EncodingEntity, stack?: IndexStack }): EntityMatch[] {
+export function match_pattern({ pattern, root_entity }: { pattern: PatternEntity, root_entity: CopilotEncodingEntity }): EntityMatch[] {
+	function traverse_dfs({ node, stack = [] }: { node: CopilotEncodingEntity, stack?: IndexStack }): EntityMatch[] {
 		const matches: EntityMatch[] = []
 
 		const result = match_pattern_internal({ node, pattern, bindings: {}, captures: {}, stack })

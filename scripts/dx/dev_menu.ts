@@ -1,5 +1,4 @@
 import { createInterface } from 'node:readline/promises'
-import { stdin as input, stdout as output } from 'node:process'
 import { run_dev_applications, APPS } from './dev_multi'
 
 type Preset = {
@@ -90,7 +89,7 @@ export async function run_dev_menu() {
 		return
 	}
 
-	const rl = createInterface({ input, output })
+	const rl = createInterface({ input: process.stdin, output: process.stdout })
 
 	try {
 		print_menu()

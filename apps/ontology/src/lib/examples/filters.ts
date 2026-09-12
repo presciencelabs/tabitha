@@ -1,15 +1,13 @@
-import { by_book_order, testament } from '@tabitha/types'
+import { by_book_order } from '@tabitha/types/patterns'
 import type {
 	Concept,
 	ContextArgumentMap,
-	ContextArgumentName,
-	Example,
 	FilterMap,
 	FilterRulesMap,
 	Options,
 } from '$lib/types'
 
-export { by_book_order, testament }
+import type { ContextArgumentName, ConceptExample } from '@tabitha/types'
 
 export const context_argument_map: ContextArgumentMap = new Map([
 	['Noun', [
@@ -103,7 +101,7 @@ export const context_argument_map: ContextArgumentMap = new Map([
  * | Agent			| ...									|
  * | Patient		| ...									|
  */
-export function derive_filters({ concept, examples }: { concept: Concept, examples: Example[] }): FilterMap {
+export function derive_filters({ concept, examples }: { concept: Concept, examples: ConceptExample[] }): FilterMap {
 	const filters: FilterMap = new Map()
 
 	// The Book filter has to be handled separately because it's a little different than the context filters.
@@ -143,7 +141,7 @@ export function derive_filters({ concept, examples }: { concept: Concept, exampl
 
 	return filters
 
-	function book_name({ reference: { id_primary } }: Example): string {
+	function book_name({ reference: { id_primary } }: ConceptExample): string {
 		return id_primary
 	}
 

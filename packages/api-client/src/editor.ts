@@ -1,4 +1,4 @@
-import type { CheckResponse, SimpleSourceData } from '@tabitha/types'
+import type { EditorCheckResult, EditorAnalyzeResult } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type EditorClient = ReturnType<typeof create_editor_client>
@@ -25,15 +25,15 @@ export function create_editor_client(options: EditorClientOptions) {
 		/**
 		 * Check, analyze, and generate backtranslation tokens for a given source text.
 		 */
-		async check_text(text: string): Promise<CheckResponse | null> {
-			return http.get<CheckResponse>(`/check?text=${encodeURIComponent(text)}`)
+		async check_text(text: string): Promise<EditorCheckResult | null> {
+			return http.get<EditorCheckResult>(`/check?text=${encodeURIComponent(text)}`)
 		},
 
 		/**
 		 * Parse input text into sentences and extract source entities and features.
 		 */
-		async analyze_text(text: string): Promise<SimpleSourceData | null> {
-			return http.get<SimpleSourceData>(`/analyze?text=${encodeURIComponent(text)}`)
+		async analyze_text(text: string): Promise<EditorAnalyzeResult | null> {
+			return http.get<EditorAnalyzeResult>(`/analyze?text=${encodeURIComponent(text)}`)
 		},
 	}
 }

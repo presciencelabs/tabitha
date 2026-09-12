@@ -1,9 +1,9 @@
 import { json, type RequestHandler } from '@sveltejs/kit'
 import type { DbRowFeature } from '$lib/types'
-import type { TargetApiFeature } from '@tabitha/types'
+import type { SourceEntityCategory, TargetFeature } from '@tabitha/types'
 
 export async function GET({ locals: { db }, params: { project }, url: { searchParams } }: Parameters<RequestHandler>[0]) {
-	const category = searchParams.get('category')?.toLowerCase() ?? ''
+	const category = (searchParams.get('category')?.toLowerCase() ?? '') as SourceEntityCategory
 
 	const lexical_sql = `
 		SELECT *
@@ -25,7 +25,7 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 	})
 }
 
-function transform(features: DbRowFeature[], category: string): TargetApiFeature[] {
+function transform(features: DbRowFeature[], category: SourceEntityCategory): TargetFeature[] {
 	return features
 		.filter(f => !category.length || f.category.toLowerCase() === category)
 		.map(({ category, feature, position, code, value }) => ({

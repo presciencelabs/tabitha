@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { build_filter_options, build_search_regex, by_book_order, filter_search_results, SearchFilterForm, SearchResultCard } from '$lib/search'
-	import type { ReturnTo, SearchTextResult } from '$lib/types'
+	import { build_filter_options, build_search_regex, filter_search_results, SearchFilterForm, SearchResultCard } from '$lib/search'
+	import { by_book_order } from '@tabitha/types/patterns'
+	import type { ReturnTo } from '$lib/types'
+	import type { SearchTargetTextResult } from '@tabitha/types'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
 
 	let return_to: ReturnTo | undefined = $derived(data.return_to)
 
-	let matches: SearchTextResult[] = $derived(data.results ?? [])
+	let matches: SearchTargetTextResult[] = $derived(data.results ?? [])
 	let found = $derived(matches.length > 0)
 	let search_terms: string[] = $derived(data.search_terms || [])
 	let searched = $derived(search_terms.length > 0)

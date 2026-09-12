@@ -5,7 +5,6 @@ import { tokenize_input } from '$lib/parser/tokenize'
 import { clausify } from '$lib/parser/clausify'
 import { describe, expect, test } from 'vitest'
 
-
 describe('sentence syntax: tag setting', () => {
 	test('quote_begin clause tag', () => {
 		const test_tokens = clausify(tokenize_input('People [] say [] person ["].'))

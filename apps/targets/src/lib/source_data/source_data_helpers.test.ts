@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fetch_source_data, get_sources_url } from './source_data_helpers'
-import type { SourceReference } from '$lib/types'
+import type { Reference } from '@tabitha/types'
 
-const mockRef: SourceReference = {
+const mockRef: Reference = {
 	type: 'verse',
 	id_primary: '1 Samuel',
-	id_secondary: 21,
-	id_tertiary: 1,
+	id_secondary: '21',
+	id_tertiary: '1',
 }
 
 describe('source_data_helpers', () => {

@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest'
 import { get_status } from './check'
-import type { Message, SimpleToken } from '@tabitha/types'
+import type { CheckerMessage, CheckerToken } from '@tabitha/types'
 
 describe('get_status', () => {
 	test('ok when there are no messages', () => {
@@ -22,11 +22,11 @@ describe('get_status', () => {
 	})
 })
 
-function message(label: Message['label']): Message {
+function message(label: CheckerMessage['label']): CheckerMessage {
 	return { label, severity: 0, message: '', rule_id: '' }
 }
 
-function token_with_messages(messages: Message[]): SimpleToken {
+function token_with_messages(messages: CheckerMessage[]): CheckerToken {
 	return {
 		token: '',
 		type: 'Word',

@@ -4,7 +4,7 @@ import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_
 import { REGEXES } from '$lib/regexes'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, from_built_in_rule, message_set_action } from './rules_parser'
-import type { Message, MessageType } from '@tabitha/types'
+import type { CheckerMessage, CheckerMessageType } from '@tabitha/types'
 import type { MessageInfo, Token } from '$lib/types'
 import type {
 	BuiltInRule,
@@ -849,12 +849,12 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 		action,
 	}
 
-	function checker_action({ action, message_type }: { action: CheckerActionJson; message_type: MessageType }): RuleAction {
+	function checker_action({ action, message_type }: { action: CheckerActionJson; message_type: CheckerMessageType }): RuleAction {
 		return trigger_context => {
 			const { tokens, trigger_index, rule_id } = trigger_context
 
 			const formatted_message = format_token_message({ trigger_context, message: action.message })
-			const message: Message = {
+			const message: CheckerMessage = {
 				...message_type,
 				message: formatted_message,
 				rule_id: trigger_context.rule_id,

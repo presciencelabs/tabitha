@@ -1,18 +1,21 @@
 import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { create_sources_client, create_targets_client } from '@tabitha/api-client'
-import { USFM_VERSE_MARKER_REGEX } from '@tabitha/types'
+import { USFM_VERSE_MARKER_REGEX } from '@tabitha/types/patterns'
+import type { VerseReference, ChapterReference, SourceSimpleJsonResult, TargetTextResult } from '@tabitha/types'
+import type { CopilotNotesResult } from '@tabitha/types/copilot'
+import type { CopilotSettings, MttLevel, CopilotMode } from '$lib/types'
 
 const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST, cache: true })
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 
-export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceApiResult | undefined> {
-	const res = await sources_client.get_simplified_json<SourceApiResult>(verse_ref, 'Bible', true)
+export async function fetch_encoding(verse_ref: VerseReference): Promise<SourceSimpleJsonResult | undefined> {
+	const res = await sources_client.get_simplified_json(verse_ref, 'Bible', true)
 	return res ?? undefined
 }
 
-export async function fetch_target_text({ verse_ref, project, preferred_audience }: { verse_ref: VerseReference, project: string, preferred_audience: string }): Promise<TargetApiResult | undefined> {
+export async function fetch_target_text({ verse_ref, project, preferred_audience }: { verse_ref: VerseReference, project: string, preferred_audience: string }): Promise<TargetTextResult | undefined> {
 	const res = await targets_client.get_target_text(verse_ref, project, preferred_audience)
-	return (res as TargetApiResult) ?? undefined
+	return (res as TargetTextResult) ?? undefined
 }
 
 export async function fetch_verses_for_chapter({ book, chapter }: ChapterReference): Promise<number | undefined> {
@@ -55,7 +58,7 @@ export async function fetch_batch_cautions({ reference, start_verse, end_verse, 
 	return sfm_text
 }
 
-export async function fetch_notes({ reference, settings }: { reference: VerseReference, settings: CopilotSettings }): Promise<CopilotApiResult> {
+export async function fetch_notes({ reference, settings }: { reference: VerseReference, settings: CopilotSettings }): Promise<CopilotNotesResult> {
 	const { book, chapter, verse } = reference
 	const params = JSON.stringify(settings)
 	const response = await fetch(`/${book}/${chapter}/${verse}?settings=${encodeURIComponent(params)}`)
@@ -65,7 +68,7 @@ export async function fetch_notes({ reference, settings }: { reference: VerseRef
 		throw new Error(body?.message || 'Unexpected error occurred')
 	}
 
-	return await response.json() as CopilotApiResult
+	return await response.json() as CopilotNotesResult
 }
 
 export const polished_books = [

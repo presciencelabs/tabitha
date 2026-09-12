@@ -21,8 +21,8 @@ describe('lookups module', () => {
 	})
 
 	test('perform_form_lookups flattens clauses and paired tokens for lookup', async () => {
-		const main_token = create_token({ token: 'verbs', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'verbs' })
-		const paired_token = create_token({ token: 'dogs', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'dogs' })
+		const main_token = create_token({ token: 'verbs', type: TOKEN_TYPE.LOOKUP_WORD })
+		const paired_token = create_token({ token: 'dogs', type: TOKEN_TYPE.LOOKUP_WORD })
 		main_token.pairing = paired_token
 
 		const clause_token = create_token({ token: '', type: TOKEN_TYPE.CLAUSE, sub_tokens: [main_token] })
@@ -35,8 +35,8 @@ describe('lookups module', () => {
 	})
 
 	test('perform_ontology_lookups filters capitalization and handles null token pairing', async () => {
-		const lower_token = create_token({ token: 'dog', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'dog' })
-		const null_token = create_token({ token: 'null', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: 'null' })
+		const lower_token = create_token({ token: 'dog', type: TOKEN_TYPE.LOOKUP_WORD })
+		const null_token = create_token({ token: 'null', type: TOKEN_TYPE.LOOKUP_WORD })
 		lower_token.pairing = null_token
 
 		const sentences: Sentence[] = [{ clause: create_token({ token: '', type: TOKEN_TYPE.CLAUSE, sub_tokens: [lower_token] }) }]

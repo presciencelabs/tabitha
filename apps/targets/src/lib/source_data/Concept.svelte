@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
-	import type { SourceConcept } from '$lib/types'
+	import type { ConceptKey } from '@tabitha/types'
 
-	let { data }: { data: SourceConcept } = $props()
+	let { data }: { data: ConceptKey } = $props()
 	let concept = $derived(`${data.stem}-${data.sense}`)
 </script>
 

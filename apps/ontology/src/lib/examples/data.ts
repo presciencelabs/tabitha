@@ -1,7 +1,8 @@
 import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
-import type { Concept, Example, Reference, SourceData, TargetTextResult } from '$lib/types'
+import type { Concept } from '$lib/types'
+import type { ConceptExample, Reference, SourceResult, TargetTextResult } from '@tabitha/types'
 
-export async function get_examples({ stem, sense, part_of_speech }: Concept): Promise<Example[]> {
+export async function get_examples({ stem, sense, part_of_speech }: Concept): Promise<ConceptExample[]> {
 	const response = await fetch(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=Bible`)
 	return await response.json()
 }
@@ -10,7 +11,7 @@ export function get_sources_url({ type, id_primary, id_secondary, id_tertiary }:
 	return `${PUBLIC_SOURCES_API_HOST}/${type}/${id_primary}/${id_secondary}/${id_tertiary}`
 }
 
-export async function get_source_data(reference: Reference): Promise<SourceData> {
+export async function get_source_data(reference: Reference): Promise<SourceResult> {
 	const response = await fetch(get_sources_url(reference))
 	return await response.json()
 }

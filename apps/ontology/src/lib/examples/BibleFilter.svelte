@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { testament } from '@tabitha/types'
+	import { testament } from '@tabitha/types/patterns'
 	import type { Option, Options } from '$lib/types'
 
 	type Props = {
