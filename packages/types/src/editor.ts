@@ -1,7 +1,8 @@
-import type { HowToEntry, LookupWord, OntologyStatus } from './ontology'
-import type { CategoryName, EntityFeature, NounListEntry, PairingType, SourceConcept } from './source'
+import type { ConceptKey } from './core'
+import type { HowToEntry, OntologyStatus } from './ontology'
+import type { NounList, PairingType, SourceEntity } from './source'
 
-export type TokenType =
+export type CheckerTokenType =
 	| 'Punctuation'
 	| 'Note'
 	| 'FunctionWord'
@@ -11,88 +12,70 @@ export type TokenType =
 	| 'Phrase'
 	| 'Gap'
 
-export type Tag = Record<string, string>
+export type CheckerMessageLabel = 'error' | 'warning' | 'suggest' | 'info'
 
-export type MessageLabel = 'error' | 'warning' | 'suggest' | 'info'
-
-export type MessageType = {
-	label: MessageLabel
+export type CheckerMessageType = {
+	label: CheckerMessageLabel
 	severity: number
 }
 
-export type Message = MessageType & {
+export type CheckerMessage = CheckerMessageType & {
 	message: string
 	rule_id: string
 }
-
-export type TokenBase = {
-	token: string
-	type: TokenType
-	tag: Tag
-	messages: Message[]
-	applied_rules: string[]
-}
-
-export type RoleTag = string
 
 export type CaseFrameStatus = 'unchecked' | 'valid' | 'invalid'
 
 export type CheckStatus = 'ok' | 'error' | 'warning'
 
-export type SimpleRoleArgResult = {
-	[role: RoleTag]: string
-}
-
-export type SimpleCaseFrame = {
+export type CheckerCaseFrameInfo = {
 	status: CaseFrameStatus
-	valid_arguments: SimpleRoleArgResult
-	extra_arguments: SimpleRoleArgResult
-	missing_arguments: RoleTag[]
-	possible_roles: RoleTag[]
-	required_roles: RoleTag[]
+	valid_arguments: Record<string, string>
+	extra_arguments: Record<string, string>
+	missing_arguments: string[]
+	possible_roles: string[]
+	required_roles: string[]
 }
 
-export type SimpleLookupResult = LookupWord & {
+export type CheckerLookupResult = ConceptKey & {
 	form: string
-	sense: string
 	level: number
 	gloss: string
 	categorization: string
 	ontology_status: OntologyStatus
 	how_to_entries: HowToEntry[]
-	case_frame: SimpleCaseFrame
+	case_frame: CheckerCaseFrameInfo
 }
 
-export type SimpleToken = TokenBase & {
-	lookup_results: SimpleLookupResult[]
-	pairing: SimpleToken | null
+export type CheckerToken = {
+	token: string
+	type: CheckerTokenType
+	tag: Record<string, string>
+	messages: CheckerMessage[]
+	applied_rules: string[]
+	lookup_results: CheckerLookupResult[]
+	pairing: CheckerToken | null
 	pairing_type: PairingType | null
-	pronoun: SimpleToken | null
-	sub_tokens: SimpleToken[]
+	pronoun: CheckerToken | null
+	sub_tokens: CheckerToken[]
 }
 
-/** The response shape of editor's `GET /check` endpoint, consumed by both `apps/editor` and `apps/sources`. */
-export type CheckResponse = {
+//===============
+// check API
+
+export type EditorCheckResult = {
 	status: CheckStatus
-	tokens: SimpleToken[]
+	tokens: CheckerToken[]
 	back_translation: string
 }
 
-export type AnalysisNote = string
+//===============
+// analyze API
 
-export type SimpleSourceEntity = {
-	category: CategoryName
-	value: string
-	features: EntityFeature[]
-	noun_list_index: string | null
-	concept: SourceConcept | null
-	pairing_concept: SourceConcept | null
-	pairing_type: PairingType | null
-}
+export type EditorAnalyzedEntity = Omit<SourceEntity, 'category_abbr' | 'feature_codes'>
 
-/** The response shape of editor's `GET /analyze` endpoint, consumed by both `apps/editor` and `apps/sources`. */
-export type SimpleSourceData = {
-	notes: AnalysisNote[]
-	source_entities: SimpleSourceEntity[]
-	noun_list: NounListEntry[]
+export type EditorAnalyzeResult = {
+	notes: string[]
+	source_entities: EditorAnalyzedEntity[]
+	noun_list: NounList
 }

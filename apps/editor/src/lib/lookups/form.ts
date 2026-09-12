@@ -3,7 +3,7 @@ import { create_targets_client } from '@tabitha/api-client'
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { create_lookup_result } from '$lib/token'
 import type { Token, LookupResult } from '$lib/types'
-import type { LexicalFormResult } from '$lib/lookups/types'
+import type { TargetFormResult, PartOfSpeech } from '@tabitha/types'
 
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 
@@ -12,7 +12,7 @@ export async function check_forms(lookup_token: Token) {
 	// The term is expected to have no sense attached to it
 	const term = lookup_token.lookup_terms[0]
 
-	const lookup_results = (await get_matches_from_form_lookup(term))
+	const lookup_results = (await targets_client.lookup_forms(term))
 		.filter(result => !result.stem.includes(' '))
 		.reduce(transform_results, [])
 
@@ -39,7 +39,7 @@ export async function check_forms(lookup_token: Token) {
 	 * with the same stem and part-of-speech (eg. Judah), simply take the id of the first one
 	 * and ignore the others. This is what the Analyzer does.
 	 */
-	function transform_results(transformed_results: LookupResult[], form_result: LexicalFormResult): LookupResult[] {
+	function transform_results(transformed_results: LookupResult[], form_result: TargetFormResult): LookupResult[] {
 		const existing_result = transformed_results.find(LOOKUP_FILTERS.MATCHES_LOOKUP(form_result))
 
 		if (!existing_result) {
@@ -59,7 +59,7 @@ export async function check_forms(lookup_token: Token) {
 		return transformed_results
 	}
 
-	function add_missing_forms({ results, term }: { results: LookupResult[]; term: string }) {
+	function add_missing_forms({ results, term }: { results: LookupResult[], term: string }) {
 		const missing_form = MISSING_FORMS.get(term.toLowerCase())
 
 		// Some missing forms may become not missing before the code here is updated. Avoid duplicate results in that case.
@@ -69,11 +69,7 @@ export async function check_forms(lookup_token: Token) {
 	}
 }
 
-async function get_matches_from_form_lookup(lookup_term: string): Promise<LexicalFormResult[]> {
-	return targets_client.lookup_forms<LexicalFormResult>(lookup_term)
-}
-
-const MISSING_FORMS = new Map<string, { stem: string; part_of_speech: string; forms: string }>([
+const MISSING_FORMS = new Map<string, { stem: string, part_of_speech: PartOfSpeech, forms: string }>([
 	// TODO add more or remove some when we include Analyzer inflections as well
 	// see https://github.com/presciencelabs/tabitha-editor/issues/37
 	['chiefer', { stem: 'chief', part_of_speech: 'Adjective', forms: 'comparative' }],

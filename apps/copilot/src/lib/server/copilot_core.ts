@@ -4,8 +4,10 @@ import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
 import type { AiClient } from '@tabitha/ai'
+import type { VerseReference, CopilotNotesResult, SourceSimpleJsonResult, SourceSimpleJsonEntity, CopilotTriggerData } from '@tabitha/types'
+import type { CopilotSettings, CopilotEncodingEntity, CopilotLlmInput, IndexStack } from '$lib/types'
 
-export async function get_copilot_result({ reference, settings, ai }: { reference: VerseReference, settings: CopilotSettings, ai: AiClient }): Promise<CopilotApiResult> {
+export async function get_copilot_result({ reference, settings, ai }: { reference: VerseReference, settings: CopilotSettings, ai: AiClient }): Promise<CopilotNotesResult> {
 	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
 
 	const encoding = await fetch_encoding(reference)
@@ -51,9 +53,13 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 
 	try {
 		const llm_output = await get_semantic_notes({ llm_input, ai })
-		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) =>
-			({ meaning, check, quoted_text, trigger: llm_input.triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))! }),
-		)
+		const triggers = llm_input.triggers.map<CopilotTriggerData>(({ name, node_id, flags, weight }) => ({ name, node_id, flags, weight }))
+		const notes = llm_output.notes.map(({ meaning, check, quoted_text, trigger }) => ({
+			meaning,
+			check,
+			quoted_text,
+			trigger: triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))!,
+		}))
 		return {
 			verse: reference,
 			english_text,
@@ -81,7 +87,7 @@ export function error_result({ reference, message }: { reference: VerseReference
 	}
 }
 
-export function convert_to_usfm_for_discern(lwc: string): (result: CopilotApiResult) => string {
+export function convert_to_usfm_for_discern(lwc: string): (result: CopilotNotesResult) => string {
 	const no_suggestions_text = lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text
 	return result => {
 		if (result.error) {
@@ -102,8 +108,8 @@ export function convert_to_usfm_for_discern(lwc: string): (result: CopilotApiRes
 	}
 }
 
-function preprocess_encoding(encoding: SourceApiResult): string {
-	const encoding_w_ids: SourceApiResult = {
+function preprocess_encoding(encoding: SourceSimpleJsonResult): string {
+	const encoding_w_ids: SourceSimpleJsonResult = {
 		encoding: add_node_ids(encoding.encoding),
 		glosses: encoding.glosses,
 	}
@@ -119,9 +125,9 @@ function preprocess_encoding(encoding: SourceApiResult): string {
 		.replaceAll('"become-G"', '"become-like-G"')
 }
 
-function add_node_ids(encoding: EncodingEntity[]): EncodingEntity[] {
+function add_node_ids(encoding: SourceSimpleJsonEntity[]): CopilotEncodingEntity[] {
 	const stack: IndexStack = []
-	function add_trace(node: EncodingEntity, index: number): EncodingEntity {
+	function add_trace(node: SourceSimpleJsonEntity, index: number): CopilotEncodingEntity {
 		stack.push(index)
 		const node_id = stack.join('.')
 		if (node.children) {

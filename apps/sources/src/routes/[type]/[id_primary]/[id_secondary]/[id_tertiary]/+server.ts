@@ -2,7 +2,7 @@ import { get_source_data } from '$lib/data/read'
 import { transform_semantic_encoding } from '$lib/encoding/semantic_encoding'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { Reference } from '@tabitha/types'
+import type { Reference, SourceResult } from '@tabitha/types'
 
 export async function GET({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }: Parameters<RequestHandler>[0]) {
 	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }
@@ -13,8 +13,9 @@ export async function GET({ locals: { db }, params: { type, id_primary, id_secon
 	}
 	
 	const parsed_semantic_encoding = await transform_semantic_encoding({ db, semantic_encoding: source.semantic_encoding })
-	return json({
+	const data: SourceResult = {
 		...source,
 		parsed_semantic_encoding,
-	})
+	}
+	return json(data)
 }

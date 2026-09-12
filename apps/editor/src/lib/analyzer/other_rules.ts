@@ -1,6 +1,6 @@
 import { create_token_filter } from '$lib/rules/rules_parser'
 import { create_lookup_result, TOKEN_TYPE } from '$lib/token'
-import type { NounListEntry, SimpleSourceEntity } from '@tabitha/types'
+import type { NounListEntry, EditorAnalyzedEntity } from '@tabitha/types'
 import type { Sentence, Token } from '$lib/types'
 import type { TokenFilter } from '$lib/rules/types'
 
@@ -39,7 +39,7 @@ export function replace_punctuation(sentences: Sentence[]): Sentence[] {
 	}
 }
 
-export function populate_noun_list(entities: SimpleSourceEntity[]): NounListEntry[] {
+export function populate_noun_list(entities: EditorAnalyzedEntity[]): NounListEntry[] {
 	const noun_list: NounListEntry[] = []
 
 	entities.forEach(entity => {

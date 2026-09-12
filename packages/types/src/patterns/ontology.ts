@@ -1,4 +1,4 @@
-import type { ConceptKey } from '../ontology'
+import type { ConceptKey, PartOfSpeech } from '../core'
 
 /**
  * Matches linguistic concept-sense identifiers formatted as `<stem>-<SENSE_LETTER>`.
@@ -87,7 +87,7 @@ export function parse_concept_key(key: string): ConceptKey | null {
 	return {
 		stem: match[1],
 		sense: match[2],
-		part_of_speech: match[3],
+		part_of_speech: match[3] as PartOfSpeech,
 	}
 }
 

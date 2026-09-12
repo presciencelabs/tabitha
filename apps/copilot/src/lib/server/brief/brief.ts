@@ -1,8 +1,11 @@
 import { env } from '$env/dynamic/private'
 import { lwc_info, usfm_book_codes } from '$lib/lookups'
 import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
-import { brief_main_prompt, translate_prompt } from './prompts'
+import translate_prompt from './translate_prompt.md?raw'
+import brief_main_prompt from './brief_main_prompt.md?raw'
 import { json_response_schema } from './json_response_schema'
+import type { VerseReference, CopilotNotesResult } from '@tabitha/types'
+import type { BriefInput, BriefOutput, BriefTnnBasedOutput, BriefSettings } from '$lib/types'
 
 // The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
 // and ADR 0007), so this is a local, best-effort substitute scoped to the third-party content
@@ -83,29 +86,6 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 	}
 }
 
-// convert_to_docx and its helpers (format_weight, format_verdict) are disabled: they build a
-// translated template_data object but never actually render a .docx (no docx library or
-// template exists yet), and nothing currently calls this function. Kept for reference rather
-// than deleted, since it's meant to become the real docx export path eventually -- see issue #36.
-//
-// function format_weight(weight: number) {
-// 	const max = 5
-// 	return `${'●'.repeat(weight)}${'○'.repeat(max - weight)}`
-// }
-//
-// function format_verdict(verdict: { type: string, subtype?: string | null, reason?: string | null }) {
-// 	switch (verdict.type) {
-// 		case 'SECTION 5':
-// 			return `→ SECTION 5 (${verdict.subtype})`
-// 		case 'SOLVED':
-// 			return `SOLVED — ${verdict.reason}`
-// 		case 'CUT':
-// 			return `CUT (${verdict.subtype} — ${verdict.reason})`
-// 		default:
-// 			return verdict.type
-// 	}
-// }
-
 const translation_opener = '[['
 const translation_delimiter = '||'
 const translation_closer = ']]'
@@ -168,7 +148,7 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 
 // main
 
-export async function create_brief_for_verse({ note_results, settings, ai }: { note_results: CopilotApiResult, settings: BriefSettings, ai: AiClient }): Promise<BriefOutput | undefined> {
+export async function create_brief_for_verse({ note_results, settings, ai }: { note_results: CopilotNotesResult, settings: BriefSettings, ai: AiClient }): Promise<BriefOutput | undefined> {
 	if (note_results.error) {
 		// the error is already logged elsewhere
 		return undefined
@@ -271,6 +251,29 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 	return items.join('\n')
 }
 
+// convert_to_docx and its helpers (format_weight, format_verdict) are disabled: they build a
+// translated template_data object but never actually render a .docx (no docx library or
+// template exists yet), and nothing currently calls this function. Kept for reference rather
+// than deleted, since it's meant to become the real docx export path eventually -- see issue #36.
+//
+// function format_weight(weight: number) {
+// 	const max = 5
+// 	return `${'●'.repeat(weight)}${'○'.repeat(max - weight)}`
+// }
+//
+// function format_verdict(verdict: { type: string, subtype?: string | null, reason?: string | null }) {
+// 	switch (verdict.type) {
+// 		case 'SECTION 5':
+// 			return `→ SECTION 5 (${verdict.subtype})`
+// 		case 'SOLVED':
+// 			return `SOLVED — ${verdict.reason}`
+// 		case 'CUT':
+// 			return `CUT (${verdict.subtype} — ${verdict.reason})`
+// 		default:
+// 			return verdict.type
+// 	}
+// }
+//
 // export async function convert_to_docx({ verse_ref, output, ai }: { verse_ref: VerseReference, output: BriefOutput, ai: AiClient }) {
 // 	// TODO fully implement this - this is currently here to keep the pre-existing conversion to this template data
 // 	const reader_language = output.lwc

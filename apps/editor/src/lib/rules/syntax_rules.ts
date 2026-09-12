@@ -2,7 +2,7 @@ import { TOKEN_TYPE, add_tag_to_token, create_token } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { PRONOUN_RULES } from './pronoun_rules'
 import { create_context_filter, create_token_filter, simple_rule_action, from_built_in_rule } from './rules_parser'
-import type { TokenType } from '@tabitha/types'
+import type { CheckerTokenType } from '@tabitha/types'
 import type { Token } from '$lib/types'
 import type { BuiltInRule } from '$lib/rules/types'
 
@@ -78,27 +78,28 @@ const builtin_syntax_rules: BuiltInRule[] = [
 				if (trigger_token.token.includes('-')) {
 					// this is a verse range (eg. Jeremiah 31:31-34)
 					const verse_numbers = trigger_token.token.split('-')
+					const applied_rules = [`create - ${rule_id}`]
 
 					tokens.splice(trigger_index, 1,
 						create_token({
 							token: verse_numbers[0],
 							type: TOKEN_TYPE.LOOKUP_WORD,
-							lookup_term: verse_numbers[0],
+							lookup_terms: [verse_numbers[0]],
 							tag: { 'role': 'verse_ref' },
-							rule_info: `create - ${rule_id}`,
+							applied_rules,
 						}),
 						create_token({
 							token: '-',
 							type: TOKEN_TYPE.FUNCTION_WORD,
 							tag: { 'syntax': 'verse_ref_hyphen' },
-							rule_info: `create - ${rule_id}`,
+							applied_rules,
 						}),
 						create_token({
 							token: verse_numbers[1],
 							type: TOKEN_TYPE.LOOKUP_WORD,
-							lookup_term: verse_numbers[1],
+							lookup_terms: [verse_numbers[1]],
 							tag: { 'role': 'verse_ref' },
-							rule_info: `create - ${rule_id}`,
+							applied_rules,
 						}),
 					)
 					return trigger_index + 3	// add 2 and advance 1
@@ -127,7 +128,7 @@ export function find_first_word(token: Token): Token | undefined {
 	return undefined
 
 	function token_is_word(token: Token): boolean {
-		const word_types: TokenType[] = [TOKEN_TYPE.LOOKUP_WORD, TOKEN_TYPE.FUNCTION_WORD]
+		const word_types: CheckerTokenType[] = [TOKEN_TYPE.LOOKUP_WORD, TOKEN_TYPE.FUNCTION_WORD]
 
 		return word_types.includes(token.type)
 			|| token.token.length > 0 && REGEXES.WORD_START_CHAR.test(token.token[0])

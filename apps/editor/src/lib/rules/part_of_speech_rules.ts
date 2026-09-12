@@ -10,6 +10,7 @@ import type {
 	TokenFilter,
 	TokenRule,
 } from '$lib/rules/types'
+import type { PartOfSpeech } from '@tabitha/types'
 
 /**
  * These rules are designed to disambiguate words that could be multiple parts of speech.
@@ -520,14 +521,18 @@ const builtin_part_of_speech_rules: BuiltInRule[] = [
 			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp|_conj' } }),
 			action: simple_rule_action(({ trigger_token, tokens, context_indexes }) => {
 				const part_of_speech_note = tokens[context_indexes[0]].token
-				const part_of_speech = new Map([
+				const part_of_speech = new Map<string, PartOfSpeech>([
 					['_noun', 'Noun'],
 					['_verb', 'Verb'],
 					['_adj', 'Adjective'],
 					['_adv', 'Adverb'],
 					['_adp', 'Adposition'],
 					['_conj', 'Conjunction'],
-				]).get(part_of_speech_note) ?? ''
+				]).get(part_of_speech_note)
+
+				if (!part_of_speech) {
+					return
+				}
 
 				keep_parts_of_speech(new Set([part_of_speech]))(trigger_token)
 
@@ -611,7 +616,7 @@ export function parse_part_of_speech_rule(rule_json: PartOfSpeechRuleJson, index
 	}
 
 	function category_filter(categories_json: string): TokenFilter {
-		const categories = categories_json.split('|')
+		const categories = categories_json.split('|') as PartOfSpeech[]
 		return token => categories.every(category => token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(category)))
 	}
 
@@ -631,7 +636,7 @@ export function parse_part_of_speech_rule(rule_json: PartOfSpeechRuleJson, index
 export const PART_OF_SPEECH_RULES = builtin_part_of_speech_rules.map(from_built_in_rule('part_of_speech'))
 	.concat(part_of_speech_rules_json.map(parse_part_of_speech_rule))
 
-function has_part_of_speech({ token, part_of_speech }: { token: Token; part_of_speech: string }): boolean {
+function has_part_of_speech({ token, part_of_speech }: { token: Token; part_of_speech: PartOfSpeech }): boolean {
 	return token.lookup_results.some(LOOKUP_FILTERS.IS_PART_OF_SPEECH(part_of_speech))
 }
 

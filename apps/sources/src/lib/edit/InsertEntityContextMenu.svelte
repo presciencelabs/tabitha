@@ -26,7 +26,7 @@
 	function insert_entities(entities: PageSourceEntity[]) {
 		const new_entities = entities.map(entity => ({
 			...entity,
-			...fill_in_features({ source_entity: entity, all_features: page.data.features as FeatureMap }),
+			...fill_in_features({ source_entity: entity, feature_map: page.data.features as FeatureMap }),
 		}))
 		
 		source_entities.splice(data.entity_id, 0, ...new_entities)

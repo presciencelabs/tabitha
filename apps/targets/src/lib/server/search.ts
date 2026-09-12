@@ -1,5 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import type { DbTextResult, ParsedSearchQuery, SearchTextResult } from '$lib/types'
+import type { DbRowText, ParsedSearchQuery } from '$lib/types'
+import type { SearchTargetTextResult } from '@tabitha/types'
 
 export function parse_search_query(q: string): ParsedSearchQuery {
 	const normalized_q = normalize_wildcards(q)
@@ -18,7 +19,7 @@ export async function search_text({ db, project, parsed_q }: {
 	db: D1Database
 	project: string
 	parsed_q: ParsedSearchQuery
-}): Promise<SearchTextResult[]> {
+}): Promise<SearchTargetTextResult[]> {
 	if (!parsed_q.or_terms.length || parsed_q.or_terms.every(term => !term.and_terms.length)) {
 		return []
 	}
@@ -37,18 +38,18 @@ export async function search_text({ db, project, parsed_q }: {
 	// Remove wildcards around each query term, as they will be added back in by default
 	const q_values = parsed_q.or_terms.flatMap(or_term => or_term.and_terms.map(term => term.replaceAll(/^%|%$/g, '')).map(term => `%${term}%`))
 
-	const { results: matches } = await db.prepare(query).bind(project, ...q_values).all<DbTextResult>()
+	const { results: matches } = await db.prepare(query).bind(project, ...q_values).all<DbRowText>()
 
 	return transform(matches ?? [])
 
-	function transform(matches: DbTextResult[]): SearchTextResult[] {
+	function transform(matches: DbRowText[]): SearchTargetTextResult[] {
 		return Map.groupBy(matches, m => `${m.book}:${m.chapter}:${m.verse}`).values()
 			.map(group => ({
 				reference: {
 					type: 'Bible',
 					id_primary: group[0].book,
-					id_secondary: group[0].chapter,
-					id_tertiary: group[0].verse,
+					id_secondary: group[0].chapter.toString(),
+					id_tertiary: group[0].verse.toString(),
 				},
 				texts: group.map(({ text, audience }) => ({ text, audience })),
 			})).toArray()

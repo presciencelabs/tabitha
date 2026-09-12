@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { get_target_data } from '$lib/examples'
-	import type { Reference, TargetTextResult } from '$lib/types'
+	import type { Reference, TargetTextResult } from '@tabitha/types'
 
 	type Props = {
 		reference: Reference

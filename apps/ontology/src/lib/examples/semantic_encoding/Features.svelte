@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import type { EntityFeature, SourceEntity } from '$lib/types'
+	import type { EntityFeature, SourceEntity } from '@tabitha/types'
 
 	type Props = {
 		source_entity: SourceEntity

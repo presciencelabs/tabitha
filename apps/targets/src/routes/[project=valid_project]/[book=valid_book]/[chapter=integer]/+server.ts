@@ -1,5 +1,7 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit'
-import type { VerseResult } from '$lib/types'
+import type { DbRowText } from '$lib/types'
+
+type QueryVerseResult = Pick<DbRowText, 'verse'>
 
 export async function GET({ locals: { db }, params: { project, book, chapter } }: Parameters<RequestHandler>[0]) {
 	const sql = `
@@ -10,10 +12,10 @@ export async function GET({ locals: { db }, params: { project, book, chapter } }
 			AND chapter = ?
 		ORDER BY verse
 	`
-	const { results } = await db.prepare(sql).bind(project, book, chapter).all<VerseResult>()
+	const { results } = await db.prepare(sql).bind(project, book, chapter).all<QueryVerseResult>()
 
 	if (results.length) {
-		return json(results.map(({ verse }) => verse))
+		return json(results.map(({ verse }) => verse.toString()))
 	}
 
 	return error(404, 'Not found')

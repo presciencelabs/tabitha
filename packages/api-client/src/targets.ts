@@ -1,4 +1,4 @@
-import type { LexicalForm, TargetApiFeatureResult, TargetTextResult, VerseReference } from '@tabitha/types'
+import type { TargetFormResult, TargetFeatureResult, TargetTextResult, VerseReference } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type TargetsClient = ReturnType<typeof create_targets_client>
@@ -36,23 +36,23 @@ export function create_targets_client(options: TargetsClientOptions) {
 		/**
 		 * Retrieve target grammatical features, optionally filtered by category.
 		 */
-		async get_features(category?: string): Promise<TargetApiFeatureResult | null> {
+		async get_features(category?: string): Promise<TargetFeatureResult | null> {
 			const path = category ? `/features/${category}` : '/features'
-			return http.get<TargetApiFeatureResult>(path)
+			return http.get<TargetFeatureResult>(path)
 		},
 
 		/**
 		 * Search lexical forms and inflections for a word token in a target language project.
 		 */
-		async lookup_forms<T = LexicalForm>(word: string, project = 'English'): Promise<T[]> {
-			return await http.get<T[]>(`/${project}/lookup/forms?word=${encodeURIComponent(word)}`) ?? []
+		async lookup_forms(word: string, project = 'English'): Promise<TargetFormResult[]> {
+			return await http.get<TargetFormResult[]>(`/${project}/lookup/forms?word=${encodeURIComponent(word)}`) ?? []
 		},
 
 		/**
 		 * Retrieve full source and lexical feature maps for a target project.
 		 */
-		async lookup_features(project = 'English'): Promise<TargetApiFeatureResult | null> {
-			return http.get<TargetApiFeatureResult>(`/${project}/lookup/features`)
+		async lookup_features(project = 'English'): Promise<TargetFeatureResult | null> {
+			return http.get<TargetFeatureResult>(`/${project}/lookup/features`)
 		},
 	}
 }

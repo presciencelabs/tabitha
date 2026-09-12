@@ -1,8 +1,16 @@
 import { create_context_filter, create_token_filter } from '$lib/rules/rules_parser'
-import type { CategoryName, EntityFeature, FeatureName, FeatureValue } from '@tabitha/types'
+import type { SourceEntityCategory, EntityFeature, FeatureName, FeatureValue } from '@tabitha/types'
 import type { Token } from '$lib/types'
-import type { FeatureRuleJson, FeatureRulesByCategory, FeatureRulesByCategoryJson } from '$lib/analyzer/types'
-import type { TokenRule } from '$lib/rules/types'
+import type { TokenRule, TokenRuleJsonBase } from '$lib/rules/types'
+
+type FeatureRuleJson = TokenRuleJsonBase | TokenRuleJsonBase[]
+type FeatureValueRules = [FeatureValue, TokenRule[]]
+type FeatureRules = [FeatureName, FeatureValueRules[]]
+type FeatureRulesByCategory = Partial<Record<SourceEntityCategory, FeatureRules[]>>
+
+type FeatureValueRulesJson = [FeatureValue, FeatureRuleJson]
+type FeatureRulesJson = [FeatureName, FeatureValueRulesJson[]]
+type FeatureRulesByCategoryJson = Partial<Record<SourceEntityCategory, FeatureRulesJson[]>>
 
 const feature_rules_json: FeatureRulesByCategoryJson = {
 	'Noun': [
@@ -457,7 +465,7 @@ function parse_all_feature_rules(): FeatureRulesByCategory {
 	}
 }
 
-export function get_features_for_token({ tokens, token_index, category }: { tokens: Token[]; token_index: number; category: CategoryName }): EntityFeature[] {
+export function get_features_for_token({ tokens, token_index, category }: { tokens: Token[]; token_index: number; category: SourceEntityCategory }): EntityFeature[] {
 	const category_feature_rules = FEATURE_RULES_BY_CATEGORY[category] || []
 	return category_feature_rules.map(([feature_name, feature_rules]) => {
 		const selected_value_rules = feature_rules.findLast(([, rules]) => rules.some(rule => test_feature_rule({ tokens, token_index, rule })))

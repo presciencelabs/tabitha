@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -25,13 +26,9 @@ type CrossPlatformFinding = {
 const findings: CrossPlatformFinding[] = []
 
 async function get_script_files(dir: string): Promise<string[]> {
+	if (!existsSync(dir)) return []
 	const files: string[] = []
-	let entries: Awaited<ReturnType<typeof readdir>>
-	try {
-		entries = await readdir(dir, { withFileTypes: true })
-	} catch {
-		return files
-	}
+	const entries = await readdir(dir, { withFileTypes: true })
 	for (const entry of entries) {
 		const full_path = join(dir, entry.name)
 		if (entry.isDirectory()) {

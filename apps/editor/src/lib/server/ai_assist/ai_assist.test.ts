@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { AiResponseError, type AiClient } from '@tabitha/ai'
-import type { CheckResponse } from '@tabitha/types'
+import type { EditorCheckResult } from '@tabitha/types'
 
 vi.mock('$lib/server/check', async importOriginal => {
 	const actual = await importOriginal<typeof import('$lib/server/check')>()
@@ -12,9 +12,9 @@ const { generate_phase_1 } = await import('./index')
 
 const run_check_mock = vi.mocked(run_check)
 
-const OK_CHECK: CheckResponse = { status: 'ok', tokens: [], back_translation: 'translated' }
+const OK_CHECK: EditorCheckResult = { status: 'ok', tokens: [], back_translation: 'translated' }
 
-function error_check(token: string): CheckResponse {
+function error_check(token: string): EditorCheckResult {
 	return {
 		status: 'error',
 		back_translation: '',

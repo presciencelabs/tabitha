@@ -31,7 +31,7 @@
     - `concept` (`string`, required) — Concept stem-sense identifier.
     - `part_of_speech` (`string`, required) — Part of speech (e.g. `Noun`, `Verb`).
     - `source` (`string`, optional) — Source reference filter.
-  - **Example:** `/examples?concept=love-01&part_of_speech=Noun`
+  - **Example:** `/examples?concept=love-B&part_of_speech=Noun`
 
 ---
 

@@ -1,3 +1,4 @@
+import type { FlagExtractionRule } from '$lib/types'
 
 export const implicit_feature_flags: FlagExtractionRule[] = [
 	{

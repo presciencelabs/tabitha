@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SourceEntity } from '$lib/types'
+	import type { SourceEntity } from '@tabitha/types'
 
 	type Props = {
 		source_entity: SourceEntity

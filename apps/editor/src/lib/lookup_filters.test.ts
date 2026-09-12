@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest'
 import { LOOKUP_FILTERS } from './lookup_filters'
 import type { LookupResult } from '$lib/types'
+import type { PartOfSpeech } from '@tabitha/types'
 
 describe('LOOKUP_FILTERS', () => {
 	test('IS_IN_ONTOLOGY', () => {
@@ -17,7 +18,8 @@ describe('LOOKUP_FILTERS', () => {
 
 	test('IS_PART_OF_SPEECH', () => {
 		const filter = LOOKUP_FILTERS.IS_PART_OF_SPEECH('Noun')
-		expect(filter({ part_of_speech: 'noun' })).toBe(true)
+		// sometimes user-input parts of speech don't match the expected case. but everything code-controlled must
+		expect(filter({ part_of_speech: 'noun' as PartOfSpeech })).toBe(true)
 		expect(filter({ part_of_speech: 'Verb' })).toBe(false)
 	})
 

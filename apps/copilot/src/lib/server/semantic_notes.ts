@@ -1,5 +1,6 @@
 import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
 import system_instruction_template from './semantic_notes_prompt.md?raw'
+import type { CopilotLlmInput, CopilotLlmOutput } from '$lib/types'
 
 // The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
 // and ADR 0007), so this is a local, best-effort substitute scoped to the translator-authored

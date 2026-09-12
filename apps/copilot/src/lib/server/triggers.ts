@@ -1,11 +1,13 @@
+import type { TriggerDataForLlm, TriggerIdData, LanguageProfile } from '$lib/types'
+import type { CopilotEncodingFlag } from '@tabitha/types/copilot'
 
 type TriggerTemplate = {
 	name: string
 	flags: string[]
-	weight_calculator: (flags: CopilotWeightedFlag[], language_profile: LanguageProfile) => number
-	flag_grouper?: (flag: CopilotWeightedFlag) => string
-	trigger_grouper?: (trigger: TriggerData) => string
-	prompt?: string | ((flags: CopilotWeightedFlag[], language_profile: LanguageProfile) => string)
+	weight_calculator: (flags: CopilotEncodingFlag[], language_profile: LanguageProfile) => number
+	flag_grouper?: (flag: CopilotEncodingFlag) => string
+	trigger_grouper?: (trigger: TriggerDataForLlm) => string
+	prompt?: string | ((flags: CopilotEncodingFlag[], language_profile: LanguageProfile) => string)
 }
 
 const triggers: TriggerTemplate[] = [
@@ -185,7 +187,7 @@ const triggers: TriggerTemplate[] = [
 	},
 ]
 
-export function collect_triggers({ flags, language_profile }: { flags: CopilotWeightedFlag[], language_profile: LanguageProfile }): TriggerData[] {
+export function collect_triggers({ flags, language_profile }: { flags: CopilotEncodingFlag[], language_profile: LanguageProfile }): TriggerDataForLlm[] {
 	return triggers.flatMap(trigger => apply_trigger({ trigger, flags, language_profile }))
 }
 
@@ -193,15 +195,15 @@ export function triggers_match({ t1, t2 }: { t1: TriggerIdData, t2: TriggerIdDat
 	return t1.name === t2.name && t1.node_id === t2.node_id
 }
 
-function apply_trigger({ trigger, flags, language_profile }: { trigger: TriggerTemplate, flags: CopilotWeightedFlag[], language_profile: LanguageProfile }): TriggerData[] {
+function apply_trigger({ trigger, flags, language_profile }: { trigger: TriggerTemplate, flags: CopilotEncodingFlag[], language_profile: LanguageProfile }): TriggerDataForLlm[] {
 	const trigger_flags = flags.filter(f => trigger.flags.includes(f.name))
-	const grouper: (flag: CopilotWeightedFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
+	const grouper: (flag: CopilotEncodingFlag) => string = trigger.flag_grouper || (f => f.encoding_anchor['node_id'])
 	const grouped = Map.groupBy(trigger_flags, grouper)
 
-	const triggers: TriggerData[] = []
+	const triggers: TriggerDataForLlm[] = []
 	for (const flags of grouped.values()) {
 		const weight = trigger.weight_calculator(flags, language_profile)
-		const trigger_data: TriggerData = {
+		const trigger_data: TriggerDataForLlm = {
 			name: trigger.name,
 			node_id: flags[0].encoding_anchor.node_id,
 			flags,
@@ -219,7 +221,7 @@ function apply_trigger({ trigger, flags, language_profile }: { trigger: TriggerT
 	return triggers
 }
 
-function power_sum(flags: CopilotWeightedFlag[]): number {
+function power_sum(flags: CopilotEncodingFlag[]): number {
 	const pow = 2
 	const pow_sum = flags.reduce((sum, flag) => sum + Math.pow(flag.weight, pow), 0)
 	const pow_avg = Math.pow(pow_sum, 1 / pow)

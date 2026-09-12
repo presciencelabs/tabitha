@@ -2,10 +2,10 @@
 	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
 	import SourceEntities from './SourceEntities.svelte'
 	import Icon from '@iconify/svelte'
-	import type { SourceReference } from '$lib/types'
+	import type { Reference } from '@tabitha/types'
 	import { fetch_source_data, get_sources_url } from './source_data_helpers'
 
-	let { reference }: { reference: SourceReference } = $props()
+	let { reference }: { reference: Reference } = $props()
 
 	let sources_url = $derived(get_sources_url({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))
 	let source_data_promise = $derived(fetch_source_data({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))

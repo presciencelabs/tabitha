@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { SourceEntity } from '../types'
+import type { SourceEntity } from '@tabitha/types'
 
 function clause_reducer(clauses: SourceEntity[][], entity: SourceEntity) {
 	if (entity.value === '{') {
@@ -17,13 +17,15 @@ function clause_reducer(clauses: SourceEntity[][], entity: SourceEntity) {
 function createMockEntity(overrides: Partial<SourceEntity>): SourceEntity {
 	return {
 		value: '',
-		category: '',
+		category: 'Clause',
 		category_abbr: '',
 		feature_codes: '',
 		features: [],
-		concept: null,
-		pairing_concept: null,
 		...overrides,
+		concept: overrides.concept ?? null,
+		pairing_concept: overrides.pairing_concept ?? null,
+		pairing_type: overrides.pairing_type ?? null,
+		noun_list_index: overrides.noun_list_index ?? null,
 	}
 }
 
@@ -54,7 +56,7 @@ const mockRealWorldEntities: SourceEntity[] = [
 			{ name: 'Number', value: 'Plural' },
 			{ name: 'Person', value: 'Third' },
 		],
-		concept: { stem: 'Philistine', sense: 'A' },
+		concept: { stem: 'Philistine', sense: 'A', part_of_speech: 'Noun' },
 	}),
 	createMockEntity({
 		category: '',
@@ -78,7 +80,7 @@ const mockRealWorldEntities: SourceEntity[] = [
 			{ name: 'Time', value: 'Discourse' },
 			{ name: 'Mood', value: 'Indicative' },
 		],
-		concept: { stem: 'fight', sense: 'A' },
+		concept: { stem: 'fight', sense: 'A', part_of_speech: 'Verb' },
 	}),
 	createMockEntity({
 		category: '',
@@ -104,7 +106,7 @@ const mockRealWorldEntities: SourceEntity[] = [
 		category_abbr: 'C',
 		value: 'and',
 		feature_codes: '1A.....',
-		concept: { stem: 'and', sense: 'A' },
+		concept: { stem: 'and', sense: 'A', part_of_speech: 'Conjunction' },
 	}),
 	createMockEntity({
 		category: 'Noun Phrase',
@@ -122,7 +124,7 @@ const mockRealWorldEntities: SourceEntity[] = [
 			{ name: 'Number', value: 'Plural' },
 			{ name: 'Person', value: 'Third' },
 		],
-		concept: { stem: 'Israelite', sense: 'A' },
+		concept: { stem: 'Israelite', sense: 'A', part_of_speech: 'Noun' },
 	}),
 	createMockEntity({
 		category: '',
@@ -147,7 +149,7 @@ describe('SourceEntities clause reducer', () => {
 
 		expect(clauses[0][0].value).toBe('{')
 		expect(clauses[0][2].value).toBe('Philistine')
-		expect(clauses[0][2].concept).toEqual({ stem: 'Philistine', sense: 'A' })
+		expect(clauses[0][2].concept).toEqual({ stem: 'Philistine', sense: 'A', part_of_speech: 'Noun' })
 
 		expect(clauses[1][0].value).toBe('{')
 		expect(clauses[1][1].value).toBe('and')

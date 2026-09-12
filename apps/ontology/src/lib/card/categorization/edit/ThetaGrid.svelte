@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { theta_grid_arguments } from '$lib/lookups'
+	import type { PartOfSpeech } from '@tabitha/types'
 
 	type Props = {
 		categories?: string[]
-		part_of_speech?: string
+		part_of_speech?: PartOfSpeech
 	}
 
 	let { categories = $bindable([]) }: Props = $props()

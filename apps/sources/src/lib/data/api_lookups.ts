@@ -1,10 +1,11 @@
 import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 import { create_ontology_client } from '@tabitha/api-client'
-import type { OntologyResult, SourceConcept } from '@tabitha/types'
+import type { OntologyResult, ConceptKey } from '@tabitha/types'
+import type { PageSourceConcept } from '$lib/types'
 
 const client = create_ontology_client({ base_url: PUBLIC_ONTOLOGY_API_HOST, cache: true })
 
-export function create_fallback_ontology_data(concept: SourceConcept): OntologyResult {
+export function create_fallback_ontology_data(concept: ConceptKey): OntologyResult {
 	return {
 		...concept,
 		level: '',
@@ -19,7 +20,7 @@ export function create_fallback_ontology_data(concept: SourceConcept): OntologyR
 /**
  * Fetch ontology definition for a single concept without mutating the input object
  */
-export async function fetch_concept_ontology_data(concept: SourceConcept): Promise<OntologyResult> {
+export async function fetch_concept_ontology_data(concept: PageSourceConcept): Promise<OntologyResult> {
 	if (concept.ontology_data) {
 		return concept.ontology_data
 	}
@@ -27,7 +28,7 @@ export async function fetch_concept_ontology_data(concept: SourceConcept): Promi
 	const fallback = create_fallback_ontology_data(concept)
 
 	try {
-		const res = await client.get_concept(concept.stem, concept.sense, concept.part_of_speech)
+		const res = await client.get_concept(concept)
 		return res ?? fallback
 	} catch {
 		return fallback
@@ -52,7 +53,7 @@ export async function fetch_all_concepts_for_part_of_speech(part_of_speech: stri
 	}
 }
 
-export async function fetch_ontology_data_for_all_senses(concept: SourceConcept): Promise<OntologyResult[]> {
+export async function fetch_ontology_data_for_all_senses(concept: ConceptKey): Promise<OntologyResult[]> {
 	const { stem, part_of_speech } = concept
 	const cache_key = `${stem}:${part_of_speech}`
 

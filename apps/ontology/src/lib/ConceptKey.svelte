@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { ConceptKey } from '$lib/types'
+	import type { Concept } from './types'
 
 	type Props = {
-		concept: ConceptKey
+		// Normally would use ConceptKey, but the part_of_speech of a search Concept might also be 'Function Word'
+		concept: Pick<Concept, 'stem' | 'sense' | 'part_of_speech'>
 	}
 
 	let { concept }: Props = $props()

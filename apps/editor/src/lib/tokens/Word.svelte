@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 	import NotFound from './NotFound.svelte'
 	import Result from './Result.svelte'
 
 	type Props = {
-		token: SimpleToken
+		token: CheckerToken
 		classes?: string
 	}
 

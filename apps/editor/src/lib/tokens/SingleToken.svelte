@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SimpleToken } from '@tabitha/types'
+	import type { CheckerToken } from '@tabitha/types'
 	import type { Component as SvelteComponent } from 'svelte'
 	import FunctionWord from './FunctionWord.svelte'
 	import Note from './Note.svelte'
@@ -8,9 +8,9 @@
 	import Message from './Message.svelte'
 	import { TOKEN_TYPE, token_has_message } from '$lib/token'
 
-	let { token }: { token: SimpleToken } = $props()
+	let { token }: { token: CheckerToken } = $props()
 
-	const component_map = new Map<string, SvelteComponent<{ token: SimpleToken, classes?: string }>>([
+	const component_map = new Map<string, SvelteComponent<{ token: CheckerToken, classes?: string }>>([
 		[TOKEN_TYPE.FUNCTION_WORD, FunctionWord],
 		[TOKEN_TYPE.NOTE, Note],
 		[TOKEN_TYPE.PUNCTUATION, Punctuation],

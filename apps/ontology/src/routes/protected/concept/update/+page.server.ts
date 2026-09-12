@@ -1,8 +1,8 @@
 import { get_concept_for_update } from '$lib/server/changes/concepts'
 import { error } from '@sveltejs/kit'
-import { parse_concept_key } from '@tabitha/types'
+import { parse_concept_key } from '@tabitha/types/patterns'
+import type { ConceptKey } from '@tabitha/types'
 import type { PageServerLoad } from './$types'
-import type { ConceptKey } from '$lib/types'
 
 // Reaching this page only requires PROTECTED_ACCESS (enforced in hooks.server.ts for all /protected
 // routes) -- UPDATE_CONCEPT is no longer required here, since a user without it can still submit an

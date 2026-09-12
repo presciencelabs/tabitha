@@ -9,9 +9,9 @@ function create_tokens(tokens: string[]): Token[] {
 	return tokens.map(token => create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD }))
 }
 
-function create_pronoun_token(pronoun: string, referent: string, referent_lookup: string | null = null): Token {
+function create_pronoun_token(pronoun: string, referent: string, referent_lookup?: string): Token {
 	const pronoun_token = create_token({ token: pronoun, type: TOKEN_TYPE.FUNCTION_WORD })
-	return create_token({ token: referent, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: referent_lookup ?? referent, pronoun: pronoun_token })
+	return create_token({ token: referent, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [referent_lookup ?? referent], pronoun: pronoun_token })
 }
 
 function create_sentence(tokens: Token[]): Sentence {

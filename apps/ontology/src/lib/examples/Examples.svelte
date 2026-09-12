@@ -2,8 +2,10 @@
 	import { onMount } from 'svelte'
 	import { fade } from 'svelte/transition'
 	import Icon from '@iconify/svelte'
-	import { by_book_order, ExampleSummary, Filters, get_examples, SourceData, TargetData } from '$lib/examples'
-	import type { Concept, Example } from '$lib/types'
+	import { ExampleSummary, Filters, get_examples, SourceData, TargetData } from '$lib/examples'
+	import { by_book_order } from '@tabitha/types/patterns'
+	import type { Concept } from '$lib/types'
+	import type { ConceptExample, PartOfSpeech } from '@tabitha/types'
 
 	type Props = {
 		concept: Concept
@@ -14,8 +16,8 @@
 	const MAX_EXAMPLES_DISPLAYED = 50
 
 	let loading = $state(true)
-	let all_examples = $state<Example[]>([])
-	let filtered_examples = $state<Example[]>([])
+	let all_examples = $state<ConceptExample[]>([])
+	let filtered_examples = $state<ConceptExample[]>([])
 	let displayed_examples = $derived(
 		filtered_examples.toSorted(by_book_order).slice(0, MAX_EXAMPLES_DISPLAYED),
 	)
@@ -71,9 +73,11 @@
 
 				<section class="collapse-content">
 					{#if retrieval_queue.includes(i)}
+						{@const { stem, sense, part_of_speech } = concept}
+						{@const concept_key = { stem, sense, part_of_speech: part_of_speech as PartOfSpeech }}
 						<TargetData {reference} />
 
-						<SourceData {reference} selected_concept={concept} />
+						<SourceData {reference} selected_concept={concept_key} />
 					{/if}
 				</section>
 			</details>

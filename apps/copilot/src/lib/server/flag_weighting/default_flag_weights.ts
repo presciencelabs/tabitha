@@ -1,4 +1,6 @@
-export const default_flag_weights_for_discern = {
+import type { FlagWeightingMap } from '$lib/types'
+
+export const default_flag_weights_for_discern: FlagWeightingMap = {
 	'Verb Time': {
 		'Historic Past': 2,
 		'Eternity Past': 3,

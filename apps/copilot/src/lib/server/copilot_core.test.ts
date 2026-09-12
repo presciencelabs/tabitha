@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'vitest'
 import { convert_to_usfm_for_discern, error_result } from './copilot_core'
+import type { CopilotNotesResult, VerseReference } from '@tabitha/types'
 
 const verse: VerseReference = { book: 'Genesis', chapter: 1, verse: 1 }
 
-function make_result(overrides: Partial<CopilotApiResult> = {}): CopilotApiResult {
+function make_result(overrides: Partial<CopilotNotesResult> = {}): CopilotNotesResult {
 	return {
 		verse,
 		english_text: 'In the beginning God created the heavens and the earth.',

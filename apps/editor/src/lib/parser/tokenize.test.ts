@@ -7,8 +7,8 @@ import { tokenize_input } from './tokenize'
 import type { PairingType } from '@tabitha/types'
 import type { Token } from '$lib/types'
 
-function create_word_token(token: string, { lookup_term = null, sense = '' }: { lookup_term?: string | null; sense?: string } = {}): Token {
-	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: lookup_term || token, specified_sense: sense })
+function create_word_token(token: string, { lookup_term, sense = '' }: { lookup_term?: string, sense?: string } = {}): Token {
+	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [lookup_term || token], specified_sense: sense })
 }
 
 function create_pairing(left_token: Token, right_token: Token, pairing_type: PairingType): Token {
@@ -24,7 +24,7 @@ function create_pronoun_token(pronoun: string, referent_token: Token): Token {
 }
 
 function create_error_token(token: string, message: string): Token {
-	return create_token({ token, type: TOKEN_TYPE.NOTE, message: { ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' } })
+	return create_token({ token, type: TOKEN_TYPE.NOTE, messages: [{ ...MESSAGE_TYPE.ERROR, message, rule_id: 'token:syntax' }] })
 }
 
 describe('tokenize_input', () => {
@@ -298,7 +298,7 @@ describe('tokenize_input', () => {
 			create_word_token('token'),
 			create_token({ token: ',', type: TOKEN_TYPE.PUNCTUATION }),
 			create_word_token('5'),
-			create_token({ token: ':', type: TOKEN_TYPE.LOOKUP_WORD, lookup_term: '-ReferenceMarker', tag: { 'syntax': 'verse_ref_colon' } }),
+			create_token({ token: ':', type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: ['-ReferenceMarker'], tag: { 'syntax': 'verse_ref_colon' } }),
 			create_word_token('5'),
 		]
 

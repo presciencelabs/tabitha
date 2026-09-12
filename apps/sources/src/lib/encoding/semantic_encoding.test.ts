@@ -21,7 +21,7 @@ describe('encode_concept_data', () => {
 	})
 
 	it('encodes single concept correctly', () => {
-		const entity = {
+		const entity: SourceEntity = {
 			category: 'Noun',
 			category_abbr: 'N',
 			value: 'god',
@@ -38,9 +38,9 @@ describe('encode_concept_data', () => {
 	})
 
 	it('returns value unchanged when no concept exists', () => {
-		const entity = {
-			category: 'Punctuation',
-			category_abbr: 'P',
+		const entity: SourceEntity = {
+			category: 'period',
+			category_abbr: '.',
 			value: '.',
 			feature_codes: '',
 			features: [],
@@ -57,7 +57,7 @@ describe('encode_concept_data', () => {
 
 describe('structure_semantic_encoding', () => {
 	it('assigns ids and structures boundary hierarchy', () => {
-		const rawEntities = [
+		const rawEntities: SourceEntity[] = [
 			{
 				category: 'Clause',
 				category_abbr: 'C',
@@ -104,19 +104,9 @@ describe('structure_semantic_encoding', () => {
 
 describe('get_noun_list', () => {
 	it('extracts noun list items and formats index labels', () => {
-		const mockSource = {
-			type: 'Bible',
-			id_primary: 'Genesis',
-			id_secondary: '1',
-			id_tertiary: '1',
-			phase_1_encoding: 'In the beginning...',
-			semantic_encoding: '...some encoding...~|AGod|Bearth|Clight',
-			status: 'Ready to Translate' as const,
-			comments: '',
-			notes: '',
-		}
+		const semantic_encoding = '...some encoding...~|AGod|Bearth|Clight'
 
-		const nounList = get_noun_list(mockSource)
+		const nounList = get_noun_list(semantic_encoding)
 		expect(nounList).toEqual([
 			{ noun: 'God-A', index: '1' },
 			{ noun: 'earth-B', index: '2' },

@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { usage_info } from '$lib/lookups'
-	import type { PartOfSpeech } from '$lib/types'
+	import type { PartOfSpeech } from '@tabitha/types'
 
 	type Props = {
-		part_of_speech: PartOfSpeech | string
+		part_of_speech: PartOfSpeech
 		categories?: string[]
 		offset?: number
 	}
 
 	let { part_of_speech, categories = $bindable([]), offset = 0 }: Props = $props()
 
-	let usages = $derived(usage_info[part_of_speech as PartOfSpeech] || [])
+	let usages = $derived(usage_info[part_of_speech] || [])
 </script>
 
 <fieldset class="fieldset border border-base-300 rounded-box p-4">

@@ -1,5 +1,5 @@
-import { BIBLE_BOOKS } from '@tabitha/types'
-import type { Book, PartOfSpeech } from '$lib/types'
+import { BIBLE_BOOKS } from '@tabitha/types/patterns'
+import type { Book, PartOfSpeech } from '@tabitha/types'
 
 // Verb categorizations in the database '[Aa_][Bb_][Cc_][Dd_][Ee_][Ff_][Gg_][Hh_][Ii_]'
 // DisplayOntologyDlg.cppL1010
@@ -204,7 +204,7 @@ export const levels = new Map<string, string>([
 	['4', 'Inexplicable'],
 ])
 
-export const parts_of_speech = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal'] as const
+export const parts_of_speech: PartOfSpeech[] = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Adposition', 'Conjunction', 'Particle', 'Phrasal']
 
 export const curated_example_category_codes: Record<string, string> = {
 	'(NP': 'NP',

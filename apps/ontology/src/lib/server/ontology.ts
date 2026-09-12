@@ -1,16 +1,9 @@
 import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
-import { normalize_wildcards, parse_concept_sense } from '@tabitha/types'
+import { normalize_wildcards, parse_concept_sense } from '@tabitha/types/patterns'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 import { get_pending_changes } from './changes/changes'
-import type {
-	Concept,
-	ConceptKey,
-	ConceptSearchFilter,
-	DbRowConcept,
-	DbRowExample,
-	Example,
-	SimplificationHint,
-} from '$lib/types'
+import type { Concept, DbRowConcept, DbRowExample } from '$lib/types'
+import type { ConceptKey, ConceptSearchFilter, ConceptExample, SimplificationHint } from '@tabitha/types'
 import type { ConceptQueryBuilder } from './types'
 
 // refs:
@@ -142,7 +135,7 @@ export const get_examples = (db: D1Database) => async (
 	concept: string,
 	part_of_speech: string,
 	source: string,
-): Promise<Example[]> => {
+): Promise<ConceptExample[]> => {
 	const parsed_concept = parse_concept_sense(concept)
 	const stem = parsed_concept ? parsed_concept.stem : concept
 	const sense = parsed_concept ? parsed_concept.sense : 'A'
@@ -221,12 +214,12 @@ export function merge_how_to_results({ concepts, how_to_results }: MergeHowToRes
 		}
 	}
 
-	function create_concept_key({ stem, sense, part_of_speech }: ConceptKey): string {
+	function create_concept_key({ stem, sense, part_of_speech }: ConceptKey | Concept): string {
 		return `${stem}-${sense}-${part_of_speech}`
 	}
 }
 
-function concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey }): boolean {
+function concepts_match({ a, b }: { a: ConceptKey | Concept, b: ConceptKey | Concept }): boolean {
 	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
 }
 

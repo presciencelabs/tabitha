@@ -2,15 +2,11 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { get_concepts } from '$lib/server/ontology'
 import { decode_categorization, encode_categorization } from '$lib/transformers'
 import { theta_grid_arguments } from '$lib/lookups'
-import type { Concept, ConceptKey, DbRowConcept } from '$lib/types'
+import type { Concept, DbRowConcept } from '$lib/types'
 import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
+import type { ConceptKey, PartOfSpeech } from '@tabitha/types'
 
-type GetConceptForUpdateOptions = {
-	readonly db: D1Database
-	readonly concept_key: ConceptKey
-}
-
-export async function get_concept_for_update({ db, concept_key }: GetConceptForUpdateOptions): Promise<ConceptUpdateData | null> {
+export async function get_concept_for_update({ db, concept_key }: { db: D1Database, concept_key: ConceptKey }): Promise<ConceptUpdateData | null> {
 	const sql = `
 		SELECT *
 		FROM Concepts
@@ -46,12 +42,7 @@ function decode_categorization_for_update({ part_of_speech, categorization }: { 
 	return categories
 }
 
-type UpdateConceptOptions = {
-	readonly db: D1Database
-	readonly data: ConceptUpdateData
-}
-
-export async function update_concept({ db, data }: UpdateConceptOptions) {
+export async function update_concept({ db, data }: { db: D1Database, data: ConceptUpdateData }) {
 	const sql = `
 		UPDATE Concepts
 		SET level = ?, gloss = ?, brief_gloss = ?, categorization = ?, curated_examples = ?
@@ -64,25 +55,14 @@ export async function update_concept({ db, data }: UpdateConceptOptions) {
 	await db.prepare(sql).bind(level, gloss, brief_gloss, categorization, curated_examples, stem, sense, part_of_speech).run()
 }
 
-type GetNextSenseOptions = {
-	readonly db: D1Database
-	readonly stem: string
-	readonly part_of_speech: string
-}
-
-export async function get_next_sense({ db, stem, part_of_speech }: GetNextSenseOptions): Promise<string> {
+export async function get_next_sense({ db, stem, part_of_speech }: { db: D1Database, stem: string, part_of_speech: PartOfSpeech }): Promise<string> {
 	const concepts = await get_concepts(db)({ q: stem, category: part_of_speech, scope: 'stems' })
 	// the search results are not case-sensitive, so filter out concepts that don't exactly match the stem
 	const valid_senses = concepts.filter((c: Concept) => c.stem === stem).map((c: Concept) => c.sense)
 	return String.fromCharCode('A'.charCodeAt(0) + valid_senses.length)
 }
 
-type CreateConceptOptions = {
-	readonly db: D1Database
-	readonly data: ConceptCreateData
-}
-
-export async function create_concept({ db, data }: CreateConceptOptions) {
+export async function create_concept({ db, data }: { db: D1Database, data: ConceptCreateData }) {
 	// The new concept needs its id set according to its position in the list of concepts sorted by TBTA's custom sorting sequence.
 	// All other concepts below it in the order need to have their id incremented to make room for the new concept.
 	const new_id = await find_concept_position({ db, data }) + 1 // +1 because ids are 1-based
@@ -141,12 +121,7 @@ export function compare_stems({ a, b }: { a: string, b: string }): number {
 	}
 }
 
-type FindConceptPositionOptions = {
-	readonly db: D1Database
-	readonly data: ConceptKey
-}
-
-async function find_concept_position({ db, data }: FindConceptPositionOptions): Promise<number> {
+async function find_concept_position({ db, data }: { db: D1Database, data: ConceptKey }): Promise<number> {
 	const concepts = await get_concepts(db)({ q: '*', category: data.part_of_speech, scope: 'stems' })
 
 	const new_stem_lower = data.stem.toLowerCase()

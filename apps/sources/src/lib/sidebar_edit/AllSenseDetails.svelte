@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { OntologyResult, SourceConcept } from '@tabitha/types'
+	import type { OntologyResult } from '@tabitha/types'
+	import type { PageSourceConcept } from '$lib/types'
 	import AllSenseDetails from '$lib/sidebar/AllSenseDetails.svelte'
 
-	const { data = $bindable(), title }: { data: SourceConcept, title: string } = $props()
+	const { data = $bindable(), title }: { data: PageSourceConcept, title: string } = $props()
 
 	function set_sense(sense_data: OntologyResult) {
 		data.ontology_data = sense_data

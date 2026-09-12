@@ -4,6 +4,7 @@ import { get_noun_list, structure_semantic_encoding, transform_semantic_encoding
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import type { Reference } from '@tabitha/types'
+import type { PageData } from '$lib/types'
 
 export async function load({ locals: { db }, params: { type, id_primary, id_secondary, id_tertiary } }: Parameters<PageServerLoad>[0]) {
 	const reference: Reference = { type, id_primary, id_secondary, id_tertiary }
@@ -16,11 +17,11 @@ export async function load({ locals: { db }, params: { type, id_primary, id_seco
 
 	const transformed_semantic_encoding = await transform_semantic_encoding({ db, semantic_encoding: source.semantic_encoding })
 	const parsed_semantic_encoding = structure_semantic_encoding(transformed_semantic_encoding)
-	const noun_list = get_noun_list(source)
+	const noun_list = get_noun_list(source.semantic_encoding)
 	const previous = await get_previous_reference({ db, reference })
 	const next = await get_next_reference({ db, reference })
 
-	return {
+	const data: PageData = {
 		source: {
 			...source,
 			parsed_semantic_encoding,
@@ -32,4 +33,5 @@ export async function load({ locals: { db }, params: { type, id_primary, id_seco
 			next,
 		},
 	}
+	return data
 }
