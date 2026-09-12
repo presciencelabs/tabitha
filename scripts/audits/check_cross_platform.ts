@@ -34,7 +34,10 @@ async function get_script_files(dir: string): Promise<string[]> {
 		if (entry.isDirectory()) {
 			if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === '.turbo') continue
 			files.push(...await get_script_files(full_path))
-		} else if ((entry.name.endsWith('.ts') || entry.name.endsWith('.mjs')) && !entry.name.endsWith('.test.ts')) {
+		// .test.ts files are deliberately included: they run on a developer's own OS like any other
+		// script here, and issue #105's actual Windows failure was a locked sqlite handle in a test's
+		// own fixture helper, not in the code under test.
+		} else if (entry.name.endsWith('.ts') || entry.name.endsWith('.mjs')) {
 			files.push(full_path)
 		}
 	}
@@ -103,24 +106,43 @@ function check_hardcoded_posix_paths(file_path: string, lines: string[]) {
 // more indentation levels deep, per this repo's tabs-for-indentation convention) can be called
 // repeatedly from a still-running process -- e.g. imported and invoked by a unit test that then
 // tries to clean up a temp dir containing that same file. POSIX allows unlinking an open file;
-// Windows holds a real lock until .close() is called, so this only breaks there. The 2-tab
-// threshold is a proxy, not real scope analysis: it's low enough to miss a directly-nested
-// function some call sites won't reach, and it can't see a handle closed by the function's
-// *caller* either -- a heuristic nudge, not a guarantee, same as the other checks here.
+// Windows holds a real lock until the handle is actually released, so this only breaks there.
+//
+// Note it specifically wants `close(true)`, not a bare `close()`: the default is sqlite3_close_v2,
+// which only releases the connection once every statement (including the ones .query() caches) is
+// finalized or garbage collected. That deferred release is prompt enough on macOS/Linux to look
+// like it worked, while still leaving the file locked on Windows -- exactly the false-negative
+// that made issue #105's failing test look fixed when it wasn't. `close(true)` finalizes
+// everything and closes immediately.
+//
+// The 2-tab threshold is a proxy, not real scope analysis: it's low enough to miss a
+// directly-nested function some call sites won't reach, and it can't see a handle closed by the
+// function's *caller* either -- a heuristic nudge, not a guarantee, same as the other checks here.
 function check_unclosed_database_handle(file_path: string, content: string, lines: string[]) {
+	// A test file is never a one-shot script -- the runner process outlives each individual test, so
+	// any function-scoped handle (1 tab) is a risk there. Elsewhere, require 2 tabs so a CLI script's
+	// own top-level if/for blocks don't read as reusable functions.
+	const min_indent = file_path.endsWith('.test.ts') ? /^\t/ : /^\t\t/
+
 	lines.forEach((line, idx) => {
-		if (!/^\t\t/.test(line)) return // shallower than this is top-level script flow -- see comment above
+		if (!min_indent.test(line)) return // shallower than this is top-level script flow -- see comment above
 		const match = line.match(/(?:const|let)\s+(\w+)\s*=\s*new Database\(/)
 		if (!match) return
 		const var_name = match[1]
-		if (!new RegExp(`\\b${var_name}\\.close\\(\\)`).test(content)) {
-			findings.push({
-				file_path,
-				line_number: idx + 1,
-				snippet: line.trim(),
-				message: `"${var_name}" is opened inside a function/loop but never closed in this file. On Windows, an open sqlite handle holds a real file lock -- if this runs more than once in a still-live process (e.g. a unit test cleaning up its own temp dir), the next attempt to touch that file/directory can fail with EBUSY. Call .close() once this handle is done with, or confirm the caller takes ownership of closing it.`,
-			})
-		}
+		if (/:memory:/.test(line)) return // in-memory databases have no file to lock
+
+		const closed_deterministically = new RegExp(`\\b${var_name}\\.close\\(\\s*true\\s*\\)`).test(content)
+		if (closed_deterministically) return
+
+		const closed_loosely = new RegExp(`\\b${var_name}\\.close\\(`).test(content)
+		findings.push({
+			file_path,
+			line_number: idx + 1,
+			snippet: line.trim(),
+			message: closed_loosely
+				? `"${var_name}" is closed with a bare .close(), which defers the actual release until every statement is finalized or garbage collected (sqlite3_close_v2). On Windows the file stays locked until that happens, so deleting it (or its directory) can still fail with EBUSY even though this looks closed on macOS/Linux. Use .close(true) to finalize and release immediately.`
+				: `"${var_name}" is opened inside a function/loop but never closed in this file. On Windows, an open sqlite handle holds a real file lock -- if this runs more than once in a still-live process (e.g. a unit test cleaning up its own temp dir), the next attempt to touch that file/directory can fail with EBUSY. Call .close(true) once this handle is done with, or confirm the caller takes ownership of closing it.`,
+		})
 	})
 }
 

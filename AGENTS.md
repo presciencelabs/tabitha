@@ -569,11 +569,20 @@ shipped from this:
   Build the input in JS and pass it via the `input` option, or invoke the target binary directly
   without shell chaining.
 
-A third pattern to avoid on the same grounds: hardcoded POSIX-only absolute paths (`/tmp/...`,
+- **`bun:sqlite` handles closed with a bare `.close()`.** The default is `sqlite3_close_v2`, which
+  only releases the connection once every statement (including the ones `.query()` caches) is
+  finalized *or garbage collected*. That deferred release is prompt enough on macOS/Linux to look
+  like it worked while still holding a Windows file lock, so deleting the file (or its containing
+  directory) fails with `EBUSY`. Use **`.close(true)`**, which finalizes everything and releases
+  immediately. This is what actually broke `migrate_source_texts.test.ts` on Windows in
+  [#105](https://github.com/presciencelabs/tabitha/issues/105) -- and it stayed broken after a
+  first fix that added a bare `.close()`, because the deferred release looked correct on macOS.
+
+A further pattern to avoid on the same grounds: hardcoded POSIX-only absolute paths (`/tmp/...`,
 `/var/...`) -- use `os.tmpdir()` or a path relative to the project instead.
 
 `scripts/audits/check_cross_platform.ts` (`bun run check:cross-platform`, part of `check:audits`
-and CI's advisory `security_compliance` stage) heuristically flags all three. It's pattern-matching
+and CI's advisory `security_compliance` stage) heuristically flags all of these. It's pattern-matching
 against known bug shapes, not an actual Windows run -- it complements `windows_dx_smoke` (`ci.yml`),
 the one CI job that runs on `windows-latest`, rather than replacing it as the real ground truth.
 

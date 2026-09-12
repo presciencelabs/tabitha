@@ -27,7 +27,10 @@ function make_tbta_source_db(source_name: string, rows: TbtaRow[]): string {
 			row.reference, row.verse ?? null, row.analyzed_verse ?? null, row.notes ?? null,
 		])
 	}
-	db.close()
+	// close(true), not close(): the default defers the actual release until every statement is
+	// finalized or GC'd, and on Windows the file stays locked until then -- which blocks afterEach's
+	// rmSync of the temp directory this file lives in.
+	db.close(true)
 
 	return path
 }
