@@ -196,7 +196,12 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          lfs: true
+
+      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
+      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
+      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
+      - name: Fetch Database Snapshots (Git LFS, scoped)
+        run: git lfs pull --include="tools/databases/snapshots/*"
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
@@ -278,7 +283,12 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          lfs: true
+
+      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
+      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
+      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
+      - name: Fetch Database Snapshots (Git LFS, scoped)
+        run: git lfs pull --include="tools/databases/snapshots/*"
 
       - name: Install SQLite3 CLI
         run: choco install sqlite -y --no-progress
