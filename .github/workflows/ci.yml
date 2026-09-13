@@ -128,9 +128,10 @@ jobs:
     name: 🌐 Cross-App Preview Deploy
     needs: [plan, security_compliance, production_build]
     # Only PRs -- a push to main deploys production via Workers Builds, unrelated to this shared
-    # preview stack. See docs/decisions/ for the cross-app-preview ADR on why this deploys via CI
-    # (each app to its own `<app>-preview.tabitha.bible` custom domain) rather than Workers Builds:
-    # Workers Builds silently redirects a named-environment deploy back onto the production Worker.
+    # preview stack. See docs/decisions/0015-cross-app-preview-custom-domains.md for why this
+    # deploys via CI (each app to its own `<app>-preview.tabitha.bible` custom domain) rather than
+    # Workers Builds: Workers Builds silently redirects a named-environment deploy back onto the
+    # production Worker.
     if: github.event_name == 'pull_request' && needs.plan.outputs.run_build == 'true'
     runs-on: ubuntu-latest
     steps:
