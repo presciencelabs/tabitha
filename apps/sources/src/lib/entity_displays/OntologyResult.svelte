@@ -9,7 +9,7 @@
 	let ontology_data = $state<OntologyResult | null>(null)
 
 	$effect(() => {
-		let cancelled = false
+		let canceled = false
 
 		if (data.ontology_data) {
 			ontology_data = data.ontology_data
@@ -17,13 +17,13 @@
 		}
 
 		fetch_concept_ontology_data(data).then(res => {
-			if (!cancelled) {
+			if (!canceled) {
 				ontology_data = res
 			}
 		})
 
 		return () => {
-			cancelled = true
+			canceled = true
 		}
 	})
 </script>

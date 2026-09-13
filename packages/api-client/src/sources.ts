@@ -1,4 +1,4 @@
-import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
+import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceEncodingResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type SourcesClient = ReturnType<typeof create_sources_client>
@@ -62,6 +62,18 @@ export function create_sources_client(options: SourcesClientOptions) {
 		async get_verse_statuses(refs: Reference[]): Promise<SourceStatusResult[] | null> {
 			const data = await http.post<SourceStatusResult[]>('/lookup/status', refs)
 			return data
+		},
+
+		/**
+		 * Look up whether each of multiple verse references actually holds a semantic encoding.
+		 *
+		 * Deliberately a separate call from `get_verse_statuses`, not an extra field on it:
+		 * `status` and the presence of an encoding come from two migrations that never consult
+		 * each other, so status is not a reliable stand-in for this question. See `/lookup/encoded`
+		 * in the Sources README.
+		 */
+		async get_verse_encoding_availability(refs: Reference[]): Promise<SourceEncodingResult[] | null> {
+			return await http.post<SourceEncodingResult[]>('/lookup/encoded', refs)
 		},
 
 		/**

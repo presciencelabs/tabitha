@@ -36,6 +36,11 @@
 - `GET /lookup/status/[type]` — Returns translation/completion status for every book of a given type.
 - `GET /lookup/status/[type]/[id_primary]` — Returns translation/completion status for an entire book.
 - `POST /lookup/status` — Batch lookup for verse statuses. Expects a JSON array of reference objects `[{ type, id_primary, id_secondary, id_tertiary }]`.
+  - **Returns:** one result per reference, in the order they were sent — `[{ reference, status }]`.
+  - `status` is workflow status (`Not Started`, `Initial Analysis in Progress`, `Initial Analysis Complete`, `Final Review in Progress`, `Ready to Translate`), from the team's own tracking. It is **not** a reliable indicator of whether a verse has a semantic encoding — use `/lookup/encoded` for that.
+- `POST /lookup/encoded` — Batch lookup for whether each verse actually holds a semantic encoding. Same request shape as `/lookup/status`.
+  - **Returns:** one result per reference, in the order they were sent — `[{ reference, has_encoding }]`.
+  - This is a separate endpoint from `/lookup/status`, not an extra field on it, because the two are populated by independent migrations that never consult each other: `semantic_encoding` comes from the TBTA export, `status` from a separate verse-status CSV tracking the team's own workflow phases. A verse's status is not a stand-in for whether its encoding exists.
 
 ---
 

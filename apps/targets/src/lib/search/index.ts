@@ -1,3 +1,5 @@
+export { default as PhraseResults } from './PhraseResults.svelte'
 export { default as SearchFilterForm } from './SearchFilterForm.svelte'
 export { default as SearchResultCard } from './SearchResultCard.svelte'
 export * from './helpers'
+export * from './modes'
