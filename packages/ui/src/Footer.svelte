@@ -10,9 +10,16 @@
 		on_refresh?: () => void
 	}
 
-	// Matches this footer's own bg-neutral -- ThemeSelector's bare btn-outline default colors
-	// from base-content instead, which goes low-contrast here in light themes.
-	let { colors = 'btn-outline btn-neutral', children, needs_refresh, on_refresh }: Props = $props()
+	// daisyUI's btn-outline/btn-neutral modifiers resolve their resting color against
+	// --color-neutral, the same token as this footer's own bg-neutral, so they go invisible here.
+	// Plain utilities set real color/border/background properties directly against
+	// neutral-content instead, sidestepping that cascade.
+	let {
+		colors = 'btn-ghost text-neutral-content border border-neutral-content hover:bg-neutral-content hover:text-neutral',
+		children,
+		needs_refresh,
+		on_refresh,
+	}: Props = $props()
 </script>
 
 <footer class="footer footer-horizontal mt-20 max-w-none bg-neutral p-10 text-neutral-content">
