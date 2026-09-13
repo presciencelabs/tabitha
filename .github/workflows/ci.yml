@@ -124,6 +124,29 @@ jobs:
       - name: Production Bundle Verification
         run: bunx turbo run build:ci ${{ needs.plan.outputs.turbo_filter }}
 
+  preview_deploy:
+    name: 🌐 Cross-App Preview Deploy
+    needs: [plan, security_compliance, production_build]
+    # Only PRs -- a push to main deploys production via Workers Builds, unrelated to this shared
+    # preview stack. See docs/decisions/0015-cross-app-preview-custom-domains.md for why this
+    # deploys via CI (each app to its own `<app>-preview.tabitha.bible` custom domain) rather than
+    # Workers Builds: Workers Builds silently redirects a named-environment deploy back onto the
+    # production Worker.
+    if: github.event_name == 'pull_request' && needs.plan.outputs.run_build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Deploy Changed Apps to Preview
+        run: bunx turbo run deploy:preview ${{ needs.plan.outputs.turbo_filter }}
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_PREVIEW_DEPLOY }}
+
   # ============================================================================
   # STAGE 2: PARALLEL TEST & QUALITY MATRIX (Runs after Blockers Pass)
   # ============================================================================
@@ -197,14 +220,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
-      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
-      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
-      - name: Fetch Database Snapshots (Git LFS, scoped)
-        run: git lfs pull --include="tools/databases/snapshots/*"
-
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
+
+      # db:load only reads tools/databases/snapshots/ -- scoping this to that directory avoids
+      # fetching tools/databases/raw/ (ETL migration inputs, unused in CI). Reads are anonymous
+      # HTTPS GETs against db-migration-data's public r2.dev URL (see tools/databases/migrations/r2_sync.ts).
+      - name: Fetch Database Snapshots (R2, scoped)
+        run: bun run r2:pull -- snapshots
+        working-directory: tools/databases
 
       - name: Bootstrap Local D1 SQLite Snapshots
         run: bun run db:load
@@ -284,12 +308,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
-      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
-      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
-      - name: Fetch Database Snapshots (Git LFS, scoped)
-        run: git lfs pull --include="tools/databases/snapshots/*"
-
       - name: Install SQLite3 CLI
         run: choco install sqlite -y --no-progress
 
@@ -303,6 +321,13 @@ jobs:
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
+
+      # db:load only reads tools/databases/snapshots/ -- scoping this to that directory avoids
+      # fetching tools/databases/raw/ (ETL migration inputs, unused in CI). Reads are anonymous
+      # HTTPS GETs against db-migration-data's public r2.dev URL (see tools/databases/migrations/r2_sync.ts).
+      - name: Fetch Database Snapshots (R2, scoped)
+        run: bun run r2:pull -- snapshots
+        working-directory: tools/databases
 
       - name: Load Local D1 SQLite Databases (db:load)
         id: db_load

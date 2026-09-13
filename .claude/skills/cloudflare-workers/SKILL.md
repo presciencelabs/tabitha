@@ -71,6 +71,17 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
   }
   ```
 
+### Publicly-Readable Buckets (No Worker Binding Needed)
+
+Not every R2 use case needs a Worker binding -- a bucket can serve anonymous HTTPS GETs directly via its `r2.dev` subdomain, with no authentication and no deployed Worker in front of it. This is the right shape for content that's already effectively public (e.g. `db-migration-data`, which replaced Git LFS tracking of `tools/databases/raw/`+`snapshots/` in a public repo -- see `tools/databases/migrations/r2_sync.ts` and its README section). Reads need no Cloudflare credentials at all; only writes (`wrangler r2 object put`/`delete`) do.
+
+Setup is two `wrangler` commands, both one-time:
+```bash
+wrangler r2 bucket create <bucket-name>
+wrangler r2 bucket dev-url enable <bucket-name>   # prints the public https://pub-<hash>.r2.dev URL
+```
+`dev-url enable` prompts for confirmation ("contents will be made publicly available") -- double-check the bucket's contents are actually meant to be public before running it, since there's no scoped/partial public-access mode. This confirmation prompt is also why Claude Code's auto-mode classifier tends to hard-block both commands; switch to manual permission mode to run them rather than trying to route around the block (see the `auto-mode-classifier-block-ask-manual-mode` memory).
+
 ---
 
 ## 4. Wrangler 4 Configuration (`wrangler.jsonc`)

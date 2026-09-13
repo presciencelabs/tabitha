@@ -41,6 +41,14 @@ coverage/
 # derived from the local .wrangler state dir, not portable/meaningful across machines
 tools/databases/.d1-workerd-hash-cache.json
 
+# ETL migration source data and SQL snapshot dumps -- fetched from the db-migration-data R2 bucket
+# (see tools/databases/migrations/r2_sync.ts) rather than committed to git. manifest.json (which
+# files currently exist) stays tracked; the actual file contents don't.
+tools/databases/raw/*
+tools/databases/snapshots/*
+!tools/databases/raw/.gitkeep
+!tools/databases/snapshots/.gitkeep
+
 # Claude Code -- per-session worktrees and personal permission overrides, not shared config
 .claude/worktrees/
 .claude/settings.local.json

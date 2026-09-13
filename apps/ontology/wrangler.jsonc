@@ -66,5 +66,64 @@
 		// Necessary to support D1 withSession() bookmarking and edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
 		"mode": "off"
+	},
+	// Deployed via CI (not Workers Builds -- see docs/decisions/0015-cross-app-preview-custom-domains.md) to
+	// its own custom domain, so a preview build of a sibling app (e.g. sources-preview) can call
+	// this preview build over normal public HTTPS exactly like production does.
+	"env": {
+		"preview": {
+			// "routes" is otherwise inherited from the top level, which would attach the production
+			// custom domain (ontology.tabitha.bible) to this separate preview Worker too.
+			"routes": [
+				{
+					"pattern": "ontology-preview.tabitha.bible",
+					"custom_domain": true
+				}
+			],
+			// "vars", "r2_buckets", "d1_databases", and "ratelimits" are non-inheritable -- each must
+			// be redeclared here or this preview Worker silently loses them (breaking OAuth/Gemini
+			// config, the /downloads page, every DB-backed request, and rate limiting respectively).
+			"vars": {
+				"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com",
+				"CLOUDFLARE_ACCOUNT_ID": "8582954a9e4c6f0259c6236be794d7d3",
+				"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
+				"GEMINI_LOCATION": "global"
+			},
+			"ratelimits": [
+				{
+					"name": "RATE_LIMITER",
+					"namespace_id": "1",
+					"simple": {
+						"limit": 60,
+						"period": 60
+					}
+				}
+			],
+			"d1_databases": [
+				{
+					"binding": "DB_Ontology",
+					"database_name": "Ontology_9494_2026-06-25",
+					"database_id": "8ca85ff3-063d-4d6b-8438-9bb68e264206"
+				},
+				{
+					"binding": "DB_Auth",
+					"database_name": "Auth",
+					"database_id": "c547b234-05fd-4923-ab0e-689d993894ad"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "R2_db_backups",
+					"bucket_name": "db-backups"
+				}
+			],
+			// "triggers" is inheritable, so without this override the preview Worker would also run
+			// its own copy of the same cron on the same schedule against the same production
+			// database as the real "ontology" Worker -- redundant at best, a double-run race at
+			// worst. Preview has no need for the scheduled sync itself.
+			"triggers": {
+				"crons": []
+			}
+		}
 	}
 }
