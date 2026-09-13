@@ -29,6 +29,7 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 			matches: hits.map(({ reference, has_encoding }) => ({ reference, has_encoding })),
 			complete,
 			notice,
+			_debug_sources_api_host: PUBLIC_SOURCES_API_HOST, // TEMP -- remove before merge (issue #85 preview debug)
 		})
 	}
 
