@@ -70,10 +70,7 @@ export function classify_files(changed_files: string[]): FileClassification {
 // diff once that's fixed upstream -- this script may no longer be needed.
 //
 // The dots go *before* the name, not after: `<pkg>...` (dots after) walks the other direction,
-// toward <pkg>'s own dependencies, not its dependents -- confirmed against Turborepo's docs after
-// a real PR touching only packages/ui silently produced a filter covering @tabitha/ui's own
-// dependencies (eslint-config/tsconfig/types) while excluding every one of the 6 apps that
-// actually depend on it.
+// toward <pkg>'s own dependencies rather than its dependents.
 export function build_turbo_filter_args(changed_package_names: string[]): string[] {
 	return changed_package_names.map(name => `--filter=...${name}`)
 }

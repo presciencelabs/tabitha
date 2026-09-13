@@ -56,11 +56,8 @@ describe('classify_files', () => {
 
 describe('build_turbo_filter_args', () => {
 	it('puts the dots before the package name, not after', () => {
-		// Regression test: `<pkg>...` (dots after) selects <pkg>'s own *dependencies* --
-		// confirmed directly against a real PR that only touched packages/ui, where this bug
-		// produced a filter covering @tabitha/ui's dependencies (eslint-config/tsconfig/types)
-		// while silently excluding every one of the 6 apps that actually depend on it. The
-		// correct direction, `...<pkg>`, selects the package and its *dependents* instead.
+		// `<pkg>...` (dots after) selects <pkg>'s own dependencies, not its dependents -- the
+		// opposite of what this scoping needs.
 		expect(build_turbo_filter_args(['@tabitha/ui'])).toEqual(['--filter=...@tabitha/ui'])
 	})
 
