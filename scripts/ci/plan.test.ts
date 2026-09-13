@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { classify_files, touches_windows_smoke_paths } from './plan'
+import { build_turbo_filter_args, classify_files, touches_windows_smoke_paths } from './plan'
 
 describe('classify_files', () => {
 	it('reports no_changes for an empty diff', () => {
@@ -51,6 +51,25 @@ describe('classify_files', () => {
 
 	it('prefers force_full over docs_only when both would otherwise match', () => {
 		expect(classify_files(['README.md', 'turbo.json'])).toEqual({ kind: 'force_full', matched_file: 'turbo.json' })
+	})
+})
+
+describe('build_turbo_filter_args', () => {
+	it('puts the dots before the package name, not after', () => {
+		// `<pkg>...` (dots after) selects <pkg>'s own dependencies, not its dependents -- the
+		// opposite of what this scoping needs.
+		expect(build_turbo_filter_args(['@tabitha/ui'])).toEqual(['--filter=...@tabitha/ui'])
+	})
+
+	it('builds one filter arg per changed package', () => {
+		expect(build_turbo_filter_args(['@tabitha/ui', '@tabitha/types'])).toEqual([
+			'--filter=...@tabitha/ui',
+			'--filter=...@tabitha/types',
+		])
+	})
+
+	it('returns an empty array for no changed packages', () => {
+		expect(build_turbo_filter_args([])).toEqual([])
 	})
 })
 
