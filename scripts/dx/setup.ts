@@ -50,6 +50,8 @@ async function setup_workspace() {
 
 	// 4. Load latest SQLite / D1 databases
 	if (sqlite_ready) {
+		console.log('📦 Fetching database snapshots from R2...')
+		await $`bun --filter @tabitha/databases r2:pull -- snapshots`
 		console.log('📦 Bootstrapping local D1 databases...')
 		await load_database('all')
 	}
