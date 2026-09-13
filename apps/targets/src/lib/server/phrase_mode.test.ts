@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { attach_encoding_availability } from './phrase_mode'
+import { filter_to_encoded_matches } from './phrase_mode'
 import type { PhraseMatch } from '$lib/types'
 import type { SourceEncodingResult } from '@tabitha/types'
 
@@ -14,50 +14,47 @@ function result(has_encoding: boolean): SourceEncodingResult {
 	return { reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '1' }, has_encoding }
 }
 
-describe('attach_encoding_availability', () => {
-	test('reports whether each verse holds an encoding', () => {
-		const hits = attach_encoding_availability({
+describe('filter_to_encoded_matches', () => {
+	test('keeps only the matches with an encoding', () => {
+		const hits = filter_to_encoded_matches({
 			matches: [match('1'), match('2'), match('3')],
 			availability: [result(true), result(false), result(true)],
 		})
 
-		expect(hits.map(hit => hit.has_encoding)).toEqual([true, false, true])
+		expect(hits).toEqual([match('1'), match('3')])
 	})
 
 	test('pairs answers to matches by position, keeping each verse with its own', () => {
-		const hits = attach_encoding_availability({
+		const hits = filter_to_encoded_matches({
 			matches: [match('1'), match('2')],
 			availability: [result(false), result(true)],
 		})
 
-		expect(hits).toEqual([
-			{ reference: match('1').reference, text: 'verse 1', has_encoding: false },
-			{ reference: match('2').reference, text: 'verse 2', has_encoding: true },
-		])
+		expect(hits).toEqual([match('2')])
 	})
 
 	// Not a response `get_verse_encoding_availability` actually produces today -- it always
 	// returns one result per reference -- but this pins the function's own contract for if that
 	// ever changes: a shorter array should only ever under-promise, never misattribute an answer.
-	test('marks verses beyond a short response as having no encoding', () => {
-		const hits = attach_encoding_availability({
+	test('drops verses beyond a short response rather than assuming they are encoded', () => {
+		const hits = filter_to_encoded_matches({
 			matches: [match('1'), match('2'), match('3')],
 			availability: [result(true)],
 		})
 
-		expect(hits.map(hit => hit.has_encoding)).toEqual([true, false, false])
+		expect(hits).toEqual([match('1')])
 	})
 
-	test('marks everything unavailable when the lookup returned nothing at all', () => {
-		const hits = attach_encoding_availability({
+	test('drops everything when the lookup returned nothing at all', () => {
+		const hits = filter_to_encoded_matches({
 			matches: [match('1'), match('2')],
 			availability: null,
 		})
 
-		expect(hits.map(hit => hit.has_encoding)).toEqual([false, false])
+		expect(hits).toEqual([])
 	})
 
 	test('returns nothing for no matches', () => {
-		expect(attach_encoding_availability({ matches: [], availability: [] })).toEqual([])
+		expect(filter_to_encoded_matches({ matches: [], availability: [] })).toEqual([])
 	})
 })

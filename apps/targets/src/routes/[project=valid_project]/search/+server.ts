@@ -24,9 +24,11 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 		// References only, deliberately: the matching verse text is licensed scripture, and the
 		// license is conditioned on reporting each view through FUMS -- which we can only do for
 		// pages we render ourselves. Callers who need the text fetch it from api.bible under
-		// their own license; see apps/targets/README.md.
+		// their own license; see apps/targets/README.md. Every returned reference is guaranteed
+		// to have a semantic encoding -- hits without one are dropped before this point, since an
+		// exemplar with no structure to show isn't useful to whoever's searching.
 		return json({
-			matches: hits.map(({ reference, has_encoding }) => ({ reference, has_encoding })),
+			matches: hits.map(({ reference }) => ({ reference })),
 			complete,
 			notice,
 		})

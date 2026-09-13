@@ -14,7 +14,6 @@
 	let { results, search_regex, project }: Props = $props()
 
 	let sorted_hits = $derived(results.hits.toSorted(by_book_order))
-	let encoded_count = $derived(results.hits.filter(hit => hit.has_encoding).length)
 	let found = $derived(results.hits.length > 0)
 
 	let collapse_states = $state<boolean[]>([])
@@ -47,14 +46,8 @@
 	<header class="flex flex-wrap items-center gap-2">
 		<em class="badge badge-lg gap-2" class:badge-success={found} class:badge-warning={!found}>
 			<Icon icon="material-symbols:{found ? 'check-circle' : 'warning'}-outline-rounded" />
-			<strong>{results.hits.length}</strong> verses
+			<strong>{results.hits.length}</strong> verses with a semantic encoding
 		</em>
-
-		{#if found}
-			<em class="badge badge-lg gap-2">
-				<strong>{encoded_count}</strong> with a semantic encoding
-			</em>
-		{/if}
 	</header>
 
 	{#if !results.complete}

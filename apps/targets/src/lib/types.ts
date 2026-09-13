@@ -74,12 +74,16 @@ export type PhraseSearchOutcome =
 	| { kind: 'unsupported_project', project: string }
 	| { kind: 'unavailable' }
 
+/**
+ * A phrase match confirmed to have a semantic encoding worth showing. Structurally identical to
+ * `PhraseMatch` -- kept as its own name because the two mean different things: `PhraseMatch` is
+ * raw output from the scripture search, before we've checked whether there's a structure behind
+ * it; `PhraseSearchHit` is what's actually worth showing someone hunting for an exemplar.
+ */
 export type PhraseSearchHit = {
 	reference: Reference
 	/** the matching verse, as the scripture API returned it */
 	text: string
-	/** whether Sources holds a semantic encoding, so this verse's structure can be shown */
-	has_encoding: boolean
 }
 
 export type PhraseSearchResults = {

@@ -25,11 +25,10 @@
   - **Example:** `/English/search?q=love`
 
 - `GET /[project]/search?mode=phrase&q={phrase}` — Finds the verses whose **scripture** text
-  contains the phrase, and reports which of them we hold a semantic encoding for.
+  contains the phrase and that we hold a semantic encoding for. Verses without one are dropped
+  rather than listed as unavailable -- a match with no structure to show isn't a useful exemplar.
   - **Example:** `/English/search?mode=phrase&q=kingdom%20of%20heaven`
-  - **Returns:** `{ matches: [{ reference, has_encoding }], complete, notice }`
-    - `has_encoding` — whether Sources holds a semantic encoding for that verse, so its structure
-      can be fetched from the Sources API.
+  - **Returns:** `{ matches: [{ reference }], complete, notice }`
     - `complete` — `false` when the phrase was common enough that we stopped paging before the end
       of the results; there may be more verses than the ones listed.
     - `notice` — `unsupported_project` when the project has no scripture text to search against

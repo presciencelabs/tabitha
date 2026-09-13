@@ -21,23 +21,12 @@
 
 	function toggle(e: MouseEvent) {
 		e.preventDefault()
-
-		// nothing to expand into when Sources has no encoding for this verse yet
-		if (!hit.has_encoding) {
-			return
-		}
-
 		open = !is_open
 	}
 </script>
 
-<details transition:fade={FADE_CHARACTERISTICS} open={is_open} class="collapse bg-base-100 overflow-visible" class:collapse-arrow={hit.has_encoding}>
-	<summary
-		onclick={toggle}
-		class="collapse-title border border-base-200"
-		class:hover:bg-base-200={hit.has_encoding}
-		class:cursor-default={!hit.has_encoding}
-	>
+<details transition:fade={FADE_CHARACTERISTICS} open={is_open} class="collapse collapse-arrow bg-base-100 overflow-visible">
+	<summary onclick={toggle} class="collapse-title border border-base-200 hover:bg-base-200">
 		<section class="flex gap-2">
 			<span class="min-w-1/8 w-1/8 shrink-0 whitespace-nowrap font-semibold">
 				{id_primary} {id_secondary}:{id_tertiary}
@@ -53,10 +42,6 @@
 						{/if}
 					{/each}
 				</p>
-
-				{#if !hit.has_encoding}
-					<em class="badge badge-ghost badge-sm">not yet encoded</em>
-				{/if}
 			</aside>
 		</section>
 	</summary>
