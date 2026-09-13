@@ -8,10 +8,11 @@
 	type Props = {
 		results: PhraseSearchResults
 		search_regex: RegExp
+		highlight_terms: Set<string>
 		project: string
 	}
 
-	let { results, search_regex, project }: Props = $props()
+	let { results, search_regex, highlight_terms, project }: Props = $props()
 
 	let sorted_hits = $derived(results.hits.toSorted(by_book_order))
 	let found = $derived(results.hits.length > 0)
@@ -62,7 +63,7 @@
 
 	<section class="prose mt-2 max-w-none overflow-x-auto text-pretty">
 		{#each sorted_hits as hit, i (`${hit.reference.id_primary}:${hit.reference.id_secondary}:${hit.reference.id_tertiary}`)}
-			<PhraseResultCard {hit} {search_regex} bind:open={collapse_states[i]} />
+			<PhraseResultCard {hit} {search_regex} {highlight_terms} bind:open={collapse_states[i]} />
 		{/each}
 	</section>
 {/if}

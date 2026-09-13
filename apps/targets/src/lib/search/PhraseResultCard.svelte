@@ -6,10 +6,11 @@
 	type Props = {
 		hit: PhraseSearchHit
 		search_regex: RegExp
+		highlight_terms: Set<string>
 		open?: boolean
 	}
 
-	let { hit, search_regex, open = $bindable() }: Props = $props()
+	let { hit, search_regex, highlight_terms, open = $bindable() }: Props = $props()
 
 	const FADE_CHARACTERISTICS = {
 		delay: 100,
@@ -50,7 +51,7 @@
 		{#if is_open}
 			<div class="min-w-1/8 w-1/8"></div>
 			<div class="w-7/8">
-				<SourceData reference={hit.reference} />
+				<SourceData reference={hit.reference} {highlight_terms} />
 			</div>
 		{/if}
 	</section>

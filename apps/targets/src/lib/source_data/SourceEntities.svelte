@@ -5,7 +5,13 @@
 	import BoundaryStart from './BoundaryStart.svelte'
 	import { Punctuation } from '@tabitha/ui'
 
-	let { source_entities }: { source_entities: SourceEntity[] } = $props()
+	type Props = {
+		source_entities: SourceEntity[]
+		/** lowercased phrase words to highlight matching concepts against, if searching by phrase */
+		highlight_terms?: Set<string>
+	}
+
+	let { source_entities, highlight_terms }: Props = $props()
 
 	let main_clauses = $derived(source_entities.reduce(clause_reducer, [] as SourceEntity[][]))
 
@@ -35,6 +41,8 @@
 			{@const Component = get_component(source_entity)}
 			{#if Component === Punctuation}
 				<Punctuation {source_entity} size="sm" />
+			{:else if Component === Word}
+				<Word {source_entity} {highlight_terms} />
 			{:else}
 				<Component {source_entity} />
 			{/if}

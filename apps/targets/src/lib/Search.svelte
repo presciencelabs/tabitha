@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state'
+	import { navigating, page } from '$app/state'
 	import Icon from '@iconify/svelte'
 	import { MODE, type SearchMode } from '$lib/search/modes'
 
@@ -47,4 +47,6 @@
 			<input type="hidden" name="return_to" id="return_to" bind:value={return_to} />
 		{/if}
 	</form>
+
+	<progress class="progress progress-warning w-full transition-opacity duration-200 {navigating.to ? 'opacity-100' : 'opacity-0'}"></progress>
 </search>
