@@ -10,7 +10,9 @@
 		on_refresh?: () => void
 	}
 
-	let { colors = '', children, needs_refresh, on_refresh }: Props = $props()
+	// Matches this footer's own bg-neutral -- ThemeSelector's bare btn-outline default colors
+	// from base-content instead, which goes low-contrast here in light themes.
+	let { colors = 'btn-outline btn-neutral', children, needs_refresh, on_refresh }: Props = $props()
 </script>
 
 <footer class="footer footer-horizontal mt-20 max-w-none bg-neutral p-10 text-neutral-content">
