@@ -197,14 +197,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
-      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
-      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
-      - name: Fetch Database Snapshots (Git LFS, scoped)
-        run: git lfs pull --include="tools/databases/snapshots/*"
-
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
+
+      # db:load only reads tools/databases/snapshots/ -- scoping this to that directory avoids
+      # fetching tools/databases/raw/ (ETL migration inputs, unused in CI). Reads are anonymous
+      # HTTPS GETs against db-migration-data's public r2.dev URL (see tools/databases/migrations/r2_sync.ts).
+      - name: Fetch Database Snapshots (R2, scoped)
+        run: bun run r2:pull -- snapshots
+        working-directory: tools/databases
 
       - name: Bootstrap Local D1 SQLite Snapshots
         run: bun run db:load
@@ -284,12 +285,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # db:load only reads tools/databases/snapshots/ -- scoping the LFS pull to that
-      # directory avoids downloading tools/databases/raw/ (ETL migration inputs, unused
-      # in CI) on every run, which was the dominant driver of the org's Git LFS bandwidth usage.
-      - name: Fetch Database Snapshots (Git LFS, scoped)
-        run: git lfs pull --include="tools/databases/snapshots/*"
-
       - name: Install SQLite3 CLI
         run: choco install sqlite -y --no-progress
 
@@ -303,6 +298,13 @@ jobs:
 
       - name: Setup Workspace
         uses: ./.github/actions/setup-workspace
+
+      # db:load only reads tools/databases/snapshots/ -- scoping this to that directory avoids
+      # fetching tools/databases/raw/ (ETL migration inputs, unused in CI). Reads are anonymous
+      # HTTPS GETs against db-migration-data's public r2.dev URL (see tools/databases/migrations/r2_sync.ts).
+      - name: Fetch Database Snapshots (R2, scoped)
+        run: bun run r2:pull -- snapshots
+        working-directory: tools/databases
 
       - name: Load Local D1 SQLite Databases (db:load)
         id: db_load

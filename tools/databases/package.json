@@ -15,7 +15,10 @@
     "migrate:ontology": "bun migrations/ontology/migrate.ts",
     "migrate:sources": "bun migrations/sources/migrate.ts",
     "migrate:targets": "bun migrations/targets/migrate.ts",
-    "migrate:status": "bun migrations/sources/update_status.ts"
+    "migrate:status": "bun migrations/sources/update_status.ts",
+    "r2:pull": "bun migrations/r2_sync.ts pull",
+    "r2:push": "bun migrations/r2_sync.ts push",
+    "r2:prune": "bun migrations/r2_sync.ts prune"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
