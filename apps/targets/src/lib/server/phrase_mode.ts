@@ -1,26 +1,22 @@
 import { create_sources_client } from '@tabitha/api-client'
 import { search_phrase } from '$lib/api_bible/search.server'
 import type { PhraseMatch, PhraseSearchResults } from '$lib/types'
-import type { SourceVerseStatusResult, TargetProject } from '@tabitha/types'
+import type { SourceEncodingResult, TargetProject } from '@tabitha/types'
 
 /**
- * Attaches each match to whether Sources actually holds a semantic encoding for that verse.
- *
- * Kept pure and separate from the request below because of how the two are paired: by position,
- * not by the reference Sources echoes back, since `StatusRequestReference` is typed loosely
- * enough to have no `id_tertiary` at all. That makes ordering load-bearing across an HTTP
- * boundary, which is worth being able to test directly. A short or missing response leaves the
- * remaining verses marked as having no encoding -- the safe way to be wrong here, since it
- * offers less rather than promising a structure that isn't there.
+ * Matched to `matches` by array position, not by comparing the reference each result carries --
+ * `get_verse_encoding_availability` maps over the request array in order, so this is safe. If
+ * the lookup fails outright the api-client returns `null` rather than a partial array, which
+ * this also treats as "no encoding" for every verse, the safe way to be wrong.
  */
-export function attach_encoding_availability({ matches, statuses }: {
+export function attach_encoding_availability({ matches, availability }: {
 	matches: PhraseMatch[]
-	statuses: SourceVerseStatusResult[] | null
+	availability: SourceEncodingResult[] | null
 }): PhraseSearchResults['hits'] {
 	return matches.map(({ reference, text }, index) => ({
 		reference,
 		text,
-		has_encoding: statuses?.[index]?.has_encoding ?? false,
+		has_encoding: availability?.[index]?.has_encoding ?? false,
 	}))
 }
 
@@ -48,10 +44,10 @@ export async function run_phrase_mode({ phrase, project, api_key, sources_api_ho
 	}
 
 	const sources = create_sources_client({ base_url: sources_api_host, cache: true })
-	const statuses = await sources.get_verse_statuses(outcome.matches.map(match => match.reference))
+	const availability = await sources.get_verse_encoding_availability(outcome.matches.map(match => match.reference))
 
 	return {
-		hits: attach_encoding_availability({ matches: outcome.matches, statuses }),
+		hits: attach_encoding_availability({ matches: outcome.matches, availability }),
 		complete: outcome.complete,
 		fums_token: outcome.fums_token,
 		notice: null,

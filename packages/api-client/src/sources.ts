@@ -1,4 +1,4 @@
-import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceVerseStatusResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
+import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceEncodingResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type SourcesClient = ReturnType<typeof create_sources_client>
@@ -52,20 +52,28 @@ export function create_sources_client(options: SourcesClientOptions) {
 		 * Look up the translation status of a specific verse reference.
 		 */
 		async get_verse_status(ref: Reference): Promise<SourceStatus | null> {
-			const data = await http.post<SourceVerseStatusResult[]>('/lookup/status', [ref])
+			const data = await http.post<SourceStatusResult[]>('/lookup/status', [ref])
 			return data?.[0]?.status ?? null
 		},
 
 		/**
-		 * Look up the translation status of multiple verse references at once, along with whether
-		 * each verse actually holds a semantic encoding.
-		 *
-		 * Read `has_encoding`, not `status`, to decide whether there is a structure to show --
-		 * the two are loaded by separate migrations and answer different questions.
+		 * Look up the translation status of multiple verse references at once.
 		 */
-		async get_verse_statuses(refs: Reference[]): Promise<SourceVerseStatusResult[] | null> {
-			const data = await http.post<SourceVerseStatusResult[]>('/lookup/status', refs)
+		async get_verse_statuses(refs: Reference[]): Promise<SourceStatusResult[] | null> {
+			const data = await http.post<SourceStatusResult[]>('/lookup/status', refs)
 			return data
+		},
+
+		/**
+		 * Look up whether each of multiple verse references actually holds a semantic encoding.
+		 *
+		 * Deliberately a separate call from `get_verse_statuses`, not an extra field on it:
+		 * `status` and the presence of an encoding come from two migrations that never consult
+		 * each other, so status is not a reliable stand-in for this question. See `/lookup/encoded`
+		 * in the Sources README.
+		 */
+		async get_verse_encoding_availability(refs: Reference[]): Promise<SourceEncodingResult[] | null> {
+			return await http.post<SourceEncodingResult[]>('/lookup/encoded', refs)
 		},
 
 		/**

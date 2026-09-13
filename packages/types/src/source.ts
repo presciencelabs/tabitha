@@ -146,19 +146,11 @@ export type SourceStatusResult = {
 	status: SourceStatus
 }
 
-/**
- * A single verse's status, plus whether that verse actually holds a semantic encoding.
- *
- * Separate from `SourceStatusResult` because only a verse can answer the encoding question --
- * a book or chapter rolls many verses up into one status and has no single answer to give.
- *
- * The two fields answer genuinely different questions, because they arrive from different
- * places: `semantic_encoding` comes from the TBTA export, while `status` is loaded afterwards
- * from a separate verse-status CSV that tracks the team's own workflow phases. Neither
- * migration consults the other, so a verse can sit at 'Final Review in Progress' with nothing
- * encoded. Anything deciding whether there is a structure to show should read `has_encoding`;
- * `status` answers how far along the people are, not what the data holds.
- */
-export type SourceVerseStatusResult = SourceStatusResult & {
+//===============
+// lookup/encoded API
+
+/** Whether a single verse actually holds a semantic encoding. See `/lookup/encoded` in the Sources README for why this is a separate lookup from `status` above. */
+export type SourceEncodingResult = {
+	reference: Reference
 	has_encoding: boolean
 }

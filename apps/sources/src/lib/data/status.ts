@@ -1,5 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import type { Reference, SourceStatus, StatusRequestReference, SourceStatusResult, SourceVerseStatusResult } from '@tabitha/types'
+import type { Reference, SourceStatus, StatusRequestReference, SourceStatusResult } from '@tabitha/types'
 
 export async function get_all_book_statuses({ db, type }: { db: D1Database, type: string }): Promise<SourceStatusResult[]> {
 	const sql = `
@@ -77,9 +77,9 @@ export async function get_chapter_status({ db, reference }: { db: D1Database, re
 	}
 }
 
-export async function get_verse_statuses({ db, references }: { db: D1Database, references: Reference[] }): Promise<SourceVerseStatusResult[]> {
+export async function get_verse_statuses({ db, references }: { db: D1Database, references: Reference[] }): Promise<SourceStatusResult[]> {
 	const sql = `
-		SELECT status, LENGTH(COALESCE(semantic_encoding, '')) > 0 AS has_encoding
+		SELECT status
 		FROM Sources
 		WHERE type LIKE ?
 			AND id_primary LIKE ?
@@ -92,15 +92,12 @@ export async function get_verse_statuses({ db, references }: { db: D1Database, r
 		prepared_statement.bind(type, id_primary, id_secondary.toString(), id_tertiary.toString()),
 	)
 
-	const batch_result = await db.batch<{ status: SourceStatus, has_encoding: number }>(bound_statements)
+	const batch_result = await db.batch<{ status: SourceStatus }>(bound_statements)
+	const statuses = batch_result.map(r => r.results[0]?.status || 'Not Started')
 
-	return references.map((reference, i) => {
-		const row = batch_result[i]?.results[0]
-
-		return {
-			reference,
-			status: row?.status || 'Not Started',
-			has_encoding: Boolean(row?.has_encoding),
-		}
-	})
+	const results = references.map((reference, i) => ({
+		reference,
+		status: statuses[i],
+	}))
+	return results
 }
