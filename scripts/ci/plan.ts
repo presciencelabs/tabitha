@@ -61,6 +61,23 @@ export function classify_files(changed_files: string[]): FileClassification {
 	return docs_only ? { kind: 'docs_only' } : { kind: 'scoped' }
 }
 
+// Pure and git-free on purpose -- exercised directly in plan.test.ts without touching a real repo.
+//
+// `--filter=...<pkg>` selects the package *and every workspace package that depends on it*,
+// walking real package.json dependency edges -- not turbo's own git-diff-based `--affected`,
+// which is unreliable from a linked worktree (vercel/turborepo#5217: it hardcodes the git index
+// path as <repo_root>/.git/index, which doesn't exist in a worktree). Revisit this hand-rolled
+// diff once that's fixed upstream -- this script may no longer be needed.
+//
+// The dots go *before* the name, not after: `<pkg>...` (dots after) walks the other direction,
+// toward <pkg>'s own dependencies, not its dependents -- confirmed against Turborepo's docs after
+// a real PR touching only packages/ui silently produced a filter covering @tabitha/ui's own
+// dependencies (eslint-config/tsconfig/types) while excluding every one of the 6 apps that
+// actually depend on it.
+export function build_turbo_filter_args(changed_package_names: string[]): string[] {
+	return changed_package_names.map(name => `--filter=...${name}`)
+}
+
 function skip_everything_plan(base_ref: string | undefined, changed_files: string[], reason: string): CiPlan {
 	return {
 		base_ref,
@@ -118,18 +135,13 @@ export async function build_ci_plan(): Promise<CiPlan> {
 		return skip_everything_plan(base_ref, changed_files, `docs-only change (${changed_files.length} markdown file(s))`)
 	}
 
-	// `--filter=<pkg>...` selects the package *and every workspace package that depends on it*,
-	// walking real package.json dependency edges -- not turbo's own git-diff-based `--affected`,
-	// which is unreliable from a linked worktree (vercel/turborepo#5217: it hardcodes the git
-	// index path as <repo_root>/.git/index, which doesn't exist in a worktree). Revisit this
-	// hand-rolled diff once that's fixed upstream -- this script may no longer be needed.
 	const changed_packages = await get_changed_workspace_packages(base_ref)
 	if (changed_packages.length === 0) {
 		return run_everything_plan(base_ref, changed_files, 'change does not map to a known workspace package -- running everything to be safe')
 	}
 
 	const changed_package_names = await Promise.all(changed_packages.map(get_package_npm_name))
-	const turbo_filter_args = changed_package_names.map(name => `--filter=${name}...`)
+	const turbo_filter_args = build_turbo_filter_args(changed_package_names)
 
 	return {
 		base_ref,
