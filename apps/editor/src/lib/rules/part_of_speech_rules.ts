@@ -518,7 +518,7 @@ const builtin_part_of_speech_rules: BuiltInRule[] = [
 		comment: '',
 		rule: {
 			trigger: token => token.type === TOKEN_TYPE.LOOKUP_WORD,
-			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp|_conj' } }),
+			context: create_context_filter({ 'followedby': { 'token': '_noun|_verb|_adj|_adv|_adp|_conj|_part|_particle' } }),
 			action: simple_rule_action(({ trigger_token, tokens, context_indexes }) => {
 				const part_of_speech_note = tokens[context_indexes[0]].token
 				const part_of_speech = new Map<string, PartOfSpeech>([
@@ -528,6 +528,8 @@ const builtin_part_of_speech_rules: BuiltInRule[] = [
 					['_adv', 'Adverb'],
 					['_adp', 'Adposition'],
 					['_conj', 'Conjunction'],
+					['_part', 'Particle'],
+					['_particle', 'Particle'],
 				]).get(part_of_speech_note)
 
 				if (!part_of_speech) {
