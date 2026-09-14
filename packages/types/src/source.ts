@@ -4,6 +4,8 @@ import type { ConceptKey, SourceEntityCategory, SourceStatus } from './core'
 //===============
 // Core types
 
+// Intentionally open: target encoding supports user-defined categories (an '&'-prefixed
+// code in the raw encoding), so there is no fixed set of target category names to enumerate.
 export type TargetEntityCategory = string
 export type EncodingEntityCategory = SourceEntityCategory | TargetEntityCategory
 
