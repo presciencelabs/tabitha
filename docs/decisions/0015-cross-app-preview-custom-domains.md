@@ -1,0 +1,50 @@
+# 0015: Cross-app preview calls via CI-deployed custom domains
+
+## Status
+
+Accepted
+
+## Context
+
+Raised while shipping PR #120 (issue #85, NIV phrase search): `apps/targets`' preview build needed to call `apps/sources`' preview build to exercise a new endpoint (`/lookup/encoded`) that didn't exist on production `sources` yet. This is a general shape of problem, not specific to that PR: any PR that changes the contract between two apps needs its own preview to call the other app's own preview, and this repo's Cloudflare Workers Builds setup had no way to do that.
+
+Every app's non-production Workers Builds trigger auto-generates a `*.workers.dev` preview URL per commit/branch, for free, with zero config. But a Worker cannot `fetch()` another Worker's `*.workers.dev` subdomain directly: Cloudflare returns **Error 1042**, a platform-wide restriction (not a bug or misconfiguration here) meant to prevent request loops between Workers. Production is unaffected because `sources.tabitha.bible`/`targets.tabitha.bible` are real Cloudflare **Custom Domains**, not `*.workers.dev` subdomains — [Cloudflare's own docs](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) state directly that "fetch requests sent on the same zone from one Worker to another Worker running on a Custom Domain will succeed without a service binding," and that the same call would fail if the target were a plain (non-custom-domain) route instead. It's the *target's* routing type that decides, not the caller's.
+
+### Path considered and abandoned: Service Bindings
+
+Cloudflare Service Bindings (`services` in `wrangler.jsonc`) are an internal Worker-to-Worker RPC mechanism that also bypasses Error 1042, and were the first design pursued here. Each app would gain a shared `env.preview` named environment (`wrangler deploy --env preview`, landing on a persistent `<app>-preview` Worker), with service bindings declared per environment (default → production Worker, `env.preview` → `<callee>-preview`) — the same pattern this repo already uses for D1 bindings, where the binding name in code never changes and only the `wrangler.jsonc` target differs per environment.
+
+This was implemented, then reverted, after a from-scratch review (run at high effort, verifying claims against wrangler's own source and live `--dry-run` output rather than trusting docs summaries) found two blockers:
+
+1. **Workers Builds silently redeploys production.** Cloudflare's Workers Builds runner injects `WRANGLER_CI_OVERRIDE_NAME`, set to the *connected* Worker's name (e.g. `sources`), and wrangler silently overrides whatever name is in `wrangler.jsonc` with it — confirmed by reproducing the exact warning (`Failed to match Worker name… Overriding using the CI provided Worker name`) via `WRANGLER_CI_OVERRIDE_NAME=sources bunx wrangler deploy --env preview --dry-run`. Since the existing non-production trigger runs on each app's *production* Workers Builds connection, switching its deploy command to `wrangler deploy --env preview` would deploy the `env.preview` config (no D1 binding, no production routes) **into the production Worker itself** on every PR push — an outage, not a preview. No CLI flag fixes this (`--name` loses to the env var). The only clean fix would be creating and connecting 6 new `<app>-preview` Workers to their own Workers Builds Git integration — a manual, one-time, no-public-API dashboard step per Worker (same limitation already documented in `tools/workers/README.md`'s "what's out of scope" section), doubling `tools/workers`' managed surface from 6 to 12 Workers.
+2. **`d1_databases` and `ratelimits` are non-inheritable**, confirmed directly against wrangler's own `notInheritable()` config-normalization source (not just docs), meaning every `env.preview` block silently lost its database and rate limiter unless explicitly redeclared — a real, independent bug in the first implementation, orthogonal to blocker 1.
+
+A follow-up review of moving the *deploy* (not the binding mechanism) to CI-driven `wrangler deploy` (e.g. GitHub Actions) confirmed it genuinely avoids blocker 1 — plain wrangler and `cloudflare/wrangler-action` never set `WRANGLER_CI_OVERRIDE_NAME`, that's Workers-Builds-specific — which raised the follow-up question this ADR actually answers: if CI controls the deploy anyway, does the preview Worker even need the free `*.workers.dev` URL, or can it get a real Custom Domain instead and skip service bindings entirely?
+
+## Decision
+
+**Deploy a shared preview stack via CI (GitHub Actions), one Custom Domain per app, no service bindings.**
+
+- Production is untouched: still deployed via Workers Builds, still on `wrangler versions upload` for non-production branches (today's free per-commit `*.workers.dev` preview, unaffected by any of this).
+- Every app gains an `env.preview` named environment in `wrangler.jsonc`, deployed by a new `deploy:preview` package.json script (`vite build --mode preview && wrangler deploy --env preview`) that a new GitHub Actions job (`preview_deploy` in `.github/workflows/ci.yml`) runs per-PR, scoped to changed apps via the same `turbo_filter` the existing `production_build` job already uses.
+- `env.preview.routes` points at a fixed, per-app Custom Domain — `<app>-preview.tabitha.bible` — instead of `routes: []`/inheriting production's domain. Cloudflare provisions the DNS record and certificate automatically on `wrangler deploy`, the same way production's six domains already work; no dashboard step, no wildcard DNS.
+- Cross-app calls go back to plain public HTTPS through `@tabitha/api-client`'s existing `create_*_client({ base_url, fetch })` — no service binding, no `bound_fetch` shim, no per-request client wiring in `hooks.server.ts`. Each app's `PUBLIC_*_API_HOST` is overridden for preview builds via a new, committed `.env.preview` (Vite's mode-based env loading merges it over `.env`), e.g. `sources`'s `.env.preview` points `PUBLIC_ONTOLOGY_API_HOST` at `https://ontology-preview.tabitha.bible`.
+- `env.preview` still redeclares `vars`/`r2_buckets`/`d1_databases`/`ratelimits`/`triggers` per app where the top level has them (all non-inheritable, or — for `triggers` — inheritable in a way that's actively wrong for preview: `ontology`'s `env.preview.triggers.crons` is explicitly emptied so the preview Worker doesn't also run the real `sync_complex_terms` cron against the shared production database).
+- This is one shared, persistent preview Worker per app, not one per PR/branch — the same trade-off the abandoned service-binding design already accepted: concurrent PRs touching the same app clobber the same preview slot, last push wins. A per-PR-namespaced alternative (`sources-pr-123`) was evaluated and rejected: `wrangler deploy` has no flags for service bindings/D1/ratelimits, so it would have needed the entire 6-app stack redeployed under matching PR-numbered names on every PR just to keep bindings resolvable, multiplying the secrets-bootstrap problem below by N instead of solving it.
+
+## Alternatives considered
+
+**Service bindings on Workers-Builds-deployed named environments.** The original design; abandoned per blocker 1 and blocker 2 above.
+
+**Service bindings on CI-deployed named environments** (keep the binding mechanism, just move *only* the deploy step to CI). Would have worked and fixed blocker 1, but was superseded once the Custom Domain question was asked: it deletes an entire abstraction layer (the `bound_fetch` shim, four `hooks.server.ts` handles, nine call-site conversions) for no remaining benefit, and — unlike service bindings, which are Worker-to-Worker only — Custom Domains also fix cross-app calls made from **client-side Svelte components** (a browser has no service binding access at all, so those calls would have kept silently hitting production even in preview, and were never subject to Error 1042 in the first place since a browser fetch isn't a Worker-to-Worker call). Custom Domains make preview use the exact same transport production uses, so a passing preview is stronger evidence production will also pass — service bindings made preview exercise a code path production doesn't.
+
+**Per-PR dynamic Worker names.** Rejected above (multiplies the bindings/secrets bootstrap problem, doesn't solve the cross-app case cleanly).
+
+## Consequences
+
+- A new GitHub Actions secret is required: an account-wide Cloudflare API token with `Workers Scripts:Edit` (Cloudflare has no per-Worker token scoping, so — like `CLOUDFLARE_API_TOKEN_DB_BACKUPS` before it — this token can technically edit production Workers too; store it as `CLOUDFLARE_API_TOKEN_PREVIEW_DEPLOY`). This is a manual, one-time setup step outside this repo (create the token in the Cloudflare dashboard, add it as a GitHub Actions secret).
+- Each of the 6 new `<app>-preview` Workers needs its own secrets bootstrapped once (`wrangler secret put --env preview`) for whatever the app reads via `$env/dynamic/private` or Auth.js — `copilot`'s `AI_GATEWAY_TOKEN`, `ontology`'s `AUTH_SECRET`/`GOOGLE_OAUTH_CLIENT_SECRET`, etc. `vars` (non-sensitive) are already handled via the `wrangler.jsonc` redeclaration above.
+- Preview builds now run on GitHub Actions minutes rather than Cloudflare's own build infrastructure, and lose Workers Builds' build cache — for preview builds only; production keeps both, untouched.
+- First deploy of each new `<app>-preview` Custom Domain waits on one-time certificate issuance (minutes). If a Custom Domain is ever removed, Cloudflare does not delete the associated Advanced Certificate automatically — manual cleanup.
+- Six preview Workers become reachable on official-looking `tabitha.bible` subdomains running unreviewed PR code against (per the shared-slot trade-off above) whatever was last pushed — worth a `noindex` header or a Cloudflare Access rule if that becomes a concern; not addressed by this decision.
+- `packages/cors`'s `PROD_ALLOWED_ORIGIN_PATTERN` (`\.tabitha\.bible$`) already matches `*-preview.tabitha.bible` — no CORS change needed.

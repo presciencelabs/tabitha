@@ -35,6 +35,25 @@
       ],
       "outputs": [".svelte-kit/**", "dist/**", "build/**"]
     },
+    "build:preview": {
+      "dependsOn": ["^build", "prepare"],
+      "inputs": [
+        "src/**",
+        "static/**",
+        "package.json",
+        "tsconfig.json",
+        "vite.config.*",
+        "svelte.config.*",
+        "wrangler.jsonc",
+        ".env.preview"
+      ],
+      "outputs": [".svelte-kit/**", "dist/**", "build/**"]
+    },
+    "deploy:preview": {
+      "dependsOn": ["build:preview"],
+      "cache": false,
+      "passThroughEnv": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"]
+    },
     "check": {
       "dependsOn": [
         "prepare"

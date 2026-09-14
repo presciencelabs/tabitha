@@ -17,6 +17,7 @@ This package contains the TBTA-to-TaBiThA ETL migration engine, reference datase
 
 ## 📦 Package Contents
 
+- **`raw/`**: Dated legacy TBTA SQLite exports and per-project TaBiThA outputs -- the ETL pipeline's inputs and intermediate artifacts.
 - **`snapshots/`**: Point-in-time SQL snapshot dumps used to seed local and production D1 databases.
 - **`migrations/`**: Bun/TypeScript ETL scripts that ingest legacy TBTA SQLite databases and transform them into normalized TaBiThA SQLite schemas.
 - **`data/`**: Linguistic data assets feeding the migration pipelines:
@@ -24,11 +25,38 @@ This package contains the TBTA-to-TaBiThA ETL migration engine, reference datase
   - `data/inflections/`: Inflection transformation scripts, source rules, and generated CSV tables.
   - `data/status/`: Historical and current verse translation status CSVs.
 
+`raw/` and `snapshots/` are gitignored -- their actual file contents live in the `db-migration-data` Cloudflare R2 bucket, not in git (see "R2-Backed File Storage" below). `manifest.json` (which *is* committed) tracks which dated files currently exist.
+
+---
+
+## ☁️ R2-Backed File Storage (`raw/` & `snapshots/`)
+
+These directories used to be tracked in Git LFS. They now live in the public `db-migration-data` R2 bucket instead, fetched on demand via `tools/databases/migrations/r2_sync.ts`:
+
+```bash
+cd tools/databases
+bun run r2:pull              # fetch everything listed in manifest.json (raw/ + snapshots/)
+bun run r2:pull -- raw       # fetch only raw/ (needed before running an ETL migration)
+bun run r2:pull -- snapshots # fetch only snapshots/ (what bun run db:load actually needs)
+```
+
+Reads are anonymous HTTPS GETs against the bucket's public `r2.dev` URL -- no Cloudflare credentials needed, and this is what CI and `bun run db:load` (at the repo root) already do automatically. Already-present local files are never re-fetched.
+
+After an ETL migration run produces new dated files in `raw/`/`snapshots/`, publish them:
+
+```bash
+cd tools/databases
+bun run r2:push   # uploads any local file not yet in manifest.json, and updates it
+bun run r2:prune  # deletes stale dated versions from R2, keeping the latest 2 per database
+```
+
+`r2:push` and `r2:prune` shell out to `wrangler`, so they need a Cloudflare API token with R2 write access (`wrangler login`, or `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` env vars -- same auth as `migrations/backup/index.ts`).
+
 ---
 
 ## 🔄 Running ETL Migrations
 
-All migration commands are run from within this package directory (`cd tools/databases`):
+All migration commands are run from within this package directory (`cd tools/databases`). Run `bun run r2:pull -- raw` first if you don't already have the latest `raw/` files locally -- the pipeline diffs new input against the previous dated version to decide what needs rebuilding.
 
 ### 1. Full Migration (Orchestrator)
 

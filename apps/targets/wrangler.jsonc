@@ -10,8 +10,7 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"workers_dev": true,
-	"preview_urls": true,
+	"workers_dev": false,
 	"observability": {
 		"enabled": true,
 		"head_sampling_rate": 1
@@ -62,5 +61,55 @@
 		// Necessary to support D1 withSession() bookmarking and edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
 		"mode": "off"
+	},
+	// Deployed via CI (not Workers Builds -- see docs/decisions/0015-cross-app-preview-custom-domains.md) to
+	// its own custom domain, so a preview build of a sibling app (e.g. sources-preview) can call
+	// this preview build over normal public HTTPS exactly like production does.
+	"env": {
+		"preview": {
+			// "routes" is otherwise inherited from the top level, which would attach the production
+			// custom domain (targets.tabitha.bible) to this separate preview Worker too.
+			"routes": [
+				{
+					"pattern": "targets-preview.tabitha.bible",
+					"custom_domain": true
+				}
+			],
+			// "d1_databases" and "ratelimits" are non-inheritable -- each must be redeclared here or
+			// this preview Worker silently loses its databases (every request throwing "database
+			// missing from platform arg") and its rate limiting.
+			"ratelimits": [
+				{
+					"name": "RATE_LIMITER",
+					"namespace_id": "3",
+					"simple": {
+						"limit": 60,
+						"period": 60
+					}
+				}
+			],
+			"d1_databases": [
+				{
+					"binding": "DB_Targets_English",
+					"database_name": "Targets_English_2026-07-31",
+					"database_id": "fa05d7a0-3241-465f-b47a-80898f86c1a9"
+				},
+				{
+					"binding": "DB_Targets_Swahili",
+					"database_name": "Targets_Swahili_2026-07-31",
+					"database_id": "ef94ce5e-a99c-40c2-ab55-402d17bf4326"
+				},
+				{
+					"binding": "DB_Targets_Indonesian",
+					"database_name": "Targets_Indonesian_2026-07-31",
+					"database_id": "3925008c-d42f-49b5-8552-88a1902dbe2c"
+				},
+				{
+					"binding": "DB_Targets_Tagalog",
+					"database_name": "Targets_Tagalog_2026-07-31",
+					"database_id": "8c9b556c-c434-48d3-a8bc-a2b48f336328"
+				}
+			]
+		}
 	}
 }

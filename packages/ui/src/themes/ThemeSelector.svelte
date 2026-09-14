@@ -29,10 +29,17 @@
 	>
 		<div class="flex flex-col gap-1.5 w-full">
 			{#each themes as theme}
-				<button
-					onclick={() => select_theme(theme)}
-					class="w-full p-0 overflow-hidden rounded-lg border border-base-300 text-left transition-all hover:scale-[1.01] {theme_state.current === theme ? 'ring-2 ring-primary' : ''}"
+				<div
+					class="relative w-full overflow-hidden rounded-lg border border-base-300 transition-all hover:scale-[1.01] has-checked:ring-2 has-checked:ring-primary"
 				>
+					<input
+						type="radio"
+						name="theme"
+						value={to_daisyui_theme(theme)}
+						checked={theme_state.current === theme}
+						onchange={() => select_theme(theme)}
+						class="theme-controller absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+					/>
 					<div data-theme={to_daisyui_theme(theme)} class="w-full bg-base-100 text-base-content px-4 py-2.5">
 						<div class="flex items-center justify-between gap-4">
 							<span class="text-sm font-semibold capitalize truncate">{theme}</span>
@@ -44,7 +51,7 @@
 							</div>
 						</div>
 					</div>
-				</button>
+				</div>
 			{/each}
 		</div>
 	</div>

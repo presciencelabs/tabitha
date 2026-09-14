@@ -10,8 +10,7 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"workers_dev": true,
-	"preview_urls": true,
+	"workers_dev": false,
 	"observability": {
 		"enabled": true,
 		"head_sampling_rate": 1
@@ -21,5 +20,21 @@
 			"pattern": "tabitha.bible",
 			"custom_domain": true
 		}
-	]
+	],
+	// Deployed via CI (not Workers Builds -- see docs/decisions/0015-cross-app-preview-custom-domains.md) to
+	// its own custom domain, so this fully-prerendered site's one dynamic route
+	// (remaining-work/+page.server.ts) can call sources-preview over normal public HTTPS exactly
+	// like production does.
+	"env": {
+		"preview": {
+			// "routes" is otherwise inherited from the top level, which would attach the production
+			// custom domain (tabitha.bible) to this separate preview Worker too.
+			"routes": [
+				{
+					"pattern": "www-preview.tabitha.bible",
+					"custom_domain": true
+				}
+			]
+		}
+	}
 }

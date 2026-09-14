@@ -68,7 +68,7 @@ function create_source_entity(overrides: Partial<EditorAnalyzedEntity> = {}): Ed
 		pairing_concept: null,
 		pairing_type: null,
 		...overrides,
-		noun_list_index: overrides.noun_list_index || overrides.category === 'Noun' ? '1' : null,
+		noun_list_index: overrides.noun_list_index || (overrides.category === 'Noun' ? '1' : null),
 	}
 }
 

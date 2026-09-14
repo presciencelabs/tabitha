@@ -227,15 +227,11 @@ async function stage_tbta_files(working_dir: string) {
 
 // True if `src` (a freshly-delivered raw file) differs from the current latest staged
 // raw/{name}_*.tbta.sqlite. Treated as changed (the safe default) when there's nothing to compare
-// against yet, or when the latest staged file is an unresolved git-lfs pointer stub.
+// against yet -- which also covers a manifest-listed raw/ file that hasn't been pulled from R2 yet
+// (see r2_sync.ts; run "bun run r2:pull -- raw" in tools/databases before migrating).
 async function is_changed(name: string, src: string): Promise<boolean> {
 	const latest = await resolve_dated_file('raw', name, date, 'tbta.sqlite', { silent: true })
 	if (!latest) return true
-
-	if (await is_unresolved_lfs_pointer(latest)) {
-		log.warn(`${basename(latest)} is an unresolved git-lfs pointer (run "git lfs pull" in tools/databases) -- skipping the unchanged-content check for ${name} and treating it as changed.`)
-		return true
-	}
 
 	return await content_hash(src) !== await content_hash(latest)
 }
@@ -246,13 +242,6 @@ async function content_hash(path: string): Promise<string> {
 		hasher.update(chunk)
 	}
 	return hasher.digest('hex')
-}
-
-const LFS_POINTER_PREFIX = 'version https://git-lfs.github.com/spec/v1'
-
-async function is_unresolved_lfs_pointer(path: string): Promise<boolean> {
-	const head = await Bun.file(path).slice(0, LFS_POINTER_PREFIX.length).text()
-	return head === LFS_POINTER_PREFIX
 }
 
 async function stage_win_files(working_dir: string) {

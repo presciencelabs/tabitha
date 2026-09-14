@@ -10,8 +10,7 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
-	"workers_dev": true,
-	"preview_urls": true,
+	"workers_dev": false,
 	"observability": {
 		"enabled": true,
 		"head_sampling_rate": 1
@@ -41,5 +40,37 @@
 		// Necessary to support edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
 		"mode": "off"
+	},
+	// Deployed via CI (not Workers Builds -- see docs/decisions/0015-cross-app-preview-custom-domains.md) to
+	// its own custom domain, so a preview build of a sibling app can call this preview build over
+	// normal public HTTPS exactly like production does.
+	"env": {
+		"preview": {
+			// "routes" is otherwise inherited from the top level, which would attach the production
+			// custom domain (editor.tabitha.bible) to this separate preview Worker too.
+			"routes": [
+				{
+					"pattern": "editor-preview.tabitha.bible",
+					"custom_domain": true
+				}
+			],
+			// "vars" and "ratelimits" are non-inheritable -- each must be redeclared here or this
+			// preview Worker silently loses its Gemini config and its rate limiting.
+			"vars": {
+				"CLOUDFLARE_ACCOUNT_ID": "8582954a9e4c6f0259c6236be794d7d3",
+				"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
+				"GEMINI_LOCATION": "global"
+			},
+			"ratelimits": [
+				{
+					"name": "RATE_LIMITER",
+					"namespace_id": "5",
+					"simple": {
+						"limit": 60,
+						"period": 60
+					}
+				}
+			]
+		}
 	}
 }
