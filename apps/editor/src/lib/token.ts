@@ -34,8 +34,8 @@ export function create_token(overrides: Partial<Token> & Pick<Token, 'token' | '
 		pairing_type: null,
 		pronoun: null,
 		applied_rules: [],
+		lookup_terms: overrides.type === TOKEN_TYPE.LOOKUP_WORD ? [overrides.token] : [],
 		...overrides,
-		lookup_terms: overrides.lookup_terms ?? overrides.type === TOKEN_TYPE.LOOKUP_WORD ? [overrides.token] : [],
 	}
 }
 
