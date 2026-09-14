@@ -135,6 +135,10 @@ Active Endpoints:`)
 						await stdio_output.write(chunk)
 					},
 				}))
+				// Killing an app tears its stdio out from under this pipe, which rejects. That's the
+				// expected path on shutdown, not a fault worth reporting, but left unhandled it
+				// surfaces as an unhandled rejection on the way out.
+				.catch(() => {})
 		}
 
 		create_subprocess_pipe(child.stdout, Bun.stdout)
@@ -143,14 +147,23 @@ Active Endpoints:`)
 		app_processes.set(app.id, child)
 	}
 
+	// Declared before terminate_apps rather than after: terminate_apps closes it, and can be
+	// reached from a child's onExit callback, so relying on that landing a tick later than this
+	// assignment would be an ordering dependency waiting to break.
+	const rl = createInterface({ input: process.stdin, output: process.stdout })
+
 	async function terminate_apps() {
 		console.log(`Terminating ${app_processes.size} apps...`)
 		terminating = true
 
 		for (const app_process of app_processes.values()) {
-			if (app_process.exitCode) {
+			// exitCode is null while running and a number (including 0) once exited, so this has to
+			// be an explicit null check -- a plain truthiness test reads a clean 0 exit as "still
+			// running". Note it only affects the log: the kill below still runs either way, because
+			// the `bun --filter` leader exiting doesn't guarantee its `vite dev` child went with it,
+			// and that surviving grandchild is exactly what this function exists to catch.
+			if (app_process.exitCode !== null) {
 				console.log(`process ${app_process.pid} already exited with exit code ${app_process.exitCode}`)
-				continue
 			}
 			if (is_win) {
 				// taskkill /t walks the actual process tree, killing `bun --filter`
@@ -175,7 +188,6 @@ Active Endpoints:`)
 		process.exit(0)
 	}
 
-	const rl = createInterface({ input: process.stdin, output: process.stdout })
 	rl.on('line', line => {
 		if (line === 'q') {
 			terminate_apps()
