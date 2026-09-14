@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
-import { filter_to_phrase, normalize_for_match, search_phrase, to_reference } from './search.server'
+import { search_phrase, to_reference } from './search.server'
 
 type Verse = {
 	bookId: string
@@ -28,47 +28,6 @@ function api_response({ verses, total, fums_token = 'tok' }: {
 		meta: { fumsToken: fums_token },
 	}))
 }
-
-describe('normalize_for_match', () => {
-	test.each([
-		['Kingdom Of Heaven', 'kingdom of heaven'],
-		['kingdom   of\n heaven', 'kingdom of heaven'],
-		['  kingdom of heaven  ', 'kingdom of heaven'],
-		['God’s word', "god's word"],
-		['“Repent”', '"repent"'],
-	])('folds %j to %j', (input, expected) => {
-		expect(normalize_for_match(input)).toBe(expected)
-	})
-})
-
-describe('filter_to_phrase', () => {
-	// The whole reason the post-filter exists: api.bible matches keywords in any order, so a
-	// query for "kingdom of heaven" also returns verses where the words are merely scattered.
-	test('keeps contiguous matches and drops scattered keyword hits', () => {
-		const contiguous = verse()
-		const scattered = verse({
-			bookId: 'MRK',
-			reference: 'Mark 11:10',
-			text: '“Blessed is the coming kingdom of our father David!” “Hosanna in the highest heaven!”',
-		})
-
-		const kept = filter_to_phrase({ verses: [contiguous, scattered], phrase: 'kingdom of heaven' })
-
-		expect(kept).toEqual([contiguous])
-	})
-
-	test('ignores case, spacing, and curly quotes when matching', () => {
-		const verses = [verse({ text: 'the  Kingdom Of Heaven is near' })]
-
-		expect(filter_to_phrase({ verses, phrase: 'kingdom of heaven' })).toHaveLength(1)
-	})
-
-	test('returns nothing when the phrase never appears contiguously', () => {
-		const verses = [verse({ text: 'heaven and the kingdom' })]
-
-		expect(filter_to_phrase({ verses, phrase: 'kingdom of heaven' })).toEqual([])
-	})
-})
 
 describe('to_reference', () => {
 	test.each([
@@ -126,12 +85,14 @@ describe('search_phrase', () => {
 		expect(result).toEqual({ kind: 'unavailable' })
 	})
 
-	test('returns phrase matches with the fums token, marked complete', async () => {
+	test('returns every verse api.bible matches, including scattered keyword hits, with the fums token, marked complete', async () => {
+		const scattered = verse({
+			bookId: 'MRK',
+			reference: 'Mark 11:10',
+			text: '“Blessed is the coming kingdom of our father David!” “Hosanna in the highest heaven!”',
+		})
 		const fetch_fn = vi.fn().mockResolvedValue(api_response({
-			verses: [
-				verse(),
-				verse({ bookId: 'MRK', reference: 'Mark 11:10', text: 'kingdom of our father David, heaven' }),
-			],
+			verses: [verse(), scattered],
 			total: 2,
 		}))
 
@@ -146,14 +107,20 @@ describe('search_phrase', () => {
 			kind: 'ok',
 			complete: true,
 			fums_token: 'tok',
-			matches: [{
-				reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '2' },
-				text: verse().text,
-			}],
+			matches: [
+				{
+					reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '2' },
+					text: verse().text,
+				},
+				{
+					reference: { type: 'Bible', id_primary: 'Mark', id_secondary: '11', id_tertiary: '10' },
+					text: scattered.text,
+				},
+			],
 		})
 	})
 
-	test('sends fuzziness=0 so typo-tolerance cannot loosen an exact phrase hunt', async () => {
+	test('sends fuzziness=0 so typo-tolerant keyword variants stay out of results', async () => {
 		const fetch_fn = vi.fn().mockResolvedValue(api_response({ verses: [], total: 0 }))
 
 		await search_phrase({ phrase: 'kingdom of heaven', project: 'English', api_key: 'key', fetch_fn })

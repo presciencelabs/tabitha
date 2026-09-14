@@ -16,9 +16,7 @@
 	let search_terms: string[] = $derived(data.search_terms || [])
 	let searched = $derived(search_terms.length > 0)
 	let search_regex = $derived(build_search_regex(search_terms))
-	// phrase mode's search_terms is the whole phrase as one element (e.g. ["it was good"]) --
-	// split into individual words so each concept in the encoding can be matched against them.
-	let highlight_terms = $derived(new Set(search_terms.flatMap(term => term.toLowerCase().split(/\s+/)).filter(Boolean)))
+	let highlight_terms = $derived(new Set(search_terms.map(term => term.toLowerCase())))
 
 	let selected_filters = $state<Record<string, string>>({})
 

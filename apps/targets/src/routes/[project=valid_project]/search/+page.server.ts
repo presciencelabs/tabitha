@@ -29,7 +29,9 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 			sources_api_host: PUBLIC_SOURCES_API_HOST,
 		})
 
-		return { results: [], search_terms: [q], phrase_results, return_to }
+		// individual words, matching text-mode's shape below, so both the verse-text and
+		// encoding-concept highlighting can treat every match the same way
+		return { results: [], search_terms: q.split(/\s+/).filter(Boolean), phrase_results, return_to }
 	}
 
 	const parsed_q = parse_search_query(q)

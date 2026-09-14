@@ -13,10 +13,8 @@ const MAX_PAGE_SIZE = 200
 /**
  * How many pages we're willing to walk before giving up and reporting an incomplete result.
  *
- * API.Bible has no exact-phrase search -- it matches all the keywords in any order -- so a
- * common phrase can return far more keyword hits than real phrase matches, and every one of
- * them has to be fetched before it can be filtered out. This bounds that cost; the UI tells
- * the user when a search hit the ceiling.
+ * A common set of words can match thousands of verses; this bounds that cost. The UI tells the
+ * user when a search hit the ceiling.
  */
 const MAX_PAGES = 5
 
@@ -47,35 +45,6 @@ type ApiBibleSearchResponse = {
 	meta?: {
 		fumsToken?: string
 	}
-}
-
-/**
- * Folds away the differences that shouldn't defeat a phrase match: case, runs of whitespace,
- * and the curly quotes publishers use where a person types straight ones.
- */
-export function normalize_for_match(text: string): string {
-	return text
-		.toLowerCase()
-		.replaceAll(/[‘’]/g, "'")
-		.replaceAll(/[“”]/g, '"')
-		.replaceAll(/\s+/g, ' ')
-		.trim()
-}
-
-/**
- * Keeps only the verses that contain the phrase as written, in order.
- *
- * API.Bible's search is keyword-based, so a query for "kingdom of heaven" also returns verses
- * where those words are merely scattered about ("...the coming kingdom of our father David!"
- * "Hosanna in the highest heaven!"). Contiguity is ours to enforce.
- */
-export function filter_to_phrase({ verses, phrase }: {
-	verses: ApiBibleVerse[]
-	phrase: string
-}): ApiBibleVerse[] {
-	const needle = normalize_for_match(phrase)
-
-	return verses.filter(verse => normalize_for_match(verse.text).includes(needle))
 }
 
 /**
@@ -114,7 +83,7 @@ function build_search_url({ bible_id, phrase, offset }: {
 		query: phrase,
 		limit: MAX_PAGE_SIZE.toString(),
 		offset: offset.toString(),
-		// their default is AUTO, which tolerates typos -- wrong for hunting an exact phrase
+		// their default is AUTO, which tolerates typos -- we want the words the user actually typed
 		fuzziness: '0',
 		'fums-version': '3',
 	})
@@ -123,7 +92,8 @@ function build_search_url({ bible_id, phrase, offset }: {
 }
 
 /**
- * Finds the verses containing `phrase` in the Bible that backs `project`.
+ * Finds the verses containing every word of `phrase` (any order, any distance apart -- whatever
+ * API.Bible itself considers a match) in the Bible that backs `project`.
  *
  * Returns a discriminated outcome rather than throwing: a project we have no Bible for, and an
  * upstream that's unreachable or unconfigured, are both ordinary things for the page to explain
@@ -165,7 +135,7 @@ export async function search_phrase({ phrase, project, api_key, fetch_fn = fetch
 		total = body.data?.total ?? 0
 		pages_read += 1
 
-		for (const verse of filter_to_phrase({ verses, phrase })) {
+		for (const verse of verses) {
 			const reference = to_reference(verse)
 
 			if (reference) {
