@@ -77,5 +77,11 @@ export function migrate_source_texts(tabitha_sources_db: Database, tbta_sources_
 			log.finish_progress()
 			log.info(`${valid_rows.length.toLocaleString()} rows inserted from ${tbta_table_name}`)
 		})
+
+		// close(true) rather than close(): the default is sqlite3_close_v2, which only releases the
+		// connection once every statement (including the ones .query() caches) is finalized or
+		// garbage collected. Windows holds a real file lock until that actually happens, so a
+		// deferred release can still block deleting this file. true finalizes and closes immediately.
+		tbta_db.close(true)
 	})
 }

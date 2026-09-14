@@ -90,6 +90,10 @@ export async function run_dev_menu() {
 	}
 
 	const rl = createInterface({ input: process.stdin, output: process.stdout })
+	process.on('SIGINT', () => {
+		rl.close()
+		process.exit(0)
+	})
 
 	try {
 		print_menu()
