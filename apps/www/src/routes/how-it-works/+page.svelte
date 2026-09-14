@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>How does it work? — TaBiThA</title>
+	<meta
+		name="description"
+		content="Five layers stand between a source text and a working draft in your language — each one built to hold onto meaning, not just words."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">For translators</div>

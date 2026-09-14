@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>One verse, every step — TaBiThA</title>
+	<meta
+		name="description"
+		content="Acts 10:9, traced through the whole pipeline — the people who touch it and the shape the text takes at each stage."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">Worked example</div>

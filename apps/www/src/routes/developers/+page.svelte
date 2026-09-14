@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>Developers — TaBiThA</title>
+	<meta
+		name="description"
+		content="Everything is one open-source monorepo, and most of the data is queryable without an API key."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">For developers</div>

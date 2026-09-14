@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>TaBiThA — Bible translation, generated with you in the room</title>
+	<meta
+		name="description"
+		content="Software that turns decades of linguistic research into a working translation your team can trust — then hands it back to you to make it sing."
+	/>
+</svelte:head>
+
 <h1>Bible translation, generated with you in the room.</h1>
 <p class="hero-dek">
 	Software that turns decades of linguistic research into a working translation your team can

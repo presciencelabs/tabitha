@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>About — TaBiThA</title>
+	<meta
+		name="description"
+		content="Built by linguists, for the languages that don't yet have a Bible translation of their own."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">The project</div>
