@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
-import { search_phrase, to_reference } from './search.server'
+import { extract_exact_phrase, search_phrase, to_reference } from './search.server'
 
 type Verse = {
 	bookId: string
@@ -50,6 +50,26 @@ describe('to_reference', () => {
 
 	test('returns null when no chapter:verse can be read from the reference', () => {
 		expect(to_reference(verse({ reference: 'Matthew' }))).toBeNull()
+	})
+})
+
+describe('extract_exact_phrase', () => {
+	test.each([
+		['"kingdom of heaven"', 'kingdom of heaven'],
+		['“kingdom of heaven”', 'kingdom of heaven'],
+		['  "kingdom of heaven"  ', 'kingdom of heaven'],
+	])('unwraps %j to %j', (input, expected) => {
+		expect(extract_exact_phrase(input)).toBe(expected)
+	})
+
+	test.each([
+		['kingdom of heaven'],
+		['"kingdom of heaven'],
+		['kingdom of heaven"'],
+		['""'],
+		['God’s word'],
+	])('returns null for %j', (input) => {
+		expect(extract_exact_phrase(input)).toBeNull()
 	})
 })
 
@@ -118,6 +138,51 @@ describe('search_phrase', () => {
 				},
 			],
 		})
+	})
+
+	test('a quoted phrase keeps only verses containing it literally, in order', async () => {
+		const scattered = verse({
+			bookId: 'MRK',
+			reference: 'Mark 11:10',
+			text: '“Blessed is the coming kingdom of our father David!” “Hosanna in the highest heaven!”',
+		})
+		const fetch_fn = vi.fn().mockResolvedValue(api_response({
+			verses: [verse(), scattered],
+			total: 2,
+		}))
+
+		const result = await search_phrase({
+			phrase: '"kingdom of heaven"',
+			project: 'English',
+			api_key: 'key',
+			fetch_fn,
+		})
+
+		expect(result).toMatchObject({
+			matches: [{
+				reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '2' },
+			}],
+		})
+
+		// the quotes are ours to enforce, not API.Bible's -- it still ANDs the bare words
+		const [url] = fetch_fn.mock.calls[0]
+		expect(url).not.toContain('%22')
+	})
+
+	test('ignores case, spacing, and curly quotes in a quoted phrase', async () => {
+		const fetch_fn = vi.fn().mockResolvedValue(api_response({
+			verses: [verse({ text: 'the  Kingdom Of Heaven is near' })],
+			total: 1,
+		}))
+
+		const result = await search_phrase({
+			phrase: '“Kingdom   of\nHeaven”',
+			project: 'English',
+			api_key: 'key',
+			fetch_fn,
+		})
+
+		expect(result).toMatchObject({ matches: [{ text: 'the  Kingdom Of Heaven is near' }] })
 	})
 
 	test('sends fuzziness=0 so typo-tolerant keyword variants stay out of results', async () => {

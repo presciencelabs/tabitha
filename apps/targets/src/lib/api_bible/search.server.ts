@@ -37,6 +37,44 @@ type ApiBibleVerse = {
 	text: string
 }
 
+/**
+ * Straight and curly double-quote pairs a phrase can be wrapped in to ask for an exact match,
+ * mirroring how a browser or OS autocorrects a typed `"` into a curly one.
+ */
+const QUOTE_PAIRS: [string, string][] = [
+	['"', '"'],
+	['“', '”'],
+]
+
+/**
+ * Pulls the inner text out of a quote-wrapped phrase (Google-style exact-phrase syntax), or
+ * `null` if `phrase` isn't wrapped in one of `QUOTE_PAIRS`.
+ */
+export function extract_exact_phrase(phrase: string): string | null {
+	const trimmed = phrase.trim()
+
+	for (const [open, close] of QUOTE_PAIRS) {
+		if (trimmed.length > open.length + close.length && trimmed.startsWith(open) && trimmed.endsWith(close)) {
+			return trimmed.slice(open.length, -close.length)
+		}
+	}
+
+	return null
+}
+
+/**
+ * Folds away the differences that shouldn't defeat a phrase match: case, runs of whitespace,
+ * and the curly quotes publishers use where a person types straight ones.
+ */
+export function normalize_for_match(text: string): string {
+	return text
+		.toLowerCase()
+		.replaceAll(/[‘’]/g, "'")
+		.replaceAll(/[“”]/g, '"')
+		.replaceAll(/\s+/g, ' ')
+		.trim()
+}
+
 type ApiBibleSearchResponse = {
 	data?: {
 		total?: number
@@ -92,8 +130,14 @@ function build_search_url({ bible_id, phrase, offset }: {
 }
 
 /**
- * Finds the verses containing every word of `phrase` (any order, any distance apart -- whatever
- * API.Bible itself considers a match) in the Bible that backs `project`.
+ * Finds the verses matching `phrase` in the Bible that backs `project`.
+ *
+ * Quote-wrapping `phrase` (`"kingdom of heaven"`, straight or curly) asks for an exact match:
+ * API.Bible's own quote handling still lets scattered near-misses through (verified against a
+ * real search -- 14 of 45 "quoted" results didn't contain the phrase as literally typed), so
+ * quotes are stripped before the request and the exact match is enforced ourselves against
+ * whatever API.Bible returns. Unquoted, every word just needs to be present somewhere in the
+ * verse, any order, any distance apart -- whatever API.Bible itself considers a match.
  *
  * Returns a discriminated outcome rather than throwing: a project we have no Bible for, and an
  * upstream that's unreachable or unconfigured, are both ordinary things for the page to explain
@@ -115,13 +159,17 @@ export async function search_phrase({ phrase, project, api_key, fetch_fn = fetch
 		return { kind: 'unavailable' }
 	}
 
+	const exact_phrase = extract_exact_phrase(phrase)
+	const query_phrase = exact_phrase ?? phrase
+	const needle = exact_phrase ? normalize_for_match(exact_phrase) : null
+
 	const matches: PhraseMatch[] = []
 	let fums_token: string | null = null
 	let total = 0
 	let pages_read = 0
 
 	while (pages_read < MAX_PAGES) {
-		const url = build_search_url({ bible_id, phrase, offset: pages_read * MAX_PAGE_SIZE })
+		const url = build_search_url({ bible_id, phrase: query_phrase, offset: pages_read * MAX_PAGE_SIZE })
 		const response = await fetch_fn(url, { headers: { 'api-key': api_key } })
 
 		if (!response.ok) {
@@ -136,6 +184,10 @@ export async function search_phrase({ phrase, project, api_key, fetch_fn = fetch
 		pages_read += 1
 
 		for (const verse of verses) {
+			if (needle && !normalize_for_match(verse.text).includes(needle)) {
+				continue
+			}
+
 			const reference = to_reference(verse)
 
 			if (reference) {

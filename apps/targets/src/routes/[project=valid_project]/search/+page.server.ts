@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
+import { extract_exact_phrase } from '$lib/api_bible/search.server'
 import { parse_search_query, search_text } from '$lib/server/search'
 import { run_phrase_mode } from '$lib/server/phrase_mode'
 import { MODE } from '$lib/search/modes'
@@ -30,8 +31,11 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 		})
 
 		// individual words, matching text-mode's shape below, so both the verse-text and
-		// encoding-concept highlighting can treat every match the same way
-		return { results: [], search_terms: q.split(/\s+/).filter(Boolean), phrase_results, return_to }
+		// encoding-concept highlighting can treat every match the same way -- stripped of any
+		// exact-phrase quoting, which isn't part of the words to highlight
+		const highlight_words = (extract_exact_phrase(q) ?? q).split(/\s+/).filter(Boolean)
+
+		return { results: [], search_terms: highlight_words, phrase_results, return_to }
 	}
 
 	const parsed_q = parse_search_query(q)
