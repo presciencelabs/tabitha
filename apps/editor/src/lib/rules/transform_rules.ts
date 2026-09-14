@@ -728,8 +728,8 @@ const builtin_transform_rules: BuiltInRule[] = [
 		rule: {
 			trigger: create_token_filter({ 'tag': { 'clause_type': 'relative_clause' } }),
 			context: create_context_filter({}),
-			action: simple_rule_action(({ trigger_token }) => {
-				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_relative_clause': 'true' } })
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_relative_clause': 'true' }, rule_id })
 			}),
 		},
 	},
@@ -739,8 +739,8 @@ const builtin_transform_rules: BuiltInRule[] = [
 		rule: {
 			trigger: create_token_filter({ 'type': TOKEN_TYPE.CLAUSE, 'tag': 'interrogative' }),
 			context: create_context_filter({}),
-			action: simple_rule_action(({ trigger_token }) => {
-				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_interrogative': 'true' } })
+			action: simple_rule_action(({ trigger_token, rule_id }) => {
+				tag_nested_clauses({ clause_token: trigger_token, tag_to_set: { 'in_interrogative': 'true' }, rule_id })
 			}),
 		},
 	},
@@ -764,12 +764,12 @@ const builtin_transform_rules: BuiltInRule[] = [
 	},
 ]
 
-function tag_nested_clauses({ clause_token, tag_to_set }: { clause_token: Token; tag_to_set: Tag }) {
+function tag_nested_clauses({ clause_token, tag_to_set, rule_id }: { clause_token: Token; tag_to_set: Tag, rule_id: string }) {
 	const quote_begin_filter = create_token_filter({ 'tag': { 'clause_type': 'patient_clause_quote_begin' } })
 
 	function tag_clause_tokens(clause_tokens: Token[]) {
 		// the first token is always the opening bracket. this is what we want to tag
-		add_tag_to_token({ token: clause_tokens[0], tag: tag_to_set })
+		add_tag_to_token({ token: clause_tokens[0], tag: tag_to_set, rule_id })
 
 		for (let i = 0; i < clause_tokens.length; i++) {
 			const token = clause_tokens[i]
