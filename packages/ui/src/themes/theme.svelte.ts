@@ -1,4 +1,4 @@
-import { themes, to_daisyui_theme, type Theme } from './themes'
+import { themes, type Theme } from './themes'
 
 const THEME_KEY = 'theme'
 
@@ -16,7 +16,6 @@ class ThemeState {
 		this.current = new_theme
 		if (typeof window !== 'undefined') {
 			localStorage.setItem(THEME_KEY, new_theme)
-			document.documentElement.setAttribute('data-theme', to_daisyui_theme(new_theme))
 		}
 	}
 }
@@ -24,11 +23,4 @@ class ThemeState {
 export const theme_state = new ThemeState()
 export function set_theme(theme: string) {
 	theme_state.set(theme)
-}
-
-// Apply the resolved theme as soon as this module loads in the browser, so every
-// consuming app gets the data-theme attribute set for free just by importing
-// theme_state, set_theme, ThemeSelector, or Footer — no per-app wiring required.
-if (typeof document !== 'undefined') {
-	document.documentElement.setAttribute('data-theme', to_daisyui_theme(theme_state.current))
 }
