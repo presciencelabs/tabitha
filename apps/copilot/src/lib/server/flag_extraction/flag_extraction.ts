@@ -13,6 +13,7 @@ const all_flag_extractions: FlagExtractionRule[] = [
 ]
 
 export function extract_flags(entities: CopilotEncodingEntity[]): CopilotEncodingFlag[] {
+	// Synthetic wrapper for tree traversal, not a real encoding entity -- 'Root' is not a domain category.
 	const root_node: CopilotEncodingEntity = {
 		category: 'Root',
 		children: entities,
