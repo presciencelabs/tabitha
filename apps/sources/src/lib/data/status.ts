@@ -70,7 +70,7 @@ export async function get_chapter_status({ db, reference }: { db: D1Database, re
 
 	const prepared_statement = db.prepare(sql).bind(reference.type, reference.id_primary, reference.id_secondary!.toString())
 	const result = await prepared_statement.first<{ status: SourceStatus }>()
-	
+
 	return {
 		reference,
 		status: result?.status ?? 'Not Started',

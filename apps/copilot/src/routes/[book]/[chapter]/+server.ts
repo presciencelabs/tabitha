@@ -1,4 +1,5 @@
-import { default_settings, fetch_verses_for_chapter, usfm_book_codes } from '$lib/lookups'
+import { default_settings, fetch_verses_for_chapter } from '$lib/lookups'
+import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
 import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
 import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
@@ -26,7 +27,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 		},
 	}
 
-	const book_code = usfm_book_codes[book] ?? book
+	const book_code = USFM_BOOK_CODES[book] ?? book
 
 	const last_verse = await fetch_verses_for_chapter({ book, chapter: chapter_int })
 	if (!last_verse) {

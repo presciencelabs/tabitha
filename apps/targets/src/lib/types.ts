@@ -1,4 +1,4 @@
-import type { SourceEntityCategory, PartOfSpeech } from '@tabitha/types'
+import type { Reference, SourceEntityCategory, PartOfSpeech } from '@tabitha/types'
 
 //===============
 // UI-related
@@ -59,4 +59,38 @@ export type OrTerm = {
 
 export type ParsedSearchQuery = {
 	or_terms: OrTerm[]
+}
+
+//===============
+// phrase search (api.bible)
+
+export type PhraseMatch = {
+	reference: Reference
+	text: string
+}
+
+export type PhraseSearchOutcome =
+	| { kind: 'ok', matches: PhraseMatch[], complete: boolean, fums_token: string | null }
+	| { kind: 'unsupported_project', project: string }
+	| { kind: 'unavailable' }
+
+/**
+ * A phrase match confirmed to have a semantic encoding worth showing. Structurally identical to
+ * `PhraseMatch` -- kept as its own name because the two mean different things: `PhraseMatch` is
+ * raw output from the scripture search, before we've checked whether there's a structure behind
+ * it; `PhraseSearchHit` is what's actually worth showing someone hunting for an exemplar.
+ */
+export type PhraseSearchHit = {
+	reference: Reference
+	/** the matching verse, as the scripture API returned it */
+	text: string
+}
+
+export type PhraseSearchResults = {
+	hits: PhraseSearchHit[]
+	/** false when the page budget was spent before the result set ran out */
+	complete: boolean
+	/** api.bible's usage-tracking token, reported once the verses are actually rendered */
+	fums_token: string | null
+	notice: 'unsupported_project' | 'unavailable' | null
 }
