@@ -68,7 +68,7 @@ describe('extract_exact_phrase', () => {
 		['kingdom of heaven"'],
 		['""'],
 		['God’s word'],
-	])('returns null for %j', (input) => {
+	])('returns null for %j', input => {
 		expect(extract_exact_phrase(input)).toBeNull()
 	})
 })
