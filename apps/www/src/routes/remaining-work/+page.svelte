@@ -12,6 +12,14 @@
 	let ready_count = $derived(data.status_counts.find(s => s.status === 'Ready to Translate')?.count ?? 0)
 </script>
 
+<svelte:head>
+	<title>Remaining work — TaBiThA</title>
+	<meta
+		name="description"
+		content="No system like this is ever finished — it grows one book, one feature, one target language at a time. Here's where things actually stand."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">The project</div>

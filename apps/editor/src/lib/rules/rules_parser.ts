@@ -407,6 +407,7 @@ const SKIP_GROUPS = new Map<SkipGroup, SkipJsonSingle[]>([
 	['vp_modifiers', [
 		{ 'tag': ['verb_polarity|modal|auxiliary', { 'syntax': 'infinitive|gerundifier' }] },
 		'advp',
+		{ 'category': 'Particle', 'stem': 'please' },
 	]],
 	['vp', [
 		'vp_modifiers',

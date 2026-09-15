@@ -753,7 +753,7 @@ const builtin_checker_rules: BuiltInRule[] = [
 			context: create_context_filter({}),
 			action: message_set_action(function* () {
 				yield { warning: 'The editor cannot determine which part of speech this word is, so some errors and warnings within the same clause may not be accurate.' }
-				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after '{token}' so the editor can check the syntax more accurately." }
+				yield { suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', '_conj', or '_part' after '{token}' so the editor can check the syntax more accurately." }
 			}),
 		},
 	},
@@ -916,7 +916,7 @@ function* check_ontology_status(token: Token): Generator<MessageInfo, void, unkn
 	if (!top_result) {
 		yield { token_to_flag: token, warning: "'{token}' is not recognized. Consult the How-To document or consider using a different word." }
 		yield { token_to_flag: token, warning: 'WARNING: Because this word is not recognized, errors and warnings within the same clause may not be accurate.' }
-		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', or '_conj' after the unknown word so the editor can check the syntax more accurately." }
+		yield { token_to_flag: token, suggest: "Add '_noun', '_verb', '_adj', '_adv', '_adp', '_conj', or '_part' after the unknown word so the editor can check the syntax more accurately." }
 
 	} else if (top_result.ontology_status === 'approved') {
 		yield { token_to_flag: token, info: 'The {category} \'{stem}\' will be added to the Ontology in a future update. Consult the How-To document for more info.' }

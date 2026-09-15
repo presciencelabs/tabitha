@@ -1,9 +1,17 @@
 <script lang="ts">
 	import '$lib/app.css'
 	import type { Snippet } from 'svelte'
+	import { page } from '$app/state'
 
 	let { children }: { children?: Snippet } = $props()
+
+	const canonicalUrl = $derived(new URL(page.url.pathname, 'https://tabitha.bible').href)
 </script>
+
+<svelte:head>
+	<link rel="canonical" href={canonicalUrl} />
+	<meta property="og:url" content={canonicalUrl} />
+</svelte:head>
 
 <div class="site">
 	<header class="site-header">

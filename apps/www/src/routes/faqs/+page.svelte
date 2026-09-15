@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>FAQs — TaBiThA</title>
+	<meta
+		name="description"
+		content="The questions that come up most, from translation teams and engineers alike."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">The project</div>

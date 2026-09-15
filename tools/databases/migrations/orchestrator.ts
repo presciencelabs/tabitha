@@ -217,6 +217,9 @@ async function stage_tbta_files(working_dir: string) {
 				throw new Error(`Could not derive minor version from "${row.version}".`)
 			}
 
+			// close(true) releases immediately; plain close() defers until statements are finalized
+			// or GC'd, which on Windows can keep a file lock alive (see migrate_source_texts.ts).
+			ontology.close(true)
 			return `./raw/Ontology_${minor_version}_${date}.tabitha.sqlite`
 		}
 	}

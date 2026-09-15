@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>Workflows — TaBiThA</title>
+	<meta
+		name="description"
+		content="The same pipeline runs underneath either way — what changes is how much of the analysis work a person has to do by hand first."
+	/>
+</svelte:head>
+
 <a href="/" class="back-link">← Home</a>
 
 <div class="page-kicker">For translators</div>
