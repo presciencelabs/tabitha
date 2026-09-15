@@ -15,16 +15,15 @@
 	let pairing_token = $derived(token.pairing!)	// the pairing will always be non-null at this point
 </script>
 
-<div class="join">
-	<Message {token} />
-	<Word {token} classes="join-item" />
+<!--This is assumed to already be within a div with the class 'join'-->
+<Message {token} />
+<Word {token} classes="join-item" />
 
-	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">
-		<div class="tooltip" data-tip={token.pairing_type}>
-			{token.pairing_type === 'dynamic-literal' ? '|' : '/'}
-		</div>
-	</TokenDisplay>
+<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">
+	<div class="tooltip" data-tip={token.pairing_type}>
+		{token.pairing_type === 'dynamic-literal' ? '|' : '/'}
+	</div>
+</TokenDisplay>
 
-	<Message token={pairing_token} />
-	<Word token={pairing_token} classes="join-item" />
-</div>
+<Message token={pairing_token} />
+<Word token={pairing_token} classes="join-item" />

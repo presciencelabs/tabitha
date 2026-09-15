@@ -102,7 +102,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid pronoun referents', () => {
-		const INPUT = "you(Paul) abc(test) your(Paul's) your(son-C) your(son's-C) your(sons'-C)] you(Paul)."
+		const INPUT = "you(Paul) abc(test) your(Paul's) your(son-C) your(son's-C) your(sons'-C)] you(Paul) you(follower/disciple) you(follower|disciple)."
 
 		const EXPECTED_OUTPUT = [
 			create_pronoun_token('you', create_word_token('Paul')),
@@ -113,6 +113,8 @@ describe('tokenize_input', () => {
 			create_pronoun_token('your', create_word_token('sons\'-C', { lookup_term: 'sons', sense: 'C' })),
 			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
 			create_pronoun_token('you', create_word_token('Paul')),
+			create_pronoun_token('you', create_pairing(create_word_token('follower'), create_word_token('disciple'), 'simple-complex')),
+			create_pronoun_token('you', create_pairing(create_word_token('follower'), create_word_token('disciple'), 'dynamic-literal')),
 			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
 		]
 
@@ -352,6 +354,26 @@ describe('tokenize_input', () => {
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
 	})
 
+	test('valid unit pairing', () => {
+		const INPUT = "5/10 .5/2 5/2.5 .5/2.5 2.5/5. [2/2.5.]"
+
+		// these pairings are parsed as 'simple-complex', and determined to be 'metric-biblical' at a later stage
+		const EXPECTED_OUTPUT = [
+			create_pairing(create_word_token('5'), create_word_token('10'), 'simple-complex'),
+			create_pairing(create_word_token('.5'), create_word_token('2'), 'simple-complex'),
+			create_pairing(create_word_token('5'), create_word_token('2.5'), 'simple-complex'),
+			create_pairing(create_word_token('.5'), create_word_token('2.5'), 'simple-complex'),
+			create_pairing(create_word_token('2.5'), create_word_token('5'), 'simple-complex'),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: '[', type: TOKEN_TYPE.PUNCTUATION }),
+			create_pairing(create_word_token('2'), create_word_token('2.5'), 'simple-complex'),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+			create_token({ token: ']', type: TOKEN_TYPE.PUNCTUATION }),
+		]
+
+		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
 	test('valid complex pairing', () => {
 		const INPUT = "simple/complex simple's/complex's simples'/complexs' simples'-A/complexs' simple-A/complex-B. [simple/complex]"
 
@@ -387,7 +409,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid complex pairing', () => {
-		const INPUT = '/complex simple/ / simple//complex simple/.complex simple./complex'
+		const INPUT = '/complex simple/ / simple//complex simple/.complex simple./complex you(simple/)'
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('/complex', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
@@ -398,6 +420,7 @@ describe('tokenize_input', () => {
 			create_error_token('.complex', ERRORS.INVALID_TOKEN_END('.')),
 			create_word_token('simple'),
 			create_error_token('./complex', ERRORS.INVALID_TOKEN_END('.')),
+			create_error_token('you(simple/)', ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX),
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)

@@ -33,12 +33,12 @@ export function textify(sentences: Sentence[]): string {
 	function textify_token(token: Token): string {
 		if (token.sub_tokens.length) {
 			return textify_tokens(token.sub_tokens)
+		} else if (token.pronoun) {
+			return textify_token(token.pronoun)
 		} else if (token.pairing && token.pairing_type === 'simple-complex') {
 			// Only show the complex word
 			return textify_lookup_word(token.pairing)
 			// No special handling for literal pairings; handled elsewhere
-		} else if (token.pronoun) {
-			return textify_token(token.pronoun)
 		} else if (token.type === TOKEN_TYPE.ADDED) {
 			return ''
 		} else if (token.type === TOKEN_TYPE.PHRASE) {
