@@ -7,6 +7,7 @@ const NO_SPACE_BEFORE_OPENING_BRACKET = 'Missing a space before [.'
 
 const INVALID_COMPLEX_PAIRING_SYNTAX = 'Complex pairings should have the form simple/complex, e.g., follower/disciple.'
 const INVALID_LITERAL_PAIRING_SYNTAX = 'Literal pairings should have the form dynamic|literal, e.g., reward|prize.'
+const INVALID_PRONOUN_REFERENT_SYNTAX = 'Pronoun referents should have the form pronoun(referent), e.g., you(follower).'
 const UNRECOGNIZED_CLAUSE_NOTATION = 'This clause notation is not recognized.' // TODO show list of valid notations
 const NO_SPACE_BEFORE_UNDERSCORE = 'Notes notation should have a space before the underscore, e.g., ⎕_implicit.'
 const UNRECOGNIZED_CHAR = 'Unrecognized character.'
@@ -33,6 +34,7 @@ export const ERRORS = {
 	NO_SPACE_BEFORE_UNDERSCORE,
 	INVALID_COMPLEX_PAIRING_SYNTAX,
 	INVALID_LITERAL_PAIRING_SYNTAX,
+	INVALID_PRONOUN_REFERENT_SYNTAX,
 	UNRECOGNIZED_CHAR,
 	INVALID_TOKEN_END,
 	WORD_LEVEL_TOO_HIGH,

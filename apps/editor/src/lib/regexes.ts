@@ -33,6 +33,7 @@ const CLAUSE_ENDING_PUNCTUATION = /[\]"]/
 const TOKEN_END_BOUNDARY = /[\s.,!?:"\]]/
 const WORD_START_CHAR = /[a-zA-Z0-9-]/
 const WORD_CHAR = /[a-zA-Z0-9-']/
+const DECIMAL_START_CHARS = /\.\d/
 const STARTS_LOWERCASE = /^[a-z.]/	// include '.' for cases like 'half'->'.5'
 
 const OR = ({ regex1, regex2 }: { regex1: RegExp, regex2: RegExp }): RegExp => new RegExp(`${regex1.source}|${regex2.source}`)
@@ -54,6 +55,7 @@ export const REGEXES = {
 	PIPE,
 	TOKEN_END_BOUNDARY,
 	WORD_START_CHAR,
+	DECIMAL_START_CHARS,
 	WORD_CHAR,
 	STARTS_LOWERCASE,
 	OR,
