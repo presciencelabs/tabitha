@@ -12,13 +12,9 @@
 </script>
 
 {#if token.pronoun}
-	<div class="join">
-		<PronounReferent {token} />
-	</div>
+	<PronounReferent {token} />
 {:else if token.pairing}
-	<div class="join">
-		<Pairing {token} />
-	</div>
+	<Pairing {token} />
 {:else}
 	<SingleToken {token} />
 {/if}

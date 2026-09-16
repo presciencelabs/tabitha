@@ -15,16 +15,18 @@
 </script>
 
 <!--This is assumed to already be within a div with the class 'join'-->
-<Message token={pronoun} />
-<TokenDisplay classes="!px-2 join-item">{pronoun.token}</TokenDisplay>
+<div class="join">
+	<Message token={pronoun} />
+	<TokenDisplay classes="!px-2 join-item">{pronoun.token}</TokenDisplay>
 
-<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">(</TokenDisplay>
+	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">(</TokenDisplay>
 
-{#if token.pairing}
-	<Pairing {token} />
-{:else}
-	<Message {token} />
-	<Word {token} classes="join-item" />
-{/if}
+	{#if token.pairing}
+		<Pairing {token} nested={true} />
+	{:else}
+		<Message {token} />
+		<Word {token} classes="join-item" />
+	{/if}
 
-<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">)</TokenDisplay>
+	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">)</TokenDisplay>
+</div>
