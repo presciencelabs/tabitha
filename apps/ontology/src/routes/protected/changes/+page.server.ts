@@ -1,4 +1,4 @@
-import { can_approve_change, get_all_changes, get_pending_changes } from '$lib/server/changes/changes.js'
+import { can_approve_change, get_all_changes, get_pending_changes } from '$lib/server/changes/changes.server.js'
 import type { PageServerLoad } from './$types'
 
 export async function load({ locals: { db_ontology }, url: { searchParams }, parent }: Parameters<PageServerLoad>[0]) {

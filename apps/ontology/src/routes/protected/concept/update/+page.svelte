@@ -9,7 +9,7 @@
 	import { enqueue } from '$lib/offline/sync'
 	import { check_for_pending_change } from '$lib/offline/pending'
 	import type { Concept } from '$lib/types'
-	import type { ConceptUpdateData } from '$lib/server/types'
+	import type { ConceptUpdateData } from '$lib/types'
 
 	let { data }: PageProps = $props()
 

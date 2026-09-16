@@ -1,4 +1,4 @@
-import type { OntologyChange } from '$lib/types'
+import type { OntologyChange, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData } from '$lib/types'
 
 // fetch()'s res.json() leaves dates as strings, unlike SvelteKit's own load-data serialization, which revives them automatically.
 function revive_dates(raw: OntologyChange): OntologyChange {
@@ -43,5 +43,29 @@ export async function apply_pending_changes(): Promise<ApplyPendingResult> {
 		version: result.version,
 		timestamp: new Date(result.timestamp),
 		changes: result.changes.map(revive_dates),
+	}
+}
+
+const DIFFED_FIELDS: (keyof OntologyChangeDataFields)[] = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples'] as const
+
+// only record the fields that actually changed
+export function diff_change_fields({ change_data, current_data }: { change_data: ConceptUpdateData, current_data: ConceptUpdateData }): OntologyChangeDataFields {
+	return Object.fromEntries(
+		DIFFED_FIELDS.flatMap(field => {
+			const old = current_data[field]
+			const value = change_data[field]
+			return old?.toString() !== value?.toString() ? [[field, { old, value }]] : []
+		}),
+	)
+}
+
+// a create has no "old" value to diff against.
+export function create_change_fields(change_data: ConceptCreateData): OntologyChangeDataFields {
+	const { level, gloss, brief_gloss, categories } = change_data
+	return {
+		level: { value: level },
+		gloss: { value: gloss },
+		...brief_gloss ? { brief_gloss: { value: brief_gloss } } : {},
+		categories: { value: categories },
 	}
 }

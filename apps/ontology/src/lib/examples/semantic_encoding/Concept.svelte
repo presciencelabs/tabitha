@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ConceptKey } from '@tabitha/types'
+	import { do_concepts_match } from '$lib/concepts'
 
 	type Props = {
 		data: ConceptKey
@@ -8,11 +9,7 @@
 
 	let { data, selected_concept }: Props = $props()
 
-	let matches_selected_concept = $derived(
-		data.stem === selected_concept.stem
-		&& data.sense === selected_concept.sense
-		&& data.part_of_speech === selected_concept.part_of_speech,
-	)
+	let matches_selected_concept = $derived(do_concepts_match({ a: data, b: selected_concept }))
 </script>
 
 <span class:font-bold={matches_selected_concept} class="text-sm tracking-tight">
