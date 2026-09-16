@@ -1,8 +1,16 @@
 <script lang="ts">
-	import { Punctuation } from '@tabitha/ui'
 	import type { SourceEntity } from '@tabitha/types'
 
 	let { source_entity }: { source_entity: SourceEntity } = $props()
+
+	// mirrors BoundaryStart's sizing, so an opening and closing bracket of the same nesting depth match
+	const boundary_size_map: Record<string, string> = {
+		'}': 'text-2xl',
+		']': 'text-xl',
+		')': 'text-xl',
+	}
 </script>
 
-<Punctuation {source_entity} size="sm" />
+<span class="{boundary_size_map[source_entity.value] || 'text-xl'} font-thin pe-1">
+	{']'}
+</span>

@@ -2,7 +2,8 @@
 	import { persisted } from '$lib/store.svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-	import { default_settings, fetch_batch_cautions, fetch_verses_for_chapter, lwc_info, mtt_level_info, usfm_book_codes } from '$lib/lookups'
+	import { default_settings, fetch_batch_cautions, fetch_verses_for_chapter, lwc_info, mtt_level_info } from '$lib/lookups'
+	import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
 	import type { ChapterReference } from '@tabitha/types'
 	import type { CopilotSettings } from '$lib/types'
 
@@ -40,7 +41,7 @@
 		error_text = ''
 		try {
 			const { book, chapter } = reference
-			const book_code = usfm_book_codes[book] || book
+			const book_code = USFM_BOOK_CODES[book] || book
 
 			const sfm_text = await fetch_batch_cautions({
 				reference,

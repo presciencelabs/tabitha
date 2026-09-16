@@ -78,6 +78,92 @@ export const BIBLE_BOOKS: Record<number, string> = {
 const BOOK_ORDER = new Map(Object.values(BIBLE_BOOKS).map((book, index) => [book, index]))
 
 /**
+ * USFM book codes keyed by the canonical book name -- the same names as `BIBLE_BOOKS`, which is
+ * what our own services expect as a reference's `id_primary`.
+ *
+ * Note `Song of Solomon`, not the `Song of Songs` spelling some external sources use: the Sources
+ * API only resolves the former, so keying on anything else silently yields no match.
+ */
+export const USFM_BOOK_CODES: Record<string, string> = {
+	'Genesis': 'GEN',
+	'Exodus': 'EXO',
+	'Leviticus': 'LEV',
+	'Numbers': 'NUM',
+	'Deuteronomy': 'DEU',
+	'Joshua': 'JOS',
+	'Judges': 'JDG',
+	'Ruth': 'RUT',
+	'1 Samuel': '1SA',
+	'2 Samuel': '2SA',
+	'1 Kings': '1KI',
+	'2 Kings': '2KI',
+	'1 Chronicles': '1CH',
+	'2 Chronicles': '2CH',
+	'Ezra': 'EZR',
+	'Nehemiah': 'NEH',
+	'Esther': 'EST',
+	'Job': 'JOB',
+	'Psalms': 'PSA',
+	'Proverbs': 'PRO',
+	'Ecclesiastes': 'ECC',
+	'Song of Solomon': 'SNG',
+	'Isaiah': 'ISA',
+	'Jeremiah': 'JER',
+	'Lamentations': 'LAM',
+	'Ezekiel': 'EZK',
+	'Daniel': 'DAN',
+	'Hosea': 'HOS',
+	'Joel': 'JOL',
+	'Amos': 'AMO',
+	'Obadiah': 'OBA',
+	'Jonah': 'JON',
+	'Micah': 'MIC',
+	'Nahum': 'NAM',
+	'Habakkuk': 'HAB',
+	'Zephaniah': 'ZEP',
+	'Haggai': 'HAG',
+	'Zechariah': 'ZEC',
+	'Malachi': 'MAL',
+	'Matthew': 'MAT',
+	'Mark': 'MRK',
+	'Luke': 'LUK',
+	'John': 'JHN',
+	'Acts': 'ACT',
+	'Romans': 'ROM',
+	'1 Corinthians': '1CO',
+	'2 Corinthians': '2CO',
+	'Galatians': 'GAL',
+	'Ephesians': 'EPH',
+	'Philippians': 'PHP',
+	'Colossians': 'COL',
+	'1 Thessalonians': '1TH',
+	'2 Thessalonians': '2TH',
+	'1 Timothy': '1TI',
+	'2 Timothy': '2TI',
+	'Titus': 'TIT',
+	'Philemon': 'PHM',
+	'Hebrews': 'HEB',
+	'James': 'JAS',
+	'1 Peter': '1PE',
+	'2 Peter': '2PE',
+	'1 John': '1JN',
+	'2 John': '2JN',
+	'3 John': '3JN',
+	'Jude': 'JUD',
+	'Revelation': 'REV',
+}
+
+/**
+ * The inverse of `USFM_BOOK_CODES`, derived rather than written out so the two cannot drift.
+ *
+ * External scripture APIs identify books by USFM code, so an incoming reference has to be
+ * translated back to the canonical name before it can be looked up in our own services.
+ */
+export const BOOK_NAME_BY_USFM_CODE: Record<string, string> = Object.fromEntries(
+	Object.entries(USFM_BOOK_CODES).map(([book_name, code]) => [code, book_name]),
+)
+
+/**
  * Sorts by Bible book order rather than the natural alphabetical order.
  */
 export function by_book_order(
