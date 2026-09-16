@@ -50,7 +50,7 @@
 <!-- https://daisyui.com/components/footer -->
 <Footer colors="bg-accent text-accent-content" needs_refresh={$needRefresh} on_refresh={() => updateServiceWorker(true)}>
 	{#if user}
-		<div class="flex items-center justify-between w-full">
+		<div class="flex items-center gap-4">
 			<span class="font-serif text-lg tracking-widest">{user.name}</span>
 
 			<button onclick={sign_out} class="btn btn-sm btn-outline btn-error">
