@@ -1,4 +1,4 @@
-import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceEncodingResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
+import type { ChapterReference, Reference, SourceResult, SourceStatus, SourceStatusResult, SourceEncodedResult, VerseReference, SourceSimpleJsonResult } from '@tabitha/types'
 import { create_http_client, type ClientOptions } from './http'
 
 export type SourcesClient = ReturnType<typeof create_sources_client>
@@ -72,8 +72,8 @@ export function create_sources_client(options: SourcesClientOptions) {
 		 * each other, so status is not a reliable stand-in for this question. See `/lookup/encoded`
 		 * in the Sources README.
 		 */
-		async get_verse_encoding_availability(refs: Reference[]): Promise<SourceEncodingResult[] | null> {
-			return await http.post<SourceEncodingResult[]>('/lookup/encoded', refs)
+		async get_verse_encoding_availability(refs: Reference[]): Promise<SourceEncodedResult[] | null> {
+			return await http.post<SourceEncodedResult[]>('/lookup/encoded', refs)
 		},
 
 		/**

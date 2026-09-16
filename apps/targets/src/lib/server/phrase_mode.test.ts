@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { filter_to_encoded_matches } from './phrase_mode'
 import type { PhraseMatch } from '$lib/types'
-import type { SourceEncodingResult } from '@tabitha/types'
+import type { SourceEncodedResult } from '@tabitha/types'
 
 function match(id_tertiary: string): PhraseMatch {
 	return {
@@ -10,7 +10,7 @@ function match(id_tertiary: string): PhraseMatch {
 	}
 }
 
-function result(has_encoding: boolean): SourceEncodingResult {
+function result(has_encoding: boolean): SourceEncodedResult {
 	return { reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '1' }, has_encoding }
 }
 

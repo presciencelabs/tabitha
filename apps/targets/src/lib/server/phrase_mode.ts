@@ -1,7 +1,7 @@
 import { create_sources_client } from '@tabitha/api-client'
 import { search_phrase } from '$lib/api_bible/search.server'
 import type { PhraseMatch, PhraseSearchHit, PhraseSearchResults } from '$lib/types'
-import type { SourceEncodingResult, TargetProject } from '@tabitha/types'
+import type { SourceEncodedResult, TargetProject } from '@tabitha/types'
 
 /**
  * Keeps only the matches Sources actually holds a semantic encoding for -- a verse with no
@@ -14,7 +14,7 @@ import type { SourceEncodingResult, TargetProject } from '@tabitha/types'
  */
 export function filter_to_encoded_matches({ matches, availability }: {
 	matches: PhraseMatch[]
-	availability: SourceEncodingResult[] | null
+	availability: SourceEncodedResult[] | null
 }): PhraseSearchHit[] {
 	return matches.filter((_, index) => availability?.[index]?.has_encoding ?? false)
 }
