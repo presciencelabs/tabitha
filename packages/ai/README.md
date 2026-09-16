@@ -47,4 +47,4 @@ const result = await ai.generate_json<MyShape>({
 
 ## Errors
 
-Both `generate_json` and `generate_text` throw `AiResponseError` on an empty or unparseable model response — one consistent failure mode across every call site, replacing the four divergent ones ADR 0007 catalogued.
+Both `generate_json` and `generate_text` throw `AiResponseError` on an empty or unparseable model response — one consistent failure mode across every call site, replacing the four divergent ones ADR 0007 cataloged.

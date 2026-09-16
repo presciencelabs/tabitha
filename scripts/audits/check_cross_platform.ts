@@ -176,7 +176,7 @@ async function audit_cross_platform_tooling() {
 
 	for (const f of findings) {
 		const rel_path = relative(root_dir, f.file_path)
-		console.log(`[Cross-Platform]`)
+		console.log('[Cross-Platform]')
 		console.log(`  📄 ${rel_path}:${f.line_number}`)
 		console.log(`  💡 ${f.message}`)
 		console.log(`  🔎 "${f.snippet}"`)

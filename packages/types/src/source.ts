@@ -147,3 +147,12 @@ export type SourceStatusResult = {
 	reference: StatusRequestReference
 	status: SourceStatus
 }
+
+//===============
+// lookup/encoded API
+
+/** Whether a single verse actually holds a semantic encoding. See `/lookup/encoded` in the Sources README for why this is a separate lookup from `status` above. */
+export type SourceEncodedResult = {
+	reference: Reference
+	has_encoding: boolean
+}

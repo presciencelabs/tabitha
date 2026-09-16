@@ -10,6 +10,8 @@ import {
 	USFM_VERSE_MARKER_REGEX,
 	strip_gloss_classifiers,
 	BIBLE_BOOKS,
+	USFM_BOOK_CODES,
+	BOOK_NAME_BY_USFM_CODE,
 	by_book_order,
 	clean_trailing_slash,
 	testament,
@@ -133,6 +135,33 @@ describe('@tabitha/types/patterns', () => {
 		test('testament returns undefined for non-canonical book names', () => {
 			expect(testament('Infected Eye')).toBeUndefined()
 			expect(testament('')).toBeUndefined()
+		})
+
+		test('USFM_BOOK_CODES maps canonical book names to USFM codes', () => {
+			expect(USFM_BOOK_CODES['Genesis']).toBe('GEN')
+			expect(USFM_BOOK_CODES['Matthew']).toBe('MAT')
+			expect(USFM_BOOK_CODES['Revelation']).toBe('REV')
+			expect(Object.keys(USFM_BOOK_CODES)).toHaveLength(66)
+		})
+
+		// Guards against the two book-name lists drifting apart. A key that isn't a canonical
+		// BIBLE_BOOKS name looks harmless but silently resolves to `undefined` at every call
+		// site -- which is exactly what the 'Song of Songs' spelling used to do.
+		test('every USFM_BOOK_CODES key is a canonical BIBLE_BOOKS name', () => {
+			const canonical_names = Object.values(BIBLE_BOOKS)
+			expect(Object.keys(USFM_BOOK_CODES).toSorted()).toEqual(canonical_names.toSorted())
+		})
+
+		test('USFM_BOOK_CODES uses the Song of Solomon spelling our services resolve', () => {
+			expect(USFM_BOOK_CODES['Song of Solomon']).toBe('SNG')
+			expect(USFM_BOOK_CODES['Song of Songs']).toBeUndefined()
+		})
+
+		test('BOOK_NAME_BY_USFM_CODE round-trips every entry in USFM_BOOK_CODES', () => {
+			for (const [book_name, code] of Object.entries(USFM_BOOK_CODES)) {
+				expect(BOOK_NAME_BY_USFM_CODE[code]).toBe(book_name)
+			}
+			expect(Object.keys(BOOK_NAME_BY_USFM_CODE)).toHaveLength(66)
 		})
 	})
 
