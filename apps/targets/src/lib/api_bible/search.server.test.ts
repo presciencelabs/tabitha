@@ -131,10 +131,12 @@ describe('search_phrase', () => {
 				{
 					reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary: '2' },
 					text: verse().text,
+					source_label: 'NIV',
 				},
 				{
 					reference: { type: 'Bible', id_primary: 'Mark', id_secondary: '11', id_tertiary: '10' },
 					text: scattered.text,
+					source_label: 'NIV',
 				},
 			],
 		})

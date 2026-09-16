@@ -10,7 +10,6 @@
 
 	let return_to: ReturnTo | undefined = $derived(data.return_to)
 	let phrase_results = $derived(data.phrase_results)
-	let source_label = $derived(data.source_label)
 
 	let matches: SearchTargetTextResult[] = $derived(data.results ?? [])
 	let found = $derived(matches.length > 0)
@@ -42,7 +41,7 @@
 </script>
 
 {#if phrase_results}
-	<PhraseResults results={phrase_results} {search_regex} {highlight_terms} {source_label} project={page.params.project ?? ''} />
+	<PhraseResults results={phrase_results} {search_regex} {highlight_terms} project={page.params.project ?? ''} />
 {:else}
 	<SearchFilterForm
 		{searched}

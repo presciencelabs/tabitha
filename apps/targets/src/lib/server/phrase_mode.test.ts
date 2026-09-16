@@ -7,6 +7,7 @@ function match(id_tertiary: string): PhraseMatch {
 	return {
 		reference: { type: 'Bible', id_primary: 'Matthew', id_secondary: '3', id_tertiary },
 		text: `verse ${id_tertiary}`,
+		source_label: 'NIV',
 	}
 }
 

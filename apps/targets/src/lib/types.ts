@@ -67,6 +67,9 @@ export type ParsedSearchQuery = {
 export type PhraseMatch = {
 	reference: Reference
 	text: string
+	/** credits where this verse's text comes from (e.g. "NIV") -- per-match, not per-search, since
+	 * a future mixed-source search (see issue #128) could return matches from different sources */
+	source_label: string | null
 }
 
 export type PhraseSearchOutcome =
@@ -84,6 +87,7 @@ export type PhraseSearchHit = {
 	reference: Reference
 	/** the matching verse, as the scripture API returned it */
 	text: string
+	source_label: string | null
 }
 
 export type PhraseSearchResults = {

@@ -29,8 +29,13 @@
 <details transition:fade={FADE_CHARACTERISTICS} open={is_open} class="collapse collapse-arrow bg-base-100 overflow-visible">
 	<summary onclick={toggle} class="collapse-title border border-base-200 hover:bg-base-200">
 		<section class="flex gap-2">
-			<span class="min-w-1/8 w-1/8 shrink-0 whitespace-nowrap font-semibold">
-				{id_primary} {id_secondary}:{id_tertiary}
+			<span class="min-w-1/8 w-1/8 shrink-0 font-semibold flex flex-col items-start gap-1">
+				<span class="whitespace-nowrap">{id_primary} {id_secondary}:{id_tertiary}</span>
+				{#if hit.source_label}
+					<em class="badge badge-xs badge-info font-normal" title="Verse text shown is from {hit.source_label}">
+						{hit.source_label}
+					</em>
+				{/if}
 			</span>
 
 			<aside class="not-prose flex-1">

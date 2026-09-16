@@ -173,6 +173,7 @@ export async function search_phrase({ phrase, project, api_key, fetch_fn = fetch
 	const exact_phrase = extract_exact_phrase(phrase)
 	const query_phrase = exact_phrase ?? phrase
 	const needle = exact_phrase ? normalize_for_match(exact_phrase) : null
+	const source_label = BIBLE_NAME_BY_PROJECT[project] ?? null
 
 	const matches: PhraseMatch[] = []
 	let fums_token: string | null = null
@@ -202,7 +203,7 @@ export async function search_phrase({ phrase, project, api_key, fetch_fn = fetch
 			const reference = to_reference(verse)
 
 			if (reference) {
-				matches.push({ reference, text: verse.text })
+				matches.push({ reference, text: verse.text, source_label })
 			}
 		}
 
