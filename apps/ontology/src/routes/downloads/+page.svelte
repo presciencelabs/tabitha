@@ -6,6 +6,12 @@
 	let { data }: PageProps = $props()
 </script>
 
+{#if data.pending}
+	<div class="alert alert-info">
+		A new Ontology version will be available soon. Check back tomorrow to get these latest updates.
+	</div>
+{/if}
+
 <table class="table">
 	<thead>
 		<tr>
@@ -18,9 +24,9 @@
 	</thead>
 
 	<tbody>
-		{#each data.backups as { name, version, created_at, size_mb, url } (name)}
+		{#each data.backups as { version, created_at, size_mb, url } (name)}
 			<tr class="hover">
-				<td>{name}</td>
+				<td>Ontology</td>
 				<td>{version}</td>
 				<td>{format_datetime({ date: created_at, ...data })}</td>
 				<td>{size_mb} MB</td>
