@@ -12,7 +12,7 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 		return json([])
 	}
 
-	if (searchParams.get('mode') === MODE.PHRASE) {
+	if (searchParams.get('mode') === MODE.REFERENCE) {
 		const { hits, complete, notice } = await run_phrase_mode({
 			phrase: q,
 			// the valid_project route matcher has already checked this against TARGET_PROJECTS

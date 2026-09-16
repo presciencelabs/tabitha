@@ -20,29 +20,46 @@
 - `GET /[project]/search?q={query}` — Searches target translation text for a given query string.
   - **Query Params:**
     - `q` (`string`, required) — Search terms or pattern.
-    - `mode` (`string`, optional) — `text` (default) or `phrase`. Omitting it keeps the original
-      target-text behavior, so existing callers are unaffected.
+    - `mode` (`string`, optional) — `target` (default) or `reference`. Omitting it keeps the
+      original target-text behavior, so existing callers are unaffected. Named for *which corpus*
+      is searched, not the query syntax -- both modes accept the same quoted-exact-phrase syntax
+      (see below), so a name like "phrase" never actually distinguished them.
   - **Example:** `/English/search?q=love`
 
-- `GET /[project]/search?mode=phrase&q={phrase}` — Finds the verses whose **scripture** text
-  contains the phrase and that we hold a semantic encoding for. Verses without one are dropped
-  rather than listed as unavailable -- a match with no structure to show isn't a useful exemplar.
-  - **Example:** `/English/search?mode=phrase&q=kingdom%20of%20heaven`
+- `GET /[project]/search?mode=reference&q={phrase}` — Finds the verses of a **published reference
+  Bible version** (not our own target-language translation -- see the table below for which
+  version each project searches) whose text contains the phrase, and that we hold a semantic
+  encoding for. Verses without one are dropped rather than listed as unavailable -- a match with
+  no structure to show isn't a useful exemplar.
+  - Every word in `q` must be present in the verse, in any order and any distance apart, unless
+    `q` is wrapped in double quotes (straight or curly), which requires the exact phrase, in
+    order, literally.
+  - **Example:** `/English/search?mode=reference&q=kingdom%20of%20heaven`
+  - **Example (exact phrase):** `/English/search?mode=reference&q=%22kingdom%20of%20heaven%22`
   - **Returns:** `{ matches: [{ reference }], complete, notice }`
-    - `complete` — `false` when the phrase was common enough that we stopped paging before the end
+    - `complete` — `false` when the query was common enough that we stopped paging before the end
       of the results; there may be more verses than the ones listed.
-    - `notice` — `unsupported_project` when the project has no scripture text to search against
+    - `notice` — `unsupported_project` when the project has no reference Bible to search against
       (currently Tagalog), `unavailable` when the upstream lookup failed, otherwise `null`.
 
-#### Why phrase search returns no verse text
+#### Which reference Bible each project searches
+
+| Project | Reference Bible |
+| --- | --- |
+| English | New International Version (NIV), 2011 |
+| Swahili | Biblica Open Kiswahili Contemporary Version (Neno) |
+| Indonesian | Plain Indonesian Translation (TSI), 62 of 66 books |
+| Tagalog | *unsupported* — no Bible on our API.Bible account for this language |
+
+#### Why reference-translation search returns no verse text
 
 The JSON response deliberately carries **references only, never the matching scripture text**.
 
-Phrase search runs against a licensed Bible from [API.Bible](https://api.bible), and that license
-is conditioned on reporting every scripture view through their Fair Use Management System (FUMS).
-We can only honor that for pages we render ourselves, where the tracking call fires once the
-verses are on screen — we can't fire it on behalf of an API consumer. Returning the text here
-would put licensed scripture outside the mechanism the license depends on.
+Reference-translation search runs against a licensed Bible from [API.Bible](https://api.bible),
+and that license is conditioned on reporting every scripture view through their Fair Use
+Management System (FUMS). We can only honor that for pages we render ourselves, where the
+tracking call fires once the verses are on screen — we can't fire it on behalf of an API consumer.
+Returning the text here would put licensed scripture outside the mechanism the license depends on.
 
 Verse references are plain facts and carry no such restriction, so they're free to consume.
 

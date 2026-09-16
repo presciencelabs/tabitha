@@ -9,10 +9,16 @@
 		results: PhraseSearchResults
 		search_regex: RegExp
 		highlight_terms: Set<string>
+		/**
+		 * Credits where the shown verse text comes from (e.g. "NIV") -- deliberately a generic
+		 * label rather than a Bible-specific one, so a future non-scripture source (e.g. Zoho) can
+		 * use the same badge without a rename.
+		 */
+		source_label: string | null
 		project: string
 	}
 
-	let { results, search_regex, highlight_terms, project }: Props = $props()
+	let { results, search_regex, highlight_terms, source_label, project }: Props = $props()
 
 	let sorted_hits = $derived(results.hits.toSorted(by_book_order))
 	let found = $derived(results.hits.length > 0)
@@ -49,6 +55,11 @@
 			<Icon icon="material-symbols:{found ? 'check-circle' : 'warning'}-outline-rounded" />
 			<strong>{results.hits.length}</strong> verses with a semantic encoding
 		</em>
+		{#if source_label}
+			<em class="badge badge-lg badge-outline" title="Verse text shown is from {source_label}">
+				{source_label}
+			</em>
+		{/if}
 	</header>
 
 	{#if !results.complete}

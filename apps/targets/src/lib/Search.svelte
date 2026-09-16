@@ -4,8 +4,8 @@
 	import { MODE, type SearchMode } from '$lib/search/modes'
 
 	const MODE_LABELS: Record<SearchMode, string> = {
-		text: 'Target text',
-		phrase: 'Scripture phrase',
+		target: 'Target text',
+		reference: 'Reference translation',
 	}
 
 	let { project }: { project: string } = $props()

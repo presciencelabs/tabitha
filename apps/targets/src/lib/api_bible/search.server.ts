@@ -30,6 +30,17 @@ const BIBLE_ID_BY_PROJECT: Partial<Record<TargetProject, string>> = {
 	Indonesian: '2dd568eeff29fb3c-02', // Plain Indonesian Translation (62 of 66 books)
 }
 
+/**
+ * A short, recognizable label for the Bible each project searches, for crediting the source of a
+ * reference-search result's text in the UI -- kept independent of the id map above since a
+ * display label and an API identifier can drift for unrelated reasons.
+ */
+export const BIBLE_NAME_BY_PROJECT: Partial<Record<TargetProject, string>> = {
+	English: 'NIV',
+	Swahili: 'Neno',
+	Indonesian: 'TSI',
+}
+
 type ApiBibleVerse = {
 	bookId: string
 	chapterId: string

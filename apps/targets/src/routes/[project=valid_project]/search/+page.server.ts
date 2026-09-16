@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private'
 import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-import { extract_exact_phrase } from '$lib/api_bible/search.server'
+import { BIBLE_NAME_BY_PROJECT, extract_exact_phrase } from '$lib/api_bible/search.server'
 import { parse_search_query, search_text } from '$lib/server/search'
 import { run_phrase_mode } from '$lib/server/phrase_mode'
 import { MODE } from '$lib/search/modes'
@@ -17,12 +17,12 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 
 	const q = searchParams.get('q')?.trim()
 	if (!q) {
-		return { results: [], search_terms: [], phrase_results: null, return_to }
+		return { results: [], search_terms: [], phrase_results: null, source_label: null, return_to }
 	}
 
-	// anything other than an explicit phrase search -- including no mode at all, as on every link
-	// written before phrase search existed -- is the original target-text search
-	if (searchParams.get('mode') === MODE.PHRASE) {
+	// anything other than an explicit reference-translation search -- including no mode at all, as
+	// on every link written before that mode existed -- is the original target-text search
+	if (searchParams.get('mode') === MODE.REFERENCE) {
 		const phrase_results = await run_phrase_mode({
 			phrase: q,
 			project: target_project,
@@ -30,12 +30,12 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 			sources_api_host: PUBLIC_SOURCES_API_HOST,
 		})
 
-		// individual words, matching text-mode's shape below, so both the verse-text and
+		// individual words, matching target-mode's shape below, so both the verse-text and
 		// encoding-concept highlighting can treat every match the same way -- stripped of any
 		// exact-phrase quoting, which isn't part of the words to highlight
 		const highlight_words = (extract_exact_phrase(q) ?? q).split(/\s+/).filter(Boolean)
 
-		return { results: [], search_terms: highlight_words, phrase_results, return_to }
+		return { results: [], search_terms: highlight_words, phrase_results, source_label: BIBLE_NAME_BY_PROJECT[target_project] ?? null, return_to }
 	}
 
 	const parsed_q = parse_search_query(q)
@@ -45,6 +45,7 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 		results,
 		search_terms: parsed_q.or_terms.flatMap(or_term => or_term.and_terms),
 		phrase_results: null,
+		source_label: null,
 		return_to,
 	}
 }
