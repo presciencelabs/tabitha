@@ -169,6 +169,6 @@
 			</tbody>
 		</table>
 	{:else}
-		No changes to show yet.
+		No changes to show.
 	{/if}
 </div>

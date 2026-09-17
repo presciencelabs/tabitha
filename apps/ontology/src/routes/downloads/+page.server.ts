@@ -10,6 +10,9 @@ type Backup = {
 	version: string,
 }
 
+const OLD_VERSION_REGEX = /^Ontology[._](\d{4}).+?\.tabitha.sqlite$/
+const NEW_VERSION_REGEX = /^Ontology_([\d-]+)\.tabitha.sqlite$/
+
 export async function load({ locals: { db_ontology }, platform }: Parameters<PageServerLoad>[0]) {
 	console.info('checking for downloads...')
 
@@ -37,8 +40,21 @@ export async function load({ locals: { db_ontology }, platform }: Parameters<Pag
 			size_mb: bytes_to_mb(obj.size),
 			created_at: new Date(obj.uploaded),
 			url: `https://db-backups.tabitha.bible/${obj.key}`,
-			version: obj.key.split(/[._]/)[1].replaceAll('-', '.'),
+			version: extract_version(obj.key),
 		}
+	}
+
+	function extract_version(key: string) {
+		// TODO only use the new one once the old backups are gone
+		let match = key.match(NEW_VERSION_REGEX)
+		if (match) {
+			return match[1].replaceAll('-', '.')
+		}
+		match = key.match(OLD_VERSION_REGEX)
+		if (match) {
+			return `3.0.${match[1]}`
+		}
+		return ''
 	}
 
 	function bytes_to_mb(bytes: number) {

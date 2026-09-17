@@ -55,7 +55,7 @@
 		<h3>Changes</h3>
 	</div>
 
-	<section class="flex flex-col">
+	<section class="flex flex-col py-2">
 		<form class="flex gap-4 bg-info text-info-content px-4 pt-2 pb-3.5 overflow-x-auto rounded-box">
 			<label>
 				Since
@@ -153,6 +153,6 @@
 			</tbody>
 		</table>
 	{:else}
-		No changes to show yet.
+		No changes to show.
 	{/if}
 </div>
