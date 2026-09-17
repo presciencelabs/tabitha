@@ -15,7 +15,7 @@ const local_hosts: Record<string, string> = {
 	PUBLIC_COPILOT_API_HOST: 'http://localhost:9000',
 }
 
-function parse_env_file(content: string): Map<string, string> {
+export function parse_env_file(content: string): Map<string, string> {
 	const result = new Map<string, string>()
 	const lines = content.split('\n')
 
