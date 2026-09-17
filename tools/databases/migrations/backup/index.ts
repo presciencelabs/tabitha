@@ -81,6 +81,6 @@ async function create_db(sql_filename: string): Promise<Database> {
 }
 
 function get_backup_name(db: Database) {
-	const version = db.query<string, []>('SELECT version FROM Version').get() || ''
+	const version = db.query<{ version: string }, []>('SELECT version FROM Version').get()?.version || ''
 	return `Ontology_${version.replaceAll('.', '-')}.tabitha.sqlite`
 }
