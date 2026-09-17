@@ -10,6 +10,7 @@ const FUNCTION_WORDS: [string, string][] = [
 	['definitely', 'Sets the Mood feature of a Verb to Definite Potential.'],
 	['extremely', 'Sets the Degree feature of an Adjective or Adverb to Extremely Intensified.'],
 	['finish', 'Sets the Aspect feature of a Verb to Completive.'],
+	['for', 'Sometimes used to indicate a Beneficiary argument of a Verb.'],
 	['from', 'Usually indicates a Source argument of a Verb.'],
 	['here', "Becomes 'at this place'."],
 	['least', "Sets the Degree feature of an Adjective or Adverb to 'least'."],
