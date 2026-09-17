@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'bun:test'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { scan_file_for_boundary_violations } from './check_relative_package_imports'
 import type { WorkspacePackage } from './check_missing_bin_deps'
 
-const root = '/repo'
+// resolve() (not join()) so this is a fully-qualified path on every platform -- on win32, a
+// driveless root like '/repo' resolves against cwd's drive when the scanner's own resolve(dir,
+// specifier) call reaches it, while a plain join() never attaches one, so the two would silently
+// stop matching (production's real WorkspacePackage.dir values are always resolve()-derived, via
+// root_dir in check_missing_bin_deps.ts, so this mismatch was a test-fixture-only issue).
+const root = resolve('/repo')
 const scripts_pkg: WorkspacePackage = { name: 'scripts', dir: join(root, 'scripts'), package_json_path: join(root, 'scripts/package.json') }
 const vite_config_pkg: WorkspacePackage = { name: 'packages/vite-config', dir: join(root, 'packages/vite-config'), package_json_path: join(root, 'packages/vite-config/package.json') }
 const all_packages = [scripts_pkg, vite_config_pkg]
