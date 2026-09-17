@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
 import { parse_wrangler_jsonc } from './db_load'
+import { parse_env_file } from './setup_env'
 import { check_cloudflare_configs } from '../audits/check_cloudflare'
 import { sync_readme_badges } from '../audits/check_readme_badges'
 import { scan_secrets } from '../audits/check_secrets'
@@ -144,6 +145,30 @@ async function check_runtimes(): Promise<DiagnosticResult[]> {
 	return results
 }
 
+// Every app's committed .env marks a "# SECRETS" section (see e.g. apps/ontology/.env) whose keys
+// are deliberately left blank in the template -- real values belong only in the gitignored
+// .env.local. Everything above that marker (open config) is allowed to be blank too, either
+// because it already carries a real committed value or because scripts/dx/setup_env.ts forces a
+// specific local-dev value for it -- only keys under the marker are ever "required".
+function get_required_secret_keys(env_template_content: string): string[] {
+	const keys: string[] = []
+	let in_secrets_section = false
+
+	for (const raw_line of env_template_content.split('\n')) {
+		const line = raw_line.trim()
+		if (line === '# SECRETS') {
+			in_secrets_section = true
+			continue
+		}
+		if (!in_secrets_section || !line || line.startsWith('#')) continue
+
+		const eq_idx = line.indexOf('=')
+		if (eq_idx !== -1) keys.push(line.slice(0, eq_idx).trim())
+	}
+
+	return keys
+}
+
 async function check_env_files(): Promise<DiagnosticResult[]> {
 	const results: DiagnosticResult[] = []
 	const missing_apps = APPS
@@ -164,6 +189,37 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 			status: 'WARN',
 			message: `Missing in: ${missing_apps.join(', ')}`,
 			fix: 'Run `bun run setup:env` to generate local environment configs',
+		})
+	}
+
+	const unpopulated: string[] = []
+	for (const app of APPS) {
+		const env_template_path = join(process.cwd(), 'apps', app.name, '.env')
+		const env_local_path = join(process.cwd(), 'apps', app.name, '.env.local')
+		if (!existsSync(env_template_path) || !existsSync(env_local_path)) continue // already flagged above
+
+		const required_keys = get_required_secret_keys(readFileSync(env_template_path, 'utf-8'))
+		if (required_keys.length === 0) continue
+
+		const local_vars = parse_env_file(readFileSync(env_local_path, 'utf-8'))
+		const blank_keys = required_keys.filter(key => !local_vars.get(key)?.trim())
+		if (blank_keys.length > 0) unpopulated.push(`${app.name} (${blank_keys.join(', ')})`)
+	}
+
+	if (unpopulated.length === 0) {
+		results.push({
+			category: 'Environment',
+			name: 'App .env.local Secrets',
+			status: 'PASS',
+			message: 'All required secret values populated',
+		})
+	} else {
+		results.push({
+			category: 'Environment',
+			name: 'App .env.local Secrets',
+			status: 'WARN',
+			message: `Missing or blank: ${unpopulated.join('; ')}`,
+			fix: 'See the "# SECRETS" section in that app\'s .env for where to obtain each value, then set it in the app\'s .env.local',
 		})
 	}
 
