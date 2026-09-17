@@ -100,7 +100,7 @@ graph TD
 | Directory | Purpose |
 | --- | --- |
 | **`tools/databases`** | Point-in-time SQLite snapshot dumps (`snapshots/`), source datasets (`data/`), and TBTA-to-TaBiThA ETL migrations (`migrations/`). |
-| **`scripts/dx`** | Developer experience, database loading, and maintenance scripts: setup wizard (`setup.ts`), environment generator (`setup_env.ts`), doctor (`doctor.ts`), server menu (`dev_menu.ts`), D1 snapshot loader (`db_load.ts`), D1 inspector (`db_status.ts`), safe updater (`update_safe.ts`), favicon generator (`generate_favicons.ts`), and PWA manifest icon generator (`generate_manifest_icons.ts`). |
+| **`scripts/dx`** | Developer experience, database loading, and maintenance scripts: setup wizard (`setup.ts`), environment generator (`setup_env.ts`), doctor (`doctor.ts`), server menu (`dev_menu.ts`), D1 snapshot loader (`db_load.ts`), D1 inspector (`db_status.ts`), local R2 object seeder (`r2_load.ts`), safe updater (`update_safe.ts`), favicon generator (`generate_favicons.ts`), and PWA manifest icon generator (`generate_manifest_icons.ts`). |
 | **`scripts/audits`** | Automated security scanners (`check_secrets.ts`), Cloudflare linters (`check_cloudflare.ts`), cookie & storage linters (`check_storage.ts`), philosophy rules (`check_philosophies.ts`), and badge sync (`check_readme_badges.ts`) along with colocated unit tests (`*.test.ts`). |
 | **`scripts/ci`** | CI/CD test coverage reporting (`report_coverage.ts`). |
 
@@ -128,7 +128,7 @@ graph TD
 # 1. Install dependencies
 bun install
 
-# 2. Automated onboarding (creates .env.local + loads D1 SQLite databases + verifies setup)
+# 2. Automated onboarding (creates .env.local + loads D1 SQLite databases + seeds local R2 buckets + verifies setup)
 bun run setup
 
 # 3. Check environment health
@@ -166,6 +166,16 @@ bun run db:grant your.email@example.com
 ```
 
 Grants every Ontology permission to that email in your local Auth D1 only — production is untouched. Re-run after any `bun run db:load`/`db:load:ontology`, since a fresh snapshot resets local grants too.
+
+### 5. Local R2 Objects (e.g. Ontology's `/downloads` page)
+
+Wrangler's local Miniflare R2 emulation starts out empty, so any UI backed by an `r2_buckets` binding (e.g. Ontology's `/downloads` page, backed by `R2_db_backups`) has nothing to list locally by default. `bun run setup` seeds it automatically, but `bun run db:load`/`db:load:<app>` does not (it only reloads D1) — re-seed manually afterward:
+
+```bash
+bun run r2:load
+```
+
+The loader copies the local D1 sqlite file into local R2 as a backup object, so it needs that D1 database already loaded (`bun run db:load:ontology`) first.
 
 ---
 

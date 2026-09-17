@@ -1,6 +1,7 @@
 import { $ } from 'bun'
 import { platform } from 'node:os'
 import { load_database } from './db_load'
+import { load_r2 } from './r2_load'
 import { setup_env } from './setup_env'
 
 async function check_sqlite_prerequisite(): Promise<boolean> {
@@ -48,12 +49,14 @@ async function setup_workspace() {
 		// Non-git environment
 	}
 
-	// 4. Load latest SQLite / D1 databases
+	// 4. Load latest SQLite / D1 databases, then seed local R2 buckets from them
 	if (sqlite_ready) {
 		console.log('📦 Fetching database snapshots from R2...')
 		await $`bun --filter @tabitha/databases r2:pull -- snapshots`
 		console.log('📦 Bootstrapping local D1 databases...')
 		await load_database('all')
+		console.log('🪣 Seeding local R2 bucket(s)...')
+		await load_r2('all')
 	}
 
 	// 5. Install Playwright browsers for local e2e testing
@@ -92,6 +95,7 @@ Useful Commands:
   • bun run test:unit        Run all unit test suites
   • bun run test:e2e         Run Playwright end-to-end tests
   • bun run db:load          Reload all D1 databases from snapshots
+  • bun run r2:load          Reseed local R2 bucket(s) from the local D1 database(s)
   • bun run db:grant <email> Grant yourself Ontology permissions locally (see below)
 
 ⚠️  Ontology only: after signing in with Google locally for the first time, a
