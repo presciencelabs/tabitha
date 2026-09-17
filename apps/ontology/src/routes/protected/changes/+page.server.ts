@@ -1,4 +1,5 @@
 import { can_approve_change, get_all_changes, get_pending_changes } from '$lib/server/changes/changes.server.js'
+import type { OntologyChange } from '$lib/types'
 import type { PageServerLoad } from './$types'
 
 export async function load({ locals: { db_ontology }, url: { searchParams }, parent }: Parameters<PageServerLoad>[0]) {
@@ -11,7 +12,7 @@ export async function load({ locals: { db_ontology }, url: { searchParams }, par
 	const { can_add, can_update } = await parent()
 
 	return {
-		changes: changes.map(change => ({
+		changes: changes.map<OntologyChange>(change => ({
 			...change,
 			can_approve: can_approve_change({ change, permissions: { can_add, can_update } }),
 		})),

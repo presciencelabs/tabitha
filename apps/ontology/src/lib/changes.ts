@@ -69,3 +69,22 @@ export function create_change_fields(change_data: ConceptCreateData): OntologyCh
 		categories: { value: categories },
 	}
 }
+
+export function change_made_between({ since, before }: { since: string, before: string }): (change: OntologyChange) => boolean {
+	if (since === 'all' && before === 'all') {
+		return () => true
+	}
+	const since_number = since === 'all' ? 0 : version_as_number(since)
+	const before_number = before === 'all' ? Number.MAX_VALUE : version_as_number(before)
+	return change => {
+		if (!change.version) {
+			return false
+		}
+		const as_number = version_as_number(change.version)
+		return as_number > since_number && as_number <= before_number
+	}
+
+	function version_as_number(version: string): number {
+		return version.split('.').map(Number).reduce((sum, part) => sum + part, 0)
+	}
+}
