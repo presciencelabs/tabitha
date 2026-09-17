@@ -37,7 +37,7 @@ export async function load({ locals: { db_ontology }, platform }: Parameters<Pag
 			size_mb: bytes_to_mb(obj.size),
 			created_at: new Date(obj.uploaded),
 			url: `https://db-backups.tabitha.bible/${obj.key}`,
-			version: obj.key.split(/[._]/)[1],
+			version: obj.key.split(/[._]/)[1].replaceAll('-', '.'),
 		}
 	}
 

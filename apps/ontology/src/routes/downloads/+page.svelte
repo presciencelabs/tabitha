@@ -33,9 +33,10 @@
 	</thead>
 
 	<tbody>
-		{#each data.backups as { version, created_at, size_mb, url }, i}
+		{#each data.backups as { name, version, created_at, size_mb, url }, i}
 			<tr class="hover">
-				<td>Ontology</td>
+				<!--TODO remove the name once they're all consistent-->
+				<td>Ontology ({name})</td>
 				<td>
 					<div class="flex gap-3">
 						{version}
