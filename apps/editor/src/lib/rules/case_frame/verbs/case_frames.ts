@@ -765,7 +765,7 @@ const verb_case_frames = new Map<WordStem, [WordSense, SenseRuleJson<VerbRoleTag
 		['pray-C', { 'patient_clause_type': 'patient_clause_quote_begin' }],
 	]],
 	['prepare', [
-		['prepare-A', { 'patient_clause_type': 'patient_clause_same_participant' }]
+		['prepare-A', { 'patient_clause_type': 'patient_clause_same_participant' }],
 	]],
 	['prevent', []],
 	['promise', [
