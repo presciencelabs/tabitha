@@ -3,6 +3,7 @@
 	import Message from './Message.svelte'
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
+	import Pairing from './Pairing.svelte'
 
 	type Props = {
 		token: CheckerToken
@@ -13,14 +14,19 @@
 	let pronoun = $derived(token.pronoun!)	// the pronoun will always be non-null at this point
 </script>
 
+<!--This is assumed to already be within a div with the class 'join'-->
 <div class="join">
 	<Message token={pronoun} />
 	<TokenDisplay classes="!px-2 join-item">{pronoun.token}</TokenDisplay>
 
 	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">(</TokenDisplay>
 
-	<Message {token} />
-	<Word {token} classes="join-item" />
+	{#if token.pairing}
+		<Pairing {token} nested={true} />
+	{:else}
+		<Message {token} />
+		<Word {token} classes="join-item" />
+	{/if}
 
 	<TokenDisplay classes="!px-1.5 [font-family:cursive] join-item">)</TokenDisplay>
 </div>

@@ -11,10 +11,10 @@
 	let { token }: Props = $props()
 </script>
 
-{#if token.pairing}
-	<Pairing {token} />
-{:else if token.pronoun}
+{#if token.pronoun}
 	<PronounReferent {token} />
+{:else if token.pairing}
+	<Pairing {token} />
 {:else}
 	<SingleToken {token} />
 {/if}

@@ -20,10 +20,9 @@ export function tokenize_input(text: string = ''): Token[] {
 	text = normalize_input(text)
 
 	const parsers: Array<[() => boolean, () => Token]> = [
-		[() => match(REGEXES.WORD_START_CHAR), word],
+		[() => match_word_start(), word],
 		[() => match(REGEXES.OPENING_PAREN), clause_notation],
 		[() => match(/_/), underscore_notation],
-		[() => match_two(/\.\d/), decimal_number],
 		[() => match(/:/), colon],
 		[() => match(/[["]/), opening_punctuation],
 		[() => match(/[.,?!\]]/), closing_punctuation],
@@ -44,54 +43,83 @@ export function tokenize_input(text: string = ''): Token[] {
 
 	return tokens
 
+	function match_word_start() {
+		return match(REGEXES.WORD_START_CHAR) || match_two(REGEXES.DECIMAL_START_CHARS)
+	}
+
+	// single term, pairing, or pronoun
 	function word(): Token {
-		eat(REGEXES.WORD_CHAR)
-		if (match(REGEXES.OPENING_PAREN)) {
-			return pronoun_referent()
+		const term_token = term_or_pairing(token_start)
 
-		} else if (match(REGEXES.FORWARD_SLASH)) {
-			return pairing('simple-complex')
-
-		} else if (match(REGEXES.PIPE)) {
-			return pairing('dynamic-literal')
-
-		} else if (match(REGEXES.BACK_SLASH)) {
-			// the back slash is used within TBTA to denote a dynamic\literal pairing, but can't be used in the phase 1
-			eat_until(REGEXES.TOKEN_END_BOUNDARY)
-			return error_token(ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
-
-		} else if (match_two(/\.\d/)) {
-			// may be a decimal number like 2.5
-			return decimal_number()
-
+		if (term_token.pairing === null && peek_match(REGEXES.OPENING_PAREN)) {
+			// can't have a pronoun referent within a pairing
+			const referent_token = pronoun_referent()
+			return check_boundary_for_token(() => referent_token)
 		} else {
-			// any other word
-			return check_boundary_for_token(word_token)
+			return check_boundary_for_token(() => term_token)
 		}
 	}
 
-	function pronoun_referent(): Token {
+	// advances until the end of a single lookup term, but doesn't create a token
+	function term(start: number): string {
 		eat(REGEXES.WORD_CHAR)
-		if (!match(REGEXES.CLOSING_PAREN)) {
-			return error_token(ERRORS.MISSING_CLOSING_PAREN)
+		if (match_two(/\.\d/)) {
+			// may be a decimal number like 2.5
+			eat(/\d/)
 		}
-		return check_boundary_for_token(pronoun_referent_token)
+		return collect_text(start)
 	}
 
-	function pairing(pairing_type: PairingType): Token {
-		if (!match(REGEXES.WORD_START_CHAR)) {
-			// simple/ or dynamic\
+	function term_or_pairing(start: number): Token {
+		const term_token = word_token(term(start))
+
+		if (match(REGEXES.FORWARD_SLASH)) {
+			return pairing(term_token, 'simple-complex')
+		} else if (match(REGEXES.PIPE)) {
+			return pairing(term_token, 'dynamic-literal')
+		} else {
+			return term_token
+		}
+	}
+
+	function pairing(left_token: Token, pairing_type: PairingType): Token {
+		const right_start = i
+		if (!match_word_start()) {
+			// simple/ or dynamic|
 			eat_until(REGEXES.TOKEN_END_BOUNDARY)
 			return error_token(pairing_type === 'simple-complex' ? ERRORS.INVALID_COMPLEX_PAIRING_SYNTAX : ERRORS.INVALID_LITERAL_PAIRING_SYNTAX)
 		}
-		// simple/complex or dynamic\literal
-		eat(REGEXES.WORD_CHAR)
-		return check_boundary_for_token(pairing_token(pairing_type))
+		const right_token = word_token(term(right_start))
+		left_token.pairing = right_token
+		left_token.pairing_type = pairing_type
+		return left_token
 	}
 
-	function decimal_number(): Token {
-		eat(/\d/)
-		return check_boundary_for_token(word_token)
+	// can be either a single term or pairing
+	function pronoun_referent(): Token {
+		const pronoun_token = simple_token(TOKEN_TYPE.FUNCTION_WORD)
+		advance()	// skip the opening paren
+
+		const referent_start = i
+		if (!match(REGEXES.WORD_START_CHAR)) {
+			// pronoun(?) pronoun(_)
+			eat_until(REGEXES.TOKEN_END_BOUNDARY)
+			return error_token(ERRORS.INVALID_PRONOUN_REFERENT_SYNTAX)
+		}
+
+		const referent_token = term_or_pairing(referent_start)
+		if (referent_token.messages.length > 0) {
+			// there was an issue with the pairing syntax
+			return referent_token
+		}
+
+		if (!match(REGEXES.CLOSING_PAREN)) {
+			// pronoun(X 
+			return error_token(ERRORS.MISSING_CLOSING_PAREN)
+		}
+
+		referent_token.pronoun = pronoun_token
+		return referent_token
 	}
 
 	function colon(): Token {
@@ -184,8 +212,8 @@ export function tokenize_input(text: string = ''): Token[] {
 		}
 	}
 
-	function collect_text(): string {
-		return text.substring(token_start, i)
+	function collect_text(start: number | null = null): string {
+		return text.substring(start ?? token_start, i)
 	}
 
 	function word_token(token: string): Token {
@@ -204,26 +232,6 @@ export function tokenize_input(text: string = ''): Token[] {
 		const stem = lookup_match[1]
 		const sense = lookup_match[2] ?? ''
 		return create_token({ token: text, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [stem], specified_sense: sense })
-	}
-
-	function pairing_token(pairing_type: PairingType): (token: string) => Token {
-		const pairing_regex = pairing_type === 'simple-complex' ? REGEXES.FORWARD_SLASH : REGEXES.PIPE
-		return token => {
-			const [left, right] = token.split(pairing_regex).map(lookup_token)
-			left.pairing = right
-			left.pairing_type = pairing_type
-			return left
-		}
-	}
-
-	function pronoun_referent_token(token: string): Token {
-		const referent_match = token.match(REGEXES.EXTRACT_PRONOUN_REFERENT)!
-
-		const [pronoun_text, referent_text] = [referent_match[1], referent_match[2]]
-		const referent = lookup_token(referent_text)
-		const pronoun = create_token({ token: pronoun_text, type: TOKEN_TYPE.FUNCTION_WORD })
-		referent.pronoun = pronoun
-		return referent
 	}
 
 	function error_token(message: string): Token {

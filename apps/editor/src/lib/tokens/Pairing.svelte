@@ -4,7 +4,7 @@
 	import TokenDisplay from './TokenDisplay.svelte'
 	import Word from './Word.svelte'
 
-	let { token }: { token: CheckerToken } = $props()
+	let { token, nested = false }: { token: CheckerToken, nested?: boolean } = $props()
 
 	/**
 	 * scenarios:
@@ -15,7 +15,7 @@
 	let pairing_token = $derived(token.pairing!)	// the pairing will always be non-null at this point
 </script>
 
-<div class="join">
+{#snippet pairing_content()}
 	<Message {token} />
 	<Word {token} classes="join-item" />
 
@@ -27,4 +27,12 @@
 
 	<Message token={pairing_token} />
 	<Word token={pairing_token} classes="join-item" />
-</div>
+{/snippet}
+
+{#if nested}
+	{@render pairing_content()}
+{:else}
+	<div class="join">
+		{@render pairing_content()}
+	</div>
+{/if}
