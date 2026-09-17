@@ -4,6 +4,15 @@
 	import { format_datetime } from '$lib/format'
 
 	let { data }: PageProps = $props()
+
+	function change_log_url(backup_index: number) {
+		// backups may skip several versions based on how many changes were made between backups.
+		// the backups are in descending order, so the previous backup is index + 1
+		const backup_version = data.backups[backup_index].version
+		const previous_backup_version = backup_index === data.backups.length - 1 ? 'all' : data.backups[backup_index + 1].version
+		const params = new URLSearchParams({ since: previous_backup_version, before: backup_version })
+		return `/history?${params.toString()}`
+	}
 </script>
 
 {#if data.pending}
@@ -24,10 +33,18 @@
 	</thead>
 
 	<tbody>
-		{#each data.backups as { version, created_at, size_mb, url } (name)}
+		{#each data.backups as { version, created_at, size_mb, url }, i}
 			<tr class="hover">
 				<td>Ontology</td>
-				<td>{version}</td>
+				<td>
+					<div class="flex gap-3">
+						{version}
+						<a href={change_log_url(i)} target="_blank" class="link link-accent link-hover text-sm flex items-end">
+							view changelog
+							<Icon icon="fe:link-external" class="h-6 w-6" />
+						</a>
+					</div>
+				</td>
 				<td>{format_datetime({ date: created_at, ...data })}</td>
 				<td>{size_mb} MB</td>
 				<td>
