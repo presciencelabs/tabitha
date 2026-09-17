@@ -1,4 +1,4 @@
-import type { OntologyChange, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData } from '$lib/types'
+import type { OntologyChange, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData, ApplyPendingResult } from '$lib/types'
 
 // fetch()'s res.json() leaves dates as strings, unlike SvelteKit's own load-data serialization, which revives them automatically.
 function revive_dates(raw: OntologyChange): OntologyChange {
@@ -19,14 +19,6 @@ export async function approve_change(id: number): Promise<OntologyChange> {
 	}
 
 	return revive_dates(result.change)
-}
-
-export type ApplyPendingResult = {
-	count: number
-	failed: number
-	version: string
-	timestamp: Date
-	changes: OntologyChange[]
 }
 
 export async function apply_pending_changes(): Promise<ApplyPendingResult> {

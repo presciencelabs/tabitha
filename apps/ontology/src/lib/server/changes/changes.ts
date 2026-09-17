@@ -4,7 +4,7 @@ import { create_concept, get_concept_for_update, update_concept } from './concep
 import { get_version } from '$lib/server/ontology'
 import { default_categories } from '$lib/lookups'
 import { create_change_fields, diff_change_fields } from '$lib/changes'
-import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData } from '$lib/types'
+import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData, ApplyPendingResult } from '$lib/types'
 import type { DbOntologyChange } from '$lib/server/types'
 import type { PartOfSpeech } from '@tabitha/types'
 
@@ -207,7 +207,7 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 	}
 }
 
-export async function apply_pending_changes(db: D1Database): Promise<{ count: number, failed: number, version: string, changes: OntologyChange[] }> {
+export async function apply_pending_changes(db: D1Database): Promise<ApplyPendingResult> {
 	await create_table_if_not_exists(db)
 
 	const sql = `
@@ -224,6 +224,7 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 			failed: 0,
 			version: await get_version(db),
 			changes: [],
+			timestamp: new Date(),
 		}
 	}
 
@@ -243,6 +244,7 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 		failed: changes.length - count,
 		version,
 		changes,
+		timestamp: new Date(),
 	}
 }
 

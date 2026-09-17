@@ -115,3 +115,11 @@ export type WorkflowInfo = {
 	email: UserEmail
 	date: Date
 }
+
+export type ApplyPendingResult = {
+	count: number
+	failed: number
+	version: string
+	changes: OntologyChange[]
+	timestamp: Date
+}
