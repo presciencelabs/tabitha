@@ -1,7 +1,7 @@
 import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
 import { normalize_wildcards, parse_concept_sense } from '@tabitha/types/patterns'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
-import { get_pending_changes } from './changes/changes.server'
+import { get_pending_changes } from './changes/changes'
 import { do_concepts_match } from '$lib/concepts'
 import type { Concept, DbRowConcept, DbRowExample } from '$lib/types'
 import type { ConceptKey, ConceptSearchFilter, ConceptExample, SimplificationHint } from '@tabitha/types'

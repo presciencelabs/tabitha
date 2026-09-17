@@ -35,7 +35,7 @@
 		const filters: ((change: OntologyChange) => boolean)[] = [
 			change_made_between({ since, before }),
 			change => action_type === 'all' || change.action === action_type,
-			change => concept === null || do_concepts_match({ a: change.concept, b: concept })
+			change => concept === null || do_concepts_match({ a: change.concept, b: concept }),
 		]
 		return changes.filter(is_a_match)
 

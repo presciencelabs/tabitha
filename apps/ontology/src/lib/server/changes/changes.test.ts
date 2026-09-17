@@ -18,7 +18,7 @@ vi.mock('./concepts', () => ({
 	}),
 }))
 
-const { apply_change_directly, suggest_change, approve_change, can_approve_change } = await import('./changes.server')
+const { apply_change_directly, suggest_change, approve_change, can_approve_change } = await import('./changes')
 const { create_concept } = await import('./concepts')
 
 type QueuedResponse = { first?: unknown, all?: unknown[], run?: { last_row_id?: number } }

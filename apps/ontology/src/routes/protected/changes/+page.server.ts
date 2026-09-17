@@ -1,4 +1,4 @@
-import { can_approve_change, get_all_changes, get_pending_changes } from '$lib/server/changes/changes.server.js'
+import { can_approve_change, get_all_changes, get_pending_changes } from '$lib/server/changes/changes'
 import type { OntologyChange } from '$lib/types'
 import type { PageServerLoad } from './$types'
 

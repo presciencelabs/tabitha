@@ -8,8 +8,7 @@
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'
 	import { check_for_pending_change } from '$lib/offline/pending'
-	import type { Concept } from '$lib/types'
-	import type { ConceptUpdateData } from '$lib/types'
+	import type { Concept, ConceptUpdateData } from '$lib/types'
 
 	let { data }: PageProps = $props()
 

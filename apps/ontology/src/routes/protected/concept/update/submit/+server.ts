@@ -1,5 +1,5 @@
 import { is_authorized } from '$lib/server/auth'
-import { apply_change_directly, suggest_change } from '$lib/server/changes/changes.server'
+import { apply_change_directly, suggest_change } from '$lib/server/changes/changes'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import type { ConceptUpdateData } from '$lib/types'
