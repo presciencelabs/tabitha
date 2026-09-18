@@ -140,6 +140,11 @@ export async function apply_change_directly({ db, action, data, user }: ChangeSu
 
 	const version = await get_next_version(db)
 	const applied = await apply_one_change({ db, change, version, applied_date: new Date().toISOString() })
+
+	if (applied.applied_date) {
+		await set_version({ db, version })
+	}
+
 	return !!applied.applied_date
 }
 
@@ -235,9 +240,12 @@ export async function apply_pending_changes(db: D1Database): Promise<ApplyPendin
 	for (const change of pending_changes) {
 		changes.push(await apply_one_change({ db, change, version, applied_date }))
 	}
-	// TODO once changes are fully supported, actually save the new version within the 'Version' table
 
 	const count = changes.filter(change => change.applied_date).length
+
+	if (count) {
+		await set_version({ db, version })
+	}
 
 	return {
 		count,
@@ -303,16 +311,16 @@ async function apply_one_change({ db, change, version, applied_date }: ApplyOneC
 	}
 }
 
-async function get_next_version(db: D1Database): Promise<string> {
-	// TODO once changes are fully supported, simply get the current version from the 'Version' table
+async function set_version({ db, version }: { db: D1Database, version: string }) {
 	const sql = `
-		SELECT version
-		FROM Changes
-		WHERE version IS NOT NULL
-		ORDER BY applied_date DESC
+		UPDATE Version
+		SET version = ?
 	`
-	const version_from_changes = await db.prepare(sql).first<string>('version')
-	const current_version = version_from_changes || await get_version(db)
+	await db.prepare(sql).bind(version).run()
+}
+
+async function get_next_version(db: D1Database): Promise<string> {
+	const current_version = await get_version(db)
 
 	// e.g. "3.0.9495" -> [3, 0, 9495]
 	const parts = current_version.split('.').map(Number)
