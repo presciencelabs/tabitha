@@ -97,7 +97,7 @@
 		<h3>Changes</h3>
 	</div>
 
-	{#if changes.some(change => change.approved_by && !change.applied_date)}
+	{#if data.can_add && changes.some(change => change.approved_by && !change.applied_date)}
 		<div class="py-4">
 			<button onclick={trigger_apply_changes} disabled={applying_changes} class="btn btn-primary">
 				{#if applying_changes}

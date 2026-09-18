@@ -113,16 +113,16 @@
 			<tbody>
 			{#each filtered_changes as change}
 				<tr>
-					<td>{change.action === 'create' ? 'Add' : 'Edit'}</td>
-					<td>
+					<td class="py-1">{change.action === 'create' ? 'Add' : 'Edit'}</td>
+					<td class="py-1">
 						<a href={`/?q=${change.concept.stem}&category=${change.concept.part_of_speech}`} target="_blank" class="link link-hover">
 							{change.concept.stem}-{change.concept.sense} ({change.concept.part_of_speech})
 						</a>
 					</td>
-					<td>
+					<td class="py-1">
 						<ChangeDiffData {change}/>
 					</td>
-					<td>
+					<td class="py-1">
 						{#if change.is_unsynced}
 							<span class="badge badge-warning badge-soft gap-1">
 								<Icon icon="mdi:cloud-off-outline" class="h-4 w-4" />
@@ -145,7 +145,7 @@
 							</div>
 						{/if}
 					</td>
-					<td>
+					<td class="py-1">
 						{change.version || ''}
 					</td>
 				</tr>

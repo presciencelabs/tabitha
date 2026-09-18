@@ -93,12 +93,20 @@
 				Changes
 			</h2>
 			<p class="text-sm text-base-content/70 mb-4">
-				View and apply pending changes to the Ontology. Applying changes will make a new downloadable Ontology Version.
+				{#if data?.can_add}
+					View and approve pending changes to the Ontology. Approving changes will make them available in a new downloadable Ontology Version.
+				{:else}
+					View previous and pending changes to the Ontology.
+				{/if}
 			</p>
 			<div>
-				<a href="/protected/changes?status=pending" class="btn btn-primary" title="Pending Changes">
+				<a href="/protected/changes?status=pending" title="Pending Changes" class="btn btn-primary">
 					<Icon icon="material-symbols:published-with-changes" class="w-5 h-5" />
 					View Pending Changes
+				</a>
+				<a href="/protected/changes" title="All Changes" class="btn btn-secondary">
+					<Icon icon="material-symbols:published-with-changes" class="w-5 h-5" />
+					View All Changes
 				</a>
 			</div>
 		</div>
