@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { PageProps } from './$types'
+	import { page } from '$app/state'
 	import Icon from '@iconify/svelte'
+	import { fade } from 'svelte/transition'
 	import ChangeDiffData from '$lib/ChangeDiffData.svelte'
 	import { check_for_pending_creates } from '$lib/offline/pending'
 	import { apply_pending_changes, approve_change } from '$lib/changes'
@@ -11,9 +13,15 @@
 
 	let changes = $derived(data.changes)
 
+	let save_result = $derived(page.state.save_result)
+
 	$effect(() => {
 		// these only live in this browser's offline queue, so the server can't have included them in data.changes
 		check_for_pending_creates().then(local => changes = [...local, ...data.changes])
+
+		setTimeout(() => {
+			save_result = undefined
+		}, 5000)
 	})
 	
 	let applying_changes = $state(false)
@@ -58,7 +66,31 @@
 			applying_changes = false
 		}
 	}
+
+	let two_mins_ago = $derived.by(() => {
+		const two_mins_ago = new Date()
+		two_mins_ago.setMinutes(two_mins_ago.getMinutes() - 2)
+		return two_mins_ago
+	})
+	function should_highlight(change: OntologyChange) {
+		return (change.applied_date && change.applied_date >= two_mins_ago)
+			|| (change.approved_by && change.approved_by.date >= two_mins_ago)
+			|| (change.suggested_by && change.suggested_by.date >= two_mins_ago)
+			|| change.is_unsynced
+	}
 </script>
+
+{#if save_result}
+	<div transition:fade class="alert {save_result === 'applied' ? 'alert-success' : 'alert-warning'}">
+		{#if save_result === 'applied'}
+			Saved — your change is live now.
+		{:else if save_result === 'pending'}
+			Saved — couldn't apply automatically, so it's pending in the changes queue.
+		{:else if save_result === 'queued'}
+			Couldn't reach the server — this change is saved on this device and will sync automatically.
+		{/if}
+	</div>
+{/if}
 
 <div class="pt-5 w-full">
 	<div class="prose">
@@ -108,7 +140,7 @@
 			</thead>
 			<tbody>
 			{#each changes as change}
-				<tr>
+				<tr class="{should_highlight(change) ? 'bg-primary-content' : ''} transition-colors duration-5000">
 					<td>{change.action === 'create' ? 'Add' : 'Edit'}</td>
 					<td>
 						<a href={`/?q=${change.concept.stem}&category=${change.concept.part_of_speech}`} target="_blank" class="link link-hover">

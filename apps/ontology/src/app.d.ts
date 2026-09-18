@@ -2,6 +2,7 @@
 /// <reference types="vite-plugin-pwa/client" />
 import type { Auth, User } from '@auth/sveltekit'
 import type { D1Database } from '@cloudflare/workers-types'
+import type { SaveResult } from '$lib/types'
 
 declare global {
 	namespace App {
@@ -12,7 +13,9 @@ declare global {
 			auth: Auth
 			user: User | undefined
 		}
-		// interface PageData {}
+		interface PageState {
+			save_result?: SaveResult
+		}
 
 		interface Platform {
 			env: Env

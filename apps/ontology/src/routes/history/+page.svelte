@@ -5,16 +5,16 @@
 	import { check_for_pending_creates } from '$lib/offline/pending'
 	import { format_datetime } from '$lib/format'
 	import { do_concepts_match } from '$lib/concepts'
-	import { change_made_between } from '$lib/changes'
+	import { change_made_between_versions } from '$lib/changes'
 	import type { OntologyChangeAction, OntologyChange } from '$lib/types'
 	import type { ConceptKey, PartOfSpeech } from '@tabitha/types'
 
 	let { data }: PageProps = $props()
 
-	let changes = $derived<OntologyChange[]>(data.changes)
+	let changes = $derived(data.changes)
 
-	let since = $derived<string>(data.since ?? 'all')
-	let before = $derived<string>(data.before ?? 'all')
+	let since = $derived(data.since ?? 'all')
+	let before = $derived(data.before ?? 'all')
 	let all_versions = $derived(new Set(changes.map(change => change.version).filter(v => v !== 'Failed')))
 
 	let action_type = $state<OntologyChangeAction | 'all'>('all')
@@ -33,7 +33,7 @@
 
 	let filtered_changes = $derived.by(() => {
 		const filters: ((change: OntologyChange) => boolean)[] = [
-			change_made_between({ since, before }),
+			change_made_between_versions({ since, before }),
 			change => action_type === 'all' || change.action === action_type,
 			change => concept === null || do_concepts_match({ a: change.concept, b: concept }),
 		]

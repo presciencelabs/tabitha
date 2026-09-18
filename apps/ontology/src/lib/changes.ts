@@ -62,14 +62,16 @@ export function create_change_fields(change_data: ConceptCreateData): OntologyCh
 	}
 }
 
-export function change_made_between({ since, before }: { since: string, before: string }): (change: OntologyChange) => boolean {
+// Create a filter for checking if a change was made between two Ontology versions.
+// 'since' is exclusive and 'before' is inclusive
+export function change_made_between_versions({ since, before }: { since: string, before: string }): (change: OntologyChange) => boolean {
 	if (since === 'all' && before === 'all') {
 		return () => true
 	}
 	const since_number = since === 'all' ? 0 : version_as_number(since)
 	const before_number = before === 'all' ? Number.MAX_VALUE : version_as_number(before)
 	return change => {
-		if (!change.version) {
+		if (!change.version || change.version === 'Failed') {
 			return false
 		}
 		const as_number = version_as_number(change.version)

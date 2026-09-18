@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
+	import { goto } from '$app/navigation'
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
@@ -8,6 +9,7 @@
 	import Header from '$lib/card/Header.svelte'
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'
+	import type { SaveResult } from '$lib/types'
 
 	let { data }: PageProps = $props()
 
@@ -22,10 +24,8 @@
 	let saving = $state(false)
 	let error_message = $state('')
 	let save_result: 'applied' | 'pending' | 'queued' | null = $state(null)
-	let toast_timeout: ReturnType<typeof setTimeout> | undefined
 
 	function dismiss_toast() {
-		clearTimeout(toast_timeout)
 		error_message = ''
 		save_result = null
 	}
@@ -40,14 +40,14 @@
 
 			if (outcome.type === 'failed') {
 				error_message = outcome.message
-			} else if (outcome.type === 'still_pending') {
-				save_result = 'queued'
 			} else {
-				save_result = outcome.applied ? 'applied' : 'pending'
-				if (outcome.applied) {
-					// success is good news and doesn't need to linger; pending/queued/error stay until dismissed, since they carry more to act on
-					toast_timeout = setTimeout(dismiss_toast, 4000)
+				let save_result: SaveResult
+				if (outcome.type === 'still_pending') {
+					save_result = 'queued'
+				} else {
+					save_result = outcome.applied ? 'applied' : 'pending'
 				}
+				goto('/protected/changes', { state: { save_result } })
 			}
 		} catch (err: unknown) {
 			error_message = err instanceof Error ? err.message : 'Failed to create the concept.'
@@ -87,16 +87,6 @@
 
 {#if error_message}
 	<Toast variant="error" on_dismiss={dismiss_toast}>{error_message}</Toast>
-{:else if save_result === 'applied'}
-	<Toast variant="success" on_dismiss={dismiss_toast}>Saved — your change is live now.</Toast>
-{:else if save_result === 'pending'}
-	<Toast variant="info" on_dismiss={dismiss_toast}>
-		Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.
-	</Toast>
-{:else if save_result === 'queued'}
-	<Toast variant="info" on_dismiss={dismiss_toast}>
-		Couldn't reach the server — this change is saved on this device and will sync automatically.
-	</Toast>
 {/if}
 
 <article class="card bg-base-200 mx-auto w-[80%]">

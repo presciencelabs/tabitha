@@ -123,3 +123,5 @@ export type ApplyPendingResult = {
 	changes: OntologyChange[]
 	timestamp: Date
 }
+
+export type SaveResult = 'applied' | 'pending' | 'queued'
