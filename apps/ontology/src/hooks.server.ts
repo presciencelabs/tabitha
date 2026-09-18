@@ -40,20 +40,23 @@ async function initialize_config(event: RequestEvent) {
 	const secret = event.platform?.env.AUTH_SECRET || AUTH_SECRET
 
 	/**
-	 * GOOGLE OAUTH REDIRECT PROXY FOR PREVIEW ENVIRONMENTS:
-	 * Google OAuth 2.0 strictly disallows wildcards in Authorized Redirect URIs (RFC 6749 security restriction).
-	 * Cloudflare Workers generates dynamic subdomains for branch preview deployments (e.g. `*-ontology.tbta.workers.dev`).
+	 * GOOGLE OAUTH REDIRECT PROXY:
+	 * Google OAuth 2.0 strictly disallows wildcards in Authorized Redirect URIs (RFC 6749 security
+	 * restriction), so a deployment can only receive the callback itself if its hostname is stable
+	 * enough to be registered on the OAuth client ahead of time.
 	 *
-	 * Setting `redirectProxyUrl` to `https://ontology.tabitha.bible/auth`:
-	 * - On Preview (`*-ontology.tbta.workers.dev`): Auth.js sees it is not on the proxy host, so it sends
-	 *   `redirect_uri = https://ontology.tabitha.bible/auth/callback/google` to Google.
-	 * - On Production (`ontology.tabitha.bible`): Auth.js sees `url.origin === redirectProxyUrl.origin` and sets
-	 *   `isOnRedirectProxy = true`, allowing production to receive the OAuth callback, decrypt the state, and
-	 *   forward the user back to the preview deployment.
+	 * A deployment with a stable hostname -- production, the `ontology-preview.tabitha.bible` Worker,
+	 * and local dev -- registers its own `/auth/callback/google` and leaves OAUTH_REDIRECT_PROXY_URL
+	 * blank, so Auth.js uses its own no-proxy default. `.env.preview` blanks it for the preview build
+	 * and scripts/dx/setup_env.ts blanks it in local dev's `.env.local`; keeping that a value rather
+	 * than a hostname check in this code is what lets each deployment decide.
 	 *
-	 * OAUTH_REDIRECT_PROXY_URL holds this value in `.env` (used by both prod and preview) and is forced
-	 * blank in local dev's `.env.local` by scripts/dx/setup_env.ts, so Auth.js falls back to its own
-	 * no-proxy default there instead of a hostname check baked into this code.
+	 * Per-commit `*.workers.dev` deployments cannot register anything, since Cloudflare generates the
+	 * subdomain per build. `.env` therefore sets the var to `https://ontology.tabitha.bible/auth` for
+	 * them: Auth.js sees it is not on the proxy host and sends production's `redirect_uri` to Google,
+	 * then production sees `url.origin === redirectProxyUrl.origin`, sets `isOnRedirectProxy = true`,
+	 * decrypts the state and forwards the user back. That handoff only works while both Workers share
+	 * an identical AUTH_SECRET, since the state is encrypted with it.
 	 */
 	const redirectProxyUrl = OAUTH_REDIRECT_PROXY_URL || undefined
 
