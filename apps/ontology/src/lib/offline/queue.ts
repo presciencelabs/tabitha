@@ -1,5 +1,4 @@
-import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
-import type { OntologyChangeAction } from '$lib/types'
+import type { OntologyChangeAction, ConceptCreateData, ConceptUpdateData } from '$lib/types'
 
 const DB_NAME = 'tabitha-ontology-offline-queue'
 const DB_VERSION = 1

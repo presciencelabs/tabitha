@@ -2,7 +2,7 @@ import { is_authorized } from '$lib/server/auth'
 import { apply_change_directly, suggest_change } from '$lib/server/changes/changes'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { ConceptUpdateData } from '$lib/server/types'
+import type { ConceptUpdateData } from '$lib/types'
 
 export async function POST({ request, locals }: Parameters<RequestHandler>[0]) {
 	const data: ConceptUpdateData = await request.json()
