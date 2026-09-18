@@ -62,9 +62,9 @@ function generate_local_env_content(template_content: string, existing_content?:
 			continue
 		}
 
-		// Priority 2: Auth.js's redirect-proxy target only makes sense for a genuine Cloudflare
-		// deployment (prod or preview) -- always force it blank for local dev, overriding any stale
-		// value a developer might already have from a prior run
+		// Priority 2: Auth.js's redirect-proxy target only makes sense for a deployment whose
+		// hostname cannot be registered on the OAuth client -- always force it blank for local dev,
+		// overriding any stale value a developer might already have from a prior run
 		if (key === 'OAUTH_REDIRECT_PROXY_URL') {
 			output_lines.push('OAUTH_REDIRECT_PROXY_URL=')
 			continue
