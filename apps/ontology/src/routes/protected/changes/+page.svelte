@@ -73,9 +73,9 @@
 		return two_mins_ago
 	})
 	function should_highlight(change: OntologyChange) {
-		return (change.applied_date && change.applied_date >= two_mins_ago)
-			|| (change.approved_by && change.approved_by.date >= two_mins_ago)
-			|| (change.suggested_by && change.suggested_by.date >= two_mins_ago)
+		return change.applied_date && change.applied_date >= two_mins_ago
+			|| change.approved_by && change.approved_by.date >= two_mins_ago
+			|| change.suggested_by && change.suggested_by.date >= two_mins_ago
 			|| change.is_unsynced
 	}
 </script>

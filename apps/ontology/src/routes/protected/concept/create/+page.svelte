@@ -23,11 +23,9 @@
 
 	let saving = $state(false)
 	let error_message = $state('')
-	let save_result: 'applied' | 'pending' | 'queued' | null = $state(null)
 
 	function dismiss_toast() {
 		error_message = ''
-		save_result = null
 	}
 
 	async function handle_submit(event: SubmitEvent) {
