@@ -69,10 +69,10 @@
     "update:interactive": "bun update --interactive --latest --recursive"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.63.0",
     "markdownlint-cli2": "^0.17.2",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "syncpack": "^15.3.3",
-    "turbo": "^2.10.11"
+    "turbo": "^2.11.2"
   }
 }

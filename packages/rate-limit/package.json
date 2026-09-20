@@ -16,11 +16,11 @@
     "test:unit": "vitest run src"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260815.1",
-    "@sveltejs/kit": "^2.70.2",
+    "@cloudflare/workers-types": "^5.20260920.1",
+    "@sveltejs/kit": "^2.70.3",
     "@tabitha/eslint-config": "workspace:*",
     "@tabitha/tsconfig": "workspace:*",
-    "eslint": "^10.8.1",
+    "eslint": "^10.11.0",
     "typescript": "^6.0.3",
     "vitest": "^3.2.7"
   }
