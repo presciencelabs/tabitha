@@ -159,6 +159,49 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 	return JSON.parse(text)
 }
 
+// The fixed set of section-header labels `convert_to_usfm_for_brief` emits, in English. Unlike
+// note text/terms/decisions (unique per verse), these are constant regardless of which verse or
+// translator triggered the brief -- routing them through `translate_json` alongside per-verse
+// content would defeat the AI Gateway's exact-match cache (mixing them into a body that's
+// otherwise different every call, see ADR/cache-TTL comment above). Resolving them once per
+// output language, in their own cache-stable request, means every brief after the first for a
+// given language is a cache hit for this part instead of a fresh translation.
+const STATIC_BRIEF_LABELS = [
+	'TaBiThA SEMANTIC NOTES',
+	'SIL TRANSLATOR NOTES',
+	'CULTURAL & CONTEXTUAL BACKGROUND',
+	'IMAGE KEYWORDS',
+	'CONSULTANT DECISION',
+] as const
+
+export async function get_static_label_translations({ target_language, ai }: { target_language: string, ai: AiClient }): Promise<Record<string, string>> {
+	if (target_language === 'English') {
+		return Object.fromEntries(STATIC_BRIEF_LABELS.map(label => [label, label]))
+	}
+
+	let translations: string[]
+	try {
+		translations = await ai.generate_json<string[]>({
+			contents: STATIC_BRIEF_LABELS.map(text => ({ text, sourceLanguage: 'English', targetLanguage: target_language })),
+			system_instruction: translate_prompt,
+			schema: {
+				type: 'array',
+				items: {
+					type: 'string',
+				},
+			},
+			config: {
+				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
+			},
+		})
+	} catch (error) {
+		if (!(error instanceof AiResponseError)) throw error
+		translations = [...STATIC_BRIEF_LABELS]
+	}
+
+	return Object.fromEntries(STATIC_BRIEF_LABELS.map((label, i) => [label, translations[i] ?? label]))
+}
+
 // main
 
 export async function create_brief_for_verse({ note_results, settings, ai }: { note_results: CopilotNotesResult, settings: BriefSettings, ai: AiClient }): Promise<BriefOutput | undefined> {
@@ -207,7 +250,7 @@ async function get_brief_data({ input, ai }: { input: BriefInput, ai: AiClient }
 	}
 }
 
-export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: VerseReference, output: BriefOutput | undefined }): string {
+export function convert_to_usfm_for_brief({ verse_ref, output, static_labels }: { verse_ref: VerseReference, output: BriefOutput | undefined, static_labels: Record<string, string> }): string {
 	if (!output) {
 		return `\\v ${verse_ref.verse} Unexpected issue getting notes for this verse...`
 	}
@@ -217,7 +260,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 	items.push(`\\v ${verse_ref.verse} ${output.section2.lwcText}`)
 
 	// Copilot notes
-	items.push(`\\s ${mark_for_translation({ text: 'TaBiThA SEMANTIC NOTES', targetLanguageName: output.lwc })}`)
+	items.push(`\\s ${static_labels['TaBiThA SEMANTIC NOTES']}`)
 	for (const note of output.section3.notes) {
 		const lwc_span = note.lwcSpan ? `"${note.lwcSpan}" — ` : ''
 		items.push(`\\iex ${lwc_span}(${mark_for_translation({ text: note.name, targetLanguageName: output.lwc })}) ${note.text}`)
@@ -228,7 +271,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 
 	// TNN notes
 	if (output.section4.notes.length > 0) {
-		items.push(`\\s ${mark_for_translation({ text: 'SIL TRANSLATOR NOTES', targetLanguageName: output.lwc })}`)
+		items.push(`\\s ${static_labels['SIL TRANSLATOR NOTES']}`)
 		for (const tnn_note of output.section4.notes) {
 			items.push(`\\iex ${mark_for_translation({ text: tnn_note.text, targetLanguageName: output.lwc })}`)
 		}
@@ -236,7 +279,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 
 	// Cultural & background
 	if (output.section5.cultural.length || output.section5.background.length) {
-		items.push(`\\s ${mark_for_translation({ text: 'CULTURAL & CONTEXTUAL BACKGROUND', targetLanguageName: output.lwc })}`)
+		items.push(`\\s ${static_labels['CULTURAL & CONTEXTUAL BACKGROUND']}`)
 		for (const { term, summary } of output.section5.cultural) {
 			items.push(`\\iex ${mark_for_translation({ text: term, targetLanguageName: output.lwc })} — ${mark_for_translation({ text: summary, targetLanguageName: output.lwc })}`)
 		}
@@ -247,7 +290,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 
 	// Image keywords
 	if (output.section6.keywords.length) {
-		items.push(`\\s ${mark_for_translation({ text: 'IMAGE KEYWORDS', targetLanguageName: output.lwc })}`)
+		items.push(`\\s ${static_labels['IMAGE KEYWORDS']}`)
 		for (const keyword of output.section6.keywords) {
 			items.push(`\\iex ${mark_for_translation({ text: keyword, targetLanguageName: output.lwc })}`)
 		}
@@ -255,7 +298,7 @@ export function convert_to_usfm_for_brief({ verse_ref, output }: { verse_ref: Ve
 
 	// Consultant decisions
 	if (output.section7.decisions.length) {
-		items.push(`\\s ${mark_for_translation({ text: 'CONSULTANT DECISION', targetLanguageName: output.lwc })}`)
+		items.push(`\\s ${static_labels['CONSULTANT DECISION']}`)
 		for (const decision of output.section7.decisions) {
 			items.push(`\\iex ${mark_for_translation({ text: decision.status, targetLanguageName: output.lwc })} — ${mark_for_translation({ text: decision.text, targetLanguageName: output.lwc })}`)
 		}
