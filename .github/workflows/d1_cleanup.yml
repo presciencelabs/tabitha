@@ -1,0 +1,27 @@
+name: D1 Cleanup
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Weekly, Monday 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    name: Delete unused D1 databases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Run D1 Cleanup
+        run: bun run cleanup:d1 | tee -a "$GITHUB_STEP_SUMMARY"
+        working-directory: tools/databases
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_D1_CLEANUP }}
