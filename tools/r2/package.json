@@ -1,0 +1,23 @@
+{
+  "name": "@tabitha/r2",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Provisions and reconciles TaBiThA's Cloudflare R2 buckets and their public-access configuration",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:lint:fix": "eslint . --fix",
+    "apply": "bun apply.ts",
+    "apply:run": "bun apply.ts --run"
+  },
+  "devDependencies": {
+    "@tabitha/eslint-config": "workspace:*",
+    "@tabitha/tsconfig": "workspace:*",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^26.6.2",
+    "eslint": "^10.11.0",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.135.0"
+  }
+}
