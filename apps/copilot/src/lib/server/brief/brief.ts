@@ -15,6 +15,12 @@ import type { BriefInput, BriefOutput, BriefTnnBasedOutput, BriefSettings } from
 // teammate), so the cap is generous -- a full notes document, not a single verse.
 const MAX_TNN_TEXT_LENGTH = 20000
 
+// Longer than the AI Gateway's 1-hour default (tools/gateway/config.ts) -- workshop settings
+// often re-check or regenerate the same verse's brief well past an hour, and these calls are
+// fully deterministic (fixed model/temperature/seed, JSON-schema output, no per-request-unique
+// data), so a stale cache entry is never a correctness concern, only a cost one.
+const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
+
 async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]> {
 	const queryParams = new URLSearchParams({
 		languageCode: 'eng',
@@ -79,6 +85,9 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 			contents: prompt,
 			system_instruction: brief_main_prompt,
 			schema: json_response_schema,
+			config: {
+				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
+			},
 		})
 	} catch (error) {
 		if (!(error instanceof AiResponseError)) throw error
@@ -133,6 +142,9 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 				items: {
 					type: 'string',
 				},
+			},
+			config: {
+				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
 			},
 		})
 	} catch (error) {
