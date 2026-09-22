@@ -71,16 +71,13 @@ Ensure `"placement": { "mode": "off" }` in `wrangler.jsonc` when utilizing sessi
   }
   ```
 
-### Publicly-Readable Buckets (No Worker Binding Needed)
+### Creating and Configuring Buckets -- via `tools/r2`, Not the Dashboard
 
-Not every R2 use case needs a Worker binding -- a bucket can serve anonymous HTTPS GETs directly via its `r2.dev` subdomain, with no authentication and no deployed Worker in front of it. This is the right shape for content that's already effectively public (e.g. `db-migration-data`, which replaced Git LFS tracking of `tools/databases/raw/`+`snapshots/` in a public repo -- see `tools/databases/migrations/r2_sync.ts` and its README section). Reads need no Cloudflare credentials at all; only writes (`wrangler r2 object put`/`delete`) do.
+Every bucket the account holds, and why its public-access setting is what it is, is declared in `tools/r2/config.ts` -- add a new bucket (or change an existing one's access) by editing that file and running `bun run apply:run` from `tools/r2`, not by clicking through the dashboard's bucket-creation flow. See `tools/r2/README.md`.
 
-Setup is two `wrangler` commands, both one-time:
-```bash
-wrangler r2 bucket create <bucket-name>
-wrangler r2 bucket dev-url enable <bucket-name>   # prints the public https://pub-<hash>.r2.dev URL
-```
-`dev-url enable` prompts for confirmation ("contents will be made publicly available") -- double-check the bucket's contents are actually meant to be public before running it, since there's no scoped/partial public-access mode. This confirmation prompt is also why Claude Code's auto-mode classifier tends to hard-block both commands; switch to manual permission mode to run them rather than trying to route around the block (see the `auto-mode-classifier-block-ask-manual-mode` memory).
+Not every R2 use case needs a Worker binding -- a bucket can serve anonymous HTTPS GETs directly, with no authentication and no deployed Worker in front of it, either via Cloudflare's shared `r2.dev` subdomain (`db-migration-data`, which replaced Git LFS tracking of `tools/databases/raw/`+`snapshots/` in a public repo -- see `tools/databases/migrations/r2_sync.ts`) or via a dedicated custom domain (`db-backups`, whose objects ontology's `/downloads` page links to directly). `tools/r2/config.ts`'s `access` field models both. Reads need no Cloudflare credentials at all; only writes (`wrangler r2 object put`/`delete`) do.
+
+Under the hood, `apply.ts` shells out to `wrangler r2 bucket create`/`dev-url enable`/`domain add`, passing `--force` to skip the interactive "contents will be made publicly available" confirmation prompt each of those commands has -- which is also why running one of them *by hand* (outside the tool) tends to trip Claude Code's auto-mode classifier; switch to manual permission mode for that rather than routing around the block (see the `auto-mode-classifier-block-ask-manual-mode` memory). Since `apply.ts` skips the prompt programmatically, double-check `config.ts`'s `access`/`reason` fields are actually right before running `apply:run` -- there's no confirmation step to catch a mistake once the tool itself is running.
 
 ---
 

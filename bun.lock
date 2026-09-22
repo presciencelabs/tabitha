@@ -420,6 +420,19 @@
         "typescript": "^6.0.3",
       },
     },
+    "tools/r2": {
+      "name": "@tabitha/r2",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@tabitha/eslint-config": "workspace:*",
+        "@tabitha/tsconfig": "workspace:*",
+        "@types/bun": "^1.4.2",
+        "@types/node": "^26.6.2",
+        "eslint": "^10.11.0",
+        "typescript": "^6.0.3",
+        "wrangler": "^4.135.0",
+      },
+    },
     "tools/workers": {
       "name": "@tabitha/workers",
       "version": "1.0.0",
@@ -1026,6 +1039,8 @@
     "@tabitha/gateway": ["@tabitha/gateway@workspace:tools/gateway"],
 
     "@tabitha/ontology": ["@tabitha/ontology@workspace:apps/ontology"],
+
+    "@tabitha/r2": ["@tabitha/r2@workspace:tools/r2"],
 
     "@tabitha/rate-limit": ["@tabitha/rate-limit@workspace:packages/rate-limit"],
 

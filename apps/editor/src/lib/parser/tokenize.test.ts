@@ -355,7 +355,7 @@ describe('tokenize_input', () => {
 	})
 
 	test('valid unit pairing', () => {
-		const INPUT = "5/10 .5/2 5/2.5 .5/2.5 2.5/5. [2/2.5.]"
+		const INPUT = '5/10 .5/2 5/2.5 .5/2.5 2.5/5. [2/2.5.]'
 
 		// these pairings are parsed as 'simple-complex', and determined to be 'metric-biblical' at a later stage
 		const EXPECTED_OUTPUT = [
