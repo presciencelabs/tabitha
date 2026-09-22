@@ -81,7 +81,7 @@
 		<div class="prose"><h3>Chapter</h3></div>
 		
 		<BookSelect bind:book={reference.book} disabled={fetching_cautions} />
-		<input type="number" bind:value={reference.chapter} disabled={fetching_cautions} class="input w-20" />
+		<input type="number" bind:value={reference.chapter} disabled={fetching_cautions} min="1" class="input w-20" />
 
 		{#if !verse_count}
 			<div class="prose mt-1">
@@ -91,9 +91,9 @@
 			<div class="divider divider-horizontal"></div>
 			<div class="flex gap-4">
 				<div class="prose"><h3>Verses</h3></div>
-				<input type="number" bind:value={start_verse} disabled={fetching_cautions} class="input w-20" />
+				<input type="number" bind:value={start_verse} disabled={fetching_cautions} min="1" class="input w-20" />
 				<div class="mt-1">to</div>
-				<input type="number" bind:value={end_verse} disabled={fetching_cautions} class="input w-20" />
+				<input type="number" bind:value={end_verse} disabled={fetching_cautions} min="1" class="input w-20" />
 				<div class="mt-1">({verse_count} verses in chapter)</div>
 			</div>
 		{/if}

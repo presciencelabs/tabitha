@@ -52,8 +52,8 @@
 	<section class="py-4 flex gap-4 items-center">
 		<h3 class="text-lg font-bold">Verse</h3>
 		<BookSelect bind:book={reference.book} />
-		<input type="number" bind:value={reference.chapter} class="input w-20" />
-		<input type="number" bind:value={reference.verse} class="input w-20" />
+		<input type="number" bind:value={reference.chapter} min="1" class="input w-20" />
+		<input type="number" bind:value={reference.verse} min="1" class="input w-20" />
 		<button type="button" onclick={get_english_text} class="btn btn-md">
 			Preview English
 		</button>
