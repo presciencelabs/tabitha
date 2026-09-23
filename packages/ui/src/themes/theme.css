@@ -10,6 +10,19 @@
 */
 @source '..';
 
+/* body is a flex column so a short page's footer settles at the bottom of the
+	 viewport instead of riding up under the content -- not sticky, since main just
+	 grows to fill the remaining space rather than the footer being pinned. */
+body {
+	display: flex;
+	min-height: 100dvh;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 1 auto;
+}
+
 @plugin '@tailwindcss/typography';
 @plugin 'daisyui' {
 	themes:
