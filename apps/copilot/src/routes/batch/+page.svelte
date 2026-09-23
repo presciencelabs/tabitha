@@ -3,6 +3,7 @@
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
 	import Icon from '@iconify/svelte'
+	import { SvelteSet } from 'svelte/reactivity'
 	import { convert_to_usfm } from '$lib/usfm'
 	import { default_settings, lwc_info, mtt_level_info } from '$lib/lookups'
 	import { fetch_batch_cautions, fetch_brief_headings, fetch_notes, fetch_verses_for_chapter } from '$lib/fetches'
@@ -16,19 +17,20 @@
 	} }).value)
 	let start_verse = $state(1)
 	let end_verse = $state(0)
+	let verse_count = $derived(end_verse - start_verse + 1)
 
 	let settings = $state(persisted<CopilotSettings>({ key: 'saved_settings@1.5', defaultValue: default_settings }).value)
 	
 	let error_text = $state('')
 
 	let fetching_verse_count = $state(false)
-	let verse_count = $state<number | null>(-1)
+	let verses_in_chapter = $state<number | null>(0)
 
 	let fetching_results = $state(false)
 	let fetched_results = $state<CopilotResult[]>([])
 	let completed_verses = $derived(fetched_results.length)
 
-	let retry_set = $state(new Set<number>())
+	let retry_set = $state(new SvelteSet<number>())
 
 	let generating_sfm = $state(false)
 
@@ -39,8 +41,8 @@
 		fetching_verse_count = true
 		fetch_verses_for_chapter(reference)
 			.then(result => {
-				verse_count = result
-				end_verse = verse_count || start_verse
+				verses_in_chapter = result
+				end_verse = verses_in_chapter || start_verse
 			})
 			.finally(() => {
 				fetching_verse_count = false
@@ -128,53 +130,57 @@
 		<BookSelect bind:book={reference.book} disabled={fetching_results} />
 		<input type="number" bind:value={reference.chapter} disabled={fetching_results} min="1" class="input w-20" />
 
-		{#if !verse_count}
+		{#if verses_in_chapter === null}
 			<div class="prose mt-1">
 				Invalid chapter
 			</div>
-		{:else}
+		{:else if verses_in_chapter > 0}
 			<div class="divider divider-horizontal"></div>
 			<div class="flex gap-4">
 				<div class="prose"><h3>Verses</h3></div>
 				<input type="number" bind:value={start_verse} disabled={fetching_results} min="1" class="input w-20" />
 				<div class="mt-1">to</div>
-				<input type="number" bind:value={end_verse} disabled={fetching_results} min="1" max={verse_count} class="input w-20" />
-				<div class="mt-1">({verse_count} verses in chapter)</div>
+				<input type="number" bind:value={end_verse} disabled={fetching_results} min="1" max={verses_in_chapter} class="input w-20" />
+				<div class="mt-1">({verses_in_chapter} verses in chapter)</div>
 			</div>
 		{/if}
 	</section>
 
 	<Settings bind:settings={settings} />
 
-	<button type="button" onclick={fetch_results} disabled={!can_do_batch_operation} class="btn btn-md my-4">
-		Get notes
-	</button>
+	<div class="flex gap-3">
+		<button type="button" onclick={fetch_results} disabled={!can_do_batch_operation} class="btn btn-md my-4">
+			Get notes
+		</button>
+		{#if fetched_results.length > 0}
+			<button type="button" onclick={download_as_sfm} disabled={!can_do_batch_operation} class="btn btn-md my-4">
+				Download notes (USFM)
+				{#if generating_sfm}
+					<Icon icon="line-md:loading-twotone-loop" class="h-8 w-8" />
+				{/if}
+			</button>
+		{/if}
+	</div>
 </form>
 
 {#if error_text.length}
-	<p>{error_text}</p>
+	<div class="text-error">{error_text}</div>
 {/if}
 
-{#if fetching_results}
-	{@const mode_label = settings.mode === 'brief' ? 'brief' : 'notes'}
-	<p>
-		{#if completed_verses && completed_verses > 0}
-			Loading {mode_label}: {completed_verses} / {verse_count} verses completed...
-		{:else}
-			Loading {mode_label}... This may take a while.
-		{/if}
-	</p>
-	<progress value={completed_verses} max={verse_count} class="progress progress-primary w-56"></progress>
+<div class="flex gap-2">
+	{#if fetching_results}
+		<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
+		Loading {settings.mode === 'brief' ? 'brief' : 'notes'}: {completed_verses} / {verse_count} verses completed...
+	{:else if completed_verses > 0}
+		<Icon icon="mdi:check" class="h-6 w-6 text-success" />
+		Loaded {verse_count} verses
+	{/if}
+</div>
+{#if fetching_results || completed_verses > 0}
+	<progress value={completed_verses} max={verse_count} class="progress progress-primary w-100"></progress>
 {/if}
 
 {#if fetched_results.length > 0}
-	<button type="button" onclick={download_as_sfm} disabled={!can_do_batch_operation} class="btn btn-md my-4">
-		Download notes (USFM)
-		{#if generating_sfm}
-			<Icon icon="line-md:loading-twotone-loop" class="h-8 w-8" />
-		{/if}
-	</button>
-
 	<table class="table">
 		<thead>
 			<tr>
@@ -200,7 +206,7 @@
 								class="btn btn-sm my-4"
 							>
 								{#if retrying}
-									<Icon icon="line-md:loading-twotone-loop" class="h-8 w-8" />
+									<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
 								{:else}
 									Retry
 								{/if}

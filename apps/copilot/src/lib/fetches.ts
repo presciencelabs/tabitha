@@ -39,13 +39,33 @@ export async function fetch_batch_cautions({ reference, start_verse, end_verse, 
 	const reader = response.body.getReader()
 	const decoder = new TextDecoder()
 
+	let buffer = ''
+
 	while (true) {
 		const { done, value } = await reader.read()
 		if (done) break
 
-		const chunk_text = decoder.decode(value, { stream: true })
-		const next_results = chunk_text.split('\n').map(text => JSON.parse(text) as CopilotResult)
+		// Decode the chunk of bytes into text and append to buffer
+		buffer += decoder.decode(value, { stream: true })
+
+		// Split the buffer by newline characters
+		const lines = buffer.split('\n')
+
+		// Keep the last (incomplete) line in the buffer
+		buffer = lines.pop() || ''
+
+		const next_results = lines.map(line => JSON.parse(line) as CopilotResult)
 		on_progress(next_results)
+	}
+	
+	// warn about any remaining text left over after the stream finishes
+	if (buffer.trim()) {
+		try {
+			const result = JSON.parse(buffer) as CopilotResult
+			on_progress([result])
+		} catch {
+			console.warn(`Leftover piece from streaming: "${buffer}"`)
+		}
 	}
 }
 
