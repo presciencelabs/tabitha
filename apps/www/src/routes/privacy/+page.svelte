@@ -21,17 +21,29 @@
 
 	<h2>Information we collect</h2>
 	<p>
-		None of these pages ask you to create an account or submit personal information. Like
+		Most of these pages don't ask you to create an account or submit personal information. Like
 		virtually every website, standard connection logs (IP address, browser/device type, pages
 		requested, timestamps) are generated automatically by our hosting provider, Cloudflare, for
 		security and operational purposes such as detecting abuse and diagnosing errors. We don't
 		separately collect, sell, or use this data for advertising.
 	</p>
 
+	<h2>Account data (ontology)</h2>
+	<p>
+		ontology.tabitha.bible lets members of the project's linguistics team sign in with Google to
+		access editing tools reserved for authorized contributors. Signing in shares your name, email
+		address, and profile picture with us, as provided by your Google account. We use this only to
+		identify you, attribute the edits you make, and check whether your account is authorized for
+		those editing tools — never for marketing, and never shared with third parties beyond the
+		processors on this page. We keep this data for as long as your account remains active; contact
+		us below to have it deleted.
+	</p>
+
 	<h2>Cookies and tracking</h2>
 	<p>
-		This site doesn't set cookies, run analytics scripts, or use any third-party advertising or
-		tracking pixels.
+		Outside of the sign-in session ontology.tabitha.bible sets for signed-in users, this site
+		doesn't use cookies, run analytics scripts, or use any third-party advertising or tracking
+		pixels.
 	</p>
 
 	<h2>AI-assisted translation tooling</h2>
@@ -45,6 +57,10 @@
 	<h2>Other third parties</h2>
 	<ul>
 		<li><strong>Cloudflare</strong> hosts and serves every page on this domain.</li>
+		<li>
+			<strong>Google</strong> provides the Sign in with Google flow ontology.tabitha.bible uses for
+			account authentication, governed by Google's own privacy policy.
+		</li>
 		<li>
 			<strong>GitHub</strong> hosts the project's public source code and issue tracker; interacting
 			with the project there is governed by GitHub's own privacy policy.
