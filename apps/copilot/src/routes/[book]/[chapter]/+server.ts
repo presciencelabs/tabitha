@@ -87,7 +87,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 						const verse = start_verse + verse_idx
 						const reference = { book, chapter: chapter_int, verse }
 
-						let result = await get_copilot_result({ reference, settings, ai })
+						const result = await get_copilot_result({ reference, settings, ai })
 						if (result.type === 'error') {
 							console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}`)
 							verse_results[verse_idx] = result

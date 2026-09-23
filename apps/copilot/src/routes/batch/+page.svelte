@@ -217,7 +217,7 @@
 						<td colspan="2">{result.notes.length} notes</td>
 					{:else if result.type === 'brief'}
 						{@const other_notes_length = result.cultural_background.length + result.image_keywords.length + result.consultant_decisions.length}
-						<td><span class="text-success">Ready</span></td>
+						<td><span class="badge badge-success">Ready</span></td>
 						<td colspan="2">
 							{result.semantic_notes.length} semantic notes, {result.tnn_notes.length} TNN notes, {other_notes_length} other
 						</td>

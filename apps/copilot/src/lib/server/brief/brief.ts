@@ -39,7 +39,12 @@ async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]>
 	})
 
 	if (!response.ok) {
-		throw new CopilotError(`HTTP error: received response of status ${response.status} (${response.statusText}) from ${response.url}`)
+		console.error(`HTTP error: received response of status ${response.status} (${response.statusText}) from ${response.url}`)
+		if (response.status === 401) {
+			throw new CopilotError('Authorization error fetching the TNN notes from Aquifer.')
+		} else {
+			throw new CopilotError('Error fetching the TNN notes from Aquifer.')
+		}
 	}
 
 	const result = await response.json() as { items: { id: number }[] }
@@ -57,7 +62,12 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 	})
 
 	if (!aquifer_response.ok) {
-		throw new CopilotError(`HTTP error: received response of status ${aquifer_response.status} (${aquifer_response.statusText}) from ${aquifer_response.url}`)
+		console.error(`HTTP error: received response of status ${aquifer_response.status} (${aquifer_response.statusText}) from ${aquifer_response.url}`)
+		if (aquifer_response.status === 401) {
+			throw new CopilotError('Authorization error fetching the TNN notes from Aquifer.')
+		} else {
+			throw new CopilotError('Error fetching the TNN notes from Aquifer.')
+		}
 	}
 	const tnn_text = await aquifer_response.text()
 	const safety_issue = check_input_safety(tnn_text, {
@@ -67,9 +77,8 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 		log_label: 'copilot: brief (tnn)',
 	})
 	if (safety_issue) {
-		const message = `copilot: brief rejected Aquifer TNN content for content ID ${contentId}: ${safety_issue}`
-		console.warn(message)
-		throw new CopilotError(message)
+		console.warn(`copilot: brief rejected Aquifer TNN content for content ID ${contentId}: ${safety_issue}`)
+		throw new CopilotError('Potential safety issue found in the TNN notes.')
 	}
 
 	const prompt = {
@@ -90,8 +99,8 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 			},
 		})
 	} catch (error) {
-		if (!(error instanceof AiResponseError)) throw error
-		throw new CopilotError(`Gemini error: ${error.message}`)
+		const message = error instanceof Error ? error.message : `${error}`
+		throw new CopilotError(`Error incorporating TNN-based notes: ${message}`)
 	}
 }
 
@@ -158,49 +167,6 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 	return JSON.parse(text)
 }
 
-// The fixed set of section-header labels `convert_to_usfm_for_brief` emits, in English. Unlike
-// note text/terms/decisions (unique per verse), these are constant regardless of which verse or
-// translator triggered the brief -- routing them through `translate_json` alongside per-verse
-// content would defeat the AI Gateway's exact-match cache (mixing them into a body that's
-// otherwise different every call, see ADR/cache-TTL comment above). Resolving them once per
-// output language, in their own cache-stable request, means every brief after the first for a
-// given language is a cache hit for this part instead of a fresh translation.
-const STATIC_BRIEF_LABELS = [
-	'TaBiThA SEMANTIC NOTES',
-	'SIL TRANSLATOR NOTES',
-	'CULTURAL & CONTEXTUAL BACKGROUND',
-	'IMAGE KEYWORDS',
-	'CONSULTANT DECISION',
-] as const
-
-export async function get_static_label_translations({ target_language, ai }: { target_language: string, ai: AiClient }): Promise<Record<string, string>> {
-	if (target_language === 'English') {
-		return Object.fromEntries(STATIC_BRIEF_LABELS.map(label => [label, label]))
-	}
-
-	let translations: string[]
-	try {
-		translations = await ai.generate_json<string[]>({
-			contents: STATIC_BRIEF_LABELS.map(text => ({ text, sourceLanguage: 'English', targetLanguage: target_language })),
-			system_instruction: translate_prompt,
-			schema: {
-				type: 'array',
-				items: {
-					type: 'string',
-				},
-			},
-			config: {
-				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
-			},
-		})
-	} catch (error) {
-		if (!(error instanceof AiResponseError)) throw error
-		translations = [...STATIC_BRIEF_LABELS]
-	}
-
-	return Object.fromEntries(STATIC_BRIEF_LABELS.map((label, i) => [label, translations[i] ?? label]))
-}
-
 // main
 
 export async function create_brief_for_verse({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<CopilotBriefResult | CopilotErrorResult> {
@@ -227,10 +193,12 @@ export async function create_brief_for_verse({ input, ai }: { input: BriefInput,
 			})),
 		}
 	} catch (error) {
+		const ref_display = `${input.verse.book} ${input.verse.chapter}:${input.verse.verse}`
+		console.error(`Error for ${ref_display}: ${error instanceof Error ? error.message : error}`)
 		return {
 			type: 'error',
 			verse: input.verse,
-			error: `Unexpected error occurred: ${(error as any)?.message ?? ''}`,
+			error: `${error instanceof Error ? error.message : 'Unexpected error generating brief.'}`,
 		}
 	}
 }

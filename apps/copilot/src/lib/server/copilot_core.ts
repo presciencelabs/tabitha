@@ -14,7 +14,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 
 	const encoding = await fetch_encoding(reference)
 	if (!encoding) {
-		console.error(`Error fetching encoding for ${reference.book} ${reference.chapter}:${reference.verse}`)
+		console.error(`Error fetching encoding for ${ref_display}`)
 		return error_result(`Verse reference ${ref_display} does not exist.`)
 	}
 
@@ -71,13 +71,8 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 		}
 
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error(`Error fetching notes from LLM for ${ref_display}:`, error.message)
-			return error_result(`Error encountered calling the LLM - ${error.message}.`)
-		} else {
-			console.error(`Error fetching notes from LLM for ${ref_display}:`, error)
-			return error_result(`Error encountered calling the LLM - ${error}.`)
-		}
+		console.error(`Error for ${ref_display}: ${error instanceof Error ? error.message : error}`)
+		return error_result(`${error instanceof Error ? error.message : 'Unexpected error fetching notes'}`)
 	}
 	
 	function error_result(error: string): CopilotErrorResult {
