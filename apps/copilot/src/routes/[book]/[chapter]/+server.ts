@@ -2,7 +2,7 @@ import { default_settings, fetch_verses_for_chapter } from '$lib/lookups'
 import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
 import { convert_to_usfm_for_discern, get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
-import { convert_to_usfm_for_brief, create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
+import { convert_to_usfm_for_brief, create_brief_for_verse, get_static_label_translations, translate_json } from '$lib/server/brief/brief'
 import type { AiClient } from '@tabitha/ai'
 import type { RequestHandler } from './$types'
 import type { CopilotNotesResult } from '@tabitha/types'
@@ -28,6 +28,11 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 	}
 
 	const book_code = USFM_BOOK_CODES[book] ?? book
+
+	// Resolved once per request (not per verse) so it's a single, cache-stable request per output
+	// language rather than being re-translated inline with every verse's unique content -- see
+	// get_static_label_translations' own comment for why that matters for the AI Gateway cache.
+	const static_labels = settings.mode === 'brief' ? await get_static_label_translations({ target_language: settings.lwc, ai }) : {}
 
 	const last_verse = await fetch_verses_for_chapter({ book, chapter: chapter_int })
 	if (!last_verse) {
@@ -104,7 +109,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 							}
 						}
 
-						sfm_verses[verse_idx] = await get_sfm_for_verse({ result, settings, ai })
+						sfm_verses[verse_idx] = await get_sfm_for_verse({ result, settings, static_labels, ai })
 						await flush()
 					}
 				}
@@ -135,7 +140,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 	})
 }
 
-async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotNotesResult, settings: CopilotSettings, ai: AiClient }): Promise<string> {
+async function get_sfm_for_verse({ result, settings, static_labels, ai }: { result: CopilotNotesResult, settings: CopilotSettings, static_labels: Record<string, string>, ai: AiClient }): Promise<string> {
 	if (settings.mode === 'brief') {
 		const brief_settings: BriefSettings = {
 			...settings,
@@ -154,7 +159,7 @@ async function get_sfm_for_verse({ result, settings, ai }: { result: CopilotNote
 			}
 		}
 
-		return convert_to_usfm_for_brief({ verse_ref: result.verse, output: brief_output })
+		return convert_to_usfm_for_brief({ verse_ref: result.verse, output: brief_output, static_labels })
 
 	} else {
 		return convert_to_usfm_for_discern(settings.lwc)(result)
