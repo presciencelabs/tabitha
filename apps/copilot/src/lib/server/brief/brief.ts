@@ -6,7 +6,7 @@ import translate_prompt from './translate_prompt.md?raw'
 import brief_main_prompt from './brief_main_prompt.md?raw'
 import { json_response_schema } from './json_response_schema'
 import type { VerseReference, CopilotBriefResult, CopilotErrorResult, CopilotBriefHeadingsResult } from '@tabitha/types'
-import type { BriefInput, BriefTnnBasedOutput } from '$lib/types'
+import type { BriefInput, BriefTnnBasedOutput, CopilotStep } from '$lib/types'
 import { CopilotError } from '../copilot_core'
 
 // The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
@@ -57,9 +57,16 @@ async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]>
 	return result.items.map(({ id }) => id)
 }
 
+type BriefOptions = {
+	input: BriefInput
+	ai: AiClient
+	on_step?: (step: CopilotStep) => void
+}
+
 // Resolves to null when Aquifer simply has no translator notes for the verse (whole books, e.g.
 // Acts, are uncovered) -- a normal outcome, unlike the failures that throw.
-async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<BriefTnnBasedOutput | null> {
+async function get_tnn_based_info({ input, ai, on_step }: BriefOptions): Promise<BriefTnnBasedOutput | null> {
+	on_step?.('aquifer')
 	const [contentId] = await get_aquifer_content_ids(input.verse)
 	if (contentId === undefined) return null
 
@@ -84,6 +91,7 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 		tabithaNotes: input.notes_result.notes,
 	}
 
+	on_step?.('brief')
 	try {
 		return await ai.generate_json<BriefTnnBasedOutput>({
 			contents: prompt,
@@ -164,7 +172,7 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 
 // main
 
-export async function create_brief_for_verse({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<CopilotBriefResult | CopilotErrorResult> {
+export async function create_brief_for_verse({ input, ai, on_step }: BriefOptions): Promise<CopilotBriefResult | CopilotErrorResult> {
 	function to_translate(text: string): string {
 		return mark_for_translation({ text, target_language: input.settings.lwc })
 	}
@@ -182,7 +190,7 @@ export async function create_brief_for_verse({ input, ai }: { input: BriefInput,
 			consultant_decisions: [],
 		}
 
-		const tnn_based_info = await get_tnn_based_info({ input, ai })
+		const tnn_based_info = await get_tnn_based_info({ input, ai, on_step })
 		if (!tnn_based_info) return brief_without_tnn
 
 		return {

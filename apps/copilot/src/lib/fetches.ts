@@ -1,9 +1,10 @@
 import { PUBLIC_SOURCES_API_HOST, PUBLIC_TARGETS_API_HOST } from '$env/static/public'
 import { create_sources_client, create_targets_client } from '@tabitha/api-client'
 import { BRIEF_HEADINGS_ENGLISH } from './lookups'
+import { read_ndjson_stream } from './ndjson'
 import type { VerseReference, ChapterReference, SourceSimpleJsonResult, TargetTextResult } from '@tabitha/types'
 import type { CopilotBriefHeadingsResult, CopilotResult } from '@tabitha/types/copilot'
-import type { CopilotSettings } from '$lib/types'
+import type { CopilotSettings, CopilotStep, CopilotStreamLine } from '$lib/types'
 
 const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST, cache: true })
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
@@ -36,49 +37,35 @@ export async function fetch_batch_cautions({ reference, start_verse, end_verse, 
 		throw new Error(message)
 	}
 
-	const reader = response.body.getReader()
-	const decoder = new TextDecoder()
-
-	let buffer = ''
-
-	while (true) {
-		const { done, value } = await reader.read()
-		if (done) break
-
-		// Decode the chunk of bytes into text and append to buffer
-		buffer += decoder.decode(value, { stream: true })
-
-		// Split the buffer by newline characters
-		const lines = buffer.split('\n')
-
-		// Keep the last (incomplete) line in the buffer
-		buffer = lines.pop() || ''
-
-		const next_results = lines.map(line => JSON.parse(line) as CopilotResult)
-		on_progress(next_results)
-	}
-	
-	// warn about any remaining text left over after the stream finishes
-	if (buffer.trim()) {
-		try {
-			const result = JSON.parse(buffer) as CopilotResult
-			on_progress([result])
-		} catch {
-			console.warn(`Leftover piece from streaming: "${buffer}"`)
-		}
-	}
+	await read_ndjson_stream<CopilotResult>({ body: response.body, on_items: on_progress })
 }
 
-export async function fetch_notes({ reference, settings }: { reference: VerseReference, settings: CopilotSettings }): Promise<CopilotResult> {
+type FetchNotesOptions = {
+	reference: VerseReference
+	settings: CopilotSettings
+	on_step?: (step: CopilotStep) => void
+}
+
+export async function fetch_notes({ reference, settings, on_step }: FetchNotesOptions): Promise<CopilotResult> {
 	const { book, chapter, verse } = reference
 	const params = JSON.stringify(settings)
 	const response = await fetch(`/${book}/${chapter}/${verse}?settings=${encodeURIComponent(params)}`)
 
-	if (!response.ok) {
+	if (!response.ok || !response.body) {
 		return await response.json().catch(() => ({ type: 'error', verse: reference, error: 'Unexpected error occurred.' })) as CopilotResult
 	}
 
-	return await response.json() as CopilotResult
+	let result: CopilotResult = { type: 'error', verse: reference, error: 'No result was received from the server.' }
+	await read_ndjson_stream<CopilotStreamLine>({
+		body: response.body,
+		on_items: lines => {
+			for (const line of lines) {
+				if (line.type === 'step') on_step?.(line.step)
+				else result = line
+			}
+		},
+	})
+	return result
 }
 
 export async function fetch_brief_headings(lwc: string): Promise<CopilotBriefHeadingsResult> {

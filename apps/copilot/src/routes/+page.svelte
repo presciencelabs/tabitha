@@ -6,7 +6,7 @@
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
 	import type { VerseReference, TargetTextResult, CopilotResult, CopilotNote } from '@tabitha/types'
-	import type { CopilotSettings } from '$lib/types'
+	import type { CopilotSettings, CopilotStep } from '$lib/types'
 
 	let reference = $state(persisted<VerseReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
@@ -21,7 +21,16 @@
 	let english_text = $state<TargetTextResult | null>(null)
 
 	let fetching_notes = $state(false)
+	let steps_reached = $state<CopilotStep[]>([])
+	const expected_step_count = $derived(settings.mode === 'discern' ? 1 : settings.lwc === 'English' ? 3 : 4)
 	let result = $state<CopilotResult | null>(null)
+
+	const STEP_LABELS: Record<CopilotStep, string> = {
+		notes: 'Generating semantic notes...',
+		aquifer: 'Fetching translator notes from Aquifer...',
+		brief: 'Writing brief...',
+		translate: 'Translating brief...',
+	}
 
 	async function get_english_text() {
 		fetching_english = true
@@ -31,12 +40,13 @@
 
 	async function get_notes() {
 		fetching_notes = true
+		steps_reached = []
 
 		const { book, chapter, verse } = reference
 		submitted_reference = { book, chapter, verse }
 
 		try {
-			result = await fetch_notes({ reference, settings })
+			result = await fetch_notes({ reference, settings, on_step: step => steps_reached.push(step) })
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'Unexpected error occurred'
 			console.error(message)
@@ -109,10 +119,24 @@
 
 {#if fetching_notes}
 	{@render notes_title(submitted_reference)}
-	<div class="flex items-center gap-1">
-		<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
-		Loading...
-	</div>
+	<ul>
+		{#each steps_reached as step, i (step)}
+			<li class="flex items-center gap-1">
+				{#if i === steps_reached.length - 1}
+					<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
+				{:else}
+					<Icon icon="mdi:check" class="h-5 w-5 text-success" />
+				{/if}
+				{STEP_LABELS[step]}
+			</li>
+		{:else}
+			<li class="flex items-center gap-1">
+				<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
+				Loading...
+			</li>
+		{/each}
+	</ul>
+	<progress value={Math.max(0, steps_reached.length - 1)} max={expected_step_count} class="progress progress-primary w-100"></progress>
 
 {:else if result?.type === 'error'}
 	{@render notes_title(result.verse)}

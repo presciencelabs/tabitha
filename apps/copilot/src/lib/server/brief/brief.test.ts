@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import type { AiClient } from '@tabitha/ai'
-import type { BriefInput, BriefSettings } from '$lib/types'
+import type { BriefInput, BriefSettings, BriefTnnBasedOutput } from '$lib/types'
 
 vi.mock('$env/dynamic/private', () => ({ env: { API_KEY_AQUIFER: 'test-key' } }))
 
@@ -12,6 +12,13 @@ const input: BriefInput = {
 	verse,
 	settings: { lwc: 'English', rigor: 'LOW' } as BriefSettings,
 	notes_result: { type: 'discern', verse, english_text: 'Theophilus, ...', notes: [] },
+}
+
+const EMPTY_TNN_OUTPUT: BriefTnnBasedOutput = {
+	section4: { sourcePointabilityRows: [], notes: [], excluded: [] },
+	section5: { cultural: [], background: [] },
+	section6: { keywords: [] },
+	section7: { decisions: [], resolvedUpstream: [] },
 }
 
 function fake_ai(): AiClient {
@@ -50,6 +57,29 @@ describe('create_brief_for_verse', () => {
 		})
 		expect(fetch_mock).toHaveBeenCalledTimes(1)
 		expect(ai.generate_json).not.toHaveBeenCalled()
+	})
+
+	test('reports the aquifer and brief steps, in order, on the way to a brief', async () => {
+		fetch_mock
+			.mockResolvedValueOnce(Response.json({ items: [{ id: 523595 }] }))
+			.mockResolvedValueOnce(new Response('Theophilus was the recipient of the book.'))
+		const ai = fake_ai()
+		vi.mocked(ai.generate_json).mockResolvedValueOnce(EMPTY_TNN_OUTPUT)
+		const steps: string[] = []
+
+		const result = await create_brief_for_verse({ input, ai, on_step: step => steps.push(step) })
+
+		expect(result).toMatchObject({ type: 'brief', tnn_available: true })
+		expect(steps).toEqual(['aquifer', 'brief'])
+	})
+
+	test('stops reporting steps once Aquifer has no notes for the verse', async () => {
+		fetch_mock.mockResolvedValueOnce(Response.json({ items: [] }))
+		const steps: string[] = []
+
+		await create_brief_for_verse({ input, ai: fake_ai(), on_step: step => steps.push(step) })
+
+		expect(steps).toEqual(['aquifer'])
 	})
 
 	test.each([
