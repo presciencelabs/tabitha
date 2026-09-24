@@ -21,7 +21,7 @@ type VertexGenerateContentResponse = {
 }
 
 export function create_ai_client({ app, feature, gateway, defaults }: CreateAiClientOptions): AiClient {
-	const url = build_url(gateway)
+	const url = build_gateway_url(gateway)
 
 	async function call(contents: unknown, system_instruction: string | undefined, config: AiCallDefaults): Promise<string> {
 		// `httpOptions` is a per-call escape hatch (e.g. ontology's AI-Gateway cache-TTL header) --
@@ -100,7 +100,7 @@ function merge_defaults(...layers: (AiCallDefaults | undefined)[]): AiCallDefaul
  * `ApiClient.constructUrl`/`shouldPrependVertexProjectPath` and `tModel` so this hand-rolled
  * request matches what was previously sent, byte for byte.
  */
-function build_url(gateway: AiGatewayConfig): string {
+export function build_gateway_url(gateway: AiGatewayConfig): string {
 	return `https://gateway.ai.cloudflare.com/v1/${gateway.account_id}/${GATEWAY_NAME}/google-vertex-ai/${VERTEX_API_VERSION}`
 		+ `/projects/${encodeURIComponent(gateway.project)}/locations/${encodeURIComponent(gateway.location)}`
 		+ `/publishers/google/models/${FIXED_MODEL}:generateContent`
