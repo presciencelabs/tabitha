@@ -70,3 +70,23 @@ export type FeatureInfo = {
 }
 
 export type FeatureMap = Map<EncodingEntityCategory, FeatureInfo[]>
+
+//===============
+// Phase 1 text search
+
+export type MatchSegment = {
+	text: string
+	is_match: boolean
+}
+
+export type Phase1SearchHit = {
+	reference: Reference
+	status: SourceStatus
+	segments: MatchSegment[]
+}
+
+export type Phase1SearchResults = {
+	terms: string[]
+	hits: Phase1SearchHit[]
+	total_count: number
+}

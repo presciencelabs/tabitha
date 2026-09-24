@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parse_reference } from './ref_parser'
+import { is_reference_query, parse_reference } from './ref_parser'
 
 describe('parse_reference', () => {
 	it('parses standard book, chapter, and verse', () => {
@@ -60,5 +60,15 @@ describe('parse_reference', () => {
 			id_secondary: '1',
 			id_tertiary: '1',
 		})
+	})
+})
+
+describe('is_reference_query', () => {
+	it.each(['Genesis 1:1', 'john 3:16', '1 Corinthians', 'Romans', 'Psalm 23'])('treats "%s" as a reference', input => {
+		expect(is_reference_query(input)).toBe(true)
+	})
+
+	it.each(['God loved', 'the people of Israel', '"son of man"', ''])('treats "%s" as a text search', input => {
+		expect(is_reference_query(input)).toBe(false)
 	})
 })

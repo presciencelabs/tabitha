@@ -21,9 +21,9 @@
   - **Query Params:** `glosses` (`true` | `false`) — Includes concept glosses from Ontology API.
   - **Example:** `/Bible/Acts/10/9/simple-json?glosses=true`
 
-### 3. Reference Search & Redirect API
+### 3. Search
 
-- `GET /search?ref={reference}` — Parses a reference string (e.g. `Acts 10:9`) and redirects (`303`) to the canonical resource path.
+- `GET /search?q={query}` — If the query names a reference (e.g. `Acts 10:9`), redirects (`303`) to the canonical resource path. Otherwise renders a page of Bible verses whose Phase 1 encoding contains every word in the query (whole words, any order; quote a run of words to require it as an exact phrase).
 
 ### 4. Encoding Analysis & Parsing APIs
 
