@@ -167,9 +167,9 @@
 	<div class="text-error">{error_text}</div>
 {/if}
 
-<div class="flex gap-2">
+<div class="flex items-center gap-1">
 	{#if fetching_results}
-		<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
+		<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
 		Loading {settings.mode === 'brief' ? 'brief' : 'notes'}: {completed_verses} / {verse_count} verses completed...
 	{:else if completed_verses > 0}
 		<Icon icon="mdi:check" class="h-6 w-6 text-success" />
