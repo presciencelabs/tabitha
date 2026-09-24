@@ -16,7 +16,9 @@
   },
   "scripts": {
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:lint": "eslint ."
+    "check:lint": "eslint .",
+    "test": "bun run test:unit",
+    "test:unit": "vitest run src"
   },
   "peerDependencies": {
     "@iconify/svelte": "^5.2.2",
@@ -34,7 +36,8 @@
     "eslint": "^10.11.0",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^3.2.7"
   },
   "dependencies": {
     "@tabitha/types": "workspace:*"
