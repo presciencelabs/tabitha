@@ -26,5 +26,6 @@
 
 	<footer class="site-footer">
 		<a href="https://github.com/presciencelabs/tabitha" class="footer-link">GitHub</a>
+		<a href="/privacy" class="footer-link">Privacy</a>
 	</footer>
 </div>
