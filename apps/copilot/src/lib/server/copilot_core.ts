@@ -1,25 +1,27 @@
 import { get_semantic_notes } from '$lib/server/semantic_notes'
-import { default_target_audience, fetch_encoding, fetch_target_text, lwc_info } from '$lib/lookups'
+import { default_target_audience } from '$lib/lookups'
+import { fetch_encoding, fetch_target_text } from '$lib/fetches'
 import { extract_flags } from './flag_extraction/flag_extraction'
 import { assign_flag_weights } from './flag_weighting/flag_weighting'
 import { collect_triggers, triggers_match } from './triggers'
 import type { AiClient } from '@tabitha/ai'
-import type { VerseReference, CopilotNotesResult, SourceSimpleJsonResult, SourceSimpleJsonEntity, CopilotTriggerData } from '@tabitha/types'
+import type { VerseReference, SourceSimpleJsonResult, SourceSimpleJsonEntity } from '@tabitha/types'
+import type { CopilotDiscernResult, CopilotErrorResult, CopilotTriggerData } from '@tabitha/types/copilot'
 import type { CopilotSettings, CopilotEncodingEntity, CopilotLlmInput, IndexStack } from '$lib/types'
 
-export async function get_copilot_result({ reference, settings, ai }: { reference: VerseReference, settings: CopilotSettings, ai: AiClient }): Promise<CopilotNotesResult> {
+export async function get_copilot_result({ reference, settings, ai }: { reference: VerseReference, settings: CopilotSettings, ai: AiClient }): Promise<CopilotDiscernResult | CopilotErrorResult> {
 	const ref_display = `${reference.book} ${reference.chapter}:${reference.verse}`
 
 	const encoding = await fetch_encoding(reference)
 	if (!encoding) {
-		console.error(`Error fetching encoding for ${reference.book} ${reference.chapter}:${reference.verse}`)
-		return error_result({ reference, message: `Verse reference ${ref_display} does not exist` })
+		console.error(`Error fetching encoding for ${ref_display}`)
+		return error_result(`Verse reference ${ref_display} does not exist.`)
 	}
 
 	const english = await fetch_target_text({ verse_ref: reference, project: 'English', preferred_audience: default_target_audience['English'] })
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)
-		return error_result({ reference, message: 'There is no English text saved yet for this verse.' })
+		return error_result('There is no English text saved yet for this verse.')
 	}
 	const english_text = english.ideal || english.text
 
@@ -29,7 +31,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 
 	if (!lwc_text_result) {
 		console.error(`Error fetching ${settings.lwc} text for ${ref_display}`)
-		return error_result({ reference, message: `There is no ${settings.lwc} text saved yet for this verse.` })
+		return error_result(`There is no ${settings.lwc} text saved yet for this verse.`)
 	}
 	const lwc_text = lwc_text_result.ideal || lwc_text_result.text
 
@@ -61,6 +63,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 			trigger: triggers.find(trigger_data => triggers_match({ t1: trigger, t2: trigger_data }))!,
 		}))
 		return {
+			type: 'discern',
 			verse: reference,
 			english_text,
 			lwc_text: llm_output.lwc_text,
@@ -68,43 +71,19 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 		}
 
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error(`Error fetching notes from LLM for ${ref_display}:`, error.message)
-			return error_result({ reference, message: `Error encountered calling the LLM - ${error.message}` })
-		} else {
-			console.error(`Error fetching notes from LLM for ${ref_display}:`, error)
-			return error_result({ reference, message: `Error encountered calling the LLM - ${error}` })
-		}
+		console.error(`Error for ${ref_display}: ${error instanceof Error ? error.message : error}`)
+		return error_result(`${error instanceof Error ? error.message : 'Unexpected error fetching notes'}`)
+	}
+	
+	function error_result(error: string): CopilotErrorResult {
+		return { type: 'error', verse: reference, error }
 	}
 }
 
-export function error_result({ reference, message }: { reference: VerseReference, message: string }) {
-	return {
-		verse: reference,
-		error: message,
-		english_text: '',
-		notes: [],
-	}
-}
-
-export function convert_to_usfm_for_discern(lwc: string): (result: CopilotNotesResult) => string {
-	const no_suggestions_text = lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text
-	return result => {
-		if (result.error) {
-			return `\\p \\v ${result.verse.verse} Unexpected error loading notes for this verse. Contact an administrator.`
-		}
-
-		// Convert the results to Paratext SFM format:
-		//   \p \v [verse number] TBTA English
-		//   \p Second language (if present)
-		//   \li First suggestion
-		//   \li Second suggestion...
-		const notes = result.notes.length ? result.notes.map(({ meaning, check }) => `${meaning} ${check}`) : [no_suggestions_text]
-		return [
-			`\\p \\v ${result.verse.verse} ${result.english_text}`,
-			...result.lwc_text ? [`\\p ${result.lwc_text}`] : [],
-			...notes.map(c => `\\li - ${c}`),
-		].join('\n')
+export class CopilotError extends Error {
+	constructor(message: string, options?: ErrorOptions) {
+		super(message, options)
+		this.name = 'CopilotError'
 	}
 }
 

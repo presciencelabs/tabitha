@@ -1,14 +1,29 @@
 <script>
+	import { page } from '$app/state'
 	import '$lib/app.css'
 
-	import { Brand, Footer } from '@tabitha/ui'
+	import { Header, Footer } from '@tabitha/ui'
 
 	let { children } = $props()
+
+	const nav_links = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Batch', href: '/batch' },
+	]
 </script>
 
-<header class="grid grid-cols-[auto_1fr] mx-8 mt-8">
-	<Brand app="Copilot" />
-</header>
+<Header app="Copilot">
+	<nav aria-label="Copilot pages">
+		<div class="tabs tabs-border">
+			{#each nav_links as { name, href }}
+				<a
+					{href}
+					class="tab {page.url.pathname === href ? 'tab-active' : ''}"
+					aria-current={page.url.pathname === href ? 'page' : undefined}>{name}</a>
+			{/each}
+		</div>
+	</nav>
+</Header>
 
 <div role="alert" class="alert alert-error mx-8">
 	<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">

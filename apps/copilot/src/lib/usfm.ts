@@ -1,0 +1,63 @@
+import { BRIEF_HEADINGS_ENGLISH, get_no_notes_text } from './lookups'
+import type { CopilotBriefHeadingsResult, CopilotBriefResult, CopilotBriefSection, CopilotDiscernResult, CopilotResult } from '@tabitha/types'
+
+export function convert_to_usfm({ result, lwc, headings }: { result: CopilotResult, lwc: string, headings?: CopilotBriefHeadingsResult }): string {
+	if (result.type === 'error') {
+		return `\\p \\v ${result.verse.verse} Unexpected issue getting notes for this verse: ${result.error}`
+	} else if (result.type === 'discern') {
+		return convert_to_usfm_for_discern({ result, lwc })
+	} else {
+		return convert_to_usfm_for_brief({ result, lwc, headings: headings ?? BRIEF_HEADINGS_ENGLISH })
+	}
+}
+
+function convert_to_usfm_for_brief({ result, lwc, headings }: { result: CopilotBriefResult, lwc: string, headings: CopilotBriefHeadingsResult }): string {
+	function create_section<T extends CopilotBriefSection>({ section, transformer }: { section: T, transformer?: (item: CopilotBriefResult[T][number]) => string }): string[] {
+		const items = result[section]
+		if (!items.length && section !== 'semantic_notes') {
+			return []
+		}
+		return [
+			`\\s ${headings[section]}`,
+			...items.map(transformer ?? (item => item)).map(s => `\\iex ${s}`),
+			...!items.length ? [`\\iex ${get_no_notes_text(lwc)}`] : [],
+		]
+	}
+
+	return [
+		`\\v ${result.verse.verse} ${result.lwc_text}`,
+		...create_section({
+			section: 'semantic_notes',
+			transformer: note => {
+				const lwc_span = note.quoted_text ? `"${note.quoted_text}" — ` : ''
+				return `${lwc_span}(${note.trigger.name}) ${note.meaning} ${note.check}`
+			},
+		}),
+		...create_section({ section: 'tnn_notes' }),
+		...create_section({
+			section: 'cultural_background',
+			transformer: ({ term, summary }) => `${term} — ${summary}`,
+		}),
+		...create_section({ section: 'image_keywords' }),
+		...create_section({
+			section: 'consultant_decisions',
+			transformer: ({ status, text }) => `${status} — ${text}`,
+		}),
+	].join('\n')
+}
+
+function convert_to_usfm_for_discern({ result, lwc }: { result: CopilotDiscernResult, lwc: string }): string {
+	// Convert the results to Paratext SFM format:
+	//   \p \v [verse number] TBTA English
+	//   \p Second language (if present)
+	//   \li First suggestion
+	//   \li Second suggestion...
+	const notes = result.notes.length
+		? result.notes.map(({ quoted_text, meaning, check }) => `"...${quoted_text}..." - ${meaning} ${check}`)
+		: [get_no_notes_text(lwc)]
+	return [
+		`\\p \\v ${result.verse.verse} ${result.english_text}`,
+		...result.lwc_text ? [`\\p ${result.lwc_text}`] : [],
+		...notes.map(c => `\\li - ${c}`),
+	].join('\n')
+}
