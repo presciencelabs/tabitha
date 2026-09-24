@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { default_settings, get_no_notes_text } from '$lib/lookups'
+	import { default_settings, get_no_notes_text, get_no_tnn_text } from '$lib/lookups'
 	import { fetch_notes, fetch_target_text } from '$lib/fetches'
 	import { persisted } from '$lib/store.svelte'
 	import Icon from '@iconify/svelte'
@@ -155,7 +155,12 @@
 			{@render semantic_notes(result.semantic_notes)}
 		</div>
 
-		{#if result.tnn_notes.length > 0}
+		{#if !result.tnn_available}
+			<div class="mt-3">
+				<div class="prose"><h4>TNN Notes</h4></div>
+				<p class="text-base-content/70">{get_no_tnn_text(settings.lwc)}</p>
+			</div>
+		{:else if result.tnn_notes.length > 0}
 			<div class="mt-3">
 				<div class="prose"><h4>TNN Notes</h4></div>
 				<ul class="list list-disc text-base ms-5">

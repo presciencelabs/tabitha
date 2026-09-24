@@ -20,6 +20,7 @@ function brief_result(overrides: Partial<CopilotBriefResult> = {}): CopilotResul
 		verse,
 		lwc_text: 'In the beginning God created the heavens and the earth.',
 		semantic_notes: [],
+		tnn_available: true,
 		tnn_notes: [],
 		cultural_background: [],
 		image_keywords: [],

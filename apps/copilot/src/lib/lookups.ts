@@ -30,11 +30,13 @@ export const polished_books = [
 type LwcInfo = {
 	code: string
 	no_notes_text?: string
+	no_tnn_text?: string
 }
 export const lwc_info: Record<string, LwcInfo> = {
 	'English': {
 		code: 'ENG',
 		no_notes_text: 'No notes for this verse based on the TBTA analysis.',
+		no_tnn_text: 'No Aquifer translator notes are available for this verse.',
 	},
 	// 'Afrikaans': {
 	// 	code: 'AFR',
@@ -144,6 +146,10 @@ export const default_settings: CopilotSettings = {
 
 export function get_no_notes_text(lwc: string) {
 	return lwc_info[lwc].no_notes_text || lwc_info['English'].no_notes_text!
+}
+
+export function get_no_tnn_text(lwc: string) {
+	return lwc_info[lwc].no_tnn_text || lwc_info['English'].no_tnn_text!
 }
 
 export const BRIEF_HEADINGS_ENGLISH: Record<CopilotBriefSection, string> = {
