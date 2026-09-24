@@ -1,7 +1,7 @@
 import { BRIEF_HEADINGS_ENGLISH, get_no_notes_text } from './lookups'
 import type { CopilotBriefHeadingsResult, CopilotBriefResult, CopilotBriefSection, CopilotDiscernResult, CopilotResult } from '@tabitha/types'
 
-export async function convert_to_usfm({ result, lwc, headings }: { result: CopilotResult, lwc: string, headings?: CopilotBriefHeadingsResult }): Promise<string> {
+export function convert_to_usfm({ result, lwc, headings }: { result: CopilotResult, lwc: string, headings?: CopilotBriefHeadingsResult }): string {
 	if (result.type === 'error') {
 		return `\\p \\v ${result.verse.verse} Unexpected issue getting notes for this verse: ${result.error}`
 	} else if (result.type === 'discern') {
@@ -11,7 +11,7 @@ export async function convert_to_usfm({ result, lwc, headings }: { result: Copil
 	}
 }
 
-async function convert_to_usfm_for_brief({ result, lwc, headings }: { result: CopilotBriefResult, lwc: string, headings: CopilotBriefHeadingsResult }): Promise<string> {
+function convert_to_usfm_for_brief({ result, lwc, headings }: { result: CopilotBriefResult, lwc: string, headings: CopilotBriefHeadingsResult }): string {
 	function create_section<T extends CopilotBriefSection>({ section, transformer }: { section: T, transformer?: (item: CopilotBriefResult[T][number]) => string }): string[] {
 		const items = result[section]
 		if (!items.length && section !== 'semantic_notes') {

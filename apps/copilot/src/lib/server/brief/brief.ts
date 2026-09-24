@@ -203,7 +203,7 @@ export async function create_brief_for_verse({ input, ai }: { input: BriefInput,
 	}
 }
 
-export async function get_brief_headings({ lwc, ai }: { lwc: string, ai: AiClient}): Promise<CopilotBriefHeadingsResult> {
+export async function get_brief_headings({ lwc, ai }: { lwc: string, ai: AiClient }): Promise<CopilotBriefHeadingsResult> {
 	if (lwc === 'English') {
 		return BRIEF_HEADINGS_ENGLISH
 	}

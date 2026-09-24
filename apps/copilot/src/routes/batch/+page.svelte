@@ -77,7 +77,7 @@
 			const result = await fetch_notes({ reference: verse, settings })
 			fetched_results[index] = result
 		} catch (error) {
-			const message = (error instanceof Error ? error.message : String(error))
+			const message = error instanceof Error ? error.message : String(error)
 			fetched_results[index] = { type: 'error', verse, error: message }
 			console.error(message)
 		} finally {
@@ -96,7 +96,7 @@
 			const sfm_text = [
 				`\\id ${book_code}`,
 				`\\c ${chapter}`,
-				...await Promise.all(fetched_results.map(result => convert_to_usfm({ result, lwc: settings.lwc, headings })))
+				...fetched_results.map(result => convert_to_usfm({ result, lwc: settings.lwc, headings })),
 			].join('\n')
 
 			const blob = new Blob([sfm_text], { type: 'text/plain;charset=utf-8' })

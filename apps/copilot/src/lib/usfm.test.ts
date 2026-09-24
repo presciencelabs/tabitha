@@ -90,14 +90,14 @@ describe('convert_to_usfm', () => {
 			],
 			tnn_notes: ['tnn note one.', 'tnn note two.'],
 			cultural_background: [
-				{ term: 'cultural one', summary: 'summary one'},
-				{ term: 'background two', summary: 'summary two'},
+				{ term: 'cultural one', summary: 'summary one' },
+				{ term: 'background two', summary: 'summary two' },
 			],
 			image_keywords: ['keyword one', 'keyword two'],
 			consultant_decisions: [
 				{ status: 'CONFLICT', text: 'decision one' },
 				{ status: 'UNRESOLVED', text: 'decision two' },
-			]
+			],
 		})
 		const sfm = await convert_to_usfm({ result, lwc: 'English' })
 
