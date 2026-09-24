@@ -1,9 +1,10 @@
-import { themes, type Theme } from './themes'
+import { themes, to_daisyui_theme, type Theme } from './themes'
+import { THEME_KEY } from './theme_script'
 
-const THEME_KEY = 'theme'
-
-function get_initial_theme(): string {
-	if (typeof window === 'undefined') return 'light'
+// Undefined on the server, so no theme-controller radio renders checked: a checked radio's
+// :has() selector outranks <html data-theme>, and would override the pre-paint theme script.
+function get_initial_theme(): string | undefined {
+	if (typeof window === 'undefined') return undefined
 	const stored = localStorage.getItem(THEME_KEY)
 	if (stored && themes.includes(stored as Theme)) return stored
 	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -16,6 +17,7 @@ class ThemeState {
 		this.current = new_theme
 		if (typeof window !== 'undefined') {
 			localStorage.setItem(THEME_KEY, new_theme)
+			document.documentElement.dataset.theme = to_daisyui_theme(new_theme)
 		}
 	}
 }
