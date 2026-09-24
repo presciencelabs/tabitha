@@ -1,9 +1,10 @@
 import { error, json } from '@sveltejs/kit'
 import { get_copilot_result } from '$lib/server/copilot_core'
+import { create_brief_for_verse } from '$lib/server/brief/brief'
 import { default_settings } from '$lib/lookups'
 import type { RequestHandler } from './$types'
 import type { VerseReference } from '@tabitha/types'
-import type { CopilotSettings } from '$lib/types'
+import type { BriefInput, CopilotSettings } from '$lib/types'
 
 export async function GET({ params: { book, chapter, verse }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
@@ -25,5 +26,21 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 	const reference: VerseReference = { book, chapter: chapter_int, verse: verse_int }
 
 	const result = await get_copilot_result({ reference, settings, ai })
+
+	if (result.type !== 'error' && settings.mode === 'brief') {
+		const brief_input: BriefInput = {
+			verse: reference,
+			notes_result: result,
+			settings: {
+				...settings,
+				rigor: 'HIGH',
+				output_format: 'usfm',
+				output_style: 'production',
+			},
+		}
+		const brief_result = await create_brief_for_verse({ input: brief_input, ai })
+		return json(brief_result)
+	}
+
 	return json(result)
 }

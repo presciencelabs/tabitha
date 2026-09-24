@@ -24,10 +24,41 @@ export type CopilotNote = {
 	trigger: CopilotTriggerData
 }
 
-export type CopilotNotesResult = {
+export type CopilotResultType = 'discern' | 'brief' | 'error'
+
+export type CopilotErrorResult = {
+	type: 'error'
+	verse: VerseReference
+	error: string
+}
+
+export type CopilotDiscernResult = {
+	type: 'discern'
 	verse: VerseReference
 	english_text: string
 	lwc_text?: string
 	notes: CopilotNote[]
-	error?: string
 }
+
+export type CopilotBriefResult = {
+	type: 'brief'
+	verse: VerseReference
+	lwc_text: string
+	semantic_notes: CopilotNote[]
+	tnn_notes: string[]
+	cultural_background: {
+		term: string
+		summary: string
+	}[]
+	image_keywords: string[]
+	consultant_decisions: {
+		status: string
+		text: string
+	}[]
+}
+
+export type CopilotResult = CopilotDiscernResult | CopilotBriefResult | CopilotErrorResult
+
+export type CopilotBriefSection = 'semantic_notes' | 'tnn_notes' | 'cultural_background' | 'image_keywords' | 'consultant_decisions'
+
+export type CopilotBriefHeadingsResult = Record<CopilotBriefSection, string>

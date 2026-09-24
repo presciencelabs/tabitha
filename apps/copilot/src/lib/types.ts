@@ -1,5 +1,5 @@
 import type { VerseReference, SourceSimpleJsonEntity } from '@tabitha/types'
-import type { CopilotTriggerData, CopilotNote } from '@tabitha/types/copilot'
+import type { CopilotTriggerData, CopilotDiscernResult } from '@tabitha/types/copilot'
 
 export type CopilotMode = 'discern' | 'brief'
 
@@ -137,43 +137,12 @@ export type BriefOutputStyle = 'production' // TODO | 'verbose'
 
 export type BriefInput = {
 	verse: VerseReference
-	lwc: string
-	rigor: BriefRigorMode
-	output_format: BriefOutputFormat
-	output_style: BriefOutputStyle
-	lwc_text: string
-	notes: CopilotNote[]
+	settings: BriefSettings
+	notes_result: CopilotDiscernResult
 }
 
-export type BriefOutput = BriefTabithaOutput & BriefTnnBasedOutput & {
-	verse: VerseReference
-	lwc: string
-	rigor: BriefRigorMode
-	tnnPromptVersion: string
-	outputStyle: BriefOutputStyle
-}
-
-export type BriefTabithaOutput = {
-	// TODO rename all the 'sectionX' properties to more meaningful names
-	section1: {
-		// Provenance flags
-		flagNotes: CopilotNote[]
-	}
-	section2: {
-		// LWC verse
-		lwcText: string
-		englishText?: string
-	}
-	section3: {
-		// Main copilot notes
-		notes: {
-			name: string	// trigger name
-			lwcSpan: string	// relevant text quoted from lwc text
-			text: string	// note text (meaning + check)
-		}[]
-	}
-}
-
+// This type matches the brief's 'json_response_schema' that the LLM returns,
+// so it should not change unless the prompt or schema changes.
 export type BriefTnnBasedOutput = {
 	section4: {
 		// SIL Translator Notes
@@ -223,52 +192,3 @@ export type BriefTnnBasedOutput = {
 		}[]
 	}
 }
-
-// Backs the disabled convert_to_docx in brief.ts -- see the comment there.
-// type BriefDocxTemplateData = {
-// 	verseReference: VerseReference
-// 	passageReference: string
-// 	promptVersion: string
-// 	pagePreamble: string
-// 	rigorMode: BriefRigorMode
-// 	lwcName: string
-// 	flagsHeading: string
-// 	flagNotes: {
-// 		title: string	// flag name
-// 		weight: string	// flag weight in circle format eg. '●●●○○'
-// 		trace: string	// eg. 'node 1.3.2  ·  Verb  ·  concept: take-B  ·  value: Gnomic
-// 		lwcText: string	// the note in the LWC
-// 		btText: string		// the note back-translated into English
-// 	}[]
-// 	sourceHeading: string
-// 	sourceBody: string
-// 	notesHeading: string
-// 	notes: {
-// 		ordinal: number	// the number of the note (really needed?)
-// 		name: string	// trigger name
-// 		text: string	// note text (meaning + check)
-// 	}[]
-// 	tnnHeading: string
-// 	tnnTraces: {
-// 		note: string
-// 		function: string
-// 		lwcSpan1: string
-// 		lwcSpan2: string
-// 		verdict1: string
-// 		verdict2: string
-// 		verdict3: string
-// 	}[]
-// 	retainedNone: boolean
-// 	retainedNoneText: string
-// 	retainedNotes: { text: string }[]
-// 	excludedNotes: { text: string }[]
-// 	contextHeading: string
-// 	contextNotesCulturalHeading: string
-// 	contextNotesCultural: { title: string, text: string }[]
-// 	contextNotesBackgroundHeading: string
-// 	contextNotesBackground: { title: string, text: string }[]
-// 	imagesHeading: string
-// 	imageNotes: { title: string }[]
-// 	consultantHeading: string
-// 	consultantNotes: { text: string }[]
-// }

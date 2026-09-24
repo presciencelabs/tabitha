@@ -1,4 +1,5 @@
-import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
+import { check_input_safety, type AiClient } from '@tabitha/ai'
+import { CopilotError } from './copilot_core'
 import system_instruction_template from './semantic_notes_prompt.md?raw'
 import type { CopilotLlmInput, CopilotLlmOutput } from '$lib/types'
 
@@ -25,7 +26,7 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 	const safety_issue = check_verse_text_safety(llm_input.english_text) ?? (llm_input.lwc_text ? check_verse_text_safety(llm_input.lwc_text) : undefined)
 	if (safety_issue) {
 		console.warn(`copilot: semantic-notes rejected verse text: ${safety_issue}`)
-		return { notes: [], lwc_text: llm_input.lwc_text }
+		throw new CopilotError('Potential safety issue found in the English/LWC text.')
 	}
 
 	const system_instruction = system_instruction_template.replace('{{TRANSLATE_OR_CITE_INSTRUCTION}}', () => translate_tbta_text
@@ -89,8 +90,8 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 			},
 		})
 	} catch (error) {
-		if (!(error instanceof AiResponseError)) throw error
-		output = { notes: [] }
+		const message = error instanceof Error ? error.message : `${error}`
+		throw new CopilotError(`Error generating semantic notes: ${message}`)
 	}
 
 	return {
