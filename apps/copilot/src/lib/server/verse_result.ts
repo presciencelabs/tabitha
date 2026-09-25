@@ -1,5 +1,5 @@
 import { get_copilot_result } from '$lib/server/copilot_core'
-import { create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
+import { create_brief_for_verse } from '$lib/server/brief/brief'
 import type { AiClient } from '@tabitha/ai'
 import type { VerseReference, CopilotResult } from '@tabitha/types'
 import type { BriefInput, CopilotSettings, CopilotStep } from '$lib/types'
@@ -8,11 +8,11 @@ type GetVerseResultOptions = {
 	reference: VerseReference
 	settings: CopilotSettings
 	ai: AiClient
-	on_step: (step: CopilotStep) => void
+	on_step?: (step: CopilotStep) => void
 }
 
 export async function get_verse_result({ reference, settings, ai, on_step }: GetVerseResultOptions): Promise<CopilotResult> {
-	on_step('notes')
+	on_step?.('notes')
 	const result = await get_copilot_result({ reference, settings, ai })
 	if (result.type === 'error' || settings.mode !== 'brief') return result
 
@@ -26,9 +26,5 @@ export async function get_verse_result({ reference, settings, ai, on_step }: Get
 			output_style: 'production',
 		},
 	}
-	const brief_result = await create_brief_for_verse({ input: brief_input, ai, on_step })
-	if (brief_result.type === 'error' || settings.lwc === 'English') return brief_result
-
-	on_step('translate')
-	return translate_json({ obj: brief_result, ai })
+	return await create_brief_for_verse({ input: brief_input, ai, on_step })
 }

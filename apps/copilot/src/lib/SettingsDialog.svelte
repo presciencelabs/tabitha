@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, type Snippet } from 'svelte'
 	import Icon from '@iconify/svelte'
-	import type { Snippet } from 'svelte'
 
 	type Props = {
 		children: Snippet

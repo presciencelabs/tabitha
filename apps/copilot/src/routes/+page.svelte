@@ -186,58 +186,63 @@
 			{@render semantic_notes(result.semantic_notes)}
 		</div>
 
-		<div class="mt-3">
-			<div class="prose"><h4>TNN Notes</h4></div>
-			{#if !result.tnn_available}
+		{#if result.tnn_available}
+			<div class="mt-3">
+				<div class="prose"><h4>TNN Notes</h4></div>
+				{#if result.tnn_notes.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.tnn_notes as note}
+							<li>{note}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Cultural Context & Background</h4></div>
+				{#if result.cultural_background.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.cultural_background as { term, summary }}
+							<li>{term} - {summary}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Image Keywords</h4></div>
+				{#if result.image_keywords.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.image_keywords as kw}
+							<li>{kw}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Consultant Decisions</h4></div>
+				{#if result.consultant_decisions.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.consultant_decisions as { status, text }}
+							<li>{status} - {text}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+		{:else}
+			<div class="mt-3">
+				<div class="prose"><h4>TNN Notes</h4></div>
 				{@render empty_section(get_no_tnn_text(settings.lwc))}
-			{:else if result.tnn_notes.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.tnn_notes as note}
-						<li>{note}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Cultural Context & Background</h4></div>
-			{#if result.cultural_background.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.cultural_background as { term, summary }}
-						<li>{term} - {summary}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Image Keywords</h4></div>
-			{#if result.image_keywords.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.image_keywords as kw}
-						<li>{kw}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Consultant Decisions</h4></div>
-			{#if result.consultant_decisions.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.consultant_decisions as { status, text }}
-						<li>{status} - {text}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {/if}
