@@ -1,18 +1,7 @@
-import type { D1PreparedStatement } from '@cloudflare/workers-types'
 import type { OntologyChangeAction, UserEmail } from '$lib/types'
-import type { ConceptKey, PartOfSpeech } from '@tabitha/types'
+import type { PartOfSpeech } from '@tabitha/types'
 
 export type Permission = 'PROTECTED_ACCESS' | 'ADD_CONCEPT' | 'UPDATE_CONCEPT' | 'DELETE_CONCEPT'
-
-export type ConceptUpdateData = ConceptKey & {
-	level: string
-	gloss: string
-	brief_gloss: string
-	categories: string[]
-	curated_examples: string
-}
-
-export type ConceptCreateData = ConceptUpdateData
 
 export type DbOntologyChange = {
 	id: number
@@ -27,10 +16,4 @@ export type DbOntologyChange = {
 	approved_date: string | null
 	applied_date: string | null
 	version: string | null
-}
-
-export type ConceptQueryBuilder = {
-	add_filter: (filter: string, params: (string | number)[]) => ConceptQueryBuilder
-	order_by: (column: string) => ConceptQueryBuilder
-	prepare: () => D1PreparedStatement
 }

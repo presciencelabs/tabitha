@@ -3,8 +3,9 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { create_concept, get_concept_for_update, update_concept } from './concepts'
 import { get_version } from '$lib/server/ontology'
 import { default_categories } from '$lib/lookups'
-import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields } from '$lib/types'
-import type { ConceptCreateData, ConceptUpdateData, DbOntologyChange } from '$lib/server/types'
+import { create_change_fields, diff_change_fields } from '$lib/changes'
+import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields, ConceptCreateData, ConceptUpdateData, ApplyPendingResult } from '$lib/types'
+import type { DbOntologyChange } from '$lib/server/types'
 import type { PartOfSpeech } from '@tabitha/types'
 
 async function create_table_if_not_exists(db: D1Database) {
@@ -75,7 +76,9 @@ type ChangeSubmission = {
 async function prepare_change_data({ db, action, data }: Pick<ChangeSubmission, 'db' | 'action' | 'data'>) {
 	await create_table_if_not_exists(db)
 	const { stem, sense, part_of_speech } = data
-	const change_data = action === 'create' ? create_change_data(data) : await diff_change_data({ db, update_data: data })
+	const change_data = action === 'create'
+		? create_change_fields(data)
+		: diff_change_fields({ change_data: data, current_data: (await get_concept_for_update({ db, concept_key: data }))! })
 	return { stem, sense, part_of_speech, change_data }
 }
 
@@ -137,6 +140,11 @@ export async function apply_change_directly({ db, action, data, user }: ChangeSu
 
 	const version = await get_next_version(db)
 	const applied = await apply_one_change({ db, change, version, applied_date: new Date().toISOString() })
+
+	if (applied.applied_date) {
+		await set_version({ db, version })
+	}
+
 	return !!applied.applied_date
 }
 
@@ -172,35 +180,6 @@ export async function approve_change({ db, id, user }: ApproveChangeOptions): Pr
 	return (await get_change({ db, id }))!
 }
 
-function create_change_data(create_data: ConceptCreateData): OntologyChangeDataFields {
-	const { level, gloss, brief_gloss, categories } = create_data
-	return {
-		level: { value: level },
-		gloss: { value: gloss },
-		...brief_gloss ? { brief_gloss: { value: brief_gloss } } : {},
-		categories: { value: categories },
-	}
-}
-
-type DiffChangeDataOptions = {
-	readonly db: D1Database
-	readonly update_data: ConceptUpdateData
-}
-
-async function diff_change_data({ db, update_data }: DiffChangeDataOptions): Promise<OntologyChangeDataFields> {
-	// only record the fields that actually changed
-	const old = (await get_concept_for_update({ db, concept_key: update_data }))!
-
-	const fields: (keyof OntologyChangeDataFields)[] = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples']
-	return Object.fromEntries(
-		fields.flatMap(field => {
-			return old[field]?.toString() !== update_data[field]?.toString()
-				? [[field, { old: old[field], value: update_data[field] }]]
-				: []
-		}),
-	)
-}
-
 function transform(db_change: DbOntologyChange): OntologyChange {
 	const {
 		id,
@@ -233,7 +212,7 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 	}
 }
 
-export async function apply_pending_changes(db: D1Database): Promise<{ count: number, failed: number, version: string, changes: OntologyChange[] }> {
+export async function apply_pending_changes(db: D1Database): Promise<ApplyPendingResult> {
 	await create_table_if_not_exists(db)
 
 	const sql = `
@@ -250,6 +229,7 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 			failed: 0,
 			version: await get_version(db),
 			changes: [],
+			timestamp: new Date(),
 		}
 	}
 
@@ -260,15 +240,19 @@ export async function apply_pending_changes(db: D1Database): Promise<{ count: nu
 	for (const change of pending_changes) {
 		changes.push(await apply_one_change({ db, change, version, applied_date }))
 	}
-	// TODO once changes are fully supported, actually save the new version within the 'Version' table
 
 	const count = changes.filter(change => change.applied_date).length
+
+	if (count) {
+		await set_version({ db, version })
+	}
 
 	return {
 		count,
 		failed: changes.length - count,
 		version,
 		changes,
+		timestamp: new Date(),
 	}
 }
 
@@ -327,16 +311,16 @@ async function apply_one_change({ db, change, version, applied_date }: ApplyOneC
 	}
 }
 
-async function get_next_version(db: D1Database): Promise<string> {
-	// TODO once changes are fully supported, simply get the current version from the 'Version' table
+async function set_version({ db, version }: { db: D1Database, version: string }) {
 	const sql = `
-		SELECT version
-		FROM Changes
-		WHERE version IS NOT NULL
-		ORDER BY applied_date DESC
+		UPDATE Version
+		SET version = ?
 	`
-	const version_from_changes = await db.prepare(sql).first<string>('version')
-	const current_version = version_from_changes || await get_version(db)
+	await db.prepare(sql).bind(version).run()
+}
+
+async function get_next_version(db: D1Database): Promise<string> {
+	const current_version = await get_version(db)
 
 	// e.g. "3.0.9495" -> [3, 0, 9495]
 	const parts = current_version.split('.').map(Number)

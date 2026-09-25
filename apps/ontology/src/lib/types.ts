@@ -62,6 +62,16 @@ export type FilterRulesMap = Map<string, FilterMap>
 //===============
 // Ontology Change types
 
+export type ConceptUpdateData = ConceptKey & {
+	level: string
+	gloss: string
+	brief_gloss: string
+	categories: string[]
+	curated_examples: string
+}
+
+export type ConceptCreateData = ConceptUpdateData
+
 export type OntologyChangeAction = 'create' | 'update' // TODO: | 'delete'
 
 export type FieldChangeData<T> = {
@@ -105,3 +115,13 @@ export type WorkflowInfo = {
 	email: UserEmail
 	date: Date
 }
+
+export type ApplyPendingResult = {
+	count: number
+	failed: number
+	version: string
+	changes: OntologyChange[]
+	timestamp: Date
+}
+
+export type SaveResult = 'applied' | 'pending' | 'queued'

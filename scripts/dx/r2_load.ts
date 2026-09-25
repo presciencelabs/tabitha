@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { createHash } from 'node:crypto'
 import { $ } from 'bun'
+import { Database } from 'bun:sqlite'
 import { apps_config, parse_wrangler_jsonc } from './db_load'
 
 type R2SeedEntry = {
@@ -21,7 +22,7 @@ const r2_seed_config: R2SeedEntry[] = [
 		app: 'ontology',
 		d1_binding: 'DB_Ontology',
 		r2_binding: 'R2_db_backups',
-		content_disposition: 'attachment; filename="Ontology.sqlite.new"',
+		content_disposition: 'attachment; filename="Ontology.new"',
 	},
 ]
 
@@ -57,7 +58,7 @@ export async function load_r2(target_app: string = 'all') {
 			continue
 		}
 
-		const object_key = `${d1.database_name}.tabitha.sqlite`
+		const object_key = get_backup_name(local_d1_file)
 		console.log(`⏳ Seeding "${bucket.bucket_name}/${object_key}" for ${entry.app} from local "${d1.database_name}"...`)
 
 		const staging_dir = mkdtempSync(join(tmpdir(), 'tabitha-r2-load-'))
@@ -90,6 +91,13 @@ export async function load_r2(target_app: string = 'all') {
 		console.error(`❌ Failed to seed all R2 buckets (${success_count}/${entries.length} succeeded).`)
 		process.exit(1)
 	}
+}
+
+function get_backup_name(db_file: string) {
+	const db = new Database(db_file)
+	const version = db.query<{ version: string }, []>('SELECT version FROM Version').get()?.version || ''
+	db.close()
+	return `Ontology_${version.replaceAll('.', '-')}.tabitha.sqlite`
 }
 
 if (import.meta.main) {

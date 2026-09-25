@@ -4,6 +4,9 @@ permissions:
   contents: read
 
 on:
+  push:
+    branches:
+      - ontology-transition
   schedule:
     - cron: "0 0 * * *" # Daily at midnight UTC
   workflow_dispatch:

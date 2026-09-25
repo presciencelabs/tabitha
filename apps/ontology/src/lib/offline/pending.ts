@@ -1,57 +1,26 @@
 import { get_all_mutations, type QueuedMutation } from './queue'
-import type { Concept, OntologyChange, OntologyChangeDataFields } from '$lib/types'
-import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
+import { do_concepts_match } from '$lib/concepts'
+import { create_change_fields, diff_change_fields } from '$lib/changes'
+import { decode_categorization_for_update } from '$lib/transformers'
+import type { Concept, OntologyChange } from '$lib/types'
 import type { ConceptKey } from '@tabitha/types'
-
-const DIFFED_FIELDS = ['level', 'gloss', 'brief_gloss', 'categories', 'curated_examples'] as const
-
-function do_concepts_match({ a, b }: { a: ConceptKey, b: ConceptKey | Concept }): boolean {
-	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
-}
-
-// The update form's categories can be a fixed-length array with '' placeholders for unfilled
-// theta-grid slots (see decode_categorization_for_update in server/changes/concepts.ts), while a
-// search-listing concept's categories are the compact form -- normalize both before comparing so
-// that placeholder padding alone doesn't read as a change the user never made.
-function normalize_categories(categories: string[] | undefined): string {
-	return (categories ?? []).filter(Boolean).sort().join(',')
-}
-
-// Mirrors the server's diff_change_data (changes.ts), but against the concept already in hand
-// client-side rather than a fresh DB fetch.
-function diff({ body, concept }: { body: ConceptUpdateData, concept: Concept }): OntologyChangeDataFields {
-	const current: Record<string, unknown> = { ...concept, curated_examples: concept.curated_examples_raw }
-
-	return Object.fromEntries(
-		DIFFED_FIELDS.flatMap(field => {
-			const old = current[field]
-			const value = body[field]
-			const changed = field === 'categories'
-				? normalize_categories(old as string[] | undefined) !== normalize_categories(value as string[] | undefined)
-				: old?.toString() !== value?.toString()
-			return changed ? [[field, { old, value }]] : []
-		}),
-	)
-}
-
-// Mirrors the server's create_change_data (changes.ts) -- a create has no "old" value to diff against.
-function create_change_fields(body: ConceptCreateData): OntologyChangeDataFields {
-	const { level, gloss, brief_gloss, categories } = body
-	return {
-		level: { value: level },
-		gloss: { value: gloss },
-		...brief_gloss ? { brief_gloss: { value: brief_gloss } } : {},
-		categories: { value: categories },
-	}
-}
 
 // concept is only needed (and only available) for an update -- a create has nothing on the server yet to diff against.
 function to_change({ mutation, concept }: { mutation: QueuedMutation, concept?: Concept }): OntologyChange {
-	const body = mutation.body as ConceptCreateData | ConceptUpdateData
+	const change_data = mutation.body
+	const { stem, sense, part_of_speech } = change_data
+
 	return {
 		id: -1,
-		concept: { stem: body.stem, sense: body.sense, part_of_speech: body.part_of_speech },
-		data: mutation.action === 'create' ? create_change_fields(body) : diff({ body, concept: concept! }),
+		concept: { stem, sense, part_of_speech },
+		data: concept
+			? diff_change_fields({ change_data, current_data: {
+				...concept,
+				part_of_speech,
+				categories: decode_categorization_for_update({ part_of_speech, categorization: concept.categorization }),
+				curated_examples: concept.curated_examples_raw,
+			} })
+			: create_change_fields(change_data),
 		action: mutation.action,
 		suggested_by: null,
 		approved_by: null,

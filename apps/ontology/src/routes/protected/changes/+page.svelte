@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { PageProps } from './$types'
+	import { page } from '$app/state'
 	import Icon from '@iconify/svelte'
+	import { fade } from 'svelte/transition'
+	import ChangeDiffData from '$lib/ChangeDiffData.svelte'
 	import { check_for_pending_creates } from '$lib/offline/pending'
 	import { apply_pending_changes, approve_change } from '$lib/changes'
 	import { format_datetime, format_time } from '$lib/format'
@@ -8,27 +11,18 @@
 
 	let { data }: PageProps = $props()
 
-	// svelte-ignore state_referenced_locally
-	let changes = $state<OntologyChange[]>(data.changes)
+	let changes = $derived(data.changes)
+
+	let save_result = $derived(page.state.save_result)
 
 	$effect(() => {
 		// these only live in this browser's offline queue, so the server can't have included them in data.changes
 		check_for_pending_creates().then(local => changes = [...local, ...data.changes])
+
+		setTimeout(() => {
+			save_result = undefined
+		}, 5000)
 	})
-
-	function categories_display({ value, old }: { value: string[], old: string[] | undefined }) {
-		if (!old) {
-			return value.filter(v => !!v && !v.startsWith('never')).join(' | ')
-		}
-
-		const display_parts: string[] = []
-		for (let i = 0; i < value.length; i++) {
-			if (value[i] !== old[i]) {
-				display_parts.push(`'${old[i]}' → '${value[i]}'`)
-			}
-		}
-		return display_parts.join(' | ')
-	}
 	
 	let applying_changes = $state(false)
 	let status_message = $state('')
@@ -72,14 +66,38 @@
 			applying_changes = false
 		}
 	}
+
+	let two_mins_ago = $derived.by(() => {
+		const two_mins_ago = new Date()
+		two_mins_ago.setMinutes(two_mins_ago.getMinutes() - 2)
+		return two_mins_ago
+	})
+	function should_highlight(change: OntologyChange) {
+		return change.applied_date && change.applied_date >= two_mins_ago
+			|| change.approved_by && change.approved_by.date >= two_mins_ago
+			|| change.suggested_by && change.suggested_by.date >= two_mins_ago
+			|| change.is_unsynced
+	}
 </script>
+
+{#if save_result}
+	<div transition:fade class="alert {save_result === 'applied' ? 'alert-success' : 'alert-warning'}">
+		{#if save_result === 'applied'}
+			Saved — your change is live now.
+		{:else if save_result === 'pending'}
+			Saved — couldn't apply automatically, so it's pending in the changes queue.
+		{:else if save_result === 'queued'}
+			Couldn't reach the server — this change is saved on this device and will sync automatically.
+		{/if}
+	</div>
+{/if}
 
 <div class="pt-5 w-full">
 	<div class="prose">
 		<h3>Changes</h3>
 	</div>
 
-	{#if changes.some(change => change.approved_by && !change.applied_date)}
+	{#if data.can_add && changes.some(change => change.approved_by && !change.applied_date)}
 		<div class="py-4">
 			<button onclick={trigger_apply_changes} disabled={applying_changes} class="btn btn-primary">
 				{#if applying_changes}
@@ -122,32 +140,15 @@
 			</thead>
 			<tbody>
 			{#each changes as change}
-				<tr>
+				<tr class="{should_highlight(change) ? 'bg-primary-content' : ''} transition-colors duration-5000">
 					<td>{change.action === 'create' ? 'Add' : 'Edit'}</td>
-					<td>{change.concept.stem}-{change.concept.sense} ({change.concept.part_of_speech})</td>
 					<td>
-						<ul class="list list-disc">
-							{#if change.data.level}
-								{@const { value, old } = change.data.level}
-								<li><span class="font-semibold">Level</span>: {old ? `${old} → ${value}` : value}</li>
-							{/if}
-							{#if change.data.gloss}
-								{@const { value, old } = change.data.gloss}
-								<li><span class="font-semibold">Gloss</span>: {old !== undefined ? `'${old}' → '${value}'` : value}</li>
-							{/if}
-							{#if change.data.brief_gloss}
-								{@const { value, old } = change.data.brief_gloss}
-								<li><span class="font-semibold">Brief gloss</span>: {old !== undefined ? `'${old}' → '${value}'` : value}</li>
-							{/if}
-							{#if change.data.categories}
-								{@const { value, old } = change.data.categories}
-								{@const label = change.concept.part_of_speech === 'Verb' ? 'Theta grid' : 'Categorization'}
-								<li><span class="font-semibold">{label}</span>: {categories_display({ value, old })}</li>
-							{/if}
-							{#if change.data.curated_examples}
-								<li><span class="font-semibold">Curated examples</span> updated</li>
-							{/if}
-						</ul>
+						<a href={`/?q=${change.concept.stem}&category=${change.concept.part_of_speech}`} target="_blank" class="link link-hover">
+							{change.concept.stem}-{change.concept.sense} ({change.concept.part_of_speech})
+						</a>
+					</td>
+					<td>
+						<ChangeDiffData {change}/>
 					</td>
 					<td>
 						{#if change.suggested_by}
@@ -200,6 +201,6 @@
 			</tbody>
 		</table>
 	{:else}
-		No changes to show yet.
+		No changes to show.
 	{/if}
 </div>
