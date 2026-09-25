@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit'
 import { get_verse_result } from '$lib/server/verse_result'
 import { default_settings } from '$lib/lookups'
+import { translate_json } from '$lib/server/brief/brief'
 import type { RequestHandler } from './$types'
 import type { VerseReference } from '@tabitha/types'
 import type { CopilotSettings, CopilotStep, CopilotStreamLine } from '$lib/types'
@@ -30,7 +31,13 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 			const on_step = (step: CopilotStep) => send({ type: 'step', step })
 
 			try {
-				send(await get_verse_result({ reference, settings, ai, on_step }))
+				const result = await get_verse_result({ reference, settings, ai, on_step })
+				if (result.type === 'error' || settings.mode !== 'brief' || settings.lwc === 'English') {
+					send(result)
+				} else {
+					on_step('translate')
+					send(await translate_json({ obj: result, ai }))
+				}
 			} catch (err) {
 				console.error(`Error generating notes for ${book} ${chapter}:${verse}:`, err)
 				send({ type: 'error', verse: reference, error: err instanceof Error ? err.message : 'Unexpected error occurred.' })

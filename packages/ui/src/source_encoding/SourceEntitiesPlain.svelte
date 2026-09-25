@@ -1,43 +1,34 @@
 <script lang="ts">
-	import type { Component } from 'svelte'
+	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
 	import Punctuation from './Punctuation.svelte'
-	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 
 	type Props = {
 		source_entities: SourceEntity[]
-		selected_concept: ConceptKey
+		ontology_base_url: string
+		/** lowercased phrase words to highlight matching concepts against, if searching by phrase */
+		highlight_terms?: Set<string>
+		/** the concept to highlight a matching concept against */
+		highlight_concept?: ConceptKey
 	}
 
-	let { source_entities, selected_concept }: Props = $props()
+	let { source_entities, ontology_base_url, highlight_terms, highlight_concept }: Props = $props()
 
 	let main_clauses = $derived(source_entities.reduce(clause_reducer, [] as SourceEntity[][]))
 
-	function clause_reducer(clauses: SourceEntity[][], source_entity: SourceEntity) {
-		if (source_entity.value === '{') {
+	function clause_reducer(clauses: SourceEntity[][], entity: SourceEntity) {
+		if (entity.value === '{') {
 			clauses.push([])
 		}
-		clauses.at(-1)?.push(source_entity)
+
+		const last_clause = clauses[clauses.length - 1]
+		if (last_clause) {
+			last_clause.push(entity)
+		}
+
 		return clauses
-	}
-
-	type EntityComponent = Component<{
-		source_entity: SourceEntity
-		selected_concept?: ConceptKey
-		classes?: string
-	}>
-
-	const component_filters: [(entity: SourceEntity) => boolean, EntityComponent][] = [
-		[is_boundary_start, BoundaryStart],
-		[is_boundary_end, BoundaryEnd],
-		[({ concept }) => !!concept, Word],
-		[() => true, Punctuation],
-	]
-
-	function get_component(entity: SourceEntity): EntityComponent {
-		return component_filters.find(([filter]) => filter(entity))![1]
 	}
 
 	function is_boundary_start(entity: SourceEntity): boolean {
@@ -48,21 +39,25 @@
 		return ['}', ']', ')'].includes(entity.value)
 	}
 
+	/**
+	 * Punctuation has no category of its own to color by, so it borrows its enclosing phrase's --
+	 * found by walking back to the nearest boundary-start not already closed by a nested one.
+	 */
 	function get_parent_category({ entities, index }: { entities: SourceEntity[], index: number }): string {
 		let inner_level = 0
+
 		for (let j = index - 1; j >= 0; j--) {
 			const entity = entities[j]
 			if (is_boundary_start(entity)) {
 				if (inner_level === 0) {
 					return entity.category_abbr
-				} else {
-					inner_level -= 1
 				}
+				inner_level -= 1
 			} else if (is_boundary_end(entity)) {
-				// skip over any phrases/clauses nested within this one
 				inner_level += 1
 			}
 		}
+
 		return ''
 	}
 </script>
@@ -70,9 +65,16 @@
 {#each main_clauses as main_clause}
 	<div class="hover:bg-base-200 flex flex-wrap items-center">
 		{#each main_clause as source_entity, i}
-			{@const Component = get_component(source_entity)}
 			<span class="entity-{source_entity.category_abbr || get_parent_category({ entities: main_clause, index: i })}">
-				<Component {source_entity} {selected_concept} />
+				{#if is_boundary_start(source_entity)}
+					<BoundaryStart {source_entity} />
+				{:else if is_boundary_end(source_entity)}
+					<BoundaryEnd {source_entity} />
+				{:else if source_entity.concept}
+					<Word {source_entity} {highlight_terms} {highlight_concept} {ontology_base_url} />
+				{:else}
+					<Punctuation {source_entity} size="sm" />
+				{/if}
 			</span>
 		{/each}
 	</div>

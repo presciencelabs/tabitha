@@ -599,6 +599,16 @@ complete"), that single signal should be treated as authorizing both `git commit
 together -- a separate, distinct confirmation for the push step should not be required once
 review-complete has been signaled.
 
+### Worktree naming
+
+Agent worktrees live at `.claude/worktrees/<name>`. A worktree name should never start with
+`copilot-` or `agents-`: VS Code's Git extension treats folders with those prefixes as GitHub
+Copilot's own worktrees and hides them from the Source Control panel while the parent repo is open
+(`isCopilotWorktreeFolder` in `microsoft/vscode`'s `extensions/git/src/util.ts`). That's an easy
+trap here, since `apps/copilot` makes `copilot-<feature>` a natural name. Put the scope later
+instead (`fix-copilot-brief-sections`). A `PreToolUse` hook in `.claude/settings.json` rejects
+these prefixes when Claude Code's `EnterWorktree` tool creates a worktree.
+
 ---
 
 ## ⚡ 1-Command Verification Gate

@@ -1,0 +1,15 @@
+{
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "EnterWorktree",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_worktree_name.ts\""
+					}
+				]
+			}
+		]
+	}
+}
