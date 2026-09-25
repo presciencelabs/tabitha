@@ -62,7 +62,7 @@
 </script>
 
 <form>
-	<section class="py-4 flex gap-4 items-center">
+	<section class="py-2 flex gap-4 items-center">
 		<h3 class="text-lg font-bold">Verse</h3>
 		<BookSelect bind:book={reference.book} />
 		<input type="number" bind:value={reference.chapter} min="1" class="input w-20" />
@@ -73,22 +73,25 @@
 	</section>
 
 	{#if fetching_english}
-		<div class="prose mb-5">
+		<div class="prose mb-3">
 			<h4>English Preview</h4>
 			<div>Loading...</div>
 		</div>
 	{:else if english_text}
-		<div class="w-full mb-5">
+		<div class="w-full mb-3">
 			<div class="prose"><h4>English Preview</h4></div>
 			<div>({english_text?.audience}) {english_text?.text || ''}</div>
 		</div>
 	{/if}
 	
-	<Settings bind:settings={settings} />
+	<div class="flex gap-3 items-center">
+		<Settings bind:settings={settings} />
 
-	<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-md my-4">
-		Get notes
-	</button>
+		<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-primary btn-md my-4">
+			<Icon icon="mdi:lightbulb-outline" class="h-5 w-5" />
+			Get notes ({settings.mode})
+		</button>
+	</div>
 </form>
 
 {#snippet empty_section(text: string)}
