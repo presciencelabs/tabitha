@@ -73,6 +73,18 @@ describe('create_brief_for_verse', () => {
 		expect(steps).toEqual(['aquifer', 'brief'])
 	})
 
+	test('gives the model the English text as the LWC verse when there is no separate LWC text', async () => {
+		fetch_mock
+			.mockResolvedValueOnce(Response.json({ items: [{ id: 523595 }] }))
+			.mockResolvedValueOnce(new Response('Theophilus was the recipient of the book.'))
+		const ai = fake_ai()
+		vi.mocked(ai.generate_json).mockResolvedValueOnce(EMPTY_TNN_OUTPUT)
+
+		await create_brief_for_verse({ input, ai })
+
+		expect(vi.mocked(ai.generate_json).mock.calls[0][0].contents).toMatchObject({ lwcVerse: input.notes_result.english_text })
+	})
+
 	test('stops reporting steps once Aquifer has no notes for the verse', async () => {
 		fetch_mock.mockResolvedValueOnce(Response.json({ items: [] }))
 		const steps: string[] = []

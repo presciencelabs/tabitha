@@ -87,7 +87,7 @@ async function get_tnn_based_info({ input, ai, on_step }: BriefOptions): Promise
 		verseReference: `${input.verse.book} ${input.verse.chapter}:${input.verse.verse}`,
 		rigorMode: input.settings.rigor,
 		tnnText: tnn_text,
-		lwcVerse: input.notes_result.lwc_text,
+		lwcVerse: input.notes_result.lwc_text ?? input.notes_result.english_text,
 		tabithaNotes: input.notes_result.notes,
 	}
 
