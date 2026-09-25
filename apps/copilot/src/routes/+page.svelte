@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BRIEF_EMPTY_SECTION_TEXT, default_settings, get_no_notes_text, get_no_tnn_text } from '$lib/lookups'
+	import { default_settings, get_no_notes_text, get_no_tnn_text } from '$lib/lookups'
 	import { fetch_notes, fetch_target_text } from '$lib/fetches'
 	import { persisted } from '$lib/store.svelte'
 	import Icon from '@iconify/svelte'
@@ -185,10 +185,8 @@
 
 		<div class="mt-3">
 			<div class="prose"><h4>TNN Notes</h4></div>
-			{#if !result.tnn_available}
-				{@render empty_section(get_no_tnn_text(settings.lwc))}
-			{:else if result.tnn_notes.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
+			{#if result.tnn_notes.length === 0}
+				{@render empty_section(get_no_tnn_text({ lwc: settings.lwc, tnn_available: result.tnn_available }))}
 			{:else}
 				<ul class="list list-disc text-base ms-5">
 					{#each result.tnn_notes as note}
@@ -198,43 +196,37 @@
 			{/if}
 		</div>
 
-		<div class="mt-3">
-			<div class="prose"><h4>Cultural Context & Background</h4></div>
-			{#if result.cultural_background.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
-			{:else}
+		{#if result.cultural_background.length > 0}
+			<div class="mt-3">
+				<div class="prose"><h4>Cultural Context & Background</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.cultural_background as { term, summary }}
 						<li>{term} - {summary}</li>
 					{/each}
 				</ul>
-			{/if}
-		</div>
+			</div>
+		{/if}
 
-		<div class="mt-3">
-			<div class="prose"><h4>Image Keywords</h4></div>
-			{#if result.image_keywords.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
-			{:else}
+		{#if result.image_keywords.length > 0}
+			<div class="mt-3">
+				<div class="prose"><h4>Image Keywords</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.image_keywords as kw}
 						<li>{kw}</li>
 					{/each}
 				</ul>
-			{/if}
-		</div>
+			</div>
+		{/if}
 
-		<div class="mt-3">
-			<div class="prose"><h4>Consultant Decisions</h4></div>
-			{#if result.consultant_decisions.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
-			{:else}
+		{#if result.consultant_decisions.length > 0}
+			<div class="mt-3">
+				<div class="prose"><h4>Consultant Decisions</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.consultant_decisions as { status, text }}
 						<li>{status} - {text}</li>
 					{/each}
 				</ul>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {/if}

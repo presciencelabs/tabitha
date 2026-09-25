@@ -72,13 +72,27 @@ describe('convert_to_usfm', () => {
 		].join('\n'))
 	})
 
-	test('brief - falls back to the LWC no-notes text when there are no notes', async () => {
+	test('brief - always renders the semantic and TNN sections, omitting the other empty sections', async () => {
 		const sfm = await convert_to_usfm({ result: brief_result(), lwc: 'English' })
 
 		expect(sfm).toBe([
 			'\\v 1 In the beginning God created the heavens and the earth.',
 			`\\s ${BRIEF_HEADINGS_ENGLISH.semantic_notes}`,
 			'\\iex No notes for this verse based on the TBTA analysis.',
+			`\\s ${BRIEF_HEADINGS_ENGLISH.tnn_notes}`,
+			'\\iex No translator notes remained for this verse after filtering.',
+		].join('\n'))
+	})
+
+	test('brief - uses the no-Aquifer-coverage text when TNN is unavailable', async () => {
+		const sfm = await convert_to_usfm({ result: brief_result({ tnn_available: false }), lwc: 'English' })
+
+		expect(sfm).toBe([
+			'\\v 1 In the beginning God created the heavens and the earth.',
+			`\\s ${BRIEF_HEADINGS_ENGLISH.semantic_notes}`,
+			'\\iex No notes for this verse based on the TBTA analysis.',
+			`\\s ${BRIEF_HEADINGS_ENGLISH.tnn_notes}`,
+			'\\iex No Aquifer translator notes are available for this verse.',
 		].join('\n'))
 	})
 
