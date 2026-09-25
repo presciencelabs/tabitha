@@ -1,17 +1,20 @@
 <script lang="ts">
-	import type { SourceEntity } from '@tabitha/types'
+	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 	import Word from './Word.svelte'
 	import BoundaryEnd from './BoundaryEnd.svelte'
 	import BoundaryStart from './BoundaryStart.svelte'
-	import { Punctuation } from '@tabitha/ui'
+	import Punctuation from './Punctuation.svelte'
 
 	type Props = {
 		source_entities: SourceEntity[]
+		ontology_base_url: string
 		/** lowercased phrase words to highlight matching concepts against, if searching by phrase */
 		highlight_terms?: Set<string>
+		/** the concept to highlight a matching concept against */
+		highlight_concept?: ConceptKey
 	}
 
-	let { source_entities, highlight_terms }: Props = $props()
+	let { source_entities, ontology_base_url, highlight_terms, highlight_concept }: Props = $props()
 
 	let main_clauses = $derived(source_entities.reduce(clause_reducer, [] as SourceEntity[][]))
 
@@ -68,14 +71,15 @@
 {#each main_clauses as main_clause}
 	<div class="hover:bg-base-200 flex flex-wrap items-center">
 		{#each main_clause as source_entity, i}
-			{@const Component = get_component(source_entity)}
 			<span class="entity-{source_entity.category_abbr || get_parent_category({ entities: main_clause, index: i })}">
-				{#if Component === Punctuation}
-					<Punctuation {source_entity} size="sm" />
-				{:else if Component === Word}
-					<Word {source_entity} {highlight_terms} />
+				{#if is_boundary_start(source_entity)}
+					<BoundaryStart {source_entity} />
+				{:else if is_boundary_end(source_entity)}
+					<BoundaryEnd {source_entity} />
+				{:else if source_entity.concept}
+					<Word {source_entity} {highlight_terms} {highlight_concept} {ontology_base_url} />
 				{:else}
-					<Component {source_entity} />
+					<Punctuation {source_entity} size="sm" />
 				{/if}
 			</span>
 		{/each}
