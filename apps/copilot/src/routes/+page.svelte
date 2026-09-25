@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { default_settings, get_no_notes_text, get_no_tnn_text } from '$lib/lookups'
+	import { BRIEF_EMPTY_SECTION_TEXT, default_settings, get_no_notes_text, get_no_tnn_text } from '$lib/lookups'
 	import { fetch_notes, fetch_target_text } from '$lib/fetches'
 	import { persisted } from '$lib/store.svelte'
 	import Icon from '@iconify/svelte'
@@ -91,9 +91,15 @@
 	</button>
 </form>
 
+{#snippet empty_section(text: string)}
+	<p class="text-base-content/70">{text}</p>
+{/snippet}
+
 {#snippet semantic_notes(notes: CopilotNote[])}
-	<ul class="list list-disc text-base ms-5">
-		{#if notes.length > 0}
+	{#if notes.length === 0}
+		{@render empty_section(get_no_notes_text(settings.lwc))}
+	{:else}
+		<ul class="list list-disc text-base ms-5">
 			{#each notes as note}
 				<li>
 					{#if note.quoted_text}
@@ -107,10 +113,8 @@
 					{/if}
 				</li>
 			{/each}
-		{:else}
-			<li>{get_no_notes_text(settings.lwc)}</li>
-		{/if}
-	</ul>
+		</ul>
+	{/if}
 {/snippet}
 
 {#snippet notes_title(reference: VerseReference)}
@@ -179,53 +183,58 @@
 			{@render semantic_notes(result.semantic_notes)}
 		</div>
 
-		{#if !result.tnn_available}
-			<div class="mt-3">
-				<div class="prose"><h4>TNN Notes</h4></div>
-				<p class="text-base-content/70">{get_no_tnn_text(settings.lwc)}</p>
-			</div>
-		{:else if result.tnn_notes.length > 0}
-			<div class="mt-3">
-				<div class="prose"><h4>TNN Notes</h4></div>
+		<div class="mt-3">
+			<div class="prose"><h4>TNN Notes</h4></div>
+			{#if !result.tnn_available}
+				{@render empty_section(get_no_tnn_text(settings.lwc))}
+			{:else if result.tnn_notes.length === 0}
+				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
+			{:else}
 				<ul class="list list-disc text-base ms-5">
 					{#each result.tnn_notes as note}
 						<li>{note}</li>
 					{/each}
 				</ul>
-			</div>
-		{/if}
+			{/if}
+		</div>
 
-		{#if result.cultural_background.length > 0}
-			<div class="mt-3">
-				<div class="prose"><h4>Cultural Context & Background</h4></div>
+		<div class="mt-3">
+			<div class="prose"><h4>Cultural Context & Background</h4></div>
+			{#if result.cultural_background.length === 0}
+				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
+			{:else}
 				<ul class="list list-disc text-base ms-5">
 					{#each result.cultural_background as { term, summary }}
 						<li>{term} - {summary}</li>
 					{/each}
 				</ul>
-			</div>
-		{/if}
+			{/if}
+		</div>
 
-		{#if result.image_keywords.length > 0}
-			<div class="mt-3">
-				<div class="prose"><h4>Image Keywords</h4></div>
+		<div class="mt-3">
+			<div class="prose"><h4>Image Keywords</h4></div>
+			{#if result.image_keywords.length === 0}
+				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
+			{:else}
 				<ul class="list list-disc text-base ms-5">
 					{#each result.image_keywords as kw}
 						<li>{kw}</li>
 					{/each}
 				</ul>
-			</div>
-		{/if}
+			{/if}
+		</div>
 
-		{#if result.consultant_decisions.length > 0}
-			<div class="mt-3">
-				<div class="prose"><h4>Consultant Decisions</h4></div>
+		<div class="mt-3">
+			<div class="prose"><h4>Consultant Decisions</h4></div>
+			{#if result.consultant_decisions.length === 0}
+				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
+			{:else}
 				<ul class="list list-disc text-base ms-5">
 					{#each result.consultant_decisions as { status, text }}
 						<li>{status} - {text}</li>
 					{/each}
 				</ul>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 {/if}

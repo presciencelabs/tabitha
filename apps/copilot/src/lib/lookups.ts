@@ -152,6 +152,13 @@ export function get_no_tnn_text(lwc: string) {
 	return lwc_info[lwc].no_tnn_text || lwc_info['English'].no_tnn_text!
 }
 
+export const BRIEF_EMPTY_SECTION_TEXT: Record<Exclude<CopilotBriefSection, 'semantic_notes'>, string> = {
+	'tnn_notes': 'No translator notes remained for this verse after filtering.',
+	'cultural_background': 'No cultural or contextual background was identified for this verse.',
+	'image_keywords': 'No image keywords were identified for this verse.',
+	'consultant_decisions': 'No consultant decisions were identified for this verse.',
+}
+
 export const BRIEF_HEADINGS_ENGLISH: Record<CopilotBriefSection, string> = {
 	'semantic_notes': 'TaBiThA SEMANTIC NOTES',
 	'tnn_notes': 'SIL TRANSLATOR NOTES',
