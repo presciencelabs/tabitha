@@ -45,6 +45,8 @@ export type CopilotBriefResult = {
 	verse: VerseReference
 	lwc_text: string
 	semantic_notes: CopilotNote[]
+	// false when Aquifer has no translator notes for the verse, leaving the TNN-based sections empty
+	tnn_available: boolean
 	tnn_notes: string[]
 	cultural_background: {
 		term: string

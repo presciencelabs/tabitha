@@ -6,7 +6,7 @@ import translate_prompt from './translate_prompt.md?raw'
 import brief_main_prompt from './brief_main_prompt.md?raw'
 import { json_response_schema } from './json_response_schema'
 import type { VerseReference, CopilotBriefResult, CopilotErrorResult, CopilotBriefHeadingsResult } from '@tabitha/types'
-import type { BriefInput, BriefTnnBasedOutput } from '$lib/types'
+import type { BriefInput, BriefTnnBasedOutput, CopilotStep } from '$lib/types'
 import { CopilotError } from '../copilot_core'
 
 // The AI Gateway's prompt-injection guardrail is off gateway-wide (see @tabitha/ai's input_guard
@@ -22,6 +22,26 @@ const MAX_TNN_TEXT_LENGTH = 20000
 // data), so a stale cache entry is never a correctness concern, only a cost one.
 const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 
+// Aquifer answers a missing api-key header (and a rate-limited request) with 406, not 401.
+const AQUIFER_STATUS_MESSAGES: Record<number, string> = {
+	401: 'Authorization error fetching the TNN notes from Aquifer.',
+	403: 'Authorization error fetching the TNN notes from Aquifer.',
+	406: 'Aquifer rejected the request for TNN notes (missing API key or rate limit exceeded).',
+	429: 'Aquifer rate limit exceeded while fetching the TNN notes. Please try again shortly.',
+}
+
+async function fetch_aquifer(path: string): Promise<Response> {
+	const url = `https://api.aquifer.bible${path}`
+	const response = await fetch(url, { headers: { 'api-key': env.API_KEY_AQUIFER } })
+		.catch((error: unknown) => {
+			throw new CopilotError('Could not reach Aquifer to fetch the TNN notes.', { cause: error })
+		})
+	if (response.ok) return response
+
+	console.error(`HTTP error: received response of status ${response.status} (${response.statusText}) from ${url}`)
+	throw new CopilotError(AQUIFER_STATUS_MESSAGES[response.status] ?? `Error fetching the TNN notes from Aquifer (HTTP ${response.status}).`)
+}
+
 async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]> {
 	const queryParams = new URLSearchParams({
 		languageCode: 'eng',
@@ -32,43 +52,25 @@ async function get_aquifer_content_ids(verse: VerseReference): Promise<number[]>
 		startVerse: verse.verse.toString(),
 		endVerse: verse.verse.toString(),
 	})
-	const response = await fetch(`https://api.aquifer.bible/resources/search?${queryParams.toString()}`, {
-		headers: {
-			'api-key': env.API_KEY_AQUIFER,
-		},
-	})
-
-	if (!response.ok) {
-		console.error(`HTTP error: received response of status ${response.status} (${response.statusText}) from ${response.url}`)
-		if (response.status === 401) {
-			throw new CopilotError('Authorization error fetching the TNN notes from Aquifer.')
-		} else {
-			throw new CopilotError('Error fetching the TNN notes from Aquifer.')
-		}
-	}
-
+	const response = await fetch_aquifer(`/resources/search?${queryParams.toString()}`)
 	const result = await response.json() as { items: { id: number }[] }
 	return result.items.map(({ id }) => id)
 }
 
-async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<BriefTnnBasedOutput> {
-	// get prompt from Aquifer
-	const contentId = (await get_aquifer_content_ids(input.verse))[0]
+type BriefOptions = {
+	input: BriefInput
+	ai: AiClient
+	on_step?: (step: CopilotStep) => void
+}
 
-	const aquifer_response = await fetch(`https://api.aquifer.bible/resources/${contentId}`, {
-		headers: {
-			'api-key': env.API_KEY_AQUIFER,
-		},
-	})
+// Resolves to null when Aquifer simply has no translator notes for the verse (whole books, e.g.
+// Acts, are uncovered) -- a normal outcome, unlike the failures that throw.
+async function get_tnn_based_info({ input, ai, on_step }: BriefOptions): Promise<BriefTnnBasedOutput | null> {
+	on_step?.('aquifer')
+	const [contentId] = await get_aquifer_content_ids(input.verse)
+	if (contentId === undefined) return null
 
-	if (!aquifer_response.ok) {
-		console.error(`HTTP error: received response of status ${aquifer_response.status} (${aquifer_response.statusText}) from ${aquifer_response.url}`)
-		if (aquifer_response.status === 401) {
-			throw new CopilotError('Authorization error fetching the TNN notes from Aquifer.')
-		} else {
-			throw new CopilotError('Error fetching the TNN notes from Aquifer.')
-		}
-	}
+	const aquifer_response = await fetch_aquifer(`/resources/${contentId}`)
 	const tnn_text = await aquifer_response.text()
 	const safety_issue = check_input_safety(tnn_text, {
 		max_length: MAX_TNN_TEXT_LENGTH,
@@ -85,10 +87,11 @@ async function get_tnn_based_info({ input, ai }: { input: BriefInput, ai: AiClie
 		verseReference: `${input.verse.book} ${input.verse.chapter}:${input.verse.verse}`,
 		rigorMode: input.settings.rigor,
 		tnnText: tnn_text,
-		lwcVerse: input.notes_result.lwc_text,
+		lwcVerse: input.notes_result.lwc_text ?? input.notes_result.english_text,
 		tabithaNotes: input.notes_result.notes,
 	}
 
+	on_step?.('brief')
 	try {
 		return await ai.generate_json<BriefTnnBasedOutput>({
 			contents: prompt,
@@ -169,18 +172,30 @@ export async function translate_json<T>({ obj, ai }: { obj: T, ai: AiClient }): 
 
 // main
 
-export async function create_brief_for_verse({ input, ai }: { input: BriefInput, ai: AiClient }): Promise<CopilotBriefResult | CopilotErrorResult> {
+export async function create_brief_for_verse({ input, ai, on_step }: BriefOptions): Promise<CopilotBriefResult | CopilotErrorResult> {
 	function to_translate(text: string): string {
 		return mark_for_translation({ text, target_language: input.settings.lwc })
 	}
 
 	try {
-		const tnn_based_info = await get_tnn_based_info({ input, ai })
-		return {
+		const brief_without_tnn: CopilotBriefResult = {
 			type: 'brief',
 			verse: input.verse,
 			lwc_text: input.notes_result.lwc_text ?? input.notes_result.english_text,
 			semantic_notes: input.notes_result.notes,
+			tnn_available: false,
+			tnn_notes: [],
+			cultural_background: [],
+			image_keywords: [],
+			consultant_decisions: [],
+		}
+
+		const tnn_based_info = await get_tnn_based_info({ input, ai, on_step })
+		if (!tnn_based_info) return brief_without_tnn
+
+		return {
+			...brief_without_tnn,
+			tnn_available: true,
 			tnn_notes: tnn_based_info.section4.notes.map(note => to_translate(note.text)),
 			cultural_background: tnn_based_info.section5.cultural.concat(tnn_based_info.section5.background).map(note => ({
 				term: to_translate(note.term),

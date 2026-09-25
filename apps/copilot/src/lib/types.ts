@@ -1,5 +1,5 @@
 import type { VerseReference, SourceSimpleJsonEntity } from '@tabitha/types'
-import type { CopilotTriggerData, CopilotDiscernResult } from '@tabitha/types/copilot'
+import type { CopilotTriggerData, CopilotDiscernResult, CopilotResult } from '@tabitha/types/copilot'
 
 export type CopilotMode = 'discern' | 'brief'
 
@@ -130,6 +130,11 @@ export type BriefSettings = CopilotSettings & {
 	output_format: BriefOutputFormat
 	output_style: BriefOutputStyle
 }
+
+// The single-verse endpoint streams one of these per stage before its final result line.
+export type CopilotStep = 'notes' | 'aquifer' | 'brief' | 'translate'
+export type CopilotStepUpdate = { type: 'step', step: CopilotStep }
+export type CopilotStreamLine = CopilotStepUpdate | CopilotResult
 
 export type BriefRigorMode = 'HIGH' | 'LOW'
 export type BriefOutputFormat = 'usfm' // TODO | 'docx' | 'pdf'
