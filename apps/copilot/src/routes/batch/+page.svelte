@@ -124,8 +124,8 @@
 </script>
 
 <form>
-	<section class="py-4 flex gap-4">
-		<div class="prose"><h3>Chapter</h3></div>
+	<section class="py-2 flex gap-4 items-center">
+		<h3 class="text-lg font-bold">Chapter</h3>
 		
 		<BookSelect bind:book={reference.book} disabled={fetching_results} />
 		<input type="number" bind:value={reference.chapter} disabled={fetching_results} min="1" class="input w-20" />
@@ -137,7 +137,7 @@
 		{:else if verses_in_chapter > 0}
 			<div class="divider divider-horizontal"></div>
 			<div class="flex gap-4">
-				<div class="prose"><h3>Verses</h3></div>
+				<h3 class="text-lg font-bold">Verses</h3>
 				<input type="number" bind:value={start_verse} disabled={fetching_results} min="1" class="input w-20" />
 				<div class="mt-1">to</div>
 				<input type="number" bind:value={end_verse} disabled={fetching_results} min="1" max={verses_in_chapter} class="input w-20" />
@@ -146,14 +146,17 @@
 		{/if}
 	</section>
 
-	<Settings bind:settings={settings} />
+	<div class="flex gap-3 items-center">
+		<Settings bind:settings={settings} />
 
-	<div class="flex gap-3">
-		<button type="button" onclick={fetch_results} disabled={!can_do_batch_operation} class="btn btn-md my-4">
-			Get notes
+		<button type="button" onclick={fetch_results} disabled={!can_do_batch_operation} class="btn btn-primary btn-md my-4">
+			<Icon icon="mdi:lightbulb-outline" class="h-5 w-5" />
+			Get notes ({settings.mode})
 		</button>
+
 		{#if fetched_results.length > 0}
-			<button type="button" onclick={download_as_sfm} disabled={!can_do_batch_operation} class="btn btn-md my-4">
+			<button type="button" onclick={download_as_sfm} disabled={!can_do_batch_operation} class="btn btn-secondary btn-md my-4">
+				<Icon icon="mdi:download" class="h-5 w-5" />
 				Download notes (USFM)
 				{#if generating_sfm}
 					<Icon icon="line-md:loading-twotone-loop" class="h-8 w-8" />

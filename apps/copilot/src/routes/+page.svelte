@@ -62,7 +62,7 @@
 </script>
 
 <form>
-	<section class="py-4 flex gap-4 items-center">
+	<section class="py-2 flex gap-4 items-center">
 		<h3 class="text-lg font-bold">Verse</h3>
 		<BookSelect bind:book={reference.book} />
 		<input type="number" bind:value={reference.chapter} min="1" class="input w-20" />
@@ -73,22 +73,25 @@
 	</section>
 
 	{#if fetching_english}
-		<div class="prose mb-5">
+		<div class="prose mb-3">
 			<h4>English Preview</h4>
 			<div>Loading...</div>
 		</div>
 	{:else if english_text}
-		<div class="w-full mb-5">
+		<div class="w-full mb-3">
 			<div class="prose"><h4>English Preview</h4></div>
 			<div>({english_text?.audience}) {english_text?.text || ''}</div>
 		</div>
 	{/if}
 	
-	<Settings bind:settings={settings} />
+	<div class="flex gap-3 items-center">
+		<Settings bind:settings={settings} />
 
-	<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-md my-4">
-		Get notes
-	</button>
+		<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-primary btn-md my-4">
+			<Icon icon="mdi:lightbulb-outline" class="h-5 w-5" />
+			Get notes ({settings.mode})
+		</button>
+	</div>
 </form>
 
 {#snippet empty_section(text: string)}
@@ -183,58 +186,63 @@
 			{@render semantic_notes(result.semantic_notes)}
 		</div>
 
-		<div class="mt-3">
-			<div class="prose"><h4>TNN Notes</h4></div>
-			{#if !result.tnn_available}
+		{#if result.tnn_available}
+			<div class="mt-3">
+				<div class="prose"><h4>TNN Notes</h4></div>
+				{#if result.tnn_notes.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.tnn_notes as note}
+							<li>{note}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Cultural Context & Background</h4></div>
+				{#if result.cultural_background.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.cultural_background as { term, summary }}
+							<li>{term} - {summary}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Image Keywords</h4></div>
+				{#if result.image_keywords.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.image_keywords as kw}
+							<li>{kw}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			<div class="mt-3">
+				<div class="prose"><h4>Consultant Decisions</h4></div>
+				{#if result.consultant_decisions.length === 0}
+					{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
+				{:else}
+					<ul class="list list-disc text-base ms-5">
+						{#each result.consultant_decisions as { status, text }}
+							<li>{status} - {text}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+		{:else}
+			<div class="mt-3">
+				<div class="prose"><h4>TNN Notes</h4></div>
 				{@render empty_section(get_no_tnn_text(settings.lwc))}
-			{:else if result.tnn_notes.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.tnn_notes)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.tnn_notes as note}
-						<li>{note}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Cultural Context & Background</h4></div>
-			{#if result.cultural_background.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.cultural_background)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.cultural_background as { term, summary }}
-						<li>{term} - {summary}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Image Keywords</h4></div>
-			{#if result.image_keywords.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.image_keywords)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.image_keywords as kw}
-						<li>{kw}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-
-		<div class="mt-3">
-			<div class="prose"><h4>Consultant Decisions</h4></div>
-			{#if result.consultant_decisions.length === 0}
-				{@render empty_section(BRIEF_EMPTY_SECTION_TEXT.consultant_decisions)}
-			{:else}
-				<ul class="list list-disc text-base ms-5">
-					{#each result.consultant_decisions as { status, text }}
-						<li>{status} - {text}</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {/if}
