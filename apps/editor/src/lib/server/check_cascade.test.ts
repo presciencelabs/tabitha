@@ -1,20 +1,64 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import { expand_token, run_check } from './check'
-import recorded_lookups from './check_cascade_lookups.json'
-import type { CheckerMessageLabel, CheckerToken } from '@tabitha/types'
+import type { CheckerMessageLabel, CheckerToken, OntologyResult, PartOfSpeech, TargetFormResult } from '@tabitha/types'
 
-// Ontology and Targets responses recorded from the live APIs, so each test runs the
-// real parse-and-check pipeline without touching the network.
-const RECORDED_LOOKUPS: Record<string, unknown> = recorded_lookups
+type Concept = { sense: string; part_of_speech: PartOfSpeech; level: number; categorization: string }
+
+// Only the senses these sentences need, with just the fields the checker reads
+const ONTOLOGY: Record<string, Concept[]> = {
+	be: [
+		{ sense: 'A', part_of_speech: 'Verb', level: 1, categorization: 'A______H_' },
+		{ sense: 'F', part_of_speech: 'Verb', level: 0, categorization: 'A_cd_____' },
+	],
+	clothes: [{ sense: 'A', part_of_speech: 'Noun', level: 1, categorization: 'o' }],
+	edge: [{ sense: 'A', part_of_speech: 'Noun', level: 1, categorization: 'o' }],
+	go: [
+		{ sense: 'A', part_of_speech: 'Verb', level: 1, categorization: 'A__de_g__' },
+		{ sense: 'B', part_of_speech: 'Verb', level: 1, categorization: 'A__dE____' },
+	],
+	in: [{ sense: 'A', part_of_speech: 'Adposition', level: 1, categorization: 'A__' }],
+	into: [{ sense: 'A', part_of_speech: 'Adposition', level: 1, categorization: 'A__' }],
+	jesus: [{ sense: 'A', part_of_speech: 'Noun', level: 4, categorization: 'M' }],
+	john: [{ sense: 'A', part_of_speech: 'Noun', level: 4, categorization: 'M' }],
+	let: [{ sense: 'A', part_of_speech: 'Verb', level: 1, categorization: 'A______H_' }],
+	man: [{ sense: 'A', part_of_speech: 'Noun', level: 1, categorization: 'o' }],
+	near: [{ sense: 'A', part_of_speech: 'Adposition', level: 1, categorization: 'A__' }],
+	person: [{ sense: 'A', part_of_speech: 'Noun', level: 0, categorization: 'o' }],
+	place: [{ sense: 'A', part_of_speech: 'Noun', level: 0, categorization: 'o' }],
+	priest: [{ sense: 'A', part_of_speech: 'Noun', level: 1, categorization: 'o' }],
+	river: [{ sense: 'A', part_of_speech: 'Noun', level: 1, categorization: 'o' }],
+	sick: [{ sense: 'A', part_of_speech: 'Adjective', level: 1, categorization: 'Gab____' }],
+	stand: [{ sense: 'A', part_of_speech: 'Verb', level: 1, categorization: 'A________' }],
+	touch: [{ sense: 'A', part_of_speech: 'Verb', level: 1, categorization: 'AB___f___' }],
+	where: [{ sense: 'A', part_of_speech: 'Adverb', level: 1, categorization: '' }],
+}
+
+// Inflected words only; any other word is looked up in the Ontology as written
+const FORMS: Record<string, Pick<TargetFormResult, 'stem' | 'part_of_speech' | 'form'>> = {
+	people: { stem: 'person', part_of_speech: 'Noun', form: 'Plural' },
+	priests: { stem: 'priest', part_of_speech: 'Noun', form: 'Plural' },
+	standing: { stem: 'stand', part_of_speech: 'Verb', form: 'Participle' },
+	was: { stem: 'be', part_of_speech: 'Verb', form: 'Past' },
+	went: { stem: 'go', part_of_speech: 'Verb', form: 'Past' },
+}
+
+function search_ontology(query: string): OntologyResult[] {
+	const concepts = ONTOLOGY[query.toLowerCase()] ?? []
+	const stem = query.toLowerCase() === query ? query : query[0].toUpperCase() + query.slice(1).toLowerCase()
+	return concepts.map(concept => ({ ...concept, stem, level: String(concept.level), status: 'in ontology', how_to_hints: [] }) as unknown as OntologyResult)
+}
+
+function lookup_forms(word: string): Partial<TargetFormResult>[] {
+	const form = FORMS[word]
+	return form ? [form] : []
+}
 
 beforeAll(() => {
 	vi.stubGlobal('fetch', async (input: string | URL | Request) => {
 		const url = new URL(input instanceof Request ? input.url : input.toString())
-		const key = `${url.pathname}${url.search}`
-		if (!(key in RECORDED_LOOKUPS)) {
-			throw new Error(`No recorded lookup for ${key}`)
-		}
-		return Response.json(RECORDED_LOOKUPS[key])
+		const search_query = url.searchParams.get('q')
+		const form_word = url.searchParams.get('word')
+		return Response.json(search_query !== null ? search_ontology(search_query) : lookup_forms(form_word ?? ''))
 	})
 })
 
@@ -45,13 +89,19 @@ describe("'where' used as a relativizer", () => {
 		expect(labels_on({ tokens, token: '[' })).not.toContain('error')
 	})
 
-	test('points the verb warnings at the relativizer', async () => {
+	test('points the verb warnings at the relativizer, before the warnings themselves', async () => {
 		const { tokens } = await run_check(text)
 
-		expect(messages_on({ tokens, token: 'went' })).toContainEqual({
+		expect(messages_on({ tokens, token: 'went' })[0]).toEqual({
 			label: 'warning',
 			message: "This may be caused by 'where' used as a relativizer. Fix that first.",
 		})
+	})
+
+	test('adds no hint to a verb the relativizer does not break', async () => {
+		const { tokens } = await run_check('John was near the place [where the priests are standing].')
+
+		expect(messages_on({ tokens, token: 'was' })).toEqual([])
 	})
 
 	test('the corrected encoding checks clean', async () => {
