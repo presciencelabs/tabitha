@@ -39,12 +39,6 @@
 		return ['}', ']', ')'].includes(entity.value)
 	}
 
-	function get_component(entity: SourceEntity) {
-		if (is_boundary_start(entity)) return BoundaryStart
-		if (is_boundary_end(entity)) return BoundaryEnd
-		return entity.concept ? Word : Punctuation
-	}
-
 	/**
 	 * Punctuation has no category of its own to color by, so it borrows its enclosing phrase's --
 	 * found by walking back to the nearest boundary-start not already closed by a nested one.

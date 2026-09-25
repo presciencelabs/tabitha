@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+	import { PUBLIC_SOURCES_API_HOST, PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { SourceEntitiesPlain } from '@tabitha/ui'
 	import Icon from '@iconify/svelte'
 	import type { Reference } from '@tabitha/types'
