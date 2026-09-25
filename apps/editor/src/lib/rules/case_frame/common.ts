@@ -1,6 +1,7 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { TOKEN_TYPE, stem_with_sense, create_case_frame, create_token, format_token_message, token_has_tag } from '$lib/token'
 import { parse_transform_rule } from '../transform_rules'
+import { create_token_filter } from '$lib/rules/rules_parser'
 import type { CheckerMessageLabel } from '@tabitha/types'
 import type { MessageInfo, Token, LookupResult } from '$lib/types'
 import type { RuleTriggerContext } from '$lib/rules/types'
@@ -304,8 +305,21 @@ export function* validate_case_frame(trigger_context: RuleTriggerContext): Gener
 	}
 
 	// show the case frame messages as warnings when inside a relative clause or question, in case something is mishandled
-	const severity: CheckerMessageLabel = token_has_tag({ token: trigger_context.tokens[0], tag_to_check: 'in_relative_clause|in_interrogative' }) ? 'warning' : 'error'
-	
+	const is_uncertain_context = token_has_tag({ token: trigger_context.tokens[0], tag_to_check: 'in_relative_clause|in_interrogative' })
+
+	if (is_missing_brackets_around_clause(trigger_context)) {
+		yield* flag_unbracketed_clause({ trigger_context, severity: is_uncertain_context ? 'warning' : 'error' })
+		return
+	}
+
+	// a 'where' relativizer already has its own error, and the case frame errors it causes go away once it is fixed
+	const has_where_relativizer = has_where_relativizer_argument(token)
+	if (has_where_relativizer) {
+		yield { warning: WHERE_RELATIVIZER_HINT }
+	}
+
+	const severity: CheckerMessageLabel = is_uncertain_context || has_where_relativizer ? 'warning' : 'error'
+
 	const selected_result = token.lookup_results[0]
 	const sense = stem_with_sense(selected_result)
 	const case_frame = selected_result.case_frame.result
@@ -415,4 +429,46 @@ function flag_extra_argument({ trigger_context, extra_argument, message, severit
 	const argument_token = extra_argument.trigger_context.trigger_token
 	const token_to_flag = argument_token.type === TOKEN_TYPE.CLAUSE ? argument_token.sub_tokens[0] : argument_token
 	return { token_to_flag, [severity]: formatted_message, plain: true }
+}
+
+const WHERE_RELATIVIZER_HINT = "This may be caused by 'where' used as a relativizer. Fix that first."
+const UNBRACKETED_CLAUSE_MESSAGE = "Put brackets around the clause after '{stem}', e.g. '{stem} [X do Y]'."
+
+const is_verb = create_token_filter({ 'category': 'Verb' })
+
+function is_where_relativizer_clause(token: Token): boolean {
+	if (token.type !== TOKEN_TYPE.CLAUSE) return false
+
+	return token.sub_tokens.find(sub_token => sub_token.token !== '[')?.token === 'where'
+}
+
+function has_where_relativizer_argument(token: Token): boolean {
+	return token.lookup_results.some(({ case_frame }) =>
+		case_frame.result.extra_arguments.some(({ trigger_context }) => is_where_relativizer_clause(trigger_context.trigger_token)))
+}
+
+/**
+ * e.g. 'let those people touch Jesus' reads 'those people' as an extra patient and 'touch' as a second Verb,
+ * when the real problem is the missing brackets in 'let [those people touch Jesus]'.
+ */
+function is_missing_brackets_around_clause({ trigger_token, tokens, trigger_index }: RuleTriggerContext): boolean {
+	const every_sense_expects_clause_but_got_patient = trigger_token.lookup_results.every(({ case_frame: { result } }) =>
+		result.missing_arguments.includes('patient_clause_different_participant')
+		&& result.extra_arguments.some(({ role_tag }) => role_tag === 'patient'))
+
+	return every_sense_expects_clause_but_got_patient && tokens.slice(trigger_index + 1).some(is_verb)
+}
+
+function* flag_unbracketed_clause({ trigger_context, severity }: { trigger_context: RuleTriggerContext; severity: CheckerMessageLabel }): Generator<MessageInfo, void, unknown> {
+	const { trigger_token } = trigger_context
+
+	yield { [severity]: UNBRACKETED_CLAUSE_MESSAGE }
+
+	for (const result of trigger_token.lookup_results) {
+		yield show_invalid_roles(result)
+	}
+
+	for (const extra_argument of trigger_token.lookup_results[0].case_frame.result.extra_arguments) {
+		yield flag_extra_argument({ trigger_context, extra_argument, message: extra_argument.rule.extra_message, severity: 'warning' })
+	}
 }

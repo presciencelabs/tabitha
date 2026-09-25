@@ -1,0 +1,1241 @@
+{
+	"/search?q=are&v=1": [],
+	"/search?q=be&v=1": [
+		{
+			"id": 64,
+			"stem": "be",
+			"sense": "A",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) equative with object complements (The problem is that John read this book.).",
+			"categorization": "A______H_",
+			"categories": [
+				"Agent-like",
+				"Patient proposition"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 65,
+			"stem": "be",
+			"sense": "B",
+			"part_of_speech": "Verb",
+			"level": "0",
+			"gloss": "(universal primitive) equative (John is the man who was here.)",
+			"categorization": "A_C___g__",
+			"categories": [
+				"Agent-like",
+				"State",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 66,
+			"stem": "be",
+			"sense": "C",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) class membership (John is a human.)",
+			"categorization": "A_c______",
+			"categories": [
+				"Agent-like",
+				"(State)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 67,
+			"stem": "be",
+			"sense": "D",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) predicative (John is tall.)",
+			"categorization": "A_____g__",
+			"categories": [
+				"Agent-like",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 68,
+			"stem": "be",
+			"sense": "E",
+			"part_of_speech": "Verb",
+			"level": "0",
+			"gloss": "(universal primitive) existential (There are lions in Africa.)",
+			"categorization": "A_____g__",
+			"categories": [
+				"Agent-like",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 69,
+			"stem": "be",
+			"sense": "F",
+			"part_of_speech": "Verb",
+			"level": "0",
+			"gloss": "(universal primitive) locative (John is under the table.) - an adposition is always included with this sense",
+			"categorization": "A_cd_____",
+			"categories": [
+				"Agent-like",
+				"(State)",
+				"(Source)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 70,
+			"stem": "be",
+			"sense": "G",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) benefactive (This book is for John.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 71,
+			"stem": "be",
+			"sense": "H",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) temporal (The party was in the afternoon.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 72,
+			"stem": "be",
+			"sense": "I",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) accompaniment (John is with Mary.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 73,
+			"stem": "be",
+			"sense": "J",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) date (The date was June 2nd.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 74,
+			"stem": "be",
+			"sense": "K",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) name (The man's name is John.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 75,
+			"stem": "be",
+			"sense": "L",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) social role (John is a doctor.)",
+			"categorization": "A_C___g__",
+			"categories": [
+				"Agent-like",
+				"State",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 76,
+			"stem": "be",
+			"sense": "M",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) kinship role (John is Mary's brother.)",
+			"categorization": "A_C___g__",
+			"categories": [
+				"Agent-like",
+				"State",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 77,
+			"stem": "be",
+			"sense": "N",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) time (The time was 4 pm.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 78,
+			"stem": "be",
+			"sense": "O",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) ambience (The weather is hot.)",
+			"categorization": "A_c______",
+			"categories": [
+				"Agent-like",
+				"(State)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 79,
+			"stem": "be",
+			"sense": "P",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) depiction (This story is about John.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 80,
+			"stem": "be",
+			"sense": "Q",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) substance (The house is made of wood.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 81,
+			"stem": "be",
+			"sense": "R",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) partitive (The leg is part of the body.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 82,
+			"stem": "be",
+			"sense": "S",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) age (John is 20 years old.)",
+			"categorization": "A________",
+			"categories": [
+				"Agent-like"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 83,
+			"stem": "be",
+			"sense": "T",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) place of origin and/or place where one grew up (e.g. Jesus was from Nazareth.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 84,
+			"stem": "be",
+			"sense": "U",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to be like something, to resemble something (John is like Peter.)",
+			"categorization": "A_C___g__",
+			"categories": [
+				"Agent-like",
+				"State",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 85,
+			"stem": "be",
+			"sense": "V",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) predicative with subject complements (It is true that ...)",
+			"categorization": "______g_I",
+			"categories": [
+				"(Beneficiary)",
+				"Agent proposition"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 86,
+			"stem": "be",
+			"sense": "W",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to be in a tribe or group (John is in the tribe of Levi. Bill is in the army.)",
+			"categorization": "A_C______",
+			"categories": [
+				"Agent-like",
+				"State"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 87,
+			"stem": "be",
+			"sense": "X",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) metaphorical, may be expressed like 'be-B' or 'be-U'",
+			"categorization": "A_C___g__",
+			"categories": [
+				"Agent-like",
+				"State",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 88,
+			"stem": "be",
+			"sense": "Y",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) takes a complement clause (This song's name is 'God helps me'.)",
+			"categorization": "A______H_",
+			"categories": [
+				"Agent-like",
+				"Patient proposition"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=clothes&v=1": [
+		{
+			"id": 780,
+			"stem": "clothes",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) that which people wear",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=edge&v=1": [
+		{
+			"id": 982,
+			"stem": "edge",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) the edge of something",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=go&v=1": [
+		{
+			"id": 444,
+			"stem": "go",
+			"sense": "A",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to move from one place to another place",
+			"categorization": "A__de_g__",
+			"categories": [
+				"Agent-like",
+				"(Source)",
+				"(Destination)",
+				"(Beneficiary)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 445,
+			"stem": "go",
+			"sense": "B",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) a region's border goes from one place to another place",
+			"categorization": "A__dE____",
+			"categories": [
+				"Agent-like",
+				"(Source)",
+				"Destination"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=in&v=1": [
+		{
+			"id": 64,
+			"stem": "in",
+			"sense": "A",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "located inside something, literally (like a basket, or a house)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 65,
+			"stem": "in",
+			"sense": "B",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "located within the boundaries of an area (in the city)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 66,
+			"stem": "in",
+			"sense": "C",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "generic location",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 67,
+			"stem": "in",
+			"sense": "D",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "in a group (John is in the army.)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 68,
+			"stem": "in",
+			"sense": "E",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "at the time (in the morning)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 69,
+			"stem": "in",
+			"sense": "F",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "in a liquid, sand, dirt, etc.",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 70,
+			"stem": "in",
+			"sense": "G",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "to be or put in a written or other medium (write in a book, in the history)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 71,
+			"stem": "in",
+			"sense": "H",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "abstract directed towards someone (faith in God)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 72,
+			"stem": "in",
+			"sense": "I",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "in a vision or dream (God spoke to Abram in a vision.)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 73,
+			"stem": "in",
+			"sense": "J",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "used for relationships such as 'in Christ' or 'in the Father'",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": [
+				{
+					"structure": "like for \"in-J Christ\"",
+					"pairing": "",
+					"explication": "We suggest using this literally and then having a dynamic alternate with “have a <<good>> relationship that is with Christ”, or \"united to Christ by God _implicitActiveAgent\". In some cases, the dynamic alternate could express this a different way, like with “believing”. Refer to the suggestion in the TNN."
+				}
+			]
+		},
+		{
+			"id": 74,
+			"stem": "in",
+			"sense": "K",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "in a language (e.g., 'xxx' means 'yyy' in Hebrew.)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 75,
+			"stem": "in",
+			"sense": "L",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "in a period of time (John read that book in three days.)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=into&v=1": [
+		{
+			"id": 82,
+			"stem": "into",
+			"sense": "A",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "location towards somewhere",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 83,
+			"stem": "into",
+			"sense": "B",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "into a container or enclosed area",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 84,
+			"stem": "into",
+			"sense": "C",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "into a liquid (John walked into the river.)",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=jesus&v=1": [
+		{
+			"id": 1764,
+			"stem": "Jesus",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "4",
+			"gloss": "(proper name) Jesus, God's Son, the Christ",
+			"categorization": "M",
+			"categories": [
+				"Masculine names"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 1765,
+			"stem": "Jesus",
+			"sense": "B",
+			"part_of_speech": "Noun",
+			"level": "4",
+			"gloss": "(proper name) used for the regular man Jesus in Colossians 4:11",
+			"categorization": "",
+			"categories": [
+				"No information available yet."
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=let&v=1": [
+		{
+			"id": 577,
+			"stem": "let",
+			"sense": "A",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to let someone do something",
+			"categorization": "A______H_",
+			"categories": [
+				"Agent-like",
+				"Patient proposition"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=man&v=1": [
+		{
+			"id": 2096,
+			"stem": "man",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) male human",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 2097,
+			"stem": "man",
+			"sense": "B",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) emphasizes grown man, not a boy",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=near&v=1": [
+		{
+			"id": 90,
+			"stem": "near",
+			"sense": "A",
+			"part_of_speech": "Adposition",
+			"level": "1",
+			"gloss": "location close to something",
+			"categorization": "A__",
+			"categories": [
+				"always used in Adjunct Phrases",
+				"never used in Noun-Noun Phrases",
+				"never used in Abverbial Clauses"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=people&v=1": [],
+	"/search?q=person&v=1": [
+		{
+			"id": 2562,
+			"stem": "person",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "0",
+			"gloss": "(universal primitive) a human being",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 2563,
+			"stem": "person",
+			"sense": "B",
+			"part_of_speech": "Noun",
+			"level": "0",
+			"gloss": "includes people, God, and spirits",
+			"categorization": "",
+			"categories": [
+				"No information available yet."
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 2564,
+			"stem": "person",
+			"sense": "C",
+			"part_of_speech": "Noun",
+			"level": "0",
+			"gloss": "refers only to members of the Trinity",
+			"categorization": "",
+			"categories": [
+				"No information available yet."
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=place&v=1": [
+		{
+			"id": 2610,
+			"stem": "place",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "0",
+			"gloss": "(universal primitive) generic word for a location",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=priest&v=1": [
+		{
+			"id": 2651,
+			"stem": "priest",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) priest of God or a god",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": [
+				{
+					"structure": "high priest",
+					"pairing": "",
+					"explication": "\"chiefest priest\" (not complex)"
+				}
+			]
+		}
+	],
+	"/search?q=priests&v=1": [],
+	"/search?q=river&v=1": [
+		{
+			"id": 2784,
+			"stem": "river",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "1",
+			"gloss": "(LDV) a river, body of water",
+			"categorization": "o",
+			"categories": [
+				"All other objects"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=sick&v=1": [
+		{
+			"id": 619,
+			"stem": "sick",
+			"sense": "A",
+			"part_of_speech": "Adjective",
+			"level": "1",
+			"gloss": "(LDV) to be ill",
+			"categorization": "Gab____",
+			"categories": [
+				"Generic",
+				"sometimes used attributively",
+				"sometimes used predicatively without an argument",
+				"never used predicatively with a nominal argument",
+				"never used predicatively with a same participant clausal argument",
+				"never used predicatively with a different participant clausal argument",
+				"never used comparatively"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=stand&v=1": [
+		{
+			"id": 942,
+			"stem": "stand",
+			"sense": "A",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to stand at some place (John stood in front of the door.)",
+			"categorization": "A________",
+			"categories": [
+				"Agent-like"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": "stand-A-Noun",
+			"stem": "stand",
+			"sense": "A",
+			"part_of_speech": "Noun",
+			"level": "2",
+			"gloss": "Not yet in the Ontology, but will be added in a future update",
+			"categorization": "",
+			"categories": [],
+			"status": "approved",
+			"how_to_hints": [
+				{
+					"structure": "for holding a lamp",
+					"pairing": "table",
+					"explication": ""
+				}
+			]
+		}
+	],
+	"/search?q=standing&v=1": [],
+	"/search?q=touch&v=1": [
+		{
+			"id": 1031,
+			"stem": "touch",
+			"sense": "A",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) a person physically touches someone or something",
+			"categorization": "AB___f___",
+			"categories": [
+				"Agent-like",
+				"Patient-like",
+				"(Instrument)"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		},
+		{
+			"id": 1032,
+			"stem": "touch",
+			"sense": "B",
+			"part_of_speech": "Verb",
+			"level": "1",
+			"gloss": "(LDV) to come into physical contact with something (The chair touched the wall.)",
+			"categorization": "AB_______",
+			"categories": [
+				"Agent-like",
+				"Patient-like"
+			],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/search?q=went&v=1": [],
+	"/search?q=where&v=1": [
+		{
+			"id": 130,
+			"stem": "where",
+			"sense": "A",
+			"part_of_speech": "Adverb",
+			"level": "1",
+			"gloss": "(LDV) locative question word",
+			"categorization": "",
+			"categories": [],
+			"status": "in ontology",
+			"how_to_hints": []
+		}
+	],
+	"/English/lookup/forms?word=Jesus&v=1": [
+		{
+			"id": 1739,
+			"stem": "Jesus",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=are&v=1": [],
+	"/English/lookup/forms?word=clothes&v=1": [
+		{
+			"id": 778,
+			"stem": "clothes",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 778,
+			"stem": "clothes",
+			"part_of_speech": "Noun",
+			"form": "Plural"
+		}
+	],
+	"/English/lookup/forms?word=edge&v=1": [
+		{
+			"id": 977,
+			"stem": "edge",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=in&v=1": [
+		{
+			"id": 34,
+			"stem": "in",
+			"part_of_speech": "Adposition",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=into&v=1": [
+		{
+			"id": 39,
+			"stem": "into",
+			"part_of_speech": "Adposition",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=let&v=1": [
+		{
+			"id": 376,
+			"stem": "let",
+			"part_of_speech": "Verb",
+			"form": "Stem"
+		},
+		{
+			"id": 377,
+			"stem": "let go",
+			"part_of_speech": "Verb",
+			"form": "Stem"
+		},
+		{
+			"id": 376,
+			"stem": "let",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		},
+		{
+			"id": 376,
+			"stem": "let",
+			"part_of_speech": "Verb",
+			"form": "Perfect"
+		},
+		{
+			"id": 377,
+			"stem": "let go",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		},
+		{
+			"id": 377,
+			"stem": "let go",
+			"part_of_speech": "Verb",
+			"form": "Perfect"
+		}
+	],
+	"/English/lookup/forms?word=man&v=1": [
+		{
+			"id": 2051,
+			"stem": "man",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=near&v=1": [
+		{
+			"id": 44,
+			"stem": "near",
+			"part_of_speech": "Adposition",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=people&v=1": [
+		{
+			"id": 2509,
+			"stem": "person",
+			"part_of_speech": "Noun",
+			"form": "Plural"
+		}
+	],
+	"/English/lookup/forms?word=place&v=1": [
+		{
+			"id": 2558,
+			"stem": "place",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=priests&v=1": [
+		{
+			"id": 2598,
+			"stem": "priest",
+			"part_of_speech": "Noun",
+			"form": "Plural"
+		}
+	],
+	"/English/lookup/forms?word=river&v=1": [
+		{
+			"id": 2734,
+			"stem": "River Arnon",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2735,
+			"stem": "River Euphrates",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2736,
+			"stem": "River Jabbok",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2737,
+			"stem": "River Jordan",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2738,
+			"stem": "River Kishon",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2739,
+			"stem": "River Shihor",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2740,
+			"stem": "river",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		},
+		{
+			"id": 2741,
+			"stem": "River Nile",
+			"part_of_speech": "Noun",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=sick&v=1": [
+		{
+			"id": 441,
+			"stem": "sick",
+			"part_of_speech": "Adjective",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=standing&v=1": [
+		{
+			"id": 613,
+			"stem": "stand",
+			"part_of_speech": "Verb",
+			"form": "Participle"
+		},
+		{
+			"id": 614,
+			"stem": "stand up",
+			"part_of_speech": "Verb",
+			"form": "Participle"
+		}
+	],
+	"/English/lookup/forms?word=touch&v=1": [
+		{
+			"id": 670,
+			"stem": "touch",
+			"part_of_speech": "Verb",
+			"form": "Stem"
+		}
+	],
+	"/English/lookup/forms?word=went&v=1": [
+		{
+			"id": 291,
+			"stem": "go",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		},
+		{
+			"id": 292,
+			"stem": "go down",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		},
+		{
+			"id": 293,
+			"stem": "go out",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		},
+		{
+			"id": 294,
+			"stem": "go up",
+			"part_of_speech": "Verb",
+			"form": "Past"
+		}
+	],
+	"/English/lookup/forms?word=where&v=1": [
+		{
+			"id": 142,
+			"stem": "where",
+			"part_of_speech": "Adverb",
+			"form": "Stem"
+		}
+	]
+}
