@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { get_source_data, get_sources_url, SourceEntities } from '$lib/examples'
+	import { get_source_data, get_sources_url } from '$lib/examples'
 	import Icon from '@iconify/svelte'
+	import { SourceEntitiesPlain } from '@tabitha/ui'
 	import type { Reference, ConceptKey, SourceResult } from '@tabitha/types'
 
 	type Props = {
@@ -53,6 +54,9 @@
 	{/if}
 
 	<div class="my-2">
-		<SourceEntities source_entities={source.parsed_semantic_encoding} {selected_concept} />
+		<SourceEntitiesPlain
+			source_entities={source.parsed_semantic_encoding}
+			ontology_base_url=''
+			highlight_concept={selected_concept} />
 	</div>
 {/if}
