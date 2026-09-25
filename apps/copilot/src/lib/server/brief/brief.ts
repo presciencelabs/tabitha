@@ -13,8 +13,10 @@ import { CopilotError } from '../copilot_core'
 // and ADR 0007), so this is a local, best-effort substitute scoped to the third-party content
 // fetched here: SIL's Open Translators Notes from the Aquifer API. Unlike a TaBiThA-user-authored
 // verse, this is untrusted external text (a compromised/malicious API response, not a malicious
-// teammate), so the cap is generous -- a full notes document, not a single verse.
-const MAX_TNN_TEXT_LENGTH = 20000
+// teammate), so the cap is generous -- a full notes document, not a single verse. It is measured
+// on Aquifer's raw editor-document JSON, markup included, and a book's verse 1 carries that book's
+// whole introduction: the longest seen (2 Corinthians 1:1) is ~29,000 characters.
+const MAX_TNN_TEXT_LENGTH = 50000
 
 // Longer than the AI Gateway's 1-hour default (tools/gateway/config.ts) -- workshop settings
 // often re-check or regenerate the same verse's brief well past an hour, and these calls are
@@ -74,13 +76,13 @@ async function get_tnn_based_info({ input, ai, on_step }: BriefOptions): Promise
 	const tnn_text = await aquifer_response.text()
 	const safety_issue = check_input_safety(tnn_text, {
 		max_length: MAX_TNN_TEXT_LENGTH,
-		too_long_message: `TNN text is too long (${tnn_text.length} characters, max ${MAX_TNN_TEXT_LENGTH}).`,
-		suspicious_message: 'TNN text looks like it might contain instructions rather than translator notes.',
+		too_long_message: 'The Aquifer translator notes for this verse are too long to process.',
+		suspicious_message: 'Potential safety issue found in the TNN notes.',
 		log_label: 'copilot: brief (tnn)',
 	})
 	if (safety_issue) {
-		console.warn(`copilot: brief rejected Aquifer TNN content for content ID ${contentId}: ${safety_issue}`)
-		throw new CopilotError('Potential safety issue found in the TNN notes.')
+		console.warn(`copilot: brief rejected Aquifer TNN content for content ID ${contentId} (${tnn_text.length} characters): ${safety_issue}`)
+		throw new CopilotError(safety_issue)
 	}
 
 	const prompt = {
