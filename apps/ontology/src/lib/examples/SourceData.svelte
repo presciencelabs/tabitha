@@ -56,7 +56,7 @@
 	<div class="my-2">
 		<SourceEntitiesPlain
 			source_entities={source.parsed_semantic_encoding}
-			ontology_base_url='/'
+			ontology_base_url=''
 			highlight_concept={selected_concept} />
 	</div>
 {/if}
