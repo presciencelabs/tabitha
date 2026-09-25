@@ -1,4 +1,4 @@
-import { BRIEF_HEADINGS_ENGLISH, get_no_notes_text } from './lookups'
+import { BRIEF_HEADINGS_ENGLISH, get_no_notes_text, get_no_tnn_text } from './lookups'
 import type { CopilotBriefHeadingsResult, CopilotBriefResult, CopilotBriefSection, CopilotDiscernResult, CopilotResult } from '@tabitha/types'
 
 export function convert_to_usfm({ result, lwc, headings }: { result: CopilotResult, lwc: string, headings?: CopilotBriefHeadingsResult }): string {
@@ -12,15 +12,15 @@ export function convert_to_usfm({ result, lwc, headings }: { result: CopilotResu
 }
 
 function convert_to_usfm_for_brief({ result, lwc, headings }: { result: CopilotBriefResult, lwc: string, headings: CopilotBriefHeadingsResult }): string {
-	function create_section<T extends CopilotBriefSection>({ section, transformer }: { section: T, transformer?: (item: CopilotBriefResult[T][number]) => string }): string[] {
+	function create_section<T extends CopilotBriefSection>({ section, transformer, empty_text }: { section: T, transformer?: (item: CopilotBriefResult[T][number]) => string, empty_text?: string }): string[] {
 		const items = result[section]
-		if (!items.length && section !== 'semantic_notes') {
+		if (!items.length && !empty_text) {
 			return []
 		}
+		const lines = items.length ? items.map(transformer ?? (item => item)) : [empty_text]
 		return [
 			`\\s ${headings[section]}`,
-			...items.map(transformer ?? (item => item)).map(s => `\\iex ${s}`),
-			...!items.length ? [`\\iex ${get_no_notes_text(lwc)}`] : [],
+			...lines.map(s => `\\iex ${s}`),
 		]
 	}
 
@@ -32,8 +32,12 @@ function convert_to_usfm_for_brief({ result, lwc, headings }: { result: CopilotB
 				const lwc_span = note.quoted_text ? `"${note.quoted_text}" — ` : ''
 				return `${lwc_span}(${note.trigger.name}) ${note.meaning} ${note.check}`
 			},
+			empty_text: get_no_notes_text(lwc),
 		}),
-		...create_section({ section: 'tnn_notes' }),
+		...create_section({
+			section: 'tnn_notes',
+			empty_text: get_no_tnn_text({ lwc, tnn_available: result.tnn_available }),
+		}),
 		...create_section({
 			section: 'cultural_background',
 			transformer: ({ term, summary }) => `${term} — ${summary}`,

@@ -144,6 +144,28 @@ describe('@tabitha/api-client', () => {
 			expect(error_result).toBeNull()
 		})
 
+		test('logs a warning with the status and url when a request fails', async () => {
+			const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+			try {
+				const mock_fetch = vi.fn().mockResolvedValue({
+					ok: false,
+					status: 503,
+					statusText: 'Service Unavailable',
+					url: `${TARGETS_URL}/item`,
+				})
+
+				const http = create_http_client({
+					base_url: TARGETS_URL,
+					fetch: mock_fetch as unknown as typeof fetch,
+				})
+
+				await http.get('/item')
+				expect(warn).toHaveBeenCalledWith(`[api-client] 503 Service Unavailable from ${TARGETS_URL}/item`)
+			} finally {
+				warn.mockRestore()
+			}
+		})
+
 		test('get retries on 429 honoring Retry-After and returns the eventual success', async () => {
 			vi.useFakeTimers()
 			try {

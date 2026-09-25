@@ -54,7 +54,7 @@ async function fetch_with_rate_limit_retry(do_fetch: () => Promise<Response>): P
  * - Declarative caching (`cache: true`) via transparent GET query parameter injection
  * - JSON body serialization and Content-Type headers on POST requests
  * - MIME-type aware response dispatching (JSON, text, streams, binary)
- * - Built-in error checking (`!res.ok -> null`)
+ * - Built-in error checking (`!res.ok -> null`), logged via `console.warn` so failures aren't silent
  * - Bounded retry-with-backoff on 429 responses, honoring the server's Retry-After header
  */
 export function create_http_client(options: ClientOptions): HttpClient {
@@ -72,7 +72,10 @@ export function create_http_client(options: ClientOptions): HttpClient {
 	}
 
 	async function parse_response<T>(res: Response): Promise<T | null> {
-		if (!res.ok) return null
+		if (!res.ok) {
+			console.warn(`[api-client] ${res.status} ${res.statusText} from ${res.url}`)
+			return null
+		}
 
 		const content_type = res.headers?.get?.('content-type') ?? ''
 
@@ -103,6 +106,7 @@ export function create_http_client(options: ClientOptions): HttpClient {
 		try {
 			return (await res.json()) as T
 		} catch {
+			console.warn(`[api-client] unparseable JSON response from ${res.url}`)
 			return null
 		}
 	}

@@ -1,11 +1,11 @@
 import { default_settings } from '$lib/lookups'
 import { fetch_verses_for_chapter } from '$lib/fetches'
-import { get_copilot_result } from '$lib/server/copilot_core'
 import { error } from '@sveltejs/kit'
-import { create_brief_for_verse, translate_json } from '$lib/server/brief/brief'
+import { get_verse_result } from '$lib/server/verse_result'
+import { translate_json } from '$lib/server/brief/brief'
 import type { RequestHandler } from './$types'
 import type { CopilotResult } from '@tabitha/types'
-import type { CopilotSettings, BriefInput } from '$lib/types'
+import type { CopilotSettings } from '$lib/types'
 
 export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
@@ -87,25 +87,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 						const verse = start_verse + verse_idx
 						const reference = { book, chapter: chapter_int, verse }
 
-						const result = await get_copilot_result({ reference, settings, ai })
-						if (result.type === 'error') {
-							console.error(`Error fetching notes for ${book} ${chapter}:${verse} - ${result.error}`)
-							verse_results[verse_idx] = result
-						} else if (settings.mode === 'discern') {
-							verse_results[verse_idx] = result
-						} else {
-							const brief_input: BriefInput = {
-								verse: reference,
-								notes_result: result,
-								settings: {
-									...settings,
-									rigor: 'HIGH',
-									output_format: 'usfm',
-									output_style: 'production',
-								},
-							}
-							verse_results[verse_idx] = await create_brief_for_verse({ input: brief_input, ai })
-						}
+						verse_results[verse_idx] = await get_verse_result({ reference, settings, ai })
 
 						await flush()
 					}
@@ -129,7 +111,7 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 
 	return new Response(stream, {
 		headers: {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/x-ndjson',
 			'Cache-Control': 'no-cache',
 			'X-Content-Type-Options': 'nosniff',
 		},
