@@ -5,6 +5,7 @@ import { get_pending_changes } from './changes/changes'
 import type { Concept, DbRowConcept, DbRowExample } from '$lib/types'
 import type { ConceptKey, ConceptSearchFilter, ConceptExample, SimplificationHint } from '@tabitha/types'
 import type { ConceptQueryBuilder } from './types'
+import type { ConceptLookupKey } from './concept_embeddings'
 
 // refs:
 // 	https://www.sqlite.org/lang_expr.html#the_like_glob_regexp_match_and_extract_operators
@@ -17,6 +18,25 @@ export async function get_all_concepts(db: D1Database): Promise<Concept[]> {
 	const { results: how_to_results } = await db.prepare('SELECT * FROM Complex_Terms').all<SimplificationHint>()
 
 	return merge_how_to_results({ concepts, how_to_results })
+}
+
+/**
+ * Exact, case-sensitive lookup of specific concepts -- both ontology entries and how-to-only
+ * ones -- without reading either table in full.
+ */
+export async function get_concepts_by_keys({ db, keys }: { db: D1Database, keys: ConceptLookupKey[] }): Promise<Concept[]> {
+	if (!keys.length) return []
+
+	const key_rows = keys.map(() => '(?, ?, ?)').join(', ')
+	const where_clause = `(stem, sense, part_of_speech) IN (VALUES ${key_rows})`
+	const params = keys.flatMap(({ stem, sense, part_of_speech }) => [stem, sense, part_of_speech])
+
+	const [{ results: concept_rows }, { results: how_to_results }] = await Promise.all([
+		db.prepare(`SELECT * FROM Concepts WHERE ${where_clause}`).bind(...params).all<DbRowConcept>(),
+		db.prepare(`SELECT * FROM Complex_Terms WHERE ${where_clause}`).bind(...params).all<SimplificationHint>(),
+	])
+
+	return merge_how_to_results({ concepts: concept_rows.map(transform), how_to_results })
 }
 
 /**

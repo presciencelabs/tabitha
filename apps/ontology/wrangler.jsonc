@@ -61,6 +61,16 @@
 			"bucket_name": "db-backups"
 		}
 	],
+	// Semantic search's concept embeddings -- the index must exist before deploying; see README.md's
+	// "Semantic Search Index" for the one-time setup. No local simulation exists and "remote": true
+	// would make every `vite dev` (and CI's e2e run) need Cloudflare credentials, so semantic search
+	// just returns nothing locally.
+	"vectorize": [
+		{
+			"binding": "VECTORIZE_Concepts",
+			"index_name": "ontology-concepts"
+		}
+	],
 	"placement": {
 		// Necessary to support D1 withSession() bookmarking and edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
@@ -79,9 +89,10 @@
 					"custom_domain": true
 				}
 			],
-			// "vars", "r2_buckets", "d1_databases", and "ratelimits" are non-inheritable -- each must
-			// be redeclared here or this preview Worker silently loses them (breaking OAuth/Gemini
-			// config, the /downloads page, every DB-backed request, and rate limiting respectively).
+			// "vars", "r2_buckets", "d1_databases", "ratelimits", and "vectorize" are non-inheritable --
+			// each must be redeclared here or this preview Worker silently loses them (breaking
+			// OAuth/Gemini config, the /downloads page, every DB-backed request, rate limiting, and
+			// semantic search respectively).
 			"vars": {
 				"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com",
 				"CLOUDFLARE_ACCOUNT_ID": "8582954a9e4c6f0259c6236be794d7d3",
@@ -114,6 +125,14 @@
 				{
 					"binding": "R2_db_backups",
 					"bucket_name": "db-backups"
+				}
+			],
+			// Shares production's index, the same way it shares production's DB_Ontology -- the
+			// embeddings describe that same data.
+			"vectorize": [
+				{
+					"binding": "VECTORIZE_Concepts",
+					"index_name": "ontology-concepts"
 				}
 			],
 			// "triggers" is inheritable, so without this override the preview Worker would also run
