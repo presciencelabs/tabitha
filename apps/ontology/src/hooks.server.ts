@@ -1,14 +1,10 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, OAUTH_REDIRECT_PROXY_URL } from '$env/static/private'
 import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { is_authorized } from '$lib/server/auth'
-import { sync_complex_terms } from '$lib/server/complex_terms'
-import { create_concept_embedder, sync_concept_embeddings } from '$lib/server/concept_embeddings'
-import { get_all_concepts } from '$lib/server/ontology'
 import { create_cors_handle } from '@tabitha/cors'
 import { create_rate_limit_handle } from '@tabitha/rate-limit'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Google from '@auth/sveltekit/providers/google'
-import type { ExecutionContext, ScheduledEvent } from '@cloudflare/workers-types'
 import { error, type Handle, type RequestEvent } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
@@ -91,42 +87,3 @@ const authz_handle: Handle = async function authz_handle({ event, resolve }) {
 }
 
 export const handle = sequence(cors_handle, rate_limit_handle, db_config_handle, authn_handle, authz_handle)
-
-type ScheduledArgs = {
-	event: ScheduledEvent
-	env: App.Platform['env']
-	ctx: ExecutionContext
-}
-
-export async function scheduled({ event, env, ctx }: ScheduledArgs) {
-	if (!env?.DB_Ontology) return
-
-	switch (event.cron) {
-		case '0 */12 * * *':
-			ctx.waitUntil(sync_complex_terms_then_embeddings(env))
-			break
-		default:
-			console.info(`Cron not recognized for schedule: ${event.cron}`)
-			break
-	}
-}
-
-// Embeddings run after the complex-terms sync, since how-to hints stand in for the gloss of
-// concepts not yet in the ontology -- but still run if that sync fails, since approved concept
-// edits need embedding either way.
-async function sync_complex_terms_then_embeddings(env: App.Platform['env']) {
-	try {
-		await sync_complex_terms(env.DB_Ontology)
-	} finally {
-		await sync_embeddings(env)
-	}
-}
-
-async function sync_embeddings(env: App.Platform['env']) {
-	const summary = await sync_concept_embeddings({
-		concepts: await get_all_concepts(env.DB_Ontology),
-		index: env.VECTORIZE_Concepts,
-		embedder: create_concept_embedder(env),
-	})
-	console.info(`Concept embeddings synced: ${summary.embedded} embedded, ${summary.unchanged} unchanged, ${summary.failed} failed`)
-}

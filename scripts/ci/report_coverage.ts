@@ -29,6 +29,8 @@ const PACKAGES_TO_COVER: PackageConfig[] = [
 	{ name: 'apps/ontology (Semantic Concepts)', pkg: '@tabitha/ontology', dir: 'apps/ontology', hasCoverage: true, hasTestScript: true },
 	{ name: 'apps/targets (Target Language Forms)', pkg: '@tabitha/targets', dir: 'apps/targets', hasCoverage: true, hasTestScript: true },
 	{ name: 'apps/copilot (AI Assist)', pkg: '@tabitha/copilot', dir: 'apps/copilot', hasCoverage: false, hasTestScript: true },
+	{ name: 'apps/www (Public Website)', pkg: '@tabitha/www', dir: 'apps/www', hasCoverage: false, hasTestScript: false },
+	{ name: 'apps/scheduler (Cron Triggers)', pkg: '@tabitha/scheduler', dir: 'apps/scheduler', hasCoverage: false, hasTestScript: true },
 	{ name: 'packages/api-client (Typed SDK)', pkg: '@tabitha/api-client', dir: 'packages/api-client', hasCoverage: true, hasTestScript: true },
 	{ name: 'packages/types (Shared Types)', pkg: '@tabitha/types', dir: 'packages/types', hasCoverage: false, hasTestScript: true },
 	{ name: 'packages/ui (Component Library)', pkg: '@tabitha/ui', dir: 'packages/ui', hasCoverage: false, hasTestScript: false },

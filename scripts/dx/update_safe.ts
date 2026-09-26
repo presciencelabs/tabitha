@@ -266,7 +266,7 @@ async function run_safe_update() {
 	console.log('   3/4 Verifying production Cloudflare Worker bundles (bun run build)...')
 	try {
 		await $`bun run build`
-		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully!')
+		console.log('   ✓ All Cloudflare Worker bundles built successfully!')
 	} catch (err) {
 		console.error('❌ Post-update production build failed:', err instanceof Error ? err.message : err)
 		process.exit(1)
@@ -278,7 +278,7 @@ async function run_safe_update() {
 	console.log('   4/4 Verifying CI production build path (bun run build:ci, Bun runtime)...')
 	try {
 		await $`bun run build:ci`
-		console.log('   ✓ All 5 Cloudflare Worker bundles built successfully via the CI (Bun) path!')
+		console.log('   ✓ All Cloudflare Worker bundles built successfully via the CI (Bun) path!')
 	} catch (err) {
 		console.error('❌ Post-update CI build path failed:', err instanceof Error ? err.message : err)
 		process.exit(1)

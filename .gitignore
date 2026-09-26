@@ -18,6 +18,9 @@ dev-dist
 # Environment variables -- .env itself is a committed template (public vars + empty secret
 # stubs); only the .local variants (which hold real secret values) are gitignored.
 .env.local
+# plain Workers' conventional local-secrets file (e.g. apps/scheduler), in case one is ever created;
+# this repo's convention is .env + .env.local instead, which wrangler also reads
+.dev.vars*
 .env.*.local
 *.local
 
