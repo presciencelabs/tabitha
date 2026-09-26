@@ -1,12 +1,14 @@
 import { error } from '@sveltejs/kit'
+import { get_request_caller, record_usage_event } from '@tabitha/usage'
 import { get_verse_result } from '$lib/server/verse_result'
 import { default_settings } from '$lib/lookups'
 import { translate_json } from '$lib/server/brief/brief'
+import { to_copilot_run_event } from '$lib/server/usage'
 import type { RequestHandler } from './$types'
-import type { VerseReference } from '@tabitha/types'
+import type { CopilotResult, VerseReference } from '@tabitha/types'
 import type { CopilotSettings, CopilotStep, CopilotStreamLine } from '$lib/types'
 
-export async function GET({ params: { book, chapter, verse }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
+export async function GET({ params: { book, chapter, verse }, url: { searchParams }, locals: { ai }, request, platform }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
 	const verse_int = parseInt(verse)
 	if (!chapter_int || !verse_int) {
@@ -29,9 +31,10 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 		async start(controller) {
 			const send = (line: CopilotStreamLine) => controller.enqueue(`${JSON.stringify(line)}\n`)
 			const on_step = (step: CopilotStep) => send({ type: 'step', step })
+			let result: CopilotResult | undefined
 
 			try {
-				const result = await get_verse_result({ reference, settings, ai, on_step })
+				result = await get_verse_result({ reference, settings, ai, on_step })
 				if (result.type === 'error' || settings.mode !== 'brief' || settings.lwc === 'English') {
 					send(result)
 				} else {
@@ -40,8 +43,14 @@ export async function GET({ params: { book, chapter, verse }, url: { searchParam
 				}
 			} catch (err) {
 				console.error(`Error generating notes for ${book} ${chapter}:${verse}:`, err)
-				send({ type: 'error', verse: reference, error: err instanceof Error ? err.message : 'Unexpected error occurred.' })
+				result = { type: 'error', verse: reference, error: err instanceof Error ? err.message : 'Unexpected error occurred.' }
+				send(result)
 			} finally {
+				record_usage_event({
+					dataset: platform?.env.USAGE,
+					app: 'copilot',
+					event: to_copilot_run_event({ caller: get_request_caller(request), run: 'verse', book, settings, verse_count: 1, results: result ? [result] : [] }),
+				})
 				controller.close()
 			}
 		},

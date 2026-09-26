@@ -71,6 +71,14 @@
 			"index_name": "ontology-concepts"
 		}
 	],
+	// Anonymous feature-usage events -- see docs/decisions/0017-usage-analytics-engine.md for the
+	// schema and example queries.
+	"analytics_engine_datasets": [
+		{
+			"binding": "USAGE",
+			"dataset": "tabitha_usage"
+		}
+	],
 	"placement": {
 		// Necessary to support D1 withSession() bookmarking and edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
@@ -135,6 +143,8 @@
 					"index_name": "ontology-concepts"
 				}
 			],
+			// "analytics_engine_datasets" is also non-inheritable, and intentionally left undeclared:
+			// usage is only tracked in production, and recording is a no-op without the binding.
 			// "triggers" is inheritable, so without this override the preview Worker would also run
 			// its own copy of the same cron on the same schedule against the same production
 			// database as the real "ontology" Worker -- redundant at best, a double-run race at

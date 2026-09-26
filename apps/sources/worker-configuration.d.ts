@@ -4,6 +4,7 @@
 interface __BaseEnv_Env {
 	DB_Sources: D1Database;
 	RATE_LIMITER: RateLimit;
+	USAGE?: AnalyticsEngineDataset;
 	ASSETS: Fetcher;
 	PUBLIC_ONTOLOGY_API_HOST: string;
 	PUBLIC_TARGETS_API_HOST: string;

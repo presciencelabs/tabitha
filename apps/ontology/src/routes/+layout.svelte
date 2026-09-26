@@ -4,11 +4,12 @@
 	import { onMount } from 'svelte'
 	import { page } from '$app/state'
 	import { Search } from '$lib'
-	import { Header, Footer } from '@tabitha/ui'
+	import { Header, Footer, theme_state } from '@tabitha/ui'
 	import { signIn, signOut } from '@auth/sveltekit/client'
 	import Icon from '@iconify/svelte'
 	import { useRegisterSW } from 'virtual:pwa-register/svelte'
 	import { sync_pending } from '$lib/offline/sync'
+	import { report_active_theme } from '@tabitha/usage/client'
 
 	let { data, children } = $props()
 
@@ -27,6 +28,7 @@
 		// Catches anything left over from a previous visit that never made it to the server --
 		// the `online` event alone wouldn't fire for a tab that was fully closed while offline.
 		sync_pending()
+		report_active_theme(theme_state.current)
 
 		window.addEventListener('online', sync_pending)
 		return () => window.removeEventListener('online', sync_pending)

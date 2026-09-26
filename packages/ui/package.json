@@ -12,7 +12,8 @@
       "svelte": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./theme.css": "./src/themes/theme.css"
+    "./theme.css": "./src/themes/theme.css",
+    "./themes": "./src/themes/themes.ts"
   },
   "scripts": {
     "check": "svelte-check --tsconfig ./tsconfig.json",

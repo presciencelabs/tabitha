@@ -3,6 +3,7 @@
 // Runtime types generated with workerd@1.20260811.1 2026-08-15 nodejs_als,nodejs_compat
 interface __BaseEnv_Env {
 	RATE_LIMITER: RateLimit;
+	USAGE?: AnalyticsEngineDataset;
 	ASSETS: Fetcher;
 	PUBLIC_SOURCES_API_HOST: string;
 	PUBLIC_TARGETS_API_HOST: string;

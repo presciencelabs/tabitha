@@ -1,13 +1,15 @@
 import { default_settings } from '$lib/lookups'
 import { fetch_verses_for_chapter } from '$lib/fetches'
 import { error } from '@sveltejs/kit'
+import { get_request_caller, record_usage_event } from '@tabitha/usage'
 import { get_verse_result } from '$lib/server/verse_result'
 import { translate_json } from '$lib/server/brief/brief'
+import { to_copilot_run_event } from '$lib/server/usage'
 import type { RequestHandler } from './$types'
 import type { CopilotResult } from '@tabitha/types'
 import type { CopilotSettings } from '$lib/types'
 
-export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai } }: Parameters<RequestHandler>[0]) {
+export async function GET({ params: { book, chapter }, url: { searchParams }, locals: { ai }, request, platform }: Parameters<RequestHandler>[0]) {
 	const chapter_int = parseInt(chapter)
 	if (!chapter_int) {
 		error(400, 'chapter must be an integer')
@@ -45,9 +47,10 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 
 	const stream = new ReadableStream({
 		async start(controller) {
+			const verse_results: CopilotResult[] = new Array(total_verses)
+
 			try {
 				const concurrency_limit = 5
-				const verse_results: CopilotResult[] = new Array(total_verses)
 				let next_to_send = 0
 				let next_to_start = 0
 				let is_flushing = false
@@ -104,6 +107,18 @@ export async function GET({ params: { book, chapter }, url: { searchParams }, lo
 				console.error('Error in batch streaming:', err)
 				controller.error(err)
 			} finally {
+				record_usage_event({
+					dataset: platform?.env.USAGE,
+					app: 'copilot',
+					event: to_copilot_run_event({
+						caller: get_request_caller(request),
+						run: 'batch',
+						book,
+						settings,
+						verse_count: total_verses,
+						results: verse_results.filter(Boolean),
+					}),
+				})
 				controller.close()
 			}
 		},
