@@ -1,4 +1,4 @@
-import { CLAUSE_NOTATIONS } from './clause_notations'
+import { CLAUSE_NOTATIONS, suggest_clause_notations } from './clause_notations'
 import { FUNCTION_WORDS } from './function_words'
 import { REGEXES } from '$lib/regexes'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
@@ -38,7 +38,7 @@ export function tokenize_input(text: string = ''): Token[] {
 			continue
 		}
 		const parser = parsers.find(([check]) => check())?.[1] ?? invalid_opening_char
-		tokens.push(parser())
+		tokens.push({ ...parser(), source_range: { start: token_start, end: i } })
 	}
 
 	return tokens
@@ -144,7 +144,7 @@ export function tokenize_input(text: string = ''): Token[] {
 
 		} else if (!CLAUSE_NOTATIONS.includes(collect_text())) {
 			// (invalid-notation)
-			return error_token(ERRORS.UNRECOGNIZED_CLAUSE_NOTATION)
+			return error_token(ERRORS.UNRECOGNIZED_CLAUSE_NOTATION(suggest_clause_notations(collect_text())))
 		}
 
 		return check_boundary_for_token(() => simple_token(TOKEN_TYPE.NOTE))

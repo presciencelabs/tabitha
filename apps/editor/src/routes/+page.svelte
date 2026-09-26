@@ -4,7 +4,8 @@
 	import CopyButton from '$lib/CopyButton.svelte'
 	import { SaveButton, save_state } from '$lib/save'
 	import { Tokens } from '$lib/tokens'
-	import { fetch_check_result } from '$lib/check'
+	import { check_text, remove_auto_fix } from '$lib/check'
+	import { set_remove_auto_fix } from '$lib/tokens/auto_fix_context'
 	import Icon from '@iconify/svelte'
 
 	let entered_text = $state(save_state.value)
@@ -15,15 +16,15 @@
 		back_translation: '',
 	})
 
-	async function check_text() {
+	async function show_checked(pending_check: Promise<{ text: string; result: EditorCheckResult }>) {
 		checking = true
-		check_response = await fetch_check_result(sanitize_input(entered_text))
+		const { text, result } = await pending_check
+		entered_text = text
+		check_response = result
 		checking = false
 	}
 
-	function sanitize_input(text: string): string {
-		return text.replaceAll('\n', ' ')
-	}
+	set_remove_auto_fix(auto_fix => show_checked(remove_auto_fix({ text: entered_text, auto_fix })))
 
 	function clear() {
 		entered_text = ''
@@ -56,7 +57,7 @@
 
 		<div class="justify-self-end">
 			<button
-				onclick={check_text}
+				onclick={() => show_checked(check_text(entered_text))}
 				type="submit"
 				disabled={checking}
 				class="btn btn-primary">

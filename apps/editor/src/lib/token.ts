@@ -1,6 +1,6 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { REGEXES } from '$lib/regexes'
-import type { CheckerMessage, CheckerMessageLabel, CheckerMessageType, CheckerTokenType } from '@tabitha/types'
+import type { CheckerMessage, CheckerMessageLabel, CheckerMessageType, CheckerTextInsertion, CheckerTokenType } from '@tabitha/types'
 import type { CaseFrameResult } from '$lib/rules/case_frame/types'
 import type { RuleTriggerContext } from '$lib/rules/types'
 import type { LookupResult, MessageInfo, Sentence, Token, Tag } from '$lib/types'
@@ -39,9 +39,9 @@ export function create_token(overrides: Partial<Token> & Pick<Token, 'token' | '
 	}
 }
 
-export function create_added_token({ token, message, rule_id = null }: { token: string; message: CheckerMessage; rule_id?: string | null }): Token {
+export function create_added_token({ token, message, rule_id = null, insertion }: { token: string; message: CheckerMessage; rule_id?: string | null; insertion?: CheckerTextInsertion }): Token {
 	const applied_rules = rule_id ? [`add - ${rule_id}`] : undefined
-	return create_token({ token, type: TOKEN_TYPE.ADDED, messages: [message], applied_rules })
+	return create_token({ token, type: TOKEN_TYPE.ADDED, messages: [message], applied_rules, insertion })
 }
 
 export function create_gap_token({ rule_id, label, tag = {} }: { rule_id: string; label: string; tag?: Tag }): Token {

@@ -36,3 +36,18 @@ export const CLAUSE_NOTATIONS = [
 	'(title)',
 	'(yesrhetorical)',
 ]
+
+const notation_name = (notation: string): string => notation.slice(1, -1).toLowerCase().replaceAll('_', '-')
+
+export function suggest_clause_notations(notation: string): string[] {
+	const entered_name = notation_name(notation)
+	if (!entered_name) return []
+
+	const exact_match = CLAUSE_NOTATIONS.find(known => notation_name(known) === entered_name)
+	if (exact_match) return [exact_match]
+
+	return CLAUSE_NOTATIONS.filter(known => {
+		const known_name = notation_name(known)
+		return known_name.startsWith(entered_name) || entered_name.startsWith(known_name)
+	})
+}

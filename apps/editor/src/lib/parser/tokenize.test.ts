@@ -3,9 +3,14 @@ import { CLAUSE_NOTATIONS } from './clause_notations'
 import { ERRORS } from './error_messages'
 import { FUNCTION_WORDS } from './function_words'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_token } from '../token'
-import { tokenize_input } from './tokenize'
+import { tokenize_input as tokenize_with_ranges } from './tokenize'
 import type { PairingType } from '@tabitha/types'
 import type { Token } from '$lib/types'
+
+// Source ranges have their own test below; toEqual treats an undefined property as absent
+function tokenize_input(text: string): Token[] {
+	return tokenize_with_ranges(text).map(token => ({ ...token, source_range: undefined }))
+}
 
 function create_word_token(token: string, { lookup_term, sense = '' }: { lookup_term?: string, sense?: string } = {}): Token {
 	return create_token({ token, type: TOKEN_TYPE.LOOKUP_WORD, lookup_terms: [lookup_term || token], specified_sense: sense })
@@ -195,16 +200,17 @@ describe('tokenize_input', () => {
 	})
 
 	test('invalid clause notation', () => {
-		const INPUT = "(imp imp) token(imp) (imp)token (implicit_situational) (imperative) (Paul's) (test )"
+		const INPUT = "(imp imp) token(imp) (imp)token (implicit_situational) (imperative) (alt) (Paul's) (test )"
 
 		const EXPECTED_OUTPUT = [
 			create_error_token('(imp', ERRORS.MISSING_CLOSING_PAREN),
 			create_error_token('imp)', ERRORS.MISSING_OPENING_PAREN),
 			create_pronoun_token('token', create_word_token('imp')),		// tokenizing at this time does not differentiate from a pronoun referent
 			create_error_token('(imp)token', ERRORS.INVALID_TOKEN_END('(imp)')),
-			create_error_token('(implicit_situational)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
-			create_error_token('(imperative)', ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
-			create_error_token("(Paul's)", ERRORS.UNRECOGNIZED_CLAUSE_NOTATION),
+			create_error_token('(implicit_situational)', 'This clause notation is not recognized. Did you mean (implicit-situational)?'),
+			create_error_token('(imperative)', 'This clause notation is not recognized. Did you mean (imp)?'),
+			create_error_token('(alt)', 'This clause notation is not recognized. Did you mean (alternate-1), (alternate-2), (alternate-3), (alternate-4), or (alternate-5)?'),
+			create_error_token("(Paul's)", 'This clause notation is not recognized.'),
 			create_error_token('(test', ERRORS.MISSING_CLOSING_PAREN),
 			create_error_token(')', ERRORS.MISSING_OPENING_PAREN),
 		]
@@ -475,5 +481,16 @@ describe('tokenize_input', () => {
 		]
 
 		expect(tokenize_input(INPUT)).toEqual(EXPECTED_OUTPUT)
+	})
+
+	test('each top-level token records its range in the input', () => {
+		const ranges = tokenize_with_ranges('John  saw all.').map(({ token, source_range }) => [token, source_range])
+
+		expect(ranges).toEqual([
+			['John', { start: 0, end: 4 }],
+			['saw', { start: 6, end: 9 }],
+			['all', { start: 10, end: 13 }],
+			['.', { start: 13, end: 14 }],
+		])
 	})
 })
