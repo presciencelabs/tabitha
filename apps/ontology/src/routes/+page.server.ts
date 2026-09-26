@@ -6,7 +6,7 @@ import { find_related_concepts } from '$lib/server/semantic_search'
 import type { PageServerLoad } from './$types'
 import type { ConceptSearchFilter } from '@tabitha/types'
 
-export async function load({ url: { searchParams }, locals: { db_ontology } }: Parameters<PageServerLoad>[0]) {
+export async function load({ url: { searchParams }, locals: { db_ontology }, platform }: Parameters<PageServerLoad>[0]) {
 	const search_filter: ConceptSearchFilter = {
 		q: '',
 		scope: 'stems',
@@ -26,7 +26,7 @@ export async function load({ url: { searchParams }, locals: { db_ontology } }: P
 	]
 
 	if (search_filter.scope === 'semantic') {
-		const related = await find_related_concepts({ db: db_ontology, search_term: search_filter.q })
+		const related = await find_related_concepts({ db: db_ontology, index: platform?.env.VECTORIZE_Concepts, search_term: search_filter.q })
 		results.push(...related)
 	}
 

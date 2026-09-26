@@ -20,3 +20,5 @@ Not automated here -- more sensitive than gateway config, and best done through 
 ## Verifying it actually works
 
 `bun run verify` sends one real request through the live gateway using the real `@tabitha/ai` client (needs `AI_GATEWAY_TOKEN` in `.env.local` and `GEMINI_PROJECT_ID`/`GEMINI_LOCATION` in `.env`, alongside the BYOK setup above). This is a manual, credential-gated integration check -- not run in CI, and deliberately not named to match `bun test`'s automatic `*_test.ts` discovery -- and exists specifically to get a real answer to the open questions in `docs/decisions/0007-ai-consolidation.md` before any app depends on this in production.
+
+`bun run verify:embedding` is the same kind of check for embeddings: it sends three real `gemini-embedding-2` requests through the gateway's `:embedContent` route and prints how similar a related and an unrelated pair come out. Run it once before ontology's semantic-search index is first backfilled (see `docs/decisions/0016-semantic-search-via-vectorize-embeddings.md`).
