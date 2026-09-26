@@ -17,7 +17,7 @@ export function apply_text_insertions({ text, insertions }: { text: string; inse
 
 	const inserted_ranges = insertions.map(({ offset, text: inserted }, index) => {
 		const earlier_length = insertions
-			.filter((other, other_index) => other.offset < offset || (other.offset === offset && other_index < index))
+			.filter((other, other_index) => other.offset < offset || other.offset === offset && other_index < index)
 			.reduce((total, other) => total + other.text.length, 0)
 		const start = offset + earlier_length
 		return { start, end: start + inserted.length }

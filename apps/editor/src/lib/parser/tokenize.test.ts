@@ -7,9 +7,9 @@ import { tokenize_input as tokenize_with_ranges } from './tokenize'
 import type { PairingType } from '@tabitha/types'
 import type { Token } from '$lib/types'
 
-// Source ranges have their own test below; everything else compares the tokens without them
+// Source ranges have their own test below; toEqual treats an undefined property as absent
 function tokenize_input(text: string): Token[] {
-	return tokenize_with_ranges(text).map(({ source_range: _source_range, ...token }) => token)
+	return tokenize_with_ranges(text).map(token => ({ ...token, source_range: undefined }))
 }
 
 function create_word_token(token: string, { lookup_term, sense = '' }: { lookup_term?: string, sense?: string } = {}): Token {
