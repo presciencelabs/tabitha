@@ -24,17 +24,12 @@ const { create_concept } = await import('./concepts')
 
 type QueuedResponse = { first?: unknown, all?: unknown[], run?: { last_row_id?: number } }
 
-// Fakes just enough of D1Database to drive changes.ts's own queries. create_table_if_not_exists's
-// CREATE TABLE call is handled transparently so callers only need to queue responses for the
-// queries that actually matter to the test, in the order changes.ts issues them.
+// Fakes just enough of D1Database to drive changes.ts's own queries. Callers queue responses in
+// the order changes.ts issues them.
 function make_db(responses: QueuedResponse[] = []) {
 	const statements: { bind: ReturnType<typeof vi.fn> }[] = []
 
-	const prepare = vi.fn((sql: string) => {
-		if (/CREATE TABLE/i.test(sql)) {
-			return { run: vi.fn().mockResolvedValue({}) }
-		}
-
+	const prepare = vi.fn(() => {
 		const response = responses[statements.length] ?? {}
 		const result = {
 			first: vi.fn().mockResolvedValue(response.first ?? null),

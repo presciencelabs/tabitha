@@ -1,6 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { cached_json } from '@tabitha/api-client'
-import type { D1Database } from '@cloudflare/workers-types'
 import { normalize_wildcards } from '@tabitha/types/patterns'
 import type { TargetFormResult } from '@tabitha/types'
 import type { DbRowLexicon } from '$lib/types'
@@ -21,14 +20,25 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 			AND forms LIKE ?
 	`
 
-	const { results: stem_matches } = await db.prepare(stem_sql).bind(project, `${word}`).all<DbRowLexicon>()
-	const { results: forms_matches } = await db.prepare(forms_sql).bind(project, `%|${word}|%`).all<DbRowLexicon>()
+	const form_names_sql = `
+		SELECT part_of_speech, position, name
+		FROM Form_Names
+		WHERE project = ?
+	`
 
-	const forms: TargetFormResult[] = await transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
+	const [{ results: stem_matches }, { results: forms_matches }, { results: form_names }] = await Promise.all([
+		db.prepare(stem_sql).bind(project, `${word}`).all<DbRowLexicon>(),
+		db.prepare(forms_sql).bind(project, `%|${word}|%`).all<DbRowLexicon>(),
+		db.prepare(form_names_sql).bind(project).all<DbRowFormName>(),
+	])
+
+	const form_name_by_position = new Map((form_names ?? []).map(({ part_of_speech, position, name }) => [form_name_key({ part_of_speech, position }), name]))
+
+	const forms: TargetFormResult[] = transform({ stem_matches: stem_matches ?? [], forms_matches: forms_matches ?? [] })
 
 	return cached_json({ data: forms })
 
-	async function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): Promise<TargetFormResult[]> {
+	function transform({ stem_matches, forms_matches }: { stem_matches: DbRowLexicon[]; forms_matches: DbRowLexicon[] }): TargetFormResult[] {
 		const forms: TargetFormResult[] = []
 
 		for (const { id, stem: base_stem, part_of_speech, constituents } of stem_matches) {
@@ -47,7 +57,7 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 
 			for (const i of matched_indices) {
 				const position = i + 1
-				const name = await get_form_name({ db, project: project!, part_of_speech, position })
+				const name = form_name_by_position.get(form_name_key({ part_of_speech, position })) ?? ''
 				forms.push({ id, stem, part_of_speech, form: name })
 			}
 		}
@@ -83,17 +93,15 @@ export async function GET({ locals: { db }, params: { project }, url: { searchPa
 
 			return constructed_re.test(form)
 		}
-
-		async function get_form_name({ db, project, part_of_speech, position }: { db: D1Database; project: string; part_of_speech: string; position: number }): Promise<string> {
-			const sql = `
-				SELECT *
-				FROM Form_Names
-				WHERE project = ?
-					AND part_of_speech = ?
-					AND position = ?
-			`
-
-			return await db.prepare(sql).bind(project, part_of_speech, position).first<string>('name') ?? ''
-		}
 	}
+}
+
+type DbRowFormName = {
+	part_of_speech: string
+	position: number
+	name: string
+}
+
+function form_name_key({ part_of_speech, position }: Pick<DbRowFormName, 'part_of_speech' | 'position'>): string {
+	return `${part_of_speech}|${position}`
 }

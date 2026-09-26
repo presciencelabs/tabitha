@@ -76,9 +76,18 @@ for (const tbta_db_name of tbta_db_names) {
 	tbta_db.close()
 }
 
+create_indexes(targets_db)
+
 log.step(`Optimizing ${targets_db_name}...`)
 targets_db.run('VACUUM')
 log.summary()
+
+// NOCASE so the `stem LIKE ?` lookups can use the index (https://www.sqlite.org/optoverview.html#the_like_optimization)
+function create_indexes(targets_db: Database) {
+	log.step('Creating indexes...')
+	targets_db.run('CREATE INDEX IF NOT EXISTS idx_lexicon_stem ON Lexicon (project, stem COLLATE NOCASE)')
+	targets_db.run('CREATE INDEX IF NOT EXISTS idx_text_reference ON Text (project, book, chapter, verse)')
+}
 
 async function warn_if_inflections_stale(win_dir: string): Promise<void> {
 	const files = Array.from(new Glob('*.win.txt').scanSync(win_dir))

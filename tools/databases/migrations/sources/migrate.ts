@@ -44,9 +44,20 @@ if (sample_db_path.includes(date)) {
 
 await migrate_source_status(bun_sqlite_runner(tabitha_sources_db), join(import.meta.dir, '../../data/status'), date)
 
+create_indexes(tabitha_sources_db)
+
 log.step(`Optimizing ${tabitha_db_name}...`)
 tabitha_sources_db.run('VACUUM')
 log.summary()
+
+// idx_sources_verse serves single-verse lookups; idx_sources_reference covers the DISTINCT
+// book/chapter listings. NOCASE so the `type LIKE ?`/`id_primary LIKE ?` filters can use it
+// (https://www.sqlite.org/optoverview.html#the_like_optimization).
+function create_indexes(tabitha_sources_db: Database) {
+	log.step('Creating indexes...')
+	tabitha_sources_db.run('CREATE INDEX IF NOT EXISTS idx_sources_verse ON Sources (id_secondary, id_tertiary)')
+	tabitha_sources_db.run('CREATE INDEX IF NOT EXISTS idx_sources_reference ON Sources (type COLLATE NOCASE, id_primary COLLATE NOCASE, id_secondary, id_tertiary)')
+}
 
 async function resolve_sample_db_path(date: string): Promise<string> {
 	const path = await resolve_dated_file('raw', 'Sample', date, 'tbta.sqlite')

@@ -35,6 +35,8 @@ const sources_db_complex = new Database(sources_db_complex_name, { readwrite: tr
 
 await load_examples(tabitha_db, sources_db, sources_db_complex)
 
+create_indexes(tabitha_db)
+
 log.step(`Optimizing ${tabitha_db_name}...`)
 tabitha_db.run('VACUUM')
 tabitha_db.close()
@@ -55,5 +57,13 @@ function create_complex_terms_table(tabitha_db: Database) {
 			'notes'				TEXT
 		)
 	`)
+}
+
+// NOCASE so the `stem LIKE ?` lookups can use the index (https://www.sqlite.org/optoverview.html#the_like_optimization)
+function create_indexes(tabitha_db: Database) {
+	log.step('Creating indexes...')
+	tabitha_db.run('CREATE INDEX IF NOT EXISTS idx_concepts_stem ON Concepts (stem COLLATE NOCASE)')
+	tabitha_db.run('CREATE INDEX IF NOT EXISTS idx_complex_terms_stem ON Complex_Terms (stem COLLATE NOCASE)')
+	tabitha_db.run('CREATE INDEX IF NOT EXISTS idx_exhaustive_examples_concept ON Exhaustive_Examples (concept_stem, concept_sense, concept_part_of_speech)')
 }
 
