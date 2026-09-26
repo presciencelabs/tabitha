@@ -72,7 +72,7 @@ export async function fetch_brief_headings(lwc: string): Promise<CopilotBriefHea
 	if (lwc === 'English') {
 		return BRIEF_HEADINGS_ENGLISH
 	}
-	const response = await fetch(`/lookups/brief_headings?lwc=${lwc}`)
+	const response = await fetch(`/lookup/brief_headings?lwc=${lwc}`)
 	if (!response.ok) {
 		console.warn(`Could not fetch brief headings for ${lwc}. Defaulting to English.`)
 		return BRIEF_HEADINGS_ENGLISH
