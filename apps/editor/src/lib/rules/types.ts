@@ -107,6 +107,8 @@ export type CheckerActionJson = {
 	on?: string
 	precededby?: string
 	followedby?: string
+	// the precededby/followedby text is inserted into the author's text rather than only suggested
+	auto_fix?: boolean
 	message: string
 }
 

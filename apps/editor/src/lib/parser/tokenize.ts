@@ -38,7 +38,7 @@ export function tokenize_input(text: string = ''): Token[] {
 			continue
 		}
 		const parser = parsers.find(([check]) => check())?.[1] ?? invalid_opening_char
-		tokens.push(parser())
+		tokens.push({ ...parser(), source_range: { start: token_start, end: i } })
 	}
 
 	return tokens

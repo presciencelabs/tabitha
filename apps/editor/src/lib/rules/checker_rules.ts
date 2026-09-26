@@ -2,9 +2,10 @@ import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { ERRORS } from '$lib/parser/error_messages'
 import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_one_part_of_speech, set_message_plain } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
+import { spaced_insertion_text } from '$lib/text_insertions'
 import { validate_case_frame } from './case_frame'
 import { create_context_filter, create_token_filter, from_built_in_rule, message_set_action } from './rules_parser'
-import type { CheckerMessage, CheckerMessageType } from '@tabitha/types'
+import type { CheckerMessage, CheckerMessageType, CheckerTextInsertion } from '@tabitha/types'
 import type { MessageInfo, Token } from '$lib/types'
 import type {
 	BuiltInRule,
@@ -203,6 +204,7 @@ const checker_rules_json: CheckerRuleJson[] = [
 		},
 		'suggest': {
 			'followedby': ',',
+			'auto_fix': true,
 			'message': "Add a comma after 'One {token}' so the 'that' doesn't confuse the Analyzer.",
 		},
 		'comment': 'The Analyzer messes up "One day that man...", but it works fine with a comma.',
@@ -390,6 +392,7 @@ const checker_rules_json: CheckerRuleJson[] = [
 		},
 		'error': {
 			'followedby': 'of',
+			'auto_fix': true,
 			'message': "Use 'all of', unless the modified Noun is generic. See P1 Checklist 0.17.",
 		},
 		'comment': 'Catches "all the|these|those people" but allows "all people"',
@@ -862,11 +865,13 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 
 			// The action will have a precededby, followedby, or neither. Never both.
 			if (action.precededby) {
-				tokens.splice(trigger_index, 0, create_added_token({ token: action.precededby, message, rule_id }))
+				const insertion = auto_fix_insertion({ action, text: action.precededby, position: 'before', trigger_context })
+				tokens.splice(trigger_index, 0, create_added_token({ token: action.precededby, message, rule_id, insertion }))
 				return trigger_index + 2
 			}
 			if (action.followedby) {
-				tokens.splice(trigger_index + 1, 0, create_added_token({ token: action.followedby, message, rule_id }))
+				const insertion = auto_fix_insertion({ action, text: action.followedby, position: 'after', trigger_context })
+				tokens.splice(trigger_index + 1, 0, create_added_token({ token: action.followedby, message, rule_id, insertion }))
 				return trigger_index + 2
 			}
 
@@ -874,6 +879,14 @@ export function parse_checker_rule(rule_json: CheckerRuleJson, index: number): T
 			set_message_plain({ token: token_to_flag, message })
 			return trigger_index + 1
 		}
+	}
+
+	function auto_fix_insertion({ action, text, position, trigger_context: { trigger_token } }: { action: CheckerActionJson; text: string; position: 'before' | 'after'; trigger_context: RuleTriggerContext }): CheckerTextInsertion | undefined {
+		const { source_range } = trigger_token
+		if (!action.auto_fix || !source_range) return undefined
+
+		const offset = position === 'before' ? source_range.start : source_range.end
+		return { offset, text: spaced_insertion_text({ text, position }) }
 	}
 
 	function get_token_to_flag({ action, trigger_context: { tokens, trigger_token, context_indexes, subtoken_indexes } }: { action: CheckerActionJson; trigger_context: RuleTriggerContext }): Token {
