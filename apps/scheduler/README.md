@@ -14,7 +14,7 @@ A cron-only Cloudflare Worker. It has no UI, no public URL, and no app logic of 
 
 ## One-time setup
 
-1. Connect the Worker to Workers Builds in the Cloudflare dashboard (**Workers & Pages → Create application → Import a repository**, root directory `apps/scheduler`). There's no API for this step. Then add it to `tools/workers/config.ts` and run that tool, so its build settings stay managed like every other app's.
+1. Create the Worker through Workers Builds in the Cloudflare dashboard (**Workers & Pages → Create application → Import a repository**, root directory `apps/scheduler`), which creates the Worker and both build triggers in one step. Then add it to `tools/workers/config.ts` and run that tool, so its build settings stay managed like every other app's. (The Workers Builds API could create the triggers instead, but `tools/workers` doesn't do that yet.)
 2. After the first deploy, generate the shared token and set it on both Workers in one command. The final `echo` prints it once, so you can save it to your password manager. Don't run this before the `scheduler` Worker exists: `wrangler secret put` against a missing Worker silently creates an empty one.
 
    ```bash

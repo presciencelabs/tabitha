@@ -318,7 +318,7 @@ Apps under `apps/*` are picked up automatically by Bun workspaces, Turborepo, CI
 3. **`.env`** following the two-tier convention in `AGENTS.md`; local values go in `.env.local`, never `.dev.vars` (gitignored as a safety net only).
 4. **Hardcoded lists**: `search_dirs` in `scripts/audits/check_philosophies.ts`, `PACKAGES_TO_COVER` in `scripts/ci/report_coverage.ts`, a `dev:<app>` script in the root `package.json`, and, after its first deploy, `desired_apps` in `tools/workers/config.ts` (it needs the Worker's `worker_tag`).
 5. **Docs**: the apps list in `AGENTS.md`, the diagram, apps table, and dev commands here, and the app sections of the root `README.md`.
-6. **Workers Builds**: connect the Worker in the Cloudflare dashboard (**Workers & Pages → Import a repository**) — there's no API for this step — then run `tools/workers`' `bun run apply:run`.
+6. **Workers Builds**: after the app is merged to `main`, create it in the Cloudflare dashboard (**Workers & Pages → Create application → Import a repository**, root directory `apps/<app>`), which creates the Worker and both build triggers in one step, then add it to `tools/workers` and run `bun run apply:run`. The Workers Builds API can create triggers too, but `tools/workers` doesn't do that yet.
 
 **A SvelteKit app, additionally:** a port in `packages/vite-config/ports.js`, entries in `scripts/dx/dev_multi.ts`, `scripts/dx/dev_menu.ts`, `scripts/ci/run_e2e.ts` (if it has e2e tests), and `scripts/dx/doctor.ts`, a letter in `scripts/dx/lib/brand_mark.ts` (see "How to Generate an App's Icons" below), and `deploy:preview` if it should get a cross-app preview deploy ([ADR 0015](docs/decisions/0015-cross-app-preview-custom-domains.md)).
 
