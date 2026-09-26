@@ -30,7 +30,7 @@ The obvious alternative, a GitHub Actions scheduled workflow calling the app (as
 ## Consequences
 
 - **`scheduler` is the first non-SvelteKit app**, so repo tooling built around SvelteKit apps needed a pass. CONTRIBUTING.md now has a "How to Add a New App" checklist that separates what every app needs from what only SvelteKit apps or only plain Workers need.
-- **One-time setup per environment:** connect `scheduler` to Workers Builds in the dashboard (no API exists for this), add it to `tools/workers/config.ts`, and set `SCHEDULER_TOKEN` on both Workers after `scheduler` first deploys (see `apps/scheduler/README.md`).
+- **One-time setup per environment:** create `scheduler` through Workers Builds' dashboard import (the Workers Builds API can create triggers too, but `tools/workers` doesn't yet), add it to `tools/workers/config.ts`, and set `SCHEDULER_TOKEN` on both Workers after `scheduler` first deploys (see `apps/scheduler/README.md`).
 - **The binding between the Workers isn't a package dependency,** so CI won't re-check `scheduler` when only `ontology` changes. The contract is small, covered from both sides: ontology's tests cover the token check and sync order, and scheduler's tests cover the URL and header it sends. Changing the endpoint's path or auth means updating both.
 - **Service bindings return, in a narrow role.** ADR 0015 rejected service bindings for cross-app *preview* calls. This is production-only: `scheduler` has no preview environment, and its preview builds only upload versions, which never run crons.
 - **Local development can't exercise the binding.** Ontology runs under `vite dev`, which a `wrangler dev` service binding can't reach, so the scheduled sync is tested locally by calling the endpoint directly.
