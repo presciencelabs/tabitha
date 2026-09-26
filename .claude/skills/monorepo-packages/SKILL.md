@@ -50,6 +50,6 @@ Before submitting code, verify all packages pass the 1-command verification gate
 
 ```bash
 bun run precommit
-# Runs: bun run check && bun run test:unit && bun run check:secrets && bun run check:cloudflare && bun run check:md && bun run build
+# Runs: bun run check && bun run check:lint && bun run test && bun run build
 ```
 

@@ -21,7 +21,7 @@
     "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:dev": "playwright test --ui",
-    "precommit": "bun run check && bun run build && bun run test",
+    "precommit": "bun run check && bun run check:lint && bun run build && bun run test",
     "clean:svelte": "rm -rf .svelte-kit",
     "clean:deps": "rm -rf node_modules",
     "clean:powerwash": "(bun run clean:svelte & bun run clean:deps) && bun install"
