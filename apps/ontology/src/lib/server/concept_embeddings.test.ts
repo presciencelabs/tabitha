@@ -58,6 +58,8 @@ function create_fake_index(): ConceptIndex & { vectors: Map<string, VectorizeVec
 		}),
 		getByIds: vi.fn(async (ids: string[]) => ids.flatMap(id => vectors.get(id) ?? [])),
 		deleteByIds: vi.fn(async (ids: string[]) => {
+			// Mirrors Vectorize's own limit: VECTOR_DELETE_ERROR (code 40007), "max id count is 100".
+			if (ids.length > 100) throw new Error(`too many ids in payload; max id count is 100, got ${ids.length}`)
 			for (const id of ids) vectors.delete(id)
 		}),
 	}
@@ -169,6 +171,15 @@ describe('sync_concept_embeddings', () => {
 		await sync_concept_embeddings({ concepts: [make_concept({ gloss: 'DELETE' })], index, embedder: create_fake_embedder() })
 
 		expect(index.vectors.has('rejoice-A-Verb')).toBe(false)
+	})
+
+	it('clears more unsearchable concepts than Vectorize accepts in one delete call', async () => {
+		const index = create_fake_index()
+		const proper_names = Array.from({ length: 150 }, (_, i) => make_concept({ stem: `Name${i}`, gloss: '(proper name) a person' }))
+
+		await sync_concept_embeddings({ concepts: proper_names, index, embedder: create_fake_embedder() })
+
+		expect(index.deleteByIds).toHaveBeenCalledTimes(2)
 	})
 
 	it('leaves a concept whose embedding failed unindexed, so the next run retries it', async () => {

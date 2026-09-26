@@ -8,7 +8,8 @@ import type { Concept } from '$lib/types'
 const SYNC_CHUNK_SIZE = 100
 // Cloudflare doesn't document a getByIds cap, so reads stay conservative.
 const GET_BY_IDS_CHUNK_SIZE = 20
-const DELETE_CHUNK_SIZE = 1000
+// deleteByIds rejects more than 100 IDs per call (VECTOR_DELETE_ERROR 40007), well below the upsert cap.
+const DELETE_CHUNK_SIZE = 100
 // A Worker invocation can have at most six connections waiting at once, shared with D1 and Vectorize.
 const EMBEDDING_CONCURRENCY = 4
 // Vectorize's documented maximum vector ID length.
