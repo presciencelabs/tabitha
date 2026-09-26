@@ -617,5 +617,5 @@ Before submitting any code changes, ensure the entire repository passes the stan
 
 ```bash
 cd tabitha && bun run precommit
-# Runs: bun run check && bun run test && bun run build
+# Runs: bun run check && bun run check:lint && bun run test && bun run build
 ```
