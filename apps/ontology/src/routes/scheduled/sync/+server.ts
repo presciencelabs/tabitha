@@ -4,7 +4,7 @@ import { is_scheduler_authorized, run_scheduled_sync } from '$lib/server/schedul
 import type { RequestHandler } from './$types'
 
 /**
- * Called by the `scheduler` Worker's cron through a service binding (ADR 0017) -- SvelteKit's
+ * Called by the `scheduler` Worker's cron through a service binding (ADR 0018) -- SvelteKit's
  * Cloudflare adapter only exposes `fetch`, so a cron can't reach the app any other way.
  */
 export async function POST({ request, platform }: Parameters<RequestHandler>[0]) {

@@ -83,7 +83,7 @@ graph TD
 | **`editor`** | `1337` | [http://localhost:1337](http://localhost:1337) | Interactive translation workbench, clause parser, rule processor, and UI. |
 | **`copilot`** | `9000` | [http://localhost:9000](http://localhost:9000) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
 | **`www`** | `1455` | [http://localhost:1455](http://localhost:1455) | Public-facing marketing/informational site. |
-| **`scheduler`** | — | — | Cron-only plain Worker (not SvelteKit) that triggers each app's scheduled work through a service binding. See [`apps/scheduler/README.md`](apps/scheduler/README.md) and [ADR 0017](docs/decisions/0017-scheduled-work-via-scheduler-worker.md). |
+| **`scheduler`** | — | — | Cron-only plain Worker (not SvelteKit) that triggers each app's scheduled work through a service binding. See [`apps/scheduler/README.md`](apps/scheduler/README.md) and [ADR 0018](docs/decisions/0018-scheduled-work-via-scheduler-worker.md). |
 
 ### Shared Packages (`packages/`)
 

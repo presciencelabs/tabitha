@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (2026-09-25). How the sync is triggered was amended by [0017](./0017-scheduled-work-via-scheduler-worker.md): the ontology Worker's own cron, described below, was never actually called.
+Accepted (2026-09-25). How the sync is triggered was amended by [0018](./0018-scheduled-work-via-scheduler-worker.md): the ontology Worker's own cron, described below, was never actually called.
 
 ## Context
 
@@ -25,7 +25,7 @@ Replace the prompt with **embeddings stored in Cloudflare Vectorize**. The expen
 
 - **Embed each searchable concept ahead of time.** The document text is the concept's stem (as the title) plus its gloss with parenthesized classifiers removed. For concepts not yet in the ontology, it is the stem plus the first how-to hint. The same exclusions as before apply (whole numbers, proper names, dates, `DELETE`). Model: `gemini-embedding-2` at 768 dimensions, through the existing AI Gateway to Vertex (ADR 0007) via a new `create_embedding_client` in `@tabitha/ai`. Vectors go into one Vectorize index, `ontology-concepts` (cosine), which the production and preview Workers share the same way they already share `DB_Ontology`.
 - **Per search, embed only the search term** (a few tokens, cached at the gateway for a week like before). Query the nearest 11 vectors, drop the exact-stem match, and resolve the remaining ≤10 with one keyed D1 lookup per table (`get_concepts_by_keys`) instead of two full-table reads.
-- **Keep the index in sync from the existing 12-hour cron** (now run through the `scheduler` Worker, per [0017](./0017-scheduled-work-via-scheduler-worker.md)), right after the complex-terms sync, since how-to hints feed the embedded text. Each vector's metadata stores a SHA-256 hash of exactly what was embedded, model name included. A run re-embeds only concepts whose hash changed and deletes vectors for concepts that became unsearchable. The first run after deploy is the backfill. An approved concept edit can take up to 12 hours to show up in semantic search; that lag was accepted deliberately.
+- **Keep the index in sync from the existing 12-hour cron** (now run through the `scheduler` Worker, per [0018](./0018-scheduled-work-via-scheduler-worker.md)), right after the complex-terms sync, since how-to hints feed the embedded text. Each vector's metadata stores a SHA-256 hash of exactly what was embedded, model name included. A run re-embeds only concepts whose hash changed and deletes vectors for concepts that became unsearchable. The first run after deploy is the backfill. An approved concept edit can take up to 12 hours to show up in semantic search; that lag was accepted deliberately.
 
 | Per search | Before (prompt) | After (embeddings) |
 | --- | --- | --- |

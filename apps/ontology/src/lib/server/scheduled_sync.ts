@@ -21,7 +21,7 @@ type SchedulerAuthorizationOptions = {
 }
 
 /**
- * The app's recurring sync, triggered by the `scheduler` Worker's cron (ADR 0017). Embeddings run
+ * The app's recurring sync, triggered by the `scheduler` Worker's cron (ADR 0018). Embeddings run
  * after complex terms, since how-to hints stand in for the gloss of concepts not yet in the
  * ontology -- but still run if that sync fails, since approved concept edits need embedding either way.
  */

@@ -75,7 +75,7 @@ For complete database tooling and snapshots documentation, see [tools/databases/
 
 Complex terms and simplification hints are synchronized from Google Sheets every 12 hours, or manually on demand.
 
-- **Scheduled**: the separate [`scheduler`](../scheduler/README.md) Worker's cron calls `POST /scheduled/sync` through a service binding, which syncs complex terms and then the semantic search index (section 5). The endpoint only accepts the shared `SCHEDULER_TOKEN`. This app can't hold the cron itself, because SvelteKit's Cloudflare adapter never calls a `scheduled` export ([ADR 0017](../../docs/decisions/0017-scheduled-work-via-scheduler-worker.md)).
+- **Scheduled**: the separate [`scheduler`](../scheduler/README.md) Worker's cron calls `POST /scheduled/sync` through a service binding, which syncs complex terms and then the semantic search index (section 5). The endpoint only accepts the shared `SCHEDULER_TOKEN`. This app can't hold the cron itself, because SvelteKit's Cloudflare adapter never calls a `scheduled` export ([ADR 0018](../../docs/decisions/0018-scheduled-work-via-scheduler-worker.md)).
 - **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"** (complex terms only).
 - **Testing the scheduled sync locally**: with `SCHEDULER_TOKEN` set in `apps/ontology/.env.local` and `bun run dev:ontology` running:
 

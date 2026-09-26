@@ -15,7 +15,7 @@ type CallAppEndpointOptions = {
 
 /**
  * Each cron in wrangler.jsonc's "triggers" runs the job listed here. Jobs only call an app's own
- * endpoint -- the work itself stays in the app (ADR 0017), since SvelteKit's Cloudflare adapter
+ * endpoint -- the work itself stays in the app (ADR 0018), since SvelteKit's Cloudflare adapter
  * exposes no `scheduled` handler of its own.
  */
 export const JOBS_BY_CRON: Record<string, Job> = {

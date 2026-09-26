@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
-	"description": "Cron-only Cloudflare Worker that triggers each app's scheduled work through a service binding (ADR 0017)",
+	"description": "Cron-only Cloudflare Worker that triggers each app's scheduled work through a service binding (ADR 0018)",
 	"scripts": {
 		"check": "tsc --noEmit",
 		"check:lint": "eslint .",

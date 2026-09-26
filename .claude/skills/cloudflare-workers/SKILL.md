@@ -94,7 +94,7 @@ Under the hood, `apply.ts` shells out to `wrangler r2 bucket create`/`dev-url en
   - Copilot: `9000`
   - Www: `1455`
   - Scheduler: none (a plain, cron-only Worker with no dev server)
-- **Cron triggers never go on a SvelteKit app.** `@sveltejs/adapter-cloudflare`'s generated Worker only exports `fetch`, so a `scheduled` export in `hooks.server.ts` (or a `triggers.crons` entry in a SvelteKit app's `wrangler.jsonc`) is silently never called. Put the work behind a token-checked `POST` endpoint in the app, and add a cron plus a job to `apps/scheduler`, which calls it through a service binding. See [ADR 0017](../../../docs/decisions/0017-scheduled-work-via-scheduler-worker.md) and `apps/scheduler/README.md`.
+- **Cron triggers never go on a SvelteKit app.** `@sveltejs/adapter-cloudflare`'s generated Worker only exports `fetch`, so a `scheduled` export in `hooks.server.ts` (or a `triggers.crons` entry in a SvelteKit app's `wrangler.jsonc`) is silently never called. Put the work behind a token-checked `POST` endpoint in the app, and add a cron plus a job to `apps/scheduler`, which calls it through a service binding. See [ADR 0018](../../../docs/decisions/0018-scheduled-work-via-scheduler-worker.md) and `apps/scheduler/README.md`.
 - Validate all workspace configurations with `bun run check:cloudflare`.
 
 ---

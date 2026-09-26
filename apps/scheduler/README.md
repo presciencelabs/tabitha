@@ -1,6 +1,6 @@
 # Scheduler Worker
 
-A cron-only Cloudflare Worker. It has no UI, no public URL, and no app logic of its own. On each cron in `wrangler.jsonc`, it calls an app's own endpoint through a [service binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/), authenticated with a shared `SCHEDULER_TOKEN`. See [ADR 0017](../../docs/decisions/0017-scheduled-work-via-scheduler-worker.md) for why this exists: SvelteKit's Cloudflare adapter only exposes `fetch`, so a `scheduled` export in an app's `hooks.server.ts` is never called.
+A cron-only Cloudflare Worker. It has no UI, no public URL, and no app logic of its own. On each cron in `wrangler.jsonc`, it calls an app's own endpoint through a [service binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/), authenticated with a shared `SCHEDULER_TOKEN`. See [ADR 0018](../../docs/decisions/0018-scheduled-work-via-scheduler-worker.md) for why this exists: SvelteKit's Cloudflare adapter only exposes `fetch`, so a `scheduled` export in an app's `hooks.server.ts` is never called.
 
 | Cron | Job |
 | --- | --- |

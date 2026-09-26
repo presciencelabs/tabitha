@@ -40,7 +40,7 @@ The web apps are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **d
 | **Editor** | `apps/editor` | `http://localhost:1337` | `1337` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
 | **Copilot** | `apps/copilot` | `http://localhost:9000` | `9000` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
 | **www** | `apps/www` | `http://localhost:1455` | `1455` | [tabitha.bible](https://tabitha.bible) | Public-facing marketing/informational site |
-| **Scheduler** | `apps/scheduler` | — (`bun run dev:scheduler`) | — | — (cron only, no public URL) | Triggers apps' scheduled work, e.g. ontology's complex terms and embeddings sync ([ADR 0017](docs/decisions/0017-scheduled-work-via-scheduler-worker.md)) |
+| **Scheduler** | `apps/scheduler` | — (`bun run dev:scheduler`) | — | — (cron only, no public URL) | Triggers apps' scheduled work, e.g. ontology's complex terms and embeddings sync ([ADR 0018](docs/decisions/0018-scheduled-work-via-scheduler-worker.md)) |
 
 ---
 
