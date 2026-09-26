@@ -396,6 +396,8 @@ import system_instruction from './review_prompt.md?raw'
    - `sources` (:1947) — Hebrew/Greek source texts, semantic trees, and verse encodings.
    - `targets` (:1382) — Target language lexicon, inflection engine, and forms.
    - `copilot` (:9000) — AI translation guidance, routed through `@tabitha/ai` and the Cloudflare AI Gateway.
+   - `www` (:1455) — Public-facing informational site.
+   - `scheduler` (no port) — Cron-only plain Cloudflare Worker, not SvelteKit: triggers each app's scheduled work through a service binding. A `scheduled` export in a SvelteKit app's `hooks.server.ts` is never called, so recurring work goes behind an app endpoint that `scheduler` calls ([ADR 0017](docs/decisions/0017-scheduled-work-via-scheduler-worker.md)). See CONTRIBUTING.md's "How to Add a New App" before adding another app.
 
 2. **Shared Packages (`packages/*`)**:
    - `@tabitha/types` — Universal TypeScript interfaces. Must remain free of runtime dependencies.
@@ -477,8 +479,10 @@ monorepo:
   secret store remotely. `.env.local` itself is exclusively a local-dev override layer on top
   of `.env`, in whichever direction local dev needs -- filling in a secret or widening a
   permission the same way `.env` left blank, or forcing something to blank/off that `.env`
-  populated for production. Both Vite (`apps/*`) and Bun (`tools/*`, `scripts/*`) natively load
-  `.env` then `.env.local` on top of it, so either direction works with no extra tooling.
+  populated for production. Vite (the SvelteKit apps), Wrangler (`apps/scheduler`'s `wrangler dev`), and
+  Bun (`tools/*`, `scripts/*`) all natively load `.env` then `.env.local` on top of it, so either
+  direction works with no extra tooling. Unlike Vite, a plain Worker's `.env` is never baked into
+  its deployed bundle -- production values come from `wrangler.jsonc` `vars` and `wrangler secret put`.
 
   This `.env`/`.env.local` split is a repo convention layered on top of SvelteKit's own env
   system, which is a separate, orthogonal 2×2: static (frozen into the bundle at build/dev-server

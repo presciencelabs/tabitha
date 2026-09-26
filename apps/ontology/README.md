@@ -73,26 +73,23 @@ For complete database tooling and snapshots documentation, see [tools/databases/
 
 ### 4. Complex Terms Synchronization
 
-Complex terms and simplification hints are synchronized from Google Sheets every 12 hours via Cloudflare Cron Triggers, or manually on demand.
+Complex terms and simplification hints are synchronized from Google Sheets every 12 hours, or manually on demand.
 
-- **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"**.
-- **Testing Cron Trigger locally**:
-
-  ```bash
-  bunx wrangler dev --test-scheduled
-  ```
-
-  In a separate terminal:
+- **Scheduled**: the separate [`scheduler`](../scheduler/README.md) Worker's cron calls `POST /scheduled/sync` through a service binding, which syncs complex terms and then the semantic search index (section 5). The endpoint only accepts the shared `SCHEDULER_TOKEN`. This app can't hold the cron itself, because SvelteKit's Cloudflare adapter never calls a `scheduled` export ([ADR 0017](../../docs/decisions/0017-scheduled-work-via-scheduler-worker.md)).
+- **Manual Sync via UI**: Sign in to the app, navigate to `/protected`, and click **"Sync Complex Terms Now"** (complex terms only).
+- **Testing the scheduled sync locally**: with `SCHEDULER_TOKEN` set in `apps/ontology/.env.local` and `bun run dev:ontology` running:
 
   ```bash
-  curl "http://localhost:8787/__scheduled"
+  curl -X POST -H "Authorization: Bearer $SCHEDULER_TOKEN" http://localhost:3056/scheduled/sync
   ```
+
+  Locally, the complex-terms half runs for real, but the embedding half can't reach Vectorize (see section 5).
 
 ### 5. Semantic Search Index
 
 The **Semantic Search** scope finds related concepts by comparing embeddings (vectors describing each concept's meaning) stored in a Cloudflare Vectorize index, `ontology-concepts`, bound as `VECTORIZE_Concepts`. See [ADR 0016](../../docs/decisions/0016-semantic-search-via-vectorize-embeddings.md) for why.
 
-The index holds derived data only. It is rebuilt from D1 by the same 12-hour cron as the complex terms (the embedding sync runs right after them), so it never needs a manual rebuild. Each run re-embeds only concepts whose gloss or how-to hint changed. The **"Sync Complex Terms Now"** button doesn't touch embeddings.
+The index holds derived data only. It is rebuilt from D1 by the same 12-hour scheduled sync as the complex terms (the embedding sync runs right after them), so it never needs a manual rebuild. Each run re-embeds only concepts whose gloss or how-to hint changed. The **"Sync Complex Terms Now"** button doesn't touch embeddings.
 
 - **One-time setup** (per Cloudflare account; production and preview share the index). Create the index before the first deploy that binds it, or the deploy fails:
 
@@ -100,7 +97,7 @@ The index holds derived data only. It is rebuilt from D1 by the same 12-hour cro
   cd apps/ontology && bunx wrangler vectorize create ontology-concepts --dimensions=768 --metric=cosine
   ```
 
-  The dimensions must match `EMBEDDING_DIMENSIONS` in `@tabitha/ai`. The next cron run then fills the index from scratch, which takes about 3,800 embedding calls. Deleting and recreating the index (for example, after changing the dimensions) just triggers another full fill.
+  The dimensions must match `EMBEDDING_DIMENSIONS` in `@tabitha/ai`. The next scheduled sync then fills the index from scratch, which takes about 3,800 embedding calls (run it by hand to skip the wait; see [`apps/scheduler/README.md`](../scheduler/README.md)). Deleting and recreating the index (for example, after changing the dimensions) just triggers another full fill.
 
 - **Before the first fill**, confirm the AI Gateway serves embeddings:
 

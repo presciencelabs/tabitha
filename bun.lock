@@ -132,6 +132,19 @@
         "wrangler": "^4.135.0",
       },
     },
+    "apps/scheduler": {
+      "name": "@tabitha/scheduler",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@cloudflare/workers-types": "^5.20260920.1",
+        "@tabitha/eslint-config": "workspace:*",
+        "@tabitha/tsconfig": "workspace:*",
+        "eslint": "^10.11.0",
+        "typescript": "^6.0.3",
+        "vitest": "^3.2.7",
+        "wrangler": "^4.135.0",
+      },
+    },
     "apps/sources": {
       "name": "@tabitha/sources",
       "version": "1.0.0",
@@ -1064,6 +1077,8 @@
     "@tabitha/r2": ["@tabitha/r2@workspace:tools/r2"],
 
     "@tabitha/rate-limit": ["@tabitha/rate-limit@workspace:packages/rate-limit"],
+
+    "@tabitha/scheduler": ["@tabitha/scheduler@workspace:apps/scheduler"],
 
     "@tabitha/scripts": ["@tabitha/scripts@workspace:scripts"],
 

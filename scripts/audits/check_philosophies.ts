@@ -101,6 +101,8 @@ async function audit_codebase() {
 		join(root_dir, 'apps/targets/src'),
 		join(root_dir, 'apps/editor/src'),
 		join(root_dir, 'apps/copilot/src'),
+		join(root_dir, 'apps/www/src'),
+		join(root_dir, 'apps/scheduler/src'),
 		join(root_dir, 'packages/ui/src'),
 		join(root_dir, 'packages/api-client/src'),
 		join(root_dir, 'packages/types/src'),

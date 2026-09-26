@@ -55,9 +55,8 @@ export type ConceptDocument = {
 }
 
 /**
- * The same four values whether they come from SvelteKit's `$env/dynamic/private` (a request) or
- * the Worker `env` a scheduled() run receives -- the latter is only populated for SvelteKit once a
- * request has hit the isolate, which a cron run can't count on.
+ * The same four values whether they come from SvelteKit's `$env/dynamic/private` (semantic search)
+ * or the Worker's own `platform.env` (the scheduled sync, which reads its bindings from there too).
  */
 export type GatewayEnv = {
 	readonly CLOUDFLARE_ACCOUNT_ID?: string

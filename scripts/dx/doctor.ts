@@ -44,6 +44,7 @@ const APPS: { name: string, port: number, db_check?: DbCheck }[] = [
 	{ name: 'sources', port: 1947, db_check: { binding: 'DB_Sources', table: 'Sources' } },
 	{ name: 'editor', port: 1337 },
 	{ name: 'copilot', port: 9000 },
+	{ name: 'www', port: 1455 },
 ]
 
 async function check_runtimes(): Promise<DiagnosticResult[]> {
@@ -182,7 +183,7 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 			category: 'Environment',
 			name: 'App .env.local Files',
 			status: 'PASS',
-			message: 'All 5 applications configured with local service endpoints',
+			message: `All ${APPS.length} applications configured with local service endpoints`,
 		})
 	} else {
 		results.push({
@@ -426,7 +427,7 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				category: 'Quality & Security',
 				name: 'Cloudflare Wrangler Configs',
 				status: 'PASS',
-				message: '5/5 wrangler.jsonc configurations valid',
+				message: `All ${cf_res.wrangler_config_count} wrangler.jsonc configurations valid`,
 			})
 		} else {
 			results.push({

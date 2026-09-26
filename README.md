@@ -30,7 +30,7 @@ TaBiThA is [CanIL](https://www.canil.ca)'s research and innovation arm, building
 
 ## 🚀 Applications & Dedicated Ports
 
-Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers — each app gets a dedicated, non-overlapping port for multi-app dev.
+The web apps are built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deployed as Cloudflare Workers — each gets a dedicated, non-overlapping port for multi-app dev. `scheduler` is a plain, cron-only Worker with no UI or port.
 
 | Application | Path | Local Dev URL | Dedicated Port | Production URL | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -40,6 +40,7 @@ Built with **Svelte**, **SvelteKit**, **Tailwind CSS**, and **daisyUI**, deploye
 | **Editor** | `apps/editor` | `http://localhost:1337` | `1337` | [editor.tabitha.bible](https://editor.tabitha.bible) | Grammar & rule checker, backtranslator, AI assistant |
 | **Copilot** | `apps/copilot` | `http://localhost:9000` | `9000` | [copilot.tabitha.bible](https://copilot.tabitha.bible) | Translation notes, brief extraction, and AI copilot |
 | **www** | `apps/www` | `http://localhost:1455` | `1455` | [tabitha.bible](https://tabitha.bible) | Public-facing marketing/informational site |
+| **Scheduler** | `apps/scheduler` | — (`bun run dev:scheduler`) | — | — (cron only, no public URL) | Triggers apps' scheduled work, e.g. ontology's complex terms and embeddings sync ([ADR 0017](docs/decisions/0017-scheduled-work-via-scheduler-worker.md)) |
 
 ---
 
@@ -76,6 +77,7 @@ tabitha/
 │   ├── copilot/     # AI Copilot & translation notes generator
 │   ├── editor/      # Semantic editor, rule parser & backtranslator
 │   ├── ontology/    # Central ontology database & concept management (Auth.js)
+│   ├── scheduler/   # Cron-only Worker that triggers each app's scheduled work
 │   ├── sources/     # Source entities, lookups, and feature explorer
 │   ├── targets/     # Target grammar, project search, and lexicons
 │   └── www/         # Public-facing marketing/informational site
@@ -153,6 +155,8 @@ bun run dev:targets    # http://localhost:1382
 bun run dev:sources    # http://localhost:1947
 bun run dev:editor     # http://localhost:1337
 bun run dev:copilot    # http://localhost:9000
+bun run dev:www        # http://localhost:1455
+bun run dev:scheduler  # cron-only Worker; see apps/scheduler/README.md
 ```
 
 > **Windows:** avoid using the specific dev commands (eg. `dev:ontology`) -- always run through `dev` or `dev:menu` instead.
@@ -273,6 +277,7 @@ graph TD;
             SourcesAPI[Sources API];
             TargetsAPI[Targets API];
             CopilotAPI[Copilot API];
+            Scheduler["Scheduler <br/>(cron only)"];
         end
 
         subgraph SharedPackages ["Shared Workspace Packages"]
@@ -320,6 +325,8 @@ graph TD;
     OntologyAPI --> AuthDB;
     SourcesAPI --> SourcesDB;
     TargetsAPI --> TargetsDB;
+
+    Scheduler -.->|"service binding, every 12h"| OntologyAPI;
 
     OntologyAPI --> AIGateway;
     CopilotAPI --> AIGateway;
