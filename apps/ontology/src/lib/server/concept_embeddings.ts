@@ -14,6 +14,8 @@ const DELETE_CHUNK_SIZE = 100
 const EMBEDDING_CONCURRENCY = 4
 // Vectorize's documented maximum vector ID length.
 const MAX_VECTOR_ID_BYTES = 64
+const MIN_SELF_SUFFICIENT_GLOSS_WORDS = 3
+const MAX_EXAMPLE_SENTENCES = 2
 
 const NOT_SEARCHABLE: ((concept: Concept) => boolean)[] = [
 	// whole numbers add noise, but decimals stay so things like 'tenth' can relate to '.1'
@@ -24,6 +26,8 @@ const NOT_SEARCHABLE: ((concept: Concept) => boolean)[] = [
 	c => /\d(?:BC|AD|PM|AM)$/.test(c.stem) && c.stem !== '12PM',
 	// concepts that are going to be deleted
 	c => c.gloss.includes('DELETE'),
+	// blank how-to rows and punctuation marks, which have no meaning to search for
+	c => !/[\p{L}\p{N}]/u.test(c.stem),
 ]
 
 /**
@@ -114,12 +118,33 @@ export function to_concept_document(concept: Concept): ConceptDocument {
  * "(proper name)", which say what kind of entry it is rather than what it means.
  */
 function describe_meaning(concept: Concept): string {
-	if (concept.status === 'in ontology') return concept.gloss.replaceAll(/\(.+?\)/g, '').trim()
+	if (concept.status === 'in ontology') return describe_gloss(concept)
 
 	const hint = concept.how_to_hints[0]
 	if (!hint) return ''
 
-	return `${hint.structure} - ${hint.pairing} - ${hint.explication}`.trim()
+	return [hint.structure, hint.pairing, hint.explication].map(field => field.trim()).filter(Boolean).join(' - ')
+}
+
+/**
+ * An empty or very short gloss ("the color", "large") leaves the embedding little to go on
+ * besides the stem itself, so curated example sentences fill in how the concept is used.
+ */
+function describe_gloss(concept: Concept): string {
+	const gloss = concept.gloss.replaceAll(/\(.+?\)/g, '').trim()
+	if (count_words(gloss) >= MIN_SELF_SUFFICIENT_GLOSS_WORDS) return gloss
+
+	const example_sentences = concept.curated_examples
+		.map(example => example.sentence.trim())
+		.filter(Boolean)
+		.slice(0, MAX_EXAMPLE_SENTENCES)
+		.join(' ')
+
+	return [gloss, example_sentences].filter(Boolean).join(': ')
+}
+
+function count_words(text: string): number {
+	return text.split(/\s+/).filter(Boolean).length
 }
 
 /**

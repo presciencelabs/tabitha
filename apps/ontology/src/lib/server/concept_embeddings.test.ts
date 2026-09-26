@@ -48,6 +48,14 @@ function make_hint(overrides: Partial<SimplificationHint> = {}): SimplificationH
 	}
 }
 
+function make_examples(sentences: string[]): Concept['curated_examples'] {
+	return sentences.map(sentence => ({
+		reference: { type: 'Bible', id_primary: 'Genesis', id_secondary: '1', id_tertiary: '1' },
+		encoding: [],
+		sentence,
+	}))
+}
+
 function create_fake_index(): ConceptIndex & { vectors: Map<string, VectorizeVector> } {
 	const vectors = new Map<string, VectorizeVector>()
 	return {
@@ -75,6 +83,8 @@ describe('is_searchable', () => {
 		['a proper name', { stem: 'Moses', gloss: '(proper name) a man' }],
 		['a date', { stem: '30AD', gloss: 'a year' }],
 		['a concept marked for deletion', { gloss: 'DELETE this one' }],
+		['a blank how-to row', { stem: '', sense: '' }],
+		['a punctuation mark', { stem: ':', sense: '' }],
 	])('excludes %s', (_, overrides) => {
 		expect(is_searchable(make_concept(overrides))).toBe(false)
 	})
@@ -104,8 +114,38 @@ describe('to_concept_document', () => {
 		expect(to_concept_document(concept).text).toBe('X has fellowship with Y - friendship - X and Y spend time together')
 	})
 
+	it('leaves out empty how-to hint fields rather than their separators', () => {
+		const concept = make_concept({ stem: 'graze', status: 'approved', how_to_hints: [make_hint({ structure: '', pairing: ' ', explication: '"eat grass"' })] })
+
+		expect(to_concept_document(concept).text).toBe('"eat grass"')
+	})
+
+	it('leaves the text empty for a hint with every field empty', () => {
+		const concept = make_concept({ stem: 'topic', status: 'not used', how_to_hints: [make_hint({ structure: '', pairing: '', explication: '' })] })
+
+		expect(to_concept_document(concept).text).toBe('')
+	})
+
 	it('leaves the text empty for a concept with neither a gloss nor a hint', () => {
 		expect(to_concept_document(make_concept({ status: 'suggested', how_to_hints: [] })).text).toBe('')
+	})
+
+	it('fills in an empty gloss with the first two curated example sentences', () => {
+		const concept = make_concept({ stem: 'swim', gloss: '(LDV)', curated_examples: make_examples(['John swims.', 'The prisoners swam away from the ship.', 'The prisoners swam to the shore.']) })
+
+		expect(to_concept_document(concept).text).toBe('John swims. The prisoners swam away from the ship.')
+	})
+
+	it('adds curated example sentences to a gloss shorter than three words', () => {
+		const concept = make_concept({ stem: 'black', gloss: '(LDV) the color', curated_examples: make_examples(['The man\'s clothes were black.']) })
+
+		expect(to_concept_document(concept).text).toBe('the color: The man\'s clothes were black.')
+	})
+
+	it('keeps a gloss of three or more words as is, even with curated examples', () => {
+		const concept = make_concept({ curated_examples: make_examples(['The people rejoiced.']) })
+
+		expect(to_concept_document(concept).text).toBe('to feel great happiness')
 	})
 })
 
