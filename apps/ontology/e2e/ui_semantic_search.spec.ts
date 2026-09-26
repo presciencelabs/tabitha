@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test'
 
-test('semantic search renders related concepts from the mocked AI response', async ({ page }) => {
-	// A query with no stem/gloss matches of its own (see api_search.spec.ts's use of the same
-	// string for the same reason), so any rendered results can only have come from
-	// find_related_concepts()'s AI round trip, not the plain stem-search fallback.
-	await page.goto('/?q=supercalifragilisticexpialidocious&category=all&scope=semantic')
+// Related concepts come from a Vectorize index, which has no local simulation (see the "vectorize"
+// note in wrangler.jsonc), so locally the semantic scope can only ever add nothing. What this can
+// check is that an unreachable index degrades to the plain stem results rather than an error page;
+// find_related_concepts' own ranking and filtering are covered by semantic_search.test.ts.
+test('semantic search still shows the plain stem results when the index is unreachable', async ({ page }) => {
+	await page.goto('/?q=love&category=all&scope=semantic')
 
 	const results_badge = page.locator('header em.badge')
 	await expect(results_badge).toBeVisible()

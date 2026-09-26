@@ -2,9 +2,13 @@
 	import { page } from '$app/state'
 	import '$lib/app.css'
 
-	import { Header, Footer } from '@tabitha/ui'
+	import { onMount } from 'svelte'
+	import { Header, Footer, theme_state } from '@tabitha/ui'
+	import { report_active_theme } from '@tabitha/usage/client'
 
 	let { children } = $props()
+
+	onMount(() => report_active_theme(theme_state.current))
 
 	const nav_links = [
 		{ name: 'Home', href: '/' },

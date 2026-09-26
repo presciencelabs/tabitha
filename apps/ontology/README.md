@@ -88,6 +88,28 @@ Complex terms and simplification hints are synchronized from Google Sheets every
   curl "http://localhost:8787/__scheduled"
   ```
 
+### 5. Semantic Search Index
+
+The **Semantic Search** scope finds related concepts by comparing embeddings (vectors describing each concept's meaning) stored in a Cloudflare Vectorize index, `ontology-concepts`, bound as `VECTORIZE_Concepts`. See [ADR 0016](../../docs/decisions/0016-semantic-search-via-vectorize-embeddings.md) for why.
+
+The index holds derived data only. It is rebuilt from D1 by the same 12-hour cron as the complex terms (the embedding sync runs right after them), so it never needs a manual rebuild. Each run re-embeds only concepts whose gloss or how-to hint changed. The **"Sync Complex Terms Now"** button doesn't touch embeddings.
+
+- **One-time setup** (per Cloudflare account; production and preview share the index). Create the index before the first deploy that binds it, or the deploy fails:
+
+  ```bash
+  cd apps/ontology && bunx wrangler vectorize create ontology-concepts --dimensions=768 --metric=cosine
+  ```
+
+  The dimensions must match `EMBEDDING_DIMENSIONS` in `@tabitha/ai`. The next cron run then fills the index from scratch, which takes about 3,800 embedding calls. Deleting and recreating the index (for example, after changing the dimensions) just triggers another full fill.
+
+- **Before the first fill**, confirm the AI Gateway serves embeddings:
+
+  ```bash
+  cd tools/gateway && bun run verify:embedding
+  ```
+
+- **Local development**: Vectorize has no local simulation, so a semantic search locally shows only the normal stem results and logs an error that the binding "needs to be run remotely". That's expected.
+
 ---
 
 ## ✅ Testing & Verification

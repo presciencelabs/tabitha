@@ -38,6 +38,14 @@
 			"database_id": "38e626c1-4edb-4b0d-b0b0-ed47b0d8d671"
 		}
 	],
+	// Anonymous feature-usage events -- see docs/decisions/0017-usage-analytics-engine.md for the
+	// schema and example queries.
+	"analytics_engine_datasets": [
+		{
+			"binding": "USAGE",
+			"dataset": "tabitha_usage"
+		}
+	],
 	"placement": {
 		// Necessary to support D1 withSession() bookmarking and edge proximity routing
 		// https://developers.cloudflare.com/d1/concepts/sessions/
@@ -50,6 +58,8 @@
 	// restriction that motivated this whole setup, so no service binding is needed here.
 	"env": {
 		"preview": {
+			// "analytics_engine_datasets" is non-inheritable, and intentionally left undeclared here:
+			// usage is only tracked in production, and recording is a no-op without the binding.
 			// "routes" is otherwise inherited from the top level, which would attach the production
 			// custom domain (sources.tabitha.bible) to this separate preview Worker too.
 			"routes": [

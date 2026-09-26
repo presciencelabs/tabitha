@@ -4,11 +4,12 @@ import { extract_exact_phrase } from '$lib/api_bible/search.server'
 import { parse_search_query, search_text } from '$lib/server/search'
 import { run_phrase_mode } from '$lib/server/phrase_mode'
 import { MODE } from '$lib/search/modes'
+import { record_usage_event, type SearchEvent } from '@tabitha/usage'
 import type { PageServerLoad } from './$types'
 import type { ReturnTo } from '$lib/types'
 import type { TargetProject } from '@tabitha/types'
 
-export async function load({ url: { searchParams }, params: { project }, locals: { db } }: Parameters<PageServerLoad>[0]) {
+export async function load({ url: { searchParams }, params: { project }, locals: { db }, platform }: Parameters<PageServerLoad>[0]) {
 	// the valid_project route matcher has already checked this against TARGET_PROJECTS
 	const target_project = project as TargetProject
 
@@ -20,6 +21,12 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 		return { results: [], search_terms: [], phrase_results: null, return_to }
 	}
 
+	const record_search = (outcome: Pick<SearchEvent, 'scope' | 'result_count' | 'note'>) => record_usage_event({
+		dataset: platform?.env.USAGE,
+		app: 'targets',
+		event: { kind: 'search', filter: target_project, q, referred_by: return_to?.app, ...outcome },
+	})
+
 	// anything other than an explicit reference-translation search -- including no mode at all, as
 	// on every link written before that mode existed -- is the original target-text search
 	if (searchParams.get('mode') === MODE.REFERENCE) {
@@ -28,6 +35,11 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 			project: target_project,
 			api_key: env.API_BIBLE_KEY ?? '',
 			sources_api_host: PUBLIC_SOURCES_API_HOST,
+		})
+		record_search({
+			scope: MODE.REFERENCE,
+			result_count: phrase_results.hits.length,
+			note: phrase_results.notice ?? (phrase_results.complete ? '' : 'incomplete'),
 		})
 
 		// individual words, matching target-mode's shape below, so both the verse-text and
@@ -40,6 +52,7 @@ export async function load({ url: { searchParams }, params: { project }, locals:
 
 	const parsed_q = parse_search_query(q)
 	const results = await search_text({ db, project: target_project, parsed_q })
+	record_search({ scope: MODE.DEFAULT, result_count: results.length })
 
 	return {
 		results,

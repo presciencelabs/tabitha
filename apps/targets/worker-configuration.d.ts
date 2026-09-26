@@ -7,6 +7,7 @@ interface __BaseEnv_Env {
 	DB_Targets_Indonesian: D1Database;
 	DB_Targets_Tagalog: D1Database;
 	RATE_LIMITER: RateLimit;
+	USAGE?: AnalyticsEngineDataset;
 	ASSETS: Fetcher;
 	PUBLIC_ONTOLOGY_API_HOST: string;
 	PUBLIC_SOURCES_API_HOST: string;
