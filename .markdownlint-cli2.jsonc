@@ -17,6 +17,10 @@
     "**/dist/**",
     "**/test-results/**",
     "tmp/**",
+    // inlang writes its own README (and .gitignore, which ignores everything but settings.json)
+    // into each app's project.inlang/.
+    "**/*.inlang/**",
+    "**/src/lib/paraglide/**",
     // Vendored skill reference docs, not this repo's own authored content -- not worth
     // reformatting to our lint rules.
     ".claude/skills/**"

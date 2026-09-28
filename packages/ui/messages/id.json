@@ -1,0 +1,8 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"ui_offline": "luring",
+	"ui_theme": "tema",
+	"ui_update_available": "Versi baru tersedia.",
+	"ui_refresh": "Muat ulang",
+	"ui_dismiss": "Tutup"
+}

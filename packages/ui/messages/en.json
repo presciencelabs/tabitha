@@ -1,0 +1,8 @@
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"ui_offline": "offline",
+	"ui_theme": "theme",
+	"ui_update_available": "A new version is available.",
+	"ui_refresh": "Refresh",
+	"ui_dismiss": "Dismiss"
+}

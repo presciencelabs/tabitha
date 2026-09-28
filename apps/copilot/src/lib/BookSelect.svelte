@@ -1,5 +1,6 @@
 <script>
 	import { polished_books } from '$lib/lookups'
+	import { m } from '$lib/paraglide/messages'
 
 	/** @type {{ book: string, disabled?: boolean }}*/
 	let { book = $bindable(), disabled = false } = $props()
@@ -10,12 +11,12 @@
 </script>
 
 <select bind:value={book} {disabled} class="select w-60">
-	<optgroup label="Old Testament">
+	<optgroup label={m.old_testament()}>
 		{#each OT_books as book}
 			<option value={book}>{book}</option>
 		{/each}
 	</optgroup>
-	<optgroup label="New Testament">
+	<optgroup label={m.new_testament()}>
 		{#each NT_books as book}
 			<option value={book}>{book}</option>
 		{/each}

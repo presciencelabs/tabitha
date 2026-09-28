@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { updated } from '$app/state'
 	import { onMount } from 'svelte'
+	import { get_ui_messages } from './i18n/ui_messages'
 
 	type Props = {
 		// Lets an app with its own update mechanism (e.g. vite-plugin-pwa's needRefresh)
@@ -10,6 +11,8 @@
 	}
 
 	let { needs_refresh, on_refresh }: Props = $props()
+
+	const messages = get_ui_messages()
 
 	let visible = $derived(needs_refresh ?? updated.current)
 
@@ -37,9 +40,9 @@
 {#if visible}
 	<div class="toast toast-end toast-bottom z-50">
 		<div class="alert alert-info shadow-lg">
-			<span>A new version is available.</span>
+			<span>{messages.ui_update_available()}</span>
 			<button onclick={refresh} class="btn btn-sm btn-primary">
-				Refresh
+				{messages.ui_refresh()}
 			</button>
 		</div>
 	</div>

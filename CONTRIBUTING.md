@@ -374,6 +374,19 @@ Every app's favicon and PWA manifest icons are generated, not hand-drawn: a shar
 
 Only the letter needs choosing per app — color, shape, and sizing are shared, so the same two commands work for every app added to the monorepo.
 
+### How to Add i18n to an App
+
+UI text is translated with [Paraglide JS](https://paraglidejs.com/sveltekit), and the locale comes from the browser ([ADR 0019](docs/decisions/0019-i18n-via-paraglide.md)). `apps/copilot` is the reference implementation.
+
+1. Copy `apps/copilot/project.inlang/settings.json` into the app. Keep `packages/ui/messages` first in `pathPattern`, so the shared `@tabitha/ui` strings are compiled in. Inlang writes its own `.gitignore`, `README.md`, and cache into that folder; only `settings.json` is committed.
+2. Add `messages/en.json` and `messages/id.json` using `snake_case` keys, and use them as `import { m } from '$lib/paraglide/messages'` → `m.some_key()`.
+3. Pass `i18n: true` to `create_app_vite_config`.
+4. Change the `prepare` script to `tabitha-compile-messages && svelte-kit sync`, so svelte-check can see the generated modules.
+5. In `hooks.server.ts`, add a `handle` that wraps `paraglideMiddleware` and replaces `%paraglide.lang%`, and set `<html lang="%paraglide.lang%">` in `app.html` (copy both from copilot).
+6. In the root `+layout.svelte`, call `set_ui_messages(m)` from `@tabitha/ui`.
+
+A new `@tabitha/ui` string goes into both `packages/ui/messages/*.json` files, and components read it through `get_ui_messages()`.
+
 ### How to Record an Architecture Decision
 
 When you make a choice where the "why" isn't obvious from the code alone — picking between two viable approaches, deliberately deferring a capability, or a convention a future contributor might second-guess — capture it as an ADR:
