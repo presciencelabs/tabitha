@@ -82,7 +82,15 @@ Enter numbers separated by commas (e.g. 1,4 or 2,3,4):`)
 	return chosen
 }
 
-export async function run_dev_menu() {
+export async function run_dev_menu(preset_argument?: string) {
+	if (preset_argument) {
+		const preset = PRESETS[preset_argument]
+		if (preset?.apps.length) {
+			await run_dev_applications(preset.apps)
+			return
+		}
+	}
+
 	if (!process.stdin.isTTY) {
 		// Non-interactive environment, launch all
 		await run_dev_applications(PRESETS['1'].apps)
@@ -122,5 +130,5 @@ export async function run_dev_menu() {
 }
 
 if (import.meta.main) {
-	await run_dev_menu()
+	await run_dev_menu(process.argv[2])
 }
