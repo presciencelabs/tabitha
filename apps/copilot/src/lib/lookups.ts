@@ -105,13 +105,12 @@ export const default_target_audience: Record<string, string> = {
 }
 
 type MttLevelInfo = {
-	label: string
 	code: string
 }
 export const mtt_level_info: Record<MttLevel, MttLevelInfo> = {
-	'grade5': { label: 'Direct', code: 'G5' },
-	'high_school': { label: 'Detailed', code: 'HS' },
-	'undergraduate': { label: 'Technical', code: 'UG' },
+	'grade5': { code: 'G5' },
+	'high_school': { code: 'HS' },
+	'undergraduate': { code: 'UG' },
 }
 
 export const copilot_modes: CopilotMode[] = [

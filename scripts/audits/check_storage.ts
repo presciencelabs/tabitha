@@ -52,7 +52,8 @@ async function get_scannable_source_files(dir: string): Promise<string[]> {
 				entry.name === 'dist' ||
 				entry.name === '.wrangler' ||
 				entry.name === '.turbo' ||
-				entry.name === '.git'
+				entry.name === '.git' ||
+				entry.name === 'paraglide'
 			) {
 				continue
 			}

@@ -4,11 +4,17 @@
   "private": true,
   "type": "module",
   "main": "./index.js",
+  "bin": {
+    "tabitha-compile-messages": "./compile_messages.js"
+  },
   "exports": {
     ".": "./index.js",
     "./playwright": "./playwright.js",
     "./svelte": "./svelte.js",
     "./ports": "./ports.js"
+  },
+  "dependencies": {
+    "@inlang/paraglide-js": "^2.25.4"
   },
   "peerDependencies": {
     "@playwright/test": "^1.63.0",

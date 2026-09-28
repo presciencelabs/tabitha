@@ -1,23 +1,28 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 	import type { LanguageProfile } from '$lib/types'
+	import { m } from '$lib/paraglide/messages'
 
 	type Props = {
 		profile: LanguageProfile
 	}
 	let { profile = $bindable() }: Props = $props()
 
-	const noun_number_options = ['Dual', 'Trial', 'Quadrial']
+	const noun_number_options = [
+		{ value: 'Dual', label: m.noun_number_dual },
+		{ value: 'Trial', label: m.noun_number_trial },
+		{ value: 'Quadrial', label: m.noun_number_quadrial },
+	]
 	const noun_proximity_options = [
-		'Near Speaker and Listener',
-		'Near Speaker',
-		'Near Listener',
-		'Remote within Sight',
-		'Remote out of Sight',
-		'Temporally Near',
-		'Temporally Remote',
-		'Contextually Near with Focus',
-		'Contextually Near',
+		{ value: 'Near Speaker and Listener', label: m.proximity_near_speaker_and_listener },
+		{ value: 'Near Speaker', label: m.proximity_near_speaker },
+		{ value: 'Near Listener', label: m.proximity_near_listener },
+		{ value: 'Remote within Sight', label: m.proximity_remote_within_sight },
+		{ value: 'Remote out of Sight', label: m.proximity_remote_out_of_sight },
+		{ value: 'Temporally Near', label: m.proximity_temporally_near },
+		{ value: 'Temporally Remote', label: m.proximity_temporally_remote },
+		{ value: 'Contextually Near with Focus', label: m.proximity_contextually_near_with_focus },
+		{ value: 'Contextually Near', label: m.proximity_contextually_near },
 	]
 </script>
 
@@ -43,33 +48,33 @@
 		<tbody>
 			<tr>
 				<td>
-					Verb tense
-					{@render info_popup('If your language marks multiple levels of past or future, TaBiThA can show notes to help you decide which level to use.')}
+					{m.verb_tense()}
+					{@render info_popup(m.verb_tense_info())}
 				</td>
 				<td>
 					<div class="flex flex-col gap-1">
 						<label>
 							<input type="checkbox" bind:checked={profile.multiple_past} class="checkbox checkbox-sm" />
-							Multiple levels of past
+							{m.multiple_past()}
 						</label>
 						<label>
 							<input type="checkbox" bind:checked={profile.multiple_future} class="checkbox checkbox-sm" />
-							Multiple levels of future
+							{m.multiple_future()}
 						</label>
 					</div>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Noun number
-					{@render info_popup('If your language has special marking for when there are exactly two (Dual), three (Trial) or four (Quadrial) of a thing (eg "John\'s EYES"), TaBiThA can show notes to identify words that might need these markings.')}
+					{m.noun_number()}
+					{@render info_popup(m.noun_number_info())}
 				</td>
 				<td>
 					<div class="flex flex-col gap-1">
-						{#each noun_number_options as value}
+						{#each noun_number_options as { value, label }}
 							<label>
-								<input type="checkbox" value={value} bind:group={profile.noun_number} class="checkbox checkbox-sm" />
-								{value}
+								<input type="checkbox" {value} bind:group={profile.noun_number} class="checkbox checkbox-sm" />
+								{label()}
 							</label>
 						{/each}
 					</div>
@@ -77,15 +82,15 @@
 			</tr>
 			<tr>
 				<td>
-					Noun proximity
-					{@render info_popup('Select the noun proximities that are notable for your language, and that you would like notes about in order to help avoid confusion.')}
+					{m.noun_proximity()}
+					{@render info_popup(m.noun_proximity_info())}
 				</td>
 				<td>
 					<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-						{#each noun_proximity_options as value}
+						{#each noun_proximity_options as { value, label }}
 							<label>
-								<input type="checkbox" value={value} bind:group={profile.noun_proximity} class="checkbox checkbox-sm" />
-								{value}
+								<input type="checkbox" {value} bind:group={profile.noun_proximity} class="checkbox checkbox-sm" />
+								{label()}
 							</label>
 						{/each}
 					</div>
@@ -93,70 +98,70 @@
 			</tr>
 			<tr>
 				<td>
-					Noun person
-					{@render info_popup('If your language marks inclusive "we" (we with you) differently from exclusive "we" (we without you), TaBiThA can show notes to help you decide which one to use.')}
+					{m.noun_person()}
+					{@render info_popup(m.noun_person_info())}
 				</td>
 				<td>
 					<label>
 						<input type="checkbox" bind:checked={profile.noun_clusivity} class="checkbox checkbox-sm" />
-						Inclusive and exclusive "we"
+						{m.noun_clusivity()}
 					</label>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Passive voice
-					{@render info_popup('TaBiThA can show notes related to how your language handles passive verbs, if at all.')}
+					{m.passive_voice()}
+					{@render info_popup(m.passive_voice_info())}
 				</td>
 				<td>
 					<select bind:value={profile.passive} class="select select-sm">
-						<option value="none">None</option>
-						<option value="agent_forbidden">Yes, but never with an agent</option>
-						<option value="agent_allowed">Yes, and an agent may be included</option>
-						<option value="other">It's not so simple</option>
+						<option value="none">{m.passive_none()}</option>
+						<option value="agent_forbidden">{m.passive_agent_forbidden()}</option>
+						<option value="agent_allowed">{m.passive_agent_allowed()}</option>
+						<option value="other">{m.passive_other()}</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Rhetorical questions
-					{@render info_popup('If your language does not use or understand rhetorical questions, TaBiThA can show notes for a rhetorical question to explain its purpose and suggest an equivalent statement.')}
+					{m.rhetorical_questions()}
+					{@render info_popup(m.rhetorical_questions_info())}
 				</td>
 				<td>
 					<select bind:value={profile.rhetorical_questions} class="select select-sm">
-						<option value={true}>Rhetorical questions are understood</option>
-						<option value={false}>Statements are preferred</option>
+						<option value={true}>{m.rhetorical_questions_understood()}</option>
+						<option value={false}>{m.rhetorical_questions_statements_preferred()}</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Speech formula position
-					{@render info_popup('If your language puts or repeats the speech formula (eg. "John said to Mary") at the end of the quote, TaBiThA can show reminders about the speaker and listener of longer quotes.')}
+					{m.speech_formula_position()}
+					{@render info_popup(m.speech_formula_position_info())}
 				</td>
 				<td>
 					<select bind:value={profile.speech_formula_position} class="select select-sm">
-						<option value="before">Before</option>
-						<option value="after">After</option>
-						<option value="either">Either</option>
-						<option value="both">Both</option>
+						<option value="before">{m.position_before()}</option>
+						<option value="after">{m.position_after()}</option>
+						<option value="either">{m.position_either()}</option>
+						<option value="both">{m.position_both()}</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Honorifics
-					{@render info_popup('If your language has special markings or pronouns for acknowledging social relationships or dynamics, TaBiThA can show notes to help identify these relationships.')}
+					{m.honorifics()}
+					{@render info_popup(m.honorifics_info())}
 				</td>
 				<td>
 					<div class="flex flex-col gap-1">
 						<label>
 							<input type="radio" value={false} bind:group={profile.honorifics} class="radio radio-xs" />
-							None
+							{m.honorifics_none()}
 						</label>
 						<label>
 							<input type="radio" value={true} bind:group={profile.honorifics} class="radio radio-xs" />
-							Yes, some honorifics
+							{m.honorifics_some()}
 						</label>
 					</div>
 				</td>

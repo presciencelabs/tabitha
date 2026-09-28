@@ -46,7 +46,8 @@ async function get_source_files(dir: string): Promise<string[]> {
 				entry.name === '.svelte-kit' ||
 				entry.name === 'dist' ||
 				entry.name === '.wrangler' ||
-				entry.name === '.turbo'
+				entry.name === '.turbo' ||
+				entry.name === 'paraglide'
 			) {
 				continue
 			}

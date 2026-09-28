@@ -7,6 +7,8 @@
 	import Settings from '$lib/Settings.svelte'
 	import type { VerseReference, TargetTextResult, CopilotResult, CopilotNote } from '@tabitha/types'
 	import type { CopilotSettings, CopilotStep } from '$lib/types'
+	import { m } from '$lib/paraglide/messages'
+	import { MODE_LABELS } from '$lib/labels'
 
 	let reference = $state(persisted<VerseReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
@@ -25,11 +27,11 @@
 	const expected_step_count = $derived(settings.mode === 'discern' ? 1 : settings.lwc === 'English' ? 3 : 4)
 	let result = $state<CopilotResult | null>(null)
 
-	const STEP_LABELS: Record<CopilotStep, string> = {
-		notes: 'Generating semantic notes...',
-		aquifer: 'Fetching translator notes from Aquifer...',
-		brief: 'Writing brief...',
-		translate: 'Translating brief...',
+	const STEP_LABELS: Record<CopilotStep, () => string> = {
+		notes: m.step_notes,
+		aquifer: m.step_aquifer,
+		brief: m.step_brief,
+		translate: m.step_translate,
 	}
 
 	async function get_english_text() {
@@ -48,7 +50,7 @@
 		try {
 			result = await fetch_notes({ reference, settings, on_step: step => steps_reached.push(step) })
 		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Unexpected error occurred'
+			const message = err instanceof Error ? err.message : m.unexpected_error()
 			console.error(message)
 			result = {
 				type: 'error',
@@ -63,23 +65,23 @@
 
 <form>
 	<section class="py-2 flex gap-4 items-center">
-		<h3 class="text-lg font-bold">Verse</h3>
+		<h3 class="text-lg font-bold">{m.verse()}</h3>
 		<BookSelect bind:book={reference.book} />
 		<input type="number" bind:value={reference.chapter} min="1" class="input w-20" />
 		<input type="number" bind:value={reference.verse} min="1" class="input w-20" />
 		<button type="button" onclick={get_english_text} class="btn btn-md">
-			Preview English
+			{m.preview_english()}
 		</button>
 	</section>
 
 	{#if fetching_english}
 		<div class="prose mb-3">
-			<h4>English Preview</h4>
-			<div>Loading...</div>
+			<h4>{m.english_preview()}</h4>
+			<div>{m.loading()}</div>
 		</div>
 	{:else if english_text}
 		<div class="w-full mb-3">
-			<div class="prose"><h4>English Preview</h4></div>
+			<div class="prose"><h4>{m.english_preview()}</h4></div>
 			<div>({english_text?.audience}) {english_text?.text || ''}</div>
 		</div>
 	{/if}
@@ -89,7 +91,7 @@
 
 		<button type="button" onclick={get_notes} disabled={fetching_notes} class="btn btn-primary btn-md my-4">
 			<Icon icon="mdi:lightbulb-outline" class="h-5 w-5" />
-			Get notes ({settings.mode})
+			{m.get_notes({ mode: MODE_LABELS[settings.mode]() })}
 		</button>
 	</div>
 </form>
@@ -121,7 +123,7 @@
 {/snippet}
 
 {#snippet notes_title(reference: VerseReference)}
-	<div class="prose"><h2>Notes for {reference.book} {reference.chapter}:{reference.verse}</h2></div>
+	<div class="prose"><h2>{m.notes_for({ reference: `${reference.book} ${reference.chapter}:${reference.verse}` })}</h2></div>
 {/snippet}
 
 {#if fetching_notes}
@@ -134,12 +136,12 @@
 				{:else}
 					<Icon icon="mdi:check" class="h-5 w-5 text-success" />
 				{/if}
-				{STEP_LABELS[step]}
+				{STEP_LABELS[step]()}
 			</li>
 		{:else}
 			<li class="flex items-center gap-1">
 				<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
-				Loading...
+				{m.loading()}
 			</li>
 		{/each}
 	</ul>
@@ -155,20 +157,20 @@
 
 		{#if settings.lwc === 'English' || settings.show_english}
 			<div class="mt-3">
-				<div class="prose"><h4>English Text</h4></div>
+				<div class="prose"><h4>{m.english_text()}</h4></div>
 				<p>{result.english_text}</p>
 			</div>
 		{/if}
 
 		{#if result.lwc_text && settings.lwc !== 'English'}
 			<div class="mt-3">
-				<div class="prose"><h4>LWC Text ({settings.lwc})</h4></div>
+				<div class="prose"><h4>{m.lwc_text({ lwc: settings.lwc })}</h4></div>
 				<p>{result.lwc_text}</p>
 			</div>
 		{/if}
 
 		<div class="mt-3">
-			<div class="prose"><h4>Notes/Cautions</h4></div>
+			<div class="prose"><h4>{m.notes_cautions()}</h4></div>
 			{@render semantic_notes(result.notes)}
 		</div>
 	</div>
@@ -177,17 +179,17 @@
 		{@render notes_title(result.verse)}
 
 		<div class="mt-3">
-			<div class="prose"><h4>{settings.lwc} Text</h4></div>
+			<div class="prose"><h4>{m.lwc_named_text({ lwc: settings.lwc })}</h4></div>
 			<p>{result.lwc_text}</p>
 		</div>
 
 		<div class="mt-3">
-			<div class="prose"><h4>Semantic Notes</h4></div>
+			<div class="prose"><h4>{m.semantic_notes()}</h4></div>
 			{@render semantic_notes(result.semantic_notes)}
 		</div>
 
 		<div class="mt-3">
-			<div class="prose"><h4>TNN Notes</h4></div>
+			<div class="prose"><h4>{m.tnn_notes()}</h4></div>
 			{#if result.tnn_notes.length === 0}
 				{@render empty_section(get_no_tnn_text({ lwc: settings.lwc, tnn_available: result.tnn_available }))}
 			{:else}
@@ -201,7 +203,7 @@
 
 		{#if result.cultural_background.length > 0}
 			<div class="mt-3">
-				<div class="prose"><h4>Cultural Context & Background</h4></div>
+				<div class="prose"><h4>{m.cultural_background()}</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.cultural_background as { term, summary }}
 						<li>{term} - {summary}</li>
@@ -212,7 +214,7 @@
 
 		{#if result.image_keywords.length > 0}
 			<div class="mt-3">
-				<div class="prose"><h4>Image Keywords</h4></div>
+				<div class="prose"><h4>{m.image_keywords()}</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.image_keywords as kw}
 						<li>{kw}</li>
@@ -223,7 +225,7 @@
 
 		{#if result.consultant_decisions.length > 0}
 			<div class="mt-3">
-				<div class="prose"><h4>Consultant Decisions</h4></div>
+				<div class="prose"><h4>{m.consultant_decisions()}</h4></div>
 				<ul class="list list-disc text-base ms-5">
 					{#each result.consultant_decisions as { status, text }}
 						<li>{status} - {text}</li>

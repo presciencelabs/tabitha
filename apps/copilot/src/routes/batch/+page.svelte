@@ -10,6 +10,8 @@
 	import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
 	import type { ChapterReference, CopilotResult } from '@tabitha/types'
 	import type { CopilotSettings } from '$lib/types'
+	import { m } from '$lib/paraglide/messages'
+	import { MODE_LABELS } from '$lib/labels'
 
 	let reference = $state(persisted<ChapterReference>({ key: 'saved_verse', defaultValue: {
 		book: 'Genesis',
@@ -62,7 +64,7 @@
 				on_progress: next_results => fetched_results.push(...next_results),
 			})
 		} catch (error) {
-			error_text = 'Generating notes failed: ' + (error instanceof Error ? error.message : String(error))
+			error_text = m.generating_notes_failed({ error: error instanceof Error ? error.message : String(error) })
 			console.error(error)
 		} finally {
 			fetching_results = false
@@ -115,7 +117,7 @@
 			window.URL.revokeObjectURL(url)
 			a.remove()
 		} catch (error) {
-			error_text = 'Download failed: ' + (error instanceof Error ? error.message : String(error))
+			error_text = m.download_failed({ error: error instanceof Error ? error.message : String(error) })
 			console.error(error)
 		} finally {
 			generating_sfm = false
@@ -125,23 +127,23 @@
 
 <form>
 	<section class="py-2 flex gap-4 items-center">
-		<h3 class="text-lg font-bold">Chapter</h3>
+		<h3 class="text-lg font-bold">{m.chapter()}</h3>
 		
 		<BookSelect bind:book={reference.book} disabled={fetching_results} />
 		<input type="number" bind:value={reference.chapter} disabled={fetching_results} min="1" class="input w-20" />
 
 		{#if verses_in_chapter === null}
 			<div class="prose mt-1">
-				Invalid chapter
+				{m.invalid_chapter()}
 			</div>
 		{:else if verses_in_chapter > 0}
 			<div class="divider divider-horizontal"></div>
 			<div class="flex gap-4">
-				<h3 class="text-lg font-bold">Verses</h3>
+				<h3 class="text-lg font-bold">{m.verses()}</h3>
 				<input type="number" bind:value={start_verse} disabled={fetching_results} min="1" class="input w-20" />
-				<div class="mt-1">to</div>
+				<div class="mt-1">{m.verse_range_to()}</div>
 				<input type="number" bind:value={end_verse} disabled={fetching_results} min="1" max={verses_in_chapter} class="input w-20" />
-				<div class="mt-1">({verses_in_chapter} verses in chapter)</div>
+				<div class="mt-1">{m.verses_in_chapter({ count: verses_in_chapter })}</div>
 			</div>
 		{/if}
 	</section>
@@ -151,13 +153,13 @@
 
 		<button type="button" onclick={fetch_results} disabled={!can_do_batch_operation} class="btn btn-primary btn-md my-4">
 			<Icon icon="mdi:lightbulb-outline" class="h-5 w-5" />
-			Get notes ({settings.mode})
+			{m.get_notes({ mode: MODE_LABELS[settings.mode]() })}
 		</button>
 
 		{#if fetched_results.length > 0}
 			<button type="button" onclick={download_as_sfm} disabled={!can_do_batch_operation} class="btn btn-secondary btn-md my-4">
 				<Icon icon="mdi:download" class="h-5 w-5" />
-				Download notes (USFM)
+				{m.download_usfm()}
 				{#if generating_sfm}
 					<Icon icon="line-md:loading-twotone-loop" class="h-8 w-8" />
 				{/if}
@@ -173,10 +175,14 @@
 <div class="flex items-center gap-1">
 	{#if fetching_results}
 		<Icon icon="line-md:loading-twotone-loop" class="h-5 w-5" />
-		Loading {settings.mode === 'brief' ? 'brief' : 'notes'}: {completed_verses} / {verse_count} verses completed...
+		{#if settings.mode === 'brief'}
+			{m.loading_brief_progress({ completed: completed_verses, total: verse_count })}
+		{:else}
+			{m.loading_notes_progress({ completed: completed_verses, total: verse_count })}
+		{/if}
 	{:else if completed_verses > 0}
 		<Icon icon="mdi:check" class="h-6 w-6 text-success" />
-		Loaded {verse_count} verses
+		{m.loaded_verses({ count: verse_count })}
 	{/if}
 </div>
 {#if fetching_results || completed_verses > 0}
@@ -187,9 +193,9 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Verse</th>
-				<th>Status</th>
-				<th>Details</th>
+				<th>{m.verse()}</th>
+				<th>{m.status()}</th>
+				<th>{m.details()}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -199,7 +205,7 @@
 					<td>{result.verse.book} {result.verse.chapter}:{result.verse.verse}</td>
 					{#if result.type === 'error'}
 						{@const retrying = retry_set.has(i)}
-						<td><span class="badge badge-error">Error</span></td>
+						<td><span class="badge badge-error">{m.status_error()}</span></td>
 						<td>{result.error}</td>
 						<td>
 							<button
@@ -211,18 +217,18 @@
 								{#if retrying}
 									<Icon icon="line-md:loading-twotone-loop" class="h-6 w-6" />
 								{:else}
-									Retry
+									{m.retry()}
 								{/if}
 							</button>
 						</td>
 					{:else if result.type === 'discern'}
-						<td><span class="badge badge-success">Ready</span></td>
-						<td colspan="2">{result.notes.length} notes</td>
+						<td><span class="badge badge-success">{m.status_ready()}</span></td>
+						<td colspan="2">{m.discern_summary({ count: result.notes.length })}</td>
 					{:else if result.type === 'brief'}
 						{@const other_notes_length = result.cultural_background.length + result.image_keywords.length + result.consultant_decisions.length}
-						<td><span class="badge badge-success">Ready</span></td>
+						<td><span class="badge badge-success">{m.status_ready()}</span></td>
 						<td colspan="2">
-							{result.semantic_notes.length} semantic notes, {result.tnn_notes.length} TNN notes, {other_notes_length} other
+							{m.brief_summary({ semantic: result.semantic_notes.length, tnn: result.tnn_notes.length, other: other_notes_length })}
 						</td>
 					{/if}
 				</tr>

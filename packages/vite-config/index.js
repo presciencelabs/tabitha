@@ -1,7 +1,9 @@
 // @ts-check
+import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { sveltekit } from '@sveltejs/kit/vite'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
+import { PARAGLIDE_OPTIONS } from './paraglide.js'
 
 // @sveltejs/adapter-cloudflare emulates platform bindings in dev via wrangler's
 // getPlatformProxy(), which logs "Using vars/secrets defined in .env..." at wrangler's
@@ -14,6 +16,7 @@ process.env.WRANGLER_LOG ??= 'warn'
  *
  * @param {Object} options
  * @param {number} options.port Dedicated local development port
+ * @param {boolean} [options.i18n] Compile the app's `project.inlang` messages with Paraglide (see ./paraglide.js)
  * @param {any[]} [options.plugins] Additional Vite plugins
  * @param {Record<string, any>} [options.server] Server configuration overrides
  * @param {Record<string, any>} [options.ssr] SSR configuration overrides
@@ -22,6 +25,7 @@ process.env.WRANGLER_LOG ??= 'warn'
  */
 export function create_app_vite_config({
 	port,
+	i18n,
 	plugins = [],
 	server = {},
 	ssr = {},
@@ -31,6 +35,7 @@ export function create_app_vite_config({
 		plugins: [
 			tailwindcss(),
 			sveltekit(),
+			...(i18n ? [paraglideVitePlugin(PARAGLIDE_OPTIONS)] : []),
 			...plugins,
 		],
 		server: {
