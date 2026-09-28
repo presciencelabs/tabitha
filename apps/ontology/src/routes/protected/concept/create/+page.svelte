@@ -5,7 +5,7 @@
 	import { Category } from '$lib/card/categorization/edit'
 	import { default_categories, levels, parts_of_speech } from '$lib/lookups'
 	import { create_fallback_concept } from '$lib/transformers'
-	import { get_next_sense } from '$lib/concepts'
+	import { get_next_sense } from '$lib/changes'
 	import Header from '$lib/card/Header.svelte'
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'

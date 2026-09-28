@@ -82,3 +82,9 @@ export function change_made_between_versions({ since, before }: { since: string,
 		return version.split('.').map(Number).reduce((sum, part) => sum + part, 0)
 	}
 }
+
+export async function get_next_sense({ stem, part_of_speech }: { stem: string, part_of_speech: string }): Promise<string> {
+	const res = await fetch(`create/next-sense?stem=${stem}&part_of_speech=${part_of_speech}`)
+	const { next_sense } = await res.json()
+	return next_sense
+}

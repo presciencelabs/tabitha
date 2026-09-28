@@ -1,5 +1,5 @@
 import { get_all_mutations, type QueuedMutation } from './queue'
-import { do_concepts_match } from '$lib/concepts'
+import { concepts_match } from '@tabitha/types/patterns'
 import { create_change_fields, diff_change_fields } from '$lib/changes'
 import { decode_categorization_for_update } from '$lib/transformers'
 import type { Concept, OntologyChange } from '$lib/types'
@@ -37,7 +37,7 @@ export async function merge_pending_changes(concepts: Concept[]): Promise<Concep
 	if (!mutations.length) return concepts
 
 	return concepts.map(concept => {
-		const mutation = mutations.find(mutation => do_concepts_match({ a: mutation.body, b: concept }))
+		const mutation = mutations.find(mutation => concepts_match({ a: mutation.body, b: concept }))
 		return mutation
 			? { ...concept, pending_changes: [...concept.pending_changes, to_change({ mutation, concept })] }
 			: concept
@@ -47,7 +47,7 @@ export async function merge_pending_changes(concepts: Concept[]): Promise<Concep
 // Finds a still-queued edit for one specific concept, e.g. to restore it when reopening its update page.
 export async function check_for_pending_change(a_concept: ConceptKey): Promise<QueuedMutation | undefined> {
 	const mutations = await get_all_mutations()
-	return mutations.find(mutation => mutation.action === 'update' && do_concepts_match({ a: mutation.body, b: a_concept }))
+	return mutations.find(mutation => mutation.action === 'update' && concepts_match({ a: mutation.body, b: a_concept }))
 }
 
 // Queued creates for concepts that don't exist on the server yet -- for the /protected/changes

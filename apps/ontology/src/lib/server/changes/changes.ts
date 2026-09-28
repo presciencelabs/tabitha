@@ -220,7 +220,7 @@ export async function apply_pending_changes(db: D1Database): Promise<ApplyPendin
 		failed: changes.length - count,
 		version,
 		changes,
-		timestamp: new Date(),
+		timestamp: new Date(applied_date),
 	}
 }
 

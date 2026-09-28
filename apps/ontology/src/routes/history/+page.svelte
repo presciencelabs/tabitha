@@ -4,7 +4,7 @@
 	import ChangeDiffData from '$lib/ChangeDiffData.svelte'
 	import { check_for_pending_creates } from '$lib/offline/pending'
 	import { format_datetime } from '$lib/format'
-	import { do_concepts_match } from '$lib/concepts'
+	import { concepts_match } from '@tabitha/types/patterns'
 	import { change_made_between_versions } from '$lib/changes'
 	import type { OntologyChangeAction, OntologyChange } from '$lib/types'
 	import type { ConceptKey, PartOfSpeech } from '@tabitha/types'
@@ -35,7 +35,7 @@
 		const filters: ((change: OntologyChange) => boolean)[] = [
 			change_made_between_versions({ since, before }),
 			change => action_type === 'all' || change.action === action_type,
-			change => concept === null || do_concepts_match({ a: change.concept, b: concept }),
+			change => concept === null || concepts_match({ a: change.concept, b: concept }),
 		]
 		return changes.filter(is_a_match)
 
@@ -57,45 +57,49 @@
 
 	<section class="flex flex-col py-2">
 		<form class="flex gap-4 bg-info text-info-content px-4 pt-2 pb-3.5 overflow-x-auto rounded-box">
-			<label>
-				Since
-				<select bind:value={since} class="select">
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend text-info-content">Since</legend>
+
+				<select bind:value={since} class="select text-base-content">
 					<option value={'all'}>All</option>
 					{#each all_versions as version}
 						<option value={version}>{version}</option>
 					{/each}
 				</select>
-			</label>
+			</fieldset>
 
-			<label>
-				Before (inclusive)
-				<select bind:value={before} class="select">
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend text-info-content">Before</legend>
+
+				<select bind:value={before} class="select text-base-content">
 					<option value={'all'}>All</option>
 					{#each all_versions as version}
 						<option value={version}>{version}</option>
 					{/each}
 				</select>
-			</label>
+			</fieldset>
 
-			<label>
-				Action
-				<select bind:value={action_type} class="select">
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend text-info-content">Action</legend>
+
+				<select bind:value={action_type} class="select text-base-content">
 					<option value={'all'}>All</option>
 					<option value={'create'}>Add</option>
 					<option value={'update'}>Edit</option>
 				</select>
-			</label>
+			</fieldset>
 
-			<label>
-				Concept
-				<select bind:value={concept_key} class="select">
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend text-info-content">Concept</legend>
+
+				<select bind:value={concept_key} class="select text-base-content">
 					<option value={null}>All</option>
 					{#each all_concepts as key}
 						{@const { stem, sense, part_of_speech } = parse_concept_key(key)}
 						<option value={key}>{stem}-{sense} ({part_of_speech})</option>
 					{/each}
 				</select>
-			</label>
+			</fieldset>
 		</form>
 	</section>
 

@@ -2,7 +2,7 @@ import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
 import { normalize_wildcards, parse_concept_sense } from '@tabitha/types/patterns'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 import { get_pending_changes } from './changes/changes'
-import { do_concepts_match } from '$lib/concepts'
+import { concepts_match } from '@tabitha/types/patterns'
 import type { Concept, DbRowConcept, DbRowExample } from '$lib/types'
 import type { ConceptKey, ConceptSearchFilter, ConceptExample, SimplificationHint } from '@tabitha/types'
 import type { ConceptLookupKey } from './concept_embeddings'
@@ -74,7 +74,7 @@ export const get_concepts = (db: D1Database) => async (concept_filter: ConceptSe
 
 	const all_pending_changes = await get_pending_changes(db)
 	for (const concept of concepts) {
-		concept.pending_changes = all_pending_changes.filter(change => do_concepts_match({ a: concept, b: change.concept }))
+		concept.pending_changes = all_pending_changes.filter(change => concepts_match({ a: concept, b: change.concept }))
 	}
 
 	const how_to_results = await get_simplification_hints(db)(concept_filter)
