@@ -4,8 +4,10 @@ import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { Database } from 'bun:sqlite'
 import { $ } from 'bun'
+import type { AiGatewayConfig } from '@tabitha/ai'
 import { parse_wrangler_jsonc } from './db_load'
 import { parse_env_file } from './setup_env'
+import { probe_gateway_token, type GatewayTokenStatus } from './lib/ai_gateway_token'
 import { check_cloudflare_configs } from '../audits/check_cloudflare'
 import { sync_readme_badges } from '../audits/check_readme_badges'
 import { scan_secrets } from '../audits/check_secrets'
@@ -42,6 +44,7 @@ const APPS: { name: string, port: number, db_check?: DbCheck }[] = [
 	{ name: 'sources', port: 1947, db_check: { binding: 'DB_Sources', table: 'Sources' } },
 	{ name: 'editor', port: 1337 },
 	{ name: 'copilot', port: 9000 },
+	{ name: 'www', port: 1455 },
 ]
 
 async function check_runtimes(): Promise<DiagnosticResult[]> {
@@ -180,7 +183,7 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 			category: 'Environment',
 			name: 'App .env.local Files',
 			status: 'PASS',
-			message: 'All 5 applications configured with local service endpoints',
+			message: `All ${APPS.length} applications configured with local service endpoints`,
 		})
 	} else {
 		results.push({
@@ -221,6 +224,85 @@ async function check_env_files(): Promise<DiagnosticResult[]> {
 			message: `Missing or blank: ${unpopulated.join('; ')}`,
 			fix: 'See the "# SECRETS" section in that app\'s .env for where to obtain each value, then set it in the app\'s .env.local',
 		})
+	}
+
+	return results
+}
+
+const unquote = (value: string): string => value.replace(/^(["'])(.*)\1$/, '$2')
+
+// Presence alone isn't enough: every app can hold the same revoked token and still pass the
+// secrets check above, surfacing only as a 401 on the first AI request. Each distinct token is
+// probed once against the live gateway; apps without a token are skipped, since the secrets
+// check already reports them (and CI never has one).
+async function check_ai_gateway_tokens(): Promise<DiagnosticResult[]> {
+	const apps_by_token = new Map<string, { gateway: AiGatewayConfig, app_names: string[] }>()
+
+	for (const app of APPS) {
+		const env_template_path = join(process.cwd(), 'apps', app.name, '.env')
+		const env_local_path = join(process.cwd(), 'apps', app.name, '.env.local')
+		if (!existsSync(env_template_path) || !existsSync(env_local_path)) continue
+
+		const env_vars = new Map([
+			...parse_env_file(readFileSync(env_template_path, 'utf-8')),
+			...parse_env_file(readFileSync(env_local_path, 'utf-8')),
+		])
+		const read_var = (key: string): string => unquote(env_vars.get(key) ?? '')
+
+		const token = read_var('AI_GATEWAY_TOKEN')
+		if (!token) continue
+
+		const existing = apps_by_token.get(token)
+		if (existing) {
+			existing.app_names.push(app.name)
+			continue
+		}
+
+		apps_by_token.set(token, {
+			gateway: {
+				account_id: read_var('CLOUDFLARE_ACCOUNT_ID'),
+				token,
+				project: read_var('GEMINI_PROJECT_ID'),
+				location: read_var('GEMINI_LOCATION'),
+			},
+			app_names: [app.name],
+		})
+	}
+
+	const results: DiagnosticResult[] = []
+	for (const [token, { gateway, app_names }] of apps_by_token) {
+		const name = `AI Gateway Token (…${token.slice(-4)})`
+		const used_by = `used by ${app_names.join(', ')}`
+		const env_local_paths = app_names.map(app_name => `apps/${app_name}/.env.local`).join(', ')
+
+		try {
+			const { status, http_code } = await probe_gateway_token(gateway)
+			const result_by_status: Record<GatewayTokenStatus, DiagnosticResult> = {
+				valid: { category: 'Environment', name, status: 'PASS', message: `Accepted by the AI Gateway (${used_by})` },
+				rejected: {
+					category: 'Environment',
+					name,
+					status: 'FAIL',
+					message: `Rejected by the AI Gateway with HTTP ${http_code} (${used_by})`,
+					fix: `Get the current AI_GATEWAY_TOKEN from the team vault, set it in ${env_local_paths}, then restart those dev servers`,
+				},
+				unexpected: {
+					category: 'Environment',
+					name,
+					status: 'WARN',
+					message: `Unexpected HTTP ${http_code} from the AI Gateway (${used_by})`,
+					fix: 'Check the gateway\'s logs in the Cloudflare dashboard (AI → AI Gateway → tabitha)',
+				},
+			}
+			results.push(result_by_status[status])
+		} catch (err) {
+			results.push({
+				category: 'Environment',
+				name,
+				status: 'WARN',
+				message: `Could not reach the AI Gateway: ${err instanceof Error ? err.message : err} (${used_by})`,
+			})
+		}
 	}
 
 	return results
@@ -345,7 +427,7 @@ async function check_security_and_cloudflare(): Promise<DiagnosticResult[]> {
 				category: 'Quality & Security',
 				name: 'Cloudflare Wrangler Configs',
 				status: 'PASS',
-				message: '5/5 wrangler.jsonc configurations valid',
+				message: `All ${cf_res.wrangler_config_count} wrangler.jsonc configurations valid`,
 			})
 		} else {
 			results.push({
@@ -406,6 +488,7 @@ export async function run_doctor(): Promise<{ all_passed: boolean; fixes: string
 	const results: DiagnosticResult[] = [
 		...await check_runtimes(),
 		...await check_env_files(),
+		...await check_ai_gateway_tokens(),
 		...await check_local_databases(),
 		...await check_security_and_cloudflare(),
 	]

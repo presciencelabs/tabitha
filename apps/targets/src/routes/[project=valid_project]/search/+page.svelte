@@ -60,6 +60,7 @@
 					{result}
 					{selected_filters}
 					{search_regex}
+					{highlight_terms}
 					bind:open={collapse_states[i]}
 				/>
 			{/each}

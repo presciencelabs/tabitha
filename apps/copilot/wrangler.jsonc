@@ -10,6 +10,14 @@
 		"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
 		"GEMINI_LOCATION": "global"
 	},
+	// Anonymous feature-usage events -- see docs/decisions/0017-usage-analytics-engine.md for the
+	// schema and example queries.
+	"analytics_engine_datasets": [
+		{
+			"binding": "USAGE",
+			"dataset": "tabitha_usage"
+		}
+	],
 	"placement": {
 		// No D1 database here (unlike editor/ontology/sources/targets, which need edge proximity
 		// to the user for D1 withSession() bookmarking) -- copilot's request-time cost is the
@@ -50,6 +58,8 @@
 	// normal public HTTPS exactly like production does.
 	"env": {
 		"preview": {
+			// "analytics_engine_datasets" is non-inheritable, and intentionally left undeclared here:
+			// usage is only tracked in production, and recording is a no-op without the binding.
 			// "routes" is otherwise inherited from the top level, which would attach the production
 			// custom domain (copilot.tabitha.bible) to this separate preview Worker too.
 			"routes": [

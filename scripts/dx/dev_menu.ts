@@ -25,8 +25,8 @@ const PRESETS: Record<string, Preset> = {
 	},
 	'4': {
 		name: '🤖 Copilot AI Lab',
-		description: 'Copilot + Sources + Ontology',
-		apps: ['copilot', 'ontology', 'sources'],
+		description: 'Copilot + Sources + Targets + Ontology',
+		apps: ['copilot', 'ontology', 'sources', 'targets'],
 	},
 	'5': {
 		name: '🎯 Custom Selection',

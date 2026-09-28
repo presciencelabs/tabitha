@@ -1,14 +1,17 @@
 <script lang="ts">
 	import '$lib/app.css'
-	import type { Snippet } from 'svelte'
+	import { onMount, type Snippet } from 'svelte'
 	import { onNavigate } from '$app/navigation'
 	import { Search } from '$lib'
-	import { Header, Footer } from '@tabitha/ui'
+	import { Header, Footer, theme_state } from '@tabitha/ui'
+	import { report_active_theme } from '@tabitha/usage/client'
 	import { useRegisterSW } from 'virtual:pwa-register/svelte'
 
 	let { children }: { children?: Snippet } = $props()
 
 	const { needRefresh, updateServiceWorker } = useRegisterSW()
+
+	onMount(() => report_active_theme(theme_state.current))
 
 	onNavigate(navigation => {
 		// Skip view transitions for non-supporting browsers, full page unloads (like native GET forms), or non-route navigations

@@ -7,11 +7,8 @@ export type TokenTransform = (token: Token) => Token
 export type LookupFilter = (concept: LookupResult) => boolean
 
 export type TokenContextFilter = (tokens: Token[], start_index: number) => ContextFilterResult
-export type ContextFilterResult = {
-	success: boolean
-	context_indexes: number[]
-	subtoken_indexes: number[]
-}
+export type ContextMatch = { success: true; context_indexes: number[]; subtoken_indexes: number[] }
+export type ContextFilterResult = ContextMatch | { success: false }
 
 export type TokenRuleCore = {
 	trigger: TokenFilter

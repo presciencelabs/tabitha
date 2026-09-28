@@ -40,6 +40,23 @@ const result = await ai.generate_json<MyShape>({
 
 `app`/`feature` are attached to every request as `cf-aig-metadata` for per-app cost/usage attribution in the gateway dashboard; they don't affect caching (confirmed empirically — see ADR 0007).
 
+## Embeddings
+
+`create_embedding_client` is a separate, smaller factory for turning text into vectors (used by ontology's semantic search -- see [ADR 0016](../../docs/decisions/0016-semantic-search-via-vectorize-embeddings.md)). It goes through the same gateway, token, and error handling as `create_ai_client`.
+
+```ts
+import { create_embedding_client } from '@tabitha/ai'
+
+const embedder = create_embedding_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+const query_vector = await embedder.embed_text({ purpose: 'query', text: 'joy' })
+const document_vector = await embedder.embed_text({ purpose: 'document', title: 'rejoice', text: 'to feel great happiness' })
+```
+
+- **Fixed:** model `gemini-embedding-2` (`EMBEDDING_MODEL`), 768 dimensions (`EMBEDDING_DIMENSIONS`), and the `global` location -- the only one Vertex serves this model from, whatever `gateway.location` says.
+- **One text per call.** The model has no batch endpoint and fuses every part of a request into one vector, so there's no batch API to misuse.
+- **`purpose` instead of a task type.** `gemini-embedding-2` takes retrieval intent as a prefix written into the text itself; `format_embedding_input` applies Google's documented prefixes, so a query and the documents it's matched against are embedded consistently.
+
 ## What's fixed vs. overridable
 
 - **Fixed package-wide, never overridable per call:** gateway base URL, auth headers, `model` (`gemini-3.5-flash`), `seed` (`42`). Two apps drifted to different values for both pre-consolidation with no real justification, so both are centralized now; see ADR 0007's "Resolved questions" if a genuine per-call need for either resurfaces.

@@ -4,8 +4,9 @@ import type { GenerateContentConfig } from '@google/genai'
  * Config for the shared Cloudflare AI Gateway, routed exclusively through Google Vertex AI
  * (never plain Google AI Studio) -- Vertex is a hard requirement for global-deployment/
  * data-residency needs, not something app-by-app choice should be allowed to drop. `project`
- * and `location` are Vertex's own required routing fields; `location` can't be `'global'` --
- * Cloudflare's Universal Endpoint docs warn that has limited model support. Owned entirely by
+ * and `location` are Vertex's own required routing fields. `location` applies to generation
+ * calls only -- the embedding client always routes to `global`, the one location Vertex serves
+ * its embedding model from. Owned entirely by
  * the package -- never overridable per call. `gateway_name` isn't here: there's exactly one
  * TaBiThA gateway (`tools/gateway/config.ts`), so it's fixed alongside the model and seed in
  * client.ts rather than repeated as a literal at every call site.
@@ -49,4 +50,23 @@ export type GenerateTextParams = {
 export type AiClient = {
 	generate_json<T>(params: GenerateJsonParams): Promise<T>
 	generate_text(params: GenerateTextParams): Promise<string>
+}
+
+export type CreateEmbeddingClientOptions = {
+	app: string
+	feature: string
+	gateway: AiGatewayConfig
+}
+
+/**
+ * A search query and the documents it's matched against are embedded differently -- see
+ * format_embedding_input in client.ts. `title` is a document's own short label (e.g. a concept's
+ * stem), which the model weighs alongside its text.
+ */
+export type EmbedTextParams =
+	| { purpose: 'query', text: string, http_headers?: Record<string, string> }
+	| { purpose: 'document', text: string, title?: string, http_headers?: Record<string, string> }
+
+export type EmbeddingClient = {
+	embed_text(params: EmbedTextParams): Promise<number[]>
 }

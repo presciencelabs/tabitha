@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { set_theme, theme_state } from './theme.svelte'
 	import themes, { to_daisyui_theme } from './themes'
+	import { theme_script_tag } from './theme_script'
+	import { get_ui_messages } from '../i18n/ui_messages'
+
+	const messages = get_ui_messages()
 
 	type Props = {
 		colors?: string
@@ -16,9 +20,14 @@
 	}
 </script>
 
+<svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- static script built from our own theme list -->
+	{@html theme_script_tag}
+</svelte:head>
+
 <div class="dropdown dropdown-top">
 	<div tabindex="0" role="button" class="btn btn-sm gap-2 capitalize {colors || 'btn-outline'}">
-		<span>{theme_state.current}</span>
+		<span>{theme_state.current ?? messages.ui_theme()}</span>
 		<svg class="h-4 w-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
 		</svg>

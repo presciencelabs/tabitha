@@ -1,4 +1,5 @@
-import { AiResponseError, check_input_safety, type AiClient } from '@tabitha/ai'
+import { check_input_safety, type AiClient } from '@tabitha/ai'
+import { CopilotError } from './copilot_core'
 import system_instruction_template from './semantic_notes_prompt.md?raw'
 import type { CopilotLlmInput, CopilotLlmOutput } from '$lib/types'
 
@@ -7,6 +8,12 @@ import type { CopilotLlmInput, CopilotLlmOutput } from '$lib/types'
 // verse text here (english_text/lwc_text) -- the same kind of content, and the same length
 // profile (a single verse), as apps/editor's ai-assist textarea.
 const MAX_VERSE_TEXT_LENGTH = 2000
+
+// Longer than the AI Gateway's 1-hour default (tools/gateway/config.ts) -- workshop settings
+// often re-check or regenerate the same verse's notes well past an hour, and this call is fully
+// deterministic (fixed model/temperature/seed, JSON-schema output, no per-request-unique data),
+// so a stale cache entry is never a correctness concern, only a cost one.
+const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 
 export async function get_semantic_notes({ llm_input, ai }: { llm_input: CopilotLlmInput, ai: AiClient }): Promise<CopilotLlmOutput> {
 
@@ -19,7 +26,7 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 	const safety_issue = check_verse_text_safety(llm_input.english_text) ?? (llm_input.lwc_text ? check_verse_text_safety(llm_input.lwc_text) : undefined)
 	if (safety_issue) {
 		console.warn(`copilot: semantic-notes rejected verse text: ${safety_issue}`)
-		return { notes: [], lwc_text: llm_input.lwc_text }
+		throw new CopilotError('Potential safety issue found in the English/LWC text.')
 	}
 
 	const system_instruction = system_instruction_template.replace('{{TRANSLATE_OR_CITE_INSTRUCTION}}', () => translate_tbta_text
@@ -78,10 +85,13 @@ export async function get_semantic_notes({ llm_input, ai }: { llm_input: Copilot
 				},
 				'required': ['notes'],
 			},
+			config: {
+				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
+			},
 		})
 	} catch (error) {
-		if (!(error instanceof AiResponseError)) throw error
-		output = { notes: [] }
+		const message = error instanceof Error ? error.message : `${error}`
+		throw new CopilotError(`Error generating semantic notes: ${message}`)
 	}
 
 	return {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { create_ai_client } from './client'
+import { create_ai_client, create_embedding_client, EMBEDDING_DIMENSIONS, format_embedding_input } from './client'
 import { AiResponseError } from './errors'
 import type { AiGatewayConfig } from './types'
 
@@ -175,6 +175,73 @@ describe('@tabitha/ai', () => {
 			const ai = create_ai_client({ app: 'ontology', feature: 'semantic-search', gateway })
 
 			await expect(ai.generate_text({ contents: 'hi' })).rejects.toThrow(AiResponseError)
+		})
+	})
+
+	describe('create_embedding_client', () => {
+		function mock_embedding(values: number[]) {
+			fetch_mock.mockResolvedValue({ ok: true, json: async () => ({ embedding: { values } }) })
+		}
+
+		test('sends one text to gemini-embedding-2 at the global location, whatever location the gateway config names', async () => {
+			mock_embedding(Array(EMBEDDING_DIMENSIONS).fill(0.1))
+			const embedder = create_embedding_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await embedder.embed_text({ purpose: 'query', text: 'joy' })
+
+			const [url, init] = fetch_mock.mock.calls[0]
+			expect(url).toBe(
+				'https://gateway.ai.cloudflare.com/v1/acct-1/tabitha/google-vertex-ai/v1beta1/projects/my-project/locations/global/publishers/google/models/gemini-embedding-2:embedContent',
+			)
+			expect(init.headers).toEqual(expect.objectContaining({
+				'cf-aig-authorization': 'Bearer gw-token',
+				'cf-aig-metadata': JSON.stringify({ app: 'ontology', feature: 'semantic-search' }),
+			}))
+			expect(JSON.parse(init.body)).toEqual({
+				content: { parts: [{ text: 'task: search result | query: joy' }] },
+				outputDimensionality: EMBEDDING_DIMENSIONS,
+			})
+		})
+
+		test('returns the embedding values and merges extra http headers in', async () => {
+			const values = Array(EMBEDDING_DIMENSIONS).fill(0.5)
+			mock_embedding(values)
+			const embedder = create_embedding_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			const result = await embedder.embed_text({ purpose: 'query', text: 'joy', http_headers: { 'cf-aig-cache-ttl': '60' } })
+
+			expect(result).toEqual(values)
+			expect(fetch_mock.mock.calls[0][1].headers).toEqual(expect.objectContaining({ 'cf-aig-cache-ttl': '60' }))
+		})
+
+		test('throws AiResponseError when the vector has the wrong number of dimensions', async () => {
+			mock_embedding([0.1, 0.2])
+			const embedder = create_embedding_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await expect(embedder.embed_text({ purpose: 'query', text: 'joy' })).rejects.toThrow(AiResponseError)
+		})
+
+		test('throws AiResponseError on a non-ok gateway response', async () => {
+			fetch_mock.mockResolvedValue({ ok: false, status: 429, statusText: 'Too Many Requests', text: async () => 'slow down' })
+			const embedder = create_embedding_client({ app: 'ontology', feature: 'semantic-search', gateway })
+
+			await expect(embedder.embed_text({ purpose: 'query', text: 'joy' })).rejects.toThrow('429')
+		})
+	})
+
+	describe('format_embedding_input', () => {
+		test('prefixes a query with the search-result task', () => {
+			expect(format_embedding_input({ purpose: 'query', text: 'joy' })).toBe('task: search result | query: joy')
+		})
+
+		test('labels a document with its title', () => {
+			expect(format_embedding_input({ purpose: 'document', title: 'rejoice', text: 'to feel great happiness' }))
+				.toBe('title: rejoice | text: to feel great happiness')
+		})
+
+		test('falls back to "none" for a document without a title', () => {
+			expect(format_embedding_input({ purpose: 'document', text: 'to feel great happiness' }))
+				.toBe('title: none | text: to feel great happiness')
 		})
 	})
 })

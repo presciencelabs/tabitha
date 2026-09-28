@@ -9,11 +9,14 @@ test('generating notes for a verse fetches real encoding/text data, runs it thro
 
 	const heading = page.getByRole('heading', { name: 'Notes for Genesis 1:1' })
 	await expect(heading).toBeVisible()
-	await expect(page.getByText('Loading...')).toBeHidden()
+
+	// The default mode is "brief", so the whole pipeline runs: real source/target lookups, flag
+	// extraction and weighting, the semantic-notes AI call, the (mocked) Aquifer lookup, and the
+	// brief AI call. The real network lookups can be slow on CI, hence the longer timeout.
+	await expect(page.getByText('[e2e mock] TNN note for this verse.')).toBeVisible({ timeout: 30_000 })
 
 	// The mocked AI response (see e2e/support/mock_ai_gateway.mjs) echoes a note back for every
-	// trigger the real flag-extraction/weighting/trigger pipeline selected for this verse, so this
-	// confirms the whole pipeline -- real source/target lookups, flag extraction, weighting, and
-	// the AI round trip -- ran end-to-end rather than erroring out.
+	// trigger the real pipeline selected for this verse, so this confirms the semantic notes made
+	// it into the brief rather than erroring out.
 	await expect(page.getByText('[e2e mock] meaning for trigger', { exact: false }).first()).toBeVisible()
 })

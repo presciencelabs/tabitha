@@ -17,7 +17,7 @@
 		"test": "bun run test:e2e",
 		"test:e2e": "playwright test",
 		"test:e2e:dev": "playwright test --ui",
-		"precommit": "bun run check && bun run build && bun run test",
+		"precommit": "bun run check && bun run check:lint && bun run build && bun run test",
 		"clean:adapter": "rm -rf .svelte-kit/cloudflare .svelte-kit/cloudflare-tmp",
 		"clean:svelte": "rm -rf .svelte-kit",
 		"clean:deps": "rm -rf node_modules",

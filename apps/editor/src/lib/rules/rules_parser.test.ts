@@ -1,7 +1,12 @@
 import { describe, expect, test } from 'vitest'
 import { TOKEN_TYPE, create_token } from '../token'
 import { create_context_filter, create_token_filter, create_token_transform } from './rules_parser'
-import type { TokenFilterJson } from '$lib/rules/types'
+import type { ContextFilterResult, TokenFilterJson } from '$lib/rules/types'
+
+function matched_context_indexes(result: ContextFilterResult): number[] {
+	if (!result.success) throw new Error('expected the context filter to match')
+	return result.context_indexes
+}
 
 describe('token filters', () => {
 	test('all', () => {
@@ -197,7 +202,7 @@ describe('context filters', () => {
 
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(2)
+		expect(matched_context_indexes(results[1])[0]).toBe(2)
 		expect(results[2].success).toBe(false)
 	})
 	test('not followed by', () => {
@@ -230,9 +235,9 @@ describe('context filters', () => {
 		const results = tokens.map((_, i) => filter(tokens, i))
 
 		expect(results[0].success).toBe(true)
-		expect(results[0].context_indexes[0]).toBe(2)
+		expect(matched_context_indexes(results[0])[0]).toBe(2)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(2)
+		expect(matched_context_indexes(results[1])[0]).toBe(2)
 		expect(results[2].success).toBe(false)
 		expect(results[3].success).toBe(false)
 	})
@@ -250,11 +255,11 @@ describe('context filters', () => {
 		const results = tokens.map((_, i) => filter(tokens, i))
 
 		expect(results[0].success).toBe(true)
-		expect(results[0].context_indexes[0]).toBe(3)
+		expect(matched_context_indexes(results[0])[0]).toBe(3)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(3)
+		expect(matched_context_indexes(results[1])[0]).toBe(3)
 		expect(results[2].success).toBe(true)
-		expect(results[2].context_indexes[0]).toBe(3)
+		expect(matched_context_indexes(results[2])[0]).toBe(3)
 		expect(results[3].success).toBe(false)
 		expect(results[4].success).toBe(false)
 	})
@@ -272,10 +277,10 @@ describe('context filters', () => {
 
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(0)
+		expect(matched_context_indexes(results[1])[0]).toBe(0)
 		expect(results[2].success).toBe(false)
 		expect(results[3].success).toBe(true)
-		expect(results[3].context_indexes[0]).toBe(2)
+		expect(matched_context_indexes(results[3])[0]).toBe(2)
 	})
 	test('not preceded by', () => {
 		const context_json = { 'notprecededby': { 'token': 'token' } }
@@ -309,11 +314,11 @@ describe('context filters', () => {
 
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(0)
+		expect(matched_context_indexes(results[1])[0]).toBe(0)
 		expect(results[2].success).toBe(true)
-		expect(results[2].context_indexes[0]).toBe(1)
+		expect(matched_context_indexes(results[2])[0]).toBe(1)
 		expect(results[3].success).toBe(true)
-		expect(results[3].context_indexes[0]).toBe(1)
+		expect(matched_context_indexes(results[3])[0]).toBe(1)
 		expect(results[4].success).toBe(false)
 	})
 	test('preceded by and followed by', () => {
@@ -333,8 +338,8 @@ describe('context filters', () => {
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(false)
 		expect(results[2].success).toBe(true)
-		expect(results[2].context_indexes[0]).toBe(1)
-		expect(results[2].context_indexes[1]).toBe(3)
+		expect(matched_context_indexes(results[2])[0]).toBe(1)
+		expect(matched_context_indexes(results[2])[1]).toBe(3)
 		expect(results[3].success).toBe(false)
 		expect(results[4].success).toBe(false)
 		expect(results[5].success).toBe(false)
@@ -366,14 +371,14 @@ describe('context filters', () => {
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(false)
 		expect(results[2].success).toBe(true)
-		expect(results[2].context_indexes[0]).toBe(1)
-		expect(results[2].context_indexes[1]).toBe(5)
+		expect(matched_context_indexes(results[2])[0]).toBe(1)
+		expect(matched_context_indexes(results[2])[1]).toBe(5)
 		expect(results[3].success).toBe(true)
-		expect(results[3].context_indexes[0]).toBe(1)
-		expect(results[3].context_indexes[1]).toBe(5)
+		expect(matched_context_indexes(results[3])[0]).toBe(1)
+		expect(matched_context_indexes(results[3])[1]).toBe(5)
 		expect(results[4].success).toBe(true)
-		expect(results[4].context_indexes[0]).toBe(1)
-		expect(results[4].context_indexes[1]).toBe(5)
+		expect(matched_context_indexes(results[4])[0]).toBe(1)
+		expect(matched_context_indexes(results[4])[1]).toBe(5)
 		expect(results[5].success).toBe(false)
 		expect(results[6].success).toBe(false)
 	})
@@ -408,11 +413,11 @@ describe('context filters', () => {
 		expect(results[2].success).toBe(false)
 		expect(results[3].success).toBe(false)
 		expect(results[4].success).toBe(true)
-		expect(results[4].context_indexes[0]).toBe(1)
-		expect(results[4].context_indexes[1]).toBe(3)
+		expect(matched_context_indexes(results[4])[0]).toBe(1)
+		expect(matched_context_indexes(results[4])[1]).toBe(3)
 		expect(results[5].success).toBe(true)
-		expect(results[5].context_indexes[0]).toBe(1)
-		expect(results[5].context_indexes[1]).toBe(3)
+		expect(matched_context_indexes(results[5])[0]).toBe(1)
+		expect(matched_context_indexes(results[5])[1]).toBe(3)
 		expect(results[6].success).toBe(false)
 	})
 	test('followedby array', () => {
@@ -443,11 +448,11 @@ describe('context filters', () => {
 
 		expect(results[0].success).toBe(false)
 		expect(results[1].success).toBe(true)
-		expect(results[1].context_indexes[0]).toBe(3)
-		expect(results[1].context_indexes[1]).toBe(5)
+		expect(matched_context_indexes(results[1])[0]).toBe(3)
+		expect(matched_context_indexes(results[1])[1]).toBe(5)
 		expect(results[2].success).toBe(true)
-		expect(results[2].context_indexes[0]).toBe(3)
-		expect(results[2].context_indexes[1]).toBe(5)
+		expect(matched_context_indexes(results[2])[0]).toBe(3)
+		expect(matched_context_indexes(results[2])[1]).toBe(5)
 		expect(results[3].success).toBe(false)
 		expect(results[4].success).toBe(false)
 		expect(results[5].success).toBe(false)

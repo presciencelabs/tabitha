@@ -5,7 +5,6 @@ import ExampleSummary from './ExampleSummary.svelte'
 import Filters from './Filters.svelte'
 import SourceData from './SourceData.svelte'
 import TargetData from './TargetData.svelte'
-import SourceEntities from './semantic_encoding/SourceEntities.svelte'
 
 export {
 	derive_filters,
@@ -18,5 +17,4 @@ export {
 	Filters,
 	SourceData,
 	TargetData,
-	SourceEntities,
 }

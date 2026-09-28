@@ -16,6 +16,37 @@
 // request). A direct fetch override has no such indirection.
 const original_fetch = globalThis.fetch
 
+function mock_semantic_notes(llm_input) {
+	const notes = (llm_input.triggers ?? []).map(trigger => ({
+		meaning: `[e2e mock] meaning for trigger "${trigger.name}"`,
+		check: '[e2e mock] check whether the translation carries this meaning.',
+		quoted_text: '',
+		trigger: { name: trigger.name, node_id: trigger.node_id },
+	}))
+	return { notes, lwc_text: llm_input.lwc_text ?? llm_input.english_text }
+}
+
+function mock_brief_tnn_output() {
+	return {
+		section4: { sourcePointabilityRows: [], notes: [{ text: '[e2e mock] TNN note for this verse.' }], excluded: [] },
+		section5: { cultural: [], background: [] },
+		section6: { keywords: [] },
+		section7: { decisions: [], resolvedUpstream: [] },
+	}
+}
+
+function mock_translations(llm_input) {
+	return llm_input.map(({ text }) => text)
+}
+
+// copilot makes three kinds of generate_json call; each is told apart by the response schema it
+// requests, so every call gets a response of the shape its caller parses.
+function mock_response_for({ schema, llm_input }) {
+	if (schema?.properties?.section4) return mock_brief_tnn_output()
+	if (schema?.type === 'array') return mock_translations(llm_input)
+	return mock_semantic_notes(llm_input)
+}
+
 globalThis.fetch = async (input, init) => {
 	const url = typeof input === 'string' ? input : input.url
 	const method = init?.method ?? 'GET'
@@ -23,18 +54,9 @@ globalThis.fetch = async (input, init) => {
 	if (url.startsWith('https://gateway.ai.cloudflare.com') && url.includes(':generateContent') && method === 'POST') {
 		const wire_request = JSON.parse(init.body)
 		const llm_input = JSON.parse(wire_request.contents[0].parts[0].text)
+		const schema = wire_request.generationConfig?.responseJsonSchema
 
-		const notes = (llm_input.triggers ?? []).map(trigger => ({
-			meaning: `[e2e mock] meaning for trigger "${trigger.name}"`,
-			check: '[e2e mock] check whether the translation carries this meaning.',
-			quoted_text: '',
-			trigger: { name: trigger.name, node_id: trigger.node_id },
-		}))
-
-		const response_text = JSON.stringify({
-			notes,
-			lwc_text: llm_input.lwc_text ?? llm_input.english_text,
-		})
+		const response_text = JSON.stringify(mock_response_for({ schema, llm_input }))
 
 		return new Response(JSON.stringify({
 			candidates: [{

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PUBLIC_SOURCES_API_HOST } from '$env/static/public'
-	import SourceEntities from './SourceEntities.svelte'
+	import { PUBLIC_SOURCES_API_HOST, PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+	import { SourceEntitiesPlain } from '@tabitha/ui'
 	import Icon from '@iconify/svelte'
 	import type { Reference } from '@tabitha/types'
 	import { fetch_source_data, get_sources_url } from './source_data_helpers'
@@ -8,7 +8,7 @@
 	type Props = {
 		reference: Reference
 		/** lowercased phrase words to highlight matching concepts against, if searching by phrase */
-		highlight_terms?: Set<string>
+		highlight_terms: Set<string>
 	}
 
 	let { reference, highlight_terms }: Props = $props()
@@ -33,6 +33,9 @@
 	</p>
 {:then source}
 	<p>
-		<SourceEntities source_entities={source.parsed_semantic_encoding} {highlight_terms} />
+		<SourceEntitiesPlain
+			source_entities={source.parsed_semantic_encoding}
+			ontology_base_url={PUBLIC_ONTOLOGY_API_HOST}
+			{highlight_terms} />
 	</p>
 {/await}

@@ -7,6 +7,7 @@
 		result: SearchTargetTextResult
 		selected_filters: Record<string, string>
 		search_regex: RegExp
+		highlight_terms: Set<string>
 		open?: boolean
 	}
 
@@ -14,6 +15,7 @@
 		result,
 		selected_filters,
 		search_regex,
+		highlight_terms,
 		open = $bindable(),
 	}: Props = $props()
 
@@ -62,7 +64,7 @@
 		{#if is_open}
 			<div class="min-w-1/8 w-1/8"></div>
 			<div class="w-7/8">
-				<SourceData reference={result.reference} />
+				<SourceData reference={result.reference} {highlight_terms} />
 			</div>
 		{/if}
 	</section>

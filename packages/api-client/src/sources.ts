@@ -42,9 +42,9 @@ export function create_sources_client(options: SourcesClientOptions) {
 		/**
 		 * Retrieve the number of verses present in a chapter.
 		 */
-		async get_chapter_verses_count(ref: ChapterReference, type = 'Bible'): Promise<number> {
+		async get_chapter_verses_count(ref: ChapterReference, type = 'Bible'): Promise<number | null> {
 			const entries = await http.get<{ id_tertiary: string }[]>(`/${type}/${ref.book}/${ref.chapter}`)
-			if (!entries || entries.length === 0) return 0
+			if (!entries || entries.length === 0) return null
 			return Math.max(...entries.map(e => parseInt(e.id_tertiary, 10)))
 		},
 

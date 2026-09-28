@@ -4,11 +4,24 @@ import { expect, test } from '@playwright/test'
 test('search bar parses reference and redirects to verse page', async ({ page }) => {
 	await page.goto('/')
 
-	const searchInput = page.locator('#ref_search')
+	const searchInput = page.locator('#search_query')
 	await searchInput.fill('Genesis 1:1')
 	await page.locator('form[role="search"] button[type="submit"]').click()
 
 	await expect(page).toHaveURL(/\/Bible\/Genesis\/1\/1$/)
+})
+
+test('search bar runs a Phase 1 text search for non-reference input, without a full page load', async ({ page }) => {
+	// a submit before hydration is a native form post, which would be a full page load regardless
+	await page.goto('/', { waitUntil: 'networkidle' })
+	await page.evaluate(() => Object.assign(window, { still_same_document: true }))
+
+	await page.locator('#search_query').fill('"the people of Israel"')
+	await page.locator('form[role="search"] button[type="submit"]').click()
+
+	await expect(page).toHaveURL(/\/search\?q=/)
+	await expect(page.locator('li.list-row mark').first()).toHaveText(/the people of Israel/i)
+	expect(await page.evaluate(() => 'still_same_document' in window)).toBe(true)
 })
 
 test('clicking next verse button navigates to next verse', async ({ page }) => {

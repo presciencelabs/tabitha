@@ -25,6 +25,7 @@ export const desired_apps: DesiredApp[] = [
 	{ worker_name: 'copilot', app_dir: 'copilot', worker_tag: '438365b3332d4db0b483dc21ffbb1dc0' },
 	{ worker_name: 'editor', app_dir: 'editor', worker_tag: '0e95fe00cde241ba89614300f6129cd6' },
 	{ worker_name: 'ontology', app_dir: 'ontology', worker_tag: '5722ffa9151e4b2799dd0adb6595b802' },
+	{ worker_name: 'scheduler', app_dir: 'scheduler', worker_tag: '17ef176bd6f7473c9e3143ab9fe110c4' },
 	{ worker_name: 'sources', app_dir: 'sources', worker_tag: '77332af7a6f84b52bede77cdc4c3a1ea' },
 	{ worker_name: 'targets', app_dir: 'targets', worker_tag: 'ae35e59e43814365a758068b590d986c' },
 	{ worker_name: 'www', app_dir: 'www', worker_tag: 'f0cbbb74c7464674ac9e5871be861ae5' },

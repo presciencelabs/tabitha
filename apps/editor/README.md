@@ -7,6 +7,8 @@
 
 ## 🔌 API
 
+> **Scripted clients:** send a descriptive `User-Agent` (e.g. `my-project/0.1 (+https://github.com/me/my-project)`); Cloudflare rejects some default library User-Agents, such as Python's `urllib`, with a `403` (`error code: 1010`). Production allows 60 requests per minute per IP, so run a local editor (see `CONTRIBUTING.md`) for batch work.
+
 ### 1. Grammar & Rule Checker API
 
 - `GET /check?text={text}` — Parses input encoding text, checks rule validations, performs backtranslation, and returns overall status (`ok` | `warning` | `error`), tokens with messages, and backtranslation.

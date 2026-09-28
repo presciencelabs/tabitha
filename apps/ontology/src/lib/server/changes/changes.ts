@@ -8,30 +8,7 @@ import type { OntologyChange, OntologyChangeAction, OntologyChangeDataFields, Co
 import type { DbOntologyChange } from '$lib/server/types'
 import type { PartOfSpeech } from '@tabitha/types'
 
-async function create_table_if_not_exists(db: D1Database) {
-	const sql = `
-		CREATE TABLE IF NOT EXISTS Changes (
-			'id'								INTEGER PRIMARY KEY,
-			'concept_stem'					TEXT,
-			'concept_sense'				TEXT,
-			'concept_part_of_speech'	TEXT,
-			'data'							TEXT,
-			'action'							TEXT,
-			'suggested_by_email'			TEXT,
-			'suggested_date'				TEXT,
-			'approved_by_email'			TEXT,
-			'approved_date'				TEXT,
-			'applied_date'					TEXT,
-			'version'						TEXT
-		)
-	`
-	// Ensure table exists
-	await db.prepare(sql).run()
-}
-
 export async function get_all_changes(db: D1Database): Promise<OntologyChange[]> {
-	await create_table_if_not_exists(db)
-
 	const sql = `
 		SELECT *
 		FROM Changes
@@ -42,8 +19,6 @@ export async function get_all_changes(db: D1Database): Promise<OntologyChange[]>
 }
 
 export async function get_pending_changes(db: D1Database): Promise<OntologyChange[]> {
-	await create_table_if_not_exists(db)
-
 	const sql = `
 		SELECT *
 		FROM Changes
@@ -60,8 +35,6 @@ type GetChangeOptions = {
 }
 
 export async function get_change({ db, id }: GetChangeOptions): Promise<OntologyChange | null> {
-	await create_table_if_not_exists(db)
-
 	const db_change = await db.prepare('SELECT * FROM Changes WHERE id = ?').bind(id).first<DbOntologyChange>()
 	return db_change ? transform(db_change) : null
 }
@@ -74,7 +47,6 @@ type ChangeSubmission = {
 }
 
 async function prepare_change_data({ db, action, data }: Pick<ChangeSubmission, 'db' | 'action' | 'data'>) {
-	await create_table_if_not_exists(db)
 	const { stem, sense, part_of_speech } = data
 	const change_data = action === 'create'
 		? create_change_fields(data)
@@ -168,8 +140,6 @@ type ApproveChangeOptions = {
 
 // Approves a suggested change so the existing apply-pending machinery will pick it up.
 export async function approve_change({ db, id, user }: ApproveChangeOptions): Promise<OntologyChange> {
-	await create_table_if_not_exists(db)
-
 	const sql = `
 		UPDATE Changes
 		SET approved_by_email = ?, approved_date = ?
@@ -213,8 +183,6 @@ function transform(db_change: DbOntologyChange): OntologyChange {
 }
 
 export async function apply_pending_changes(db: D1Database): Promise<ApplyPendingResult> {
-	await create_table_if_not_exists(db)
-
 	const sql = `
 		SELECT *
 		FROM Changes

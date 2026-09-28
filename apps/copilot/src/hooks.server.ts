@@ -5,6 +5,7 @@ import { create_cors_handle } from '@tabitha/cors'
 import { create_rate_limit_handle } from '@tabitha/rate-limit'
 import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { env } from '$env/dynamic/private'
+import { paraglideMiddleware } from '$lib/paraglide/server'
 
 let ai: AiClient
 
@@ -30,4 +31,13 @@ const ai_locals_handle: Handle = async function ai_locals_handle({ event, resolv
 	return resolve(event)
 }
 
-export const handle = sequence(cors_handle, rate_limit_handle, ai_locals_handle)
+const i18n_handle: Handle = function i18n_handle({ event, resolve }) {
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
+		event.request = request
+		return resolve(event, {
+			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
+		})
+	})
+}
+
+export const handle = sequence(cors_handle, rate_limit_handle, ai_locals_handle, i18n_handle)
