@@ -8,6 +8,7 @@
 	import { apply_pending_changes, approve_change } from '$lib/changes'
 	import { format_datetime, format_time } from '$lib/format'
 	import type { OntologyChange } from '$lib/types'
+    import { onMount } from 'svelte';
 
 	let { data }: PageProps = $props()
 
@@ -67,12 +68,18 @@
 		}
 	}
 
+	let do_highlight = $state(true)
+	onMount(() => {
+		setTimeout(() => {
+			do_highlight = false
+		}, 1000)
+	})
 	let two_mins_ago = $derived.by(() => {
 		const two_mins_ago = new Date()
 		two_mins_ago.setMinutes(two_mins_ago.getMinutes() - 2)
 		return two_mins_ago
 	})
-	function should_highlight(change: OntologyChange) {
+	function was_recent_change(change: OntologyChange) {
 		return change.applied_date && change.applied_date >= two_mins_ago
 			|| change.approved_by && change.approved_by.date >= two_mins_ago
 			|| change.suggested_by && change.suggested_by.date >= two_mins_ago
@@ -140,7 +147,7 @@
 			</thead>
 			<tbody>
 			{#each changes as change}
-				<tr class="{should_highlight(change) ? 'bg-primary-content' : ''} transition-colors duration-5000">
+				<tr class="transition-color duration-3000 {do_highlight && was_recent_change(change) ? 'bg-info/30' : ''}">
 					<td>{change.action === 'create' ? 'Add' : 'Edit'}</td>
 					<td>
 						<a href={`/?q=${change.concept.stem}&category=${change.concept.part_of_speech}`} target="_blank" class="link link-hover">

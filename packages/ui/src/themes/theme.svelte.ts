@@ -15,9 +15,32 @@ class ThemeState {
 
 	set(new_theme: string) {
 		this.current = new_theme
+
 		if (typeof window !== 'undefined') {
+			// 1. Create a style block to instantly kill ALL transitions/animations
+			const css = document.createElement('style')
+			css.appendChild(
+				document.createTextNode(
+				`* { 
+					-webkit-transition: none !important; 
+					-moz-transition: none !important; 
+					-o-transition: none !important; 
+					-ms-transition: none !important; 
+					transition: none !important; 
+				}`
+				)
+			)
+			document.head.appendChild(css)
+
+			// 2. Change the daisyUI theme attribute
 			localStorage.setItem(THEME_KEY, new_theme)
 			document.documentElement.dataset.theme = to_daisyui_theme(new_theme)
+			
+			// 3. Force a DOM repaint so the browser renders the new theme colors instantly
+			window.getComputedStyle(css).opacity
+
+			// 4. Remove the style block to re-enable your 3-second row animations safely
+			document.head.removeChild(css)
 		}
 	}
 }
