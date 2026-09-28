@@ -23,7 +23,7 @@
 
 ### 3. AI Assist Generation API
 
-- `POST /ai-assist/generate` — Uses the shared `@tabitha/ai` client, routed through the Cloudflare AI Gateway, to convert English text into a Phase 1 encoding suggestion, then validates it against editor's own checker (with one automatic repair pass if the checker finds errors).
+- `POST /ai-assist/generate` — Uses the shared `@tabitha/ai` client, routed through the Cloudflare AI Gateway, to convert English text into a Phase 1 encoding suggestion, then validates it against editor's own checker (with one automatic repair pass if the checker finds errors). The prompt pairs the editor's own conventions (`system_instruction.md`) with an itemized Phase 1 rule set (`phase1_rules.md`); the repair pass keeps both and adds the checker's feedback, including the ontology's pairing/explication hints for any flagged word.
   - **Request Body:**
 
     ```json
