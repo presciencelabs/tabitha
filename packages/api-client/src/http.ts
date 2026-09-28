@@ -74,6 +74,8 @@ export function create_http_client(options: ClientOptions): HttpClient {
 	async function parse_response<T>(res: Response): Promise<T | null> {
 		if (!res.ok) {
 			console.warn(`[api-client] ${res.status} ${res.statusText} from ${res.url}`)
+			// const error_text = await res.text().catch(() => 'no text body')
+			// console.warn(error_text)
 			return null
 		}
 

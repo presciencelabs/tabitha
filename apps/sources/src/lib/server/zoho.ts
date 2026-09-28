@@ -11,7 +11,7 @@ export type ZohoVerseData = {
 	complex_concepts: string[]
 }
 
-const zoho_workdrive_client = create_http_client({ base_url: 'https://www.zohoapis.com/workdrive/api/v1' })
+const zoho_workdrive_client = create_http_client({ base_url: 'https://www.zohoapis.com/workdrive/api/v1', cache: true })
 const zoho_writer_client = create_http_client({ base_url: 'https://www.zohoapis.com/writer/api/v1' })
 
 const bible_book_folder_ids = new Map([
@@ -66,6 +66,10 @@ const bible_book_folder_ids = new Map([
 
 export async function get_all_verses_in_chapter(chapter_reference: ChapterReference): Promise<ZohoVerseData[]> {
 	const chapter_files = await find_files_for_chapter(chapter_reference)
+	if (!chapter_files.length) {
+		console.info(`No Zoho files found for ${chapter_reference.book} ${chapter_reference.chapter}.`)
+		return []
+	}
 	const data: ZohoVerseData[] = []
 	for (const file of chapter_files) {
 		console.info(`Extracting verses from '${file.name}'...`)
@@ -136,7 +140,7 @@ export async function extract_all_verses_from_file(file: ZohoFilesInfo, chapter:
 		data.push({
 			verse,
 			he1: match[2]?.trim() ?? '',
-			he2: match[3]?.trim() ?? '',
+			he2: match[3]?.replace(/^\s*-( drafter)?/, '').trim() ?? '',
 			back_translation: match[4]?.trim() ?? '',
 			complex_concepts: match[5]?.split('|').map(cc => cc.trim()).filter(cc => cc) ?? '',
 		})
@@ -188,7 +192,8 @@ type ZohoFilesInfo = {
 	type: 'writer' | 'folder'
 	passage?: PassageReference
 }
-export async function list_folder_contents(folder_id: string): Promise<ZohoFilesInfo[]> {
+
+async function list_folder_contents(folder_id: string): Promise<ZohoFilesInfo[]> {
 	// refer to https://www.zoho.com/workdrive/developer/docs/api/v1/list-files-folders-inside-a-folder.html
 	const params = new URLSearchParams({ 'fields[files]': 'type,name', 'page[limit]': '100' })
 	const obj = await fetch_from_zoho<any>({
@@ -206,7 +211,7 @@ export async function list_folder_contents(folder_id: string): Promise<ZohoFiles
 	return obj.data.map((x: any) => ({ id: x.id, name: x.attributes.name, type: x.attributes.type })) as ZohoFilesInfo[]
 }
 
-export async function download_file(file_id: string): Promise<string | null> {
+async function download_file(file_id: string): Promise<string | null> {
 	// refer to https://www.zoho.com/writer/help/api/v1/download-document.html
 	// Unintuitively, 'include_changes: all' only returns the final version of the text
 	// whereas 'include_changes: none' only returns the first version of the text.
@@ -237,13 +242,6 @@ type ZohoFetchConfig = {
 	client: HttpClient
 	path: string
 	headers?: Record<string, string>
-}
-
-type ZohoError = {
-	errors: {
-		id: string
-		title: string
-	}[]
 }
 
 async function fetch_from_zoho<T>({ scope, client, path, headers }: ZohoFetchConfig): Promise<T | null> {
