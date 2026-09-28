@@ -500,7 +500,7 @@ monorepo:
   of the two (public vs. private) to use is about client-bundle exposure only, and is unrelated to whether a
   given var happens to be blank or populated in `.env` -- a var can be public and blank (e.g.
   `PUBLIC_CORS_ALLOW_LOCALHOST`, whose correct production value genuinely is "off"), or private
-  and populated (e.g. `OAUTH_REDIRECT_PROXY_URL`, non-sensitive but server-only, holding a real
+  and populated (e.g. `GOOGLE_OAUTH_CLIENT_ID`, non-sensitive but server-only, holding a real
   value in production).
 
   SvelteKit is moving toward a different, [explicit environment variables

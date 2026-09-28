@@ -16,7 +16,7 @@
 		"head_sampling_rate": 1
 	},
 	"vars": {
-		"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com", // Ontology (Preview & Prod)
+		"GOOGLE_OAUTH_CLIENT_ID": "839335496347-0tb9fcocvv3gcvr9d4derj2l76uirgab.apps.googleusercontent.com", // Ontology (prod)
 		"CLOUDFLARE_ACCOUNT_ID": "8582954a9e4c6f0259c6236be794d7d3",
 		"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
 		"GEMINI_LOCATION": "global"
@@ -96,7 +96,7 @@
 			// OAuth/Gemini config, the /downloads page, every DB-backed request, rate limiting, and
 			// semantic search respectively).
 			"vars": {
-				"GOOGLE_OAUTH_CLIENT_ID": "920310198944-m3ndmqnajejoa1drvkubke6gvr888rv7.apps.googleusercontent.com",
+				"GOOGLE_OAUTH_CLIENT_ID": "839335496347-cjfdqt75n7fc3gjusoesh7cajecc6arp.apps.googleusercontent.com", // Ontology (preview)
 				"CLOUDFLARE_ACCOUNT_ID": "8582954a9e4c6f0259c6236be794d7d3",
 				"GEMINI_PROJECT_ID": "gen-lang-client-0319586327",
 				"GEMINI_LOCATION": "global"
