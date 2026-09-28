@@ -6,7 +6,9 @@ export default create_app_vite_config({
 	port: PORTS.editor.port,
 	plugins: [
 		SvelteKitPWA({
-			registerType: 'prompt',
+			// A new service worker takes over as soon as it installs; the page picks up the new
+			// version on its next navigation (UpdateNotice in @tabitha/ui), never a forced reload.
+			registerType: 'autoUpdate',
 			scope: '/',
 			base: '/',
 			manifest: {

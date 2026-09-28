@@ -23,7 +23,7 @@ export function create_app_svelte_config({
 	return {
 		kit: {
 			adapter: adapter(adapter_options),
-			// Users might leave a tab open indefinitely, so poll for new deployments (see UpdateToast in @tabitha/ui).
+			// Users might leave a tab open indefinitely, so poll for new deployments (see UpdateNotice in @tabitha/ui).
 			version: { pollInterval: POLL_EVERY_30_MINS },
 			...kit,
 		},
