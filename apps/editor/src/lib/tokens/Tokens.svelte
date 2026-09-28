@@ -3,6 +3,7 @@
 	import type { Component as SvelteComponent } from 'svelte'
 	import LookupWord from './LookupWord.svelte'
 	import Added from './Added.svelte'
+	import AutoFixed from './AutoFixed.svelte'
 	import SingleToken from './SingleToken.svelte'
 	import Clause from './Clause.svelte'
 	import { TOKEN_TYPE } from '$lib/token'
@@ -21,7 +22,9 @@
 
 {#each tokens as token}
 	{@const Component = component_map.get(token.type)}
-	{#if Component}
+	{#if token.auto_fix}
+		<AutoFixed {token} auto_fix={token.auto_fix} />
+	{:else if Component}
 		<Component {token} />
 	{/if}
 {/each}

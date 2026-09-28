@@ -58,6 +58,20 @@ export type CheckerToken = {
 	pairing_type: PairingType | null
 	pronoun: CheckerToken | null
 	sub_tokens: CheckerToken[]
+	auto_fix?: CheckerAutoFix
+}
+
+export type CheckerTextInsertion = {
+	offset: number
+	text: string
+}
+
+// A token the checker inserted into the author's text; start/end locate the inserted text within the checked text
+export type CheckerAutoFix = {
+	message: string
+	text: string
+	start: number
+	end: number
 }
 
 //===============
@@ -67,6 +81,8 @@ export type EditorCheckResult = {
 	status: CheckStatus
 	tokens: CheckerToken[]
 	back_translation: string
+	// Insertions applied to the submitted text before checking, located by offsets into the submitted text
+	auto_fixes?: CheckerTextInsertion[]
 }
 
 //===============

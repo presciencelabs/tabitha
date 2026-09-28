@@ -8,7 +8,13 @@ const NO_SPACE_BEFORE_OPENING_BRACKET = 'Missing a space before [.'
 const INVALID_COMPLEX_PAIRING_SYNTAX = 'Complex pairings should have the form simple/complex, e.g., follower/disciple.'
 const INVALID_LITERAL_PAIRING_SYNTAX = 'Literal pairings should have the form dynamic|literal, e.g., reward|prize.'
 const INVALID_PRONOUN_REFERENT_SYNTAX = 'Pronoun referents should have the form pronoun(referent), e.g., you(follower).'
-const UNRECOGNIZED_CLAUSE_NOTATION = 'This clause notation is not recognized.' // TODO show list of valid notations
+const UNRECOGNIZED_CLAUSE_NOTATION = (suggestions: string[]): string => {
+	const message = 'This clause notation is not recognized.'
+	if (!suggestions.length) return message
+
+	const suggestion_list = new Intl.ListFormat('en', { type: 'disjunction' }).format(suggestions)
+	return `${message} Did you mean ${suggestion_list}?`
+}
 const NO_SPACE_BEFORE_UNDERSCORE = 'Notes notation should have a space before the underscore, e.g., ⎕_implicit.'
 const UNRECOGNIZED_CHAR = 'Unrecognized character.'
 

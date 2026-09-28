@@ -1,5 +1,5 @@
 import type { ConceptKey, PairingType } from '@tabitha/types'
-import type { CheckerTokenType, CheckerMessage, CheckerMessageLabel, EditorCheckResult, CheckerLookupResult } from '@tabitha/types/editor'
+import type { CheckerTokenType, CheckerMessage, CheckerMessageLabel, EditorCheckResult, CheckerLookupResult, CheckerTextInsertion, CheckerAutoFix } from '@tabitha/types/editor'
 import type { CaseFrame } from '$lib/rules/case_frame/types'
 
 export type LookupTerm = string
@@ -12,8 +12,14 @@ export type LookupResult = Omit<CheckerLookupResult, 'case_frame'> & {
 
 export type Tag = Record<string, string>
 
+export type SourceRange = {
+	start: number
+	end: number
+}
+
 export type Token = {
 	token: string
+	source_range?: SourceRange
 	type: CheckerTokenType
 	tag: Tag
 	messages: CheckerMessage[]
@@ -25,6 +31,9 @@ export type Token = {
 	pairing_type: PairingType | null
 	pronoun: Token | null
 	sub_tokens: Token[]
+	// where an auto-fix Added token belongs in the author's text
+	insertion?: CheckerTextInsertion
+	auto_fix?: CheckerAutoFix
 }
 
 export type Clause = Token
