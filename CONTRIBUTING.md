@@ -381,7 +381,7 @@ UI text is translated with [Paraglide JS](https://paraglidejs.com/sveltekit), an
 1. Copy `apps/copilot/project.inlang/settings.json` into the app. Keep `packages/ui/messages` first in `pathPattern`, so the shared `@tabitha/ui` strings are compiled in. Inlang writes its own `.gitignore`, `README.md`, and cache into that folder; only `settings.json` is committed.
 2. Add `messages/en.json` and `messages/id.json` using `snake_case` keys, and use them as `import { m } from '$lib/paraglide/messages'` → `m.some_key()`.
 3. Pass `i18n: true` to `create_app_vite_config`.
-4. Change the `prepare` script to `tabitha-compile-messages && svelte-kit sync`, so svelte-check can see the generated modules.
+4. Change the `check` script to `bun run prepare && tabitha-compile-messages && bun run check:svelte`, so svelte-check can see the generated modules. Keep the compile out of `prepare`: `bun install` runs `prepare` and can start it before Paraglide's dependencies finish linking, which fails the install.
 5. In `hooks.server.ts`, add a `handle` that wraps `paraglideMiddleware` and replaces `%paraglide.lang%`, and set `<html lang="%paraglide.lang%">` in `app.html` (copy both from copilot).
 6. In the root `+layout.svelte`, call `set_ui_messages(m)` from `@tabitha/ui`.
 

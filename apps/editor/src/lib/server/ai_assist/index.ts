@@ -4,7 +4,7 @@ import { check_input_safety } from './input_guard'
 import { build_repair_instruction, build_system_instruction, type CheckerFeedback } from './prompts'
 import { phase_1_response_schema } from './response_schema'
 
-import type { EditorCheckResult } from '@tabitha/types'
+import type { CheckerToken, EditorCheckResult } from '@tabitha/types'
 import type { AiAssistResult } from '$lib/types'
 
 const MAX_REPAIR_ATTEMPTS = 1
@@ -57,14 +57,40 @@ async function generate_and_check({ text, ai, system_instruction, attempts_left 
 		attempts_left: attempts_left - 1,
 	})
 
-	return STATUS_RANK[repaired.check.status] >= STATUS_RANK[result.check.status] ? repaired : result
+	return is_at_least_as_good({ candidate: repaired.check, baseline: result.check }) ? repaired : result
+}
+
+function is_at_least_as_good({ candidate, baseline }: { candidate: EditorCheckResult, baseline: EditorCheckResult }): boolean {
+	const status_difference = STATUS_RANK[candidate.status] - STATUS_RANK[baseline.status]
+	if (status_difference !== 0) return status_difference > 0
+
+	return count_errors(candidate) <= count_errors(baseline)
+}
+
+function count_errors(check: EditorCheckResult): number {
+	return check.tokens
+		.flatMap(expand_token)
+		.flatMap(token => token.messages)
+		.filter(message => message.label === 'error')
+		.length
 }
 
 function collect_feedback(check: EditorCheckResult): CheckerFeedback[] {
 	return check.tokens
 		.flatMap(expand_token)
-		.flatMap(token => token.messages.map(message => ({ token: token.token, label: message.label, message: message.message })))
+		.flatMap(token => token.messages.map(message => ({ token: token.token, label: message.label, message: message.message, hints: collect_how_to_hints(token) })))
 		.filter(feedback => feedback.label === 'error' || feedback.label === 'warning')
+}
+
+function collect_how_to_hints(token: CheckerToken): string[] {
+	return token.lookup_results
+		.flatMap(lookup => lookup.how_to_entries)
+		.map(({ structure, pairing, explication }) => [
+			structure && `structure "${structure}"`,
+			pairing && `pairing "${pairing}"`,
+			explication && `explication "${explication}"`,
+		].filter(Boolean).join(', '))
+		.filter(Boolean)
 }
 
 function sanitize(text: string): string {
