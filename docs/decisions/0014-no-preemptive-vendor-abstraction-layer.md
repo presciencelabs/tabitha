@@ -16,7 +16,7 @@ The audit (wrangler configs, `lib/server` code, `packages/*`) found:
 - **Cron trigger** (ontology) — a plain `scheduled()` export; only the trigger config is Workers-specific.
 - **`adapter-cloudflare`** — a config-level SvelteKit adapter, swappable on its own terms.
 - **Cloudflare AI Gateway** — a thin BYOK proxy in front of Google Vertex AI (`packages/ai/src/client.ts`), used for observability/cost tracking only. The actual inference vendor is Google, not Cloudflare.
-- **Not used at all**: Durable Objects, Queues, Vectorize, KV, Workers AI, Turnstile, Access/Zero Trust — the primitives that tend to create genuine one-way doors elsewhere (stateful coordination, proprietary vector search, proprietary inference).
+- **Not used at all**: Durable Objects, Queues, Vectorize, KV, Workers AI, Turnstile, Access/Zero Trust — the primitives that tend to create genuine one-way doors elsewhere (stateful coordination, proprietary vector search, proprietary inference). *(Vectorize has since been adopted for ontology's semantic search, as rebuildable derived data — see [0016](./0016-semantic-search-via-vectorize-embeddings.md).)*
 
 Net finding: lock-in is real but shallow, and concentrated almost entirely in the D1 access layer, which is already contained to a bounded, greppable set of files per app rather than scattered.
 

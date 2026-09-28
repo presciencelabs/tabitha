@@ -10,7 +10,7 @@
 
 <div class="page-kicker">The project</div>
 <h1>Privacy Policy</h1>
-<p class="page-dek">Last updated: September 23, 2026</p>
+<p class="page-dek">Last updated: September 26, 2026</p>
 
 <div class="page-body">
 	<p>
@@ -42,8 +42,34 @@
 	<h2>Cookies and tracking</h2>
 	<p>
 		Outside of the sign-in session ontology.tabitha.bible sets for signed-in users, this site
-		doesn't use cookies, run analytics scripts, or use any third-party advertising or tracking
-		pixels.
+		doesn't use cookies, run third-party analytics scripts, or use any third-party advertising or
+		tracking pixels.
+	</p>
+
+	<h2>Anonymous feature usage</h2>
+	<p>
+		To learn which features are worth improving, the ontology, sources, targets, editor, and
+		copilot apps count a few anonymous usage events:
+	</p>
+	<ul>
+		<li>
+			searches in ontology, sources, and targets — the search terms entered, the options chosen, and
+			how many results came back;
+		</li>
+		<li>
+			copilot runs — the settings chosen (mode, language, level, and which language-profile options
+			were changed), the book, how many verses were requested, and whether any failed;
+		</li>
+		<li>
+			editor checks and AI Assist requests — whether they succeeded and how many errors or warnings
+			the checker found, but not the text itself;
+		</li>
+		<li>which color theme is active, once per browser session in each app.</li>
+	</ul>
+	<p>
+		These events carry no account, IP address, cookie, or other identifier, so they can't be tied to
+		you or linked across visits. They're stored with Cloudflare, our hosting provider, and aren't
+		shared with anyone else.
 	</p>
 
 	<h2>AI-assisted translation tooling</h2>

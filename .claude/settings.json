@@ -1,5 +1,16 @@
 {
 	"hooks": {
+		"SessionStart": [
+			{
+				"matcher": "startup",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "bun \"$CLAUDE_PROJECT_DIR/.claude/hooks/warn_session_started_in_worktree.ts\""
+					}
+				]
+			}
+		],
 		"PreToolUse": [
 			{
 				"matcher": "EnterWorktree",

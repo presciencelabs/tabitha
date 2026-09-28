@@ -2,6 +2,7 @@
 
 import type { D1Database } from '@cloudflare/workers-types'
 import type { TargetProject } from '@tabitha/types/target'
+import type { UsageEnv } from '@tabitha/usage'
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
@@ -18,7 +19,7 @@ declare global {
 		interface Platform {
 			// Cloudflare-specific -- one D1 binding per target-language project, named to match
 			// TARGET_PROJECTS (see wrangler.jsonc and @tabitha/types/target)
-			env: {
+			env: UsageEnv & {
 				[K in TargetProject as `DB_Targets_${K}`]: D1Database
 			}
 		}

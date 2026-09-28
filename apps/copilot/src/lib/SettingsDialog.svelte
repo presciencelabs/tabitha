@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte'
 	import Icon from '@iconify/svelte'
+	import { m } from '$lib/paraglide/messages'
 
 	type Props = {
 		children: Snippet
@@ -40,7 +41,7 @@
 				
 				<section class="card-actions justify-end">
 					<form method="dialog">
-						<button class="btn btn-primary btn-md">OK</button>
+						<button class="btn btn-primary btn-md">{m.ok()}</button>
 					</form>
 				</section>
 			</div>
@@ -48,6 +49,6 @@
 	</section>
 
 	<form method="dialog" class="modal-backdrop">
-		<button>Close</button>
+		<button>{m.close()}</button>
 	</form>
 </dialog>

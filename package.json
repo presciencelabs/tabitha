@@ -16,6 +16,7 @@
     "dev:copilot": "bun --filter @tabitha/copilot dev",
     "dev:editor": "bun --filter @tabitha/editor dev",
     "dev:ontology": "bun --filter @tabitha/ontology dev",
+    "dev:scheduler": "bun --filter @tabitha/scheduler dev",
     "dev:sources": "bun --filter @tabitha/sources dev",
     "dev:targets": "bun --filter @tabitha/targets dev",
     "dev:www": "bun --filter @tabitha/www dev",

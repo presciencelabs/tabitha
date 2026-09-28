@@ -6,17 +6,18 @@ Welcome to the **TaBiThA** monorepo! This guide covers architecture, conventions
 
 ## 🗺️ System Architecture
 
-The TaBiThA monorepo consists of 6 modular Cloudflare Worker applications and 8 shared workspace packages managed with **Bun workspaces** and **Turborepo**:
+The TaBiThA monorepo consists of 7 Cloudflare Worker applications (6 SvelteKit apps plus a cron-only `scheduler` Worker) and 8 shared workspace packages managed with **Bun workspaces** and **Turborepo**:
 
 ```mermaid
 graph TD
-	subgraph Apps ["Applications (Cloudflare Workers / SvelteKit)"]
+	subgraph Apps ["Applications (Cloudflare Workers)"]
 		Editor["Editor (:1337)<br/>Translation Workbench & Rule Engine"]
 		Ontology["Ontology (:3056)<br/>Concepts, Senses, & D1 DB"]
 		Sources["Sources (:1947)<br/>Hebrew/Greek & Semantic Trees"]
 		Targets["Targets (:1382)<br/>Target Language Lexicon & Forms"]
 		Copilot["Copilot (:9000)<br/>AI Translation Assistant"]
 		Www["Www (:1455)<br/>Public Marketing Site"]
+		Scheduler["Scheduler (cron only)<br/>Triggers Apps' Scheduled Work"]
 	end
 
 	subgraph SharedPackages ["Shared Workspace Packages"]
@@ -63,6 +64,7 @@ graph TD
 	Ontology -.->|"REST / JSON"| Sources
 	Ontology -.->|"REST / JSON"| Targets
 	Www -.->|"REST / JSON"| Sources
+	Scheduler -.->|"Service binding (cron)"| Ontology
 
 	AI --> Gateway --> Vertex
 ```
@@ -81,6 +83,7 @@ graph TD
 | **`editor`** | `1337` | [http://localhost:1337](http://localhost:1337) | Interactive translation workbench, clause parser, rule processor, and UI. |
 | **`copilot`** | `9000` | [http://localhost:9000](http://localhost:9000) | AI translation guidance, theological constraint checking, and LLM calls via `@tabitha/ai` and the Cloudflare AI Gateway. |
 | **`www`** | `1455` | [http://localhost:1455](http://localhost:1455) | Public-facing marketing/informational site. |
+| **`scheduler`** | — | — | Cron-only plain Worker (not SvelteKit) that triggers each app's scheduled work through a service binding. See [`apps/scheduler/README.md`](apps/scheduler/README.md) and [ADR 0018](docs/decisions/0018-scheduled-work-via-scheduler-worker.md). |
 
 ### Shared Packages (`packages/`)
 
@@ -138,7 +141,7 @@ bun run check:doctor
 ### 3. Start Development Servers
 
 ```bash
-# Start all 6 apps concurrently
+# Start all 6 web apps concurrently
 bun run dev
 
 # Interactive launcher (choose presets e.g. Editor + Ontology)
@@ -151,6 +154,9 @@ bun run dev:sources
 bun run dev:targets
 bun run dev:copilot
 bun run dev:www
+
+# The cron-only scheduler Worker (wrangler dev --test-scheduled; see apps/scheduler/README.md)
+bun run dev:scheduler
 ```
 
 > **Windows:** avoid using the specific dev commands (eg. `dev:ontology`) -- always run through `dev` or `dev:menu` instead. The way bun handles `--filter` can make the terminal ignore user input, including Ctrl+C, and cause the process to hang or orphan the vite process. WSL2 sidesteps Windows-native tooling issues like this one entirely, at the cost of a separate Linux-side setup (see [ADR 0011](docs/decisions/0011-windows-db-load-node-fallback.md) for another example of this same class of issue).
@@ -301,9 +307,26 @@ If you use the **Generate ✨** button in the VS Code / IDE Source Control panel
    import type { Concept, LinguisticEntity } from '@tabitha/types'
    ```
 
+### How to Add a New App
+
+Apps under `apps/*` are picked up automatically by Bun workspaces, Turborepo, CI's change scoping, and most audits, but several places list apps by hand, and some tooling assumes every app is SvelteKit. Work through this list so a new app isn't silently skipped, and doesn't wander into tooling meant for another kind of app.
+
+**Every app:**
+
+1. **`package.json`** named `@tabitha/<app>`, with at least `check`, `check:lint`, `build`, `build:ci`, `test`, and `precommit`. Workers Builds runs `bun install && bun run build` before deploying, so a missing `build` fails the deploy, and CI only builds apps that define `build:ci`.
+2. **`wrangler.jsonc`** with `compatibility_date` and `nodejs_compat` (`bun run check:cloudflare` enforces both). Secrets go through `wrangler secret put`, never `vars`.
+3. **`.env`** following the two-tier convention in `AGENTS.md`; local values go in `.env.local`, never `.dev.vars` (gitignored as a safety net only).
+4. **Hardcoded lists**: `search_dirs` in `scripts/audits/check_philosophies.ts`, `PACKAGES_TO_COVER` in `scripts/ci/report_coverage.ts`, a `dev:<app>` script in the root `package.json`, and, after its first deploy, `desired_apps` in `tools/workers/config.ts` (it needs the Worker's `worker_tag`).
+5. **Docs**: the apps list in `AGENTS.md`, the diagram, apps table, and dev commands here, and the app sections of the root `README.md`.
+6. **Workers Builds**: after the app is merged to `main`, create it in the Cloudflare dashboard (**Workers & Pages → Create application → Import a repository**, root directory `apps/<app>`), which creates the Worker and both build triggers in one step, then add it to `tools/workers` and run `bun run apply:run`. The Workers Builds API can create triggers too, but `tools/workers` doesn't do that yet.
+
+**A SvelteKit app, additionally:** a port in `packages/vite-config/ports.js`, entries in `scripts/dx/dev_multi.ts`, `scripts/dx/dev_menu.ts`, `scripts/ci/run_e2e.ts` (if it has e2e tests), and `scripts/dx/doctor.ts`, a letter in `scripts/dx/lib/brand_mark.ts` (see "How to Generate an App's Icons" below), and `deploy:preview` if it should get a cross-app preview deploy ([ADR 0015](docs/decisions/0015-cross-app-preview-custom-domains.md)).
+
+**A plain Worker (like `apps/scheduler`), deliberately not:** don't define `prepare`, `dev:e2e`, `test:e2e`, or `deploy:preview`, and don't add it to the port registry, `dev_multi`, `dev_menu`, `run_e2e`, `doctor`, or `brand_mark` — each assumes a SvelteKit dev server, and `deploy:preview` would enroll it in CI's preview deploy. Extend `@tabitha/tsconfig/base.json` and use `tsc --noEmit` for `check`, and something like `wrangler deploy --dry-run --outdir dist` for `build`.
+
 ### How to Add a New App-Level Configuration
 
-All applications use `@tabitha/vite-config` and `@tabitha/eslint-config` to eliminate boilerplate:
+Every SvelteKit app uses `@tabitha/vite-config` and `@tabitha/eslint-config` to eliminate boilerplate (`apps/scheduler`, a plain Worker, uses only the ESLint and TypeScript configs):
 
 - `vite.config.js`:
 
@@ -350,6 +373,19 @@ Every app's favicon and PWA manifest icons are generated, not hand-drawn: a shar
 4. If the app is on `@vite-pwa/sveltekit`, point its `manifest.icons` at the three generated files (see `apps/ontology/vite.config.js` for a complete example) instead of leaving `manifest: false`.
 
 Only the letter needs choosing per app — color, shape, and sizing are shared, so the same two commands work for every app added to the monorepo.
+
+### How to Add i18n to an App
+
+UI text is translated with [Paraglide JS](https://paraglidejs.com/sveltekit), and the locale comes from the browser ([ADR 0019](docs/decisions/0019-i18n-via-paraglide.md)). `apps/copilot` is the reference implementation.
+
+1. Copy `apps/copilot/project.inlang/settings.json` into the app. Keep `packages/ui/messages` first in `pathPattern`, so the shared `@tabitha/ui` strings are compiled in. Inlang writes its own `.gitignore`, `README.md`, and cache into that folder; only `settings.json` is committed.
+2. Add `messages/en.json` and `messages/id.json` using `snake_case` keys, and use them as `import { m } from '$lib/paraglide/messages'` → `m.some_key()`.
+3. Pass `i18n: true` to `create_app_vite_config`.
+4. Change the `prepare` script to `tabitha-compile-messages && svelte-kit sync`, so svelte-check can see the generated modules.
+5. In `hooks.server.ts`, add a `handle` that wraps `paraglideMiddleware` and replaces `%paraglide.lang%`, and set `<html lang="%paraglide.lang%">` in `app.html` (copy both from copilot).
+6. In the root `+layout.svelte`, call `set_ui_messages(m)` from `@tabitha/ui`.
+
+A new `@tabitha/ui` string goes into both `packages/ui/messages/*.json` files, and components read it through `get_ui_messages()`.
 
 ### How to Record an Architecture Decision
 

@@ -13,6 +13,6 @@ This tool is deliberately narrow: it never lists the whole zone and reconciles e
 
 ## What's not covered here (yet)
 
-- **Workers Builds trigger config** (build/deploy commands, watch paths, build cache, variables) is scripted in `tools/workers`, not here. The initial repo connection itself (which GitHub repo/branch/root-directory a Worker's Workers Builds is wired to) still has no public Cloudflare API as of this writing -- that's a one-time, per-Worker dashboard step (Workers & Pages -> Create application -> Import a repository).
+- **Workers Builds trigger config** (build/deploy commands, watch paths, build cache, variables) is scripted in `tools/workers`, not here. Creating a new Worker's triggers in the first place is still a one-time dashboard step (Workers & Pages -> Create application -> Import a repository) -- see `tools/workers/README.md`.
 - **Page Rules** (e.g. the copilot beta redirect) are a separate, legacy system from the Redirect Rules this tool manages, and aren't scripted here.
 - **Domain registration** at Porkbun is untouched by this tool.

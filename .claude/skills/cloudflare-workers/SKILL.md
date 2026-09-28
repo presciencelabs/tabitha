@@ -92,13 +92,16 @@ Under the hood, `apply.ts` shells out to `wrangler r2 bucket create`/`dev-url en
   - Sources: `1947`
   - Editor: `1337`
   - Copilot: `9000`
+  - Www: `1455`
+  - Scheduler: none (a plain, cron-only Worker with no dev server)
+- **Cron triggers never go on a SvelteKit app.** `@sveltejs/adapter-cloudflare`'s generated Worker only exports `fetch`, so a `scheduled` export in `hooks.server.ts` (or a `triggers.crons` entry in a SvelteKit app's `wrangler.jsonc`) is silently never called. Put the work behind a token-checked `POST` endpoint in the app, and add a cron plus a job to `apps/scheduler`, which calls it through a service binding. See [ADR 0018](../../../docs/decisions/0018-scheduled-work-via-scheduler-worker.md) and `apps/scheduler/README.md`.
 - Validate all workspace configurations with `bun run check:cloudflare`.
 
 ---
 
 ## 5. Workers Builds Git Integration (Monorepo Cutover)
 
-Every app deploys to production via Cloudflare Workers Builds (dashboard-configured git integration), not any script or GitHub Actions step in this repo. As of this writing, Cloudflare has no public API for the git-connection step itself, so it's a one-time, per-Worker dashboard action: **Workers & Pages -> Create application -> Import a repository** -> select `presciencelabs/tabitha` (this monorepo -- several apps still have their git integration pointed at their old, now-legacy standalone single-app repos; cutting one over means reconnecting that Worker's integration to this monorepo instead).
+Every app deploys to production via Cloudflare Workers Builds (dashboard-configured git integration), not any script or GitHub Actions step in this repo. The [Workers Builds API](https://developers.cloudflare.com/api/resources/workers_builds) can now create repo connections (`PUT /accounts/{account_id}/builds/repos/connections`) and triggers (`POST /accounts/{account_id}/builds/triggers`), but a trigger needs the Worker's tag (`external_script_id`), so the Worker has to exist first, and `tools/workers` doesn't create triggers yet. Until it does, connecting a new Worker is a one-time dashboard action that creates the Worker and both triggers in one step: **Workers & Pages -> Create application -> Import a repository** -> select `presciencelabs/tabitha` (this monorepo -- several apps still have their git integration pointed at their old, now-legacy standalone single-app repos; cutting one over means reconnecting that Worker's integration to this monorepo instead).
 
 **Migration note (2026-09):** the monorepo cut over from pnpm to Bun as its package manager. That change lives entirely in git (`package.json`, `bun.lock`), but the **Build command**/**Deploy command**/**Variables** below are dashboard-only settings per Worker, not stored in this repo, so they don't update themselves just because the repo did -- a lesson worth remembering for the *next* tooling change of this shape, not just this one. All 6 apps' settings were brought in line with the `bun`-based commands shown here (see the `tools/workers` note below) and verified via real passing builds.
 
@@ -111,7 +114,7 @@ Every app deploys to production via Cloudflare Workers Builds (dashboard-configu
 4. `PATCH /accounts/{account_id}/builds/triggers/{trigger_uuid}/environment_variables` with `{"VAR_NAME": {"value": "...", "is_secret": false}}` to add any Build Variables (e.g. `SKIP_DEPENDENCY_INSTALL`, see below) that the dashboard also failed to propagate.
 5. Optionally verify immediately with a manual trigger: `POST /accounts/{account_id}/builds/triggers/{trigger_uuid}/builds` with `{"branch": "...", "commit_hash": "..."}`, then poll `GET /accounts/{account_id}/builds/workers/{tag}/builds` (status field) and `GET /accounts/{account_id}/builds/builds/{build_uuid}/logs` (full log lines) until it resolves.
 
-**`tools/workers` now automates the steps above.** Rather than doing this by hand per app, `bun run apply` (from `tools/workers`) prints a plan of every drifted field -- build command, deploy command, build cache, watch paths, and managed Build Variables -- across both triggers for all 6 apps, and `bun run apply:run` applies it. See `tools/workers/README.md`. The manual API steps above are still the right mental model for understanding *why* a dashboard re-save doesn't fix this, and for one-off debugging, but routine fixes/rollouts should go through the tool, not hand-run `curl`.
+**`tools/workers` now automates the steps above.** Rather than doing this by hand per app, `bun run apply` (from `tools/workers`) prints a plan of every drifted field -- build command, deploy command, build cache, watch paths, and managed Build Variables -- across both triggers for every app in its `config.ts`, and `bun run apply:run` applies it. See `tools/workers/README.md`. The manual API steps above are still the right mental model for understanding *why* a dashboard re-save doesn't fix this, and for one-off debugging, but routine fixes/rollouts should go through the tool, not hand-run `curl`.
 
 All 6 apps' non-production triggers have had this check applied -- `copilot` was fixed by hand first (to isolate and diagnose the root cause), the other 5 via `tools/workers`' `apply:run` -- and verified via real passing builds on PR #102 (2026-09-02/03).
 

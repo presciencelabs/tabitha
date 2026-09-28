@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/private'
-import { create_ai_client, check_input_safety, AiResponseError } from '@tabitha/ai'
-import { get_all_concepts } from './ontology'
-import system_instruction from './semantic_search_prompt.md?raw'
+import { check_input_safety, AiResponseError } from '@tabitha/ai'
+import { concept_key, create_concept_embedder, read_concept_key, type ConceptIndex, type ConceptLookupKey } from './concept_embeddings'
+import { get_concepts_by_keys } from './ontology'
 import type { D1Database } from '@cloudflare/workers-types'
 import type { Concept } from '$lib/types'
 
@@ -13,12 +13,20 @@ const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
 // is tight -- no legitimate search needs more than this.
 const MAX_SEARCH_TERM_LENGTH = 200
 
+const MAX_RELATED_CONCEPTS = 10
+
 type FindRelatedConceptsOptions = {
 	readonly db: D1Database
+	readonly index: ConceptIndex | undefined
 	readonly search_term: string
 }
 
-export async function find_related_concepts({ db, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
+/**
+ * Embeds the search term and returns the concepts whose embedded glosses sit nearest to it, most
+ * similar first. The concepts themselves were embedded ahead of time by the scheduled
+ * sync_concept_embeddings (see ADR 0016).
+ */
+export async function find_related_concepts({ db, index, search_term }: FindRelatedConceptsOptions): Promise<Concept[]> {
 	const safety_issue = check_input_safety(search_term, {
 		max_length: MAX_SEARCH_TERM_LENGTH,
 		too_long_message: `Search term is too long (${search_term.length} characters, max ${MAX_SEARCH_TERM_LENGTH}).`,
@@ -27,99 +35,44 @@ export async function find_related_concepts({ db, search_term }: FindRelatedConc
 	})
 	if (safety_issue) {
 		// No related concepts is a normal, unremarkable outcome for a search feature -- fail soft,
-		// same as an AiResponseError from the model itself below.
+		// same as a failed embedding or index query below.
 		console.warn(`ontology: semantic-search rejected search term (${search_term.length} chars): ${safety_issue}`)
 		return []
 	}
 
-	const all_concepts = await get_all_concepts(db)
+	if (!index) return []
 
-	// These filters currently result in ~3800 concepts getting sent to the LLM, down from ~6380
-	const concept_filters: ((c: Concept) => boolean)[] = [
-		// don't bother including whole numbers, they just use up tokens
-		// leave decimal numbers though, so things like 'tenth' can relate to '.1'
-		c => c.gloss.includes('number') && !!c.stem.match(/^\d/),
-		// don't bother including proper names, unless one of the geographical ones like mount-Horeb, city-David, etc.
-		c => c.gloss.startsWith('(proper name)') /*&& !c.stem.match(/^(?:sea-|mount-|valley-|river-|desert-|city-|cave-|feast-|gate-)/i)*/,
-		// don't include dates and times other than '12PM' so it can relate to 'noon'
-		c => !!c.stem.match(/\d(?:BC|AD|PM|AM)$/) && c.stem !== '12PM',
-		// don't include concepts that are going to be deleted
-		c => c.gloss.includes('DELETE'),
-		// don't include the concepts that are exactly the search term (handled separately and would be redundant)
-		// TODO figure out how to include these again in order to take better advantage of implicit caching
-		//   See https://ai.google.dev/gemini-api/docs/caching?lang=node#implicit-caching
-		c => c.stem === search_term,
-	]
+	const nearest_keys = await find_nearest_concept_keys({ index, search_term })
+	const related_keys = nearest_keys
+		// the concept that is exactly the search term already shows up in the plain stem results
+		.filter(key => key.stem !== search_term)
+		.slice(0, MAX_RELATED_CONCEPTS)
 
-	// Note that currently the input is about 73800 tokens, and sometimes triggers 20000-50000 tokens of implicit cache
-	const input_data = {
-		concepts: all_concepts.filter(c => !concept_filters.some(f => f(c))).map(transform_concept),
-		search_term,
-	}
+	const concepts = await get_concepts_by_keys({ db, keys: related_keys })
+	const rank_by_key = new Map(related_keys.map((key, rank) => [concept_key(key), rank]))
 
-	const ai = create_ai_client({
-		app: 'ontology',
-		feature: 'semantic-search',
-		gateway: {
-			account_id: env.CLOUDFLARE_ACCOUNT_ID,
-			token: env.AI_GATEWAY_TOKEN,
-			project: env.GEMINI_PROJECT_ID,
-			location: env.GEMINI_LOCATION,
-		},
-	})
+	return concepts.toSorted((a, b) => (rank_by_key.get(concept_key(a)) ?? 0) - (rank_by_key.get(concept_key(b)) ?? 0))
+}
 
-	let output: string[]
+async function find_nearest_concept_keys({ index, search_term }: { index: ConceptIndex, search_term: string }): Promise<ConceptLookupKey[]> {
 	try {
-		output = await ai.generate_json<string[]>({
-			contents: input_data,
-			system_instruction,
-			schema: {
-				type: 'array',
-				description: 'The list of related concepts.',
-				items: {
-					type: 'string',
-					description: 'The concept identifier.',
-				},
-			},
-			config: {
-				// Replaces the old in-memory Map cache, which was per-isolate and largely
-				// ineffective on Workers anyway -- the gateway's cache is shared and durable.
-				httpOptions: { headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) } },
-			},
+		const vector = await create_concept_embedder(env).embed_text({
+			purpose: 'query',
+			text: search_term,
+			// The gateway's shared, durable cache answers a repeated search term without calling Vertex.
+			http_headers: { 'cf-aig-cache-ttl': String(ONE_WEEK_IN_SECONDS) },
 		})
+
+		// +1 leaves room for the exact-stem match, which is filtered out afterward.
+		const { matches } = await index.query(vector, { topK: MAX_RELATED_CONCEPTS + 1, returnMetadata: 'all' })
+
+		return matches
+			.map(match => read_concept_key(match.metadata))
+			.filter((key): key is ConceptLookupKey => key !== null)
 	} catch (error) {
 		// No related concepts is a normal, unremarkable outcome for a search feature -- fail soft.
-		if (error instanceof AiResponseError) return []
-		throw error
+		// That includes local dev and e2e, where Vectorize has no local simulation to query.
+		if (!(error instanceof AiResponseError)) console.error('ontology: semantic-search index query failed', error)
+		return []
 	}
-
-	return output
-		.map(key => all_concepts.find(c => key === concept_key(c)))
-		.filter((c): c is Concept => c !== undefined)
-}
-
-function transform_concept(concept: Concept): { concept: string, gloss: string } {
-	return {
-		concept: concept_key(concept),
-		gloss: transform_gloss(concept),
-	}
-
-	function transform_gloss(concept: Concept): string {
-		if (concept.status !== 'in ontology') {
-			// there is no gloss, but some fields can be used to help the LLM identify the semantics of the word
-			const hint = concept.how_to_hints[0]
-			if (!hint) return ''
-
-			const { structure, pairing, explication } = hint
-
-			return `${structure} - ${pairing} - ${explication}`.trim()
-		} else {
-			// remove anything within parentheses
-			return concept.gloss.replaceAll(/\(.+?\)/g, '').trim()
-		}
-	}
-}
-
-function concept_key({ stem, sense, part_of_speech }: Concept): string {
-	return `${stem}-${sense}-${part_of_speech}`
 }

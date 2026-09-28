@@ -1,0 +1,29 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "scheduler",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-09-20",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	// Cron-only: no fetch handler, so no public URL.
+	"workers_dev": false,
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"triggers": {
+		// Each cron here runs the job mapped to it in src/index.ts's JOBS_BY_CRON.
+		"crons": [
+			"0 */12 * * *" // every 12 hours, 00:00 UTC and 12:00 UTC -- ontology's complex terms + embeddings sync
+		]
+	},
+	"services": [
+		{
+			"binding": "ONTOLOGY",
+			"service": "ontology"
+		}
+	]
+	// No "env.preview": preview builds only upload versions (`wrangler versions upload`), which
+	// never run crons, and the service binding would target production ontology anyway.
+}
