@@ -16,7 +16,7 @@ Because more apps are expected to adopt this, the shared setup is built now rath
 
 - **Paraglide JS 2**, with each app owning a `project.inlang/` and a `messages/{locale}.json` catalog. Locales are `en` (base) and `id`.
 - **The locale comes from the browser**, via Paraglide's `['preferredLanguage', 'baseLocale']` strategy: `Accept-Language` during SSR, `navigator.languages` on the client, with a base-language fallback (so `id-ID` gets `id`). URLs aren't prefixed, and there's no cookie or language switcher.
-- **Shared compiler options** (`PARAGLIDE_OPTIONS` in `packages/vite-config/paraglide.js`) feed both the Vite plugin, enabled by `create_app_vite_config({ i18n: true })`, and the `tabitha-compile-messages` bin, which an app's `prepare` script runs so svelte-check sees the generated `$lib/paraglide`. Both therefore always produce the same runtime. Paraglide's own `project.inlang/paraglide.config.js` file isn't used, because inlang writes a `.gitignore` into `project.inlang/` that ignores everything except `settings.json`.
+- **Shared compiler options** (`PARAGLIDE_OPTIONS` in `packages/vite-config/paraglide.js`) feed both the Vite plugin, enabled by `create_app_vite_config({ i18n: true })`, and the `tabitha-compile-messages` bin, which an app's `check` script runs so svelte-check sees the generated `$lib/paraglide`. It stays out of `prepare` because `bun install` runs that script and can start it before Paraglide's dependencies finish linking. Both therefore always produce the same runtime. Paraglide's own `project.inlang/paraglide.config.js` file isn't used, because inlang writes a `.gitignore` into `project.inlang/` that ignores everything except `settings.json`.
 - **`@tabitha/ui`'s own strings** (`ui_*` keys) live in `packages/ui/messages/`. Each app's inlang settings list that catalog first in `pathPattern`, so it's merged into the app's compiled messages. The root layout passes the app's `m` to `set_ui_messages(m)`, which puts it in a Svelte context that UI components read. An app that hasn't enabled i18n sets nothing and gets English, so `@tabitha/ui` needs no Paraglide runtime of its own.
 
 ## Alternatives considered
@@ -28,7 +28,7 @@ Because more apps are expected to adopt this, the shared setup is built now rath
 
 ## Consequences
 
-- **Adopting i18n in another app** takes a `project.inlang/settings.json`, a `messages/` folder, `i18n: true`, the `prepare` compile, a `handle` in `hooks.server.ts`, `lang="%paraglide.lang%"` in `app.html`, and `set_ui_messages(m)`. CONTRIBUTING.md has the checklist.
+- **Adopting i18n in another app** takes a `project.inlang/settings.json`, a `messages/` folder, `i18n: true`, the `check` compile, a `handle` in `hooks.server.ts`, `lang="%paraglide.lang%"` in `app.html`, and `set_ui_messages(m)`. CONTRIBUTING.md has the checklist.
 - **Generated output is excluded by name.** `src/lib/paraglide/` is gitignored, which also covers ESLint. The storage and philosophies audits skip `paraglide` directories, and markdownlint skips both that folder and `*.inlang/`.
 - **Compiling loads the inlang message-format plugin from jsDelivr** (pinned to major version 4), so `check`, `build`, and `dev` need network access the first time. Workers Builds and CI both have it.
 - **The locale list is repeated in each app's `settings.json`.** Inlang settings can't extend a shared file, and the lists are short.

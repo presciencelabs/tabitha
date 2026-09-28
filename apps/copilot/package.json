@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prepare": "tabitha-compile-messages && svelte-kit sync",
-    "check": "bun run prepare && bun run check:svelte",
+    "prepare": "svelte-kit sync",
+    "check": "bun run prepare && tabitha-compile-messages && bun run check:svelte",
     "check:svelte": "svelte-check --tsconfig ./tsconfig.json",
     "check:lint": "eslint .",
     "check:lint:fix": "eslint . --fix",
