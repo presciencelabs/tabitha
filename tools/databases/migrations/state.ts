@@ -6,7 +6,7 @@
 import { unlink } from 'fs/promises'
 import type { TaskId } from './plan'
 
-export type MigrationStep = 'staging' | `${TaskId}:migrated` | `${TaskId}:dumped`
+export type MigrationStep = 'staging' | `${TaskId}:migrated` | `${TaskId}:dumped` | `${TaskId}:deployed`
 
 type State = { completed_steps: MigrationStep[] }
 

@@ -4,6 +4,7 @@ import { cp, mkdir, rename } from 'fs/promises'
 import { existsSync } from 'fs'
 import { basename, join } from 'path'
 import { create_logger } from './log'
+import { deploy_to_d1 } from './deploy'
 import { intake } from './intake'
 import { plan_migration, type TaskFamily } from './plan'
 import { resolve_dated_file } from './resolve_dated_file'
@@ -13,6 +14,10 @@ import { validate_migration_output, type ValidationConfig } from './validate'
 const log = create_logger('Orchestrator')
 
 const AUDIENCE_NAME = 'Unchurched Adults'
+// Ontology and Sources_Complex are per-run generated artifacts tightly date-locked to this run's
+// other outputs, not independently-versioned raw inputs -- so they're always staged fresh and
+// excluded from the unchanged-content check.
+const DEDUP_EXEMPT = new Set(['Ontology', 'Sources_Complex'])
 const USAGE = 'Usage: bun migrate.ts "<directory or zip containing all necessary TBTA dbs>" YYYY-MM-DD'
 
 if (!Bun.which('sqlite3')) {
@@ -89,6 +94,7 @@ try {
 	for (const task of plan.tasks) {
 		const migrated_step = `${task.id}:migrated` as const
 		const dumped_step = `${task.id}:dumped` as const
+		const deployed_step = `${task.id}:deployed` as const
 
 		if (!task.changed) {
 			log.step(`Skipping ${task.id} migration entirely -- ${task.reason}.`)
@@ -128,25 +134,12 @@ try {
 		// so it must reflect the actual state of output_file every time, not just the first pass.
 		await validate_migration_output(task.id, task.output_file, date, VALIDATIONS[task.family])
 
-		// TEMPORARILY DISABLED for local verification
-		// console.log(`[Orchestrator] Creating new D1 database for ${task.id}...`)
-		// const d1_db_name = basename(task.output_file, '.tabitha.sqlite') // => Sources_2025-10-22 or Ontology_9493_2025-10-22
-		// const cmd_output_new_db = await $`bun wrangler d1 create ${d1_db_name}`.text()
-
-		// console.log(`[Orchestrator] Updating wrangler.jsonc with new ${task.id} database info...`)
-		// const new_db_info = extract_new_db_info(cmd_output_new_db)
-		// await update_deployment_config('./wrangler.jsonc', new_db_info, `DB_${task.id}`)
-
-		// console.log(`[Orchestrator] Deploying new ${task.id} data to D1...`)
-		// await $`bun wrangler d1 execute ${d1_db_name} --file ${dump_file} --remote`.quiet()
-
-		// // A freshly-deployed Sources db doesn't carry status data (Sources migration only applies
-		// // status to the local build if a status CSV happened to be available at that time) -- reapply
-		// // the latest known status immediately so a new deploy never regresses to stale/no status.
-		// // import { apply_status_to_d1 } from './sources/update_status' (top of file)
-		// if (task.id === 'Sources') {
-		// 	await apply_status_to_d1(d1_db_name, join(import.meta.dir, '../data/status'), date)
-		// }
+		if (completed_steps.has(deployed_step)) {
+			log.step(`Skipping ${task.id} D1 deploy (already completed for this run).`)
+		} else {
+			await deploy_to_d1({ task, dump_file, date })
+			await mark_done(date, deployed_step, completed_steps)
+		}
 	}
 
 	await clear_state(date)
@@ -176,11 +169,6 @@ async function stage_tbta_files(working_dir: string) {
 			.map(normalize_name)
 			.map(stage_one)
 	}
-
-	// Ontology and Sources_Complex are per-run generated artifacts tightly date-locked to this run's
-	// other outputs, not independently-versioned raw inputs -- so they're always staged fresh and
-	// excluded from the unchanged-content check.
-	const DEDUP_EXEMPT = new Set(['Ontology', 'Sources_Complex'])
 
 	async function stage_one({ name, src, dest }: { name: string, src: string, dest: string }) {
 		if (!DEDUP_EXEMPT.has(name) && !await is_changed(name, src)) {

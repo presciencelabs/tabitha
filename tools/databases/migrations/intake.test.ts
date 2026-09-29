@@ -60,10 +60,20 @@ describe('intake', () => {
 		expect(result.working_dir.endsWith('TBTA 6-25-26')).toBe(true)
 	})
 
-	it('throws when the extracted zip has no .sqlite files at the root or in a single wrapping folder', async () => {
+	it('accepts a zip containing only .new upgrade files, e.g. an ontology-only delivery', async () => {
+		const zip_path = make_zip({ 'Ontology.new': 'ontology-content' })
+
+		const result = await intake(zip_path)
+		if (result.cleanup) cleanups.push(result.cleanup)
+
+		const files = Array.from(new Glob('*.new').scanSync(result.working_dir))
+		expect(files).toEqual(['Ontology.new'])
+	})
+
+	it('throws when the extracted zip has no .sqlite or .new files at the root or in a single wrapping folder', async () => {
 		const zip_path = make_zip({ 'readme.txt': 'not a database' })
 
-		await expect(intake(zip_path)).rejects.toThrow(/No \.sqlite files found/)
+		await expect(intake(zip_path)).rejects.toThrow(/No \.sqlite or \.new files found/)
 	})
 
 	it('cleanup removes the extracted temp directory', async () => {

@@ -40,8 +40,8 @@
 	"d1_databases": [
 		{
 			"binding": "DB_Ontology",
-			"database_name": "Ontology_9494_2026-06-25",
-			"database_id": "8ca85ff3-063d-4d6b-8438-9bb68e264206"
+			"database_name": "Ontology_9494_2026-09-29",
+			"database_id": "a2f52867-bcbd-4477-af7e-ff702de3c5ef"
 		},
 		{
 			"binding": "DB_Auth",
@@ -114,8 +114,8 @@
 			"d1_databases": [
 				{
 					"binding": "DB_Ontology",
-					"database_name": "Ontology_9494_2026-06-25",
-					"database_id": "8ca85ff3-063d-4d6b-8438-9bb68e264206"
+					"database_name": "Ontology_9494_2026-09-29",
+					"database_id": "a2f52867-bcbd-4477-af7e-ff702de3c5ef"
 				},
 				{
 					"binding": "DB_Auth",
