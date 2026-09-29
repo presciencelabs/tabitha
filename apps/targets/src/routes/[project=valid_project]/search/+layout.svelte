@@ -4,12 +4,13 @@
 	import { onMount } from 'svelte'
 	import { Header, Footer, theme_state } from '@tabitha/ui'
 	import { report_active_theme } from '@tabitha/usage/client'
-	import { useRegisterSW } from 'virtual:pwa-register/svelte'
+	import { registerSW } from 'virtual:pwa-register'
 
 	let { data, children } = $props()
 	let project = $derived(data.project)
 
-	const { needRefresh, updateServiceWorker } = useRegisterSW()
+	// No-op instead of the default forced reload: the page picks up a new version on its next navigation.
+	registerSW({ immediate: true, onNeedReload: () => {} })
 
 	onMount(() => report_active_theme(theme_state.current))
 </script>
@@ -24,4 +25,4 @@
 	{@render children?.()}
 </main>
 
-<Footer needs_refresh={$needRefresh} on_refresh={() => updateServiceWorker(true)} />
+<Footer />
