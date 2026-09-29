@@ -19,7 +19,8 @@
     "r2:pull": "bun migrations/r2_sync.ts pull",
     "r2:push": "bun migrations/r2_sync.ts push",
     "r2:prune": "bun migrations/r2_sync.ts prune",
-    "cleanup:d1": "bun migrations/cleanup_unused_d1.ts"
+    "cleanup:d1": "bun migrations/cleanup_unused_d1.ts",
+    "cleanup:backups": "bun migrations/cleanup_old_backups.ts"
   },
   "dependencies": {
     "adm-zip": "^0.5.18",
