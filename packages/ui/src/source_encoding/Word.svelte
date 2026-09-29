@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Features from './Features.svelte'
 	import Concept from './Concept.svelte'
+	import { concepts_match } from '@tabitha/types/patterns'
 	import type { ConceptKey, SourceEntity } from '@tabitha/types'
 
 	type Props = {
@@ -23,15 +24,10 @@
 	let matched = $derived(matches(concept) || matches(source_entity.pairing_concept))
 	
 	function matches(concept: ConceptKey | null) {
-		return concept && (matches_terms(concept) || matches_concept(concept))
-	}
-
-	function matches_terms(concept: ConceptKey) {
-		return highlight_terms?.has(concept.stem.toLowerCase())
-	}
-
-	function matches_concept({ stem, sense, part_of_speech }: ConceptKey) {
-		return highlight_concept && stem === highlight_concept.stem && sense === highlight_concept.sense && part_of_speech === highlight_concept.part_of_speech
+		return concept && (
+			highlight_terms?.has(concept.stem.toLowerCase())
+			|| highlight_concept && concepts_match({ a: concept, b: highlight_concept })
+		)
 	}
 </script>
 

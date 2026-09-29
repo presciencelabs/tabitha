@@ -3,7 +3,7 @@ import { apply_change_directly, suggest_change } from '$lib/server/changes/chang
 import { get_concept_for_update } from '$lib/server/changes/concepts'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { ConceptCreateData } from '$lib/server/types'
+import type { ConceptCreateData } from '$lib/types'
 
 export async function POST({ request, locals }: Parameters<RequestHandler>[0]) {
 	const data: ConceptCreateData = await request.json()

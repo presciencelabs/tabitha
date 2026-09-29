@@ -91,6 +91,14 @@ export function parse_concept_key(key: string): ConceptKey | null {
 	}
 }
 
+type ConceptCompare = Omit<ConceptKey, 'part_of_speech'> & {
+	part_of_speech: string
+}
+
+export function concepts_match({ a, b }: { a: ConceptCompare, b: ConceptCompare }) {
+	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
+}
+
 /**
  * Strips dictionary classifier prefixes from a gloss definition.
  *

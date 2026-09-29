@@ -1,9 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { get_concepts } from '$lib/server/ontology'
-import { decode_categorization, encode_categorization } from '$lib/transformers'
-import { theta_grid_arguments } from '$lib/lookups'
-import type { Concept, DbRowConcept } from '$lib/types'
-import type { ConceptCreateData, ConceptUpdateData } from '$lib/server/types'
+import { decode_categorization_for_update, encode_categorization } from '$lib/transformers'
+import type { Concept, DbRowConcept, ConceptCreateData, ConceptUpdateData } from '$lib/types'
 import type { ConceptKey, PartOfSpeech } from '@tabitha/types'
 
 export async function get_concept_for_update({ db, concept_key }: { db: D1Database, concept_key: ConceptKey }): Promise<ConceptUpdateData | null> {
@@ -28,18 +26,6 @@ export async function get_concept_for_update({ db, concept_key }: { db: D1Databa
 		categories: decode_categorization_for_update({ part_of_speech, categorization }),
 		curated_examples,
 	}
-}
-
-function decode_categorization_for_update({ part_of_speech, categorization }: { part_of_speech: string, categorization: string }): string[] {
-	const categories = decode_categorization({ part_of_speech, categorization })
-
-	if (part_of_speech === 'Verb') {
-		// The above decoder removes empty theta grid arguments, so they are not in a consistent sequence.
-		// For the purpose of 'update', we need to fill in the gaps.
-		return theta_grid_arguments.map(arg => categories.find(category => category.includes(arg)) || '')
-	}
-
-	return categories
 }
 
 export async function update_concept({ db, data }: { db: D1Database, data: ConceptUpdateData }) {

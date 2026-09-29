@@ -2,9 +2,9 @@ import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
 import { normalize_wildcards, parse_concept_sense } from '@tabitha/types/patterns'
 import { decode_categorization, transform_curated_examples } from '$lib/transformers'
 import { get_pending_changes } from './changes/changes'
+import { concepts_match } from '@tabitha/types/patterns'
 import type { Concept, DbRowConcept, DbRowExample } from '$lib/types'
 import type { ConceptKey, ConceptSearchFilter, ConceptExample, SimplificationHint } from '@tabitha/types'
-import type { ConceptQueryBuilder } from './types'
 import type { ConceptLookupKey } from './concept_embeddings'
 
 // refs:
@@ -239,16 +239,13 @@ export function merge_how_to_results({ concepts, how_to_results }: MergeHowToRes
 	}
 }
 
-function concepts_match({ a, b }: { a: ConceptKey | Concept, b: ConceptKey | Concept }): boolean {
-	return a.stem === b.stem && a.sense === b.sense && a.part_of_speech === b.part_of_speech
+type ConceptQueryBuilder = {
+	add_filter: (filter: string, params: (string | number)[]) => ConceptQueryBuilder
+	order_by: (column: string) => ConceptQueryBuilder
+	prepare: () => D1PreparedStatement
 }
 
-type BuildConceptQueryOptions = {
-	readonly db: D1Database
-	readonly table: string
-}
-
-function build_concept_query({ db, table }: BuildConceptQueryOptions): ConceptQueryBuilder {
+function build_concept_query({ db, table }: { db: D1Database, table: string }): ConceptQueryBuilder {
 	const all_filters: string[] = []
 	const all_params: (string | number)[] = []
 	let order_by_sql = ''

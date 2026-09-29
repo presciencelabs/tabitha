@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
 	import type { PageProps } from './$types'
 	import { Category } from '$lib/card/categorization/edit'
 	import { levels } from '$lib/lookups'
@@ -8,8 +9,7 @@
 	import { Toast } from '@tabitha/ui'
 	import { enqueue } from '$lib/offline/sync'
 	import { check_for_pending_change } from '$lib/offline/pending'
-	import type { Concept } from '$lib/types'
-	import type { ConceptUpdateData } from '$lib/server/types'
+	import type { Concept, ConceptUpdateData, SaveResult } from '$lib/types'
 
 	let { data }: PageProps = $props()
 
@@ -21,8 +21,7 @@
 
 	let saving = $state(false)
 	let error_message = $state('')
-	let save_result: 'applied' | 'pending' | 'queued' | 'unsynced_loaded' | null = $state(null)
-	let toast_timeout: ReturnType<typeof setTimeout> | undefined
+	let unsynced_loaded = $state(false)
 
 	onMount(() => {
 		check_for_pending_change(concept_data).then(mutation => {
@@ -30,7 +29,7 @@
 
 			Object.assign(concept_data, mutation.body)
 			initial_data = $state.snapshot(concept_data)
-			save_result = 'unsynced_loaded'
+			unsynced_loaded = true
 		})
 	})
 
@@ -39,9 +38,8 @@
 	}
 
 	function dismiss_toast() {
-		clearTimeout(toast_timeout)
 		error_message = ''
-		save_result = null
+		unsynced_loaded = false
 	}
 
 	async function handle_submit(event: SubmitEvent) {
@@ -55,18 +53,13 @@
 			if (outcome.type === 'failed') {
 				error_message = outcome.message
 			} else {
-				// the intent is durably recorded either way (applied, left pending, or queued offline) -- only a rejected change leaves the form dirty
-				initial_data = $state.snapshot(concept_data)
-
+				let save_result: SaveResult
 				if (outcome.type === 'still_pending') {
 					save_result = 'queued'
 				} else {
 					save_result = outcome.applied ? 'applied' : 'pending'
-					if (outcome.applied) {
-						// success is good news and doesn't need to linger; pending/queued/error stay until dismissed, since they carry more to act on
-						toast_timeout = setTimeout(dismiss_toast, 4000)
-					}
 				}
+				goto('/protected/changes', { state: { save_result } })
 			}
 		} catch (err: unknown) {
 			error_message = err instanceof Error ? err.message : 'Failed to save the concept.'
@@ -78,17 +71,7 @@
 
 {#if error_message}
 	<Toast variant="error" on_dismiss={dismiss_toast}>{error_message}</Toast>
-{:else if save_result === 'applied'}
-	<Toast variant="success" on_dismiss={dismiss_toast}>Saved — your change is live now.</Toast>
-{:else if save_result === 'pending'}
-	<Toast variant="info" on_dismiss={dismiss_toast}>
-		Saved — couldn't apply automatically, so it's pending in the <a href="/protected/changes" class="link">changes queue</a>.
-	</Toast>
-{:else if save_result === 'queued'}
-	<Toast variant="info" on_dismiss={dismiss_toast}>
-		Couldn't reach the server — this change is saved on this device and will sync automatically.
-	</Toast>
-{:else if save_result === 'unsynced_loaded'}
+{:else if unsynced_loaded}
 	<Toast variant="info" on_dismiss={dismiss_toast}>
 		Showing your unsynced edit from this device — it hasn't been sent to the server yet.
 	</Toast>

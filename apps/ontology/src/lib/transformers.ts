@@ -4,6 +4,7 @@ import {
 	semantic_category,
 	sources,
 	theta_grid,
+	theta_grid_arguments,
 	usage_info,
 } from '$lib/lookups'
 import type { Concept, CuratedExample, SimplifiedEncodingEntity, SimplifiedSemanticEncoding } from '$lib/types'
@@ -104,6 +105,18 @@ type DecodeCategorizationOptions = {
 export function decode_categorization({ part_of_speech, categorization }: DecodeCategorizationOptions): string[] {
 	const decoder = categorization_decoders[part_of_speech]
 	return decoder ? decoder(categorization) : [...categorization]
+}
+
+export function decode_categorization_for_update({ part_of_speech, categorization }: DecodeCategorizationOptions): string[] {
+	const categories = decode_categorization({ part_of_speech, categorization })
+
+	if (part_of_speech === 'Verb') {
+		// The above decoder removes empty theta grid arguments, so they are not in a consistent sequence.
+		// For the purpose of 'update', we need to fill in the gaps.
+		return theta_grid_arguments.map(arg => categories.find(category => category.includes(arg)) || '')
+	}
+
+	return categories
 }
 
 /**

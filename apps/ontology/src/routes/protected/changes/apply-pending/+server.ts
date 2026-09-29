@@ -8,14 +8,9 @@ export async function POST({ locals }: Parameters<RequestHandler>[0]) {
 	}
 
 	try {
-		const { count, failed, version, changes } = await apply_pending_changes(locals.db_ontology)
-		return json({
-			count,
-			failed,
-			version,
-			changes,
-			timestamp: new Date().toISOString(),
-		})
+		const result = await apply_pending_changes(locals.db_ontology)
+		return json(result)
+
 	} catch (err: unknown) {
 		const message = err instanceof Error ? err.message : String(err)
 		console.error('Failed to apply pending changes:', message)
