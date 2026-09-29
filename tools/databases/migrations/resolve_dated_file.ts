@@ -12,7 +12,8 @@ export async function resolve_dated_file(dir: string, prefix: string, date: stri
 	const exact_path = `${dir}/${prefix}_${date}.${ext}`
 	if (await Bun.file(exact_path).exists()) return exact_path
 
-	const files = Array.from(new Glob(`${prefix}_*.${ext}`).scanSync(dir))
+	// Date-shaped, not `*`, so a prefix never matches a longer name that merely starts with it.
+	const files = Array.from(new Glob(`${prefix}_????-??-??.${ext}`).scanSync(dir))
 	files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
 	const latest = files.pop()
 	if (!latest) return undefined

@@ -68,7 +68,8 @@ async function push(dirs: Dir[]) {
 	let uploaded = 0
 
 	for (const dir of dirs) {
-		const local_files = Array.from(new Glob('*').scanSync(local_dir(dir))).sort()
+		// Databases and dumps only -- never a SQLite -wal/-shm sidecar left behind by opening a file.
+		const local_files = Array.from(new Glob('*.{sqlite,sql}').scanSync(local_dir(dir))).sort()
 		for (const filename of local_files) {
 			if (manifest[dir].includes(filename)) continue
 
