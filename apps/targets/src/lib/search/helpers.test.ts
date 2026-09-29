@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { build_filter_options, build_search_regex, filter_search_results } from './helpers'
 import { by_book_order } from '@tabitha/types/patterns'
-import type { SearchTargetTextResult } from '@tabitha/types'
+import type { TargetTextResult } from '@tabitha/types'
 
-const mockRealWorldResults: SearchTargetTextResult[] = [
+const mockRealWorldResults: TargetTextResult[] = [
 	{
 		reference: { type: 'verse', id_primary: '1 Samuel', id_secondary: '21', id_tertiary: '1' },
 		texts: [

@@ -1,7 +1,15 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import type { Reference, SourceStatus, StatusRequestReference, SourceStatusResult } from '@tabitha/types'
+import type {
+	Reference,
+	SourceStatus,
+	PrimaryIdReference,
+	SecondaryIdReference,
+	PrimaryIdSourceStatusResult,
+	SecondaryIdSourceStatusResult,
+	SourceStatusResult,
+} from '@tabitha/types'
 
-export async function get_all_book_statuses({ db, type }: { db: D1Database, type: string }): Promise<SourceStatusResult[]> {
+export async function get_all_book_statuses({ db, type }: { db: D1Database, type: string }): Promise<PrimaryIdSourceStatusResult[]> {
 	const sql = `
 		SELECT status, id_primary
 		FROM ChapterStatus
@@ -10,13 +18,14 @@ export async function get_all_book_statuses({ db, type }: { db: D1Database, type
 	const { results } = await db.prepare(sql).bind(type).all<{ status: SourceStatus, id_primary: string }>()
 	const by_book = Map.groupBy(results, result => result.id_primary)
 
-	return by_book.entries().map(([id_primary, statuses]) => ({
+	return by_book.entries().map<PrimaryIdSourceStatusResult>(([id_primary, statuses]) => ({
+		level: 'primary',
 		reference: { type, id_primary },
 		status: combine_statuses(statuses),
 	})).toArray()
 }
 
-export async function get_book_status({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<SourceStatusResult> {
+export async function get_book_status({ db, reference }: { db: D1Database, reference: PrimaryIdReference }): Promise<PrimaryIdSourceStatusResult> {
 	const sql = `
 		SELECT status
 		FROM ChapterStatus
@@ -26,6 +35,7 @@ export async function get_book_status({ db, reference }: { db: D1Database, refer
 
 	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ status: SourceStatus }>()
 	return {
+		level: 'primary',
 		reference,
 		status: combine_statuses(results),
 	}
@@ -44,7 +54,7 @@ export function combine_statuses(status_array: { status: SourceStatus }[]) {
 	return just_statuses.length ? status_mapping.find(([predicate]) => predicate(just_statuses))![1] : 'Not Started'
 }
 
-export async function get_chapter_statuses_for_book({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<SourceStatusResult[]> {
+export async function get_chapter_statuses_for_book({ db, reference }: { db: D1Database, reference: PrimaryIdReference }): Promise<SecondaryIdSourceStatusResult[]> {
 	const sql = `
 		SELECT id_secondary, status
 		FROM ChapterStatus
@@ -54,12 +64,13 @@ export async function get_chapter_statuses_for_book({ db, reference }: { db: D1D
 
 	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ id_secondary: string, status: SourceStatus }>()
 	return results.map(({ id_secondary, status }) => ({
+		level: 'secondary',
 		reference: { ...reference, id_secondary },
 		status,
 	}))
 }
 
-export async function get_chapter_status({ db, reference }: { db: D1Database, reference: StatusRequestReference }): Promise<SourceStatusResult> {
+export async function get_chapter_status({ db, reference }: { db: D1Database, reference: SecondaryIdReference }): Promise<SecondaryIdSourceStatusResult> {
 	const sql = `
 		SELECT status
 		FROM ChapterStatus
@@ -72,6 +83,7 @@ export async function get_chapter_status({ db, reference }: { db: D1Database, re
 	const result = await prepared_statement.first<{ status: SourceStatus }>()
 
 	return {
+		level: 'secondary',
 		reference,
 		status: result?.status ?? 'Not Started',
 	}
@@ -95,9 +107,9 @@ export async function get_verse_statuses({ db, references }: { db: D1Database, r
 	const batch_result = await db.batch<{ status: SourceStatus }>(bound_statements)
 	const statuses = batch_result.map(r => r.results[0]?.status || 'Not Started')
 
-	const results = references.map((reference, i) => ({
+	return references.map((reference, i) => ({
+		level: 'tertiary',
 		reference,
 		status: statuses[i],
 	}))
-	return results
 }

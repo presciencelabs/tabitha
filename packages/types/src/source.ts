@@ -1,4 +1,4 @@
-import type { Reference } from './reference'
+import type { PrimaryIdReference, Reference, SecondaryIdReference } from './reference'
 import type { ConceptKey, SourceEntityCategory, SourceStatus } from './core'
 
 //===============
@@ -136,15 +136,21 @@ export type SourceFeatureResult = {
 //===============
 // lookup/status API
 
-// TODO rework this
-export type StatusRequestReference = {
-	type?: string
-	id_primary: string
-	id_secondary?: string
+export type PrimaryIdSourceStatusResult = {
+	level: 'primary'
+	reference: PrimaryIdReference
+	status: SourceStatus
+}
+
+export type SecondaryIdSourceStatusResult = {
+	level: 'secondary'
+	reference: SecondaryIdReference
+	status: SourceStatus
 }
 
 export type SourceStatusResult = {
-	reference: StatusRequestReference
+	level: 'tertiary'
+	reference: Reference
 	status: SourceStatus
 }
 

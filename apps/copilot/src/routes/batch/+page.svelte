@@ -8,8 +8,8 @@
 	import { default_settings, lwc_info, mtt_level_info } from '$lib/lookups'
 	import { fetch_batch_cautions, fetch_brief_headings, fetch_notes, fetch_verses_for_chapter } from '$lib/fetches'
 	import { USFM_BOOK_CODES } from '@tabitha/types/patterns'
-	import type { ChapterReference, CopilotResult } from '@tabitha/types'
-	import type { CopilotSettings } from '$lib/types'
+	import type { CopilotResult } from '@tabitha/types'
+	import type { CopilotSettings, ChapterReference } from '$lib/types'
 	import { m } from '$lib/paraglide/messages'
 	import { MODE_LABELS } from '$lib/labels'
 
