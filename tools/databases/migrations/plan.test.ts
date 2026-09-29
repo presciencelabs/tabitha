@@ -157,6 +157,23 @@ describe('plan_migration', () => {
 		expect(ontology.migrate_args).toEqual([sources.output_file, 'raw/Sources_Complex_2026-08-01.tabitha.sqlite'])
 	})
 
+	it('never mistakes Sources_Complex for a prior Sources output, even though it sorts after it', async () => {
+		const date = '2026-09-29'
+		touch('Bible_2026-07-27.tbta.sqlite')
+		touch('Sources_2026-07-27.tabitha.sqlite')
+		touch('Sources_Complex_2026-06-25.tabitha.sqlite')
+		stage_ontology(date)
+
+		const plan = await plan_migration(date)
+
+		const sources = plan.tasks.find(t => t.id === 'Sources')!
+		expect(sources.changed).toBe(false)
+		expect(sources.output_file).toBe('raw/Sources_2026-07-27.tabitha.sqlite')
+
+		const ontology = plan.tasks.find(t => t.id === 'Ontology')!
+		expect(ontology.migrate_args).toEqual(['raw/Sources_2026-07-27.tabitha.sqlite', 'raw/Sources_Complex_2026-06-25.tabitha.sqlite'])
+	})
+
 	it('throws when no staged Ontology database exists for the run date', async () => {
 		const date = '2026-08-29'
 		touch(`Bible_${date}.tbta.sqlite`)

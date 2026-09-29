@@ -40,19 +40,21 @@ export async function intake(source: string): Promise<IntakeResult> {
 // (e.g. "TBTA 6-25-26.zip" -> "TBTA 6-25-26/Bible.sqlite" instead of "Bible.sqlite" at the root).
 // Look one level deeper if nothing is found directly at the extraction root.
 async function resolve_extracted_root(extract_dir: string): Promise<string> {
-	if (has_sqlite_files(extract_dir)) return extract_dir
+	if (has_tbta_files(extract_dir)) return extract_dir
 
 	const entries = await readdir(extract_dir, { withFileTypes: true })
 	const subdirs = entries.filter(entry => entry.isDirectory())
 
 	if (subdirs.length === 1) {
 		const nested_dir = join(extract_dir, subdirs[0].name)
-		if (has_sqlite_files(nested_dir)) return nested_dir
+		if (has_tbta_files(nested_dir)) return nested_dir
 	}
 
-	throw new Error(`No .sqlite files found directly in the extracted zip contents (or a single wrapping folder) at ${extract_dir}. Check the zip's internal structure.`)
+	throw new Error(`No .sqlite or .new files found directly in the extracted zip contents (or a single wrapping folder) at ${extract_dir}. Check the zip's internal structure.`)
 
-	function has_sqlite_files(dir: string): boolean {
-		return Array.from(new Glob('*.sqlite').scanSync(dir)).length > 0
+	// A TBTA delivery may be nothing but .new upgrade files (e.g. an ontology-only "Ontology.new"),
+	// which staging renames to .sqlite later.
+	function has_tbta_files(dir: string): boolean {
+		return Array.from(new Glob('*.{sqlite,new}').scanSync(dir)).length > 0
 	}
 }

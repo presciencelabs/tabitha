@@ -131,7 +131,9 @@ async function latest_previous_output_file(id: string, date: string): Promise<st
 	// Scanning from 'raw' (rather than baking it into the pattern and scanning from '.') keeps the
 	// match a bare filename -- Bun's Glob otherwise returns the traversed directory portion using the
 	// OS-native separator, which broke this on Windows (backslash) despite the forward-slash pattern.
-	const files = Array.from(new Glob(`${id}_*.tabitha.sqlite`).scanSync('raw')).filter(file => !file.includes(`_${date}.`))
+	// A date-shaped wildcard, not `*`, so e.g. Sources never matches Sources_Complex_* (which would
+	// otherwise sort after every Sources_<date> file and be picked as "the latest Sources output").
+	const files = Array.from(new Glob(`${id}_????-??-??.tabitha.sqlite`).scanSync('raw')).filter(file => !file.includes(`_${date}.`))
 	files.sort() // lexicographical sort will serve correctly for YYYY-MM-DD
 	const latest = files.pop()
 	return latest ? `raw/${latest}` : undefined
