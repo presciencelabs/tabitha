@@ -13,7 +13,6 @@ async function fetch_check_result({ text, auto_fix }: { text: string; auto_fix: 
 	return await editor_client.check_text({ text, auto_fix }) ?? { status: 'error', tokens: [], back_translation: '' }
 }
 
-
 export async function check_text(text: string): Promise<CheckedText> {
 	const result = await fetch_check_result({ text, auto_fix: true })
 	const fixed_text = apply_text_insertions({ text, insertions: result.auto_fixes ?? [] }).text

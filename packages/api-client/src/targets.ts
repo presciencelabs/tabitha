@@ -38,7 +38,7 @@ export function create_targets_client(options: TargetsClientOptions) {
 		 * Retrieve full source and lexical features for a target project.
 		 */
 		async lookup_features({ project, category }: { project: string, category?: string }): Promise<TargetFeatureResult | null> {
-			const params = category? `?${new URLSearchParams({ category }).toString()}` : ''
+			const params = category ? `?${new URLSearchParams({ category }).toString()}` : ''
 			return http.get<TargetFeatureResult>(`/${project}/lookup/features${params}`)
 		},
 
