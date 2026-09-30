@@ -1,6 +1,7 @@
 import Database from 'bun:sqlite'
 import { load_examples } from './exhaustive_examples/load'
 import { create_changes_table } from './changes'
+import { load_complex_terms } from './complex_terms'
 import { create_logger } from '../log'
 
 const log = create_logger('Ontology migration')
@@ -23,7 +24,9 @@ const tabitha_db = new Database(tabitha_db_name, { create: false, readwrite: tru
 // drastic perf improvement: https://www.sqlite.org/pragma.html#pragma_journal_mode
 tabitha_db.run('PRAGMA journal_mode = WAL')
 
-create_complex_terms_table(tabitha_db)
+normalize_concept_text_columns(tabitha_db)
+
+await load_complex_terms(tabitha_db)
 
 create_changes_table(tabitha_db)
 
@@ -43,20 +46,19 @@ tabitha_db.close()
 
 log.summary()
 
-function create_complex_terms_table(tabitha_db: Database) {
-	tabitha_db.run(`
-		CREATE TABLE IF NOT EXISTS Complex_Terms (
-			'stem' 				TEXT,
-			'sense'				TEXT,
-			'part_of_speech' 	TEXT,
-			'structure'		 	TEXT,
-			'pairing' 			TEXT,
-			'explication' 		TEXT,
-			'ontology_status'	TEXT,
-			'level'				INTEGER,
-			'notes'				TEXT
-		)
+// The app treats these as always-present strings ("" when empty), but newly-added concepts in a
+// TBTA export can carry NULLs (31 did in 2026-09-29), which breaks search on those rows.
+function normalize_concept_text_columns(tabitha_db: Database) {
+	log.step('Normalizing NULL concept text columns to empty strings...')
+	const { changes } = tabitha_db.run(`
+		UPDATE Concepts SET
+			gloss = COALESCE(gloss, ''),
+			brief_gloss = COALESCE(brief_gloss, ''),
+			categorization = COALESCE(categorization, ''),
+			curated_examples = COALESCE(curated_examples, '')
+		WHERE gloss IS NULL OR brief_gloss IS NULL OR categorization IS NULL OR curated_examples IS NULL
 	`)
+	log.info(`${changes} concept(s) normalized`)
 }
 
 // NOCASE so the `stem LIKE ?` lookups can use the index (https://www.sqlite.org/optoverview.html#the_like_optimization)

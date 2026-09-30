@@ -31,6 +31,7 @@
     "@sveltejs/kit": "^2.70.3",
     "@tabitha/ai": "workspace:*",
     "@tabitha/api-client": "workspace:*",
+    "@tabitha/complex-terms": "workspace:*",
     "@tabitha/cors": "workspace:*",
     "@tabitha/rate-limit": "workspace:*",
     "@tabitha/types": "workspace:*",

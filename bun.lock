@@ -97,6 +97,7 @@
         "@sveltejs/kit": "^2.70.3",
         "@tabitha/ai": "workspace:*",
         "@tabitha/api-client": "workspace:*",
+        "@tabitha/complex-terms": "workspace:*",
         "@tabitha/cors": "workspace:*",
         "@tabitha/rate-limit": "workspace:*",
         "@tabitha/types": "workspace:*",
@@ -280,6 +281,20 @@
         "vitest": "^3.2.7",
       },
     },
+    "packages/complex-terms": {
+      "name": "@tabitha/complex-terms",
+      "version": "1.0.0",
+      "dependencies": {
+        "@tabitha/types": "workspace:*",
+      },
+      "devDependencies": {
+        "@tabitha/eslint-config": "workspace:*",
+        "@tabitha/tsconfig": "workspace:*",
+        "eslint": "^10.11.0",
+        "typescript": "^6.0.3",
+        "vitest": "^3.2.7",
+      },
+    },
     "packages/cors": {
       "name": "@tabitha/cors",
       "version": "1.0.0",
@@ -419,6 +434,7 @@
       "name": "@tabitha/databases",
       "version": "1.0.0",
       "dependencies": {
+        "@tabitha/complex-terms": "workspace:*",
         "adm-zip": "^0.5.18",
         "officeparser": "^7.8.0",
       },
@@ -1145,6 +1161,8 @@
     "@tabitha/ai": ["@tabitha/ai@workspace:packages/ai"],
 
     "@tabitha/api-client": ["@tabitha/api-client@workspace:packages/api-client"],
+
+    "@tabitha/complex-terms": ["@tabitha/complex-terms@workspace:packages/complex-terms"],
 
     "@tabitha/copilot": ["@tabitha/copilot@workspace:apps/copilot"],
 

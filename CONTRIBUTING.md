@@ -25,6 +25,7 @@ graph TD
 		UI["@tabitha/ui<br/>Reusable Svelte 5 & daisyUI Components"]
 		ApiClient["@tabitha/api-client<br/>Typed Inter-App HTTP Client"]
 		Cors["@tabitha/cors<br/>Shared CORS Middleware"]
+		ComplexTerms["@tabitha/complex-terms<br/>How-To Sheet → Complex_Terms"]
 		AI["@tabitha/ai<br/>Shared LLM Client"]
 		ViteConfig["@tabitha/vite-config<br/>Standardized Vite, Svelte, & Test Configs"]
 		ESLintConfig["@tabitha/eslint-config<br/>Standardized ESLint Flat Config"]
@@ -44,6 +45,7 @@ graph TD
 	Ontology --> UI
 	Ontology --> Cors
 	Ontology --> AI
+	Ontology --> ComplexTerms
 	Sources --> Types
 	Sources --> UI
 	Sources --> Cors
@@ -93,6 +95,7 @@ graph TD
 | **`@tabitha/ui`** | Shared Svelte 5 components (buttons, badges, concept cards, headers, layouts) styled with daisyUI 5. |
 | **`@tabitha/api-client`** | Typed HTTP client for inter-service communication across applications. |
 | **`@tabitha/cors`** | Shared CORS middleware for Cloudflare Worker request handlers. |
+| **`@tabitha/complex-terms`** | Reads the how-to Google Sheet into `Complex_Terms` rows, for both Ontology's scheduled sync and the Ontology migration. |
 | **`@tabitha/ai`** | Shared LLM client (`generate_json`, `generate_text`) routing every app's AI calls through the Cloudflare AI Gateway to Vertex AI. |
 | **`@tabitha/vite-config`** | Standardized configuration helpers for Vite (`vite.config.js`), SvelteKit (`svelte.config.js`), Vitest, and Playwright (`playwright.config.js`). |
 | **`@tabitha/eslint-config`** | Centralized ESLint flat configuration ensuring consistent formatting and quality rules. |
