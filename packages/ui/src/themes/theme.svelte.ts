@@ -21,14 +21,14 @@ class ThemeState {
 			const css = document.createElement('style')
 			css.appendChild(
 				document.createTextNode(
-				`* { 
+					`* { 
 					-webkit-transition: none !important; 
 					-moz-transition: none !important; 
 					-o-transition: none !important; 
 					-ms-transition: none !important; 
 					transition: none !important; 
-				}`
-				)
+				}`,
+				),
 			)
 			document.head.appendChild(css)
 
@@ -37,7 +37,7 @@ class ThemeState {
 			document.documentElement.dataset.theme = to_daisyui_theme(new_theme)
 			
 			// 3. Force a DOM repaint so the browser renders the new theme colors instantly
-			window.getComputedStyle(css).opacity
+			window.getComputedStyle(css).getPropertyValue('opacity')
 
 			// 4. Remove the style block to re-enable your 3-second row animations safely
 			document.head.removeChild(css)

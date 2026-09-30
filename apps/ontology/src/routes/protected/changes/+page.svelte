@@ -8,7 +8,7 @@
 	import { apply_pending_changes, approve_change } from '$lib/changes'
 	import { format_datetime, format_time } from '$lib/format'
 	import type { OntologyChange } from '$lib/types'
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte'
 
 	let { data }: PageProps = $props()
 

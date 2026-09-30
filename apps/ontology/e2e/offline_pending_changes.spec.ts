@@ -14,9 +14,10 @@ test('reopening the update page shows a queued, unsynced edit overlaid on the fo
 	await page.getByRole('button', { name: 'Save' }).click()
 	await expect(page.getByText(/saved on this device and will sync/i)).toBeVisible()
 
-	// Still offline: reload the same edit page and confirm the queued edit is what's shown,
-	// not the stale server value, along with a notice that it hasn't synced yet.
-	await page.reload()
+	// Saving navigates to /protected/changes. Still offline: reopen the same edit page and confirm
+	// the queued edit is what's shown, not the stale server value, along with a notice that it
+	// hasn't synced yet.
+	await page.goto('/protected/concept/update?concept=love-A-Verb')
 	await expect(page.getByText(/showing your unsynced edit/i)).toBeVisible()
 	await expect(page.locator('textarea[name="gloss"]')).toHaveValue(gloss)
 })
