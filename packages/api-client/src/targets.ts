@@ -16,8 +16,9 @@ export type TargetsClientOptions = ClientOptions
  *   cache: true, // Enables transparent Edge CDN caching on GET requests
  * })
  *
- * const text = await targets.get_target_text({ book: 'GEN', chapter: 1, verse: 1 }, 'English')
- * const forms = await targets.lookup_forms('loved')
+ * const ref = { type: 'Bible', id_primary: 'Genesis', id_secondary: '1', id_tertiary: '1' }
+ * const text = await targets.get_target_text({ ref, project: 'English', preferred_audience: 'Unchurched Adults' })
+ * const forms = await targets.lookup_forms({ word: 'loved', project: 'English' })
  * ```
  */
 export function create_targets_client(options: TargetsClientOptions) {

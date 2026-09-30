@@ -388,7 +388,7 @@ describe('@tabitha/api-client', () => {
 	})
 
 	describe('create_sources_client', () => {
-		test('get_verse_source queries correct REST path', async () => {
+		test('get_source queries correct REST path', async () => {
 			const mock_data = { id: 'GEN.1.1' }
 			const mock_fetch = vi.fn().mockResolvedValue({
 				ok: true,

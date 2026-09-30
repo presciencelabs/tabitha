@@ -28,8 +28,8 @@ export type SourcesClientOptions = ClientOptions
  *   cache: true, // Enables transparent Edge CDN caching on GET requests
  * })
  *
- * const verse = await sources.get_verse_source({ book: 'GEN', chapter: 1, verse: 1 })
- * const status = await sources.get_book_status('GEN')
+ * const verse = await sources.get_source({ type: 'Bible', id_primary: 'Genesis', id_secondary: '1', id_tertiary: '1' })
+ * const status = await sources.get_book_status({ type: 'Bible', id_primary: 'Genesis' })
  * ```
  */
 export function create_sources_client(options: SourcesClientOptions) {
@@ -93,7 +93,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		},
 
 		/**
-		 * Look up the translation status of an entire book (e.g. 'GEN').
+		 * Look up the translation status of an entire book (e.g. 'Genesis').
 		 */
 		async get_book_status(ref: PrimaryIdReference): Promise<SourceStatus | null> {
 			const data = await http.get<PrimaryIdSourceStatusResult>(`/lookup/status/${ref.type}/${ref.id_primary}`)
@@ -108,7 +108,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		},
 
 		/**
-		 * Look up the translation status of every book of a given type.
+		 * Parse phase 1 text into source entities.
 		 */
 		async analyze_text(text: string): Promise<AnalysisResult | null> {
 			return await http.get<AnalysisResult>(`/analyze?${new URLSearchParams({ text: sanitize_input(text) })}`)
