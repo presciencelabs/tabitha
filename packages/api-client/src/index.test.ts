@@ -330,6 +330,59 @@ describe('@tabitha/api-client', () => {
 			const result = await client.check_text({ text: 'invalid' })
 			expect(result).toBeNull()
 		})
+
+		test('check_text replaces line breaks with spaces and appends auto_fix when requested', async () => {
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ status: 'ok', tokens: [], back_translation: '' }),
+			})
+
+			const client = create_editor_client({
+				base_url: EDITOR_URL,
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			await client.check_text({ text: 'Paul writes-A.\nJohn reads-A.', auto_fix: true })
+			expect(mock_fetch).toHaveBeenCalledWith(`${EDITOR_URL}/check?text=Paul+writes-A.+John+reads-A.&auto_fix=on`)
+		})
+
+		test('analyze_text replaces line breaks with spaces and queries /analyze', async () => {
+			const mock_response = { source_entities: [], noun_list: [] }
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => mock_response,
+			})
+
+			const client = create_editor_client({
+				base_url: EDITOR_URL,
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			const result = await client.analyze_text('Paul writes-A.\nJohn reads-A.')
+			expect(mock_fetch).toHaveBeenCalledWith(`${EDITOR_URL}/analyze?text=Paul%20writes-A.%20John%20reads-A.`)
+			expect(result).toEqual(mock_response)
+		})
+
+		test('ai_assist_generate posts line-break-free text to /ai-assist/generate', async () => {
+			const mock_response = { status: 'ok', phase_1: 'Paul writes-A.', notes: [], check: { status: 'ok', tokens: [], back_translation: '' } }
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => mock_response,
+			})
+
+			const client = create_editor_client({
+				base_url: EDITOR_URL,
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			const result = await client.ai_assist_generate('Paul wrote\na letter.')
+			expect(mock_fetch).toHaveBeenCalledWith(`${EDITOR_URL}/ai-assist/generate`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ text: 'Paul wrote a letter.' }),
+			})
+			expect(result).toEqual(mock_response)
+		})
 	})
 
 	describe('create_ontology_client', () => {
@@ -384,6 +437,23 @@ describe('@tabitha/api-client', () => {
 
 			const concept = await client.get_concept({ stem: 'write', sense: 'B', part_of_speech: 'Verb' })
 			expect(concept?.sense).toBe('B')
+		})
+
+		test('get_examples queries examples endpoint with concept, part of speech, and source', async () => {
+			const mock_examples = [{ reference: { type: 'Bible', id_primary: 'Genesis', id_secondary: '1', id_tertiary: '1' } }]
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => mock_examples,
+			})
+
+			const client = create_ontology_client({
+				base_url: ONTOLOGY_URL,
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			const examples = await client.get_examples({ concept: { stem: 'write', sense: 'A', part_of_speech: 'Verb' }, source: 'Bible' })
+			expect(mock_fetch).toHaveBeenCalledWith(`${ONTOLOGY_URL}/examples?concept=write-A&part_of_speech=Verb&source=Bible`)
+			expect(examples).toEqual(mock_examples)
 		})
 	})
 
@@ -457,6 +527,23 @@ describe('@tabitha/api-client', () => {
 			const statuses = await client.get_all_book_statuses()
 			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/lookup/status/Bible')
 			expect(statuses).toEqual(mock_data)
+		})
+
+		test('analyze_text replaces line breaks with spaces and queries /analyze', async () => {
+			const mock_response = { source_entities: [] }
+			const mock_fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => mock_response,
+			})
+
+			const client = create_sources_client({
+				base_url: SOURCES_URL,
+				fetch: mock_fetch as unknown as typeof fetch,
+			})
+
+			const result = await client.analyze_text('Paul writes-A.\nJohn reads-A.')
+			expect(mock_fetch).toHaveBeenCalledWith(`${SOURCES_URL}/analyze?text=Paul+writes-A.+John+reads-A.`)
+			expect(result).toEqual(mock_response)
 		})
 	})
 
