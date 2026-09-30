@@ -28,9 +28,16 @@ type DuplicateCheckConfig = {
 	columns: string[]
 }
 
+type NotNullCheckConfig = {
+	table: string
+	columns: string[]
+}
+
 export type ValidationConfig = {
 	book_check?: BookCheckConfig
 	duplicate_check?: DuplicateCheckConfig
+	/** Columns the consuming app reads as always-present, so a NULL would break it at runtime. */
+	not_null_checks?: NotNullCheckConfig[]
 	row_count_table: string
 }
 
@@ -51,6 +58,10 @@ export async function validate_migration_output(key: string, db_path: string, da
 
 		if (config.duplicate_check) {
 			failures.push(...check_duplicate_rows(db, config.duplicate_check))
+		}
+
+		for (const not_null_check of config.not_null_checks ?? []) {
+			failures.push(...check_not_null_columns(db, not_null_check))
 		}
 
 		const row_count_failure = await check_row_count_sanity(db, config.row_count_table, key, date)
@@ -103,6 +114,17 @@ function check_duplicate_rows(db: Database, { table, columns }: DuplicateCheckCo
 
 	const examples = rows.slice(0, 5).map(row => `(${columns.map(column => row[column]).join(', ')}) x${row.dupe_count}`).join('; ')
 	return [`${table} has ${rows.length} duplicate row(s) on (${column_list}), e.g. ${examples}`]
+}
+
+export function check_not_null_columns(db: Database, { table, columns }: NotNullCheckConfig): string[] {
+	const null_counts = columns.map(column => ({
+		column,
+		count: db.query<{ count: number }, []>(`SELECT COUNT(*) AS count FROM ${table} WHERE ${column} IS NULL`).get()?.count ?? 0,
+	}))
+
+	return null_counts
+		.filter(({ count }) => count > 0)
+		.map(({ column, count }) => `${table}.${column} has ${count} NULL row(s)`)
 }
 
 async function check_row_count_sanity(db: Database, table: string, key: string, date: string): Promise<string | null> {
