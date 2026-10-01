@@ -19,11 +19,12 @@ test('an edit made while offline is queued locally, then syncs once back online'
 	await page.unroute('**/protected/concept/update/submit')
 	await page.evaluate(() => window.dispatchEvent(new Event('online')))
 
-	// A fresh page load reads straight from the server (and also re-triggers the app's own
-	// bootstrap flush check), so this only shows the new gloss if the queued mutation actually
-	// made it there -- not just optimistic local state.
+	// Saving navigates to /protected/changes, so reopen the edit page. A fresh page load reads
+	// straight from the server (and also re-triggers the app's own bootstrap flush check), so this
+	// only shows the new gloss if the queued mutation actually made it there -- not just optimistic
+	// local state.
 	await expect(async () => {
-		await page.reload()
+		await page.goto('/protected/concept/update?concept=love-A-Verb')
 		await expect(page.locator('textarea[name="gloss"]')).toHaveValue(gloss)
 	}).toPass({ timeout: 10_000 })
 })

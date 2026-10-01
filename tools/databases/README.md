@@ -104,7 +104,7 @@ bun run migrate:sources \
 
 #### Ontology Migration
 
-Populates the exhaustive concept examples (`Complex_Terms`) in an already-staged Ontology database, from a migrated Sources database and its Sources_Complex export:
+Populates the exhaustive concept examples (`Exhaustive_Examples`) in an already-staged Ontology database, from a migrated Sources database and its Sources_Complex export. It also normalizes NULL concept text columns to empty strings and rebuilds `Complex_Terms` from the how-to Google Sheet (network required), replacing whatever copy the TBTA export shipped:
 
 ```bash
 cd tools/databases

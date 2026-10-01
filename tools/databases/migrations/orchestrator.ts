@@ -73,9 +73,13 @@ try {
 		},
 		Ontology: {
 			// Complex_Terms is the one table this migration step actually populates, so it's the
-			// meaningful signal for row-count sanity here (the rest of Ontology.sqlite is the
-			// untouched TBTA export).
+			// meaningful signal for row-count sanity here (the rest of Ontology.sqlite is the TBTA
+			// export, with only NULL text columns normalized).
 			row_count_table: 'Complex_Terms',
+			not_null_checks: [
+				{ table: 'Concepts', columns: ['gloss', 'brief_gloss', 'categorization', 'curated_examples'] },
+				{ table: 'Complex_Terms', columns: ['level', 'notes'] },
+			],
 		},
 		Targets: {
 			// Per-language translation output is expected to only partially cover the canon while
