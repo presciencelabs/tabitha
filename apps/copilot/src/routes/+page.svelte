@@ -5,7 +5,7 @@
 	import Icon from '@iconify/svelte'
 	import BookSelect from '$lib/BookSelect.svelte'
 	import Settings from '$lib/Settings.svelte'
-	import type { VerseReference, TargetTextResult, CopilotResult, CopilotNote } from '@tabitha/types'
+	import type { TargetTextData, CopilotResult, CopilotNote, VerseReference } from '@tabitha/types'
 	import type { CopilotSettings, CopilotStep } from '$lib/types'
 	import { m } from '$lib/paraglide/messages'
 	import { MODE_LABELS } from '$lib/labels'
@@ -20,7 +20,7 @@
 	let settings = $state(persisted<CopilotSettings>({ key: 'saved_settings@1.5', defaultValue: default_settings }).value)
 
 	let fetching_english = $state(false)
-	let english_text = $state<TargetTextResult | null>(null)
+	let english_text = $state<TargetTextData | null>(null)
 
 	let fetching_notes = $state(false)
 	let steps_reached = $state<CopilotStep[]>([])
@@ -36,7 +36,7 @@
 
 	async function get_english_text() {
 		fetching_english = true
-		english_text = await fetch_target_text({ verse_ref: reference, project: 'English', preferred_audience: 'Unchurched Adults' })
+		english_text = await fetch_target_text({ reference, project: 'English', preferred_audience: 'Unchurched Adults' })
 		fetching_english = false
 	}
 

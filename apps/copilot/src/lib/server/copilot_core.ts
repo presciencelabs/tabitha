@@ -18,7 +18,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 		return error_result(`Verse reference ${ref_display} does not exist.`)
 	}
 
-	const english = await fetch_target_text({ verse_ref: reference, project: 'English', preferred_audience: default_target_audience['English'] })
+	const english = await fetch_target_text({ reference, project: 'English', preferred_audience: default_target_audience['English'] })
 	if (!english) {
 		console.error(`Error fetching english text for ${ref_display}`)
 		return error_result('There is no English text saved yet for this verse.')
@@ -26,7 +26,7 @@ export async function get_copilot_result({ reference, settings, ai }: { referenc
 	const english_text = english.ideal || english.text
 
 	const lwc_text_result = settings.lwc !== 'English'
-		? await fetch_target_text({ verse_ref: reference, project: settings.lwc, preferred_audience: default_target_audience[settings.lwc] || 'Unchurched Adults' })
+		? await fetch_target_text({ reference, project: settings.lwc, preferred_audience: default_target_audience[settings.lwc] || 'Unchurched Adults' })
 		: english
 
 	if (!lwc_text_result) {

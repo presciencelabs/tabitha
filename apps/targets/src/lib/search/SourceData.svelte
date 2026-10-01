@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { PUBLIC_SOURCES_API_HOST, PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
+	import { PUBLIC_ONTOLOGY_API_HOST } from '$env/static/public'
 	import { SourceEntitiesPlain } from '@tabitha/ui'
 	import Icon from '@iconify/svelte'
+	import { fetch_source_data, get_sources_url } from './helpers'
 	import type { Reference } from '@tabitha/types'
-	import { fetch_source_data, get_sources_url } from './source_data_helpers'
 
 	type Props = {
 		reference: Reference
@@ -13,8 +13,8 @@
 
 	let { reference, highlight_terms }: Props = $props()
 
-	let sources_url = $derived(get_sources_url({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))
-	let source_data_promise = $derived(fetch_source_data({ reference, sources_api_host: PUBLIC_SOURCES_API_HOST }))
+	let sources_url = $derived(get_sources_url(reference))
+	let source_data_promise = $derived(fetch_source_data(reference))
 </script>
 
 <h4 class="flex justify-between">
@@ -32,10 +32,16 @@
 		getting the source data...
 	</p>
 {:then source}
-	<p>
-		<SourceEntitiesPlain
-			source_entities={source.parsed_semantic_encoding}
-			ontology_base_url={PUBLIC_ONTOLOGY_API_HOST}
-			{highlight_terms} />
-	</p>
+	{#if source}
+		<p>
+			<SourceEntitiesPlain
+				source_entities={source.parsed_semantic_encoding}
+				ontology_base_url={PUBLIC_ONTOLOGY_API_HOST}
+				{highlight_terms} />
+		</p>
+	{:else}
+		<p>
+			Could not load the source data...
+		</p>
+	{/if}
 {/await}

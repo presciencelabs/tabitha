@@ -12,7 +12,7 @@ export async function check_forms(lookup_token: Token) {
 	// The term is expected to have no sense attached to it
 	const term = lookup_token.lookup_terms[0]
 
-	const lookup_results = (await targets_client.lookup_forms(term))
+	const lookup_results = (await targets_client.lookup_forms({ word: term, project: 'English' }))
 		.filter(result => !result.stem.includes(' '))
 		.reduce(transform_results, [])
 

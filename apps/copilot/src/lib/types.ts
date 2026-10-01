@@ -1,6 +1,8 @@
 import type { VerseReference, SourceSimpleJsonEntity } from '@tabitha/types'
 import type { CopilotTriggerData, CopilotDiscernResult, CopilotResult } from '@tabitha/types/copilot'
 
+export type ChapterReference = Pick<VerseReference, 'book' | 'chapter'>
+
 export type CopilotMode = 'discern' | 'brief'
 
 export type MttLevel = 'grade5' | 'high_school' | 'undergraduate'
