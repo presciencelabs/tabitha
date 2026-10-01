@@ -55,7 +55,7 @@ export function create_ontology_client(options: OntologyClientOptions) {
 		/**
 		 * Retrieve the source-text examples where a concept is used.
 		 */
-		async get_examples({ concept: { stem, sense, part_of_speech }, source = 'Bible' }: { concept: ConceptKey, source?: string }): Promise<ConceptExample[] | null> {
+		async get_examples({ concept: { stem, sense, part_of_speech }, source }: { concept: ConceptKey, source: string }): Promise<ConceptExample[] | null> {
 			return await http.get<ConceptExample[]>(`/examples?concept=${stem}-${sense}&part_of_speech=${part_of_speech}&source=${source}`)
 		},
 	}

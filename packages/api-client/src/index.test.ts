@@ -524,7 +524,7 @@ describe('@tabitha/api-client', () => {
 				fetch: mock_fetch as unknown as typeof fetch,
 			})
 
-			const statuses = await client.get_all_book_statuses()
+			const statuses = await client.get_all_book_statuses('Bible')
 			expect(mock_fetch).toHaveBeenCalledWith('http://localhost:8789/lookup/status/Bible')
 			expect(statuses).toEqual(mock_data)
 		})

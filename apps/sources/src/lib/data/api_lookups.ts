@@ -35,10 +35,19 @@ export async function fetch_concept_ontology_data(concept: PageSourceConcept): P
 	}
 }
 
+const all_senses_cache = new Map<string, OntologyResult[]>()
+const category_cache = new Map<string, OntologyResult[]>()
+
 export async function fetch_all_concepts_for_part_of_speech(part_of_speech: string): Promise<OntologyResult[]> {
+	if (category_cache.has(part_of_speech)) {
+		return category_cache.get(part_of_speech) ?? []
+	}
+
 	try {
 		const results = await client.get_all_for_category(part_of_speech)
-		return results.filter(result => result.status === 'in ontology')
+		const filtered = results.filter(result => result.status === 'in ontology')
+		category_cache.set(part_of_speech, filtered)
+		return filtered
 	} catch {
 		return []
 	}
@@ -46,10 +55,17 @@ export async function fetch_all_concepts_for_part_of_speech(part_of_speech: stri
 
 export async function fetch_ontology_data_for_all_senses(concept: ConceptKey): Promise<OntologyResult[]> {
 	const { stem, part_of_speech } = concept
+	const cache_key = `${stem}:${part_of_speech}`
+
+	if (all_senses_cache.has(cache_key)) {
+		return all_senses_cache.get(cache_key) ?? []
+	}
 
 	try {
 		const results = await client.search_concepts({ q: stem, category: part_of_speech })
-		return results.filter(result => result.stem === stem && result.status === 'in ontology')
+		const filtered = results.filter(result => result.stem === stem && result.status === 'in ontology')
+		all_senses_cache.set(cache_key, filtered)
+		return filtered
 	} catch {
 		return []
 	}

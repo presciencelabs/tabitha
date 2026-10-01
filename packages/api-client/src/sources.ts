@@ -1,4 +1,5 @@
 import { create_http_client, type ClientOptions } from './http'
+import { sanitize_input_whitespace } from './text'
 import type {
 	SourceResult,
 	SourceStatus,
@@ -35,11 +36,6 @@ export type SourcesClientOptions = ClientOptions
 export function create_sources_client(options: SourcesClientOptions) {
 	const http = create_http_client(options)
 
-	// Line breaks become spaces, which keeps every character offset the same as in the author's text
-	function sanitize_input(text: string): string {
-		return text.replaceAll('\n', ' ')
-	}
-
 	return {
 		/**
 		 * Retrieve raw source data for a specific Bible verse.
@@ -51,7 +47,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		/**
 		 * Retrieve simplified JSON encoding for a verse, optionally including glosses.
 		 */
-		async get_simplified_json(ref: Reference, include_glosses = false): Promise<SourceSimpleJsonResult | null> {
+		async get_simplified_json({ ref, include_glosses } : { ref: Reference, include_glosses?: boolean }): Promise<SourceSimpleJsonResult | null> {
 			const query = include_glosses ? '?glosses=true' : ''
 			return http.get<SourceSimpleJsonResult>(`/${ref.type}/${ref.id_primary}/${ref.id_secondary}/${ref.id_tertiary}/simple-json${query}`)
 		},
@@ -103,7 +99,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		/**
 		 * Look up the translation status of every book of a given type.
 		 */
-		async get_all_book_statuses(type = 'Bible'): Promise<PrimaryIdSourceStatusResult[]> {
+		async get_all_book_statuses(type: string): Promise<PrimaryIdSourceStatusResult[]> {
 			return await http.get<PrimaryIdSourceStatusResult[]>(`/lookup/status/${type}`) ?? []
 		},
 
@@ -111,7 +107,7 @@ export function create_sources_client(options: SourcesClientOptions) {
 		 * Parse phase 1 text into source entities.
 		 */
 		async analyze_text(text: string): Promise<AnalysisResult | null> {
-			return await http.get<AnalysisResult>(`/analyze?${new URLSearchParams({ text: sanitize_input(text) })}`)
+			return await http.get<AnalysisResult>(`/analyze?${new URLSearchParams({ text: sanitize_input_whitespace(text) })}`)
 		},
 	}
 }

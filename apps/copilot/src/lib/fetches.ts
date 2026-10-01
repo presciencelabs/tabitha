@@ -10,7 +10,7 @@ const sources_client = create_sources_client({ base_url: PUBLIC_SOURCES_API_HOST
 const targets_client = create_targets_client({ base_url: PUBLIC_TARGETS_API_HOST, cache: true })
 
 export async function fetch_encoding(reference: VerseReference): Promise<SourceSimpleJsonResult | null> {
-	return sources_client.get_simplified_json(verse_to_source_ref(reference), true)
+	return sources_client.get_simplified_json({ ref: verse_to_source_ref(reference), include_glosses: true })
 }
 
 export async function fetch_target_text({ reference, project, preferred_audience }: { reference: VerseReference, project: string, preferred_audience: string }): Promise<TargetTextData | null> {

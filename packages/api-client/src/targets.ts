@@ -31,7 +31,9 @@ export function create_targets_client(options: TargetsClientOptions) {
 		async get_target_text({ ref, project, preferred_audience }: { ref: Reference, project: string, preferred_audience?: string }): Promise<TargetTextData | null> {
 			const result = await http.get<TargetTextResult>(`/${project}/${ref.id_primary}/${ref.id_secondary}/${ref.id_tertiary}`)
 			if (!result) return null
-			return result.texts.find(r => r.audience === preferred_audience) ?? result.texts.at(0) ?? null
+			return result.texts.find(r => r.audience === preferred_audience)
+					?? result.texts.find(r => r.text)
+					?? null
 		},
 
 		/**
