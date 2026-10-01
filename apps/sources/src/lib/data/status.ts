@@ -19,7 +19,6 @@ export async function get_all_book_statuses({ db, type }: { db: D1Database, type
 	const by_book = Map.groupBy(results, result => result.id_primary)
 
 	return by_book.entries().map<PrimaryIdSourceStatusResult>(([id_primary, statuses]) => ({
-		level: 'primary',
 		reference: { type, id_primary },
 		status: combine_statuses(statuses),
 	})).toArray()
@@ -35,7 +34,6 @@ export async function get_book_status({ db, reference }: { db: D1Database, refer
 
 	const { results } = await db.prepare(sql).bind(reference.type, reference.id_primary).all<{ status: SourceStatus }>()
 	return {
-		level: 'primary',
 		reference,
 		status: combine_statuses(results),
 	}
@@ -83,7 +81,6 @@ export async function get_chapter_status({ db, reference }: { db: D1Database, re
 	const result = await prepared_statement.first<{ status: SourceStatus }>()
 
 	return {
-		level: 'secondary',
 		reference,
 		status: result?.status ?? 'Not Started',
 	}
@@ -108,7 +105,6 @@ export async function get_verse_statuses({ db, references }: { db: D1Database, r
 	const statuses = batch_result.map(r => r.results[0]?.status || 'Not Started')
 
 	return references.map((reference, i) => ({
-		level: 'tertiary',
 		reference,
 		status: statuses[i],
 	}))

@@ -137,19 +137,16 @@ export type SourceFeatureResult = {
 // lookup/status API
 
 export type PrimaryIdSourceStatusResult = {
-	level: 'primary'
 	reference: PrimaryIdReference
 	status: SourceStatus
 }
 
 export type SecondaryIdSourceStatusResult = {
-	level: 'secondary'
 	reference: SecondaryIdReference
 	status: SourceStatus
 }
 
 export type SourceStatusResult = {
-	level: 'tertiary'
 	reference: Reference
 	status: SourceStatus
 }
