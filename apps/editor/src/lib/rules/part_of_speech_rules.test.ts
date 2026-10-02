@@ -112,3 +112,58 @@ describe('possessive and pronoun POS rules', () => {
 		expect(checked_tokens[0].lookup_results[0].part_of_speech).toBe('Noun')
 	})
 })
+
+describe('Noun-Adjective disambiguation', () => {
+	const create_life_token = (token: string) => create_lookup_token_for_test({ token, lookup_results: [
+		lookup_result_for_test({ stem: 'life', part_of_speech: 'Noun' }),
+		lookup_result_for_test({ stem: 'life', part_of_speech: 'Adjective' }),
+	] })
+
+	test('Noun-Adjective followed by a Verb is a Noun', () => {
+		const test_tokens = [create_sentence_for_test([
+			create_lookup_token_for_test({ token: 'Officials', lookup_results: [
+				lookup_result_for_test({ stem: 'official', part_of_speech: 'Noun' }),
+				lookup_result_for_test({ stem: 'official', part_of_speech: 'Adjective' }),
+			] }),
+			create_lookup_token_for_test({ token: 'shouted', lookup_results: [lookup_result_for_test({ stem: 'shout', part_of_speech: 'Verb' })] }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+		])]
+
+		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
+		expect(checked_tokens[0].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+	})
+	test('"life" followed by a Verb is a Noun', () => {
+		const test_tokens = [create_sentence_for_test([
+			create_life_token('Life'),
+			create_lookup_token_for_test({ token: 'comes', lookup_results: [lookup_result_for_test({ stem: 'come', part_of_speech: 'Verb' })] }),
+			create_token({ token: 'from', type: TOKEN_TYPE.FUNCTION_WORD }),
+			create_lookup_token_for_test({ token: 'God', lookup_results: [lookup_result_for_test({ stem: 'God', part_of_speech: 'Noun' })] }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+		])]
+
+		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
+		expect(checked_tokens[0].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+	})
+	test('"life" not followed by a Noun is a Noun', () => {
+		const test_tokens = [create_sentence_for_test([
+			create_lookup_token_for_test({ token: 'John', lookup_results: [lookup_result_for_test({ stem: 'John', part_of_speech: 'Noun' })] }),
+			create_lookup_token_for_test({ token: 'had', lookup_results: [lookup_result_for_test({ stem: 'have', part_of_speech: 'Verb' })] }),
+			create_life_token('life'),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+		])]
+
+		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
+		expect(checked_tokens[2].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+	})
+	test('"life" followed by a Noun is an Adjective', () => {
+		const test_tokens = [create_sentence_for_test([
+			create_token({ token: 'the', type: TOKEN_TYPE.FUNCTION_WORD, tag: { determiner: 'definite_article' } }),
+			create_life_token('life'),
+			create_lookup_token_for_test({ token: 'boat', lookup_results: [lookup_result_for_test({ stem: 'boat', part_of_speech: 'Noun' })] }),
+			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
+		])]
+
+		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
+		expect(checked_tokens[1].lookup_results.map(result => result.part_of_speech)).toEqual(['Adjective'])
+	})
+})

@@ -225,12 +225,22 @@ const part_of_speech_rules_json = [
 		'comment': 'John knew about the secret(N/Adj).',
 	},
 	{
+		'name': 'If Noun-Adjective "life" is not followed by Noun, remove Adjective',
+		'category': 'Noun|Adjective',
+		'trigger': { 'stem': 'life' },
+		'context': {
+			'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
+		},
+		'remove': 'Adjective',
+		'comment': "John had life(N/Adj). The Adjective only exists for 'life boat' (Acts 27:16). Not applied to all Noun-Adjectives, since predicate adjectives (Melissa's eye is sore) are also not followed by a Noun",
+	},
+	{
 		'name': 'If Noun-Adjective followed by Verb, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
 			'followedby': { 'category': 'Verb' },
 		},
-		'remove': 'Noun',
+		'remove': 'Adjective',
 		'comment': 'Daniel 3:4 The one official(N/Adj) shouted ...',
 	},
 	{
