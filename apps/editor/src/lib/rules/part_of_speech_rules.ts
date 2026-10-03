@@ -232,7 +232,7 @@ const part_of_speech_rules_json = [
 			'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
 		},
 		'remove': 'Adjective',
-		'comment': "John had life(N/Adj). The Adjective only exists for 'life boat' (Acts 27:16). Not applied to all Noun-Adjectives, since predicate adjectives (Melissa's eye is sore) are also not followed by a Noun",
+		'comment': "Acts 17:25 God gives life(N/Adj) to all people. The Adjective only exists for 'life boat' (Acts 27:16). Not applied to all Noun-Adjectives, since predicate adjectives (Psalm 115:4 Their idols are silver(N/Adj)) are also not followed by a Noun",
 	},
 	{
 		'name': 'If Noun-Adjective followed by Verb, remove Adjective',

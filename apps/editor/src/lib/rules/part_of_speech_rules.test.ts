@@ -4,6 +4,7 @@ import { apply_rules } from './rules_processor'
 import { describe, expect, test } from 'vitest'
 import { PART_OF_SPEECH_RULES } from './part_of_speech_rules'
 import { expect_error, create_sentence_for_test, create_pairing_token_for_test, create_lookup_token_for_test, lookup_result_for_test } from '$lib/test_helps'
+import type { Token } from '$lib/types'
 
 describe('pairing part_of_speech disambiguation', () => {
 	test('both words fully match part_of_speech', () => {
@@ -114,56 +115,78 @@ describe('possessive and pronoun POS rules', () => {
 })
 
 describe('Noun-Adjective disambiguation', () => {
-	const create_life_token = (token: string) => create_lookup_token_for_test({ token, lookup_results: [
-		lookup_result_for_test({ stem: 'life', part_of_speech: 'Noun' }),
-		lookup_result_for_test({ stem: 'life', part_of_speech: 'Adjective' }),
+	const create_noun_adjective_token = ({ token, stem }: { token: string, stem: string }) => create_lookup_token_for_test({ token, lookup_results: [
+		lookup_result_for_test({ stem, part_of_speech: 'Noun' }),
+		lookup_result_for_test({ stem, part_of_speech: 'Adjective' }),
 	] })
+	const create_word_token = ({ token, stem, part_of_speech }: { token: string, stem: string, part_of_speech: 'Noun' | 'Verb' }) =>
+		create_lookup_token_for_test({ token, lookup_results: [lookup_result_for_test({ stem, part_of_speech })] })
+	const create_article_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD, tag: { determiner: 'definite_article' } })
+	const create_function_word_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD })
+	const create_period_token = () => create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION })
+	const parts_of_speech_after_rules = ({ tokens, index }: { tokens: Token[], index: number }) =>
+		apply_rules({ sentences: [create_sentence_for_test(tokens)], rules: PART_OF_SPEECH_RULES })
+			.flatMap(flatten_sentence)[index]
+			.lookup_results.map(result => result.part_of_speech)
 
-	test('Noun-Adjective followed by a Verb is a Noun', () => {
-		const test_tokens = [create_sentence_for_test([
-			create_lookup_token_for_test({ token: 'Officials', lookup_results: [
-				lookup_result_for_test({ stem: 'official', part_of_speech: 'Noun' }),
-				lookup_result_for_test({ stem: 'official', part_of_speech: 'Adjective' }),
-			] }),
-			create_lookup_token_for_test({ token: 'shouted', lookup_results: [lookup_result_for_test({ stem: 'shout', part_of_speech: 'Verb' })] }),
-			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
-		])]
+	test('Noun-Adjective followed by a Verb is a Noun: Silver belongs to God. (cf. Haggai 2:8)', () => {
+		const tokens = [
+			create_noun_adjective_token({ token: 'Silver', stem: 'silver' }),
+			create_word_token({ token: 'belongs', stem: 'belong', part_of_speech: 'Verb' }),
+			create_function_word_token('to'),
+			create_word_token({ token: 'God', stem: 'God', part_of_speech: 'Noun' }),
+			create_period_token(),
+		]
 
-		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
-		expect(checked_tokens[0].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+		expect(parts_of_speech_after_rules({ tokens, index: 0 })).toEqual(['Noun'])
 	})
-	test('"life" followed by a Verb is a Noun', () => {
-		const test_tokens = [create_sentence_for_test([
-			create_life_token('Life'),
-			create_lookup_token_for_test({ token: 'comes', lookup_results: [lookup_result_for_test({ stem: 'come', part_of_speech: 'Verb' })] }),
-			create_token({ token: 'from', type: TOKEN_TYPE.FUNCTION_WORD }),
-			create_lookup_token_for_test({ token: 'God', lookup_results: [lookup_result_for_test({ stem: 'God', part_of_speech: 'Noun' })] }),
-			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
-		])]
+	test('Noun-Adjective preceded by "be" stays an Adjective: Their idols are silver. (Psalm 115:4)', () => {
+		const tokens = [
+			create_function_word_token('Their'),
+			create_word_token({ token: 'idols', stem: 'idol', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'are', stem: 'be', part_of_speech: 'Verb' }),
+			create_noun_adjective_token({ token: 'silver', stem: 'silver' }),
+			create_period_token(),
+		]
 
-		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
-		expect(checked_tokens[0].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+		expect(parts_of_speech_after_rules({ tokens, index: 3 })).toEqual(['Adjective'])
 	})
-	test('"life" not followed by a Noun is a Noun', () => {
-		const test_tokens = [create_sentence_for_test([
-			create_lookup_token_for_test({ token: 'John', lookup_results: [lookup_result_for_test({ stem: 'John', part_of_speech: 'Noun' })] }),
-			create_lookup_token_for_test({ token: 'had', lookup_results: [lookup_result_for_test({ stem: 'have', part_of_speech: 'Verb' })] }),
-			create_life_token('life'),
-			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
-		])]
+	test('"life" followed by a Verb is a Noun: Life is in the blood. (cf. Leviticus 17:11)', () => {
+		const tokens = [
+			create_noun_adjective_token({ token: 'Life', stem: 'life' }),
+			create_word_token({ token: 'is', stem: 'be', part_of_speech: 'Verb' }),
+			create_function_word_token('in'),
+			create_article_token('the'),
+			create_word_token({ token: 'blood', stem: 'blood', part_of_speech: 'Noun' }),
+			create_period_token(),
+		]
 
-		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
-		expect(checked_tokens[2].lookup_results.map(result => result.part_of_speech)).toEqual(['Noun'])
+		expect(parts_of_speech_after_rules({ tokens, index: 0 })).toEqual(['Noun'])
 	})
-	test('"life" followed by a Noun is an Adjective', () => {
-		const test_tokens = [create_sentence_for_test([
-			create_token({ token: 'the', type: TOKEN_TYPE.FUNCTION_WORD, tag: { determiner: 'definite_article' } }),
-			create_life_token('life'),
-			create_lookup_token_for_test({ token: 'boat', lookup_results: [lookup_result_for_test({ stem: 'boat', part_of_speech: 'Noun' })] }),
-			create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION }),
-		])]
+	test('"life" not followed by a Noun is a Noun: God gives life to all people. (cf. Acts 17:25)', () => {
+		const tokens = [
+			create_word_token({ token: 'God', stem: 'God', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'gives', stem: 'give', part_of_speech: 'Verb' }),
+			create_noun_adjective_token({ token: 'life', stem: 'life' }),
+			create_function_word_token('to'),
+			create_function_word_token('all'),
+			create_word_token({ token: 'people', stem: 'people', part_of_speech: 'Noun' }),
+			create_period_token(),
+		]
 
-		const checked_tokens = apply_rules({ sentences: test_tokens, rules: PART_OF_SPEECH_RULES }).flatMap(flatten_sentence)
-		expect(checked_tokens[1].lookup_results.map(result => result.part_of_speech)).toEqual(['Adjective'])
+		expect(parts_of_speech_after_rules({ tokens, index: 2 })).toEqual(['Noun'])
+	})
+	test('"life" followed by a Noun is an Adjective: The sailors lowered the life boat. (cf. Acts 27:30)', () => {
+		const tokens = [
+			create_article_token('The'),
+			create_word_token({ token: 'sailors', stem: 'sailor', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'lowered', stem: 'lower', part_of_speech: 'Verb' }),
+			create_article_token('the'),
+			create_noun_adjective_token({ token: 'life', stem: 'life' }),
+			create_word_token({ token: 'boat', stem: 'boat', part_of_speech: 'Noun' }),
+			create_period_token(),
+		]
+
+		expect(parts_of_speech_after_rules({ tokens, index: 4 })).toEqual(['Adjective'])
 	})
 })
