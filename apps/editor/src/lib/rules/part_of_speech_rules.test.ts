@@ -121,7 +121,6 @@ describe('Noun-Adjective disambiguation', () => {
 	] })
 	const create_word_token = ({ token, stem, part_of_speech }: { token: string, stem: string, part_of_speech: 'Noun' | 'Verb' }) =>
 		create_lookup_token_for_test({ token, lookup_results: [lookup_result_for_test({ stem, part_of_speech })] })
-	const create_article_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD, tag: { determiner: 'definite_article' } })
 	const create_function_word_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD })
 	const create_period_token = () => create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION })
 	const parts_of_speech_after_rules = ({ tokens, index }: { tokens: Token[], index: number }) =>
@@ -150,43 +149,5 @@ describe('Noun-Adjective disambiguation', () => {
 		]
 
 		expect(parts_of_speech_after_rules({ tokens, index: 3 })).toEqual(['Adjective'])
-	})
-	test('"life" followed by a Verb is a Noun: Life is in the blood. (cf. Leviticus 17:11)', () => {
-		const tokens = [
-			create_noun_adjective_token({ token: 'Life', stem: 'life' }),
-			create_word_token({ token: 'is', stem: 'be', part_of_speech: 'Verb' }),
-			create_function_word_token('in'),
-			create_article_token('the'),
-			create_word_token({ token: 'blood', stem: 'blood', part_of_speech: 'Noun' }),
-			create_period_token(),
-		]
-
-		expect(parts_of_speech_after_rules({ tokens, index: 0 })).toEqual(['Noun'])
-	})
-	test('"life" not followed by a Noun is a Noun: God gives life to all people. (cf. Acts 17:25)', () => {
-		const tokens = [
-			create_word_token({ token: 'God', stem: 'God', part_of_speech: 'Noun' }),
-			create_word_token({ token: 'gives', stem: 'give', part_of_speech: 'Verb' }),
-			create_noun_adjective_token({ token: 'life', stem: 'life' }),
-			create_function_word_token('to'),
-			create_function_word_token('all'),
-			create_word_token({ token: 'people', stem: 'people', part_of_speech: 'Noun' }),
-			create_period_token(),
-		]
-
-		expect(parts_of_speech_after_rules({ tokens, index: 2 })).toEqual(['Noun'])
-	})
-	test('"life" followed by a Noun is an Adjective: The sailors lowered the life boat. (cf. Acts 27:30)', () => {
-		const tokens = [
-			create_article_token('The'),
-			create_word_token({ token: 'sailors', stem: 'sailor', part_of_speech: 'Noun' }),
-			create_word_token({ token: 'lowered', stem: 'lower', part_of_speech: 'Verb' }),
-			create_article_token('the'),
-			create_noun_adjective_token({ token: 'life', stem: 'life' }),
-			create_word_token({ token: 'boat', stem: 'boat', part_of_speech: 'Noun' }),
-			create_period_token(),
-		]
-
-		expect(parts_of_speech_after_rules({ tokens, index: 4 })).toEqual(['Adjective'])
 	})
 })

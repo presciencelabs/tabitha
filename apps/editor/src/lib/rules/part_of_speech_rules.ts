@@ -225,16 +225,6 @@ const part_of_speech_rules_json = [
 		'comment': 'John knew about the secret(N/Adj).',
 	},
 	{
-		'name': 'If Noun-Adjective "life" is not followed by Noun, remove Adjective',
-		'category': 'Noun|Adjective',
-		'trigger': { 'stem': 'life' },
-		'context': {
-			'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
-		},
-		'remove': 'Adjective',
-		'comment': "Acts 17:25 God gives life(N/Adj) to all people. The Adjective only exists for 'life boat' (Acts 27:16). Not applied to all Noun-Adjectives, since predicate adjectives (Psalm 115:4 Their idols are silver(N/Adj)) are also not followed by a Noun",
-	},
-	{
 		'name': 'If Noun-Adjective followed by Verb, remove Adjective',
 		'category': 'Noun|Adjective',
 		'context': {
