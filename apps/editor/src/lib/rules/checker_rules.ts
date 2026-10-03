@@ -587,6 +587,12 @@ const checker_rules_json: CheckerRuleJson[] = [
 	},
 ]
 
+const ADJECTIVE_AFTER_DETERMINER = create_context_filter({
+	'precededby': { 'tag': { 'determiner': 'definite_article|near_demonstrative|remote_demonstrative' }, 'skip': 'adjp_modifiers_attributive' },
+	'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
+})
+const FOLLOWED_BY_OF = create_context_filter({ 'followedby': { 'token': 'of' } })
+
 const builtin_checker_rules: BuiltInRule[] = [
 	{
 		name: 'Check capitalization for first word in a sentence or quote',
@@ -832,6 +838,24 @@ const builtin_checker_rules: BuiltInRule[] = [
 					return { warning: 'If this verb is passive, it must have an explicit agent. Use _implicitActiveAgent if necessary.' }
 				}
 			}),
+		},
+	},
+	{
+		name: 'Check for an Adjective used as a Noun after a determiner',
+		comment: 'eg. Romans 10:9 "God raised Jesus from the dead." John 11:25 "The one who believes will live." Should be "dead people" and "the person who". Partitives ("all of our fathers") and "the same" are allowed.',
+		rule: {
+			trigger: create_token_filter({ 'category': 'Adjective' }),
+			context: (tokens, trigger_index) => {
+				const is_same = tokens[trigger_index].lookup_results.some(result => result.stem === 'same')
+				if (is_same || FOLLOWED_BY_OF(tokens, trigger_index).success) {
+					return { success: false }
+				}
+				return ADJECTIVE_AFTER_DETERMINER(tokens, trigger_index)
+			},
+			action: message_set_action(({ trigger_token }) => ({
+				token_to_flag: trigger_token,
+				error: "An Adjective cannot be used as a Noun. Add a Noun after '{token}' (eg. 'people'), or use a Noun instead.",
+			})),
 		},
 	},
 ]

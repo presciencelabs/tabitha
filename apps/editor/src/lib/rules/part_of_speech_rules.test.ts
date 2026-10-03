@@ -150,4 +150,39 @@ describe('Noun-Adjective disambiguation', () => {
 
 		expect(parts_of_speech_after_rules({ tokens, index: 3 })).toEqual(['Adjective'])
 	})
+	test('"silver" after "have" is a Noun: Peter did not have silver. (cf. Acts 3:6)', () => {
+		const tokens = [
+			create_word_token({ token: 'Peter', stem: 'Peter', part_of_speech: 'Noun' }),
+			create_function_word_token('did'),
+			create_function_word_token('not'),
+			create_word_token({ token: 'have', stem: 'have', part_of_speech: 'Verb' }),
+			create_noun_adjective_token({ token: 'silver', stem: 'silver' }),
+			create_period_token(),
+		]
+
+		expect(parts_of_speech_after_rules({ tokens, index: 4 })).toEqual(['Noun'])
+	})
+	test('"gold" after "have" and an attributive Adjective is a Noun: Abram had much gold. (cf. Genesis 13:2)', () => {
+		const tokens = [
+			create_word_token({ token: 'Abram', stem: 'Abram', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'had', stem: 'have', part_of_speech: 'Verb' }),
+			create_lookup_token_for_test({ token: 'much', lookup_results: [lookup_result_for_test({ stem: 'much-many', part_of_speech: 'Adjective' })] }),
+			create_noun_adjective_token({ token: 'gold', stem: 'gold' }),
+			create_period_token(),
+		]
+
+		expect(parts_of_speech_after_rules({ tokens, index: 3 })).toEqual(['Noun'])
+	})
+	test('"silver" after "of" is a Noun: Demetrius made shrines of silver. (cf. Acts 19:24)', () => {
+		const tokens = [
+			create_word_token({ token: 'Demetrius', stem: 'Demetrius', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'made', stem: 'make', part_of_speech: 'Verb' }),
+			create_word_token({ token: 'shrines', stem: 'shrine', part_of_speech: 'Noun' }),
+			create_function_word_token('of'),
+			create_noun_adjective_token({ token: 'silver', stem: 'silver' }),
+			create_period_token(),
+		]
+
+		expect(parts_of_speech_after_rules({ tokens, index: 4 })).toEqual(['Noun'])
+	})
 })
