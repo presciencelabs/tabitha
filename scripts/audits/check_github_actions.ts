@@ -62,14 +62,14 @@ export async function scan_github_actions(): Promise<{ scanned: number; findings
 	const workflow_files = await list_yaml_files(join(root_dir, '.github', 'workflows'))
 	const action_files = await list_yaml_files(join(root_dir, '.github', 'actions'))
 
-	const workflow_findings = await Promise.all(workflow_files.map(async (file_path) => {
+	const workflow_findings = await Promise.all(workflow_files.map(async file_path => {
 		const content = await readFile(file_path, 'utf-8')
 		return [
 			...find_secret_github_tokens(file_path, content),
 			...find_missing_top_level_permissions(file_path, content),
 		]
 	}))
-	const action_findings = await Promise.all(action_files.map(async (file_path) => {
+	const action_findings = await Promise.all(action_files.map(async file_path => {
 		const content = await readFile(file_path, 'utf-8')
 		return find_secret_github_tokens(file_path, content)
 	}))
