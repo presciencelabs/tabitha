@@ -297,6 +297,8 @@ describe('Adjective used as a Noun after a determiner', () => {
 
 	const create_word_token = ({ token, stem, part_of_speech }: { token: string, stem: string, part_of_speech: 'Noun' | 'Verb' | 'Adjective' }) =>
 		create_lookup_token_for_test({ token, lookup_results: [lookup_result_for_test({ stem, part_of_speech })] })
+	const create_predicative_adjective_token = ({ token, stem }: { token: string, stem: string }) =>
+		create_lookup_token_for_test({ token, tag: { 'adj_usage': 'predicative' }, lookup_results: [lookup_result_for_test({ stem, part_of_speech: 'Adjective' })] })
 	const create_article_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD, tag: { 'determiner': 'definite_article' } })
 	const create_function_word_token = (token: string) => create_token({ token, type: TOKEN_TYPE.FUNCTION_WORD })
 	const create_period_token = () => create_token({ token: '.', type: TOKEN_TYPE.PUNCTUATION })
@@ -309,16 +311,29 @@ describe('Adjective used as a Noun after a determiner', () => {
 			create_word_token({ token: 'Jesus', stem: 'Jesus', part_of_speech: 'Noun' }),
 			create_function_word_token('from'),
 			create_article_token('the'),
-			create_word_token({ token: 'dead', stem: 'dead', part_of_speech: 'Adjective' }),
+			create_predicative_adjective_token({ token: 'dead', stem: 'dead' }),
 			create_period_token(),
 		])
 
 		expect_error_to_match({ token: checked_tokens[5], regex: /^An Adjective cannot be used as a Noun/ })
 	})
+	test('does not flag an Adjective that is not predicative: God raised Jesus from the dead. (cf. Romans 10:9)', () => {
+		const checked_tokens = check([
+			create_word_token({ token: 'God', stem: 'God', part_of_speech: 'Noun' }),
+			create_word_token({ token: 'raised', stem: 'raise', part_of_speech: 'Verb' }),
+			create_word_token({ token: 'Jesus', stem: 'Jesus', part_of_speech: 'Noun' }),
+			create_function_word_token('from'),
+			create_article_token('the'),
+			create_word_token({ token: 'dead', stem: 'dead', part_of_speech: 'Adjective' }),
+			create_period_token(),
+		])
+
+		expect_no_message(checked_tokens[5])
+	})
 	test('flags an Adjective before a relative clause: The one who believes will live. (cf. John 11:25)', () => {
 		const checked_tokens = check([
 			create_article_token('The'),
-			create_word_token({ token: 'one', stem: 'one', part_of_speech: 'Adjective' }),
+			create_predicative_adjective_token({ token: 'one', stem: 'one' }),
 			create_function_word_token('who'),
 			create_word_token({ token: 'believes', stem: 'believe', part_of_speech: 'Verb' }),
 			create_function_word_token('will'),
@@ -340,18 +355,6 @@ describe('Adjective used as a Noun after a determiner', () => {
 
 		expect_no_message(checked_tokens[3])
 	})
-	test('does not flag a partitive "X of": so that all of our fathers walked through the sea (cf. 1 Corinthians 10:1)', () => {
-		const checked_tokens = check([
-			create_function_word_token('so'),
-			create_token({ token: 'that', type: TOKEN_TYPE.FUNCTION_WORD, tag: { 'determiner': 'remote_demonstrative', 'syntax': 'relativizer' } }),
-			create_word_token({ token: 'all', stem: 'all', part_of_speech: 'Adjective' }),
-			create_function_word_token('of'),
-			create_function_word_token('our'),
-			create_word_token({ token: 'fathers', stem: 'father', part_of_speech: 'Noun' }),
-		])
-
-		expect_no_message(checked_tokens[2])
-	})
 	test('does not flag "the same": Both corners should be the same. (cf. Exodus 26:24)', () => {
 		const checked_tokens = check([
 			create_function_word_token('Both'),
@@ -359,7 +362,7 @@ describe('Adjective used as a Noun after a determiner', () => {
 			create_function_word_token('should'),
 			create_word_token({ token: 'be', stem: 'be', part_of_speech: 'Verb' }),
 			create_article_token('the'),
-			create_word_token({ token: 'same', stem: 'same', part_of_speech: 'Adjective' }),
+			create_predicative_adjective_token({ token: 'same', stem: 'same' }),
 			create_period_token(),
 		])
 

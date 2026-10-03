@@ -1,6 +1,6 @@
 import { LOOKUP_FILTERS } from '$lib/lookup_filters'
 import { ERRORS } from '$lib/parser/error_messages'
-import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_one_part_of_speech, set_message_plain } from '$lib/token'
+import { MESSAGE_TYPE, TOKEN_TYPE, create_added_token, format_token_message, is_one_part_of_speech, set_message_plain, token_has_tag } from '$lib/token'
 import { REGEXES } from '$lib/regexes'
 import { spaced_insertion_text } from '$lib/text_insertions'
 import { validate_case_frame } from './case_frame'
@@ -587,12 +587,6 @@ const checker_rules_json: CheckerRuleJson[] = [
 	},
 ]
 
-const ADJECTIVE_AFTER_DETERMINER = create_context_filter({
-	'precededby': { 'tag': { 'determiner': 'definite_article|near_demonstrative|remote_demonstrative' }, 'skip': 'adjp_modifiers_attributive' },
-	'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
-})
-const FOLLOWED_BY_OF = create_context_filter({ 'followedby': { 'token': 'of' } })
-
 const builtin_checker_rules: BuiltInRule[] = [
 	{
 		name: 'Check capitalization for first word in a sentence or quote',
@@ -842,20 +836,16 @@ const builtin_checker_rules: BuiltInRule[] = [
 	},
 	{
 		name: 'Check for an Adjective used as a Noun after a determiner',
-		comment: 'eg. Romans 10:9 "God raised Jesus from the dead." John 11:25 "The one who believes will live." Should be "dead people" and "the person who". Partitives ("all of our fathers") and "the same" are allowed.',
+		comment: 'eg. Romans 10:9 "God raised Jesus from the dead." John 11:25 "The one who believes will live." Should be "dead people" and "the person who". "the same" is allowed (Exodus 26:24 "Both corners should be the same.").',
 		rule: {
-			trigger: create_token_filter({ 'category': 'Adjective' }),
-			context: (tokens, trigger_index) => {
-				const is_same = tokens[trigger_index].lookup_results.some(result => result.stem === 'same')
-				if (is_same || FOLLOWED_BY_OF(tokens, trigger_index).success) {
-					return { success: false }
-				}
-				return ADJECTIVE_AFTER_DETERMINER(tokens, trigger_index)
-			},
-			action: message_set_action(({ trigger_token }) => ({
-				token_to_flag: trigger_token,
-				error: "An Adjective cannot be used as a Noun. Add a Noun after '{token}' (eg. 'people'), or use a Noun instead.",
-			})),
+			trigger: token => token_has_tag({ token, tag_to_check: { 'adj_usage': 'predicative' } })
+				&& token.lookup_results.length > 0
+				&& token.lookup_results.every(result => result.part_of_speech === 'Adjective' && result.stem !== 'same'),
+			context: create_context_filter({
+				'precededby': { 'tag': { 'determiner': 'definite_article|near_demonstrative|remote_demonstrative' }, 'skip': 'adjp_modifiers_attributive' },
+				'notfollowedby': { 'category': 'Noun', 'skip': 'adjp_attributive' },
+			}),
+			action: message_set_action(() => ({ error: "An Adjective cannot be used as a Noun. Add a Noun after '{token}' (eg. 'people'), or use a Noun instead." })),
 		},
 	},
 ]
