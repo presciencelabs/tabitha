@@ -210,7 +210,7 @@ jobs:
           script: |
             const marker = '<!-- ci-preview-links -->'
             // www's production domain is the apex, so its Previews use a preview-only www host
-            const host = (app) => app === 'www' ? 'www.tabitha.bible' : `${app}.tabitha.bible`
+            const host = (app) => app === 'www' ? 'www-pr.tabitha.bible' : `${app}.tabitha.bible`
 
             try {
               const { data: comments } = await github.rest.issues.listComments({

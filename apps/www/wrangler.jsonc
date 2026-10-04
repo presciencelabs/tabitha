@@ -21,11 +21,12 @@
 			"custom_domain": true
 		}
 	],
-	// Per-PR Worker Previews, served at `pr-<N>.www.tabitha.bible`. CI's preview_deploy job creates
+	// Per-PR Worker Previews, served at `pr-<N>.www-pr.tabitha.bible`. CI's preview_deploy job creates
 	// them with `wrangler preview --name pr-<N>` (docs/decisions/0020-per-pr-worker-previews.md).
 	// A Preview inherits nothing from the top level, so every var and binding it needs is redeclared.
 	// Production lives on the apex (tabitha.bible), so Previews get their own preview-only custom
-	// domain, www.tabitha.bible, instead of a *.tabitha.bible wildcard on the apex. This Worker has
-	// no vars or bindings, so the block is empty, but Wrangler requires it to exist.
+	// domain, www-pr.tabitha.bible, instead of a *.tabitha.bible wildcard on the apex
+	// (www.tabitha.bible is taken by a DNS record that redirects to the apex). This Worker has no
+	// vars or bindings, so the block is empty, but Wrangler requires it to exist.
 	"previews": {}
 }
