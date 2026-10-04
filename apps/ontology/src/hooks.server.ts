@@ -1,6 +1,7 @@
 import { AUTH_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, OAUTH_REDIRECT_PROXY_URL } from '$env/static/private'
 import { PUBLIC_CORS_ALLOW_LOCALHOST, PUBLIC_RATE_LIMIT_DISABLED } from '$env/static/public'
 import { is_authorized } from '$lib/server/auth'
+import { resolve_redirect_proxy_url } from '$lib/server/redirect_proxy'
 import { create_cors_handle } from '@tabitha/cors'
 import { create_rate_limit_handle } from '@tabitha/rate-limit'
 import { SvelteKitAuth } from '@auth/sveltekit'
@@ -51,11 +52,11 @@ async function initialize_config(event: RequestEvent) {
 	 *   forward the user back to the preview deployment. That only works because Previews share
 	 *   production's AUTH_SECRET and Google client (see the `previews` block in wrangler.jsonc).
 	 *
-	 * OAUTH_REDIRECT_PROXY_URL holds this value in `.env` (used by both prod and preview) and is forced
-	 * blank in local dev's `.env.local` by scripts/dx/setup_env.ts, so Auth.js falls back to its own
-	 * no-proxy default there instead of a hostname check baked into this code.
+	 * OAUTH_REDIRECT_PROXY_URL holds this value in `.env` for production, and as a runtime var in
+	 * wrangler.jsonc's `previews` block for Previews (CI builds them with setup:env's `.env.local`, which
+	 * blanks the build-time value). Local dev gets neither, so Auth.js uses its own no-proxy default.
 	 */
-	const redirectProxyUrl = OAUTH_REDIRECT_PROXY_URL || undefined
+	const redirectProxyUrl = resolve_redirect_proxy_url({ runtime: event.platform?.env.OAUTH_REDIRECT_PROXY_URL, build: OAUTH_REDIRECT_PROXY_URL })
 
 	return {
 		providers: [

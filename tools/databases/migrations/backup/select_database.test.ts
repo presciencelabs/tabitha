@@ -17,6 +17,9 @@ const CONFIG_TEXT = `{
 		}
 	],
 	"previews": {
+		"vars": {
+			"OAUTH_REDIRECT_PROXY_URL": "https://ontology.tabitha.bible/auth" // a URL must not read as a comment
+		},
 		"d1_databases": [
 			{
 				"binding": "DB_Ontology",
